@@ -1,5 +1,5 @@
 /*
- * "$Id: epson.c,v 1.2 2001/06/03 20:53:24 rlk Exp $"
+ * "$Id: epson.c,v 1.3 2001/10/29 01:52:10 rlk Exp $"
  *
  *   EPSON backend for the Common UNIX Printing System.
  *
@@ -452,9 +452,6 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 void
 list_devices(void)
 {
-  static const char *funky_hex = "0123456789abcdefghijklmnopqrstuvwxyz";
-				/* Funky hex numbering used for some devices */
-
 #ifdef __linux
   int	i;			/* Looping var */
   int	fd;			/* File descriptor */
@@ -704,5 +701,5 @@ list_devices(void)
 
 
 /*
- * End of "$Id: epson.c,v 1.2 2001/06/03 20:53:24 rlk Exp $".
+ * End of "$Id: epson.c,v 1.3 2001/10/29 01:52:10 rlk Exp $".
  */
