@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.15.2.2 2001/03/31 16:50:04 rlk Exp $"
+ * "$Id: print-dither.c,v 1.15.2.3 2001/03/31 17:18:35 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1608,18 +1608,18 @@ stp_dither_monochrome(const unsigned short  *gray,
   int j;
   unsigned char *tptr;
   int dst_width = d->dst_width;
-
-  bit = 128;
-  x = 0;
-
-  xstep  = d->src_width / d->dst_width;
-  xmod   = d->src_width % d->dst_width;
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * bits);
   if (zero_mask)
     return;
   kptr = black;
+
+  bit = 128;
+  x = 0;
+
+  xstep  = d->src_width / d->dst_width;
+  xmod   = d->src_width % d->dst_width;
   xerror = 0;
   matrix_set_row(d, kdither, row);
   for (x = 0; x < dst_width; x++)
@@ -1630,20 +1630,24 @@ stp_dither_monochrome(const unsigned short  *gray,
 	  for (j = 0; j < bits; j++, tptr += height)
 	    tptr[0] |= bit;
 	}
-
-      gray   += xstep;
-      xerror += xmod;
       bit >>= 1;
       if (bit == 0)
 	{
 	  kptr ++;
 	  bit = 128;
 	}
-      if (xerror >= dst_width)
+      if (d->src_width == d->dst_width)
+	gray++;
+      else
 	{
-	  xerror -= dst_width;
-	  gray++;
-	}
+	  gray += xstep;
+	  xerror += xmod;
+	  if (xerror >= d->dst_width)
+	    {
+	      xerror -= d->dst_width;
+	      gray++;
+	    }
+	}	  
     }
 }
 
@@ -1666,27 +1670,31 @@ stp_dither_black_fast(const unsigned short   *gray,
 		*kptr;		/* Current black pixel */
   int		k;
   dither_t *d = (dither_t *) vd;
-  unsigned short *kl = get_valueline(d, ECOLOR_K);
   dither_color_t *kd = &(d->dither[ECOLOR_K]);
   dither_matrix_t *kdither = &(d->dithermat[ECOLOR_K]);
   int dst_width = d->dst_width;
   int dither_very_fast = 0;
-  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
-    dither_very_fast = 1;
-
-  bit = 128;
+  int xerror, xstep, xmod;
 
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   if (zero_mask)
     return;
+
+  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
+    dither_very_fast = 1;
+
+  bit = 128;
+  xstep  = d->src_width / d->dst_width;
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
   kptr = black;
   matrix_set_row(d, &(d->dithermat[ECOLOR_K]), row);
 
   for (x = 0; x < dst_width; x++)
     {
-      k = kl[x];
+      k = gray[0];
       print_color_fast(d, kd, k, k, x, row, kptr, NULL, bit, height, kdither,
 		       dither_very_fast);
 
@@ -1696,6 +1704,18 @@ stp_dither_black_fast(const unsigned short   *gray,
 	  kptr ++;
 	  bit = 128;
 	}
+      if (d->src_width == d->dst_width)
+	gray++;
+      else
+	{
+	  gray += xstep;
+	  xerror += xmod;
+	  if (xerror >= d->dst_width)
+	    {
+	      xerror -= d->dst_width;
+	      gray++;
+	    }
+	}	  
     }
 }
 
@@ -1714,19 +1734,23 @@ stp_dither_black_ordered(const unsigned short   *gray,
 		*kptr;		/* Current black pixel */
   int		k;		/* Current black error */
   dither_t *d = (dither_t *) vd;
-  unsigned short *kl = get_valueline(d, ECOLOR_K);
   int terminate;
   int ink_budget;
-
-  bit = 128;
-  x = 0;
-  terminate = d->dst_width;
+  int xerror, xstep, xmod;
 
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   if (zero_mask)
     return;
+
+  bit = 128;
+  x = 0;
+  terminate = d->dst_width;
+  xstep  = d->src_width / d->dst_width;
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
+
   kptr = black;
   matrix_set_row(d, &(d->dithermat[ECOLOR_K]), row);
   matrix_set_row(d, &(d->pick[ECOLOR_K]), row);
@@ -1735,7 +1759,7 @@ stp_dither_black_ordered(const unsigned short   *gray,
     {
       ink_budget = d->ink_limit;
 
-      k = kl[x];
+      k = gray[0];
       print_color(d, &(d->dither[ECOLOR_K]), k, k, k, x, row, kptr, NULL, bit,
 		  height, d->randomizer[ECOLOR_K], 0, &ink_budget,
 		  &(d->pick[ECOLOR_K]), &(d->dithermat[ECOLOR_K]),
@@ -1746,6 +1770,18 @@ stp_dither_black_ordered(const unsigned short   *gray,
 	  kptr ++;
 	  bit = 128;
 	}
+      if (d->src_width == d->dst_width)
+	gray++;
+      else
+	{
+	  gray += xstep;
+	  xerror += xmod;
+	  if (xerror >= d->dst_width)
+	    {
+	      xerror -= d->dst_width;
+	      gray++;
+	    }
+	}	  
     }
 }
 
@@ -1767,15 +1803,20 @@ stp_dither_black_ed(const unsigned short   *gray,
 		*kerror0,	/* Pointer to current error row */
 		*kerror1;	/* Pointer to next error row */
   dither_t *d = (dither_t *) vd;
-  unsigned short *kl = get_valueline(d, ECOLOR_K);
   int terminate;
   int direction = row & 1 ? 1 : -1;
   int odb = d->spread;
   int odb_mask = (1 << odb) - 1;
   int ink_budget;
+  int xerror, xstep, xmod;
 
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
+  xstep  = d->src_width / d->dst_width;
+  xmod   = d->src_width % d->dst_width;
+  xerror = (direction == 1) ? 0 : (xmod * (d->dst_width - 1)) % d->dst_width;
+  if (direction == -1)
+    gray += d->src_width - 1;
   terminate = (direction == 1) ? d->dst_width : -1;
 
   height = (d->dst_width + 7) / 8;
@@ -1823,7 +1864,7 @@ stp_dither_black_ed(const unsigned short   *gray,
     {
       ink_budget = d->ink_limit;
 
-      k = kl[x];
+      k = gray[0];
       ok = k;
       k = UPDATE_COLOR(k, ditherk);
       k = print_color(d, &(d->dither[ECOLOR_K]), ok, ok, k, x, row, kptr, NULL,
@@ -1841,6 +1882,18 @@ stp_dither_black_ed(const unsigned short   *gray,
 	      kptr ++;
 	      bit = 128;
 	    }
+	  if (d->src_width == d->dst_width)
+	    gray++;
+	  else
+	    {
+	      gray += xstep;
+	      xerror += xmod;
+	      if (xerror >= d->dst_width)
+		{
+		  xerror -= d->dst_width;
+		  gray++;
+		}
+	    }	  
 	}
       else
 	{
@@ -1851,6 +1904,18 @@ stp_dither_black_ed(const unsigned short   *gray,
 	    }
 	  else
 	    bit <<= 1;
+	  if (d->src_width == d->dst_width)
+	    gray--;
+	  else
+	    {
+	      gray -= xstep;
+	      xerror -= xmod;
+	      if (xerror < 0)
+		{
+		  xerror += d->dst_width;
+		  gray--;
+		}
+	    }	  
 	}
     }
 }
@@ -2517,7 +2582,7 @@ stp_dither_cmyk_ed(const unsigned short  *cmy,
   xmod   = d->src_width % d->dst_width;
   xerror = (direction == 1) ? 0 : (xmod * (d->dst_width - 1)) % d->dst_width;
   if (direction == -1)
-    cmy += (3 * (d->dst_width - 1));
+    cmy += (3 * (d->src_width - 1));
   terminate = (direction == 1) ? d->dst_width : -1;
 
   for (i = 0; i < NCOLORS; i++)

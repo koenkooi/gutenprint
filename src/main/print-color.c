@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.9.2.2 2001/03/31 16:50:04 rlk Exp $"
+ * "$Id: print-color.c,v 1.9.2.3 2001/03/31 17:18:35 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -189,9 +189,9 @@ calc_hsl_to_rgb(unsigned short *rgb, double h, double s, double l)
 static inline void
 update_cmyk(unsigned short *rgb)
 {
-  int c = rgb[0];
-  int m = rgb[1];
-  int y = rgb[2];
+  int c = 65535 - rgb[0];
+  int m = 65535 - rgb[1];
+  int y = 65535 - rgb[2];
   int nc, nm, ny;
   int k;
   if (c == m && c == y)
@@ -226,9 +226,9 @@ update_cmyk(unsigned short *rgb)
   if (ny > 65535)
     ny = 65535;
 
-  rgb[0] = nc;
-  rgb[1] = nm;
-  rgb[2] = ny;
+  rgb[0] = 65535 - nc;
+  rgb[1] = 65535 - nm;
+  rgb[2] = 65535 - ny;
 }
 
 /*
