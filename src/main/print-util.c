@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.12 2001/03/09 21:23:35 rleigh Exp $"
+ * "$Id: print-util.c,v 1.13 2001/03/10 19:45:16 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1125,11 +1125,11 @@ stp_minimum_settings()
 # include <varargs.h>
 #endif
 
-static int stp_vasprintf (char **result, const char *format, va_list args);
-static int int_stp_vasprintf (char **result, const char *format, va_list *args);
+static int vasprintf (char **result, const char *format, va_list args);
+static int int_vasprintf (char **result, const char *format, va_list *args);
 
 static int
-int_stp_vasprintf (char **result, const char *format, va_list *args)
+int_vasprintf (char **result, const char *format, va_list *args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -1206,9 +1206,9 @@ int_stp_vasprintf (char **result, const char *format, va_list *args)
 }
 
 static int
-stp_vasprintf (char **result, const char *format, va_list args)
+vasprintf (char **result, const char *format, va_list args)
 {
-  return int_stp_vasprintf (result, format, &args);
+  return int_vasprintf (result, format, &args);
 }
 #else
 extern int vasprintf (char **result, const char *format, va_list args);
