@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.22 2001/08/06 02:45:54 rlk Exp $
+## $Id: Makefile.am,v 1.23 2001/08/10 02:21:34 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -57,9 +57,14 @@ testdither_SOURCES = testdither.c
 testdither_LDADD = $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
-testpattern_SOURCES = testpattern.c
+LFLAGS = -i
+YFLAGS = -d
+
+testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
 testpattern_LDADD = $(LIBGIMPPRINT_LIBS)
 testpattern_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+testpatternl.o: testpatterny.o
 
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../src/main
@@ -70,4 +75,5 @@ $(LIBGIMPPRINT_LIBS):
 CLEANFILES = $(EXTRA_PROGRAMS) mixed-color-1bit.ppm
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
+DISTCLEANFILES = testpatternl.c testpatterny.c testpatterny.h
+EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest testpatterny.h testpattern.sample
