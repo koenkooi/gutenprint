@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.56 2000/02/15 03:51:41 rlk Exp $"
+ * "$Id: print.c,v 1.57 2000/02/15 22:10:41 davehill Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -3253,7 +3253,7 @@ printrc_load(void)
 	}
 
 
-      if ((p = bsearch(&key, plist + 1, plist_count - 1, sizeof(plist_t),
+      if ((p = bsearch(&key, plist, plist_count, sizeof(plist_t),
                        (int (*)(const void *, const void *))compare_printers))
 	  != NULL)
 	{
@@ -3336,7 +3336,7 @@ printrc_save(void)
 
     fputs("#PRINTRC " PLUG_IN_VERSION "\n", fp);
 
-    for (i = 1, p = plist + 1; i < plist_count; i ++, p ++)
+    for (i = 0, p = plist; i < plist_count; i ++, p ++)
       fprintf(fp, "%s,%s,%s,%s,%d,%s,%s,%s,%s,%d,%.3f,%d,%d,%d,%.3f,%d,%d,%d,%d,%d,%.3f,%.3f,%s\n",
               p->name, p->v.output_to, p->v.driver, p->v.ppd_file,
 	      p->v.output_type, p->v.resolution, p->v.media_size,
@@ -3389,6 +3389,7 @@ get_system_printers(void)
   plist[0].v.output_to[0] = '\0';
   strcpy(plist[0].v.driver, "ps2");
   plist[0].v.output_type = OUTPUT_COLOR;
+  initialize_printer(&plist[0]);
 
 #ifdef LPC_COMMAND
   if ((pfile = popen(LPC_COMMAND " status < /dev/null", "r")) != NULL)
@@ -3531,5 +3532,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.56 2000/02/15 03:51:41 rlk Exp $".
+ * End of "$Id: print.c,v 1.57 2000/02/15 22:10:41 davehill Exp $".
  */
