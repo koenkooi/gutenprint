@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.12 2000/07/02 20:34:58 davehill Exp $"
+ * "$Id: gtk_color_window.c,v 1.13 2000/07/06 12:29:38 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -440,7 +440,7 @@ void gtk_create_color_adjust_window(void)
 
     saturation_adjustment = scale_data =
 	gtk_adjustment_new((float)vars.saturation,
-			   0.001,
+			   0,
 			   10.0,
 			   0.001,
 			   0.01,
