@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.39 2003/05/08 02:22:55 rlk Exp $"
+ * "$Id: panel.c,v 1.39.2.1 2003/05/25 02:20:37 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1337,6 +1337,14 @@ create_printer_dialog (void)
 	{
 	  gchar *tmp=g_strdup(gettext(stp_printer_get_long_name(the_printer)));
 
+	  /*
+	   * FIXME Somehow if the raw printer comes before any of the
+	   * "real" printers in the list of printers created in module.c,
+	   * this code barfs on any of those printers added later.  For
+	   * example, try listing olympus_LTX_stpi_module_data after
+	   * raw_LTX_stpi_module_data.
+	   */
+	  
 	  gtk_clist_insert (GTK_CLIST (printer_driver), i, &tmp);
 	  gtk_clist_set_row_data (GTK_CLIST (printer_driver), i, (gpointer) i);
 	  g_free(tmp);
@@ -3106,6 +3114,8 @@ print_driver_callback (GtkWidget      *widget, /* I - Driver list */
   reset_preview ();
   data = gtk_clist_get_row_data (GTK_CLIST (widget), row);
   tmp_printer = stp_get_printer_by_index ((gint) data);
+  fprintf(stderr, "printer name %s %d\n", stp_printer_get_driver(tmp_printer),
+	  (int) data);
 
   pop_ppd_box();
   calling_print_driver_callback--;
