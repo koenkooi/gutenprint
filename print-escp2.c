@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.38 2000/01/08 23:27:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.39 2000/01/13 03:25:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.39  2000/01/13 03:25:31  rlk
+ *   bug fix from mainline
+ *
  *   Revision 1.38  2000/01/08 23:27:54  rlk
  *   Rearrange setup code; more printers to support softweave
  *
@@ -1344,7 +1347,7 @@ escp2_write(FILE          *prn,	/* I - Print file or command */
       fprintf(prn, "\033r%c", plane);
   }
 
-  if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
+  if (escp2_has_cap(model, MODEL_1440DPI_MASK, MODEL_1440DPI_YES))
     fprintf(prn, "\033(\\%c%c%c%c%c%c", 4, 0, 160, 5,
 	    (offset * 1440 / ydpi) & 255, (offset * 1440 / ydpi) >> 8);
   else
@@ -2195,5 +2198,5 @@ escp2_write_weave(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.38 2000/01/08 23:27:54 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.39 2000/01/13 03:25:31 rlk Exp $".
  */
