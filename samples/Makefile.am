@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/07/21 14:14:27 rlk Exp $
+## $Id: Makefile.am,v 1.2 2001/07/21 15:33:06 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ MAINT_CHARSET = latin1
 
 SAMPLE_IMAGES = colorbars4.png colorsweep.png profile.jpg
 
-pkgdatadir = $(datadir)/$(PACKAGE)
+pkgdatadir = $(datadir)/$(PACKAGE)/samples
 
 pkgdata_DATA = @SAMPLE_IMAGES@
 
