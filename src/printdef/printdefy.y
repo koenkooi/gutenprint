@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.8 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: printdefy.y,v 1.9 2002/10/27 02:28:58 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -178,18 +178,23 @@ density:		tBEGIN DENSITY VALUE ASSIGN tDOUBLE tEND
 ;
 
 Empty:
+;
 
 pstart: printerstart | printerstartalt
 ;
 
 parg: color | nocolor | model | language | brightness | gamma | contrast
 	| cyan | magenta | yellow | saturation | density
+;
 
 pargs: pargs parg | parg
+;
 
 Printer: pstart pargs printerend | pstart printerend
+;
 
 Printers: Printers Printer | Empty
+;
 
 %%
 
