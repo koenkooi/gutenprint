@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.7 2004/03/20 21:38:39 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.8 2004/03/20 21:52:56 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -170,6 +170,7 @@ typedef struct
   int in_channels;
   int out_channels;
   int channels_are_initialized;
+  int invert_output;
   const color_description_t *input_color_description;
   const color_description_t *output_color_description;
   const color_correction_t *color_correction;
@@ -462,6 +463,38 @@ static curve_param_t curve_parameters[] =
   },
   {
     {
+      "RedCurve", N_("Red Curve"), N_("Output Curves"),
+      N_("Red curve"),
+      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
+    }, &color_curve_bounds, CHANNEL_R, 0
+  },
+  {
+    {
+      "GreenCurve", N_("Green Curve"), N_("Output Curves"),
+      N_("Green curve"),
+      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
+    }, &color_curve_bounds, CHANNEL_G, 0
+  },
+  {
+    {
+      "BlueCurve", N_("Blue Curve"), N_("Output Curves"),
+      N_("Blue curve"),
+      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
+    }, &color_curve_bounds, CHANNEL_B, 0
+  },
+  {
+    {
+      "WhiteCurve", N_("White Curve"), N_("Output Curves"),
+      N_("White curve"),
+      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
+    }, &color_curve_bounds, CHANNEL_W, 0
+  },
+  {
+    {
       "HueMap", N_("Hue Map"), N_("Advanced HSL Curves"),
       N_("Hue adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
@@ -573,22 +606,6 @@ get_color_correction(const char *name)
 	  return &(color_corrections[i]);
       }
   return NULL;
-}
-
-static void
-initialize_cmyk_lut(stp_const_vars_t vars, size_t count)
-{
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  if (!lut->cmyk_lut)
-    {
-      int i;
-      double print_gamma = stp_get_float_parameter(vars, "Gamma");
-      lut->cmyk_lut = stpi_malloc(sizeof(unsigned short) * count);
-
-      for (i = 0; i < count; i ++)
-	lut->cmyk_lut[i] =
-	  (65535.0 * pow((double)i / (double) (count - 1), print_gamma)) + 0.5;
-    }
 }
 
 static void
@@ -1530,7 +1547,6 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
   const T *s_in = (const T *) in;					\
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
 									\
-  initialize_cmyk_lut(vars, (1<<size)-1);				\
   memset(nz, 0, sizeof(nz));						\
 									\
   for (i = 0; i < lut->image_width; i++, out += 4)			\
@@ -1667,8 +1683,6 @@ cmyk_##size##_to_gray(stp_const_vars_t vars,				\
   const T *s_in = (const T *) in;					\
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
 									\
-  initialize_cmyk_lut(vars, (1<<size)-1);				\
-									\
   for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		\
     {									\
       for (j = 0; j < 4; j++)						\
@@ -1731,7 +1745,7 @@ raw_##size##_to_raw(stp_const_vars_t vars,				\
   unsigned retval = 0;							\
   const T *s_in = (const T *) in;					\
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  int colors = lut->image_bpp;						\
+  int colors = lut->in_channels;					\
 									\
   memset(nz, 0, sizeof(nz));						\
   for (i = 0; i < lut->image_width; i++)				\
@@ -1774,7 +1788,7 @@ stpi_color_traditional_get_row(stp_vars_t v,
   const lut_t *lut = (const lut_t *)(stpi_get_component_data(v, "Color"));
   unsigned zero;
   if (stpi_image_get_row(image, lut->in_data,
-			 lut->image_width * lut->image_bpp, row)
+			 lut->image_width * lut->in_channels, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
   if (!lut->channels_are_initialized)
@@ -1856,14 +1870,14 @@ copy_lut(void *vlut)
     dest->gcr_curve = stp_curve_create_copy(src->gcr_curve);
   dest->steps = src->steps;
   dest->colorfunc = src->colorfunc;
-  dest->image_bpp = src->image_bpp;
+  dest->in_channels = src->in_channels;
+  dest->out_channels = src->out_channels;
   dest->channel_depth = src->channel_depth;
   dest->image_width = src->image_width;
-  dest->invert_output = src->invert_output;
   if (src->in_data)
     {
-      dest->in_data = stpi_malloc(src->image_width * src->image_bpp);
-      memset(dest->in_data, 0, src->image_width * src->image_bpp);
+      dest->in_data = stpi_malloc(src->image_width * src->in_channels);
+      memset(dest->in_data, 0, src->image_width * src->in_channels);
     }
   return dest;
 }
@@ -2384,8 +2398,16 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
       if (strcmp(name, param->param.name) == 0)
 	{
 	  stpi_fill_parameter_settings(description, &(param->param));
-	  if (param->color_only && stp_get_output_type(v) == OUTPUT_GRAY)
-	    description->is_active = 0;
+	  if (param->channel_mask != CHANNEL_EVERY)
+	    {
+	      const color_description_t *color_description =
+		get_color_description(stpi_describe_output(v));
+	      if (color_description &&
+		  (param->channel_mask & color_description->channels))
+		description->is_active = 1;
+	      else
+		description->is_active = 0;
+	    }	      
 	  if (stp_check_string_parameter(v, "ImageType", STP_PARAMETER_ACTIVE) &&
 	      strcmp(stp_get_string_parameter(v, "ImageType"), "None") != 0 &&
 	      description->p_level > STP_PARAMETER_LEVEL_BASIC)
@@ -2480,8 +2502,16 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	{
 	  description->is_active = 1;
 	  stpi_fill_parameter_settings(description, &(param->param));
-	  if (param->color_only && stp_get_output_type(v) == OUTPUT_GRAY)
-	    description->is_active = 0;
+	  if (param->channel_mask != CHANNEL_EVERY)
+	    {
+	      const color_description_t *color_description =
+		get_color_description(stpi_describe_output(v));
+	      if (color_description &&
+		  (param->channel_mask & color_description->channels))
+		description->is_active = 1;
+	      else
+		description->is_active = 0;
+	    }	      
 	  if (stp_check_string_parameter(v, "ImageType", STP_PARAMETER_ACTIVE) &&
 	      strcmp(stp_get_string_parameter(v, "ImageType"), "None") != 0 &&
 	      description->p_level > STP_PARAMETER_LEVEL_BASIC)
