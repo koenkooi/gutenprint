@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.31 1999/12/05 22:11:59 rlk Exp $"
+ * "$Id: print.c,v 1.32 1999/12/11 14:42:04 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -270,7 +270,7 @@ printer_t	printers[] =		/* List of supported printer types */
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { N_("EPSON Stylus Photo EX"),	"escp2-ex",	1,	7,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
-  { N_("EPSON Stylus Photo EX"),	"escp2-photo",	1,	8,	0.585,	0.646,
+  { N_("EPSON Stylus Photo"),	"escp2-photo",	1,	8,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
 };
 
@@ -3288,5 +3288,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.31 1999/12/05 22:11:59 rlk Exp $".
+ * End of "$Id: print.c,v 1.32 1999/12/11 14:42:04 rlk Exp $".
  */
