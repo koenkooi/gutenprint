@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.13.2.3 2001/03/10 00:22:54 rlk Exp $"
+ * "$Id: print-dither.c,v 1.13.2.4 2001/03/24 01:47:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2492,21 +2492,16 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 {
   int		x,		/* Current X coordinate */
     		height;		/* Height of output bitmap in bytes */
-  int		c, m, y, k,	/* CMYK values */
-		oc, om, oy;
-  unsigned char	bit,		/* Current bit */
-    		*cptr,		/* Current cyan pixel */
-    		*mptr,		/* Current magenta pixel */
-    		*yptr,		/* Current yellow pixel */
-    		*kptr;		/* Current black pixel */
+  int		values[NCOLORS];
+  int		ovalues[NCOLORS];
+  unsigned char *vptrs[NCOLORS];
+  unsigned char	bit;		/* Current bit */
   int		i, j;
   int		ndither[NCOLORS];
   int		*error[NCOLORS][ERROR_ROWS];
   int		bk = 0;
   dither_t	*d = (dither_t *) vd;
-  const unsigned short *cline = get_valueline(d, ECOLOR_C);
-  const unsigned short *mline = get_valueline(d, ECOLOR_M);
-  const unsigned short *yline = get_valueline(d, ECOLOR_Y);
+  const unsigned short vlines[NCOLORS];
   int nonzero;
 
   int		terminate;
@@ -2519,11 +2514,11 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 
   height = (d->dst_width + 7) / 8;
 
-  memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
-  if (black)
-    memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
+  for (i = 0; i < ncolors; i++)
+    {
+      if (outputs[i])
+	memset(outputs[i], 0, height * d->dither[i].signif_bits);
+    }
   /*
    * First, generate the CMYK separation.  If there's nothing in
    * this row, and we're using an ordered dither, there's no reason
@@ -2552,6 +2547,8 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 
   for (i = 0; i < NCOLORS; i++)
     {
+      vptrs[i] = outputs[i];
+      vlines[i] = get_valueline(d, i);
       for (j = 0; j < ERROR_ROWS; j++)
 	error[i][j] = get_errline(d, row + j, i);
       memset(error[i][j - 1], 0, d->dst_width * sizeof(int));
@@ -2568,22 +2565,15 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	}
       return;
     }
-  cptr = cyan;
-  mptr = magenta;
-  yptr = yellow;
-  kptr = black;
   if (direction == -1)
     {
       for (i = 0; i < NCOLORS; i++)
 	{
 	  for (j = 0; j < ERROR_ROWS; j++)
 	    error[i][j] += d->dst_width - 1;
+	  vptrs[i] += height - 1;
 	}
-      cptr = cyan + height - 1;
-      mptr = magenta + height - 1;
-      yptr = yellow + height - 1;
-      kptr = black + height - 1;
-      first_color = (first_color + d->dst_width - 1) % 3;
+      first_color = 1 + ((first_color + d->dst_width - 1) % 3);
     }
   for (i = 0; i < NCOLORS; i++)
     {
@@ -2597,33 +2587,36 @@ stp_dither_cmyk_ed(const unsigned short  *input,
    */
   for (; x != terminate; x += direction)
     {
+      int is_nonzero = 0;
+      int k = 65535;
       /*
        * First get the standard CMYK separation color values.
        */
 
-      c = cline[x];
-      m = mline[x];
-      y = yline[x];
-      oc = c;
-      om = m;
-      oy = y;
+      values[ECOLOR_K] = 0;
+      for (i = 1; i < NCOLORS; i++)
+	{
+	  values[i] = vlines[i][x];
+	  ovalues[i] = values[i];
+	  if (values[i])
+	    is_nonzero = 1;
+	}
 
       /*
        * If we're doing ordered dither, and there's no ink, we aren't
        * going to print anything.
        */
-      if (c == 0 && m == 0 && y == 0)
+      if (!is_nonzero)
 	{
-	  c = UPDATE_COLOR(c, ndither[ECOLOR_C]);
-	  m = UPDATE_COLOR(m, ndither[ECOLOR_M]);
-	  y = UPDATE_COLOR(y, ndither[ECOLOR_Y]);
-	  k = UPDATE_COLOR(0, ndither[ECOLOR_K]);
+	  for (i = 0; i < NCOLORS; i++)
+	    values[i] = UPDATE_COLOR(values[i], ndither[i]);
 	  goto out;
 	}
 
       QUANT(7);
 
-      k = USMIN(c, USMIN(m, y));
+      for (i = 1; i < NCOLORS; i++)
+	k = USMIN(k, values[i]);
       bk = 0;
 
       /*
@@ -2633,10 +2626,10 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 
       if (k > 0)
 	{
-	  if (black != NULL)
-	    update_cmyk(d, oc, om, oy, k, &c, &m, &y, &bk, &k);
+	  if (outputs[ECOLOR_K])
+	    update_cmyk(d, &ovalues, k, &values, &bk, &k);
 	  else
-	    update_cmy(d, oc, om, oy, k, &c, &m, &y);
+	    update_cmy(d, &ovalues, k, &values);
 	}
 
       QUANT(8);

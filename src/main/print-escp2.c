@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.37.2.3 2001/03/10 00:22:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.37.2.4 2001/03/24 01:47:27 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1129,7 +1129,7 @@ static const int ph2_dotsizes[] =
 { 3, 3, -1, -1, 1, -1, 4, -1, -1, -1, -1 };
 
 static const int sc440_dotsizes[] =
-{ 3, 3, -1, 1, 1, -1, -1, -1, -1, -1, -1 };
+{ 3, 3, -1, -1, 1, -1, -1, -1, -1, -1, -1 };
 
 static const int sc640_dotsizes[] =
 { 3, 3, -1, 1, 1, -1, 1, -1, 1, -1, -1 };

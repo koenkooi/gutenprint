@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.20.2.3 2001/03/10 00:22:54 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.20.2.4 2001/03/24 01:47:27 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -41,10 +41,10 @@
 #endif
 
 
-#define ECOLOR_C 0
-#define ECOLOR_M 1
-#define ECOLOR_Y 2
-#define ECOLOR_K 3
+#define ECOLOR_K 0
+#define ECOLOR_C 1
+#define ECOLOR_M 2
+#define ECOLOR_Y 3
 #define NCOLORS (4)
 
 #define MAX_CARRIAGE_WIDTH	80 /* This really needs to go away */
@@ -444,5 +444,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.20.2.3 2001/03/10 00:22:54 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.20.2.4 2001/03/24 01:47:27 rlk Exp $".
  */

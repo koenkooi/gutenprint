@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.7.2.3 2001/03/10 00:22:54 rlk Exp $"
+ * "$Id: print-color.c,v 1.7.2.4 2001/03/24 01:47:27 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -57,7 +57,7 @@ typedef struct
 #define LUM_GREEN	61
 #define LUM_BLUE	8
 
-/* rgb/hsv conversions taken from Gimp common/autostretch_hsv.c */
+/* rgb/hsl conversions taken from Gimp common/autostretch_hsv.c */
 
 #define FMAX(a, b) ((a) > (b) ? (a) : (b))
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
