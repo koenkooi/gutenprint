@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.8 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: array.c,v 1.9 2003/11/25 02:46:44 rlk Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -48,7 +48,7 @@ typedef struct
 /*
  * We could do more sanity checks here if we want.
  */
-static void
+static inline void
 check_array(const stpi_internal_array_t *v)
 {
   if (v == NULL)

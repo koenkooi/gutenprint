@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.2 2003/11/09 15:19:36 rlk Exp $"
+ * "$Id: color.c,v 1.3 2003/11/25 02:46:44 rlk Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -81,7 +81,7 @@ stp_color_count(void)
 }
 
 
-static void
+static inline void
 check_color(const stpi_internal_color_t *c)
 {
   if (c == NULL)

@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.9 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: sequence.c,v 1.10 2003/11/25 02:46:44 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -61,7 +61,7 @@ typedef struct
 /*
  * We could do more sanity checks here if we want.
  */
-static void
+static inline void
 check_sequence(const stpi_internal_sequence_t *v)
 {
   if (v == NULL)
@@ -538,16 +538,7 @@ stp_sequence_get_##name##_data(stp_const_sequence_t sequence, size_t *count) \
     {									     \
       (iseq)->name##_data = stpi_zalloc(sizeof(t) * iseq->size);	     \
       for (i = 0; i < iseq->size; i++)					     \
-        {								     \
-	  double val;							     \
-	  if ((stp_sequence_get_point(sequence, i, &val)) == 0)		     \
-	    {								     \
-	      stpi_free(iseq->name##_data);				     \
-	      iseq->name##_data = NULL;					     \
-	      return NULL;						     \
-	    }								     \
-	  iseq->name##_data[i] = (t) val;				     \
-        }								     \
+	iseq->name##_data[i] = (t) iseq->data[i];			     \
     }									     \
   *count = iseq->size;							     \
   return iseq->name##_data;						     \

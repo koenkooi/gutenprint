@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.29 2003/11/16 03:20:29 rlk Exp $"
+ * "$Id: print-papers.c,v 1.30 2003/11/25 02:46:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -80,7 +80,7 @@ stpi_paper_list_init(void)
   return 0;
 }
 
-static void
+static inline void
 check_paperlist(void)
 {
   if (paper_list == NULL)
