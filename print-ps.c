@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.26 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print-ps.c,v 1.26.2.1 2000/06/17 13:13:27 jmv Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -245,7 +245,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   int		top = v->top;
   int		left = v->left;
   int		i, j;		/* Looping vars */
-  int		x, y;		/* Looping vars */
+  int		y;		/* Looping vars */
   unsigned char	*in;		/* Input pixels from image */
   unsigned short	*out;		/* Output pixels for printer */
   int		page_left,	/* Left margin of page */
@@ -258,10 +258,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
 		out_height,	/* Height of image on page */
 		out_bpp,	/* Output bytes per pixel */
 		out_length,	/* Output length (Level 2 output) */
-		out_offset,	/* Output offset (Level 2 output) */
-		temp_width,	/* Temporary width of image on page */
-		temp_height,	/* Temporary height of image on page */
-		landscape;	/* True if we rotate the output 90 degrees */
+		out_offset;	/* Output offset (Level 2 output) */
   time_t	curtime;	/* Current time of day */
   convert_t	colorfunc;	/* Color conversion function... */
   char		*command;	/* PostScript command */
@@ -294,143 +291,21 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
     output_type = OUTPUT_GRAY_COLOR;		/* Force grayscale output */
 
-  if (output_type == OUTPUT_COLOR)
-  {
-    out_bpp = 3;
-
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_rgb;
-    else
-      colorfunc = indexed_to_rgb;
-  }
-  else if (output_type == OUTPUT_GRAY_COLOR)
-  {
-    out_bpp = 3;
-    colorfunc = gray_to_rgb;
-  }
-  else
-  {
-    out_bpp = 1;
-
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_gray;
-    else if (cmap == NULL)
-      colorfunc = gray_to_gray;
-    else
-      colorfunc = indexed_to_gray;
-  }
+  colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp);
 
  /*
   * Compute the output size...
   */
 
-  landscape = 0;
   ps_imageable_area(model, ppd_file, media_size, &page_left, &page_right,
                     &page_bottom, &page_top);
+  compute_page_parameters(page_right, page_left, page_top, page_bottom,
+			  scaling, image_width, image_height, image,
+			  &orientation, &page_width, &page_height,
+			  &out_width, &out_height, &left, &top);
 
-  page_width  = page_right - page_left;
-  page_height = page_top - page_bottom;
-
-#ifdef DEBUG
-  printf("page_width = %d, page_height = %d\n", page_width, page_height);
-  printf("image_width = %d, image_height = %d\n", image_width, image_height);
-  printf("scaling = %.1f\n", scaling);
-#endif /* DEBUG */
-
- /*
-  * Portrait width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    out_width  = image_width * -72.0 / scaling;
-    out_height = image_height * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    out_width  = page_width * scaling / 100.0;
-    out_height = out_width * image_height / image_width;
-    if (out_height > page_height)
-    {
-      out_height = page_height * scaling / 100.0;
-      out_width  = out_height * image_width / image_height;
-    }
-  }
-
- /*
-  * Landscape width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    temp_width  = image_height * -72.0 / scaling;
-    temp_height = image_width * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    temp_width  = page_width * scaling / 100.0;
-    temp_height = temp_width * image_width / image_height;
-    if (temp_height > page_height)
-    {
-      temp_height = page_height;
-      temp_width  = temp_height * image_height / image_width;
-    }
-  }
-
- /*
-  * See which orientation has the greatest area (or if we need to rotate the
-  * image to fit it on the page...)
-  */
-
-  if (orientation == ORIENT_AUTO)
-  {
-    if (scaling < 0.0)
-    {
-      if ((out_width > page_width && out_height < page_width) ||
-          (out_height > page_height && out_width < page_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-    else
-    {
-      if ((temp_width * temp_height) > (out_width * out_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-  }
-
-  if (orientation == ORIENT_LANDSCAPE)
-  {
-    out_width  = temp_width;
-    out_height = temp_height;
-    landscape  = 1;
-
-   /*
-    * Swap left/top offsets...
-    */
-
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
-  }
+  image_height = Image_height(image);
+  image_width = Image_width(image);
 
  /*
   * Let the user know what we're doing...
@@ -446,6 +321,8 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
 
   if (left < 0)
     left = (page_width - out_width) / 2 + page_left;
+  else
+    left += page_left;
 
   if (top < 0)
     top  = (page_height + out_height) / 2 + page_bottom;
@@ -463,7 +340,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   _fsetmode(prn, "t");
 #endif
   fputs("%!PS-Adobe-3.0\n", prn);
-  fprintf(prn, "%%Creator: %s\n", Image_get_pluginname(image));
+  fprintf(prn, "%%%%Creator: %s\n", Image_get_pluginname(image));
   fprintf(prn, "%%%%CreationDate: %s", ctime(&curtime));
   fputs("%%Copyright: 1997-2000 by Michael Sweet (mike@easysw.com) and Robert Krawitz (rlk@alum.mit.edu)\n", prn);
   fprintf(prn, "%%%%BoundingBox: %d %d %d %d\n",
@@ -547,26 +424,16 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   }
 
  /*
-  * Output the page, rotating as necessary...
+  * Output the page...
   */
 
   fputs("%%Page: 1\n", prn);
   fputs("gsave\n", prn);
 
-  if (landscape)
-  {
-    fprintf(prn, "%d %d translate\n", left, top - out_height);
-    fprintf(prn, "%.3f %.3f scale\n",
-            (float)out_width / ((float)image_height),
-            (float)out_height / ((float)image_width));
-  }
-  else
-  {
-    fprintf(prn, "%d %d translate\n", left, top);
-    fprintf(prn, "%.3f %.3f scale\n",
-            (float)out_width / ((float)image_width),
-            (float)out_height / ((float)image_height));
-  }
+  fprintf(prn, "%d %d translate\n", left, top);
+  fprintf(prn, "%.3f %.3f scale\n",
+          (float)out_width / ((float)image_width),
+          (float)out_height / ((float)image_height));
 
   in  = malloc(image_width * image_bpp);
   out = malloc((image_width * out_bpp + 3) * 2);
@@ -580,10 +447,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
 
     fprintf(prn, "%d %d 8\n", image_width, image_height);
 
-    if (landscape)
-      fputs("[ 0 1 1 0 0 0 ]\n", prn);
-    else
-      fputs("[ 1 0 0 -1 0 1 ]\n", prn);
+    fputs("[ 1 0 0 -1 0 1 ]\n", prn);
 
     if (output_type == OUTPUT_GRAY)
       fputs("{currentfile picture readhexstring pop} image\n", prn);
@@ -625,10 +489,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
     if ((image_width * 72 / out_width) < 100)
       fputs("\t/Interpolate true\n", prn);
 
-    if (landscape)
-      fputs("\t/ImageMatrix [ 0 1 1 0 0 0 ]\n", prn);
-    else
-      fputs("\t/ImageMatrix [ 1 0 0 -1 0 1 ]\n", prn);
+    fputs("\t/ImageMatrix [ 1 0 0 -1 0 1 ]\n", prn);
 
     fputs(">>\n", prn);
     fputs("image\n", prn);

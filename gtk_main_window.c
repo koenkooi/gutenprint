@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.14 2000/05/25 00:41:24 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.14.2.1 2000/06/17 13:13:26 jmv Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -43,6 +43,7 @@ extern int plist_count;	     /* Number of system printers */
 extern int plist_current;    /* Current system printer */
 extern plist_t  *plist;       /* System printers */
 extern gint32 image_ID;
+extern const char *image_filename;
 extern int image_width;
 extern int image_height;
 extern const printer_t *current_printer;
@@ -59,8 +60,10 @@ static GtkWidget* print_dialog;           /* Print dialog window */
 static GtkWidget* recenter_button;
 static GtkWidget* left_entry;
 static GtkWidget* right_entry;
+static GtkWidget* width_entry;
 static GtkWidget* top_entry;
 static GtkWidget* bottom_entry;
+static GtkWidget* height_entry;
 static GtkWidget* media_size;             /* Media size option button */
 static GtkWidget* media_size_menu=NULL;   /* Media size menu */
 static GtkWidget* media_type;             /* Media type option button */
@@ -221,7 +224,8 @@ void gtk_create_main_window(void)
      ***/
     print_dialog = dialog = gtk_dialog_new();
 
-    plug_in_name = g_strdup_printf (_("Print v%s"), PLUG_IN_VERSION);
+    plug_in_name = g_strdup_printf (_("%s - Print v%s"),
+                                    image_filename, PLUG_IN_VERSION);
     gtk_window_set_title(GTK_WINDOW(dialog), plug_in_name);
     g_free (plug_in_name);
   
@@ -353,6 +357,42 @@ void gtk_create_main_window(void)
 		     box, 3, 4, 9, 10, GTK_FILL, GTK_FILL, 0, 0);
     gtk_widget_show(box);
     bottom_entry = entry = gtk_entry_new();
+    sprintf(s, "%.3f", fabs(vars.left));
+    gtk_entry_set_text(GTK_ENTRY(entry), s);
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",
+		       (GtkSignalFunc)gtk_position_callback, NULL);
+    gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
+    gtk_widget_set_usize(entry, 60, 0);
+    gtk_widget_show(entry);
+
+    label = gtk_label_new(_("Width:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_table_attach(GTK_TABLE(table),
+		     label, 0, 1, 10, 11, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_show(label);
+    box = gtk_hbox_new(FALSE, 8);
+    gtk_table_attach(GTK_TABLE(table),
+		     box, 1, 2, 10, 11, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_show(box);
+    width_entry = entry = gtk_entry_new();
+    sprintf(s, "%.3f", fabs(vars.left));
+    gtk_entry_set_text(GTK_ENTRY(entry), s);
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",
+		       (GtkSignalFunc)gtk_position_callback, NULL);
+    gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
+    gtk_widget_set_usize(entry, 60, 0);
+    gtk_widget_show(entry);
+
+    label = gtk_label_new(_("Height:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_table_attach(GTK_TABLE(table),
+		     label, 2, 3, 10, 11, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_show(label);
+    box = gtk_hbox_new(FALSE, 8);
+    gtk_table_attach(GTK_TABLE(table),
+		     box, 3, 4, 10, 11, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_show(box);
+    height_entry = entry = gtk_entry_new();
     sprintf(s, "%.3f", fabs(vars.left));
     gtk_entry_set_text(GTK_ENTRY(entry), s);
     gtk_signal_connect(GTK_OBJECT(entry), "activate",
@@ -615,7 +655,7 @@ void gtk_create_main_window(void)
     gtk_table_attach(GTK_TABLE(table),
 		     label,
 		     0, 1,
-		     10, 11,
+		     11, 12,
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(label);
@@ -624,7 +664,7 @@ void gtk_create_main_window(void)
     gtk_table_attach(GTK_TABLE(table),
 		     box,
 		     1, 4,
-		     10, 11,
+		     11, 12,
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(box);
@@ -680,7 +720,7 @@ void gtk_create_main_window(void)
     gtk_table_attach(GTK_TABLE(table),
 		     label,
 		     0, 1,
-		     11, 12,
+		     12, 13,
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(label);
@@ -689,7 +729,7 @@ void gtk_create_main_window(void)
     gtk_table_attach(GTK_TABLE(table),
 		     box,
 		     1, 4,
-		     11, 12,
+		     12, 13,
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(box);
@@ -714,7 +754,7 @@ void gtk_create_main_window(void)
     scaling_entry = entry = gtk_entry_new();
     sprintf(s, "%.1f", fabs(vars.scaling));
     gtk_entry_set_text(GTK_ENTRY(entry), s);
-    gtk_signal_connect(GTK_OBJECT(entry), "changed",
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",
 		       (GtkSignalFunc)gtk_scaling_callback, NULL);
     gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
     gtk_widget_set_usize(entry, 60, 0);
@@ -753,7 +793,7 @@ void gtk_create_main_window(void)
     box = gtk_hbox_new(FALSE, 8);
     gtk_table_attach(GTK_TABLE(table),
 		     box,
-		     3, 4, 12, 13,
+		     3, 4, 13, 14,
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(box);
@@ -1336,7 +1376,7 @@ static void gtk_position_callback(GtkWidget *widget)
   if (widget == top_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) -  (paper_height - top);
+      vars.top = ((new_value + 1.0 / 144) * 72) - top;
     }
   else if (widget == left_entry)
     {
@@ -1346,13 +1386,32 @@ static void gtk_position_callback(GtkWidget *widget)
   else if (widget == bottom_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) -
-	(print_height + paper_height - top); 
+      vars.top = ((new_value + 1.0 / 144) * 72) - (top + print_height); 
     }
   else if (widget == right_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
       vars.left = ((new_value + 1.0 / 144) * 72) - (left + print_width);
+    }
+  else if (widget == width_entry)
+    {
+      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
+      if (vars.scaling >= 0) {
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_ppi), TRUE);
+	gtk_scaling_callback (scaling_ppi);
+      }
+      GTK_ADJUSTMENT(scaling_adjustment)->value = image_width / new_value;
+      gtk_signal_emit_by_name(scaling_adjustment, "value_changed");
+    }
+  else if (widget == height_entry)
+    {
+      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
+      if (vars.scaling >= 0) {
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_ppi), TRUE);
+	gtk_scaling_callback (scaling_ppi);
+      }
+      GTK_ADJUSTMENT(scaling_adjustment)->value = image_height / new_value;
+      gtk_signal_emit_by_name(scaling_adjustment, "value_changed");
     }
   else if (widget == recenter_button)
     {
@@ -1883,16 +1942,12 @@ static void gtk_file_cancel_callback(void)
 static void gtk_preview_update(void)
 {
   int		temp,		/* Swapping variable */
-		orient,		/* True orientation of printable */
-		tw0, tw1,	/* Temporary printable_widths */
-		th0, th1,	/* Temporary printable_heights */
-		ta0 = 0, ta1 = 0;	/* Temporary areas */
+		orient;		/* True orientation of printable */
+  double	min_ppi_scaling;/* Minimum PPI for current page size */
   int           paper_left, paper_top; 
-  static GdkGC	*gc = NULL;	/* Graphics context */
+  static GdkGC	*gc = NULL,	/* Normal graphics context */
+		*gcinv = NULL;	/* GC for inverted drawing (arrow) */
   char s[255];
-
-  /* a lot of this gets very confusing 'cause we measure position from */
-  /* top left, but, but paper from bottom left                         */
 
   if (preview->widget.window == NULL)
     return;
@@ -1900,102 +1955,49 @@ static void gtk_preview_update(void)
   gdk_window_clear(preview->widget.window);
 
   if (gc == NULL)
+  {
     gc = gdk_gc_new(preview->widget.window);
+    gcinv = gdk_gc_new(preview->widget.window);
+    gdk_gc_set_function (gcinv, GDK_INVERT);
+  }
 
-  
-  (*current_printer->imageable_area)(current_printer->model, vars.ppd_file,
-				     vars.media_size, &left, &right,
-				     &bottom, &top);
-
-
-  printable_width  = right - left;
-  printable_height = top - bottom;
 
   (*current_printer->media_size)(current_printer->model, vars.ppd_file,
 				 vars.media_size, &paper_width, &paper_height);
 
+  (*current_printer->imageable_area)(current_printer->model, vars.ppd_file,
+				     vars.media_size, &left, &right,
+				     &bottom, &top);
 
-  if (vars.scaling < 0)
-  {
-    tw0 = 72 * -image_width / vars.scaling;
-    th0 = tw0 * image_height / image_width;
-    tw1 = tw0;
-    th1 = th0;
-  }
-  else
-  {
-    /* Portrait */
-    /* we do vars.scaling % of height or width, whatever is smaller*/
-    /* this is relative to printable size */
+  /* Rationalise things a bit by measuring everything from the top left */
+  top = paper_height - top;
+  bottom = paper_height - bottom;
 
-    tw0 = printable_width * vars.scaling / 100;
-    th0 = tw0 * image_height / image_width;
-    if (th0 > printable_height * vars.scaling / 100)
-    {
-      th0 = printable_height * vars.scaling / 100;
-      tw0 = th0 * image_width / image_height;
-    }
-    ta0 = tw0 * th0;
 
-    /* Landscape */
-    tw1 = printable_height * vars.scaling / 100;
-    th1 = tw1 * image_height / image_width;
-    if (th1 > printable_width * vars.scaling / 100)
-    {
-      th1 = printable_width * vars.scaling / 100;
-      tw1 = th1 * image_width / image_height;
-    }
-    ta1 = tw1 * th1;
-  }
+  printable_width  = right - left;
+  printable_height = bottom - top;
+
 
   if (vars.orientation == ORIENT_AUTO)
   {
-    if (vars.scaling < 0)
-    {
-      if ((printable_width > printable_height && tw0 > th0) ||
-	  (printable_height > printable_width && th0 > tw0))
-	{
-	  orient = ORIENT_PORTRAIT;
-	  if (tw0 > printable_width)
-	    {
-	      vars.scaling *= (double) printable_width / (double) tw0;
-	      th0 = th0 * printable_width / tw0;
-	    }
-	  if (th0 > printable_height)
-	    {
-	      vars.scaling *= (double) printable_height / (double) th0;
-	      tw0 = tw0 * printable_height / th0;
-	    }
-	}
-      else
-	{
-	  orient = ORIENT_LANDSCAPE;
-	  if (tw1 > printable_height)
-	    {
-	      vars.scaling *= (double) printable_height / (double) tw1;
-	      th1 = th1 * printable_height / tw1;
-	    }
-	  if (th1 > printable_width)
-	    {
-	      vars.scaling *= (double) printable_width / (double) th1;
-	      tw1 = tw1 * printable_width / th1;
-	    }
-	}
-    }
+    if ((printable_width >= printable_height && image_width >= image_height)
+        || (printable_height >= printable_width && image_height >= image_width))
+      orient = ORIENT_PORTRAIT;
     else
-    {
-      if (ta0 >= ta1)
-	orient = ORIENT_PORTRAIT;
-      else
-	orient = ORIENT_LANDSCAPE;
-    }
+      orient = ORIENT_LANDSCAPE;
   }
   else
     orient = vars.orientation;
 
-  
   if (orient == ORIENT_LANDSCAPE)
   {
+    /*
+     * In landscape mode, we print the right-hand side of the logical
+     * page at the top of the physical paper.  So, left-to-right on the
+     * paper corresponds to top-to-bottom on the image, so we don't have
+     * to flip the columns of the image end-for-end while forming rows
+     * for printing.
+     */
     temp              = printable_width;
     printable_width   = printable_height;
     printable_height  = temp;
@@ -2003,36 +2005,62 @@ static void gtk_preview_update(void)
     paper_width       = paper_height;
     paper_height      = temp;
     temp              = left;
-    left              = bottom;
-    bottom            = temp;
-    temp              = right;
-    right             = top;
+    left              = paper_width - bottom;
+    bottom            = right;
+    right             = paper_width - top;
     top               = temp;
+  }
 
-    print_width       = tw1;
-    print_height      = th1;
+  if (orient == ORIENT_PORTRAIT)
+    min_ppi_scaling = 72.0 * (double) image_width / (double) printable_width;
+  else
+    min_ppi_scaling = 72.0 * (double) image_height / (double) printable_height;
+
+  if (vars.scaling < 0 && vars.scaling > -min_ppi_scaling)
+    vars.scaling = -min_ppi_scaling;
+
+  if (vars.scaling < 0)
+  {
+    print_width = 72 * -image_width / vars.scaling;
+    print_height = print_width * image_height / image_width;
   }
   else
   {
-    print_width  = tw0;
-    print_height = th0;
+    /* we do vars.scaling % of height or width, whatever is smaller */
+    /* this is relative to printable size */
+    if (image_width * printable_height > printable_width * image_height)
+      /* i.e. if image_width/image_height > printable_width/printable_height */
+      /* i.e. if image is wider relative to its height than the width
+         of the printable area relative to its height */
+    {
+      print_width = printable_width * vars.scaling / 100;
+      print_height = print_width * image_height / image_width;
+    }
+    else
+    {
+      print_height = printable_height * vars.scaling / 100;
+      print_width = print_height * image_width / image_height;
+    }
   }
 
-  paper_left = (PREVIEW_SIZE_HORIZ - 10 * paper_width / 72) / 2;
-  paper_top  = (PREVIEW_SIZE_VERT - 10 * paper_height / 72) / 2;
-  printable_left = paper_left +  10 * left / 72;
-  printable_top  = paper_top + 10 * (paper_height - top) / 72 ;
+
+  paper_left = (PREVIEW_SIZE_HORIZ - PREVIEW_PPI * paper_width / 72) / 2;
+  paper_top  = (PREVIEW_SIZE_VERT - PREVIEW_PPI * paper_height / 72) / 2;
+  printable_left = paper_left +  PREVIEW_PPI * left / 72;
+  printable_top  = paper_top + PREVIEW_PPI * top / 72 ;
 
   /* draw paper frame */
 
   gdk_draw_rectangle(preview->widget.window, gc, 0, 
 		     paper_left, paper_top,
-                     10 * paper_width / 72, 10 * paper_height / 72);
+                     PREVIEW_PPI * paper_width / 72,
+                     PREVIEW_PPI * paper_height / 72);
 
   /* draw printable frame */
   gdk_draw_rectangle(preview->widget.window, gc, 0,
                      printable_left, printable_top,
-                     10 * printable_width / 72, 10 * printable_height / 72);
+                     PREVIEW_PPI * printable_width / 72,
+                     PREVIEW_PPI * printable_height / 72);
 
 
   if (vars.left < 0)		/* centre */
@@ -2045,7 +2073,7 @@ static void gtk_preview_update(void)
       vars.left = printable_width - print_width;
 
   if (vars.top < 0)
-    vars.top  = ((paper_height - print_height) / 2) - (paper_height - top);
+    vars.top  = ((paper_height - print_height) / 2) - top;
  
   if (vars.top > (printable_height - print_height))
       vars.top = printable_height - print_height; 
@@ -2054,7 +2082,7 @@ static void gtk_preview_update(void)
   plist[plist_current].v.top = vars.top;
       
 
-  sprintf(s, "%.2f", ((paper_height - top) + vars.top) / 72.0);
+  sprintf(s, "%.2f", (top + vars.top) / 72.0);
   gtk_signal_handler_block_by_data(GTK_OBJECT(top_entry), NULL);
   gtk_entry_set_text(GTK_ENTRY(top_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(top_entry), NULL);
@@ -2065,7 +2093,7 @@ static void gtk_preview_update(void)
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(left_entry), NULL);
 
   gtk_signal_handler_block_by_data(GTK_OBJECT(bottom_entry), NULL);
-  sprintf(s, "%.2f", (((paper_height - top) + vars.top) + print_height) / 72.0);
+  sprintf(s, "%.2f", ((top + vars.top) + print_height) / 72.0);
   gtk_entry_set_text(GTK_ENTRY(bottom_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(bottom_entry), NULL);
 
@@ -2074,11 +2102,47 @@ static void gtk_preview_update(void)
   gtk_entry_set_text(GTK_ENTRY(right_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(right_entry), NULL);
 
+  gtk_signal_handler_block_by_data(GTK_OBJECT(width_entry), NULL);
+  sprintf(s, "%.2f", print_width / 72.0);
+  gtk_entry_set_text(GTK_ENTRY(width_entry), s);
+  gtk_signal_handler_unblock_by_data(GTK_OBJECT(width_entry), NULL);
+
+  gtk_signal_handler_block_by_data(GTK_OBJECT(height_entry), NULL);
+  sprintf(s, "%.2f", print_height / 72.0);
+  gtk_entry_set_text(GTK_ENTRY(height_entry), s);
+  gtk_signal_handler_unblock_by_data(GTK_OBJECT(height_entry), NULL);
+
   /* draw image  */
   gdk_draw_rectangle(preview->widget.window, gc, 1,
-		     1 + printable_left + 10 * vars.left / 72, 
-		     1 + printable_top + 10 * vars.top / 72,
-                     10 * print_width / 72, 10 * print_height / 72);
+		     1 + printable_left + PREVIEW_PPI * vars.left / 72, 
+		     1 + printable_top + PREVIEW_PPI * vars.top / 72,
+                     PREVIEW_PPI * print_width / 72,
+                     PREVIEW_PPI * print_height / 72);
+
+  /* draw orientation arrow pointing to top-of-paper */
+  {
+    int ox, oy, u;
+    if (paper_width < paper_height)
+      u = PREVIEW_PPI * paper_width / 72 / 4;
+    else
+      u = PREVIEW_PPI * paper_height / 72 / 4;
+    ox = paper_left + PREVIEW_PPI * paper_width / 72;
+    oy = paper_top;
+    if (orient == ORIENT_LANDSCAPE) {
+      ox -= u;
+      oy += PREVIEW_PPI * paper_height / 72 / 2;
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy-u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-2*u, oy);
+    } else {
+      ox -= PREVIEW_PPI * paper_width / 72 / 2;
+      oy += u;
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox+u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox, oy+2*u);
+    }
+  }
+
   gdk_flush();
 
 }
@@ -2110,8 +2174,8 @@ static void gtk_preview_motion_callback(GtkWidget      *w,
     vars.top  = 72 * (printable_height - print_height) / 20;
   }
 
-  vars.left += 72 * (event->x - mouse_x) / 10;
-  vars.top  += 72 * (event->y - mouse_y) / 10;
+  vars.left += 72 * (event->x - mouse_x) / PREVIEW_PPI;
+  vars.top  += 72 * (event->y - mouse_y) / PREVIEW_PPI;
 
   if (vars.left < 0)
     vars.left = 0;

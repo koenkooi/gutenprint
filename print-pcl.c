@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.52.2.1 2000/06/03 01:21:10 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.52.2.2 2000/06/17 13:13:27 jmv Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1126,7 +1126,7 @@ pcl_print(const printer_t *printer,		/* I - Model */
   float 	scaling = v->scaling;
   int		top = v->top;
   int		left = v->left;
-  int		x, y;		/* Looping vars */
+  int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   unsigned short *out;
   unsigned char	*in,		/* Input pixels */
@@ -1145,9 +1145,6 @@ pcl_print(const printer_t *printer,		/* I - Model */
 		out_width,	/* Width of image on page */
 		out_height,	/* Height of image on page */
 		out_bpp,	/* Output bytes per pixel */
-		temp_width,	/* Temporary width of image on page */
-		temp_height,	/* Temporary height of image on page */
-		landscape,	/* True if we rotate the output 90 degrees */
 		length,		/* Length of raster data */
 		errdiv,		/* Error dividend */
 		errmod,		/* Error modulus */
@@ -1197,31 +1194,7 @@ pcl_print(const printer_t *printer,		/* I - Model */
   else if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
     output_type = OUTPUT_GRAY_COLOR;		/* Force grayscale output */
 
-  if (output_type == OUTPUT_COLOR)
-  {
-    out_bpp = 3;
-
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_rgb;
-    else
-      colorfunc = indexed_to_rgb;
-  }
-  else if (output_type == OUTPUT_GRAY_COLOR)
-  {
-    out_bpp = 3;
-    colorfunc = gray_to_rgb;
-  }
-  else
-  {
-    out_bpp = 1;
-
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_gray;
-    else if (cmap == NULL)
-      colorfunc = gray_to_gray;
-    else
-      colorfunc = indexed_to_gray;
-  }
+  colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp);
 
  /*
   * Figure out the output resolution...
@@ -1256,117 +1229,15 @@ pcl_print(const printer_t *printer,		/* I - Model */
   * Compute the output size...
   */
 
-  landscape = 0;
   pcl_imageable_area(model, ppd_file, media_size, &page_left, &page_right,
                      &page_bottom, &page_top);
+  compute_page_parameters(page_right, page_left, page_top, page_bottom,
+			  scaling, image_width, image_height, image,
+			  &orientation, &page_width, &page_height,
+			  &out_width, &out_height, &left, &top);
 
-  page_width  = page_right - page_left;
-  page_height = page_top - page_bottom;
-
- /*
-  * Portrait width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    out_width  = image_width * -72.0 / scaling;
-    out_height = image_height * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    out_width  = page_width * scaling / 100.0;
-    out_height = out_width * image_height / image_width;
-    if (out_height > page_height)
-    {
-      out_height = page_height * scaling / 100.0;
-      out_width  = out_height * image_width / image_height;
-    }
-  }
-
- /*
-  * Landscape width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    temp_width  = image_height * -72.0 / scaling;
-    temp_height = image_width * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    temp_width  = page_width * scaling / 100.0;
-    temp_height = temp_width * image_width / image_height;
-    if (temp_height > page_height)
-    {
-      temp_height = page_height;
-      temp_width  = temp_height * image_height / image_width;
-    }
-  }
-
- /*
-  * See which orientation has the greatest area (or if we need to rotate the
-  * image to fit it on the page...)
-  */
-
-  if (orientation == ORIENT_AUTO)
-  {
-    if (scaling < 0.0)
-    {
-      if ((out_width > page_width && out_height < page_width) ||
-          (out_height > page_height && out_width < page_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-    else
-    {
-      if ((temp_width * temp_height) > (out_width * out_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-  }
-
-  if (orientation == ORIENT_LANDSCAPE)
-  {
-    out_width  = temp_width;
-    out_height = temp_height;
-    landscape  = 1;
-
-   /*
-    * Swap left/top offsets...
-    */
-
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
-  }
-
-  if (left < 0)
-    left = (page_width - out_width) / 2 + page_left;
-  else
-    left = left + page_left;
-
-  if (top < 0)
-    top  = (page_height + out_height) / 2 + page_bottom;
-  else
-    top = page_height - top + page_bottom;
+  image_height = Image_height(image);
+  image_width = Image_width(image);
 
 #ifdef DEBUG
   printf("page_width = %d, page_height = %d\n", page_width, page_height);
@@ -1658,10 +1529,7 @@ pcl_print(const printer_t *printer,		/* I - Model */
     nv.density = 1.0;
   nv.saturation *= printer->printvars.saturation;
 
-  if (landscape)
-    dither = init_dither(image_height, out_width, &nv);
-  else
-    dither = init_dither(image_width, out_width, &nv);
+  dither = init_dither(image_width, out_width, &nv);
 
 /* Set up dithering for special printers. */
 
@@ -1697,6 +1565,11 @@ pcl_print(const printer_t *printer,		/* I - Model */
     if (do_6color)
       dither_set_light_inks(dither, .25, .25, 0.0, nv.density);
 
+  if (xdpi > ydpi)
+    dither_set_aspect_ratio(dither, 1, xdpi / ydpi);
+  else if (ydpi > xdpi)
+    dither_set_aspect_ratio(dither, ydpi / xdpi, 1);
+			  
   switch (nv.image_type)
     {
     case IMAGE_LINE_ART:
@@ -1709,224 +1582,114 @@ pcl_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, 14);
       break;
     }	    
-  dither_set_density(dither, 1, nv.density);
+  dither_set_density(dither, nv.density);
 
-  if (landscape)
+  in  = malloc(image_width * image_bpp);
+  out = malloc(image_width * out_bpp * 2);
+
+  errdiv  = image_height / out_height;
+  errmod  = image_height % out_height;
+  errval  = 0;
+  errlast = -1;
+  errline  = 0;
+
+  for (y = 0; y < out_height; y ++)
   {
-    in  = malloc(image_height * image_bpp);
-    out = malloc(image_height * out_bpp * 2);
-
-    errdiv  = image_width / out_height;
-    errmod  = image_width % out_height;
-    errval  = 0;
-    errlast = -1;
-    errline  = image_width - 1;
-    
-    for (x = 0; x < out_height; x ++)
-    {
 #ifdef DEBUG
-      printf("pcl_print: x = %d, line = %d, val = %d, mod = %d, height = %d\n",
-             x, errline, errval, errmod, out_height);
+    printf("pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
+           y, errline, errval, errmod, out_height);
 #endif /* DEBUG */
 
-      if ((x & 255) == 0)
-	Image_note_progress(image, x, out_height);
+    if ((y & 255) == 0)
+      Image_note_progress(image, y, out_height);
 
-      if (errline != errlast)
+    if (errline != errlast)
+    {
+      errlast = errline;
+      Image_get_row(image, in, errline);
+    }
+
+    (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
+
+    if (do_cret)
+    {
+     /*
+      * 4-level (CRet) dithers...
+      */
+
+      if (output_type == OUTPUT_GRAY)
       {
-        errlast = errline;
-	Image_get_col(image, in, errline);
+        dither_black(out, y, dither, black);
+        (*writefunc)(prn, black + length / 2, length / 2, 0);
+        (*writefunc)(prn, black, length / 2, 1);
       }
-
-      (*colorfunc)(in, out, image_height, image_bpp, cmap, &nv);
-
-      if (do_cret)
+      else 
       {
-       /*
-        * 4-level (CRet) dithers...
-	*/
+        dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, NULL, black);
 
-	if (output_type == OUTPUT_GRAY)
-	{
-          dither_black(out, x, dither, black);
-          (*writefunc)(prn, black + length / 2, length / 2, 0);
-          (*writefunc)(prn, black, length / 2, 1);
-	}
-	else 
-	{
-          dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
-		      yellow, NULL, black);
+        (*writefunc)(prn, black + length / 2, length / 2, 0);
+        (*writefunc)(prn, black, length / 2, 0);
+        (*writefunc)(prn, cyan + length / 2, length / 2, 0);
+        (*writefunc)(prn, cyan, length / 2, 0);
+        (*writefunc)(prn, magenta + length / 2, length / 2, 0);
+        (*writefunc)(prn, magenta, length / 2, 0);
+        (*writefunc)(prn, yellow + length / 2, length / 2, 0);
+        if (do_6color)
+        {
+          (*writefunc)(prn, yellow, length / 2, 0);
+          (*writefunc)(prn, lcyan + length / 2, length / 2, 0);
+          (*writefunc)(prn, lcyan, length / 2, 0);
+          (*writefunc)(prn, lmagenta + length / 2, length / 2, 0);
+          (*writefunc)(prn, lmagenta, length / 2, 1);		/* Last plane set on light magenta */
+        }
+        else
+          (*writefunc)(prn, yellow, length / 2, 1);		/* Last plane set on yellow */
+      }
+    }
+    else
+    {
+     /*
+      * Standard 2-level dithers...
+      */
 
-          (*writefunc)(prn, black + length / 2, length / 2, 0);
-          (*writefunc)(prn, black, length / 2, 0);
-          (*writefunc)(prn, cyan + length / 2, length / 2, 0);
-          (*writefunc)(prn, cyan, length / 2, 0);
-          (*writefunc)(prn, magenta + length / 2, length / 2, 0);
-          (*writefunc)(prn, magenta, length / 2, 0);
-          (*writefunc)(prn, yellow + length / 2, length / 2, 0);
-          if (do_6color)
-          {
-            (*writefunc)(prn, yellow, length / 2, 0);
-            (*writefunc)(prn, lcyan + length / 2, length / 2, 0);
-            (*writefunc)(prn, lcyan, length / 2, 0);
-            (*writefunc)(prn, lmagenta + length / 2, length / 2, 0);
-            (*writefunc)(prn, lmagenta, length / 2, 1);		/* Last plane set on light magenta */
-          }
-          else
-            (*writefunc)(prn, yellow, length / 2, 1);		/* Last plane set on yellow */
-	}
+      if (output_type == OUTPUT_GRAY)
+      {
+	if (nv.image_type == IMAGE_MONOCHROME)
+	  dither_fastblack(out, y, dither, black);
+	else
+	  dither_black(out, y, dither, black);
+        (*writefunc)(prn, black, length, 1);
       }
       else
       {
-       /*
-        * Standard 2-level dithers...
-	*/
+        dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, NULL, black);
 
-	if (output_type == OUTPUT_GRAY)
-	{
-	  if (nv.image_type == IMAGE_MONOCHROME)
-	    dither_fastblack(out, x, dither, black);
-	  else
-	    dither_black(out, x, dither, black);
-          (*writefunc)(prn, black, length, 1);
-	}
-	else
-	{
-          dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
-		      yellow, NULL, black);
-
-          if (black != NULL)
-            (*writefunc)(prn, black, length, 0);
-          (*writefunc)(prn, cyan, length, 0);
-          (*writefunc)(prn, magenta, length, 0);
-          if (do_6color)
-          {
-            (*writefunc)(prn, yellow, length, 0);
-            (*writefunc)(prn, lcyan, length, 0);
-            (*writefunc)(prn, lmagenta, length, 1);		/* Last plane set on light magenta */
-          }
-          else
-            (*writefunc)(prn, yellow, length, 1);		/* Last plane set on yellow */
-	}
-      }
-
-      errval += errmod;
-      errline -= errdiv;
-      if (errval >= out_height)
-      {
-        errval -= out_height;
-        errline --;
+        if (black != NULL)
+          (*writefunc)(prn, black, length, 0);
+        (*writefunc)(prn, cyan, length, 0);
+        (*writefunc)(prn, magenta, length, 0);
+        if (do_6color)
+        {
+          (*writefunc)(prn, yellow, length, 0);
+          (*writefunc)(prn, lcyan, length, 0);
+          (*writefunc)(prn, lmagenta, length, 1);		/* Last plane set on light magenta */
+        }
+        else
+          (*writefunc)(prn, yellow, length, 1);		/* Last plane set on yellow */
       }
     }
-  }
-  else
-  {
-    in  = malloc(image_width * image_bpp);
-    out = malloc(image_width * out_bpp * 2);
 
-    errdiv  = image_height / out_height;
-    errmod  = image_height % out_height;
-    errval  = 0;
-    errlast = -1;
-    errline  = 0;
-    
-    for (y = 0; y < out_height; y ++)
+    errval += errmod;
+    errline += errdiv;
+    if (errval >= out_height)
     {
-#ifdef DEBUG
-      printf("pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
-             y, errline, errval, errmod, out_height);
-#endif /* DEBUG */
-
-      if ((y & 255) == 0)
-	Image_note_progress(image, y, out_height);
-
-      if (errline != errlast)
-      {
-        errlast = errline;
-	Image_get_row(image, in, errline);
-      }
-
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
-
-      if (do_cret)
-      {
-       /*
-        * 4-level (CRet) dithers...
-	*/
-
-	if (output_type == OUTPUT_GRAY)
-	{
-          dither_black(out, y, dither, black);
-          (*writefunc)(prn, black + length / 2, length / 2, 0);
-          (*writefunc)(prn, black, length / 2, 1);
-	}
-	else 
-	{
-          dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		      yellow, NULL, black);
-
-          (*writefunc)(prn, black + length / 2, length / 2, 0);
-          (*writefunc)(prn, black, length / 2, 0);
-          (*writefunc)(prn, cyan + length / 2, length / 2, 0);
-          (*writefunc)(prn, cyan, length / 2, 0);
-          (*writefunc)(prn, magenta + length / 2, length / 2, 0);
-          (*writefunc)(prn, magenta, length / 2, 0);
-          (*writefunc)(prn, yellow + length / 2, length / 2, 0);
-          if (do_6color)
-          {
-            (*writefunc)(prn, yellow, length / 2, 0);
-            (*writefunc)(prn, lcyan + length / 2, length / 2, 0);
-            (*writefunc)(prn, lcyan, length / 2, 0);
-            (*writefunc)(prn, lmagenta + length / 2, length / 2, 0);
-            (*writefunc)(prn, lmagenta, length / 2, 1);		/* Last plane set on light magenta */
-          }
-          else
-            (*writefunc)(prn, yellow, length / 2, 1);		/* Last plane set on yellow */
-	}
-      }
-      else
-      {
-       /*
-        * Standard 2-level dithers...
-	*/
-
-	if (output_type == OUTPUT_GRAY)
-	{
-	  if (nv.image_type == IMAGE_MONOCHROME)
-	    dither_fastblack(out, y, dither, black);
-	  else
-	    dither_black(out, y, dither, black);
-          (*writefunc)(prn, black, length, 1);
-	}
-	else
-	{
-          dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		      yellow, NULL, black);
-
-          if (black != NULL)
-            (*writefunc)(prn, black, length, 0);
-          (*writefunc)(prn, cyan, length, 0);
-          (*writefunc)(prn, magenta, length, 0);
-          if (do_6color)
-          {
-            (*writefunc)(prn, yellow, length, 0);
-            (*writefunc)(prn, lcyan, length, 0);
-            (*writefunc)(prn, lmagenta, length, 1);		/* Last plane set on light magenta */
-          }
-          else
-            (*writefunc)(prn, yellow, length, 1);		/* Last plane set on yellow */
-	}
-      }
-
-      errval += errmod;
-      errline += errdiv;
-      if (errval >= out_height)
-      {
-        errval -= out_height;
-        errline ++;
-      }
+      errval -= out_height;
+      errline ++;
     }
   }
+
   free_dither(dither);
 
 

@@ -2,7 +2,7 @@
 unsigned char *rasterp, RASTERP[16];
 #define VERBOSE
 /*
- * "$Id: print-dither.c,v 1.53.2.3 2000/06/17 00:49:58 jmv Exp $"
+ * "$Id: print-dither.c,v 1.53.2.4 2000/06/17 13:13:27 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1607,12 +1607,6 @@ usmin(unsigned short a, unsigned short b)
   return (a < b ? a : b);
 }
 
-static inline int
-min(int a, int b)
-{
-  return (a < b ? a : b);
-}
-
 static void
 generate_cmyk(dither_t *d,
 	      unsigned short *rgb,
@@ -1671,7 +1665,6 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
 	    int *nc, int *nm, int *ny, int *nk, int *jk)
 {
   int ak;
-  int kdarkness;
   unsigned ks, kl;
   int ub, lb;
   int ok;

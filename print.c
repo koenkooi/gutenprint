@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.95 2000/05/30 11:16:12 rlk Exp $"
+ * "$Id: print.c,v 1.95.2.1 2000/06/17 13:13:27 jmv Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -57,17 +57,6 @@
 #endif
 
 #include "print-intl.h"
-
-/*
- * Types...
- */
-
-/* Concrete type to represent image */
-typedef struct
-{
-  GDrawable *drawable;
-  GPixelRgn  rgn;
-} Gimp_Image_t;
 
 
 /*
@@ -151,6 +140,7 @@ int		runme = FALSE;		/* True if print should proceed */
 const printer_t *current_printer = 0;	/* Current printer index */
 gint32          image_ID;	        /* image ID */
 
+const char *image_filename;
 int image_width;
 int image_height;
 
@@ -356,6 +346,10 @@ run (char   *name,		/* I - Name of print program. */
 
   image_ID = param[1].data.d_int32;
   drawable_ID = param[2].data.d_int32;
+
+  image_filename = gimp_image_get_filename (image_ID);
+  if (strchr(image_filename, '/'))
+    image_filename = strrchr(image_filename, '/') + 1;
 
 #ifndef GIMP_1_0
   /*  eventually export the image */ 
@@ -627,8 +621,8 @@ run (char   *name,		/* I - Name of print program. */
 
       if (prn != NULL)
 	{
-	  Gimp_Image_t image;
-	  image.drawable = drawable;
+	  Image image = Image_GDrawable_new(drawable);
+
 	  compute_lut (&(current_printer->printvars), gimp_gamma (), &vars);
 	  /*
 	   * Is the image an Indexed type?  If so we need the colormap...
@@ -647,7 +641,7 @@ run (char   *name,		/* I - Name of print program. */
 	   * close the output file/command...
 	   */
 
-	  (*current_printer->print) (current_printer, 1, prn, &image, cmap,
+	  (*current_printer->print) (current_printer, 1, prn, image, cmap,
 				     &vars);
 
 	  if (plist_current > 0)
@@ -843,7 +837,7 @@ printrc_load(void)
 		*commaptr;	/* Pointer to next comma */
   plist_t	*p,		/* Current printer */
 		key;		/* Search key */
-#ifdef GIMP_1_0
+#if (GIMP_MINOR_VERSION == 0)
   char		*home;		/* Home dir */
 #endif
 
@@ -997,7 +991,7 @@ printrc_save(void)
   char	       *filename;	/* Printrc filename */
   int		i;		/* Looping var */
   plist_t	*p;		/* Current printer */
-#ifdef GIMP_1_0
+#if (GIMP_MINOR_VERSION == 0)
   char		*home;		/* Home dir */
 #endif
 
@@ -1171,75 +1165,6 @@ get_system_printers(void)
   }
 }
 
-void
-Image_init(Image image)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  gimp_pixel_rgn_init(&(gimage->rgn), gimage->drawable, 0, 0,
-		      gimage->drawable->width, gimage->drawable->height,
-		      FALSE, FALSE);
-}
-
-int
-Image_bpp(Image image)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  return gimage->drawable->bpp;
-}
-
-int
-Image_width(Image image)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  return gimage->drawable->width;
-}
-
-int
-Image_height(Image image)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  return gimage->drawable->height;
-}
-
-void
-Image_get_col(Image image, unsigned char *data, int column)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  gimp_pixel_rgn_get_col(&(gimage->rgn), data, column, 0,
-			 gimage->drawable->height);
-}
-
-void
-Image_get_row(Image image, unsigned char *data, int row)
-{
-  Gimp_Image_t *gimage = (Gimp_Image_t *) image;
-  gimp_pixel_rgn_get_row(&(gimage->rgn), data, 0, row,
-			 gimage->drawable->width);
-}
-
-void
-Image_progress_init(Image image)
-{
-  image = image;
-  gimp_progress_init(_("Printing..."));
-}
-
-void
-Image_note_progress(Image image, double current, double total)
-{
-  image = image;
-  gimp_progress_update(current / total);
-}
-
-const char *
-Image_get_pluginname(Image image)
-{
-  static char pluginname[] = PLUG_IN_NAME " plug-in V" PLUG_IN_VERSION
-    "for GIMP";
-  image = image;
-  return pluginname;
-}
-
 /*
- * End of "$Id: print.c,v 1.95 2000/05/30 11:16:12 rlk Exp $".
+ * End of "$Id: print.c,v 1.95.2.1 2000/06/17 13:13:27 jmv Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.10 2000/05/25 00:41:24 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.10.2.1 2000/06/17 13:13:26 jmv Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -37,6 +37,7 @@ extern gint             plist_count;	   /* Number of system printers */
 extern gint             plist_current;     /* Current system printer */
 extern plist_t          *plist;		  /* System printers */
 extern gint32           image_ID;
+extern const char       *image_filename;
 extern gint             image_width;
 extern gint             image_height;
 extern const printer_t *current_printer;
@@ -54,8 +55,10 @@ static GtkWidget *print_dialog;           /* Print dialog window */
 static GtkWidget *recenter_button;
 static GtkWidget *left_entry;
 static GtkWidget *right_entry;
+static GtkWidget *width_entry;
 static GtkWidget *top_entry;
 static GtkWidget *bottom_entry;
+static GtkWidget *height_entry;
 static GtkWidget *media_size;             /* Media size option button */
 static GtkWidget *media_size_menu=NULL;   /* Media size menu */
 static GtkWidget *media_type;             /* Media type option button */
@@ -207,7 +210,8 @@ gimp_create_main_window (void)
    * Create the main dialog
    */
 
-  plug_in_name = g_strdup_printf (_("Print v%s"), PLUG_IN_VERSION);
+  plug_in_name = g_strdup_printf (_("%s -- Print v%s"),
+                                  image_filename, PLUG_IN_VERSION);
 
   print_dialog = dialog =
     gimp_dialog_new (plug_in_name, "print",
@@ -282,7 +286,7 @@ gimp_create_main_window (void)
                          GDK_BUTTON_PRESS_MASK |
                          GDK_BUTTON_RELEASE_MASK);
 
-  table = gtk_table_new (3, 4, FALSE);
+  table = gtk_table_new (4, 4, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 4);
   gtk_table_set_row_spacings (GTK_TABLE (table), 4);
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
@@ -339,6 +343,28 @@ gimp_create_main_window (void)
   gtk_widget_set_usize (entry, 60, 0);
   gimp_table_attach_aligned (GTK_TABLE (table), 2, 2,
                              _("Bottom:"), 1.0, 0.5,
+                             entry, 1, TRUE);
+
+  width_entry = entry = gtk_entry_new ();
+  g_snprintf (s, sizeof (s), "%.3f", fabs (vars.left));
+  gtk_entry_set_text (GTK_ENTRY (entry), s);
+  gtk_signal_connect (GTK_OBJECT (entry), "activate",
+                      GTK_SIGNAL_FUNC (gimp_position_callback),
+		      NULL);
+  gtk_widget_set_usize (entry, 60, 0);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+                             _("Width:"), 1.0, 0.5,
+                             entry, 1, TRUE);
+
+  height_entry = entry = gtk_entry_new ();
+  g_snprintf (s, sizeof (s), "%.3f", fabs (vars.left));
+  gtk_entry_set_text (GTK_ENTRY (entry), s);
+  gtk_signal_connect (GTK_OBJECT (entry), "activate",
+                      GTK_SIGNAL_FUNC (gimp_position_callback),
+		      NULL);
+  gtk_widget_set_usize (entry, 60, 0);
+  gimp_table_attach_aligned (GTK_TABLE (table), 2, 3,
+                             _("Height:"), 1.0, 0.5,
                              entry, 1, TRUE);
 
   /*
@@ -1039,7 +1065,7 @@ gimp_position_callback (GtkWidget *widget)
   if (widget == top_entry)
     {
       gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) -  (paper_height - top);
+      vars.top = ((new_value + 1.0 / 144) * 72) - top;
     }
   else if (widget == left_entry)
     {
@@ -1049,13 +1075,32 @@ gimp_position_callback (GtkWidget *widget)
   else if (widget == bottom_entry)
     {
       gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) -
-	(print_height + paper_height - top); 
+      vars.top = ((new_value + 1.0 / 144) * 72) - (top + print_height); 
     }
   else if (widget == right_entry)
     {
       gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
       vars.left = ((new_value + 1.0 / 144) * 72) - (left + print_width);
+    }
+  else if (widget == width_entry)
+    {
+      gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
+      if (vars.scaling >= 0) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scaling_ppi), TRUE);
+        gimp_scaling_callback (scaling_ppi);
+      }
+      GTK_ADJUSTMENT (scaling_adjustment)->value = image_width / new_value;
+      gtk_signal_emit_by_name (scaling_adjustment, "value_changed");
+    }
+  else if (widget == height_entry)
+    {
+      gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
+      if (vars.scaling >= 0) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scaling_ppi), TRUE);
+        gimp_scaling_callback (scaling_ppi);
+      }
+      GTK_ADJUSTMENT (scaling_adjustment)->value = image_height / new_value;
+      gtk_signal_emit_by_name (scaling_adjustment, "value_changed");
     }
   else if (widget == recenter_button)
     {
@@ -1522,10 +1567,9 @@ gimp_preview_update (void)
 {
   gint	        temp;
   gint          orient;		   /* True orientation of page */
-  gint          tw0, tw1;	   /* Temporary printable_widths */
-  gint          th0, th1;	   /* Temporary printable_heights */
-  gint          ta0 = 0, ta1 = 0;  /* Temporary areas */
-  static GdkGC *gc = NULL;
+  gdouble	min_ppi_scaling;   /* Minimum PPI for current page size */
+  static GdkGC	*gc = NULL,
+		*gcinv = NULL;
   gchar         s[255];
   gint          paper_left, paper_top;
 
@@ -1535,140 +1579,108 @@ gimp_preview_update (void)
   gdk_window_clear (preview->widget.window);
 
   if (gc == NULL)
+  {
     gc = gdk_gc_new (preview->widget.window);
+    gcinv = gdk_gc_new(preview->widget.window);
+    gdk_gc_set_function (gcinv, GDK_INVERT);
+  }
 
-
-  (*current_printer->imageable_area) (current_printer->model, vars.ppd_file,
-				      vars.media_size, &left, &right,
-				      &bottom, &top);
-  /* a lot of this gets very confusing 'cause we measure position from */
-  /* top left, but, but paper from bottom left                         */
-
-  printable_width  = right - left;
-  printable_height = top - bottom;
 
   (*current_printer->media_size) (current_printer->model, vars.ppd_file,
 				  vars.media_size, &paper_width, &paper_height);
 
-  if (vars.scaling < 0)
-    {
-      tw0 = 72 * -image_width / vars.scaling;
-      th0 = tw0 * image_height / image_width;
-      tw1 = tw0;
-      th1 = th0;
-    }
-  else
-    {
-      /* Portrait */
+  (*current_printer->imageable_area) (current_printer->model, vars.ppd_file,
+				      vars.media_size, &left, &right,
+				      &bottom, &top);
 
-     /* we do vars.scaling % of height or width, whatever is smaller*/
-     /* this is relative to printable size */
+  /* Rationalise things a bit by measuring everything from the top left */
+  top = paper_height - top;
+  bottom = paper_height - bottom;
 
-      tw0 = printable_width * vars.scaling / 100;
-      th0 = tw0 * image_height / image_width;
-      if (th0 > printable_height * vars.scaling / 100)
-	{
-	  th0 = printable_height * vars.scaling / 100;
-	  tw0 = th0 * image_width / image_height;
-	}
-      ta0 = tw0 * th0;
-
-      /* Landscape */
-      tw1 = printable_height * vars.scaling / 100;
-      th1 = tw1 * image_height / image_width;
-      if (th1 > printable_width * vars.scaling / 100)
-	{
-	  th1 = printable_width * vars.scaling / 100;
-	  tw1 = th1 * image_width / image_height;
-	}
-      ta1 = tw1 * th1;
-    }
+  printable_width  = right - left;
+  printable_height = bottom - top;
 
   if (vars.orientation == ORIENT_AUTO)
-    {
-      if (vars.scaling < 0)
-	{
-	  if ((printable_width > printable_height && tw0 > th0) ||
-	      (printable_height > printable_width && th0 > tw0))
-	    {
-	      orient = ORIENT_PORTRAIT;
-	      if (tw0 > printable_width)
-		{
-		  vars.scaling *= (double) printable_width / (double) tw0;
-		  th0 = th0 * printable_width / tw0;
-		}
-	      if (th0 > printable_height)
-		{
-		  vars.scaling *= (double) printable_height / (double) th0;
-		  tw0 = tw0 * printable_height / th0;
-		}
-	    }
-	  else
-	    {
-	      orient = ORIENT_LANDSCAPE;
-	      if (tw1 > printable_height)
-		{
-		  vars.scaling *= (double) printable_height / (double) tw1;
-		  th1 = th1 * printable_height / tw1;
-		}
-	      if (th1 > printable_width)
-		{
-		  vars.scaling *= (double) printable_width / (double) th1;
-		  tw1 = tw1 * printable_width / th1;
-		}
-	    }
-	}
-      else
-	{
-	  if (ta0 >= ta1)
-	    orient = ORIENT_PORTRAIT;
-	  else
-	    orient = ORIENT_LANDSCAPE;
-	}
-    }
+  {
+    if ((printable_width >= printable_height && image_width >= image_height)
+	|| (printable_height >= printable_width && image_height >= image_width))
+      orient = ORIENT_PORTRAIT;
+    else
+      orient = ORIENT_LANDSCAPE;
+  }
   else
-    {
-      orient = vars.orientation;
-    }
+    orient = vars.orientation;
 
   if (orient == ORIENT_LANDSCAPE)
     {
-      temp         = printable_width;
+      /*
+       * In landscape mode, we print the right-hand side of the logical
+       * page at the top of the physical paper.  So, left-to-right on
+       * the paper corresponds to top-to-bottom on the image, so we
+       * don't have to flip the columns of the image end-for-end while
+       * forming rows for printing.
+       */
+      temp              = printable_width;
       printable_width   = printable_height;
       printable_height  = temp;
-      temp         = paper_width;
-      paper_width        = paper_height;
-      paper_height       = temp;
+      temp              = paper_width;
+      paper_width       = paper_height;
+      paper_height      = temp;
       temp              = left;
-      left              = bottom;
-      bottom            = temp;
-      temp              = right;
-      right             = top;
+      left              = paper_width - bottom;
+      bottom            = right;
+      right             = paper_width - top;
       top               = temp;
-
-      print_width  = tw1;
-      print_height = th1;
     }
+
+  if (orient == ORIENT_PORTRAIT)
+    min_ppi_scaling = 72.0 * (double) image_width / (double) printable_width;
   else
-    {
-      print_width  = tw0;
-      print_height = th0;
-    }
+    min_ppi_scaling = 72.0 * (double) image_height / (double) printable_height;
 
-  paper_left = (PREVIEW_SIZE_HORIZ - 10 * paper_width / 72) / 2;
-  paper_top  = (PREVIEW_SIZE_VERT - 10 * paper_height / 72) / 2;
-  printable_left = paper_left +  10 * left / 72;
-  printable_top  = paper_top + 10 * (paper_height - top) / 72 ;
+  if (vars.scaling < 0 && vars.scaling > -min_ppi_scaling)
+    vars.scaling = -min_ppi_scaling;
+
+  if (vars.scaling < 0)
+  {
+    print_width = 72 * -image_width / vars.scaling;
+    print_height = print_width * image_height / image_width;
+  }
+  else
+  {
+    /* we do vars.scaling % of height or width, whatever is smaller */
+    /* this is relative to printable size */
+    if (image_width * printable_height > printable_width * image_height)
+      /* i.e. if image_width/image_height > printable_width/printable_height */
+      /* i.e. if image is wider relative to its height than the width
+	 of the printable area relative to its height */
+    {
+      print_width = printable_width * vars.scaling / 100;
+      print_height = print_width * image_height / image_width;
+    }
+    else
+    {
+      print_height = printable_height * vars.scaling / 100;
+      print_width = print_height * image_width / image_height;
+    }
+  }
+
+  paper_left = (PREVIEW_SIZE_HORIZ - PREVIEW_PPI * paper_width / 72) / 2;
+  paper_top  = (PREVIEW_SIZE_VERT - PREVIEW_PPI * paper_height / 72) / 2;
+  printable_left = paper_left +  PREVIEW_PPI * left / 72;
+  printable_top  = paper_top + PREVIEW_PPI * top / 72 ;
 
   /* draw paper frame */ 
   gdk_draw_rectangle(preview->widget.window, gc, 0, 
  		     paper_left, paper_top,
-		     10 * paper_width / 72, 10 * paper_height / 72);
+		     PREVIEW_PPI * paper_width / 72,
+		     PREVIEW_PPI * paper_height / 72);
 
   /* draw printable frame */
   gdk_draw_rectangle(preview->widget.window, gc, 0,
                      printable_left, printable_top,
-                     10 * printable_width / 72, 10 * printable_height / 72);
+                     PREVIEW_PPI * printable_width / 72,
+                     PREVIEW_PPI * printable_height / 72);
 
   if (vars.left < 0)
     vars.left = (paper_width - print_width) / 2;
@@ -1679,7 +1691,7 @@ gimp_preview_update (void)
 
 
   if (vars.top < 0)
-    vars.top  = ((paper_height - print_height) / 2) - (paper_height - top);
+    vars.top  = ((paper_height - print_height) / 2) - top;
 
  
   if (vars.top > (printable_height - print_height))
@@ -1688,7 +1700,7 @@ gimp_preview_update (void)
   plist[plist_current].v.left = vars.left;
   plist[plist_current].v.top = vars.top;
 
-  g_snprintf (s, sizeof (s), "%.2f", ((paper_height - top) + vars.top) / 72.0);
+  g_snprintf (s, sizeof (s), "%.2f", (top + vars.top) / 72.0);
   gtk_signal_handler_block_by_data (GTK_OBJECT (top_entry), NULL);
   gtk_entry_set_text (GTK_ENTRY (top_entry), s);
   gtk_signal_handler_unblock_by_data (GTK_OBJECT (top_entry), NULL);
@@ -1700,7 +1712,7 @@ gimp_preview_update (void)
 
   gtk_signal_handler_block_by_data (GTK_OBJECT (bottom_entry), NULL);
   g_snprintf(s, sizeof (s), "%.2f", 
-	     (((paper_height - top) + vars.top) + print_height) / 72.0);
+	     (top + vars.top + print_height) / 72.0);
   gtk_entry_set_text (GTK_ENTRY (bottom_entry), s);
   gtk_signal_handler_unblock_by_data (GTK_OBJECT (bottom_entry), NULL);
 
@@ -1711,11 +1723,46 @@ gimp_preview_update (void)
   gtk_entry_set_text (GTK_ENTRY (right_entry), s);
   gtk_signal_handler_unblock_by_data (GTK_OBJECT (right_entry), NULL);
 
+  gtk_signal_handler_block_by_data (GTK_OBJECT (width_entry), NULL);
+  g_snprintf (s, sizeof (s), "%.2f", print_width / 72.0);
+  gtk_entry_set_text (GTK_ENTRY (width_entry), s);
+  gtk_signal_handler_unblock_by_data (GTK_OBJECT (width_entry), NULL);
+
+  gtk_signal_handler_block_by_data (GTK_OBJECT (height_entry), NULL);
+  g_snprintf(s, sizeof (s), "%.2f", print_height / 72.0);
+  gtk_entry_set_text (GTK_ENTRY (height_entry), s);
+  gtk_signal_handler_unblock_by_data (GTK_OBJECT (height_entry), NULL);
+
   /* draw image */
   gdk_draw_rectangle(preview->widget.window, gc, 1,
-		     1 + printable_left + 10 * vars.left / 72, 
-		     1 + printable_top + 10 * vars.top / 72,
-                     10 * print_width / 72, 10 * print_height / 72);
+		     1 + printable_left + PREVIEW_PPI * vars.left / 72, 
+		     1 + printable_top + PREVIEW_PPI * vars.top / 72,
+                     PREVIEW_PPI * print_width / 72,
+                     PREVIEW_PPI * print_height / 72);
+
+  /* draw orientation arrow pointing to top-of-paper */
+  {
+    int ox, oy, u;
+    if (paper_width < paper_height)
+      u = PREVIEW_PPI * paper_width / 72 / 4;
+    else
+      u = PREVIEW_PPI * paper_height / 72 / 4;
+    ox = paper_left + PREVIEW_PPI * paper_width / 72;
+    oy = paper_top;
+    if (orient == ORIENT_LANDSCAPE) {
+      ox -= u;
+      oy += PREVIEW_PPI * paper_height / 72 / 2;
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy-u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-2*u, oy);
+    } else {
+      ox -= PREVIEW_PPI * paper_width / 72 / 2;
+      oy += u;
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox-u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox+u, oy+u);
+      gdk_draw_line (preview->widget.window, gcinv, ox, oy, ox, oy+2*u);
+    }
+  }
 
   gdk_flush ();
 }
@@ -1746,8 +1793,8 @@ gimp_preview_motion_callback (GtkWidget      *widget,
       vars.top  = 72 * (printable_height - print_height) / 20;
     }
 
-  vars.left += 72 * (event->x - mouse_x) / 10;
-  vars.top  += 72 * (event->y - mouse_y) / 10;
+  vars.left += 72 * (event->x - mouse_x) / PREVIEW_PPI;
+  vars.top  += 72 * (event->y - mouse_y) / PREVIEW_PPI;
 
   if (vars.left < 0)
     vars.left = 0;

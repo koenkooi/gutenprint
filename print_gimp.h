@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.15 2000/05/31 02:44:57 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.15.2.1 2000/06/17 13:13:27 jmv Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -46,11 +46,19 @@
 /*
  * Constants for GUI...
  */
+#define PREVIEW_PPI        10  /* Pixels in preview per inch on paper */
 #define PREVIEW_SIZE_VERT  240 /* Assuming max media size of 24" A2 */
 #define PREVIEW_SIZE_HORIZ 240 /* Assuming max media size of 24" A2 */
 
 #if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
 #define GIMP_1_0
 #endif
+
+/*
+ * Function prototypes
+ */
+
+/* How to create an Image wrapping a Gimp drawable */
+extern Image Image_GDrawable_new(GDrawable *drawable);
 
 #endif  /* __PRINT_GIMP_H__ */
