@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.32 2003/04/15 02:24:59 rlk Exp $"
+ * "$Id: testdither.c,v 1.33 2003/04/20 03:07:45 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -31,6 +31,7 @@
 #include "../lib/libprintut.h"
 #include "../src/main/gimp-print-internal.h"
 #include "../src/main/weave.h"
+#include "../src/main/bit-ops.h"
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -883,5 +884,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.32 2003/04/15 02:24:59 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.33 2003/04/20 03:07:45 rlk Exp $".
  */
