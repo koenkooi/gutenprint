@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.325 2004/08/19 03:24:35 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.326 2004/08/25 11:31:59 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1319,7 +1319,6 @@ escp2_parameters(const stp_vars_t *v, const char *name,
 	   strcmp(name, "CDYAdjustment") == 0)
     {
       const input_slot_t *slot = get_input_slot(v);
-      description->bounds.str = stp_string_list_create();
       if (escp2_has_cap(v, MODEL_PRINT_TO_CD, MODEL_PRINT_TO_CD_YES) &&
 	  (!slot || (slot && slot->is_cd)))
 	{
