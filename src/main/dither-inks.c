@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.2 2003/05/16 02:13:10 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.3 2003/05/17 16:22:08 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -37,6 +37,47 @@
 #include <math.h>
 #include <string.h>
 #include "dither-impl.h"
+
+unsigned char *
+stpi_dither_get_channel(stp_vars_t v, unsigned channel, unsigned subchannel)
+{
+  stpi_dither_data_t *d = &(((stpi_dither_t *) stpi_get_component_data(v, "Dither"))->dt);
+  stpi_dither_channel_data_t *chan;
+  if (channel >= d->channel_count)
+    return NULL;
+  chan = d->c + channel;
+  if (subchannel >= chan->subchannel_count)
+    return NULL;
+  return chan->c[subchannel];
+}
+
+void
+stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
+			unsigned channel, unsigned subchannel)
+{
+  stpi_dither_data_t *d = &(((stpi_dither_t *) stpi_get_component_data(v, "Dither"))->dt);
+  stpi_dither_channel_data_t *chan;
+  if (channel >= d->channel_count)
+    {
+      unsigned oc = d->channel_count;
+      d->c = stpi_realloc
+	(d->c, sizeof(stpi_dither_channel_data_t) * (channel + 1));
+      (void) memset
+	(d->c + oc, 0, sizeof(stpi_dither_channel_data_t) * (channel + 1- oc));
+      d->channel_count = channel + 1;
+    }
+  chan = d->c + channel;
+  if (subchannel >= chan->subchannel_count)
+    {
+      unsigned oc = chan->subchannel_count;
+      chan->c =
+	stpi_realloc(chan->c, sizeof(unsigned char *) * (subchannel + 1));
+      (void) memset
+	(chan->c + oc, 0, sizeof(unsigned char *) * (subchannel + 1 - oc));
+      chan->subchannel_count = subchannel + 1;
+    }
+  chan->c[subchannel] = data;
+}
 
 static void
 stpi_dither_finalize_ranges(stp_vars_t v, stpi_dither_channel_t *s)
