@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2003/02/09 23:20:31 rlk Exp $
+## $Id: Makefile.am,v 1.4 2003/03/30 12:52:37 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,6 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-INCLUDES = @GTK_CFLAGS@
-
 m4datadir = $(datadir)/aclocal
 pkgconfigdatadir = $(prefix)/lib/pkgconfig
 
@@ -50,6 +48,7 @@ libgimpprintui_la_SOURCES =			\
 
 libgimpprintui_la_LIBADD = $(GIMPPRINT_UI_LIBDEPS)
 # Uncommment to build an unversioned library (version in soname)
+libgimpprintui_la_CFLAGS = $(GIMPPRINT_CFLAGS) $(GTK_CFLAGS) $(AM_CFLAGS)
 libgimpprintui_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir)
 # Uncomment to build a versioned library
 #libgimpprintui_la_LDFLAGS = \

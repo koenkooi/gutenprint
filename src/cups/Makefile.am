@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.63 2003/01/19 22:27:28 rleigh Exp $
+## $Id: Makefile.am,v 1.64 2003/03/30 12:52:37 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
+INCLUDES = $(GIMPPRINT_CFLAGS)
 PACKAGE = cups
 
 bindir = @cups_bindir@

@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE gimp-print SYSTEM "gimpprint.dtd">
 
 <!--
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.69 2003/03/29 04:43:04 rlk Exp $"
+   "$Id: printers.xml,v 1.70 2003/03/30 12:52:40 rleigh Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"

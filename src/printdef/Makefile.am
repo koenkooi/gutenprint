@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2003/01/26 21:46:08 rlk Exp $
+## $Id: Makefile.am,v 1.14 2003/03/30 12:52:40 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-LOCAL_CFLAGS = $(GNUCFLAGS) @LIBXML_CFLAGS@
+LOCAL_CFLAGS = $(GNUCFLAGS) $(GIMPPRINT_CFLAGS)
 
 
 ## Programs

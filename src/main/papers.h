@@ -1,5 +1,5 @@
 /*
- * "$Id: papers.h,v 1.8 2003/02/22 17:20:21 rlk Exp $"
+ * "$Id: papers.h,v 1.9 2003/03/30 12:52:39 rleigh Exp $"
  *
  *   libgimpprint header.
  *
@@ -41,6 +41,22 @@ extern "C" {
 #include <config.h>
 #endif
 
+
+typedef struct
+{
+  char *name;
+  char *text;
+  char *comment;
+  unsigned width;
+  unsigned height;
+  unsigned top;
+  unsigned left;
+  unsigned bottom;
+  unsigned right;
+  stp_papersize_unit_t paper_unit;
+} stpi_internal_papersize_t;
+
+
 extern int stpi_paper_list_init(void);
 
 extern int stpi_paper_create(stp_papersize_t *pt);
@@ -52,5 +68,5 @@ extern int stpi_paper_destroy(stp_papersize_t *pt);
 
 #endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
 /*
- * End of "$Id: papers.h,v 1.8 2003/02/22 17:20:21 rlk Exp $".
+ * End of "$Id: papers.h,v 1.9 2003/03/30 12:52:39 rleigh Exp $".
  */
