@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.43 2003/04/20 22:56:05 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.43.2.1 2003/05/01 00:55:33 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -293,8 +293,6 @@ typedef struct escp2_printer
 /*****************************************************************************/
   /* Print head resolution */
   int		base_separation; /* Basic unit of row separation */
-  int		base_resolution; /* Base hardware line spacing (above this */
-				/* always requires multiple passes) */
   int		resolution_scale;   /* Scaling factor for ESC(D command */
   int		max_black_resolution; /* Above this resolution, we */
 				      /* must use color parameters */
@@ -304,6 +302,21 @@ typedef struct escp2_printer
   int		max_vres;
   int		min_hres;
   int		min_vres;
+  /* Miscellaneous printer-specific data */
+  int		extra_feed;	/* Extra distance the paper can be spaced */
+				/* beyond the bottom margin, in 1/360". */
+				/* (maximum useful value is */
+				/* nozzles * nozzle_separation) */
+  int		separation_rows; /* Some printers require funky spacing */
+				/* arguments in microweave mode. */
+  int		pseudo_separation_rows;/* Some printers require funky */
+				/* spacing arguments in softweave mode */
+
+  int           zero_margin_offset;   /* Offset to use to achieve */
+				      /* zero-margin printing */
+  int		initial_vertical_offset;
+  int		black_initial_vertical_offset;
+  int		extra_720dpi_separation;
 /*****************************************************************************/
   /* Paper size limits */
   int		max_paper_width; /* Maximum paper width, in points */
@@ -334,23 +347,6 @@ typedef struct escp2_printer
   int		m_roll_right_margin;	/* Right margin, points */
   int		m_roll_top_margin;	/* Absolute top margin, points */
   int		m_roll_bottom_margin;	/* Absolute bottom margin, points */
-/*****************************************************************************/
-  /* Miscellaneous printer-specific data */
-  int		extra_feed;	/* Extra distance the paper can be spaced */
-				/* beyond the bottom margin, in 1/360". */
-				/* (maximum useful value is */
-				/* nozzles * nozzle_separation) */
-  int		separation_rows; /* Some printers require funky spacing */
-				/* arguments in microweave mode. */
-  int		pseudo_separation_rows;/* Some printers require funky */
-				/* spacing arguments in softweave mode */
-
-  int           zero_margin_offset;   /* Offset to use to achieve */
-				      /* zero-margin printing */
-  int		initial_vertical_offset;
-  int		black_initial_vertical_offset;
-  int		extra_720dpi_separation;
-
 /*****************************************************************************/
   const int *dot_sizes;		/* Vector of dot sizes for resolutions */
   const double *densities;	/* List of densities for each printer */
@@ -412,5 +408,5 @@ extern const res_t stpi_escp2_sc660_reslist[];
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.43 2003/04/20 22:56:05 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.43.2.1 2003/05/01 00:55:33 rlk Exp $".
  */
