@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.14 2002/06/30 20:15:05 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.15 2002/07/06 22:33:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -248,6 +248,7 @@ typedef struct
 {
   int color;
   int density;
+  int head_offset;
 } physical_subchannel_t;
 
 typedef struct
@@ -362,9 +363,6 @@ typedef struct escp2_printer
 
   int           zero_margin_offset;   /* Offset to use to achieve */
 				      /* zero-margin printing */
-		 /* The stylus 480 and 580 have an unusual arrangement of
-				  color jets that need special handling */
-  const int *head_offset;
   int		initial_vertical_offset;
   int		black_initial_vertical_offset;
 
