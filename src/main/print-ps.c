@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.63 2003/04/15 02:24:56 rlk Exp $"
+ * "$Id: print-ps.c,v 1.63.2.1 2003/04/30 00:23:16 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -541,9 +541,16 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   stpi_puts("gsave\n", v);
 
   stpi_zprintf(v, "%d %d translate\n", left, top);
+
+  /* Force locale to "C", because decimal numbers in Postscript must
+     always be printed with a decimal point rather than the
+     locale-specific setting. */
+
+  setlocale(LC_ALL, "C");
   stpi_zprintf(v, "%.3f %.3f scale\n",
           (double)out_width / ((double)image_width),
           (double)out_height / ((double)image_height));
+  setlocale(LC_ALL, "");
 
   out_channels = stpi_color_init(nv, image, 256);
 
