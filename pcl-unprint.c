@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.5 2000/02/28 18:39:24 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.6 2000/03/20 21:03:30 davehill Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -28,7 +28,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.5 2000/02/28 18:39:24 davehill Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.6 2000/03/20 21:03:30 davehill Exp $";
 
 /* 
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -1019,6 +1019,9 @@ int main(int argc, char *argv[]) {
 		case 0 :
 		    fprintf(stderr, "Plain\n");
 		    break;
+		case 1 :
+		    fprintf(stderr, "Bond\n");
+		    break;
 		case 2 :
 		    fprintf(stderr, "Premium\n");
 		    break;
@@ -1027,6 +1030,9 @@ int main(int argc, char *argv[]) {
 		    break;
 		case 4 :
 		    fprintf(stderr, "Transparency\n");
+		    break;
+		case 5 :
+		    fprintf(stderr, "Photo\n");
 		    break;
 		default :
 		    fprintf(stderr, "Unknown (%d)\n", numeric_arg);
@@ -1376,6 +1382,10 @@ int main(int argc, char *argv[]) {
  * Revision History:
  *
  *   $Log: pcl-unprint.c,v $
+ *   Revision 1.6  2000/03/20 21:03:30  davehill
+ *   Added "Bond" and "Photo" paper types to pcl-unprint and print-pcl.
+ *   Corrected Depletion output for old Deskjets in print-pcl.
+ *
  *   Revision 1.5  2000/02/28 18:39:24  davehill
  *   Fixed decoding of "configure data". Added "Custom" to paper sizes.
  *   Started changes for multiple levels.
@@ -1399,6 +1409,6 @@ int main(int argc, char *argv[]) {
  *   (i.e. Deskjet 500)
  *
  *
- * End of "$Id: pcl-unprint.c,v 1.5 2000/02/28 18:39:24 davehill Exp $"
+ * End of "$Id: pcl-unprint.c,v 1.6 2000/03/20 21:03:30 davehill Exp $"
  */
 
