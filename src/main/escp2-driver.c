@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.3 2003/05/09 11:24:50 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.4 2003/05/10 13:51:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -478,9 +478,9 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int nlines)
     {
       int ncolor = pd->channels[color]->color;
       int subchannel = pd->channels[color]->subchannel;
+      int nwidth = pd->bitwidth * ((lwidth + 7) / 8);
       if (subchannel >= 0)
 	ncolor |= (subchannel << 4);
-      int nwidth = pd->bitwidth * ((lwidth + 7) / 8);
       stpi_send_command(v, "\033i", "ccchh", ncolor, COMPRESSION,
 			pd->bitwidth, nwidth, nlines);
     }    
