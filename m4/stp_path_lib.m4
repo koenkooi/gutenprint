@@ -68,7 +68,7 @@ dnl Based on `AM_PATH_GTK' (gtk.m4) by Owen Taylor, and `AC_PATH_GENERIC'
 dnl (ac_path_generic.m4) by Angus Lees <gusl@cse.unsw.edu.au>.
 dnl pkg-config support based on AM_PATH_GTK_2_0 (gtk-2.0.m4) by Owen Taylor.
 dnl
-dnl @version $Id: stp_path_lib.m4,v 1.1 2002/03/23 11:27:05 rleigh Exp $
+dnl @version $Id: stp_path_lib.m4,v 1.2 2002/03/31 15:08:32 rleigh Exp $
 dnl @author Roger Leigh <roger@whinlatter.uklinux.net>
 dnl
 
@@ -146,7 +146,7 @@ ac_save_[]UP[]_VERSION="$UP[]_VERSION"
 # Set up default behaviour.
 AC_DEFUN([_STP_PATH_LIB_DEFAULTS],
 [dnl Set up pkgconfig as default config script.
-m4_if(STP_PATH_LIB_USEPKGCONFIG, , STP_PATH_LIB_PKGCONFIG)
+m4_ifdef([STP_PATH_LIB_USEPKGCONFIG],, [STP_PATH_LIB_PKGCONFIG])
 dnl Set default header and config script names.
 LDOWN[]_header="m4_default([_STP_PATH_LIB_HEADER], [$1/$1.h])"
 LDOWN[]_config="m4_default([$2], [$1-config])"
