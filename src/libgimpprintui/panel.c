@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.28 2003/03/01 17:18:38 rlk Exp $"
+ * "$Id: panel.c,v 1.29 2003/03/01 17:23:09 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1564,7 +1564,6 @@ create_printer_settings_frame (void)
   printer_features_table = gtk_table_new(1, 1, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (printer_features_table), 2);
   gtk_table_set_row_spacings (GTK_TABLE (printer_features_table), 0);
-  gtk_container_set_border_width (GTK_CONTAINER (printer_features_table), 4);
   gtk_widget_show (printer_features_table);
   gtk_table_attach_defaults(GTK_TABLE(table), printer_features_table,
 			    0, 6, vpos, vpos + 1);
