@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.22.4.1 2002/07/07 00:32:53 rlk Exp $"
+ * "$Id: print.c,v 1.22.4.2 2002/08/22 23:48:52 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1238,8 +1238,21 @@ get_system_printers(void)
 	      if ((ptr = strchr(line, ':')) != NULL &&
 	          line[0] != ' ' && line[0] != '\t')
               {
-		check_plist(plist_count + 1);
+		int printer_exists = 0;
 		*ptr = '\0';
+                /* check for duplicate printers--yes, they can happen,
+                 * and it makes gimp-print forget everything about the
+                 * printer */
+                for (i = 1; i < plist_count; i++)
+                  if (strcmp(line, plist[i].name) == 0)
+		    {
+		      printer_exists = 1;
+		      break;
+		    }
+		if (printer_exists)
+		  break;
+
+		check_plist(plist_count + 1);
 		initialize_printer(&plist[plist_count]);
 		strncpy(plist[plist_count].name, line,
 			sizeof(plist[plist_count].name) - 1);
@@ -1259,6 +1272,18 @@ get_system_printers(void)
 	      if ((sscanf(line, "printer %127s", name) == 1) ||
 		  (sscanf(line, "Printer: %127s", name) == 1))
 	      {
+		int printer_exists = 0;
+                /* check for duplicate printers--yes, they can happen,
+                 * and it makes gimp-print forget everything about the
+                 * printer */
+                for (i = 1; i < plist_count; i++)
+                  if (strcmp(name, plist[i].name) == 0)
+		    {
+		      printer_exists = 1;
+		      break;
+		    }
+		if (printer_exists)
+		  break;
 		check_plist(plist_count + 1);
 		initialize_printer(&plist[plist_count]);
 		strncpy(plist[plist_count].name, name,
@@ -1313,5 +1338,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.22.4.1 2002/07/07 00:32:53 rlk Exp $".
+ * End of "$Id: print.c,v 1.22.4.2 2002/08/22 23:48:52 rlk Exp $".
  */

@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.103.2.27 2002/08/14 01:32:54 rlk Exp $
+dnl $Id: configure.in.in,v 1.103.2.28 2002/08/22 23:48:51 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ dnl
 GIMPPRINT_MAJOR_VERSION=4
 GIMPPRINT_MINOR_VERSION=2
 GIMPPRINT_MICRO_VERSION=2
-GIMPPRINT_EXTRA_VERSION=-rc1
+GIMPPRINT_EXTRA_VERSION=-rc2
 GIMPPRINT_CURRENT_INTERFACE=1
 GIMPPRINT_INTERFACE_AGE=2
 GIMPPRINT_BINARY_AGE=0
