@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.14 2001/05/15 23:11:31 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,6 @@
 AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
-
-## Make DESTDIR available to gimptool
-export DESTDIR
 
 MAINT_CHARSET = latin1
 
@@ -52,7 +49,8 @@ $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../main
 
 install-libexecPROGRAMS: $(libexec_PROGRAMS)
-	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
+	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
+	list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    if test -f .libs/$$p; then \
 	      cd .libs; \
@@ -63,7 +61,8 @@ install-libexecPROGRAMS: $(libexec_PROGRAMS)
 	done
 
 uninstall-libexecPROGRAMS: $(libexec_PROGRAMS)
-	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
+	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
+	list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  if test -f "$$p"; then \
 	    echo $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
             $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
