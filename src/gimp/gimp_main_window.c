@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.95 2002/12/24 21:04:24 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.96 2002/12/27 02:21:30 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -714,7 +714,8 @@ create_printer_dialog (void)
     {
       stp_printer_t the_printer = stp_get_printer_by_index (i);
 
-      if (strcmp (stp_printer_get_long_name (the_printer), "") != 0)
+      if (strcmp(stp_printer_get_long_name (the_printer), "") != 0 &&
+	  strcmp(stp_printer_get_family(the_printer), "raw") != 0)
 	{
 	  gchar *tmp=g_strdup(gettext(stp_printer_get_long_name(the_printer)));
 

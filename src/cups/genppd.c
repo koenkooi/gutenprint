@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.51 2002/11/22 02:16:57 rlk Exp $"
+ * "$Id: genppd.c,v 1.52 2002/12/27 02:21:41 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -471,8 +471,8 @@ void printmodels(int verbose)
     {
       p = stp_get_printer_by_index(i);
       if (p &&
-	  !(strcmp(stp_printer_get_driver(p), "ps") == 0 ||
-	    strcmp(stp_printer_get_driver(p), "ps2") == 0))
+	  strcmp(stp_printer_get_family(p), "ps") != 0 &&
+	  strcmp(stp_printer_get_family(p), "raw") != 0)
 	{
 	  if(verbose)
 	    printf("%-20s%s\n", stp_printer_get_driver(p),
@@ -1078,5 +1078,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.51 2002/11/22 02:16:57 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.52 2002/12/27 02:21:41 rlk Exp $".
  */

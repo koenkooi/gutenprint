@@ -1,5 +1,5 @@
 /*
- * "$Id: printlist.h,v 1.1 2002/12/26 23:26:06 rlk Exp $"
+ * "$Id: printlist.h,v 1.2 2002/12/27 02:21:42 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -29,6 +29,7 @@ typedef struct stp_old_printer
 {
   const char *long_name;	/* Long name for UI */
   const char *short_name;
+  const char *family;
   int        model;		/* Model number */
   int	     color;
   const stp_printfuncs_t *printfuncs;
@@ -37,5 +38,5 @@ typedef struct stp_old_printer
 
 #endif /* GIMP_PRINT_PRINTLIST_H */
 /*
- * End of "$Id: printlist.h,v 1.1 2002/12/26 23:26:06 rlk Exp $".
+ * End of "$Id: printlist.h,v 1.2 2002/12/27 02:21:42 rlk Exp $".
  */

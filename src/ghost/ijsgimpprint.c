@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.24 2002/12/24 21:04:23 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.25 2002/12/27 02:21:41 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -456,7 +456,9 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
     {
       stp_printer_t printer = stp_get_printer_by_driver(vbuf);
       stp_set_driver(img->v, vbuf);
-      if (printer)
+      if (printer &&
+	  strcmp(stp_printer_get_family(printer), "ps") != 0 &&
+	  strcmp(stp_printer_get_family(printer), "raw") != 0)
 	stp_set_printer_defaults(img->v, printer);
       else
 	code = IJS_ERANGE;

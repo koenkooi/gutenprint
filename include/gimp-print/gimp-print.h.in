@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h.in,v 1.32 2002/12/26 20:31:36 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.33 2002/12/27 02:21:41 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -356,6 +356,7 @@ extern int stp_get_printer_index_by_driver(const char *driver);
 
 extern const char * stp_printer_get_long_name(const stp_printer_t p);
 extern const char * stp_printer_get_driver(const stp_printer_t p);
+extern const char * stp_printer_get_family(const stp_printer_t p);
 extern int stp_printer_get_model(const stp_printer_t p);
 extern const stp_vars_t stp_printer_get_printvars(const stp_printer_t p);
 extern void stp_set_printer_defaults(stp_vars_t, const stp_printer_t);
@@ -948,5 +949,5 @@ extern const stp_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.32 2002/12/26 20:31:36 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.33 2002/12/27 02:21:41 rlk Exp $
  */
