@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.28.2.2 2002/04/07 02:28:42 rlk Exp $
+## $Id: Makefile.am,v 1.28.2.3 2002/12/08 18:31:23 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -197,12 +197,14 @@ install-data-local: $(STANDARD_TARGETS)
 	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/figures ; \
 	    fi ; \
 	  done ; \
-	  cd ../stylesheet-images ; \
-	  for file in * ; do \
-	    if test -f $$file ; then \
-	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/stylesheet-images ; \
-	    fi ; \
-	  done ; \
+	  if test -d ../stylesheet-images ; then \
+	    cd ../stylesheet-images ; \
+	    for file in * ; do \
+	      if test -f $$file ; then \
+	        $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/stylesheet-images ; \
+	      fi ; \
+	    done ; \
+	  fi ; \
 	fi
 
 uninstall-local:
