@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.83 2002/11/22 02:16:58 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.84 2002/12/08 20:36:01 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2143,7 +2143,9 @@ const stp_printfuncs_t stp_lexmark_printfuncs =
   lexmark_limit,
   lexmark_print,
   lexmark_describe_resolution,
-  stp_verify_printer_params
+  stp_verify_printer_params,
+  NULL,
+  NULL
 };
 
 

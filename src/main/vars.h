@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.4 2002/11/22 02:16:59 rlk Exp $"
+ * "$Id: vars.h,v 1.5 2002/12/08 20:36:03 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -72,6 +72,8 @@ typedef struct					/* Plug-in variables */
   int	page_height;		/* Height of page in points */
   int	input_color_model;	/* Color model for this device */
   int	output_color_model;	/* Color model for this device */
+  int	page_number;
+  stp_job_mode_t job_mode;
   void  *lut;			/* Look-up table */
   void  *driver_data;		/* Private data of the driver */
   unsigned char *cmap;		/* Color map */
@@ -105,5 +107,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc, const char *name);
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.4 2002/11/22 02:16:59 rlk Exp $".
+ * End of "$Id: vars.h,v 1.5 2002/12/08 20:36:03 rlk Exp $".
  */

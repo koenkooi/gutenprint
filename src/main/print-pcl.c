@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.67 2002/11/22 02:16:58 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.68 2002/12/08 20:36:02 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2747,7 +2747,9 @@ const stp_printfuncs_t stp_pcl_printfuncs =
   pcl_limit,
   pcl_print,
   pcl_describe_resolution,
-  stp_verify_printer_params
+  stp_verify_printer_params,
+  NULL,
+  NULL
 };
 
 

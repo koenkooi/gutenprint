@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.2 2002/11/22 02:16:59 rlk Exp $"
+ * "$Id: util.h,v 1.3 2002/12/08 20:36:03 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -54,6 +54,8 @@ typedef struct
   int   (*print)(const stp_vars_t v, stp_image_t *image);
   void  (*describe_resolution)(const stp_vars_t v, int *x, int *y);
   int   (*verify)(const stp_vars_t v);
+  int   (*start_job)(const stp_vars_t v, stp_image_t *image);
+  int   (*end_job)(const stp_vars_t v, stp_image_t *image);
 } stp_printfuncs_t;
 
 
@@ -160,5 +162,5 @@ extern void  print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.2 2002/11/22 02:16:59 rlk Exp $".
+ * End of "$Id: util.h,v 1.3 2002/12/08 20:36:03 rlk Exp $".
  */
