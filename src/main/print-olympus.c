@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.45 2004/06/24 11:18:20 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.46 2004/06/26 13:30:15 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1150,7 +1150,7 @@ olympus_describe_output(const stp_vars_t *v)
   return "CMY";
 }
 
-unsigned short *
+static unsigned short *
 olympus_get_cached_output(stp_vars_t *v,
              stp_image_t *image,
 	     unsigned short **cache,
@@ -1500,7 +1500,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 		}
 
 	      out = olympus_get_cached_output(v, image, rows, r_errline,
-	                                  print_px_width * ink_channels * 2);
+	                                  image_px_width * ink_channels * 2);
 	      if (out == NULL)
 	        {
 		  status = 2;
