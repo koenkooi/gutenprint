@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/06/02 23:01:54 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2001/06/03 00:21:59 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 ## Programs
 
-FOOMATIC_NOINST_BIN="printer_options paper_sizes gimp-print-version"
+FOOMATIC_NOINST_BIN=printer_options paper_sizes gimp-print-version
 
 noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
 
