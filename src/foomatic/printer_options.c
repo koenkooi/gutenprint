@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.30 2004/03/15 01:45:23 tillkamppeter Exp $"
+ * "$Id: printer_options.c,v 1.31 2004/03/19 18:59:30 tillkamppeter Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -61,7 +61,7 @@ main(int argc, char **argv)
 	{
 	  const stp_parameter_t *p = stp_parameter_list_param(params, k);
 	  stp_parameter_t desc;
-	  if (p->p_level > STP_PARAMETER_CLASS_OUTPUT ||
+	  if (p->p_level > STP_PARAMETER_LEVEL_ADVANCED4 ||
 	      (p->p_class != STP_PARAMETER_CLASS_OUTPUT &&
 	       p->p_class != STP_PARAMETER_CLASS_FEATURE))
 	    continue;
@@ -69,6 +69,10 @@ main(int argc, char **argv)
 	  stp_describe_parameter(pv, p->name, &desc);
 	  printf("$longnames{'%s'} = '%s';\n",
 		 p->name, p->text);
+	  printf("$param_classes{'%s'} = %d;\n",
+		 p->name, p->p_class);
+          printf("$param_levels{'%s'} = %d;\n",
+		 p->name, p->p_level);
 	  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
 	    {
 	      count = stp_string_list_count(desc.bounds.str);
