@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.44.4.1 2002/01/24 01:46:48 rlk Exp $"
+ * "$Id: print-dither.c,v 1.44.4.2 2002/03/27 01:22:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1692,7 +1692,7 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
     return;
   if (dc->very_fast)
     {
-      if (adjusted >= ditherpoint(d, dither_matrix, x))
+      if (adjusted > ditherpoint(d, dither_matrix, x))
 	{
 	  if (rv->row_ends[0][0] == -1)
 	    rv->row_ends[0][0] = x;
@@ -2801,6 +2801,8 @@ stp_dither(const unsigned short  *input,
 	  CHANNEL(d, i).dither.ranges[0].bits[1] == 1 &&
 	  CHANNEL(d, i).dither.ranges[0].isdark[1])
 	CHANNEL(d, i).very_fast = 1;
+      else
+	CHANNEL(d, i).very_fast = 0;
       matrix_set_row(d, &(CHANNEL(d, i).dithermat), row);
       matrix_set_row(d, &(CHANNEL(d, i).pick), row);
     }
