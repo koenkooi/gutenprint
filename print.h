@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.8 1999/10/23 20:26:48 rlk Exp $"
+ * "$Id: print.h,v 1.9 1999/10/25 00:14:46 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -136,12 +136,6 @@ extern void	gray_to_gray(guchar *, guchar *, int, int, lut_t *,
 			     guchar *, float);
 extern void	indexed_to_gray(guchar *, guchar *, int, int, lut_t *,
 				guchar *, float);
-extern void	indexed_to_rgb(guchar *, guchar *, int, int, lut_t *,
-			       guchar *, float);
-extern void	rgb_to_gray(guchar *, guchar *, int, int, lut_t *,
-			    guchar *, float);
-extern void	rgb_to_rgb(guchar *, guchar *, int, int, lut_t *, guchar *,
-			   float);
 
 extern void	gray_to_gray16(guchar *, gushort *, int, int, lut16_t *,
 			       guchar *, float);
@@ -213,5 +207,5 @@ extern void compute_lut(lut_t *lut, lut16_t *lut16, int icontrast,
 			int linear, float printer_density, float user_density);
 
 /*
- * End of "$Id: print.h,v 1.8 1999/10/23 20:26:48 rlk Exp $".
+ * End of "$Id: print.h,v 1.9 1999/10/25 00:14:46 rlk Exp $".
  */
