@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.10 2001/01/20 02:34:14 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -333,5 +333,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.10 2001/01/20 02:34:14 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $".
  */
