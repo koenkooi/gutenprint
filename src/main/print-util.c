@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.65 2002/05/18 23:35:51 rlk Exp $"
+ * "$Id: print-util.c,v 1.66 2002/05/28 07:14:33 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1459,7 +1459,7 @@ stp_minimum_settings()
       va_start(args, format);						\
       bytes = vsnprintf(result, current_allocation, format, args);	\
       va_end(args);							\
-      if (bytes >= 0 && bytes <= current_allocation)			\
+      if (bytes >= 0 && bytes < current_allocation)			\
 	break;								\
       else								\
 	{								\
@@ -1467,7 +1467,7 @@ stp_minimum_settings()
 	  if (bytes < 0)						\
 	    current_allocation *= 2;					\
 	  else								\
-	    current_allocation = bytes;					\
+	    current_allocation = bytes + 1;				\
 	  result = stp_malloc(current_allocation);			\
 	}								\
     }									\
