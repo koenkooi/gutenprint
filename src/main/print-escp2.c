@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.23 2001/02/18 19:39:04 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.24 2001/02/18 19:50:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1710,7 +1710,7 @@ static escp2_stp_printer_t model_capabilities[] =
     &variable_3pl_4color_inks, standard_lum_adjustment, standard_hue_adjustment,
     standard_sat_adjustment
   },
-  /* 35: Stylus Photo 790 */
+  /* 35: Stylus Photo 780/790 */
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_MULTI
