@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125.4.2 2004/02/22 04:05:49 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.3 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1601,8 +1601,8 @@ pcl_parameters(stp_const_vars_t v, const char *name,
 	   strcmp(name, "BlackDensity") == 0)
     {
       if (caps->color_type != PCL_COLOR_NONE &&
-	  stp_get_output_mode(v) != STP_OUTPUT_BW &&
-	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
+	  stp_check_string_parameter(v, "PrintingMode", STP_PARAMETER_DEFAULTED) &&
+	  strcmp(stp_get_string_parameter(v, "PrintingMode"), "Color") == 0)
 	description->is_active = 1;
       else
 	description->is_active = 0;
@@ -1611,8 +1611,8 @@ pcl_parameters(stp_const_vars_t v, const char *name,
 	   strcmp(name, "LightMagentaTransition") == 0)
     {
       if (caps->color_type & PCL_COLOR_CMYKcm &&
-	  stp_get_output_mode(v) != STP_OUTPUT_BW &&
-	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
+	  stp_check_string_parameter(v, "PrintingMode", STP_PARAMETER_DEFAULTED) &&
+	  strcmp(stp_get_string_parameter(v, "PrintingMode"), "Color") == 0)
 	description->is_active = 1;
       else
 	description->is_active = 0;
@@ -1627,6 +1627,17 @@ pcl_parameters(stp_const_vars_t v, const char *name,
 	description->deflt.integer = 4;
       description->bounds.integer.lower = -1;
       description->bounds.integer.upper = -1;
+    }
+  else if (strcmp(name, "PrintingMode") == 0)
+    {
+      description->bounds.str = stp_string_list_create();
+      if (caps->color_type != PCL_COLOR_NONE)
+	stp_string_list_add_string
+	  (description->bounds.str, "Color", _("Color"));
+      stp_string_list_add_string
+	(description->bounds.str, "BW", _("Black and White"));
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
 }
 
@@ -1751,7 +1762,7 @@ pcl_printfunc(stp_vars_t v)
 		  (len_m == -1) && (len_lm == -1) && (len_y == -1) &&
 		  (len_k == -1));
   int height = pd->height;
-  stp_output_mode_t output_mode = stp_get_output_mode(v);
+  const char    *print_mode = stp_get_string_parameter(v, "PrintingMode");
 
   if (is_blank && (pd->blank_lines != 0))	/* repeated blank line */
     {
@@ -1780,7 +1791,7 @@ pcl_printfunc(stp_vars_t v)
 	  /*
 	   * 4-level (CRet) dithers...
 	   */
-	  if (output_mode == STP_OUTPUT_BW)
+	  if (strcmp(print_mode, "BW") == 0)
 	    {
 	      (*(pd->writefunc))(v, black + height / 2, height / 2, 0);
 	      (*(pd->writefunc))(v, black, height / 2, 1);
@@ -1820,7 +1831,7 @@ pcl_printfunc(stp_vars_t v)
 	   * Standard 2-level dithers...
 	   */
 
-	  if (output_mode == STP_OUTPUT_BW)
+	  if (strcmp(print_mode, "BW") == 0)
 	    {
 	      (*(pd->writefunc))(v, black, height, 1);
 	    }
@@ -1864,7 +1875,8 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   const char	*media_type = stp_get_string_parameter(v, "MediaType");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
   const char	*ink_type = stp_get_string_parameter(v, "InkType");
-  stp_output_mode_t output_mode = stp_get_output_mode(v);
+  const char    *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  int printing_color = 0;
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
   int		y;		/* Looping vars */
@@ -1910,6 +1922,8 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       stpi_eprintf(v, "Print options not verified; cannot print.\n");
       return 0;
     }
+  if (strcmp(print_mode, "Color") == 0)
+    printing_color = 1;
 
   caps = pcl_get_model_capabilities(model);
 
@@ -1948,17 +1962,18 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   * Choose the correct color conversion function...
   */
   if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
-      output_mode != STP_OUTPUT_BW && xdpi == 600 && ydpi == 600)
+      printing_color && xdpi == 600 && ydpi == 600)
     {
       stpi_eprintf(v, "600x600 resolution only available in MONO\n");
-      output_mode = STP_OUTPUT_BW;
+      stp_set_string_parameter(v, "PrintingMode", "BW");
+      printing_color = 0;
     }
 
   privdata.do_cret = (xdpi >= 300 &&
 	     ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4));
   privdata.do_cretb = (xdpi >= 600 && ydpi >= 600 &&
 	      ((caps->color_type & PCL_COLOR_CMYK4b) == PCL_COLOR_CMYK4b) &&
-	      output_mode != STP_OUTPUT_BW);
+	      printing_color);
   if (privdata.do_cretb){
     privdata.do_cret = 1;
     dot_sizes_use=dot_sizes_cret;
@@ -2134,7 +2149,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     * vertical resolutions as well as a color count...
     */
 
-    if (output_mode != STP_OUTPUT_BW)
+    if (printing_color)
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         planes = 3;
       else
@@ -2167,7 +2182,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   else
   {
     stpi_zprintf(v, "\033*t%dR", xdpi);		/* Simple resolution */
-    if (output_mode != STP_OUTPUT_BW)
+    if (printing_color)
     {
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         stpi_puts("\033*r-3U", v);		/* Simple CMY color */
@@ -2232,7 +2247,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   if (privdata.do_cret)
     privdata.height *= 2;
 
-  if (output_mode == STP_OUTPUT_BW)
+  if (!printing_color)
   {
     black   = stpi_malloc(privdata.height);
     cyan    = NULL;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.1 2004/02/22 04:05:49 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -120,6 +120,16 @@ raw_parameters(stp_const_vars_t v, const char *name,
       for (i = 0; i < ink_count; i++)
 	stp_string_list_add_string(description->bounds.str,
 				  inks[i].name, inks[i].name);
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
+    }
+  else if (strcmp(name, "PrintingMode") == 0)
+    {
+      description->bounds.str = stp_string_list_create();
+      stp_string_list_add_string
+	(description->bounds.str, "Color", _("Color"));
+      stp_string_list_add_string
+	(description->bounds.str, "BW", _("Black and White"));
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
     }

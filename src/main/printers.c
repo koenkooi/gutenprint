@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.1 2004/02/22 04:05:50 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -288,6 +288,57 @@ stpi_printer_describe_parameter(stp_const_vars_t v, const char *name,
   const stpi_printfuncs_t *printfuncs =
     stpi_get_printfuncs(stp_get_printer(v));
   (printfuncs->parameters)(v, name, description);
+}
+
+void
+stp_set_printer_defaults(stp_vars_t v, stp_const_printer_t printer)
+{
+  stp_parameter_list_t *params;
+  int count;
+  int i;
+  stp_parameter_t desc;
+  stp_set_driver(v, stp_printer_get_driver(printer));
+  params = stp_get_parameter_list(v);
+  count = stp_parameter_list_count(params);
+  for (i = 0; i < count; i++)
+    {
+      const stp_parameter_t *p = stp_parameter_list_param(params, i);
+      if (p->is_mandatory)
+	{
+	  stp_describe_parameter(v, p->name, &desc);
+	  switch (p->p_type)
+	    {
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	      stp_set_string_parameter(v, p->name, desc.deflt.str);
+	      stp_set_string_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      stp_set_float_parameter(v, p->name, desc.deflt.dbl);
+	      stp_set_float_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    case STP_PARAMETER_TYPE_INT:
+	      stp_set_int_parameter(v, p->name, desc.deflt.integer);
+	      stp_set_int_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    case STP_PARAMETER_TYPE_BOOLEAN:
+	      stp_set_boolean_parameter(v, p->name, desc.deflt.boolean);
+	      stp_set_boolean_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    case STP_PARAMETER_TYPE_CURVE:
+	      stp_set_curve_parameter(v, p->name, desc.deflt.curve);
+	      stp_set_curve_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    case STP_PARAMETER_TYPE_ARRAY:
+	      stp_set_array_parameter(v, p->name, desc.deflt.array);
+	      stp_set_array_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
+	      break;
+	    default:
+	      break;
+	    }
+	  stp_parameter_description_free(&desc);
+	}
+    }
+  stp_parameter_list_free(params);
 }
 
 void
@@ -581,12 +632,10 @@ stpi_verify_printer_params(stp_vars_t v)
   void *odata = stp_get_errdata(v);
 
   stp_parameter_list_t params;
-  stp_const_printer_t p = stp_get_printer(v);
   int nparams;
   int i;
   int answer = 1;
   int left, top, bottom, right;
-  stp_const_vars_t printvars = stp_printer_get_defaults(p);
   const char *pagesize = stp_get_string_parameter(v, "PageSize");
 
   stp_set_errfunc((stp_vars_t) v, fill_buffer_writefunc);
@@ -595,16 +644,6 @@ stpi_verify_printer_params(stp_vars_t v)
   errbuf.data = NULL;
   errbuf.bytes = 0;
 
-  /*
-   * Note that in raw CMYK mode the user is responsible for not sending
-   * color output to black & white printers!
-   */
-  if (stp_get_output_mode(printvars) == STP_OUTPUT_BW &&
-      stp_get_output_mode(v) == STP_OUTPUT_COLOR)
-    {
-      answer = 0;
-      stpi_eprintf(v, _("Printer does not support color output\n"));
-    }
   if (pagesize && strlen(pagesize) > 0)
     {
       answer &= verify_param(v, "PageSize");
@@ -660,7 +699,6 @@ stpi_verify_printer_params(stp_vars_t v)
       stpi_eprintf(v, _("Image is too long for the page\n"));
     }
 
-  CHECK_INT_RANGE(v, output_mode, STP_OUTPUT_BW, STP_OUTPUT_RAW);
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
   CHECK_INT_RANGE(v, job_mode, STP_JOB_MODE_PAGE, STP_JOB_MODE_JOB);
   CHECK_INT_RANGE(v, image_type, STP_IMAGE_GRAYSCALE, STP_IMAGE_RAW);
@@ -801,7 +839,6 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
  /* props[] (unused) is the correct tag sequence */
   /*  const char *props[] =
     {
-      "color",
       "model",
       "black",
       "cyan",
@@ -823,7 +860,6 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
   int
     driver = 0,                                       /* Check driver */
     long_name = 0,                                    /* Check long_name */
-    color = 0,                                        /* Check color */
     model = 0;                                        /* Check model */
 
   outprinter = stpi_zalloc(sizeof(stpi_internal_printer_t));
@@ -858,19 +894,7 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
       if (prop->type == MXML_ELEMENT)
 	{
 	  const char *prop_name = prop->value.element.name;
-	  if (!strcmp(prop_name, "color"))
-	    {
-	      stmp = stpi_mxmlElementGetAttr(prop, "value");
-	      if (stmp)
-		{
-		  if (!strcmp(stmp, "true"))
-		    stp_set_output_mode(outprinter->printvars, STP_OUTPUT_COLOR);
-		  else
-		    stp_set_output_mode(outprinter->printvars, STP_OUTPUT_BW);
-		  color = 1;
-		}
-	    }
-	  else if (!strcmp(prop_name, "model"))
+	  if (!strcmp(prop_name, "model"))
 	    {
 	      stmp = stpi_mxmlElementGetAttr(prop, "value");
 	      if (stmp)
@@ -901,7 +925,7 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
 	}
       prop = prop->next;
     }
-  if (driver && long_name && color && model && printfuncs)
+  if (driver && long_name && model && printfuncs)
     {
       if (stpi_debug_level & STPI_DBG_XML)
 	{

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140.2.2 2004/02/22 04:05:47 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.3 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1186,7 +1186,7 @@ typedef struct {
 
 typedef struct {
   const canon_cap_t *caps;
-  stp_output_mode_t output_mode;
+  int printing_color;
   const paper_t *pt;
   int print_head;
   int colormode;
@@ -1775,6 +1775,16 @@ canon_parameters(stp_const_vars_t v, const char *name,
 				media_sources[i].name,
 				_(media_sources[i].text));
   }
+  else if (strcmp(name, "PrintingMode") == 0)
+  {
+    description->bounds.str = stp_string_list_create();
+    stp_string_list_add_string
+      (description->bounds.str, "Color", _("Color"));
+    stp_string_list_add_string
+      (description->bounds.str, "BW", _("Black and White"));
+    description->deflt.str =
+      stp_string_list_param(description->bounds.str, 0)->name;
+  }
 }
 
 
@@ -1947,7 +1957,7 @@ canon_init_setColor(stp_const_vars_t v, canon_init_t *init)
 		break;		/*	tbd */
 
   	case 1:			/* 360 dpi series - BJC-4000, BJC-210, BJC-70 and their descendants */
-		if (init->output_mode==STP_OUTPUT_BW)
+		if (!init->printing_color)
     			arg_63_1|= 0x01;					/* PRINT_COLOUR */
 
   		arg_63_2 = ((init->pt ? init->pt->media_code : 0) << 4)		/* PRINT_MEDIA */
@@ -1960,7 +1970,7 @@ canon_init_setColor(stp_const_vars_t v, canon_init_t *init)
 		break;
 
 	case 3:			/* 720 dpi series - BJC-3000 and descendants */
-		if (init->output_mode==STP_OUTPUT_BW)
+		if (!init->printing_color)
     			arg_63_1|= 0x01;					/* colour mode */
 
   		arg_63_2 = (init->pt) ? init->pt->media_code : 0;		/* print media type */
@@ -2063,7 +2073,7 @@ canon_init_setPrintMode(stp_const_vars_t v, canon_init_t *init)
     arg_6d_1= 0x02;
   else if (init->print_head<=4)
     arg_6d_1= 0x04;
-  if (init->output_mode==STP_OUTPUT_BW)
+  if (!init->printing_color)
     arg_6d_2= 0x02;
 
   if (init->caps->model==8200)
@@ -2280,7 +2290,8 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   int		model = stpi_get_model_id(v);
   const char	*resolution = stp_get_string_parameter(v, "Resolution");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
-  stp_output_mode_t output_mode = stp_get_output_mode(v);
+  const char    *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  int printing_color = 0;
   const char	*ink_type = stp_get_string_parameter(v, "InkType");
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -2328,6 +2339,8 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
       stpi_eprintf(v, "Print options not verified; cannot print.\n");
       return 0;
     }
+  if (strcmp(print_mode, "Color") == 0)
+    printing_color = 1;
 
   PUT("top        ",top,72);
   PUT("left       ",left,72);
@@ -2344,10 +2357,11 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 
   if (printhead == 0 || caps->inks == CANON_INK_K)
     {
-      output_mode = STP_OUTPUT_BW;
+      printing_color = 0;
+      stp_set_string_parameter(v, "PrintingMode", "BW");
     }
 
-  if (output_mode == STP_OUTPUT_BW)
+  if (!printing_color)
     colormode = COLOR_MONOCHROME;
 
  /*
@@ -2408,7 +2422,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   pt = get_media_type(stp_get_string_parameter(v, "MediaType"));
 
   init.caps = caps;
-  init.output_mode = output_mode;
+  init.printing_color = printing_color;
   init.pt = pt;
   init.print_head = printhead;
   init.colormode = colormode;

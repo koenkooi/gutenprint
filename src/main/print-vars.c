@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.62.4.1 2004/02/22 04:05:50 rlk Exp $"
+ * "$Id: print-vars.c,v 1.62.4.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -37,8 +37,8 @@
 #include <gimp-print/gimp-print.h>
 #include "gimp-print-internal.h"
 #include <gimp-print/gimp-print-intl-internal.h>
-#include "vars.h"
 #include "generic-options.h"
+#include "vars.h"
 
 #define COOKIE_VARS      0x1a18376c
 
@@ -70,7 +70,6 @@ typedef struct					/* Plug-in variables */
   int	cookie;
   char *driver;			/* Name of printer "driver" */
   char *color_conversion;       /* Color module in use */
-  stp_output_mode_t output_mode;	/* Color or grayscale output */
   stp_job_mode_t job_mode;
   stp_image_type_t image_type;
   stp_output_type_t output_type;
@@ -99,7 +98,6 @@ static stpi_internal_vars_t default_vars =
 	COOKIE_VARS,
 	NULL,		       	/* Name of printer "driver" */
 	NULL,                   /* Name of color module */
-	STP_OUTPUT_BW,		/* Color or grayscale output */
 	STP_JOB_MODE_PAGE,	/* Job mode */
 	STP_IMAGE_INVALID,	/* Image type */
 	STP_OUTPUT_TYPE_INVALID,	/* Image type */
@@ -141,7 +139,7 @@ get_vars(stp_const_vars_t vars)
 static const char *
 value_namefunc(const void *item)
 {
-  const value_t *v = (value_t *) (item);
+  const value_t *v = (const value_t *) (item);
   return v->name;
 }
 
@@ -183,7 +181,7 @@ static value_t *
 value_copy(const void *item)
 {
   value_t *ret = stpi_malloc(sizeof(value_t));
-  const value_t *v = (value_t *) (item);
+  const value_t *v = (const value_t *) (item);
   ret->name = stpi_strdup(v->name);
   ret->typ = v->typ;
   ret->active = v->active;
@@ -233,7 +231,7 @@ copy_value_list(const stpi_list_t *src)
 static const char *
 compdata_namefunc(const void *item)
 {
-  const compdata_t *cd = (compdata_t *) (item);
+  const compdata_t *cd = (const compdata_t *) (item);
   return cd->name;
 }
 
@@ -250,7 +248,7 @@ compdata_freefunc(void *item)
 static void *
 compdata_copyfunc(const void *item)
 {
-  compdata_t *cd = (compdata_t *) (item);
+  const compdata_t *cd = (const compdata_t *) (item);
   if (cd->copyfunc)
     return (cd->copyfunc)(cd->data);
   else
@@ -422,7 +420,6 @@ pre##_get_##s(stp_const_vars_t vv)		\
 
 DEF_STRING_FUNCS(driver, stp)
 DEF_STRING_FUNCS(color_conversion, stp)
-DEF_FUNCS(output_mode, stp_output_mode_t, stp)
 DEF_FUNCS(left, int, stp)
 DEF_FUNCS(top, int, stp)
 DEF_FUNCS(width, int, stp)
@@ -1273,7 +1270,6 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
     return;
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_color_conversion(vd, stp_get_color_conversion(vs));
-  stp_set_output_mode(vd, stp_get_output_mode(vs));
   stp_set_job_mode(vd, stp_get_job_mode(vs));
   stp_set_image_type(vd, stp_get_image_type(vs));
   stpi_set_output_type(vd, stpi_get_output_type(vs));
@@ -1331,96 +1327,6 @@ stp_vars_create_copy(stp_const_vars_t vs)
   return (vd);
 }
 
-void
-stp_merge_printvars(stp_vars_t user, stp_const_vars_t print)
-{
-  int i;
-  stp_parameter_list_t params = stp_get_parameter_list(print);
-  int count = stp_parameter_list_count(params);
-  for (i = 0; i < count; i++)
-    {
-      const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->p_type == STP_PARAMETER_TYPE_DOUBLE &&
-	  p->p_class == STP_PARAMETER_CLASS_OUTPUT &&
-	  stp_check_float_parameter(print, p->name, STP_PARAMETER_DEFAULTED))
-	{
-	  stp_parameter_t desc;
-	  double prnval = stp_get_float_parameter(print, p->name);
-	  double usrval;
-	  stp_describe_parameter(print, p->name, &desc);
-	  if (stp_check_float_parameter(user, p->name, STP_PARAMETER_ACTIVE))
-	    usrval = stp_get_float_parameter(user, p->name);
-	  else
-	    usrval = desc.deflt.dbl;
-	  if (strcmp(p->name, "Gamma") == 0)
-	    usrval /= prnval;
-	  else
-	    usrval *= prnval;
-	  if (usrval < desc.bounds.dbl.lower)
-	    usrval = desc.bounds.dbl.lower;
-	  else if (usrval > desc.bounds.dbl.upper)
-	    usrval = desc.bounds.dbl.upper;
-	  stp_set_float_parameter(user, p->name, usrval);
-	  stp_parameter_description_free(&desc);
-	}
-    }
-  if (stp_get_output_mode(print) == STP_OUTPUT_BW &&
-      (stp_get_output_mode(user) == STP_OUTPUT_COLOR))
-    stp_set_output_mode(user, STP_OUTPUT_BW);
-  stp_parameter_list_free(params);
-}
-
-void
-stp_set_printer_defaults(stp_vars_t v, stp_const_printer_t printer)
-{
-  stp_parameter_list_t *params;
-  int count;
-  int i;
-  stp_parameter_t desc;
-  stp_set_driver(v, stp_printer_get_driver(printer));
-  params = stp_get_parameter_list(v);
-  count = stp_parameter_list_count(params);
-  for (i = 0; i < count; i++)
-    {
-      const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->is_mandatory)
-	{
-	  stp_describe_parameter(v, p->name, &desc);
-	  switch (p->p_type)
-	    {
-	    case STP_PARAMETER_TYPE_STRING_LIST:
-	      stp_set_string_parameter(v, p->name, desc.deflt.str);
-	      stp_set_string_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    case STP_PARAMETER_TYPE_DOUBLE:
-	      stp_set_float_parameter(v, p->name, desc.deflt.dbl);
-	      stp_set_float_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    case STP_PARAMETER_TYPE_INT:
-	      stp_set_int_parameter(v, p->name, desc.deflt.integer);
-	      stp_set_int_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    case STP_PARAMETER_TYPE_BOOLEAN:
-	      stp_set_boolean_parameter(v, p->name, desc.deflt.boolean);
-	      stp_set_boolean_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    case STP_PARAMETER_TYPE_CURVE:
-	      stp_set_curve_parameter(v, p->name, desc.deflt.curve);
-	      stp_set_curve_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    case STP_PARAMETER_TYPE_ARRAY:
-	      stp_set_array_parameter(v, p->name, desc.deflt.array);
-	      stp_set_array_parameter_active(v, p->name, STP_PARAMETER_ACTIVE);
-	      break;
-	    default:
-	      break;
-	    }
-	  stp_parameter_description_free(&desc);
-	}
-    }
-  stp_parameter_list_free(params);
-}
-
 static const char *
 param_namefunc(const void *item)
 {
@@ -1450,31 +1356,6 @@ stp_parameter_list_add_param(stp_parameter_list_t list,
 {
   stpi_list_t *ilist = (stpi_list_t *) list;
   stpi_list_item_create(ilist, NULL, item);
-}
-
-stp_parameter_list_t
-stp_get_parameter_list(stp_const_vars_t v)
-{
-  stp_parameter_list_t ret = stp_parameter_list_create();
-  stp_parameter_list_t tmp_list;
-
-  tmp_list = stpi_printer_list_parameters(v);
-  stp_parameter_list_append(ret, tmp_list);
-  stp_parameter_list_free(tmp_list);
-
-  tmp_list = stpi_color_list_parameters(v);
-  stp_parameter_list_append(ret, tmp_list);
-  stp_parameter_list_free(tmp_list);
-
-  tmp_list = stpi_dither_list_parameters(v);
-  stp_parameter_list_append(ret, tmp_list);
-  stp_parameter_list_free(tmp_list);
-
-  tmp_list = stpi_list_generic_parameters(v);
-  stp_parameter_list_append(ret, tmp_list);
-  stp_parameter_list_free(tmp_list);
-
-  return ret;
 }
 
 void

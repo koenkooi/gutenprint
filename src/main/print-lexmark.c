@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.137.4.1 2004/02/22 04:05:49 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.137.4.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -906,7 +906,7 @@ static const paper_t lexmark_paper_list[] =
 static const int paper_type_count = sizeof(lexmark_paper_list) / sizeof(paper_t);
 
 static const lexmark_inkname_t *
-lexmark_get_ink_type(const char *name, stp_output_mode_t output_mode, const lexmark_cap_t * caps)
+lexmark_get_ink_type(const char *name, int printing_color, const lexmark_cap_t * caps)
 {
   int i = 0;
   const lexmark_inkname_t *ink_type = caps->ink_types;
@@ -919,18 +919,15 @@ lexmark_get_ink_type(const char *name, stp_output_mode_t output_mode, const lexm
 }
 
 static const lexmark_inkparam_t *
-lexmark_get_ink_parameter(const char *name, stp_output_mode_t output_mode, const lexmark_cap_t * caps, stp_vars_t nv)
+lexmark_get_ink_parameter(const char *name, int printing_color, const lexmark_cap_t * caps, stp_vars_t nv)
 {
-  const lexmark_inkname_t *ink_type = lexmark_get_ink_type(name, output_mode, caps);
+  const lexmark_inkname_t *ink_type = lexmark_get_ink_type(name, printing_color, caps);
 
   if (ink_type->name == NULL) {
     return (NULL); /* not found ! */
   }
 
-  if (output_mode == STP_OUTPUT_BW || output_mode == STP_OUTPUT_COLOR)
-    return &(ink_type->ink_parameter[output_mode]);
-  else
-    return NULL;
+  return &(ink_type->ink_parameter[printing_color]);
 }
 
 
@@ -1251,6 +1248,16 @@ lexmark_parameters(stp_const_vars_t v, const char *name,
       description->bounds.integer.lower = -1;
       description->bounds.integer.upper = -1;
     }
+  else if (strcmp(name, "PrintingMode") == 0)
+    {
+      description->bounds.str = stp_string_list_create();
+      stp_string_list_add_string
+	(description->bounds.str, "Color", _("Color"));
+      stp_string_list_add_string
+	(description->bounds.str, "BW", _("Black and White"));
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
+    }
 }
 
 /*
@@ -1326,7 +1333,7 @@ lexmark_limit(stp_const_vars_t v,  		/* I */
 
 static int
 lexmark_init_printer(stp_const_vars_t v, const lexmark_cap_t * caps,
-		     stp_output_mode_t output_mode,
+		     int printing_color,
 		     const char *source_str,
 		     int xdpi, int ydpi,
 		     int page_width, int page_height,
@@ -1609,7 +1616,8 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   const char	*resolution   = stp_get_string_parameter(v, "Resolution");
   const char	*media_type   = stp_get_string_parameter(v, "MediaType");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
-  stp_output_mode_t output_mode = stp_get_output_mode(v);
+  const char    *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  int printing_color = 0;
   const char	*ink_type     = stp_get_string_parameter(v, "InkType");
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -1618,7 +1626,7 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   const lexmark_res_t *res_para_ptr =
     lexmark_get_resolution_para(model, resolution);
   const paper_t *media = get_media_type(media_type,caps);
-  const lexmark_inkparam_t *ink_parameter = lexmark_get_ink_parameter(ink_type, output_mode, caps, v);
+  const lexmark_inkparam_t *ink_parameter = lexmark_get_ink_parameter(ink_type, printing_color, caps, v);
 
   stpi_prune_inactive_options(v);
 
@@ -1631,6 +1639,8 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
       stpi_eprintf(v, "Print options not verified; cannot print.\n");
       return 0;
     }
+  if (strcmp(print_mode, "Color") == 0)
+    printing_color = 1;
 
   if (ink_parameter == NULL)
     {
@@ -1649,7 +1659,8 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   if ((ink_parameter->used_colors == COLOR_MODE_K) ||
       (caps->inks == LEXMARK_INK_K))
     {
-      output_mode = STP_OUTPUT_BW;
+      printing_color = 0;
+      stp_set_string_parameter(v, "PrintingMode", "BW");
     }
 
   /*
@@ -1749,7 +1760,7 @@ densityDivisor /= 1.2;
   lxm3200_linetoeject = (page_true_height * 1200) / 72;
 
 
-  if (!lexmark_init_printer(v, caps, output_mode,
+  if (!lexmark_init_printer(v, caps, printing_color,
 			    media_source,
 			    xdpi, ydpi, page_width, page_height,
 			    top,left,use_dmt))

@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.15.2.1 2004/02/22 04:05:47 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.15.2.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -95,7 +95,6 @@ print_debug_params(stp_vars_t v)
   print_remote_param(v, "Version", VERSION);
   print_remote_param(v, "Release Date", RELEASE_DATE);
   print_remote_param(v, "Driver", stp_get_driver(v));
-  print_remote_int_param(v, "Output Mode", stp_get_output_mode(v));
   print_remote_int_param(v, "Left", stp_get_left(v));
   print_remote_int_param(v, "Top", stp_get_top(v));
   print_remote_int_param(v, "Page Width", stp_get_page_width(v));

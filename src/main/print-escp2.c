@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.2 2004/02/22 04:05:48 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.3 2004/03/01 03:07:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -641,12 +641,16 @@ escp2_paperlist(stp_const_vars_t v)
 static int
 using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
 {
+  int is_raw = 0;
+  if (stp_get_string_parameter(v, "PrintingMode") &&
+      strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0)
+    is_raw = 1;
   switch (mode)
     {
     case AUTO_MODE_QUALITY:
       if (stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) &&
 	  strcmp(stp_get_string_parameter(v, "Quality"), "None") != 0 &&
-	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
+	  !is_raw)
 	return 1;
       else
 	return 0;
@@ -654,7 +658,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     case AUTO_MODE_FULL_AUTO:
       if (stp_check_string_parameter(v, "AutoMode", STP_PARAMETER_ACTIVE) &&
 	  strcmp(stp_get_string_parameter(v, "AutoMode"), "None") != 0 &&
-	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
+	  !is_raw)
 	return 1;
       else
 	return 0;
@@ -662,7 +666,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     case AUTO_MODE_MANUAL:
       if (!stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) ||
 	  strcmp(stp_get_string_parameter(v, "Quality"), "None") == 0 ||
-	  stp_get_output_mode(v) == STP_OUTPUT_RAW)
+	  is_raw)
 	return 1;
       else
 	return 0;
@@ -995,7 +999,8 @@ set_density_parameter(stp_const_vars_t v,
 		      stp_parameter_t *description,
 		      int color)
 {
-  if (stp_get_output_mode(v) != STP_OUTPUT_BW &&
+  if (stp_get_string_parameter(v, "PrintingMode") &&
+      strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") != 0 &&
       using_automatic_settings(v, AUTO_MODE_MANUAL))
     description->is_active = 1;
   else
@@ -1022,7 +1027,8 @@ set_color_transition_parameter(stp_const_vars_t v,
 			       int color)
 {
   description->is_active = 0;
-  if (stp_get_output_mode(v) != STP_OUTPUT_BW &&
+  if (stp_get_string_parameter(v, "PrintingMode") &&
+      strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") != 0 &&
       using_automatic_settings(v, AUTO_MODE_MANUAL))
     {
       const escp2_inkname_t *ink_name = get_inktype(v);
@@ -1434,6 +1440,18 @@ escp2_parameters(stp_const_vars_t v, const char *name,
       description->deflt.integer = escp2_physical_channels(v);
       description->bounds.integer.lower = -1;
       description->bounds.integer.upper = -2;
+    }
+  else if (strcmp(name, "PrintingMode") == 0)
+    {
+      description->bounds.str = stp_string_list_create();
+      stp_string_list_add_string
+	(description->bounds.str, "Color", _("Color"));
+      stp_string_list_add_string
+	(description->bounds.str, "BW", _("Black and White"));
+      stp_string_list_add_string
+	(description->bounds.str, "Raw", _("Raw"));
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
 }
 
@@ -2112,9 +2130,9 @@ setup_head_parameters(stp_vars_t v)
   /*
    * Set up the output channels
    */
-  if (stp_get_output_mode(v) == STP_OUTPUT_RAW)
+  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0)
     pd->logical_channels = escp2_physical_channels(v);
-  else if (stp_get_output_mode(v) == STP_OUTPUT_BW)
+  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
     pd->logical_channels = 1;
   else
     pd->logical_channels = NCOLORS;
@@ -2160,7 +2178,8 @@ setup_head_parameters(stp_vars_t v)
 
   setup_head_offset(v);
 
-  if (stp_get_output_mode(v) == STP_OUTPUT_BW && pd->physical_channels == 1)
+  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0 &&
+      pd->physical_channels == 1)
     {
       if (pd->use_black_parameters)
 	pd->initial_vertical_offset =
@@ -2441,7 +2460,8 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     }
   stpi_image_init(image);
 
-  if (stp_get_output_mode(v) == STP_OUTPUT_RAW && !set_raw_ink_type(v))
+  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0 &&
+      !set_raw_ink_type(v))
     return 0;
 
   pd = (escp2_privdata_t *) stpi_zalloc(sizeof(escp2_privdata_t));

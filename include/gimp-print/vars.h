@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.3.4.1 2004/02/22 04:05:46 rlk Exp $"
+ * "$Id: vars.h,v 1.3.4.2 2004/03/01 03:07:44 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -50,13 +50,6 @@ typedef enum
   STP_JOB_MODE_PAGE,
   STP_JOB_MODE_JOB
 } stp_job_mode_t;
-
-typedef enum
-{
-  STP_OUTPUT_BW,
-  STP_OUTPUT_COLOR,
-  STP_OUTPUT_RAW
-} stp_output_mode_t;
 
 /*
  * Opaque representation of printer setttings.
@@ -248,12 +241,6 @@ extern int stp_get_width(stp_const_vars_t v);
 
 extern void stp_set_height(stp_vars_t v, int val);
 extern int stp_get_height(stp_const_vars_t v);
-
-/*
- * Set output type.
- */
-extern void stp_set_output_mode(stp_vars_t v, stp_output_mode_t val);
-extern stp_output_mode_t stp_get_output_mode(stp_const_vars_t v);
 
 /*
  * Set/get the type of the image
@@ -599,5 +586,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.1 2004/02/22 04:05:46 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.2 2004/03/01 03:07:44 rlk Exp $".
  */
