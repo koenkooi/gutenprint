@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.1 2000/02/17 01:02:13 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.2 2000/03/06 03:10:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -93,11 +93,11 @@ main(int argc, char **argv)
 	      argv[0]);
       return 2;
     }
-  physjets = strtol(argv[1], 0, 0);
-  physsep = strtol(argv[2], 0, 0);
-  hpasses = strtol(argv[3], 0, 0);
-  vpasses = strtol(argv[4], 0, 0);
-  nrows = strtol(argv[5], 0, 0);
+  physjets = atoi(argv[1]);
+  physsep = atoi(argv[2]);
+  hpasses = atoi(argv[3]);
+  vpasses = atoi(argv[4]);
+  nrows = atoi(argv[5]);
   passstarts = malloc(sizeof(int) * nrows);
   logpassstarts = malloc(sizeof(int) * nrows);
   passends = malloc(sizeof(int) * nrows);
