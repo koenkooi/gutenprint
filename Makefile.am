@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.136 2003/11/23 03:52:46 rlk Exp $
+## $Id: Makefile.am,v 1.137 2004/02/27 02:45:51 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,16 @@ libtool: $(LIBTOOL_DEPS)
 	cd $(srcdir); \
 	$(SHELL) ./config.status --recheck
 
-ChangeLog:
+ChangeLogStamp:
+	for f in `find . -name Entries -print | grep CVS` ; do \
+	  if /usr/bin/test ! -f ChangeLogStamp -o ChangeLogStamp -ot $$f ; then \
+	    rm -f ChangeLogStamp ; \
+	    ls -l ChangeLogStamp $$f ; \
+	    touch ChangeLogStamp ; \
+	  fi ; \
+	done
+
+ChangeLog: ChangeLogStamp
 	@cd $(top_srcdir) ; \
 	if test -f $(top_builddir)/.noupdate ; then \
 	  echo "ChangeLog: .noupdate found: NOT updating ChangeLog from CVS" ; \
@@ -193,4 +202,4 @@ MAINTAINERCLEANFILES = \
 
 EXTRA_DIST = autogen.sh
 
-.PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLog
+.PHONY: deb html install-cups install-gimp install-ghost snapshot
