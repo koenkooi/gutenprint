@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2003/01/06 20:50:59 rleigh Exp $
+## $Id: Makefile.am,v 1.9 2003/09/01 21:54:17 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -181,6 +181,6 @@ mostlyclean-aminfo:
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
-EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES)
+EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES) stamp-vti
 
 .PHONY: html ps pdf docs
