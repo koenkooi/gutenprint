@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.36 2003/03/29 18:04:54 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.37 2003/04/05 14:54:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -415,6 +415,7 @@ extern const paperlist_t stpi_escp2_standard_paper_list;
 
 extern const res_t stpi_escp2_escp2200_reslist[];
 extern const res_t stpi_escp2_escp950_reslist[];
+extern const res_t stpi_escp2_c1_8_reslist[];
 extern const res_t stpi_escp2_no_microweave_reslist[];
 extern const res_t stpi_escp2_pro_reslist[];
 extern const res_t stpi_escp2_sp5000_reslist[];
@@ -422,5 +423,5 @@ extern const res_t stpi_escp2_standard_reslist[];
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.36 2003/03/29 18:04:54 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.37 2003/04/05 14:54:07 rlk Exp $".
  */
