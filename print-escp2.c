@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155.2.1 2000/06/03 01:21:10 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.155.2.2 2000/06/13 23:39:22 jmv Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -38,7 +38,11 @@
  */
 
 #ifndef WEAVETEST
+#ifdef ESCP2_GHOST
+#include "gdevstp-print.h"
+#else
 #include "print.h"
+#endif
 #endif
 
 #ifdef DEBUG_SIGNAL
@@ -234,57 +238,71 @@ static full_dither_range_t normal_dither_ranges[] =
   { 0.67,  1.0,  0x2, 0x3, 1, 1}
 };
 
+static full_dither_range_t stp870_c_dither_ranges[] =
+{
+  { 0.0,  0.52,  0x0, 0x1, 1, 1},
+  { 0.52, 0.67,  0x1, 0x2, 1, 1},
+  { 0.67, 0.96,  0x2, 0x3, 1, 1}
+};
+
 static full_dither_range_t stp870_c1_dither_ranges[] =
 {
-  { 0.0,  0.18, 0x0, 0x1, 0, 0},
-  { 0.18, 0.25, 0x1, 0x2, 0, 0},
-  { 0.25, 0.52, 0x2, 0x1, 0, 1},
-  { 0.25, 0.39, 0x2, 0x3, 0, 0},
-  { 0.39, 0.52, 0x3, 0x1, 0, 1},
+  { 0.0,  0.17, 0x0, 0x1, 0, 0},
+  { 0.17, 0.23, 0x1, 0x2, 0, 0},
+  { 0.23, 0.52, 0x2, 0x1, 0, 1},
+  { 0.23, 0.35, 0x2, 0x3, 0, 0},
+  { 0.35, 0.52, 0x3, 0x1, 0, 1},
   { 0.52, 0.67, 0x1, 0x2, 1, 1},
   { 0.67, 0.96, 0x2, 0x3, 1, 1}
 };
 
 static full_dither_range_t stp870_c2_dither_ranges[] =
 {
-  { 0.0,  0.18, 0x0, 0x1, 0, 0},
-  { 0.18, 0.25, 0x1, 0x2, 0, 0},
-  { 0.25, 0.39, 0x2, 0x3, 0, 0},
-  { 0.39, 0.67, 0x3, 0x2, 0, 1},
+  { 0.0,  0.17, 0x0, 0x1, 0, 0},
+  { 0.17, 0.23, 0x1, 0x2, 0, 0},
+  { 0.23, 0.35, 0x2, 0x3, 0, 0},
+  { 0.35, 0.67, 0x3, 0x2, 0, 1},
   { 0.67, 0.96, 0x2, 0x3, 1, 1}
+};
+
+static full_dither_range_t stp870_m_dither_ranges[] =
+{
+  { 0.0,  0.52,  0x0, 0x1, 1, 1},
+  { 0.52, 0.67,  0x1, 0x2, 1, 1},
+  { 0.67, 1.0,   0x2, 0x3, 1, 1}
 };
 
 static full_dither_range_t stp870_m1_dither_ranges[] =
 {
-  { 0.0,  0.18, 0x0, 0x1, 0, 0},
-  { 0.18, 0.24, 0x1, 0x2, 0, 0},
-  { 0.24, 0.52, 0x2, 0x1, 0, 1},
-  { 0.24, 0.36, 0x2, 0x3, 0, 0},
-  { 0.36, 0.52, 0x3, 0x1, 0, 1},
+  { 0.0,  0.17, 0x0, 0x1, 0, 0},
+  { 0.17, 0.23, 0x1, 0x2, 0, 0},
+  { 0.23, 0.52, 0x2, 0x1, 0, 1},
+  { 0.23, 0.35, 0x2, 0x3, 0, 0},
+  { 0.35, 0.52, 0x3, 0x1, 0, 1},
   { 0.52, 0.67, 0x1, 0x2, 1, 1},
   { 0.67, 1.0,  0x2, 0x3, 1, 1}
 };
 
 static full_dither_range_t stp870_m2_dither_ranges[] =
 {
-  { 0.0,  0.18, 0x0, 0x1, 0, 0},
-  { 0.18, 0.24, 0x1, 0x2, 0, 0},
-  { 0.24, 0.36, 0x2, 0x3, 0, 0},
-  { 0.36, 0.67, 0x3, 0x2, 0, 1},
+  { 0.0,  0.17, 0x0, 0x1, 0, 0},
+  { 0.17, 0.23, 0x1, 0x2, 0, 0},
+  { 0.23, 0.35, 0x2, 0x3, 0, 0},
+  { 0.35, 0.67, 0x3, 0x2, 0, 1},
   { 0.67, 1.0,  0x2, 0x3, 1, 1}
 };
 
 static full_dither_range_t stp870_y_dither_ranges[] =
 {
   { 0.0,  0.55,  0x0, 0x1, 1, 1},
-  { 0.55,  0.71,  0x1, 0x2, 1, 1},
-  { 0.71,  1.0,  0x2, 0x3, 1, 1}
+  { 0.55, 0.71,  0x1, 0x2, 1, 1},
+  { 0.71, 1.0,   0x2, 0x3, 1, 1}
 };
 
 static full_dither_range_t stp870_k_dither_ranges[] =
 {
   { 0.0,  0.55,  0x0, 0x1, 1, 1},
-  { 0.55,  0.67, 0x1, 0x2, 1, 1},
+  { 0.55, 0.67,  0x1, 0x2, 1, 1},
   { 0.67, 1.0,   0x2, 0x3, 1, 1}
 };
 
@@ -886,7 +904,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
   float 	scaling = v->scaling;
   int		top = v->top;
   int		left = v->left;
-  int		x, y;		/* Looping vars */
+  int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   int		n;		/* Output number */
   unsigned short *out;	/* Output pixels (16-bit) */
@@ -907,9 +925,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
 		out_width,	/* Width of image on page */
 		out_height,	/* Height of image on page */
 		out_bpp,	/* Output bytes per pixel */
-		temp_width,	/* Temporary width of image on page */
-		temp_height,	/* Temporary height of image on page */
-		landscape,	/* True if we rotate the output 90 degrees */
 		length,		/* Length of raster data */
 		errdiv,		/* Error dividend */
 		errmod,		/* Error modulus */
@@ -974,31 +989,21 @@ escp2_print(const printer_t *printer,		/* I - Model */
   if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
     output_type = OUTPUT_GRAY_COLOR;	/* Force grayscale output */
 
-  if (output_type == OUTPUT_COLOR)
-  {
-    out_bpp = 3;
+  colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp);
 
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_rgb;
-    else
-      colorfunc = indexed_to_rgb;
-  }
-  else if (output_type == OUTPUT_GRAY_COLOR)
-  {
-    out_bpp = 3;
-    colorfunc = gray_to_rgb;
-  }
-  else
-  {
-    out_bpp = 1;
+ /*
+  * Compute the output size...
+  */
+  escp2_imageable_area(model, ppd_file, media_size, &page_left, &page_right,
+                       &page_bottom, &page_top);
 
-    if (image_bpp >= 3)
-      colorfunc = rgb_to_gray;
-    else if (cmap == NULL)
-      colorfunc = gray_to_gray;
-    else
-      colorfunc = indexed_to_gray;
-  }
+  compute_page_parameters(page_right, page_left, page_top, page_bottom,
+			  scaling, image_width, image_height, image,
+			  &orientation, &page_width, &page_height,
+			  &out_width, &out_height, &left, &top);
+
+  image_height = Image_height(image);
+  image_width = Image_width(image);
 
  /*
   * Figure out the output resolution...
@@ -1038,124 +1043,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
     bits = 2;
   else
     bits = 1;
- /*
-  * Compute the output size...
-  */
-
-  landscape   = 0;
-  escp2_imageable_area(model, ppd_file, media_size, &page_left, &page_right,
-                       &page_bottom, &page_top);
-
-  page_width  = page_right - page_left;
-  page_height = page_top - page_bottom;
-
-  default_media_size(model, ppd_file, media_size, &n, &page_length);
-
- /*
-  * Portrait width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    out_width  = image_width * -72.0 / scaling;
-    out_height = image_height * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    out_width  = page_width * scaling / 100.0;
-    out_height = out_width * image_height / image_width;
-    if (out_height > page_height)
-    {
-      out_height = page_height * scaling / 100.0;
-      out_width  = out_height * image_width / image_height;
-    }
-  }
-
-  if (out_width == 0)
-    out_width = 1;
-  if (out_height == 0)
-    out_height = 1;
-
- /*
-  * Landscape width/height...
-  */
-
-  if (scaling < 0.0)
-  {
-   /*
-    * Scale to pixels per inch...
-    */
-
-    temp_width  = image_height * -72.0 / scaling;
-    temp_height = image_width * -72.0 / scaling;
-  }
-  else
-  {
-   /*
-    * Scale by percent...
-    */
-
-    temp_width  = page_width * scaling / 100.0;
-    temp_height = temp_width * image_width / image_height;
-    if (temp_height > page_height)
-    {
-      temp_height = page_height;
-      temp_width  = temp_height * image_height / image_width;
-    }
-  }
-
- /*
-  * See which orientation has the greatest area (or if we need to rotate the
-  * image to fit it on the page...)
-  */
-
-  if (orientation == ORIENT_AUTO)
-  {
-    if (scaling < 0.0)
-    {
-      if ((out_width > page_width && out_height < page_width) ||
-          (out_height > page_height && out_width < page_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-    else
-    {
-      if ((temp_width * temp_height) > (out_width * out_height))
-	orientation = ORIENT_LANDSCAPE;
-      else
-	orientation = ORIENT_PORTRAIT;
-    }
-  }
-
-  if (orientation == ORIENT_LANDSCAPE)
-  {
-    out_width  = temp_width;
-    out_height = temp_height;
-    landscape  = 1;
-
-   /*
-    * Swap left/top offsets...
-    */
-
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
-  }
-
-  if (left < 0)
-    left = (page_width - out_width) / 2;
-
-  if (top < 0)
-    top  = (page_height - out_height) / 2;
 
  /*
   * Let the user know what we're doing...
@@ -1166,6 +1053,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
  /*
   * Send ESC/P2 initialization commands...
   */
+  default_media_size(model, ppd_file, media_size, &n, &page_length);
   page_length += (39 + (escp2_nozzles(model) * 2) *
 		  escp2_nozzle_separation(model)) / 10; /* Top and bottom */
   page_top = 0;
@@ -1232,24 +1120,21 @@ escp2_print(const printer_t *printer,		/* I - Model */
       
 
  /*
-  * Output the page, rotating as necessary...
+  * Output the page...
   */
 
-  oversample = real_horizontal_passes * vertical_subsample;
+  oversample = horizontal_passes * vertical_subsample;
   dither_density = nv.density * printer->printvars.density;
-  nv.density = dither_density / oversample;
-  if(dither_density > 1 )
-    dither_density = 1;
   if (bits == 2)
-    nv.density *= 1.6;
+    dither_density *= 3.3;
+  nv.density = dither_density / oversample;
+  if(dither_density > 1.0)
+	dither_density = 1.0;
   if (nv.density > 1.0)
     nv.density = 1.0;
   nv.saturation *= printer->printvars.saturation;
 
-  if (landscape)
-    dither = init_dither(image_height, out_width, &nv);
-  else
-    dither = init_dither(image_width, out_width, &nv);
+  dither = init_dither(image_width, out_width, &nv);
 
   dither_set_black_levels(dither, 1.0, 1.0, 1.0);
   if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
@@ -1264,44 +1149,50 @@ escp2_print(const printer_t *printer,		/* I - Model */
     dither_set_adaptive_divisor(dither, 8);
   else
     dither_set_adaptive_divisor(dither, 2);
-
-  dither_set_max_ink(dither, 3, 3.0/oversample);
-
   if (bits == 2)
     {
       int dsize = (sizeof(variable_dither_ranges) /
 		   sizeof(simple_dither_range_t));
-      dither_set_y_ranges_simple(dither, 3, dot_sizes, nv.density);
-      dither_set_k_ranges_simple(dither, 3, dot_sizes, nv.density);
+	  dither_set_max_ink(dither, 3, 3.0*nv.density);
+	  dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
+					           dither_density);
+	  dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
+					           dither_density);
       if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
 	{
-	  dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
-				   dither_density);
-	  dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
-				   dither_density);
-	  if (oversample > 1)
-	    {
-	      dither_set_c_ranges_full(dither, 7, stp870_c1_dither_ranges,
-				       dither_density);
-	      dither_set_m_ranges_full(dither, 7, stp870_m1_dither_ranges,
-				       dither_density);
-	    }
+	  if(oversample > 1)
+	  {
+	    dither_set_c_ranges_full(dither, 7, stp870_c1_dither_ranges,
+					             dither_density);
+	    dither_set_m_ranges_full(dither, 7, stp870_m1_dither_ranges,
+					             dither_density);
+	  }
 	  else
-	    {
-	      dither_set_c_ranges_full(dither, 5, stp870_c2_dither_ranges,
-				       dither_density);
-	      dither_set_m_ranges_full(dither, 5, stp870_m2_dither_ranges,
-				       dither_density);
-	    }
+	  {
+	    dither_set_c_ranges_full(dither, 5, stp870_c2_dither_ranges,
+					             dither_density);
+	    dither_set_m_ranges_full(dither, 5, stp870_m2_dither_ranges,
+					             dither_density);
+	  }
 	}
       else
 	{	
-	  dither_set_c_ranges_simple(dither, 3, dot_sizes, nv.density);
-	  dither_set_m_ranges_simple(dither, 3, dot_sizes, nv.density);
+	  dither_set_c_ranges_full(dither, 3, stp870_c_dither_ranges,
+					           dither_density);
+	  dither_set_m_ranges_full(dither, 2, stp870_m_dither_ranges,
+					           dither_density);
 	}
     }
-  else if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
-    dither_set_light_inks(dither, .25, .25, 0.0, nv.density);
+  else {
+	dither_set_max_ink(dither, 1, 3.0*nv.density);
+	if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
+    	dither_set_light_inks(dither, .33, .33, 0.0, nv.density);
+  }
+  if (xdpi > ydpi)
+    dither_set_aspect_ratio(dither, 1, xdpi / ydpi);
+  else if (ydpi > xdpi)
+    dither_set_aspect_ratio(dither, ydpi / xdpi, 1);
+			  
 
   switch (nv.image_type)
     {
@@ -1322,111 +1213,56 @@ escp2_print(const printer_t *printer,		/* I - Model */
     }	    
   dither_set_density(dither, oversample, dither_density);
 
-  if (landscape)
+  in  = malloc(image_width * image_bpp);
+  out = malloc(image_width * out_bpp * 2);
+
+  errdiv  = image_height / out_height;
+  errmod  = image_height % out_height;
+  errval  = 0;
+  errlast = -1;
+  errline  = 0;
+  
+  for (y = 0; y < out_height; y ++)
   {
-    in  = malloc(image_height * image_bpp);
-    out = malloc(image_height * out_bpp * 2);
+    if ((y & 255) == 0)
+      Image_note_progress(image, y, out_height);
 
-    errdiv  = image_width / out_height;
-    errmod  = image_width % out_height;
-    errval  = 0;
-    errlast = -1;
-    errline  = image_width - 1;
-    
-    for (x = 0; x < out_height; x ++)
+    if (errline != errlast)
     {
-      if ((x & 255) == 0)
- 	Image_note_progress(image, x, out_height);
-
-      if (errline != errlast)
-      {
-        errlast = errline;
-	Image_get_col(image, in, errline);
-      }
-
-      (*colorfunc)(in, out, image_height, image_bpp, cmap, &nv);
-
-      if (nv.image_type == IMAGE_MONOCHROME)
-	dither_fastblack(out, x, dither, black);
-      else if (output_type == OUTPUT_GRAY)
-	dither_black(out, x, dither, black);
-      else
-	dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, 0, black);
-
-      if (use_softweave)
-	escp2_write_weave(weave, prn, length, ydpi, model, out_width, left,
-			  xdpi, cyan, magenta, yellow, black, lcyan, lmagenta);
-      else
-	escp2_write_microweave(prn, black, cyan, magenta, yellow, lcyan,
-			       lmagenta, length, xdpi, ydpi, model,
-			       out_width, left, bits);
-
-      errval += errmod;
-      errline -= errdiv;
-      if (errval >= out_height)
-      {
-        errval -= out_height;
-        errline --;
-      }
+      errlast = errline;
+      Image_get_row(image, in, errline);
     }
-    if (use_softweave)
-      escp2_flush(weave, model, out_width, left, ydpi, xdpi, prn);
+
+    (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
+
+    if (nv.image_type == IMAGE_MONOCHROME)
+      dither_fastblack(out, y, dither, black);
+    else if (output_type == OUTPUT_GRAY)
+      dither_black(out, y, dither, black);
     else
-      escp2_free_microweave();
+      dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		  yellow, 0, black);
+
+    if (use_softweave)
+      escp2_write_weave(weave, prn, length, ydpi, model, out_width, left,
+			xdpi, cyan, magenta, yellow, black, lcyan, lmagenta);
+    else
+      escp2_write_microweave(prn, black, cyan, magenta, yellow, lcyan,
+			     lmagenta, length, xdpi, ydpi, model,
+			     out_width, left, bits);
+    errval += errmod;
+    errline += errdiv;
+    if (errval >= out_height)
+    {
+      errval -= out_height;
+      errline ++;
+    }
   }
+  if (use_softweave)
+    escp2_flush(weave, model, out_width, left, ydpi, xdpi, prn);
   else
-  {
-    in  = malloc(image_width * image_bpp);
-    out = malloc(image_width * out_bpp * 2);
+    escp2_free_microweave();
 
-    errdiv  = image_height / out_height;
-    errmod  = image_height % out_height;
-    errval  = 0;
-    errlast = -1;
-    errline  = 0;
-    
-    for (y = 0; y < out_height; y ++)
-    {
-      if ((y & 255) == 0)
-	Image_note_progress(image, y, out_height);
-
-      if (errline != errlast)
-      {
-        errlast = errline;
-	Image_get_row(image, in, errline);
-      }
-
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
-
-      if (nv.image_type == IMAGE_MONOCHROME)
-	dither_fastblack(out, y, dither, black);
-      else if (output_type == OUTPUT_GRAY)
-	dither_black(out, y, dither, black);
-      else
-	dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, 0, black);
-
-      if (use_softweave)
-	escp2_write_weave(weave, prn, length, ydpi, model, out_width, left,
-			  xdpi, cyan, magenta, yellow, black, lcyan, lmagenta);
-      else
-	escp2_write_microweave(prn, black, cyan, magenta, yellow, lcyan,
-			       lmagenta, length, xdpi, ydpi, model,
-			       out_width, left, bits);
-      errval += errmod;
-      errline += errdiv;
-      if (errval >= out_height)
-      {
-        errval -= out_height;
-        errline ++;
-      }
-    }
-    if (use_softweave)
-      escp2_flush(weave, model, out_width, left, ydpi, xdpi, prn);
-    else
-      escp2_free_microweave();
-  }
   free_dither(dither);
 
  /*
@@ -1488,21 +1324,53 @@ escp2_fold(const unsigned char *line,
 }
 
 static void
-escp2_split_2(int length,
-	      int bits,
-	      const unsigned char *in,
-	      unsigned char *outhi,
-	      unsigned char *outlo)
+escp2_split_2_1(int length,
+		const unsigned char *in,
+		unsigned char *outhi,
+		unsigned char *outlo)
 {
   int i, j;
   int row = 0;
-  int base = (1 << bits) - 1;
-  for (i = 0; i < length * 2; i++)
+  int limit = length * 2;
+  for (i = 0; i < limit; i++)
     {
       unsigned char inbyte = in[i];
       outlo[i] = 0;
       outhi[i] = 0;
-      for (j = base; j < 256; j <<= bits)
+      for (j = 1; j < 256; j += j)
+	{
+	  if (inbyte & j)
+	    {
+	      if (row == 0)
+		{
+		  outlo[i] |= j;
+		  row = 1;
+		}
+	      else
+		{
+		  outhi[i] |= j;
+		  row = 0;
+		}
+	    }
+	}
+    }
+}
+
+static void
+escp2_split_2_2(int length,
+		const unsigned char *in,
+		unsigned char *outhi,
+		unsigned char *outlo)
+{
+  int i, j;
+  int row = 0;
+  int limit = length * 2;
+  for (i = 0; i < limit; i++)
+    {
+      unsigned char inbyte = in[i];
+      outlo[i] = 0;
+      outhi[i] = 0;
+      for (j = 3; j < 256; j *= 4)
 	{
 	  if (inbyte & j)
 	    {
@@ -1519,6 +1387,19 @@ escp2_split_2(int length,
 	    }
 	}
     }
+}
+
+static void
+escp2_split_2(int length,
+	      int bits,
+	      const unsigned char *in,
+	      unsigned char *outhi,
+	      unsigned char *outlo)
+{
+  if (bits == 2)
+    escp2_split_2_2(length, in, outhi, outlo);
+  else
+    escp2_split_2_1(length, in, outhi, outlo);
 }
 
 static void
@@ -2101,25 +1982,52 @@ escp2_write_microweave(FILE          *prn,	/* I - Print file or command */
  * 256 rows, or 1105920 bytes.  Considering that the Photo EX can print
  * 11" wide, we're looking at more like 1.5 MB.  In fact, these printers are
  * capable of 1440 dpi horizontal resolution.  This would require 3 MB.  The
- * printers actually have 64K.
+ * printers actually have 64K-256K.
  *
- * With the newer (750 and 1200) printers it's even worse, since these printers
- * support multiple dot sizes.  But that's neither here nor there.
+ * With the newer (740/750 and later) printers it's even worse, since these
+ * printers support multiple dot sizes.  But that's neither here nor there.
  *
- * The printer is capable of printing an image fed to it as single raster
- * lines.  This is called MicroWeave (tm).  It actually produces extremely
- * high quality output, but it only uses one nozzle per color per pass.
- * This means that it has to make a lot of passes to print a page, so it's
- * extremely slow (a full 8.5x11" page takes over 30 minutes!).  It's also
- * not possible to print very close to the bottom of the page with MicroWeave
- * since only the first nozzle is used, and the head cannot get closer than
- * some distance from the edge of the page.
+ * Older Epson printers had a mode called MicroWeave (tm).  In this mode, the
+ * host fed the printer individual rows of dots, and the printer bundled them
+ * up and sent them to the print head in the correct order to achieve high
+ * quality.  This MicroWeave mode still works in new printers, but the
+ * implementation is very minimal: the printer uses exactly one nozzle of
+ * each color (the first one).  This makes printing extremely slow (more than
+ * 30 minutes for one 8.5x11" page), although the quality is extremely high
+ * with no visible banding whatsoever.  It's not good for the print head,
+ * though, since no ink is flowing through the other nozzles.  This leads to
+ * drying of ink and possible permanent damage to the print head.
  *
- * The solution is to have the host rearrange the output so that a single
- * pass is fed to the print head.  This means that we have to feed the printer
- * every 8th line as a single pass, and we then have to interleave ("weave")
- * the other raster lines as separate passes.  This allows us to use all 32
- * nozzles, and achieve much higher printing speed.
+ * By the way, although the Epson manual says that microweave mode should be
+ * used at 720 dpi, 360 dpi continues to work in much the same way.  At 360
+ * dpi, data is fed to the printer one row at a time on all Epson printers.
+ * The pattern that the printer uses to print is very prone to banding.
+ * However, 360 dpi is inherently a low quality mode; if you're using it,
+ * presumably you don't much care about quality.
+ *
+ * Printers from roughly the Stylus Color 600 and later do not have the
+ * capability to do MicroWeave correctly.  Instead, the host must arrange
+ * the output in the order that it will be sent to the print head.  This
+ * is a very complex process; the jets in the print head are spaced more
+ * than one row (1/720") apart, so we can't simply send consecutive rows
+ * of dots to the printer.  Instead, we have to pass e. g. the first, ninth,
+ * 17th, 25th... rows in order for them to print in the correct position on
+ * the paper.  This interleaving process is called "soft" weaving.
+ *
+ * This decision was probably made to save money on memory in the printer.
+ * It certainly makes the driver code far more complicated than it would
+ * be if the printer could arrange the output.  Is that a bad thing?
+ * Usually this takes far less CPU time than the dithering process, and it
+ * does allow us more control over the printing process, e. g. to reduce
+ * banding.  Conceivably, we could even use this ability to map out bad
+ * jets.
+ *
+ * Interestingly, apparently the Windows (and presumably Macintosh) drivers
+ * for most or all Epson printers still list a "microweave" mode.
+ * Experiments have demonstrated that this does not in fact use the
+ * "microweave" mode of the printer.  Possibly it does nothing, or it uses
+ * a different weave pattern from what the non-"microweave" mode does.
+ * This is unnecessarily confusing.
  *
  * What makes this interesting is that there are many different ways of
  * of accomplishing this goal.  The naive way would be to divide the image
@@ -2163,12 +2071,101 @@ escp2_write_microweave(FILE          *prn,	/* I - Print file or command */
  * position.  However, if we want four passes, we have to effectively print
  * each line twice.  Actually doing this would increase the density, so
  * what we do is print half the dots on each pass.  This produces near-perfect
- * output, and it's far faster than using "MicroWeave".
+ * output, and it's far faster than using (pseudo) "MicroWeave".
  *
  * The current algorithm is not completely general.  The number of passes
  * is limited to (nozzles / gap).  On the Photo EX class printers, that limits
  * it to 4 -- 32 nozzles, an inter-nozzle gap of 8 lines.  Furthermore, there
- * are a number of routines that are only coded up to 4 passes.
+ * are a number of routines that are only coded up to 8 passes.  Fortunately,
+ * this is enough passes to get rid of most banding.  What's left is a very
+ * fine pattern that is sometimes described as "corduroy", since the pattern
+ * looks like that kind of fabric.
+ *
+ * Newer printers (those that support variable dot sizes, such as the 740,
+ * 1200, etc.) have an additional complication: when used in softweave mode,
+ * they operate at 360 dpi horizontal resolution.  This requires FOUR passes
+ * to achieve 1440x720 dpi.  Thus, to enable us to break up each row
+ * into separate sub-rows, we have to actually print each row eight times.
+ * Fortunately, all such printers have 48 nozzles and a gap of 6 rows,
+ * except for the high-speed 900, which uses 96 nozzles and a gap of 2 rows.
+ *
+ * I cannot let this entirely pass without commenting on the Stylus Color 440.
+ * This is a very low-end printer with 21 (!) nozzles and a separation of 8.
+ * The weave routine works correctly with single-pass printing, which is enough
+ * to minimally achieve 720 dpi output (it's physically a 720 dpi printer).
+ * However, the routine does not work correctly at more than one pass per row.
+ * Therefore, this printer bands badly.
+ *
+ * Yet another complication is how to get near the top and bottom of the page.
+ * This algorithm lets us print to within one head width of the top of the
+ * page, and a bit more than one head width from the bottom.  That leaves a
+ * lot of blank space.  Doing the weave properly outside of this region is
+ * increasingly difficult as we get closer to the edge of the paper; in the
+ * interior region, any nozzle can print any line, but near the top and
+ * bottom edges, only some nozzles can print.  We've handled this for now by
+ * using the naive way mentioned above near the borders, and switching over
+ * to the high quality method in the interior.  Unfortunately, this means
+ * that the quality is quite visibly degraded near the top and bottom of the
+ * page.  Algorithms that degrade more gracefully are more complicated.
+ * Epson does not advertise that the printers can print at the very top of the
+ * page, although in practice most or all of them can.  I suspect that the
+ * quality that can be achieved very close to the top is poor enough that
+ * Epson does not want to allow printing there.  That is a valid decision,
+ * although we have taken another approach.
+ *
+ * To compute the weave information, we need to start with the following
+ * information:
+ *
+ * 1) The number of jets the print head has for each color;
+ *
+ * 2) The separation in rows between the jets;
+ *
+ * 3) The horizontal resolution of the printer;
+ *
+ * 4) The desired horizontal resolution of the output;
+ *
+ * 5) The desired extra passes to reduce banding.
+ *
+ * As discussed above, each row is actually printed in one or more passes
+ * of the print head; we refer to these as subpasses.  For example, if we're
+ * printing at 1440(h)x720(v) on a printer with true horizontal resolution of
+ * 360 dpi, and we wish to print each line twice with different nozzles
+ * to reduce banding, we need to use 8 subpasses.  The dither routine
+ * will feed us a complete row of bits for each color; we have to split that
+ * up, first by round robining the bits to ensure that they get printed at
+ * the right micro-position, and then to split up the bits that are actually
+ * turned on into two equal chunks to reduce banding.
+ *
+ * Given the above information, and the desired row index and subpass (which
+ * together form a line number), we can compute:
+ *
+ * 1) Which pass this line belongs to.  Passes are numbered consecutively,
+ *    and each pass must logically (see #3 below) start at no smaller a row
+ *    number than the previous pass, as the printer cannot advance by a
+ *    negative amount.
+ *
+ * 2) Which jet will print this line.
+ *
+ * 3) The "logical" first line of this pass.  That is, what line would be
+ *    printed by jet 0 in this pass.  This number may be less than zero.
+ *    If it is, there are ghost lines that don't actually contain any data.
+ *    The difference between the logical first line of this pass and the
+ *    logical first line of the preceding pass tells us how many lines must
+ *    be advanced.
+ *
+ * 4) The "physical" first line of this pass.  That is, the first line index
+ *    that is actually printed in this pass.  This information lets us know
+ *    when we must prepare this pass.
+ *
+ * 5) The last line of this pass.  This lets us know when we must actually
+ *    send this pass to the printer.
+ *
+ * 6) The number of ghost rows this pass contains.  We must still send the
+ *    ghost data to the printer, so this lets us know how much data we must
+ *    fill in prior to the start of the pass.
+ *
+ * The bookkeeping to keep track of all this stuff is quite hairy, and needs
+ * to be documented separately.
  *
  * The routine initialize_weave calculates the basic parameters, given
  * the number of jets and separation between jets, in rows.
@@ -2320,7 +2317,8 @@ get_color_by_params(int plane, int density)
  *
  * Rules:
  *
- * 1) Currently, osample * v_subpasses * v_subsample <= 4
+ * 1) Currently, osample * v_subpasses * v_subsample <= 8, and no one
+ *    of these variables may exceed 4.
  *
  * 2) first_line >= 0
  *
@@ -2346,7 +2344,6 @@ initialize_weave(int jets,	/* Width of print head */
 		 int phys_lines) /* Total height of the page in rows */
 {
   int i;
-  int k;
   int lastline;
   escp2_softweave_t *sw = malloc(sizeof (escp2_softweave_t));
   if (jets <= 1)
@@ -2433,9 +2430,9 @@ initialize_weave(int jets,	/* Width of print head */
 
   sw->horizontal_width = (linewidth + 128 + 7) * 129 / 128;
   sw->vertical_height = lineheight;
-  sw->lineoffsets = malloc(sw->vmod * sizeof(lineoff_t) * sw->oversample);
-  sw->lineactive = malloc(sw->vmod * sizeof(lineactive_t) * sw->oversample);
-  sw->linebases = malloc(sw->vmod * sizeof(linebufs_t) * sw->oversample);
+  sw->lineoffsets = malloc(sw->vmod * sizeof(lineoff_t));
+  sw->lineactive = malloc(sw->vmod * sizeof(lineactive_t));
+  sw->linebases = malloc(sw->vmod * sizeof(linebufs_t));
   sw->passes = malloc(sw->vmod * sizeof(pass_t));
   sw->linecounts = malloc(sw->vmod * sizeof(int));
   sw->lineno = 0;
@@ -2444,13 +2441,10 @@ initialize_weave(int jets,	/* Width of print head */
     {
       int j;
       sw->passes[i].pass = -1;
-      for (k = 0; k < sw->oversample; k++)
+      for (j = 0; j < sw->ncolors; j++)
 	{
-	  for (j = 0; j < sw->ncolors; j++)
-	    {
-	      sw->linebases[k * sw->vmod + i].v[j] =
-		malloc(jets * sw->bitwidth * sw->horizontal_width / 8);
-	    }
+	  sw->linebases[i].v[j] =
+	    malloc(jets * sw->bitwidth * sw->horizontal_width / 8);
 	}
     }
   return (void *) sw;
@@ -2459,7 +2453,7 @@ initialize_weave(int jets,	/* Width of print head */
 static void
 destroy_weave(void *vsw)
 {
-  int i, j, k;
+  int i, j;
   escp2_softweave_t *sw = (escp2_softweave_t *) vsw;
   free(sw->linecounts);
   free(sw->passes);
@@ -2467,12 +2461,9 @@ destroy_weave(void *vsw)
   free(sw->lineoffsets);
   for (i = 0; i < sw->vmod; i++)
     {
-      for (k = 0; k < sw->oversample; k++)
+      for (j = 0; j < sw->ncolors; j++)
 	{
-	  for (j = 0; j < sw->ncolors; j++)
-	    {
-	      free(sw->linebases[k * sw->vmod + i].v[j]);
-	    }
+	  free(sw->linebases[i].v[j]);
 	}
     }
   free(sw->linebases);
