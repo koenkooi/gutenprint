@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.11 2000/05/13 14:26:49 rlk Exp $"
+ * "$Id: pcl-unprint.c,v 1.12 2000/05/15 17:12:42 davehill Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -28,7 +28,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.11 2000/05/13 14:26:49 rlk Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.12 2000/05/15 17:12:42 davehill Exp $";
 
 /* 
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -125,7 +125,7 @@ typedef struct {
 #define PCL_PRINT_QUALITY 23
 #define PCL_PJL_COMMAND 24
 #define PCL_GRAY_BALANCE 25
-#define PCL_UNK1 26
+#define PCL_DRIVER_CONFIG 26
 #define PCL_PAGE_ORIENTATION 27
 #define PCL_VERTICAL_CURSOR_POSITIONING_BY_DOTS 28
 #define PCL_HORIZONTAL_CURSOR_POSITIONING_BY_DOTS 29
@@ -173,7 +173,7 @@ commands_t pcl_commands[] =
 	{ "*o", 'D', 0, PCL_DEPLETION, "Depletion" },
 	{ "*o", 'M', 0, PCL_PRINT_QUALITY, "Print Quality" },
 	{ "*o", 'Q', 0, PCL_SHINGLING, "Raster Graphics Shingling" },
-	{ "*o", 'W', 1, PCL_UNK1, "Unknown 1" },
+	{ "*o", 'W', 1, PCL_DRIVER_CONFIG, "Driver Configuration Command" },
 /* Cursor Positioning */
 	{ "*p", 'X', 0, PCL_HORIZONTAL_CURSOR_POSITIONING_BY_DOTS, "Horizontal Cursor Positioning by Dots" },
 	{ "*p", 'Y', 0, PCL_VERTICAL_CURSOR_POSITIONING_BY_DOTS, "Vertical Cursor Positioning by Dots" },
@@ -1306,6 +1306,7 @@ int main(int argc, char *argv[])
 	    case PCL_PALETTE_CONFIGURATION :
 	    case PCL_UNIT_OF_MEASURE :
 	    case PCL_GRAY_BALANCE :
+	    case PCL_DRIVER_CONFIG :
 		fprintf(stderr, "%s: %d (ignored)", pcl_commands[command_index].description, numeric_arg);
 		if (pcl_commands[command_index].has_data == 1) {
 		    fprintf(stderr, " Data: ");
@@ -1579,18 +1580,6 @@ int main(int argc, char *argv[])
 		    break;
 		}
 		fprintf(stderr, " (ignored)\n");
-		break;
-
-	    case PCL_UNK1 :
-		fprintf(stderr, "ERROR: Unknown command: %s%d%c", initial_command,
-		    numeric_arg, final_command);
-		if (pcl_commands[command_index].has_data == 1) {
-		    fprintf(stderr, " Data: ");
-		    for (i=0; i < numeric_arg; i++) {
-			fprintf(stderr, "%02x ", (unsigned char) data_buffer[i]);
-		    }
-		}
-		fprintf(stderr, "\n");
 		break;
 
 	    default :
