@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4 2004/09/17 18:38:13 rleigh Exp $"
+ * "$Id: print.c,v 1.5 2004/09/29 00:41:45 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -219,10 +219,15 @@ run (const char        *name,		/* I - Name of print program. */
   drawable_ID = param[2].data.d_int32;
 
   image_filename = gimp_image_get_filename (image_ID);
-  if (strchr(image_filename, '/'))
-    image_filename = strrchr(image_filename, '/') + 1;
-  stpui_set_image_filename(image_filename);
-  /* g_free(image_filename); */
+  if (image_filename)
+    {
+      if (strchr(image_filename, '/'))
+	image_filename = strrchr(image_filename, '/') + 1;
+      stpui_set_image_filename(image_filename);
+      /* g_free(image_filename); */
+    }
+  else
+    stpui_set_image_filename("Untitled");
 
   /*  eventually export the image */
   switch (run_mode)
