@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.66 2002/11/02 03:29:29 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.67 2002/11/02 04:02:55 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1254,7 +1254,7 @@ create_scaling_frame (void)
                       NULL);
 
   /*
-   * The inch/cm toggles
+   * The units toggles
    */
 
   table = gtk_table_new (2, (unit_count + 1) / 2, FALSE);
