@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.1 2002/12/27 18:02:54 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.2 2002/12/27 18:08:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -71,14 +71,16 @@ static stp_image_t theImage =
 stp_image_t *
 Image_Thumbnail_new(const guchar *data, gint w, gint h, gint bpp)
 {
-  thumbnail_image_t *im = xmalloc(sizeof(thumbnail_image_t));
+  thumbnail_image_t *im;
+  if (! theImage.rep)
+    theImage.rep = xmalloc(sizeof(thumbnail_image_t));
+  im = (thumbnail_image_t *) (theImage.rep);
   memset(im, 0, sizeof(thumbnail_image_t));
   im->data = data;
   im->w = w;
   im->h = h;
   im->bpp = bpp;
 
-  theImage.rep = im;
   theImage.reset(&theImage);
   return &theImage;
 }
@@ -148,5 +150,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.1 2002/12/27 18:02:54 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.2 2002/12/27 18:08:37 rlk Exp $".
  */
