@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.6 2002/07/31 02:16:12 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.7 2002/08/09 10:54:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1733,8 +1733,8 @@ static const escp2_variable_inklist_t variable_2pl_inks =
     &escp2_multishot_standard_inks,
     &escp2_6pl_standard_inks,
     &escp2_4pl_standard_inks,
-    &escp2_4pl_2880_standard_inks,
-    &escp2_4pl_2880_standard_inks,
+    &escp2_4pl_standard_inks,
+    &escp2_4pl_standard_inks,
     &escp2_2pl_2880_standard_inks,
   },
   {
@@ -1744,8 +1744,8 @@ static const escp2_variable_inklist_t variable_2pl_inks =
     &escp2_multishot_photo_inks,
     &escp2_6pl_photo_inks,
     &escp2_4pl_photo_inks,
-    &escp2_4pl_2880_photo_inks,
-    &escp2_4pl_2880_photo_inks,
+    &escp2_4pl_photo_inks,
+    &escp2_4pl_photo_inks,
     &escp2_2pl_2880_photo_inks
   },
   { NULL, },
@@ -1757,8 +1757,8 @@ static const escp2_variable_inklist_t variable_2pl_inks =
     &piezo_multishot_quadtone_inks,
     &piezo_6pl_quadtone_inks,
     &piezo_4pl_quadtone_inks,
-    &piezo_4pl_2880_quadtone_inks,
-    &piezo_4pl_2880_quadtone_inks,
+    &piezo_4pl_quadtone_inks,
+    &piezo_4pl_quadtone_inks,
     &piezo_2pl_2880_quadtone_inks,
   },
   {
@@ -1768,8 +1768,8 @@ static const escp2_variable_inklist_t variable_2pl_inks =
     &escp2_multishot_extended_inks,
     &escp2_6pl_extended_inks,
     &escp2_4pl_extended_inks,
-    &escp2_4pl_2880_extended_inks,
-    &escp2_4pl_2880_extended_inks,
+    &escp2_4pl_extended_inks,
+    &escp2_4pl_extended_inks,
     &escp2_2pl_2880_extended_inks,
   },
 };
@@ -2821,7 +2821,7 @@ static const escp2_base_resolutions_t variable_base_res =
 {  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  360 };
 
 static const escp2_base_resolutions_t stp950_base_res =
-{  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  720,  720,  720 };
+{  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  720 };
 
 static const escp2_base_resolutions_t stc900_base_res =
 {  360,  360,  360,  360,  360,  360,  360,  360,  180,  180,  180,  180,  180 };
@@ -3896,9 +3896,9 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   },
   /* 47: Stylus Photo 2100/2200 */
   {
-    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO |
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_YES |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO),
-    96, 1, 2, 192, 1, 1, 7,
+    96, 1, 2, 96, 1, 2, 7,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(13), INCH(1200), INCH(2), INCH(4),
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -3910,7 +3910,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   },
   /* 48: Stylus Pro 7600 */
   {
-    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO |
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_YES |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_YES),
     1, 1, 1, 1, 1, 1, 7,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
@@ -3924,7 +3924,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   },
   /* 49: Stylus Pro 9600 */
   {
-    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO |
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_YES |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_YES),
     1, 1, 1, 1, 1, 1, 7,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
