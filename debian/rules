@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.45 2003/01/23 19:59:04 rleigh Exp $
+# $Id: rules,v 1.46 2003/01/24 00:10:33 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -56,9 +56,9 @@ clean: debian/control
 
 	-$(MAKE) distclean
 	-test -r /usr/share/misc/config.sub && \
-	  cp -f /usr/share/misc/config.sub config.sub
+	  cp -f /usr/share/misc/config.sub scripts/config.sub
 	-test -r /usr/share/misc/config.guess && \
-	  cp -f /usr/share/misc/config.guess config.guess
+	  cp -f /usr/share/misc/config.guess scripts/config.guess
 
 	rm -rf debian/build debian/install
 	rm -rf debian/libgimpprint.install debian/libgimpprint-doc.doc-base debian/libgimpprint-doc.install
