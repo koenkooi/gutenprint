@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.60 2004/09/17 18:38:20 rleigh Exp $"
+ * "$Id: escp2-papers.c,v 1.61 2004/12/07 06:03:39 mtomlinson Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -422,9 +422,9 @@ static const paper_adjustment_t photo2_adjustments[] =
     photo2_hue_adj, photo2_lum_adj, photo2_sat_adj },
   { "BackFilm", 1.00, .5, 0.25, .2, .999, 1, 1, 1, 1, 1, 1,
     photo2_hue_adj, photo2_lum_adj, photo2_sat_adj },
-  { "Matte", 0.85, .75, 0.4, .3, .999, 1, 1, 1, 1, 1, 1.1,
+  { "Matte", 0.85, .5, 0.4, .3, .999, 1, 1, 1, 1, 1, 1.1,
     photo2_hue_adj, photo2_lum_adj, photo2_sat_adj },
-  { "MatteHeavy", 0.85, .75, .3, .2, .999, 1, 1, 1, 1, 1, 1.1,
+  { "MatteHeavy", 0.85, .5, .3, .2, .999, 1, 1, 1, 1, 1, 1.1,
     photo2_hue_adj, photo2_lum_adj, photo2_sat_adj },
   { "Inkjet", 0.85, .5, 0.5, .15, .9, 1, 1, 1, 1, 1, 1.1,
     photo2_hue_adj, photo2_lum_adj, photo2_sat_adj },
