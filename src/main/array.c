@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.7 2003/06/19 23:09:22 rlk Exp $"
+ * "$Id: array.c,v 1.8 2003/06/20 00:15:13 rlk Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -214,7 +214,7 @@ stpi_array_create_from_xmltree(mxml_node_t *array)  /* The array node */
   stp_array_t ret = NULL;
   stpi_internal_array_t *iret;
 
-  stmp = mxmlElementGetAttr(array, "x-size");
+  stmp = stpi_mxmlElementGetAttr(array, "x-size");
   if (stmp)
     {
       x_size = (int) strtoul(stmp, NULL, 0);
@@ -225,7 +225,7 @@ stpi_array_create_from_xmltree(mxml_node_t *array)  /* The array node */
       goto error;
     }
   /* Get y-size */
-  stmp = mxmlElementGetAttr(array, "y-size");
+  stmp = stpi_mxmlElementGetAttr(array, "y-size");
   if (stmp)
     {
       y_size = (int) strtoul(stmp, NULL, 0);
@@ -238,7 +238,7 @@ stpi_array_create_from_xmltree(mxml_node_t *array)  /* The array node */
 
   /* Get the sequence data */
 
-  child = mxmlFindElement(array, array, "sequence", NULL, NULL, MXML_DESCEND);
+  child = stpi_mxmlFindElement(array, array, "sequence", NULL, NULL, MXML_DESCEND);
   if (child)
     seq = stpi_sequence_create_from_xmltree(child);
 
