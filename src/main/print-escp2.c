@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.301 2003/11/16 03:40:39 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.302 2003/11/16 03:56:30 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2239,7 +2239,7 @@ escp2_print_data(stp_vars_t v, stp_image_t *image)
   unsigned char *cd_mask = NULL;
   if (pd->cd_outer_radius > 0)
     {
-      cd_mask = stpi_malloc((pd->image_scaled_width + 7) / 8);
+      cd_mask = stpi_malloc(1 + (pd->image_scaled_width + 7) / 8);
       outer_r_sq = (double) pd->cd_outer_radius * (double) pd->cd_outer_radius;
       inner_r_sq = (double) pd->cd_inner_radius * (double) pd->cd_inner_radius;
     }
