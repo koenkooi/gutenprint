@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.64 2000/02/23 13:19:52 rlk Exp $"
+ * "$Id: print.c,v 1.65 2000/02/24 01:54:36 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -49,7 +49,7 @@
  */
 #include <gtk/gtk.h>
 #include <libgimp/gimp.h>
-#define PLUG_IN_VERSION		"3.1.0 - 21 Feb 2000"
+#define PLUG_IN_VERSION		"3.1.1 - 21 Feb 2000"
 #define PLUG_IN_NAME		"Print"
 
 #include <math.h>
@@ -3578,5 +3578,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.64 2000/02/23 13:19:52 rlk Exp $".
+ * End of "$Id: print.c,v 1.65 2000/02/24 01:54:36 rlk Exp $".
  */
