@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.48 2001/06/04 19:03:13 rleigh Exp $
+dnl $Id: configure.in.in,v 1.49 2001/06/04 19:51:19 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -300,10 +300,6 @@ if test "$CC" = "gcc" ; then
   GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -ansi -pedantic"
 fi
 AC_SUBST(GNUCFLAGS)
-
-if test x${USE_MAINTAINER_MODE} = xtrue ; then
-  AC_DEFINE(GIMP_PRINT_MAINT)
-fi
 
 dnl Checks for libraries.
 AC_CHECK_LIB(readline, readline, HAVE_LIBREADLINE=true, HAVE_LIBREADLINE=false)
