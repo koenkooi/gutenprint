@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.53 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: print-weave.c,v 1.54 2003/11/02 18:01:27 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -313,6 +313,7 @@ calculate_raw_row_parameters(raw_t *w,		/* I - weave parameters */
 		else
 			subpassblock = w->subblocksperpassblock
 			                 - (subblockoffset - 1) / 2;
+		break;
 	default:
 		subpassblock = subblockoffset;
 		break;
