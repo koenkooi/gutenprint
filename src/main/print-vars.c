@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.33 2003/01/25 15:01:25 davehill Exp $"
+ * "$Id: print-vars.c,v 1.34 2003/01/26 02:38:14 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -944,6 +944,7 @@ stpi_fill_parameter_settings(stp_parameter_t *desc,
       desc->p_class = param->p_class;
       desc->is_mandatory = param->is_mandatory;
       desc->is_active = param->is_active;
+      desc->channel = param->channel;
       desc->name = param->name;
       desc->text = param->text;
       desc->help = param->help;

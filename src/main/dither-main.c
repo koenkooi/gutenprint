@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.4 2003/01/20 22:19:14 rlk Exp $"
+ * "$Id: dither-main.c,v 1.5 2003/01/26 02:38:14 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -73,7 +73,7 @@ static const stp_parameter_t dither_parameters[] =
        "paper or smears; increase the density if black "
        "regions are not solid."),
     STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
   },
   {
     "DitherAlgorithm", N_("Dither Algorithm"),
@@ -84,7 +84,7 @@ static const stp_parameter_t dither_parameters[] =
        "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
        "Hybrid Floyd-Steinberg generally produces inferior output."),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
   },
 };
 

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.22 2003/01/20 22:25:47 rlk Exp $
+ *  $Id: gimp-print.h,v 1.23 2003/01/26 02:38:13 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -321,6 +321,7 @@ typedef struct
   stp_parameter_level_t p_level;
   int is_mandatory;
   int is_active;
+  int channel;
   union				/* Limits on the values */
   {				/* the parameter may take */
     stp_curve_t curve;
@@ -1007,5 +1008,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.22 2003/01/20 22:25:47 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.23 2003/01/26 02:38:13 rlk Exp $
  */
