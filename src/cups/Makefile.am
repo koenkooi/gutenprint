@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2001/08/14 00:11:14 easysw Exp $
+## $Id: Makefile.am,v 1.31 2001/08/14 22:59:23 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -99,11 +99,12 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
 	  cd ppd ; \
 	  for language in * ; do \
+	    cd ..; \
 	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
-	    cd $$language; \
+	    cd ppd/$$language; \
 	    for ppdfile in * ; do \
 	      $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir)/$$language ; \
-	    done \
+	    done; \
 	    cd ..; \
 	  done \
 	fi
