@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.138 2001/10/27 17:16:39 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.139 2001/10/27 18:23:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1840,7 +1840,7 @@ static const escp2_dot_size_t spro10000_dotsizes =
 {    4,   -1, 0x11,   -1, 0x11,   -1, 0x10,   -1, 0x10,   -1,   -1,   -1,   -1 };
 
 static const escp2_dot_size_t c3pl_pigment_dotsizes =
-{   -1, 0x13,   -1, 0x10,   -1, 0x10,   -1, 0x11,   -1, 0x12,   -1, 0x12,   -1 };
+{   -1, 0x10,   -1, 0x10,   -1, 0x10,   -1, 0x11,   -1, 0x12,   -1, 0x12,   -1 };
 
 /*
  * Densities are for:
