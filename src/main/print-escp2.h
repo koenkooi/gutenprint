@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.83 2004/08/19 03:24:35 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.84 2004/08/23 12:02:11 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -515,9 +515,9 @@ extern const escp2_drop_list_t stpi_escp2_variable_2pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_pigment_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_pmg_drops;
-extern const escp2_drop_list_t stpi_escp2_variable_4pl_drops;
+extern const escp2_drop_list_t stpi_escp2_variable_1440_4pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_ultrachrome_drops;
-extern const escp2_drop_list_t stpi_escp2_variable_680_4pl_drops;
+extern const escp2_drop_list_t stpi_escp2_variable_2880_4pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_6pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_2000p_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_x80_6pl_drops;
@@ -686,5 +686,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.83 2004/08/19 03:24:35 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.84 2004/08/23 12:02:11 rlk Exp $".
  */
