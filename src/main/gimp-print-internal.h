@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.1 2001/01/22 21:44:25 rleigh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.1 2001/01/23 18:31:19 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -36,5 +36,5 @@
 
 #endif /* _GIMP_PRINT_INTERNAL_H */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.1 2001/01/22 21:44:25 rleigh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.1 2001/01/23 18:31:19 rleigh Exp $".
  */

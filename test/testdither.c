@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.2 2001/01/22 21:44:25 rleigh Exp $"
+ * "$Id: testdither.c,v 1.3 2001/01/23 18:31:19 rleigh Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 #include <gimp-print.h>
-#include <gimp-print-internal.h>
 
 /*
  * NOTE: writing of 2-bit dither images is currently broken due to the
@@ -723,5 +722,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.2 2001/01/22 21:44:25 rleigh Exp $".
+ * End of "$Id: testdither.c,v 1.3 2001/01/23 18:31:19 rleigh Exp $".
  */

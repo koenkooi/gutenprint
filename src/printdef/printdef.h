@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.h,v 1.2 2001/01/22 21:44:25 rleigh Exp $"
+ * "$Id: printdef.h,v 1.3 2001/01/23 18:31:19 rleigh Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -22,7 +22,6 @@
  */
 
 #include <gimp-print.h>
-#include <gimp-print-internal.h>
 
 typedef union yylv {
   int ival;

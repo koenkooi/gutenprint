@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/01/22 19:00:18 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2001/01/23 18:31:19 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,9 @@ pkgdata_DATA = calibrate.ppm
 cups_backend = epson canon
 cups_filter = rastertoprinter commandtoepson commandtocanon
 
+if CUPS_INSTALL
 install-data-local:
+endif
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/backend
@@ -98,8 +100,7 @@ dist-hook:
 	done
 
 clean-local:
-	-rm -rf ppd/*
-	-rmdir ppd
+	-rm -rf ppd
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
