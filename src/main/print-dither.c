@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.47 2001/12/16 23:59:35 rlk Exp $"
+ * "$Id: print-dither.c,v 1.48 2001/12/17 00:05:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -533,7 +533,7 @@ reverse_row_ends(dither_t *d)
       }
 }
 
-static stp_dither_data_t *
+stp_dither_data_t *
 stp_create_dither_data(void)
 {
   stp_dither_data_t *ret = stp_malloc(sizeof(stp_dither_data_t));
@@ -542,7 +542,7 @@ stp_create_dither_data(void)
   return ret;
 }
 
-static void
+void
 stp_add_channel(stp_dither_data_t *d, unsigned char *data,
 		unsigned channel, unsigned subchannel)
 {
@@ -567,7 +567,7 @@ stp_add_channel(stp_dither_data_t *d, unsigned char *data,
   chan->c[subchannel] = data;
 }
 
-static void
+void
 stp_free_dither_data(stp_dither_data_t *d)
 {
   int i;
@@ -583,7 +583,7 @@ do								\
   d->ditherfunc = func;						\
 } while (0)
 
-static void *
+void *
 stp_init_dither(int in_width, int out_width, int horizontal_aspect,
 		int vertical_aspect, stp_vars_t v)
 {
