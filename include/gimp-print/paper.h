@@ -1,5 +1,5 @@
 /*
- * "$Id: paper.h,v 1.1 2003/06/29 16:48:17 rleigh Exp $"
+ * "$Id: paper.h,v 1.2 2004/04/07 18:57:51 rleigh Exp $"
  *
  *   libgimpprint paper functions.
  *
@@ -21,6 +21,10 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+ * @file paper.h
+ * @brief Paper size functions.
+ */
 
 #ifndef __GIMP_PRINT_PAPER_H__
 #define __GIMP_PRINT_PAPER_H__
@@ -29,43 +33,90 @@
 extern "C" {
 #endif
 
+/**
+ * The papersize describes the dimensions of a paper.
+ *
+ * @defgroup papersize papersize
+ * @{
+ */
 
-/*
- * Paper size
+
+
+/**
+ * Units of measurement.
  */
 typedef enum
 {
+  /** English/Imperial units. */
   PAPERSIZE_ENGLISH_STANDARD,
+  /** Metric units. */
   PAPERSIZE_METRIC_STANDARD,
+  /** English/Imperial units (optional paper, not displayed by default). */
   PAPERSIZE_ENGLISH_EXTENDED,
+  /** Metric units (optional paper, not displayed by default). */
   PAPERSIZE_METRIC_EXTENDED
 } stp_papersize_unit_t;
 
+/** The papersize data type. */
 typedef struct
 {
+  /** Short unique name (not translated). */
   char *name;
+  /** Long descriptive name (translated). */
   char *text;
+  /** Comment. */
   char *comment;
+  /** Paper width. */
   unsigned width;
+  /** Paper height. */
   unsigned height;
+  /** Top margin. */
   unsigned top;
+  /** Left margin. */
   unsigned left;
+  /** Bottom margin. */
   unsigned bottom;
+  /** Right margin. */
   unsigned right;
+  /** Units of measurement. */
   stp_papersize_unit_t paper_unit;
 } stp_papersize_t;
 
-/****************************************************************
-*                                                               *
-* PAPER SIZE MANAGEMENT                                         *
-*                                                               *
-****************************************************************/
-
+/**
+ * Get the number of available papersizes.
+ * @returns the number of papersizes.
+ */
 extern int stp_known_papersizes(void);
+
+/**
+ * Get a papersize by name.
+ * @param name the short unique name of the paper.
+ * @returns a pointer to the papersize, or NULL on failure.  The
+ * pointer should not be freed.
+ */
 extern const stp_papersize_t *stp_get_papersize_by_name(const char *name);
-extern const stp_papersize_t *stp_get_papersize_by_size(int l, int w);
+
+/**
+ * Get a papersize by size.
+ * The nearest available size to the size requested will be found.
+ * @param length the length of the paper.
+ * @param width the width of the paper
+ * @returns a pointer to the papersize, or NULL on failure.  The
+ * pointer should not be freed.
+ */
+extern const stp_papersize_t *stp_get_papersize_by_size(int length,
+							int width);
+
+/**
+ * Get a papersize by its index number.
+ * @param idx the index number.  This must not be greater than (total
+ * number of papers - 1).
+ * @returns a pointer to the papersize, or NULL on failure.  The
+ * pointer should not be freed.
+ */
 extern const stp_papersize_t *stp_get_papersize_by_index(int idx);
 
+/** @} */
 
 #ifdef __cplusplus
   }
@@ -73,5 +124,5 @@ extern const stp_papersize_t *stp_get_papersize_by_index(int idx);
 
 #endif /* __GIMP_PRINT_PAPER_H__ */
 /*
- * End of "$Id: paper.h,v 1.1 2003/06/29 16:48:17 rleigh Exp $".
+ * End of "$Id: paper.h,v 1.2 2004/04/07 18:57:51 rleigh Exp $".
  */
