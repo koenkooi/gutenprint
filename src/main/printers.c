@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.26 2003/01/11 01:32:59 rlk Exp $"
+ * "$Id: printers.c,v 1.27 2003/01/11 01:58:10 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -618,9 +618,7 @@ stp_family_register(stp_list_t *family)
 	  check_printer(printer);
 	  if (!stp_list_get_item_by_name(printer_list,
 					 stp_get_driver(printer->printvars)))
-	    stp_list_item_create(printer_list,
-				 stp_list_get_end(printer_list),
-				 (void *) printer);
+	    stp_list_item_create(printer_list, NULL, printer);
 	  printer_item = stp_list_item_next(printer_item);
 	}
     }

@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.5 2003/01/10 04:43:43 rlk Exp $"
+ * "$Id: string-list.c,v 1.6 2003/01/11 01:58:10 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -118,7 +118,5 @@ stp_string_list_add_param(stp_string_list_t list,
   stp_param_string_t *new_string = stp_malloc(sizeof(stp_param_string_t));
   new_string->name = stp_strdup(name);
   new_string->text = stp_strdup(text);
-  stp_list_item_create((stp_list_t *) list,
-		       stp_list_get_end((stp_list_t *) list),
-		       new_string);
+  stp_list_item_create((stp_list_t *) list, NULL, new_string);
 }

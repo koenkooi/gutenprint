@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.12 2003/01/10 04:57:59 rlk Exp $
+ *  $Id: gimp-print.h,v 1.13 2003/01/11 01:58:09 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -854,7 +854,7 @@ extern void stp_list_set_sortfunc(stp_list_t *list, node_sortfunc);
 extern node_sortfunc stp_list_get_sortfunc(stp_list_t *list);
 
 extern int stp_list_item_create(stp_list_t *list,
-				stp_list_item_t *prev,
+				stp_list_item_t *next,
 				void *data);
 extern int stp_list_item_destroy(stp_list_t *list,
 				 stp_list_item_t *item);
@@ -989,5 +989,5 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.12 2003/01/10 04:57:59 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.13 2003/01/11 01:58:09 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.10 2003/01/09 03:08:16 rlk Exp $"
+ * "$Id: print-papers.c,v 1.11 2003/01/11 01:58:09 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -106,9 +106,7 @@ int stp_paper_create(stp_papersize_t pt)
     }
 
   /* Add paper to list */
-  stp_list_item_create(paper_list,
-		       stp_list_get_end(paper_list),
-		       (void *) p);
+  stp_list_item_create(paper_list, NULL, (void *) p);
 
   return 0;
 }
