@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.35.4.3 2004/03/27 23:04:04 rlk Exp $"
+ * "$Id: testpattern.c,v 1.35.4.4 2004/03/28 00:00:24 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -80,6 +80,7 @@ double global_xleft;
 double global_hsize;
 double global_vsize;
 const char *global_image_type;
+const char *global_printing_mode;
 int global_bit_depth;
 int global_channel_depth;
 int global_invert_data = 0;
@@ -202,6 +203,7 @@ initialize_global_parameters(void)
   global_bit_depth = 16;
   global_channel_depth = 0;
   global_image_type = "CMYK";
+  global_printing_mode = NULL;
   global_use_raw_cmyk = 0;
   global_did_something = 0;
   global_invert_data = 0;
@@ -264,6 +266,8 @@ do_print(void)
   stp_set_errfunc(v, writefunc);
   stp_set_outdata(v, stdout);
   stp_set_errdata(v, stderr);
+  if (global_printing_mode)
+    stp_set_string_parameter(v, "PrintingMode", global_printing_mode);
   stp_set_string_parameter(v, "InputImageType", global_image_type);
   sprintf(tmp, "%d", global_bit_depth);
   stp_set_string_parameter(v, "ChannelBitDepth", tmp);

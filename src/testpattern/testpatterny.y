@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.18.4.1 2004/03/26 03:04:37 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.18.4.2 2004/03/28 00:00:24 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -198,7 +198,8 @@ whitespec: WHITE tINT
 
 extendedspec: EXTENDED tINT tINT
 	{
-	  global_image_type = "Raw";
+	  global_image_type = "CMYK";
+	  global_printing_mode = "Raw";
 	  global_invert_data = 0;
 	  global_channel_depth = $2;
 	  if ($2 == 8 || $2 == 16)
