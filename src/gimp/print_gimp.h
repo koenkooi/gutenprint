@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.4 2001/02/19 19:32:53 rleigh Exp $"
+ * "$Id: print_gimp.h,v 1.4.2.1 2001/02/21 23:36:05 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -61,7 +61,7 @@ typedef struct		/**** Printer List ****/
   int	active;			/* Do we know about this printer? */
   char	name[128];		/* Name of printer */
   stp_vars_t v;
-} stp_plist_t;
+} gp_plist_t;
 
 /*
  * Constants for GUI...

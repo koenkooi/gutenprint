@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.1.2.3 2001/02/21 03:04:55 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.1.2.4 2001/02/21 23:36:05 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -305,6 +305,24 @@ extern void	stp_set_media_type (stp_vars_t vv, const char *val);
 extern void	stp_set_media_source (stp_vars_t vv, const char *val);
 extern void	stp_set_ink_type (stp_vars_t vv, const char *val);
 extern void	stp_set_dither_algorithm (stp_vars_t vv, const char *val);
+extern void	stp_set_output_to_n (stp_vars_t vv, const char *val,
+				     int bytes);
+extern void	stp_set_driver_n (stp_vars_t vv, const char *val,
+				  int bytes);
+extern void	stp_set_ppd_file_n (stp_vars_t vv, const char *val,
+				    int bytes);
+extern void	stp_set_resolution_n (stp_vars_t vv, const char *val,
+				      int bytes);
+extern void	stp_set_media_size_n (stp_vars_t vv, const char *val,
+				      int bytes);
+extern void	stp_set_media_type_n (stp_vars_t vv, const char *val,
+				      int bytes);
+extern void	stp_set_media_source_n (stp_vars_t vv, const char *val,
+					int bytes);
+extern void	stp_set_ink_type_n (stp_vars_t vv, const char *val,
+				    int bytes);
+extern void	stp_set_dither_algorithm_n (stp_vars_t vv, const char *val,
+					    int bytes);
 extern void	stp_set_output_type (stp_vars_t vv, int val);
 extern void	stp_set_orientation (stp_vars_t vv, int val);
 extern void	stp_set_left (stp_vars_t vv, int val);
@@ -425,5 +443,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.1.2.3 2001/02/21 03:04:55 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.1.2.4 2001/02/21 23:36:05 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.4 2001/02/21 03:04:56 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.5 2001/02/21 23:36:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -218,6 +218,21 @@ c_strdup(const char *s)
   return ret;
 }
 
+static char *
+c_strndup(const char *s, int n)
+{
+  char *ret;
+  if (!s)
+    return NULL;
+  if (n < 0)
+    return NULL;
+  if (n > strlen(s))
+    n = strlen(s);
+  ret = xmalloc(n + 1);
+  strncpy(ret, s, n);
+  return ret;
+}
+
 void
 stp_free_vars(stp_vars_t vv)
 {
@@ -244,6 +259,18 @@ stp_set_##s(stp_vars_t vv, const char *val)		\
       v->s = NULL;					\
     }							\
   v->s = c_strdup(val);					\
+}							\
+							\
+void							\
+stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  if (v->s)						\
+    {							\
+      free(v->s);					\
+      v->s = NULL;					\
+    }							\
+  v->s = c_strndup(val, n);				\
 }							\
 							\
 const char *						\
