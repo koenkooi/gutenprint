@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.51 2002/05/18 17:25:10 rleigh Exp $
+## $Id: Makefile.am,v 1.52 2002/05/19 20:33:42 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,7 @@ endif
 
 if BUILD_TRANSLATED_PPDS
 PPD_NLS = $(PPD_NLS_1)
-LINGUAS = $(ALL_LINGAS)
+LINGUAS = $(ALL_LINGUAS)
 endif
 
 if USE_NLS
