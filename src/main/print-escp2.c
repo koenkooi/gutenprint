@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.116 2001/09/18 10:52:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.117 2001/09/18 11:11:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1325,7 +1325,7 @@ static const escp2_dot_size_t sc720_dotsizes =
 { 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x11,   -1, 0x11,   -1,   -1,   -1 };
 
 static const escp2_dot_size_t sc660_dotsizes =
-{    3,    3,   -1,    3,    0,    3,    0,   -1,    0,   -1,   -1,   -1 };
+{    3,   -1,    3,   -1,    0,   -1,    0,   -1,    0,   -1,   -1,   -1 };
 
 static const escp2_dot_size_t sc480_dotsizes =
 { 0x13,   -1, 0x13,   -1, 0x13,   -1, 0x10,   -1, 0x10,   -1,   -1,   -1 };
