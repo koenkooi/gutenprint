@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.119 2004/12/29 19:09:55 rlk Exp $
+dnl $Id: configure.ac,v 1.120 2005/04/05 02:28:44 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -38,15 +38,15 @@ pushdef([GUTENPRINT_NAME],              [gutenprint])
 pushdef([GUTENPRINT_MAJOR_VERSION],     [5])
 pushdef([GUTENPRINT_MINOR_VERSION],     [0])
 pushdef([GUTENPRINT_MICRO_VERSION],     [0])
-pushdef([GUTENPRINT_EXTRA_VERSION],     [-beta3])
-pushdef([GUTENPRINT_CURRENT_INTERFACE], [8])
+pushdef([GUTENPRINT_EXTRA_VERSION],     [-beta4])
+pushdef([GUTENPRINT_CURRENT_INTERFACE], [9])
 pushdef([GUTENPRINT_INTERFACE_AGE],     [0])
 pushdef([GUTENPRINT_BINARY_AGE],        [0])
 pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.GUTENPRINT_MICRO_VERSION[]GUTENPRINT_EXTRA_VERSION)
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.119 $)
+AC_REVISION($Revision: 1.120 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
