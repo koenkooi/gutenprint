@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.4 2004/03/09 03:00:25 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.5 2004/03/11 03:37:55 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1999,16 +1999,16 @@ allocate_channels(stp_vars_t v, int line_length)
 	}
     }
   if (pd->logical_channels == 1 && ink_type->inkset != INKSET_EXTENDED)
-    stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+    stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
   else
     {
       switch (ink_type->inkset)
 	{
 	case INKSET_CMYKRB:
-	  stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYKRB);
+	  stp_set_string_parameter(v, "STPIOutputType", "CMYKRB");
 	  break;
 	case INKSET_EXTENDED:
-	  stpi_set_output_type(v, STP_OUTPUT_TYPE_RAW);
+	  stp_set_string_parameter(v, "STPIOutputType", "Raw");
 	  break;
 	case INKSET_CMYK:
 	case INKSET_CcMmYK:
@@ -2016,9 +2016,9 @@ allocate_channels(stp_vars_t v, int line_length)
 	case INKSET_CcMmYKk:
 	default:
 	  if (ink_type->channel_set->channels[0])
-	    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+	    stp_set_string_parameter(v, "STPIOutputType", "CMYK");
 	  else
-	    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+	    stp_set_string_parameter(v, "STPIOutputType", "CMY");
 	  break;
 	}
     }

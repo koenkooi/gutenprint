@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125.4.4 2004/03/09 03:00:26 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.5 2004/03/11 03:37:56 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2287,12 +2287,12 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   if (black)
     {
       if (cyan)
-	stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+	stp_set_string_parameter(v, "STPIOutputType", "CMYK");
       else
-	stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+	stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
     }
   else
-    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+    stp_set_string_parameter(v, "STPIOutputType", "CMY");
 
 /* Allocate buffer for pcl_mode2 tiff compression */
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33.4.1 2004/02/22 04:05:49 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.2 2004/03/11 03:37:56 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -59,7 +59,7 @@ static const char *zero = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
 
 typedef struct
 {
-  stp_output_type_t output_type;
+  const char *output_type;
   int output_channels;
   const char *name;
 } ink_t;
@@ -158,7 +158,7 @@ static const olympus_cap_t* olympus_get_model_capabilities(int model);
 
 static const ink_t cmy_inks[] =
 {
-  { STP_OUTPUT_TYPE_CMY, 3, "CMY" },
+  { "CMY", 3, "CMY" },
 };
 
 static const ink_list_t cmy_ink_list =
@@ -168,7 +168,7 @@ static const ink_list_t cmy_ink_list =
 
 static const ink_t rgb_inks[] =
 {
-  { STP_OUTPUT_TYPE_RGB, 3, "RGB" },
+  { "RGB", 3, "RGB" },
 };
 
 static const ink_list_t rgb_ink_list =
@@ -1201,7 +1201,7 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
   privdata.xsize = print_px_width;
   privdata.ysize = print_px_height;
 
-  stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+  stp_set_string_parameter(v, "STPIOutputType", "CMY");
   
   if (caps->adj_cyan &&
         !stp_check_curve_parameter(v, "CyanCurve", STP_PARAMETER_ACTIVE))
@@ -1233,7 +1233,8 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
       for (i = 0; i < caps->inks->n_items; i++)
 	if (strcmp(ink_type, caps->inks->item[i].name) == 0)
 	  {
-	    stpi_set_output_type(v, caps->inks->item[i].output_type);
+	    stp_set_string_parameter(v, "STPIOutputType",
+				     caps->inks->item[i].output_type);
 	    ink_channels = caps->inks->item[i].output_channels;
 	    break;
 	  }

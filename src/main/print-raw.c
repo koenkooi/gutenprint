@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.3 2004/03/09 03:00:26 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.4 2004/03/11 03:37:56 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -42,7 +42,7 @@
 
 typedef struct
 {
-  stp_output_type_t output_type;
+  const char *output_type;
   int output_channels;
   int rotate_channels;
   const char *name;
@@ -65,12 +65,12 @@ static const raw_printer_t raw_model_capabilities[] =
 
 static const ink_t inks[] =
 {
-  { STP_OUTPUT_TYPE_RGB, 3, 0, "RGB" },
-  { STP_OUTPUT_TYPE_CMY, 3, 0, "CMY" },
-  { STP_OUTPUT_TYPE_CMYK, 4, 1, "CMYK" },
-  { STP_OUTPUT_TYPE_CMYK, 4, 0, "KCMY" },
-  { STP_OUTPUT_TYPE_WHITESCALE, 1, 0, "RGBGray" },
-  { STP_OUTPUT_TYPE_GRAYSCALE, 1, 0, "CMYGray" },
+  { "RGB", 3, 0, "RGB" },
+  { "CMYK", 3, 0, "CMY" },
+  { "CMYK", 4, 1, "CMYK" },
+  { "CMYK", 4, 0, "KCMY" },
+  { "Whitescale", 1, 0, "RGBGray" },
+  { "Grayscale", 1, 0, "CMYGray" },
 };
 
 static const int ink_count = sizeof(inks) / sizeof(ink_t);
@@ -216,7 +216,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
       for (i = 0; i < ink_count; i++)
 	if (strcmp(ink_type, inks[i].name) == 0)
 	  {
-	    stpi_set_output_type(nv, inks[i].output_type);
+	    stp_set_string_parameter(nv, "STPIOutputType", inks[i].output_type);
 	    ink_channels = inks[i].output_channels;
 	    rotate_output = inks[i].rotate_channels;
 	    break;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.137.4.3 2004/03/09 03:00:26 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.137.4.4 2004/03/11 03:37:56 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1861,12 +1861,12 @@ densityDivisor /= 1.2;
   if (cols.p.k)
     {
       if (cols.p.c)
-	stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+	stp_set_string_parameter(v, "STPIOutputType", "CMYK");
       else
-	stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+	stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
     }
   else
-    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+    stp_set_string_parameter(v, "STPIOutputType", "CMY");
 
 #ifdef DEBUG
   stpi_erprintf("lexmark: driver will use colors ");
