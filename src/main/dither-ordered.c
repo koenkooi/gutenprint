@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.7.2.5 2003/05/24 22:37:36 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7.2.6 2003/05/25 17:17:20 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -134,7 +134,7 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      if (dither_value >= vmatrix)
+      if (dither_value > 0 && dither_value >= vmatrix)
 	{
 	  stpi_ink_defn_t *subc;
 

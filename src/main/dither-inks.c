@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.14 2003/05/25 16:44:36 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.15 2003/05/25 17:17:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -225,7 +225,7 @@ stpi_dither_finalize_ranges(stp_vars_t v, stpi_dither_channel_t *dc)
 
   for (i = 0; i < dc->nlevels; i++)
     {
-      if (dc->ranges[i].lower->dot_size == dc->ranges[i].upper->dot_size)
+      if (dc->ranges[i].lower->bits == dc->ranges[i].upper->bits)
 	dc->ranges[i].is_same_ink = 1;
       else
 	dc->ranges[i].is_same_ink = 0;
@@ -247,6 +247,10 @@ stpi_dither_finalize_ranges(stp_vars_t v, stpi_dither_channel_t *dc)
 		   "       xvalue[0] %d xvalue[1] %d bits[0] %d bits[1] %d\n",
 		   dc->ranges[i].lower->xvalue, dc->ranges[i].upper->xvalue,
 		   dc->ranges[i].lower->bits, dc->ranges[i].upper->bits);
+      stpi_dprintf(STPI_DBG_INK, v,
+		   "       dot_size[0] %d dot_size[1] %d\n",
+		   dc->ranges[i].lower->dot_size,
+		   dc->ranges[i].upper->dot_size);
       stpi_dprintf(STPI_DBG_INK, v,
 		   "       rangespan %d valuespan %d same_ink %d equal %d\n",
 		   dc->ranges[i].range_span, dc->ranges[i].value_span,

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-fast.c,v 1.7.2.5 2003/05/25 01:50:04 rlk Exp $"
+ * "$Id: dither-fast.c,v 1.7.2.6 2003/05/25 17:17:20 rlk Exp $"
  *
  *   Fast dither algorithm
  *
@@ -83,7 +83,7 @@ print_color_fast(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, int y
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      if (adjusted >= vmatrix)
+      if (adjusted > 0 && adjusted >= vmatrix)
 	{
 	  bits = subc->bits;
 	  tptr = dc->ptr + d->ptr_offset;
