@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.82 2000/09/05 01:37:30 rlk Exp $"
+ * "$Id: print.h,v 1.83 2000/09/05 10:55:12 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -76,9 +76,7 @@
 #define IMAGE_SOLID_TONE	1
 #define IMAGE_CONTINUOUS	2
 #define IMAGE_MONOCHROME	3
-#define IMAGE_FAST_COLOR	4
-#define IMAGE_FAST_GRAYSCALE	5
-#define NIMAGE_TYPES		6
+#define NIMAGE_TYPES		4
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
@@ -316,21 +314,11 @@ extern void	dither_monochrome(const unsigned short *, int, void *,
 extern void	dither_black(const unsigned short *, int, void *,
 			     unsigned char *, int duplicate_line);
 
-extern void	dither_black_fast(const unsigned short *, int, void *,
-				  unsigned char *, int duplicate_line);
-
 extern void	dither_cmyk(const unsigned short *, int, void *,
 			    unsigned char *,
 			    unsigned char *, unsigned char *,
 			    unsigned char *, unsigned char *,
 			    unsigned char *, unsigned char *,
-			    int duplicate_line);
-
-extern void	dither_cmyk_fast(const unsigned short *, int, void *,
-				 unsigned char *,
-				 unsigned char *, unsigned char *,
-				 unsigned char *, unsigned char *,
-				 unsigned char *, unsigned char *,
 			    int duplicate_line);
 
 extern void	merge_printvars(vars_t *user, const vars_t *print);
@@ -465,5 +453,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.82 2000/09/05 01:37:30 rlk Exp $".
+ * End of "$Id: print.h,v 1.83 2000/09/05 10:55:12 rlk Exp $".
  */
