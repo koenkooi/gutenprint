@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2001/02/17 22:42:10 rleigh Exp $
+## $Id: Makefile.am,v 1.10 2001/02/19 19:32:53 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,8 @@ export DESTDIR
 
 MAINT_CHARSET = latin1
 
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
+CFLAGS = @CFLAGS@
+INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS)
 
 AM_CPPFLAGS =\
  -DLOCALEDIR=\""$(localedir)"\"\

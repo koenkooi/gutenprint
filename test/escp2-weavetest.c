@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.9 2001/02/18 11:43:09 wollvieh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.10 2001/02/19 19:32:53 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -68,7 +68,11 @@
 
 #define DEBUG_SIGNAL
 #define MIN(x, y) ((x) <= (y) ? (x) : (y))
+#ifdef INCLUDE_GIMP_PRINT_H
+#include INCLUDE_GIMP_PRINT_H
+#else
 #include <gimp-print.h>
+#endif
 #include <gimp-print-internal.h>
 
 const char header[] = "Legend:\n"

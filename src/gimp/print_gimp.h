@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.3 2001/01/23 00:11:57 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.4 2001/02/19 19:32:53 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -43,7 +43,11 @@
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
 
+#ifdef INCLUDE_GIMP_PRINT_H
+#include INCLUDE_GIMP_PRINT_H
+#else
 #include <gimp-print.h>
+#endif
 
 /*
  * All Gimp-specific code is in this file.

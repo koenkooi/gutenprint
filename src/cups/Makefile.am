@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17 2001/02/19 02:23:09 rlk Exp $
+## $Id: Makefile.am,v 1.18 2001/02/19 19:32:52 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ cups_modeldir = $(pkgdatadir)/model
 
 CFLAGS = @CFLAGS@ $(CUPS_CFLAGS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
-INCLUDES = @INCLUDES@
+INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 ## Programs

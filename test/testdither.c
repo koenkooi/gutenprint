@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.4 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: testdither.c,v 1.5 2001/02/19 19:32:53 rleigh Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -23,7 +23,11 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#ifdef INCLUDE_GIMP_PRINT_H
+#include INCLUDE_GIMP_PRINT_H
+#else
 #include <gimp-print.h>
+#endif
 #include "../lib/libprintut.h"
 
 /*
@@ -723,5 +727,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.4 2001/02/02 01:25:33 rleigh Exp $".
+ * End of "$Id: testdither.c,v 1.5 2001/02/19 19:32:53 rleigh Exp $".
  */

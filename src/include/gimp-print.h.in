@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h,v 1.5 2001/02/09 18:20:22 rleigh Exp $"
+ * "$Id: gimp-print.h.in,v 1.1 2001/02/19 19:32:53 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -281,9 +281,25 @@ typedef struct stp_image
 /*
  * Library versioning details
  */
+
+/* compile time version
+ *  */
+#define GIMPPRINT_MAJOR_VERSION 	(@GIMPPRINT_MAJOR_VERSION@)
+#define GIMPPRINT_MINOR_VERSION 	(@GIMPPRINT_MINOR_VERSION@)
+#define GIMPPRINT_MICRO_VERSION 	(@GIMPPRINT_MICRO_VERSION@)
+#define GIMPPRINT_CURRENT_INTERFACE 	(@GIMPPRINT_CURRENT_INTERFACE@)
+#define GIMPPRINT_BINARY_AGE 		(@GIMPPRINT_BINARY_AGE@)
+#define GIMPPRINT_INTERFACE_AGE 	(@GIMPPRINT_INTERFACE_AGE@)
+#define GIMPPRINT_CHECK_VERSION(major,minor,micro) \
+  (GIMPPRINT_MAJOR_VERSION >  (major) || \
+  (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION > (minor)) || \
+  (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION == (minor) && \
+   GIMPPRINT_MICRO_VERSION >= (micro)))
+	
 extern const unsigned int gimpprint_major_version;
 extern const unsigned int gimpprint_minor_version;
 extern const unsigned int gimpprint_micro_version;
+extern const unsigned int gimpprint_current_interface;
 extern const unsigned int gimpprint_binary_age;
 extern const unsigned int gimpprint_interface_age;
 char* stp_check_version (unsigned int required_major,
@@ -377,5 +393,5 @@ extern const stp_vars_t *stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h,v 1.5 2001/02/09 18:20:22 rleigh Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.1 2001/02/19 19:32:53 rleigh Exp $".
  */
