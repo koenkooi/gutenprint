@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2002/10/27 00:43:01 rlk Exp $
+## $Id: Makefile.am,v 1.14 2002/10/28 22:29:40 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,18 @@ if BUILD_GHOSTSCRIPT
 GHOSTSCRIPT_MAN = ijsgimpprint.1
 endif
 
-MAIN_MAN = gimpprint.3 gimpprint-config.1
+MAIN_MAN = \
+	gimpprint.3 \
+	gimpprint-config.1 \
+	gimpprint-color.7 \
+	gimpprint-dithers.7 \
+	gimpprint-imagetypes.7 \
+	gimpprint-inktypes.7 \
+	gimpprint-mediasizes.7 \
+	gimpprint-mediasources.7 \
+	gimpprint-mediatypes.7 \
+	gimpprint-models.7 \
+	gimpprint-resolutions.7
 
 man_MANS = $(CUPS_MAN) $(ESCPUTIL_MAN) $(GHOSTSCRIPT_MAN) $(MAIN_MAN)
 
@@ -49,9 +60,7 @@ EXTRA_man_MANS = \
 	cups-genppd.8 \
 	cups-genppdconfig.8 \
 	escputil.1 \
-	ijsgimpprint.1 \
-	gimpprint.3 \
-	gimpprint-config.1
+	ijsgimpprint.1
 
 
 ## Rules
@@ -66,7 +75,7 @@ uninstall-local:
 
 ## Clean
 
-DISTCLEANFILES = $(EXTRA_man_MANS)
+DISTCLEANFILES = $(MAIN_MAN) $(EXTRA_man_MANS)
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = $(man_MANS)

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.131 2002/10/09 22:05:39 rleigh Exp $
+## $Id: Makefile.am,v 1.132 2002/10/28 22:29:38 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-non-native-prefix=\$$\{prefix\}
 
 ## Variables
 
-SUBDIRS = include intl lib man src samples test po doc debian scripts
+SUBDIRS = include intl lib src samples test po man doc debian scripts
 DISTDIRS = m4 m4extra
 
 

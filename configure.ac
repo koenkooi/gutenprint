@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.28 2002/10/27 00:43:01 rlk Exp $
+dnl $Id: configure.ac,v 1.29 2002/10/28 22:29:38 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.28 $)
+AC_REVISION($Revision: 1.29 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -645,12 +645,21 @@ AC_CONFIG_FILES([include/gimp-print/gimp-print.h])
 AC_CONFIG_FILES([intl/Makefile])
 AC_CONFIG_FILES([lib/Makefile])
 AC_CONFIG_FILES([man/Makefile])
-AC_CONFIG_FILES([man/escputil.1])
 AC_CONFIG_FILES([man/cups-calibrate.8])
 AC_CONFIG_FILES([man/cups-genppd.8])
 AC_CONFIG_FILES([man/cups-genppdconfig.8])
+AC_CONFIG_FILES([man/escputil.1])
 AC_CONFIG_FILES([man/gimpprint.3])
+AC_CONFIG_FILES([man/gimpprint-color.7])
 AC_CONFIG_FILES([man/gimpprint-config.1])
+AC_CONFIG_FILES([man/gimpprint-dithers.7])
+AC_CONFIG_FILES([man/gimpprint-imagetypes.7])
+AC_CONFIG_FILES([man/gimpprint-inktypes.7])
+AC_CONFIG_FILES([man/gimpprint-mediasizes.7])
+AC_CONFIG_FILES([man/gimpprint-mediasources.7])
+AC_CONFIG_FILES([man/gimpprint-mediatypes.7])
+AC_CONFIG_FILES([man/gimpprint-models.7])
+AC_CONFIG_FILES([man/gimpprint-resolutions.7])
 AC_CONFIG_FILES([man/ijsgimpprint.1])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([samples/Makefile])
