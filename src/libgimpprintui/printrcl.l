@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.3 2003/03/01 02:59:58 rlk Exp $"
+ * "$Id: printrcl.l,v 1.4 2003/03/30 19:42:20 rleigh Exp $"
  *
  *   printrc parser
  *
@@ -64,7 +64,7 @@ digit		[0-9]
 boolean		(True)|(False)
 integer		[-+]?{digit}+
 float		[-+]?{digit}+(\.{digit}+)?([eE][-+]?{digit}+)?
-string		[\"][^\"\n]*[\"]
+string         ([\"][^\"\n]*[\"])|([\'][^\']*[\'])
 ws		[ \t]+
 printrc_hdr	#PRINTRCv2.*\n
 word		[a-zA-Z][a-zA-Z0-9_]*

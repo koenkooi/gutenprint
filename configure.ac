@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.57 2003/03/30 12:52:36 rleigh Exp $
+dnl $Id: configure.ac,v 1.58 2003/03/30 19:42:19 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.57 $)
+AC_REVISION($Revision: 1.58 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -557,7 +557,7 @@ AC_CHECK_LIB(m,pow,
              gimpprint_libdeps="${gimpprint_libdeps} -lm")
 
 PKG_CHECK_MODULES(LIBXML, libxml-2.0)
-GIMPPRINT_CFLAGS="${LIBXML_CFLAGS}"
+GIMPPRINT_CFLAGS="${GIMPPRINT_CFLAGS} ${LIBXML_CFLAGS}"
 GIMPPRINT_LIBDEPS="${GIMPPRINT_LIBDEPS} ${LIBXML_LIBS}"
 gimpprint_requires="${gimpprint_requires} libxml-2.0"
 
