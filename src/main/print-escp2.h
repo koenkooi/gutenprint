@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.56 2003/06/14 21:36:00 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.57 2003/06/15 02:33:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -254,6 +254,31 @@ typedef struct
   size_t n_input_slots;
 } input_slot_list_t;
 
+typedef struct
+{
+  const char *name;
+  const char *text;
+  short min_hres;
+  short min_vres;
+  short max_hres;
+  short max_vres;
+  short desired_hres;
+  short desired_vres;
+} quality_t;
+
+typedef struct
+{
+  const quality_t *qualities;
+  size_t n_quals;
+} quality_list_t;
+
+typedef enum
+{
+  AUTO_MODE_FULL_AUTO,
+  AUTO_MODE_QUALITY,
+  AUTO_MODE_MANUAL
+} auto_mode_t;
+
 #define MODEL_COMMAND_MASK	0xful /* What general command set does */
 #define MODEL_COMMAND_1998	0x0ul
 #define MODEL_COMMAND_1999	0x1ul /* The 1999 series printers */
@@ -380,6 +405,7 @@ typedef struct escp2_printer
   const short *base_resolutions;
   const input_slot_list_t *input_slots;
 /*****************************************************************************/
+  const quality_list_t *quality_list;
   const stp_raw_t *preinit_sequence;
   const stp_raw_t *postinit_remote_sequence;
 } stpi_escp2_printer_t;
@@ -541,5 +567,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.56 2003/06/14 21:36:00 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.57 2003/06/15 02:33:40 rlk Exp $".
  */
