@@ -1,0 +1,13 @@
+Makefile.in
+Makefile
+.deps
+.libs
+printer_options
+foomatic-db
+foomatic-generator
+paper_sizes
+gimp-print-version
+stp_limits
+foomatic-stamp
+mk_printerlist
+printers
