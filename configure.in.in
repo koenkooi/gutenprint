@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.35 2001/05/04 18:59:56 rleigh Exp $
+dnl $Id: configure.in.in,v 1.36 2001/05/05 20:27:07 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ dnl Save this value here, since automake will set cflags later.
 cflags_set=${CFLAGS+set}
 
 dnl Initialize automake stuff.
-AM_INIT_AUTOMAKE(gimp-print, $GIMPPRINT_VERSION)
+AM_INIT_AUTOMAKE(gimp-print, ${GIMPPRINT_VERSION})
 
 dnl Specify a configuration file.
 AM_CONFIG_HEADER(config.h)

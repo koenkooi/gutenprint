@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.19 2001/04/29 01:56:11 rlk Exp $
+## $Id: Makefile.am,v 1.20 2001/05/05 20:27:07 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -79,13 +79,23 @@ pkgdata_DATA = @CUPS_PKG@
 pkgsysconf_DATA = @CUPS_CONF@
 
 if BUILD_CUPS
-install-data-local: ppd
+INSTALL_DATA_LOCAL_DEPS = ppd
 endif
-	$(mkinstalldirs) $(DESTDIR)$(cups_modeldir)
-	cd ppd ; \
-	for ppdfile in * ; do \
-	  $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir) ; \
-	done
+
+if BUILD_CUPS
+INSTALL_PPD = true
+else
+INSTALL_PPD =
+endif
+
+install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
+	if test -n "$(INSTALL_PPD)" ; then \
+	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
+	  cd ppd ; \
+	  for ppdfile in * ; do \
+	    $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir) ; \
+	  done \
+	fi
 
 install-data-hook:
 # Remove unused directories in install tree

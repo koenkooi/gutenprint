@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.95 2001/05/03 20:00:51 rleigh Exp $
+## $Id: Makefile.am,v 1.96 2001/05/05 20:27:07 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -71,9 +71,9 @@ dist-hook:
 	done
 # Do some extra magic to make a distribution for GIMP CVS
 	if test -f .gimp-dist ; then \
-	  rm -rf $(distdir)/src/cups $(distdir)/src/ghost ; \
-	  rm -rf $(distdir)/scripts $(distdir)/test ; \
-	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/stamp-h.in ; \
+	  rm -rf $(distdir)/src/cups $(distdir)/src/escputil $(distdir)/src/foomatic $(distdir)/src/ghost ; \
+	  rm -rf $(distdir)/debian $(distdir)/scripts $(distdir)/test ; \
+	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/configure $(distdir)/stamp-h.in ; \
 	  find $(distdir) -name Makefile.in -print | xargs --no-run-if-empty rm ; \
 	  rm -f .gimp-dist ; \
 	fi
