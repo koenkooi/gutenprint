@@ -1,5 +1,5 @@
 /*
- * "$Id: weave.h,v 1.4 2003/01/20 22:19:57 rlk Exp $"
+ * "$Id: weave.h,v 1.5 2003/03/12 01:30:20 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -225,9 +225,9 @@ extern void *stpi_initialize_weave(int jets, int separation, int oversample,
 							    int n));
 
 extern void stpi_fill_tiff(stpi_softweave_t *sw, int row, int subpass,
-			  int width, int missingstartrows, int color);
+			   int width, int missingstartrows, int color);
 extern void stpi_fill_uncompressed(stpi_softweave_t *sw, int row, int subpass,
-				  int width, int missingstartrows, int color);
+				   int width, int missingstartrows, int color);
 
 extern int stpi_compute_tiff_linewidth(const stpi_softweave_t *sw, int n);
 extern int stpi_compute_uncompressed_linewidth(const stpi_softweave_t *sw, int n);
@@ -236,8 +236,8 @@ extern void stpi_flush_all(void *);
 
 extern void
 stpi_write_weave(void *        vsw,
-		int           length,	/* I - Length of bitmap data */
-		unsigned char *const cols[]);
+		 int           length,	/* I - Length of bitmap data */
+		 unsigned char *const cols[]);
 
 extern stpi_lineoff_t *
 stpi_get_lineoffsets_by_pass(const stpi_softweave_t *sw, int pass);
@@ -256,7 +256,7 @@ stpi_get_pass_by_pass(const stpi_softweave_t *sw, int pass);
 
 extern void
 stpi_weave_parameters_by_row(const stpi_softweave_t *sw, int row,
-			    int vertical_subpass, stpi_weave_t *w);
+			     int vertical_subpass, stpi_weave_t *w);
 
 extern void stpi_destroy_weave(void *);
 
@@ -266,5 +266,5 @@ extern void stpi_destroy_weave(void *);
 
 #endif /* GIMP_PRINT_INTERNAL_WEAVE_H */
 /*
- * End of "$Id: weave.h,v 1.4 2003/01/20 22:19:57 rlk Exp $".
+ * End of "$Id: weave.h,v 1.5 2003/03/12 01:30:20 rlk Exp $".
  */
