@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.11 2000/04/22 23:25:48 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.12 2000/04/29 19:44:40 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -431,7 +431,7 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Brightness", &bright, 0, 400, code);
   code = stp_put_param_int(plist, "Contrast", &cont, 25, 400, code);
   code = stp_put_param_int(plist, "Color", &color, 0, 1, code);
-  code = stp_put_param_int(plist, "Model", &model, 0, 17, code);
+  code = stp_put_param_int(plist, "Model", &model, 0, 19, code);
   code = stp_put_param_int(plist, "Quality", &qual, 0, 9, code);
   code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
   code = stp_put_param_int(plist, "Dither", &algo, 0, num_dither_algos, code);
