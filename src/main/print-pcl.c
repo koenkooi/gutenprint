@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.35 2001/07/29 10:48:54 easysw Exp $"
+ * "$Id: print-pcl.c,v 1.36 2001/07/30 01:35:55 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1067,11 +1067,6 @@ static const pcl_cap_t pcl_model_capabilities[] =
       PCL_PAPERSOURCE_LJ_TRAY2,
       PCL_PAPERSOURCE_LJ_TRAY3,
       PCL_PAPERSOURCE_LJ_TRAY4,
-      PCL_PAPERSIZE_MONARCH_ENV,
-      PCL_PAPERSIZE_COMMERCIAL10_ENV,
-      PCL_PAPERSIZE_DL_ENV,
-      PCL_PAPERSIZE_C5_ENV,
-      PCL_PAPERSIZE_C6_ENV,
       -1,
     },
   },
