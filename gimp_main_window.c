@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.65 2000/10/04 00:56:22 mitsch Exp $"
+ * "$Id: gimp_main_window.c,v 1.66 2000/10/04 01:08:16 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -61,6 +61,7 @@ extern GtkWidget *dither_algo_combo;
 
 extern void gimp_do_color_updates    (void);
 extern void gimp_redraw_color_swatch (void);
+extern void gimp_build_dither_combo  (void);
 
 /*
  *  Main window widgets
@@ -1440,6 +1441,8 @@ gimp_plist_callback (GtkWidget *widget,
 	free (resolutions[i]);
       free (resolutions);
     }
+  if (dither_algo_combo)
+    gimp_build_dither_combo();
 }
 
 #define Combo_get_text(combo) \

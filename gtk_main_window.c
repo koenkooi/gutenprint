@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.56 2000/09/15 12:12:22 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.57 2000/10/04 01:08:16 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -49,6 +49,7 @@ extern int runme;
 extern int saveme;
 extern GtkWidget* gtk_color_adjust_dialog;
 extern void gtk_do_color_updates(void);
+extern GtkWidget* dither_algo_menu;  /* dither menu */
 
 void  printrc_save(void);
 
@@ -1704,6 +1705,8 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
 		       resolutions,
 		       p->v.resolution,
 		       gtk_resolution_callback);
+  if (dither_algo_menu)
+    gtk_build_dither_menu();
 
 }
 

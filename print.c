@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.126 2000/10/04 00:37:55 mitsch Exp $"
+ * "$Id: print.c,v 1.127 2000/10/04 01:08:20 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -751,9 +751,10 @@ do_print_dialog (gchar *proc_name)
 static void
 initialize_printer(plist_t *printer)
 {
+  const vars_t *def = print_default_settings();
   printer->name[0] = '\0';
   printer->active=0;
-  memcpy(&(printer->v), &vars, sizeof(vars));
+  memcpy(&(printer->v), def, sizeof(vars_t));
 }
 
 #define GET_MANDATORY_STRING_PARAM(param)		\
@@ -1490,5 +1491,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.126 2000/10/04 00:37:55 mitsch Exp $".
+ * End of "$Id: print.c,v 1.127 2000/10/04 01:08:20 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.20 2000/09/09 23:15:12 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.21 2000/10/04 01:08:16 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -52,7 +52,7 @@ static GtkWidget* gamma_scale;		/* Scale for gamma */
 static GtkWidget* gamma_entry;         /* Text entry widget for gamma */
 static GtkWidget* dismiss_button;      /* Action area dismiss button */
 static GtkWidget* dither_algo_button;  /* Button for dither type menu */
-static GtkWidget* dither_algo_menu = NULL;  /* dither menu */
+GtkWidget* dither_algo_menu = NULL;  /* dither menu */
 
 static GtkObject* brightness_adjustment;  /* Adjustment object for brightness */
 static GtkObject* saturation_adjustment;  /* Adjustment object for saturation */
