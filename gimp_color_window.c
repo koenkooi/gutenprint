@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.8 2000/06/19 16:40:39 jmv Exp $"
+ * "$Id: gimp_color_window.c,v 1.9 2000/07/02 20:34:58 davehill Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -344,17 +344,13 @@ gimp_build_dither_menu (void)
   gtk_option_menu_set_menu (GTK_OPTION_MENU (dither_algo_button),
 			    dither_algo_menu);
 
-#ifdef DEBUG
-  g_print ("cur_item = \'%s\'\n", cur_item);
-#endif /* DEBUG */
-
   for (i = 0; i < num_dither_algos; i++)
     {
 #ifdef DEBUG
       g_print ("item[%d] = \'%s\'\n", i, dither_algo_names[i]);
 #endif /* DEBUG */
 
-      if (strcmp (dither_algo_names[i], vars.dither_algorithm) == 0)
+      if (strcmp (dither_algo_names[i], plist[plist_current].v.dither_algorithm) == 0)
 	{
 	  gtk_option_menu_set_history (GTK_OPTION_MENU (dither_algo_button), i);
 	  break;
