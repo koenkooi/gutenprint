@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.109 2004/09/30 01:48:48 rlk Exp $"
+   "$Id: printers.xml,v 1.110 2004/12/14 02:17:02 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -230,11 +230,11 @@
         <parameter type="float" name="Gamma">0.636</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
-      <printer name="EPSON Stylus C65" driver="escp2-c65" manufacturer="Epson" model="61">
+      <printer name="EPSON Stylus C65" driver="escp2-c65" manufacturer="Epson" model="66">
         <parameter type="float" name="Gamma">0.636</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
-      <printer name="EPSON Stylus C66" driver="escp2-c66" manufacturer="Epson" model="61">
+      <printer name="EPSON Stylus C66" driver="escp2-c66" manufacturer="Epson" model="66">
         <parameter type="float" name="Gamma">0.636</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>

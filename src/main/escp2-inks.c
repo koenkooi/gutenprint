@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.32 2004/09/17 18:38:20 rleigh Exp $"
+ * "$Id: escp2-inks.c,v 1.33 2004/12/14 02:16:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -134,6 +134,20 @@ static const escp2_dropsize_t escp2_3pl_pigment_2880_dropsizes =
   { "3pl_pigment_2880", 2, { 0.5, 1.0 } };
 static const escp2_dropsize_t escp2_3pl_pigment_5760_dropsizes =
   { "3pl_pigment_5760", 1, { 1.0 } };
+
+/* Stylus C66 */
+static const escp2_dropsize_t escp2_economy_pigment_c66_dropsizes =
+  { "economy_pigment_c66", 3, { 0, 0, 1.0 } };
+static const escp2_dropsize_t escp2_low_pigment_c66_dropsizes =
+  { "low_pigment_c66", 3, { 0.125, 0.25, 1.0 } };
+static const escp2_dropsize_t escp2_6pl_pigment_c66_dropsizes =
+  { "6pl_pigment_c66", 3, { 0.28, 0, 1.0 } };
+static const escp2_dropsize_t escp2_3pl_pigment_c66_dropsizes =
+  { "3pl_pigment_c66", 3, { 0.25, 0.5, 1.0 } };
+static const escp2_dropsize_t escp2_3pl_pigment_c66_2880_dropsizes =
+  { "3pl_pigment_c66_2880", 2, { 0.5, 1.0 } };
+static const escp2_dropsize_t escp2_3pl_pigment_c66_5760_dropsizes =
+  { "3pl_pigment_c66_5760", 1, { 1.0 } };
 
 /* Stylus Photo 2000P */
 static const escp2_dropsize_t escp2_2000p_dropsizes =
@@ -293,6 +307,18 @@ const escp2_drop_list_t stpi_escp2_variable_3pl_pigment_drops =
   &escp2_3pl_pigment_2880_dropsizes,
   &escp2_3pl_pigment_5760_dropsizes,
   &escp2_3pl_pigment_5760_dropsizes,
+};
+
+const escp2_drop_list_t stpi_escp2_variable_3pl_pigment_c66_drops =
+{
+  &escp2_economy_pigment_c66_dropsizes,
+  &escp2_low_pigment_c66_dropsizes,
+  &escp2_low_pigment_c66_dropsizes,
+  &escp2_6pl_pigment_c66_dropsizes,
+  &escp2_3pl_pigment_c66_dropsizes,
+  &escp2_3pl_pigment_c66_2880_dropsizes,
+  &escp2_3pl_pigment_c66_5760_dropsizes,
+  &escp2_3pl_pigment_c66_5760_dropsizes,
 };
 
 const escp2_drop_list_t stpi_escp2_spro10000_drops =
