@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.64.2.3 2003/05/25 01:50:07 rlk Exp $"
+ * "$Id: print-ps.c,v 1.64.2.4 2003/05/25 02:21:34 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -323,7 +323,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   const char	*media_type = stp_get_string_parameter(v, "MediaType");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
   int 		output_type = stp_get_output_type(v);
-  unsigned short *out;
+  unsigned short *out = NULL;
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
   int		i, j;		/* Looping vars */
@@ -651,7 +651,8 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   }
   stpi_image_progress_conclude(image);
 
-  stpi_free(out);
+  if (out)
+    stpi_free(out);
 
   stpi_puts("grestore\n", v);
   stpi_puts("showpage\n", v);
