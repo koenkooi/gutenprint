@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.1.2.2 2004/06/20 14:15:50 rleigh Exp $"
+ * "$Id: ui-utils.c,v 1.1.2.3 2004/06/20 15:26:29 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -139,7 +139,7 @@ dialog_create_action_areav (GtkDialog *dialog,
 	  if (slot_object)
 	    g_signal_connect_object (G_OBJECT (button), "clicked",
 				     G_CALLBACK (callback),
-				     slot_object, (GConnectFlags) 0);
+				     slot_object, G_CONNECT_SWAPPED);
 	  else
 	    g_signal_connect (G_OBJECT (button), "clicked",
 			      G_CALLBACK (callback),
