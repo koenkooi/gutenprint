@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.62 2000/09/17 01:08:55 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.63 2000/09/23 18:02:40 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -240,7 +240,6 @@ gimp_create_main_window (void)
    */
 
   adjusted_thumbnail_data = malloc(3 * thumbnail_w * thumbnail_h);
-  gimp_update_adjusted_thumbnail ();
 
   /*
    * Create the main dialog
@@ -939,6 +938,7 @@ gimp_create_main_window (void)
    */
 
   gimp_plist_callback (NULL, (gpointer) plist_current);
+  gimp_update_adjusted_thumbnail ();
 
   gtk_widget_show (print_dialog);
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.124 2000/09/17 02:45:07 rlk Exp $"
+ * "$Id: print.c,v 1.125 2000/09/23 18:02:40 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -386,15 +386,6 @@ run (char   *name,		/* I - Name of print program. */
   switch (run_mode)
     {
     case RUN_INTERACTIVE:
-      /*
-       * Possibly retrieve data...
-       */
-      gimp_get_data (PLUG_IN_NAME, &vars);
-      vars.page_width = 0;
-      vars.page_height = 0;
-
-      current_printer = get_printer_by_driver (vars.driver);
-
       /*
        * Get information from the dialog...
        */
@@ -1494,5 +1485,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.124 2000/09/17 02:45:07 rlk Exp $".
+ * End of "$Id: print.c,v 1.125 2000/09/23 18:02:40 rlk Exp $".
  */
