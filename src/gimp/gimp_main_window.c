@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.54.12.3 2002/10/26 18:30:11 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.54.12.4 2002/10/26 19:27:48 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -132,10 +132,8 @@ static gint	       physical_orientation = -2; /* Actual orientation */
 static gint	       preview_thumbnail_w = 0;
 static gint	       preview_thumbnail_h = 0;
 
-static gint            printable_left;	/* Left pixel column of page */
-static gint            printable_top;	/* Top pixel row of page */
-static gint            printable_width;	/* Width of page on screen */
-static gint            printable_height;	/* Height of page on screen */
+static gint            printable_width;	/* Width of page */
+static gint            printable_height;	/* Height of page */
 static gint            print_width;	/* Printed width of image */
 static gint            print_height;	/* Printed height of image */
 static gint	       left, right;	        /* Imageable area */
@@ -2761,8 +2759,7 @@ draw_arrow (GdkWindow *w,
  *  gimp_preview_update_callback() -
  */
 static void
-gimp_do_preview_thumbnail (gint paper_left,
-                           gint paper_top)
+gimp_do_preview_thumbnail (void)
 {
   static GdkGC	*gc    = NULL;
   static GdkGC  *gcinv = NULL;
@@ -2772,11 +2769,49 @@ gimp_do_preview_thumbnail (gint paper_left,
   static gint    opy = 0;
   static gint    oph = 0;
   static gint    opw = 0;
+  gint paper_display_left, paper_display_top;
+  gint printable_display_left, printable_display_top;
+  gint preview_x, preview_y;
+  gint preview_w, preview_h;
+  gint paper_display_width, paper_display_height;
+  gint printable_display_width, printable_display_height;
 
-  gint preview_x = 1 + paper_left + preview_ppi * stp_get_left (pv->v) / 72;
-  gint preview_y = 1 + paper_top + preview_ppi * stp_get_top (pv->v) / 72;
-  gint preview_w = MAX (1, ((preview_ppi * print_width) / 72) - 1);
-  gint preview_h = MAX (1, ((preview_ppi * print_height) / 72) - 1);
+  preview_ppi = PREVIEW_SIZE_HORIZ * 72.0 / (gdouble) paper_width;
+
+  if (preview_ppi > PREVIEW_SIZE_VERT * 72.0 / (gdouble) paper_height)
+    preview_ppi = PREVIEW_SIZE_VERT * 72.0 / (gdouble) paper_height;
+  if (preview_ppi > MAX_PREVIEW_PPI)
+    preview_ppi = MAX_PREVIEW_PPI;
+
+  if (preview == NULL || preview->widget.window == NULL)
+    return;
+  /*
+   * Center the page on the preview
+   */
+  paper_display_width = MAX(3, (preview_ppi * paper_width + 71) / 72);
+  paper_display_height = MAX(3, (preview_ppi * paper_height + 71) / 72);
+
+  paper_display_left = (PREVIEW_SIZE_HORIZ - paper_display_width) / 2;
+  paper_display_top = (PREVIEW_SIZE_VERT - paper_display_height) / 2;
+
+  printable_display_width = MAX(3, (preview_ppi * printable_width + 71) / 72);
+  printable_display_height = MAX(3, (preview_ppi * printable_height + 71) /72);
+
+  printable_display_left = paper_display_left + preview_ppi * left / 72;
+  printable_display_top  = paper_display_top + preview_ppi * top / 72 ;
+
+  preview_x = 1 + paper_display_left + preview_ppi * stp_get_left (pv->v) / 72;
+  preview_y = 1 + (paper_display_top + preview_ppi * stp_get_top (pv->v) / 72);
+
+  preview_w = MIN(printable_display_width - 1,
+		  MAX(3, (preview_ppi * print_width) / 72));
+  preview_h = MIN(printable_display_height - 1,
+		  MAX(3, (preview_ppi * print_height) / 72));
+
+  if (preview_w + preview_x > printable_display_left + printable_display_width)
+    preview_x--;
+  if (preview_h + preview_y > printable_display_top + printable_display_height)
+    preview_y--;
 
   if (gc == NULL)
     {
@@ -2867,15 +2902,13 @@ gimp_do_preview_thumbnail (gint paper_left,
     {
       /* draw paper frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
-			  paper_left, paper_top,
-			  MAX(2, (preview_ppi * paper_width) / 72),
-			  MAX(2, (preview_ppi * paper_height) / 72));
+			  paper_display_left, paper_display_top,
+			  paper_display_width, paper_display_height);
 
       /* draw printable frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
-			  printable_left, printable_top,
-			  MAX(2, (preview_ppi * printable_width) / 72),
-			  MAX(2, (preview_ppi * printable_height) / 72));
+			  printable_display_left, printable_display_top,
+			  printable_display_width, printable_display_height);
       need_exposure = 0;
     }
   else if (!frame_valid)
@@ -2883,15 +2916,13 @@ gimp_do_preview_thumbnail (gint paper_left,
       gdk_window_clear (preview->widget.window);
       /* draw paper frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
-			  paper_left, paper_top,
-			  MAX(2, (preview_ppi * paper_width) / 72),
-			  MAX(2, (preview_ppi * paper_height) / 72));
+			  paper_display_left, paper_display_top,
+			  paper_display_width, paper_display_height);
 
       /* draw printable frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
-			  printable_left, printable_top,
-			  MAX(2, (preview_ppi * printable_width) / 72),
-			  MAX(2, (preview_ppi * printable_height) / 72));
+			  printable_display_left, printable_display_top,
+			  printable_display_width, printable_display_height);
       frame_valid = 1;
     }
   else
@@ -2920,7 +2951,7 @@ gimp_do_preview_thumbnail (gint paper_left,
 	}
     }
 
-  draw_arrow (preview->widget.window, gcset, paper_left, paper_top);
+  draw_arrow (preview->widget.window, gcset, paper_display_left, paper_display_top);
 
   if (adjusted_thumbnail_bpp == 1)
     gdk_draw_gray_image (preview->widget.window, gc,
@@ -2932,7 +2963,7 @@ gimp_do_preview_thumbnail (gint paper_left,
 			GDK_RGB_DITHER_NORMAL, preview_data, 3 * preview_w);
 
   /* draw orientation arrow pointing to top-of-paper */
-  draw_arrow (preview->widget.window, gcinv, paper_left, paper_top);
+  draw_arrow (preview->widget.window, gcinv, paper_display_left, paper_display_top);
 
   opx = preview_x;
   opy = preview_y;
@@ -2954,8 +2985,6 @@ gimp_preview_update (void)
   gdouble min_ppi_scaling;   /* Minimum PPI for current page size */
   gdouble min_ppi_scaling1;  /* Minimum PPI for current page size */
   gdouble min_ppi_scaling2;  /* Minimum PPI for current page size */
-  gint    paper_left;
-  gint    paper_top;
   gdouble unit_scaler = 72.0;
 
   (stp_printer_get_printfuncs (current_printer)->media_size)
@@ -3032,20 +3061,6 @@ gimp_preview_update (void)
 	}
     }
 
-  preview_ppi = PREVIEW_SIZE_HORIZ * 72.0 / (gdouble) paper_width;
-
-  if (PREVIEW_SIZE_VERT * 72 / paper_height < preview_ppi)
-    preview_ppi = PREVIEW_SIZE_VERT * 72.0 / (gdouble) paper_height;
-  if (preview_ppi > MAX_PREVIEW_PPI)
-    preview_ppi = MAX_PREVIEW_PPI;
-
-  paper_left = (PREVIEW_SIZE_HORIZ - preview_ppi * paper_width / 72) / 2;
-  paper_top  = (PREVIEW_SIZE_VERT - preview_ppi * paper_height / 72) / 2;
-  printable_left = paper_left + preview_ppi * left / 72;
-  printable_top  = paper_top + preview_ppi * top / 72 ;
-
-  if (preview == NULL || preview->widget.window == NULL)
-    return;
 
   if (!pv->left_is_valid || stp_get_left(pv->v) < left)
     {
@@ -3089,7 +3104,7 @@ gimp_preview_update (void)
   /* draw image */
   if (! suppress_preview_update)
     {
-      gimp_do_preview_thumbnail (paper_left, paper_top);
+      gimp_do_preview_thumbnail ();
       gdk_flush ();
     }
 }
@@ -3232,10 +3247,6 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	    }
 	  while (mouse_y - event->y >= y_threshold)
 	    {
-	      printf("top %d left %d bottom %d right %d\n",
-		     top, left, bottom, right);
-	      printf("image top %d print height %d %d\n",
-		     stp_get_top(pv->v), print_height, stp_get_height(pv->v));
 	      if (stp_get_top (pv->v) >= print_height + top)
 		{
 		  stp_set_top (pv->v, stp_get_top (pv->v) - print_height);
