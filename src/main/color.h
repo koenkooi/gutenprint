@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.15 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: color.h,v 1.16 2004/04/18 18:32:20 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -39,20 +39,6 @@ extern "C" {
 
 
 #include <gimp-print/color.h>
-
-#if 0
-typedef enum
-{
-  STP_OUTPUT_TYPE_INVALID,
-  STP_OUTPUT_TYPE_GRAYSCALE,
-  STP_OUTPUT_TYPE_WHITESCALE,
-  STP_OUTPUT_TYPE_RGB,
-  STP_OUTPUT_TYPE_CMY,
-  STP_OUTPUT_TYPE_CMYK,
-  STP_OUTPUT_TYPE_CMYKRB,
-  STP_OUTPUT_TYPE_RAW
-} stp_output_type_t;
-#endif
 
 typedef struct
 {
