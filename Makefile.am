@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.125 2002/03/16 16:08:16 rlk Exp $
+## $Id: Makefile.am,v 1.126 2002/03/23 11:42:53 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -155,5 +155,4 @@ CLEANSCRIPTS = \
 CLEANFILES = .noupdate
 MAINTAINERCLEANFILES = ABOUT-NLS INSTALL aclocal.m4 config.h.in configure Makefile.in stamp-h.in $(addprefix scripts/, $(CLEANSCRIPTS))
 
-.PHONY: deb install-cups install-ghost snapshot ChangeLog
-.PHONY: install-gimp html
+.PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLog
