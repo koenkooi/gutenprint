@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.95 2004/01/07 13:04:45 rleigh Exp $
+dnl $Id: configure.ac,v 1.95.2.1 2004/03/24 22:42:52 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.95 $)
+AC_REVISION($Revision: 1.95.2.1 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -498,30 +498,19 @@ fi
 
 dnl Compiler flags
 if test "$CC" = "gcc" ; then
-  AC_MSG_CHECKING(if GCC supports -finline-limit=1048576)
-  OLDCFLAGS="$CFLAGS"
-  CFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -Werror-implicit-function-declaration -Winline -finline-limit=1048576"
-  AC_TRY_COMPILE(,,
-      [ AC_MSG_RESULT(yes);
-        GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -Werror-implicit-function-declaration -Winline -finline-limit=1048576"],
-      [ AC_MSG_RESULT(no);
-        GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -Werror-implicit-function-declaration -Winline"])
-  CFLAGS="$OLDCFLAGS"
+  STP_ADD_COMPILER_ARGS([-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -Werror-implicit-function-declaration -Winline -finline-limit=1048576], GNUCFLAGS)
   if test x${USE_MAINTAINER_MODE} = xyes ; then
-    GNUCFLAGS="${GNUCFLAGS} -pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
-  fi
-  if test x$ENABLE_PROFILE = xyes ; then
-    CFLAGS="${CFLAGS:=} -pg"
+    STP_ADD_COMPILER_ARGS([-pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls], GNUCFLAGS)
   fi
 else
   if test x$ENABLE_DEBUG = xyes ; then
-    CFLAGS="${CFLAGS:=} -g"
+    STP_ADD_COMPILER_ARG([-g])
   else
-    CFLAGS="${CFLAGS:=} -O"
+    STP_ADD_FIRST_COMPILER_ARG([-O6 -O3 -O2 -O1 -O])
   fi
-  if test x$ENABLE_PROFILE = xyes ; then
-    CFLAGS="${CFLAGS:=} -pg"
-  fi
+fi
+if test x$ENABLE_PROFILE = xyes ; then
+  STP_ADD_COMPILER_ARG([-pg])
 fi
 AC_SUBST(GNUCFLAGS)
 
