@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.12 2001/03/12 22:05:57 rleigh Exp $
+# $Id: rules,v 1.13 2001/03/12 22:11:16 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -118,14 +118,12 @@ configure: configure.in
           autoconf ; \
 	fi
 
-configure.in: configure.in.in
+configure.in:
 	if test -f configure.in ; then \
 	  if test -f scripts/autogen.sh ; then \
 	    /bin/sh scripts/autogen.sh --version ; \
 	  fi \
 	fi
-
-configure.in.in:
 
 ChangeLog:
 	$(MAKE) -f debian/gimp-print-build/Makefile top_srcdir=`/bin/pwd` ChangeLog
