@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.87.2.6 2002/11/18 00:31:03 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.87.2.7 2002/11/19 01:33:57 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2671,7 +2671,7 @@ preview_button_callback (GtkWidget      *widget,
 	  preview_active = 1;
 	  disable_help();
 	  move_constraint =
-	    (event->state & GDK_SHIFT_MASK) ? MOVE_CONSTRAIN : MOVE_ANY
+	    (event->state & GDK_SHIFT_MASK) ? MOVE_CONSTRAIN : MOVE_ANY;
 	}
       else if ((buttons_mask & (1 << event->button)) == 0)
 	{
