@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.6 2001/05/30 00:30:30 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -32,15 +32,15 @@ noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
 EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes
 
 printer_options_SOURCES = printer_options.c
-printer_options_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+printer_options_LDADD = $(LIBGIMPPRINT_LIBS)
 printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 gimp_print_version_SOURCES = gimp-print-version.c
-gimp_print_version_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+gimp_print_version_LDADD = $(LIBGIMPPRINT_LIBS)
 gimp_print_version_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 paper_sizes_SOURCES = paper_sizes.c
-paper_sizes_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+paper_sizes_LDADD = $(LIBGIMPPRINT_LIBS)
 paper_sizes_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.18 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.19 2001/05/30 00:30:30 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ libgimpprint_la_SOURCES = \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h
-#libgimpprint_la_LIBADD = ../../lib/libprintut.la -lm
+libgimpprint_la_LIBADD = $(GIMPPRINT_DEPLIBS)
 # Uncommment to build an unversioned library (version in soname)
 libgimpprint_la_LDFLAGS = -release $(VERSION) -rpath $(libdir)
 ## Uncomment to build a versioned library

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2001/05/30 00:30:30 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pcl_unprint_SOURCES = pcl-unprint.c
 bjc_unprint_SOURCES = bjc-unprint.c
 
 testdither_SOURCES = testdither.c
-testdither_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+testdither_LDADD = $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
