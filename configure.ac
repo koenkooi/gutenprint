@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.20 2002/09/07 22:02:15 rlk Exp $
+dnl $Id: configure.ac,v 1.21 2002/09/13 08:25:29 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.20 $)
+AC_REVISION($Revision: 1.21 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -482,6 +482,7 @@ AM_PATH_GTK(1.2.0, ,
 fi
 
 STP_GIMP_LIBS
+STP_GIMP_PLUG_IN_DIR
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -610,6 +611,7 @@ AC_SUBST(ESCPUTIL_MAN)
 AC_SUBST(GIMP_BIN)
 AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
+AC_SUBST(gimp_plug_indir)
 AC_SUBST(GIMPPRINT_CFLAGS)
 AC_SUBST(GIMPPRINT_LIBS)
 AC_SUBST(GIMPPRINT_DEPLIBS)
