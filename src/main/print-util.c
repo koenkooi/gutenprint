@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.37 2001/08/07 00:50:26 rlk Exp $"
+ * "$Id: print-util.c,v 1.38 2001/08/11 21:26:11 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1115,6 +1115,25 @@ stp_compute_page_parameters(int page_right,	/* I */
 
   if (*top < 0)
     *top  = (*page_height - *out_height) / 2;
+}
+
+void
+stp_set_printer_defaults(stp_vars_t v, const stp_printer_t p,
+			 const char *ppd_file)
+{
+  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
+  stp_set_resolution(v, ((printfuncs->default_parameters)
+			 (p, ppd_file, "Resolution")));
+  stp_set_ink_type(v, ((printfuncs->default_parameters)
+		       (p, ppd_file, "InkType")));
+  stp_set_media_type(v, ((printfuncs->default_parameters)
+			 (p, ppd_file, "MediaType")));
+  stp_set_media_source(v, ((printfuncs->default_parameters)
+			   (p, ppd_file, "InputSlot")));
+  stp_set_media_size(v, ((printfuncs->default_parameters)
+			 (p, ppd_file, "PageSize")));
+  stp_set_dither_algorithm(v, stp_default_dither_algorithm());
+  stp_set_driver(v, p);
 }
 
 int
