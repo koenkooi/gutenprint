@@ -1,5 +1,5 @@
 /*
- * "$Id: cups-calibrate.c,v 1.1 2001/01/24 13:02:18 rlk Exp $"
+ * "$Id: cups-calibrate.c,v 1.2 2001/08/13 23:59:12 rlk Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
@@ -452,7 +452,7 @@ safe_gets(const char *prompt,
 
   if (s[0])
     s[strlen(s) - 1] = '\0';
- 
+
   return (s);
 }
 

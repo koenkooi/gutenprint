@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.17 2001/08/13 22:42:48 easysw Exp $"
+ * "$Id: gimp-print.h.in,v 1.18 2001/08/13 23:59:12 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -47,7 +47,7 @@ extern "C" {
  * Library versioning details
  */
 
-/* 
+/*
  * compile-time version
  */
 #define GIMPPRINT_MAJOR_VERSION       (@GIMPPRINT_MAJOR_VERSION@)
@@ -455,11 +455,11 @@ extern stp_convert_t stp_choose_colorfunc (int output_type, int image_bpp,
                                            const stp_vars_t v);
 
 extern void stp_compute_page_parameters (int page_right, int page_left,
-                                         int page_top, int page_bottom, 
+                                         int page_top, int page_bottom,
                                          double scaling, int image_width,
-                                         int image_height, stp_image_t *image, 
+                                         int image_height, stp_image_t *image,
                                          int *orientation,
-                                         int *page_width, int *page_height, 
+                                         int *page_width, int *page_height,
                                          int *out_width, int *out_height,
                                          int *left, int *top);
 
@@ -473,5 +473,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.17 2001/08/13 22:42:48 easysw Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.18 2001/08/13 23:59:12 rlk Exp $".
  */

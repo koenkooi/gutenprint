@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.23 2001/08/12 23:55:47 rlk Exp $"
+ * "$Id: escputil.c,v 1.24 2001/08/13 23:59:12 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -520,7 +520,7 @@ add_resets(int count)
     }
 }
 
-const char *colors[] = 
+const char *colors[] =
 {
   "Black", "Cyan", "Magenta", "Yellow", "Light Cyan", "Light Magenta", 0
 };
