@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.26 2002/10/27 00:43:03 rlk Exp $ */
+/* $Id: unprint.c,v 1.27 2002/10/28 00:57:38 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -27,7 +27,9 @@
 #include "../lib/libprintut.h"
 #include<stdio.h>
 #include<stdlib.h>
+#ifdef HAVE_LIMITS_H
 #include<limits.h>
+#endif
 #include<string.h>
 
 #ifdef __GNUC__
