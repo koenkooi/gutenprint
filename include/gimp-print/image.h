@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.2 2003/10/13 02:00:03 rlk Exp $"
+ * "$Id: image.h,v 1.2.4.1 2004/02/16 23:46:56 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -176,6 +176,7 @@ typedef struct stp_image
   void (*init)(struct stp_image *image);
   void (*reset)(struct stp_image *image);
   int  (*bpp)(struct stp_image *image);
+  int  (*bit_depth)(struct stp_image *image);
   int  (*width)(struct stp_image *image);
   int  (*height)(struct stp_image *image);
   stp_image_status_t (*get_row)(struct stp_image *image, unsigned char *data,
@@ -203,5 +204,5 @@ typedef struct stp_image
 
 #endif /* __GIMP_PRINT_IMAGE_H__ */
 /*
- * End of "$Id: image.h,v 1.2 2003/10/13 02:00:03 rlk Exp $".
+ * End of "$Id: image.h,v 1.2.4.1 2004/02/16 23:46:56 rlk Exp $".
  */

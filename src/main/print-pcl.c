@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125 2003/11/14 04:01:15 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.1 2004/02/16 23:47:07 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1889,8 +1889,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 		errlast;	/* Last raster line loaded */
   unsigned	zero_mask;
   int           image_height,
-                image_width,
-                image_bpp;
+                image_width;
   const pcl_cap_t *caps;		/* Printer capabilities */
   int		planes = 3;	/* # of output planes */
   int		pcl_media_size, /* PCL media size code */
@@ -1919,7 +1918,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   stpi_image_init(image);
   image_height = stpi_image_height(image);
   image_width = stpi_image_width(image);
-  image_bpp = stpi_image_bpp(image);
 
  /*
   * Figure out the output resolution...

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.39 2003/11/14 12:12:11 rlk Exp $"
+ * "$Id: testdither.c,v 1.39.4.1 2004/02/16 23:47:07 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -147,6 +147,12 @@ image_bpp(stp_image_t *image)
 }
 
 static int
+image_bit_depth(stp_image_t *image)
+{
+  return 8;
+}
+
+static int
 image_width(stp_image_t *image)
 {
   return IMAGE_WIDTH;
@@ -157,6 +163,7 @@ static stp_image_t theImage =
   NULL,
   NULL,
   image_bpp,
+  image_bit_depth,
   image_width,
   NULL,
   NULL,
@@ -905,5 +912,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.39 2003/11/14 12:12:11 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.39.4.1 2004/02/16 23:47:07 rlk Exp $".
  */

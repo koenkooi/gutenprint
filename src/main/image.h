@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.3 2003/03/12 01:30:17 rlk Exp $"
+ * "$Id: image.h,v 1.3.14.1 2004/02/16 23:47:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,6 +31,7 @@ extern "C" {
 extern void stpi_image_init(stp_image_t *image);
 extern void stpi_image_reset(stp_image_t *image);
 extern int stpi_image_bpp(stp_image_t *image);
+extern int stpi_image_bit_depth(stp_image_t *image);
 extern int stpi_image_width(stp_image_t *image);
 extern int stpi_image_height(stp_image_t *image);
 extern stp_image_status_t stpi_image_get_row(stp_image_t *image,
@@ -52,5 +53,5 @@ extern void stpi_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* GIMP_PRINT_INTERNAL_IMAGE_H */
 /*
- * End of "$Id: image.h,v 1.3 2003/03/12 01:30:17 rlk Exp $".
+ * End of "$Id: image.h,v 1.3.14.1 2004/02/16 23:47:06 rlk Exp $".
  */

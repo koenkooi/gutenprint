@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.35 2003/10/20 00:51:34 rlk Exp $"
+ * "$Id: testpattern.c,v 1.35.4.1 2004/02/16 23:47:07 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -53,12 +53,14 @@ static stp_image_status_t Image_get_row(stp_image_t *image,
 static int Image_height(stp_image_t *image);
 static int Image_width(stp_image_t *image);
 static int Image_bpp(stp_image_t *image);
+static int Image_bit_depth(stp_image_t *image);
 static void Image_init(stp_image_t *image);
 static stp_image_t theImage =
 {
   Image_init,
   NULL,				/* reset */
   Image_bpp,
+  Image_bit_depth,
   Image_width,
   Image_height,
   Image_get_row,
@@ -840,11 +842,16 @@ Image_get_row(stp_image_t *image, unsigned char *data,
 static int
 Image_bpp(stp_image_t *image)
 {
-  int byte_depth = global_bit_depth / 8;
   if (global_ink_depth)
-    return global_ink_depth * byte_depth;
+    return global_ink_depth;
   else
-    return 4 * byte_depth;
+    return 4;
+}
+
+static int
+Image_bit_depth(stp_image_t *image)
+{
+  return global_bit_depth;
 }
 
 static int

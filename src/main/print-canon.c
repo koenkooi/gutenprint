@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140 2003/12/13 00:16:36 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.1 2004/02/16 23:47:06 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2307,8 +2307,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   unsigned	zero_mask;
   int           bits= 1;
   int           image_height,
-                image_width,
-                image_bpp;
+                image_width;
   int           res_code;
   int           use_6color= 0;
   double        k_upper, k_lower;
@@ -2338,7 +2337,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   */
 
   stpi_image_init(image);
-  image_bpp = stpi_image_bpp(image);
 
   /* force grayscale if image is grayscale
    *                 or single black cartridge installed

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.71 2003/11/09 23:06:02 rlk Exp $"
+ * "$Id: print-ps.c,v 1.71.4.1 2004/02/16 23:47:07 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -352,8 +352,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
     int		order;
   }		commands[4];
   int           image_height,
-                image_width,
-                image_bpp;
+		image_width;
   stp_vars_t	nv = stp_vars_create_copy(v);
   if (!resolution)
     resolution = "";
@@ -371,12 +370,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
       return 0;
     }
 
- /*
-  * Setup a read-only pixel region for the entire image...
-  */
-
   stpi_image_init(image);
-  image_bpp = stpi_image_bpp(image);
 
  /*
   * Compute the output size...

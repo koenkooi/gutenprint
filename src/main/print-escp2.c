@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308 2004/01/31 22:39:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.1 2004/02/16 23:47:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1613,7 +1613,7 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
    */
   for (i = 0; i < ninktypes; i++)
     if (inks->inknames[i]->inkset == INKSET_EXTENDED &&
-	inks->inknames[i]->channel_set->channel_count * 2 == stpi_image_bpp(image))
+	inks->inknames[i]->channel_set->channel_count == stpi_image_bpp(image))
       {
 	stpi_dprintf(STPI_DBG_INK, v, "Changing ink type from %s to %s\n",
 		     stp_get_string_parameter(v, "InkType") ?
@@ -1624,7 +1624,7 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
       }
   stpi_eprintf
     (v, _("This printer does not support raw printer output at depth %d\n"),
-     stpi_image_bpp(image) / 2);
+     stpi_image_bpp(image));
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106 2003/12/29 10:34:09 mtomlinson Exp $"
+ * "$Id: print-color.c,v 1.106.2.1 2004/02/16 23:47:06 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -54,6 +54,7 @@ typedef struct
   unsigned steps;
   unsigned char *in_data;
   int image_bpp;
+  int image_bit_depth;
   int image_width;
   int out_channels;
   int channels_are_initialized;
@@ -774,6 +775,18 @@ generic_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   return retval;
 }
 
+#define GENERIC_COLOR_FUNC(fromname, toname)				\
+static unsigned								\
+fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	\
+		       unsigned short *out)				\
+{									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  if (lut->image_bit_depth == 8)					\
+    return fromname##_8_to_##toname(vars, in, out);			\
+  else									\
+    return fromname##_16_to_##toname(vars, in, out);			\
+}
+
 /*
  * 'rgb_to_rgb()' - Convert rgb image data to RGB.
  */
@@ -878,6 +891,7 @@ rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	      \
 
 RGB_TO_RGB_FUNC(unsigned char, 8)
 RGB_TO_RGB_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(rgb, rgb)
 
 /*
  * 'rgb_to_rgb()' - Convert rgb image data to RGB.
@@ -949,6 +963,7 @@ fast_rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in, \
 
 FAST_RGB_TO_RGB_FUNC(unsigned char, 8)
 FAST_RGB_TO_RGB_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(fast_rgb, rgb)
 
 /*
  * 'gray_to_rgb()' - Convert gray image data to RGB.
@@ -1010,6 +1025,7 @@ gray_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	\
 
 GRAY_TO_RGB_FUNC(unsigned char, 8)
 GRAY_TO_RGB_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(gray, rgb)
 
 #define RGB_TO_KCMY_FUNC(name, bits)					\
 static unsigned								\
@@ -1024,11 +1040,16 @@ name##_##bits##_to_kcmy(stp_const_vars_t vars, const unsigned char *in,	\
 }
 
 RGB_TO_KCMY_FUNC(gray, 8)
-RGB_TO_KCMY_FUNC(rgb, 8)
-RGB_TO_KCMY_FUNC(fast_rgb, 8)
 RGB_TO_KCMY_FUNC(gray, 16)
+GENERIC_COLOR_FUNC(gray, kcmy)
+
+RGB_TO_KCMY_FUNC(rgb, 8)
 RGB_TO_KCMY_FUNC(rgb, 16)
+GENERIC_COLOR_FUNC(rgb, kcmy)
+
+RGB_TO_KCMY_FUNC(fast_rgb, 8)
 RGB_TO_KCMY_FUNC(fast_rgb, 16)
+GENERIC_COLOR_FUNC(fast_rgb, kcmy)
 
 #define RGB_TO_KCMY_LINE_ART_FUNC(T, name)				\
 static unsigned								\
@@ -1085,6 +1106,7 @@ name##_to_kcmy_line_art(stp_const_vars_t vars,				\
 
 RGB_TO_KCMY_LINE_ART_FUNC(unsigned char, rgb_8)
 RGB_TO_KCMY_LINE_ART_FUNC(unsigned short, rgb_16)
+GENERIC_COLOR_FUNC(rgb, kcmy_line_art)
 
 #define CMYK_TO_KCMY_LINE_ART_FUNC(T, name)				\
 static unsigned								\
@@ -1131,6 +1153,7 @@ name##_to_kcmy_line_art(stp_const_vars_t vars,				\
 
 CMYK_TO_KCMY_LINE_ART_FUNC(unsigned char, cmyk_8)
 CMYK_TO_KCMY_LINE_ART_FUNC(unsigned short, cmyk_16)
+GENERIC_COLOR_FUNC(cmyk, kcmy_line_art)
 
 #define GRAY_TO_COLOR_LINE_ART_FUNC(T, name, bits, channels)		\
 static unsigned								\
@@ -1164,8 +1187,11 @@ gray_##bits##_to_##name##_line_art(stp_const_vars_t vars,		\
 
 GRAY_TO_COLOR_LINE_ART_FUNC(unsigned char, rgb, 8, 3)
 GRAY_TO_COLOR_LINE_ART_FUNC(unsigned short, rgb, 16, 3)
+GENERIC_COLOR_FUNC(gray, rgb_line_art)
+
 GRAY_TO_COLOR_LINE_ART_FUNC(unsigned char, kcmy, 8, 4)
 GRAY_TO_COLOR_LINE_ART_FUNC(unsigned short, kcmy, 16, 4)
+GENERIC_COLOR_FUNC(gray, kcmy_line_art)
 
 #define RGB_TO_RGB_LINE_ART_FUNC(T, name)				\
 static unsigned								\
@@ -1207,6 +1233,7 @@ name##_to_rgb_line_art(stp_const_vars_t vars,				\
 
 RGB_TO_RGB_LINE_ART_FUNC(unsigned char, rgb_8)
 RGB_TO_RGB_LINE_ART_FUNC(unsigned short, rgb_16)
+GENERIC_COLOR_FUNC(rgb, rgb_line_art)
 
 #define COLOR_TO_GRAY_LINE_ART_FUNC(T, name, channels, max_channels)	\
 static unsigned								\
@@ -1243,10 +1270,15 @@ name##_to_gray_line_art(stp_const_vars_t vars,				\
 
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, cmyk_8, 4, 4)
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, cmyk_16, 4, 4)
+GENERIC_COLOR_FUNC(cmyk, gray_line_art)
+
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, color_8, 3, 4)
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, color_16, 3, 4)
+GENERIC_COLOR_FUNC(color, gray_line_art)
+
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, gray_8, 1, 1)
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, gray_16, 1, 1)
+GENERIC_COLOR_FUNC(gray, gray_line_art)
 
 #define CMYK_TO_KCMY_FUNC(T, size)					\
 static unsigned								\
@@ -1282,6 +1314,7 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
 
 CMYK_TO_KCMY_FUNC(unsigned char, 8)
 CMYK_TO_KCMY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(cmyk, kcmy)
 
 /*
  * 'gray_to_gray()' - Convert grayscale image data to grayscale (brightness
@@ -1327,6 +1360,7 @@ gray_##bits##_to_gray(stp_const_vars_t vars,				\
 
 GRAY_TO_GRAY_FUNC(unsigned char, 8)
 GRAY_TO_GRAY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(gray, gray)
 
 /*
  * 'rgb_to_gray()' - Convert RGB image data to grayscale.
@@ -1381,6 +1415,7 @@ color_##bits##_to_gray(stp_const_vars_t vars,				   \
 
 COLOR_TO_GRAY_FUNC(unsigned char, 8)
 COLOR_TO_GRAY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(color, gray)
 
 
 #define CMYK_TO_GRAY_FUNC(T, size)					\
@@ -1410,85 +1445,77 @@ cmyk_##size##_to_gray(stp_const_vars_t vars,				\
 
 CMYK_TO_GRAY_FUNC(unsigned char, 8)
 CMYK_TO_GRAY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(cmyk, gray)
 
-static unsigned
-cmyk_16_to_gray_raw(stp_const_vars_t vars, const unsigned char *in,
-		    unsigned short *out)
-{
-  int i;
-  int nz[4];
-  const unsigned short *usin = (const unsigned short *) in;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-
-  memset(nz, 0, sizeof(nz));
-  for (i = 0; i < lut->image_width; i++)
-    {
-      nz[0] |= usin[0];
-      out[0] = usin[0];
-      usin += 4;
-      out += 1;
-    }
-  return nz[0] ? 1 : 0;
+#define CMYK_TO_KCMY_RAW_FUNC(T, size)					\
+static unsigned								\
+cmyk_##size##_to_kcmy_raw(stp_const_vars_t vars,			\
+			  const unsigned char *in,			\
+			  unsigned short *out)				\
+{									\
+  int i;								\
+  int j;								\
+  int nz[4];								\
+  unsigned retval = 0;							\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+									\
+  memset(nz, 0, sizeof(nz));						\
+  for (i = 0; i < lut->image_width; i++)				\
+    {									\
+      out[0] = s_in[3] * (65535 / (1 << size));				\
+      out[1] = s_in[0] * (65535 / (1 << size));				\
+      out[2] = s_in[1] * (65535 / (1 << size));				\
+      out[3] = s_in[2] * (65535 / (1 << size));				\
+      for (j = 0; j < 4; j++)						\
+	nz[j] |= out[j];						\
+      s_in += 4;							\
+      out += 4;								\
+    }									\
+  for (j = 0; j < 4; j++)						\
+    if (nz[j] == 0)							\
+      retval |= (1 << j);						\
+  return retval;							\
 }
 
-static unsigned
-cmyk_16_to_kcmy_raw(stp_const_vars_t vars, const unsigned char *in,
-		    unsigned short *out)
-{
-  int i;
-  int j;
-  unsigned retval = 0;
-  int nz[4];
-  const unsigned short *usin = (const unsigned short *) in;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
+CMYK_TO_KCMY_RAW_FUNC(unsigned char, 8)
+CMYK_TO_KCMY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(cmyk, kcmy_raw)
 
-  memset(nz, 0, sizeof(nz));
-  for (i = 0; i < lut->image_width; i++)
-    {
-      out[0] = usin[3];
-      out[1] = usin[0];
-      out[2] = usin[1];
-      out[3] = usin[2];
-      for (j = 0; j < 4; j++)
-	nz[j] |= out[j];
-      usin += 4;
-      out += 4;
-    }
-  for (j = 0; j < 4; j++)
-    if (nz[j] == 0)
-      retval |= (1 << j);
-  return retval;
+#define RAW_TO_RAW_FUNC(T, size)					\
+static unsigned								\
+raw_##size##_to_raw(stp_const_vars_t vars,				\
+		    const unsigned char *in,				\
+		    unsigned short *out)				\
+{									\
+  int i;								\
+  int j;								\
+  int nz[STP_CHANNEL_LIMIT];						\
+  unsigned retval = 0;							\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int colors = lut->image_bpp;						\
+									\
+  memset(nz, 0, sizeof(nz));						\
+  for (i = 0; i < lut->image_width; i++)				\
+    {									\
+      for (j = 0; j < colors; j++)					\
+	{								\
+	  nz[j] |= s_in[j];						\
+	  out[j] = s_in[j] * (65535 / (1 << size));			\
+	}								\
+      s_in += colors;							\
+      out += colors;							\
+    }									\
+  for (j = 0; j < colors; j++)						\
+    if (nz[j] == 0)							\
+      retval |= (1 << j);						\
+  return retval;							\
 }
 
-static unsigned
-raw_to_raw(stp_const_vars_t vars, const unsigned char *in,
-	   unsigned short *out)
-{
-  int i;
-  int j;
-  unsigned retval = 0;
-  int nz[STP_CHANNEL_LIMIT];
-  int colors;
-  const unsigned short *usin = (const unsigned short *) in;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  colors = lut->image_bpp / 2;
-
-  memset(nz, 0, sizeof(nz));
-  for (i = 0; i < lut->image_width; i++)
-    {
-      for (j = 0; j < colors; j++)
-	{
-	  nz[j] |= usin[j];
-	  out[j] = usin[j];
-	}
-      usin += colors;
-      out += colors;
-    }
-  for (j = 0; j < colors; j++)
-    if (nz[j] == 0)
-      retval |= (1 << j);
-  return retval;
-}
+RAW_TO_RAW_FUNC(unsigned char, 8)
+RAW_TO_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(raw, raw)
 
 
 static void
@@ -1574,6 +1601,7 @@ copy_lut(void *vlut)
   dest->steps = src->steps;
   dest->colorfunc = src->colorfunc;
   dest->image_bpp = src->image_bpp;
+  dest->image_bit_depth = src->image_bit_depth;
   dest->image_width = src->image_width;
   dest->input_color_model = src->input_color_model;
   dest->output_color_model = src->output_color_model;
@@ -1967,13 +1995,17 @@ stpi_color_traditional_init(stp_vars_t v,
   const char *color_correction = stp_get_string_parameter(v, "ColorCorrection");
   int itype = 0;
   int image_bpp = stpi_image_bpp(image);
+  int image_bit_depth = stpi_image_bit_depth(image);
   lut_t *lut;
+  if (image_bit_depth != 8 && image_bit_depth != 16)
+    return -1;
   if (steps != 256 && steps != 65536)
     return -1;
 
   stpi_compute_lut(v, steps);
   lut = (lut_t *)(stpi_get_component_data(v, "Color"));
   lut->image_bpp = image_bpp;
+  lut->image_bit_depth = image_bit_depth;
   lut->image_width = stpi_image_width(image);
   if (image_type && strcmp(image_type, "None") != 0)
     {
@@ -1994,6 +2026,8 @@ stpi_color_traditional_init(stp_vars_t v,
 	itype = 2;
       else if (strcmp(color_correction, "Threshold") == 0)
 	itype = 3;
+      else if (strcmp(color_correction, "Raw") == 0)
+	itype = 4;
     }
   switch (stp_get_output_type(v))
     {
@@ -2004,25 +2038,13 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 1:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(gray_8_to_kcmy_line_art);
+	      SET_COLORFUNC(gray_to_kcmy_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(gray_8_to_kcmy);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 2:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(gray_16_to_kcmy_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(gray_16_to_kcmy);
+	      SET_COLORFUNC(gray_to_kcmy);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2030,27 +2052,14 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 3:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(rgb_8_to_kcmy_line_art);
+	      SET_COLORFUNC(rgb_to_kcmy_line_art);
 	    case 2:
 	    case 1:
-	      SET_COLORFUNC(rgb_8_to_kcmy);
+	      SET_COLORFUNC(rgb_to_kcmy);
 	    case 0:
-	      SET_COLORFUNC(fast_rgb_8_to_kcmy);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 6:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(rgb_16_to_kcmy_line_art);
-	    case 2:
-	    case 1:
-	      SET_COLORFUNC(rgb_16_to_kcmy);
-	    case 0:
-	      SET_COLORFUNC(fast_rgb_16_to_kcmy);
+	      SET_COLORFUNC(fast_rgb_to_kcmy);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2058,25 +2067,14 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 4:
 	  switch (itype)
 	    {
+	    case 4:
+	      SET_COLORFUNC(cmyk_to_kcmy_raw);
 	    case 3:
-	      SET_COLORFUNC(cmyk_8_to_kcmy_line_art);
+	      SET_COLORFUNC(cmyk_to_kcmy_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(cmyk_8_to_kcmy);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 8:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(cmyk_16_to_kcmy_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(cmyk_16_to_kcmy_raw);
+	      SET_COLORFUNC(cmyk_to_kcmy);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2092,25 +2090,13 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 1:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(gray_8_to_rgb_line_art);
+	      SET_COLORFUNC(gray_to_rgb_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(gray_8_to_rgb);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 2:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(gray_16_to_rgb_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(gray_16_to_rgb);
+	      SET_COLORFUNC(gray_to_rgb);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2118,27 +2104,14 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 3:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(rgb_8_to_rgb_line_art);
+	      SET_COLORFUNC(rgb_to_rgb_line_art);
 	    case 2:
 	    case 1:
-	      SET_COLORFUNC(rgb_8_to_rgb);
+	      SET_COLORFUNC(rgb_to_rgb);
 	    case 0:
-	      SET_COLORFUNC(fast_rgb_8_to_rgb);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 6:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(rgb_16_to_rgb_line_art);
-	    case 2:
-	    case 1:
-	      SET_COLORFUNC(rgb_16_to_rgb);
-	    case 0:
-	      SET_COLORFUNC(fast_rgb_16_to_rgb);
+	      SET_COLORFUNC(fast_rgb_to_rgb);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2148,11 +2121,11 @@ stpi_color_traditional_init(stp_vars_t v,
 	}
       break;
     case OUTPUT_RAW_PRINTER:
-      if ((image_bpp & 1) || image_bpp < 2 || image_bpp > 64)
+      if (image_bpp < 1 || image_bpp > 32)
 	{
 	  SET_COLORFUNC(NULL);
 	}
-      lut->out_channels = image_bpp / 2;
+      lut->out_channels = image_bpp;
       SET_COLORFUNC(raw_to_raw);
     case OUTPUT_GRAY:
       lut->out_channels = 1;
@@ -2161,25 +2134,14 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 1:
 	  switch (itype)
 	    {
+	    case 4:
+	      SET_COLORFUNC(raw_to_raw);
 	    case 3:
-	      SET_COLORFUNC(gray_8_to_gray_line_art);
+	      SET_COLORFUNC(gray_to_gray_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(gray_8_to_gray);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 2:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(gray_16_to_gray_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(gray_16_to_gray);
+	      SET_COLORFUNC(gray_to_gray);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2187,25 +2149,13 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 3:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(color_8_to_gray_line_art);
+	      SET_COLORFUNC(color_to_gray_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(color_8_to_gray);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 6:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(color_16_to_gray_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(color_16_to_gray);
+	      SET_COLORFUNC(color_to_gray);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2213,25 +2163,13 @@ stpi_color_traditional_init(stp_vars_t v,
 	case 4:
 	  switch (itype)
 	    {
+	    case 4:
 	    case 3:
-	      SET_COLORFUNC(cmyk_8_to_gray_line_art);
+	      SET_COLORFUNC(cmyk_to_gray_line_art);
 	    case 2:
 	    case 1:
 	    case 0:
-	      SET_COLORFUNC(cmyk_8_to_gray);
-	    default:
-	      SET_COLORFUNC(NULL);
-	    }
-	  break;
-	case 8:
-	  switch (itype)
-	    {
-	    case 3:
-	      SET_COLORFUNC(cmyk_16_to_gray_line_art);
-	    case 2:
-	    case 1:
-	    case 0:
-	      SET_COLORFUNC(cmyk_16_to_gray_raw);
+	      SET_COLORFUNC(cmyk_to_gray);
 	    default:
 	      SET_COLORFUNC(NULL);
 	    }
@@ -2381,6 +2319,8 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		    (description->bounds.str, "Threshold", _("Threshold"));
 		  stp_string_list_add_string
 		    (description->bounds.str, "Uncorrected", _("Uncorrected"));
+		  stp_string_list_add_string
+		    (description->bounds.str, "Raw", _("Raw"));
 		  description->deflt.str = "None";
 		}
 	      break;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.11 2003/01/20 22:25:48 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.11.16.1 2004/02/16 23:47:05 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -103,6 +103,7 @@ static stp_image_status_t Image_get_row(stp_image_t *image,
 static int Image_height(stp_image_t *image);
 static int Image_width(stp_image_t *image);
 static int Image_bpp(stp_image_t *image);
+static int Image_bit_depth(stp_image_t *image);
 static void Image_reset(stp_image_t *image);
 static void Image_init(stp_image_t *image);
 static void Image_transpose(stp_image_t *image);
@@ -118,6 +119,7 @@ static stp_image_t theImage =
   Image_init,
   Image_reset,
   Image_bpp,
+  Image_bit_depth,
   Image_width,
   Image_height,
   Image_get_row,
@@ -313,6 +315,12 @@ Image_bpp(stp_image_t *image)
 }
 
 static int
+Image_bit_depth(stp_image_t *image)
+{
+  return 8;
+}
+
+static int
 Image_width(stp_image_t *image)
 {
   Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
@@ -453,5 +461,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.11 2003/01/20 22:25:48 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.11.16.1 2004/02/16 23:47:05 rlk Exp $".
  */

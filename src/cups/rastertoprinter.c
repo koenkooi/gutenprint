@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.79 2004/02/10 22:37:28 rleigh Exp $"
+ * "$Id: rastertoprinter.c,v 1.79.2.1 2004/02/16 23:46:56 rlk Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -106,6 +106,7 @@ static stp_image_status_t Image_get_row(stp_image_t *image,
 static int	Image_height(stp_image_t *image);
 static int	Image_width(stp_image_t *image);
 static int	Image_bpp(stp_image_t *image);
+static int	Image_bit_depth(stp_image_t *image);
 static void	Image_init(stp_image_t *image);
 
 static stp_image_t theImage =
@@ -113,6 +114,7 @@ static stp_image_t theImage =
   Image_init,
   NULL,				/* reset */
   Image_bpp,
+  Image_bit_depth,
   Image_width,
   Image_height,
   Image_get_row,
@@ -771,6 +773,12 @@ Image_bpp(stp_image_t *image)		/* I - Image */
   }
 }
 
+static int
+Image_bit_depth(stp_image_t *image)		/* I - Image */
+{
+  return 8;
+}
+
 
 /*
  * 'Image_get_appname()' - Get the application we are running.
@@ -986,5 +994,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.79 2004/02/10 22:37:28 rleigh Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.79.2.1 2004/02/16 23:46:56 rlk Exp $".
  */

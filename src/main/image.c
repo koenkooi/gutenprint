@@ -1,5 +1,5 @@
 /*
- * "$Id: image.c,v 1.3 2003/01/20 22:19:16 rlk Exp $"
+ * "$Id: image.c,v 1.3.16.1 2004/02/16 23:47:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -45,6 +45,12 @@ int
 stpi_image_bpp(stp_image_t *image)
 {
   return image->bpp(image);
+}
+
+int
+stpi_image_bit_depth(stp_image_t *image)
+{
+  return image->bit_depth(image);
 }
 
 int

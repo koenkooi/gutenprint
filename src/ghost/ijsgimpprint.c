@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.44 2003/10/11 21:30:36 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.44.4.1 2004/02/16 23:47:05 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -691,6 +691,14 @@ gimp_image_bpp(stp_image_t *image)
 }
 
 static int
+gimp_image_bit_depth(stp_image_t *image)
+{
+  IMAGE *img = (IMAGE *)(image->rep);
+  STP_DEBUG(fprintf(stderr, "gimp_image_bit_depth: returning %d\n", 8));
+  return 8;
+}
+
+static int
 gimp_image_width(stp_image_t *image)
 {
   IMAGE *img = (IMAGE *)(image->rep);
@@ -893,6 +901,7 @@ main (int argc, char **argv)
 
   memset(&si, 0, sizeof(si));
   si.bpp = gimp_image_bpp;
+  si.bit_depth = gimp_image_bit_depth;
   si.width = gimp_image_width;
   si.height = gimp_image_height;
   si.get_row = gimp_image_get_row;
