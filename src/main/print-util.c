@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.96 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: print-util.c,v 1.97 2003/06/13 10:51:46 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -705,32 +705,3 @@ stpi_abort(void)
 {
   abort();
 }
-
-#ifdef QUANTIFY
-unsigned quantify_counts[NUM_QUANTIFY_BUCKETS] = {0};
-struct timeval quantify_buckets[NUM_QUANTIFY_BUCKETS] = {{0,0}};
-int quantify_high_index = 0;
-int quantify_first_time = 1;
-struct timeval quantify_cur_time;
-struct timeval quantify_prev_time;
-
-void print_timers(stp_const_vars_t v)
-{
-  int i;
-
-  stpi_eprintf(v, "%s", "Quantify timers:\n");
-  for (i = 0; i <= quantify_high_index; i++)
-    {
-      if (quantify_counts[i] > 0)
-	{
-	  stpi_eprintf(v,
-		      "Bucket %d:\t%ld.%ld s\thit %u times\n", i,
-		      quantify_buckets[i].tv_sec, quantify_buckets[i].tv_usec,
-		      quantify_counts[i]);
-	  quantify_buckets[i].tv_sec = 0;
-	  quantify_buckets[i].tv_usec = 0;
-	  quantify_counts[i] = 0;
-	}
-    }
-}
-#endif

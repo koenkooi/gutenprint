@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.11 2003/05/30 22:44:41 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.12 2003/06/13 10:51:45 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -150,10 +150,8 @@ stpi_dither_ordered(stp_vars_t v,
 				    bit, length);
 	    }
 
-	  QUANT(11);
 	  ADVANCE_UNIDIRECTIONAL(d, bit, raw, CHANNEL_COUNT(d), xerror,
 				 xstep, xmod);
-	  QUANT(13);
 	}
     }
 }

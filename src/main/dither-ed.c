@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.11 2003/05/30 01:23:23 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.12 2003/06/13 10:51:45 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -451,7 +451,6 @@ stpi_dither_ed(stp_vars_t v,
   if (direction == -1)
     raw += (CHANNEL_COUNT(d) * (d->src_width - 1));
 
-  QUANT(6);
   for (; x != terminate; x += direction)
     {
       for (i = 0; i < CHANNEL_COUNT(d); i++)
@@ -468,10 +467,8 @@ stpi_dither_ed(stp_vars_t v,
 					 direction, error[i][0], error[i][1]);
 	    }
 	}
-      QUANT(12);
       ADVANCE_BIDIRECTIONAL(d, bit, raw, direction, CHANNEL_COUNT(d), xerror,
 			    xstep, xmod, error, d->error_rows);
-      QUANT(13);
     }
   shared_ed_deinitializer(d, error, ndither);
   if (direction == -1)
