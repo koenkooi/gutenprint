@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.134 2001/01/19 03:01:41 rlk Exp $"
+ * "$Id: print.c,v 1.135 2001/01/20 02:34:14 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -625,7 +625,7 @@ run (char   *name,		/* I - Name of print program. */
 
       if (prn != NULL)
 	{
-	  Image image = Image_GDrawable_new(drawable);
+	  stp_image_t *image = Image_GDrawable_new(drawable);
 	  vars.app_gamma = gimp_gamma();
 	  stp_merge_printvars(&vars, &(current_printer->printvars));
 
@@ -1516,5 +1516,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.134 2001/01/19 03:01:41 rlk Exp $".
+ * End of "$Id: print.c,v 1.135 2001/01/20 02:34:14 rlk Exp $".
  */
