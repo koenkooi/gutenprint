@@ -1,7 +1,7 @@
 /*
- * "$Id: xml.c,v 1.21.2.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: xml.c,v 1.21.2.2 2003/06/19 01:01:07 rlk Exp $"
  *
- *   XML parser - process gimp-print XML data with libxml2.
+ *   XML parser - process gimp-print XML data with mxml.
  *
  *   Copyright 2002-2003 Roger Leigh (roger@whinlatter.uklinux.net)
  *
@@ -114,7 +114,7 @@ stpi_xml_preinit(void)
 
 /*
  * Call before using any of the static functions in this file.  All
- * public functions should call this before using any libXML
+ * public functions should call this before using any mxml
  * functions.
  */
 void
@@ -136,7 +136,7 @@ stpi_xml_init(void)
 
 /*
  * Call after using any of the static functions in this file.  All
- * public functions should call this after using any libXML functions.
+ * public functions should call this after using any mxml functions.
  */
 void
 stpi_xml_exit(void)

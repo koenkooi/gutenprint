@@ -1,7 +1,4 @@
 #include <gimp-print/gimp-print.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#include <libxml/globals.h>
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +31,7 @@ int main(int argc, char *argv[])
 	{
 	  fprintf(stderr, "%s", output);
 	  fprintf(stderr, "curve string successfully created\n");
-	  xmlFree(output);
+	  stp_free(output);
 	}
       else
 	fprintf(stderr, "error creating curve string\n");
