@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inlined-functions.h,v 1.3 2003/05/26 01:03:56 rlk Exp $"
+ * "$Id: dither-inlined-functions.h,v 1.4 2003/05/30 01:23:24 rlk Exp $"
  *
  *   Performance-critical functions that should be inlined, based on
  *   measurements.
@@ -26,11 +26,6 @@
  *   See ChangeLog
  */
 
-
-/*
- * All of these functions have been profiled, and I have determined that
- * inlining them improves performance measurably.
- */
 
 /*
  * Inlining has yielded significant (measured) speedup, even with the
@@ -75,16 +70,6 @@ ditherpoint(const stpi_dither_t *d, dither_matrix_t *mat, int x)
     }
   mat->last_x = x;
   return mat->matrix[mat->index];
-}
-
-static inline int
-compute_black(const stpi_dither_t *d)
-{
-  int answer = INT_MAX;
-  int i;
-  for (i = 1; i < CHANNEL_COUNT(d); i++)
-    answer = USMIN(answer, CHANNEL(d, i).v);
-  return answer;
 }
 
 static inline void

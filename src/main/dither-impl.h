@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.8 2003/05/29 01:28:45 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.9 2003/05/30 01:23:24 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -213,7 +213,6 @@ typedef struct dither
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
 
 
-extern stpi_ditherfunc_t stpi_dither_fast;
 extern stpi_ditherfunc_t stpi_dither_very_fast;
 extern stpi_ditherfunc_t stpi_dither_ordered;
 extern stpi_ditherfunc_t stpi_dither_ed;
@@ -289,5 +288,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.8 2003/05/29 01:28:45 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.9 2003/05/30 01:23:24 rlk Exp $".
  */
