@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.22 2001/08/11 16:02:13 rlk Exp $"
+ * "$Id: escputil.c,v 1.23 2001/08/12 23:55:47 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -672,13 +672,13 @@ do_status(void)
       fprintf(stderr, "Cannot read from %s: %s\n", raw_device,strerror(errno));
       exit(1);
     }
-  while ((where = strchr(buf, ';')) != NULL)
-    *where = '\n';
   initialize_print_cmd();
   do_remote_cmd("ST", 2, 0, 0);
   add_resets(2);
   (void) write(fd, printer_cmd, bufpos);
   (void) read(fd, buf, 1024);
+  while ((where = strchr(buf, ';')) != NULL)
+    *where = '\n';
   printf("%s\n", buf);
   (void) close(fd);
   exit(0);
