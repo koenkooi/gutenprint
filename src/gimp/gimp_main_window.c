@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.24 2001/06/12 01:32:45 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.25 2001/06/14 02:36:13 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2632,7 +2632,7 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 
       while (event->x - mouse_x >= x_threshold)
 	{
-	  if (stp_get_left(vars) + (print_width * 2) <= right)
+	  if (left + stp_get_left(vars) + (print_width * 2) <= right)
 	    {
 	      stp_set_left(vars, stp_get_left(vars) + print_width);
 	      mouse_x += x_threshold;
@@ -2655,7 +2655,7 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 
       while (event->y - mouse_y >= y_threshold)
 	{
-	  if (stp_get_top(vars) + (print_height * 2) <= bottom)
+	  if (top + stp_get_top(vars) + (print_height * 2) <= bottom)
 	    {
 	      stp_set_top(vars, stp_get_top(vars) + print_height);
 	      mouse_y += y_threshold;
