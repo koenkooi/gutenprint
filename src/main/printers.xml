@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.88 2003/11/20 01:56:55 rlk Exp $"
+   "$Id: printers.xml,v 1.89 2003/11/20 03:46:06 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1103,6 +1103,12 @@
       <printer name="EPSON PM-G700" driver="escp2-pmg700">
         <color value="true"/>
         <model value="63"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON PM-G800" driver="escp2-pmg800">
+        <color value="true"/>
+        <model value="64"/>
         <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
