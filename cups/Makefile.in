@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.12 2000/09/18 00:31:24 easysw Exp $"
+# "$Id: Makefile.in,v 1.13 2000/09/18 13:09:03 easysw Exp $"
 #
 #   Makefile for the CUPS drivers.
 #
@@ -87,6 +87,8 @@ OBJS	=	$(DRVOBJS) calibrate.o commandtoepson.o epson.o genppd.o \
 all:
 	echo Using $(CC) for C compiler.
 	echo Using \"$(CFLAGS)\" for compiler options.
+	echo Using \"$(LDFLAGS)\" for linker options.
+	echo Using \"$(LIBS)\" for libraries.
 	$(MAKE) $(TARGETS)
 
 #
@@ -208,5 +210,5 @@ rastertoprinter.o:	cups-print.h cups-quickmatrix257.h cups-ran.367.179.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.12 2000/09/18 00:31:24 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.13 2000/09/18 13:09:03 easysw Exp $".
 #
