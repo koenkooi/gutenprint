@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.8.2.3 2001/06/30 03:19:58 sharkey Exp $
+ * $Id: acconfig.h,v 1.8.2.4 2001/07/10 20:22:46 sharkey Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -92,8 +92,5 @@
 /* Define if maintainer-mode is used */
 #undef HAVE_MAINTAINER_MODE
 
-/* Gnome definitions (from glade acconfig.h) */
-#undef HAVE_LIBSM
+/* Package locale directory */
 #undef PACKAGE_LOCALE_DIR
-#undef PACKAGE_DATA_DIR
-#undef PACKAGE_SOURCE_DIR

@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.18.2.4 2001/06/30 03:19:58 sharkey Exp $
+dnl $Id: configure.in.in,v 1.18.2.5 2001/07/10 20:22:46 sharkey Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -64,11 +64,12 @@ dnl For more detailed information, see the libtool info documentation.
 dnl
 GIMPPRINT_MAJOR_VERSION=4
 GIMPPRINT_MINOR_VERSION=1
-GIMPPRINT_MICRO_VERSION=10
+GIMPPRINT_MICRO_VERSION=99
+GIMPPRINT_EXTRA_VERSION=-a1
 GIMPPRINT_CURRENT_INTERFACE=5
-GIMPPRINT_INTERFACE_AGE=2
+GIMPPRINT_INTERFACE_AGE=3
 GIMPPRINT_BINARY_AGE=0
-GIMPPRINT_VERSION=$GIMPPRINT_MAJOR_VERSION.$GIMPPRINT_MINOR_VERSION.$GIMPPRINT_MICRO_VERSION
+GIMPPRINT_VERSION=$GIMPPRINT_MAJOR_VERSION.$GIMPPRINT_MINOR_VERSION.$GIMPPRINT_MICRO_VERSION$GIMPPRINT_EXTRA_VERSION
 dnl
 AC_DIVERT_POP()dnl
 
@@ -297,7 +298,7 @@ fi
 
 dnl Compiler flags
 if test "$CC" = "gcc" ; then
-  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -ansi -pedantic"
+  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic"
 fi
 AC_SUBST(GNUCFLAGS)
 

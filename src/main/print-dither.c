@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.10.4.4 2001/06/30 03:19:59 sharkey Exp $"
+ * "$Id: print-dither.c,v 1.10.4.5 2001/07/10 20:22:47 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -82,6 +82,8 @@ typedef struct dither_segment
   unsigned value_span;		/* Span of values */
   unsigned dot_size[2];		/* Size of lower, upper dot */
   int isdark[2];		/* Is lower, upper value dark ink? */
+  int is_same_ink;		/* Are both endpoints using the same dots? */
+  int is_equal;			/* Are both endpoints using the same ink? */
 } dither_segment_t;
 
 typedef struct dither_color
@@ -911,6 +913,17 @@ stp_dither_set_generic_ranges(dither_t *d, dither_color_t *s, int nlevels,
     }
   for (i = 0; i < s->nlevels; i++)
     {
+      if (s->ranges[i].isdark[0] == s->ranges[i].isdark[1] &&
+	  s->ranges[i].dot_size[0] == s->ranges[i].dot_size[1])
+	s->ranges[i].is_same_ink = 1;
+      else
+	s->ranges[i].is_same_ink = 0;
+      if (s->ranges[i].range_span > 0 &&
+	  (s->ranges[i].value_span > 0 ||
+	   s->ranges[i].isdark[0] != s->ranges[i].isdark[1]))
+	s->ranges[i].is_equal = 0;
+      else
+	s->ranges[i].is_equal = 1;
       stp_dprintf(STP_DBG_INK, d->v,
 		  "    level %d value[0] %d value[1] %d range[0] %d range[1] %d\n",
 		  i, s->ranges[i].value[0], s->ranges[i].value[1],
@@ -919,8 +932,10 @@ stp_dither_set_generic_ranges(dither_t *d, dither_color_t *s, int nlevels,
 		  "       bits[0] %d bits[1] %d isdark[0] %d isdark[1] %d\n",
 		  s->ranges[i].bits[0], s->ranges[i].bits[1],
 		  s->ranges[i].isdark[0], s->ranges[i].isdark[1]);
-      stp_dprintf(STP_DBG_INK, d->v, "       rangespan %d valuespan %d\n",
-	      s->ranges[i].range_span, s->ranges[i].value_span);
+      stp_dprintf(STP_DBG_INK, d->v,
+		  "       rangespan %d valuespan %d same_ink %d equal %d\n",
+		  s->ranges[i].range_span, s->ranges[i].value_span,
+		  s->ranges[i].is_same_ink, s->ranges[i].is_equal);
     }
   stp_dprintf(STP_DBG_INK, d->v,
 	      "  bit_max %d signif_bits %d\n", s->bit_max, s->signif_bits);
@@ -989,6 +1004,17 @@ stp_dither_set_generic_ranges_full(dither_t *d, dither_color_t *s, int nlevels,
     }
   for (i = 0; i < s->nlevels; i++)
     {
+      if (s->ranges[i].isdark[0] == s->ranges[i].isdark[1] &&
+	  s->ranges[i].dot_size[0] == s->ranges[i].dot_size[1])
+	s->ranges[i].is_same_ink = 1;
+      else
+	s->ranges[i].is_same_ink = 0;
+      if (s->ranges[i].range_span > 0 &&
+	  (s->ranges[i].value_span > 0 ||
+	   s->ranges[i].isdark[0] != s->ranges[i].isdark[1]))
+	s->ranges[i].is_equal = 0;
+      else
+	s->ranges[i].is_equal = 1;
       stp_dprintf(STP_DBG_INK, d->v,
 		  "    level %d value[0] %d value[1] %d range[0] %d range[1] %d\n",
 		  i, s->ranges[i].value[0], s->ranges[i].value[1],
@@ -997,8 +1023,10 @@ stp_dither_set_generic_ranges_full(dither_t *d, dither_color_t *s, int nlevels,
 		  "       bits[0] %d bits[1] %d isdark[0] %d isdark[1] %d\n",
 		  s->ranges[i].bits[0], s->ranges[i].bits[1],
 		  s->ranges[i].isdark[0], s->ranges[i].isdark[1]);
-      stp_dprintf(STP_DBG_INK, d->v, "       rangespan %d valuespan %d\n",
-	      s->ranges[i].range_span, s->ranges[i].value_span);
+      stp_dprintf(STP_DBG_INK, d->v,
+		  "       rangespan %d valuespan %d same_ink %d equal %d\n",
+		  s->ranges[i].range_span, s->ranges[i].value_span,
+		  s->ranges[i].is_same_ink, s->ranges[i].is_equal);
     }
   stp_dprintf(STP_DBG_INK, d->v,
 	      "  bit_max %d signif_bits %d\n", s->bit_max, s->signif_bits);
@@ -1384,8 +1412,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
        * We scale the input linearly against the top and bottom of the
        * range.
        */
-      if (dd->range_span > 0 &&
-	  (dd->value_span > 0 || dd->isdark[0] != dd->isdark[1]))
+      if (!dd->is_equal)
 	rangepoint =
 	  ((unsigned) (density - dd->range[0])) * 65535 / dd->range_span;
 
@@ -1466,7 +1493,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 	{
 	  int subchannel;
 
-	  if (dd->isdark[1] == dd->isdark[0] && dd->bits[1] == dd->bits[0])
+	  if (dd->is_same_ink)
 	    subchannel = 1;
 	  else
 	    {
@@ -1558,8 +1585,7 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
        * We scale the input linearly against the top and bottom of the
        * range.
        */
-      if (dd->range_span == 0 ||
-	  (dd->value_span == 0 && dd->isdark[0] == dd->isdark[1]))
+      if (dd->is_equal)
 	rangepoint = 32768;
       else
 	rangepoint =
@@ -1606,7 +1632,7 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
 	{
 	  int subchannel;
 
-	  if (dd->isdark[1] == dd->isdark[0] && dd->bits[1] == dd->bits[0])
+	  if (dd->is_same_ink)
 	    subchannel = 1;
 	  else
 	    {
@@ -1647,6 +1673,8 @@ static inline void
 print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
 		 unsigned char bit, int length)
 {
+  int density = dc->o;
+  int adjusted = dc->v;
   dither_color_t *rv = &(dc->dither);
   dither_matrix_t *dither_matrix = &(dc->dithermat);
   int i;
@@ -1655,68 +1683,76 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
   unsigned char *tptr;
   unsigned bits;
 
-  if (dc->o <= 0 || dc->v <= 0)
+  if (density <= 0 || adjusted <= 0)
     return;
   if (dc->very_fast)
     {
-      if (dc->v >= ditherpoint(d, dither_matrix, x))
+      if (adjusted >= ditherpoint(d, dither_matrix, x))
 	{
 	  if (rv->row_ends[0][0] == -1)
 	    rv->row_ends[0][0] = x;
 	  rv->row_ends[1][0] = x;
 	  dc->ptrs[0][d->ptr_offset] |= bit;
 	}
-      return;
     }
-  /*
-   * Look for the appropriate range into which the input value falls.
-   * Notice that we use the input, not the error, to decide what dot type
-   * to print (if any).  We actually use the "density" input to permit
-   * the caller to use something other that simply the input value, if it's
-   * desired to use some function of overall density, rather than just
-   * this color's input, for this purpose.
-   */
-  for (i = levels; i >= 0; i--)
+  else
     {
-      dither_segment_t *dd = &(rv->ranges[i]);
-      unsigned vmatrix;
-      if (dc->v <= dd->range[0])
-	continue;
-
-      vmatrix = (dd->value[1] * ditherpoint(d, dither_matrix, x)) >> 16;
-
-      /*
-       * After all that, printing is almost an afterthought.
-       * Pick the actual dot size (using a matrix here) and print it.
-       */
-      if (dc->v >= vmatrix)
+      for (i = levels; i >= 0; i--)
 	{
-	  int isdark = dd->isdark[1];
-	  bits = dd->bits[1];
-	  tptr = dc->ptrs[1 - isdark] + d->ptr_offset;
-	  if (rv->row_ends[0][1 - isdark] == -1)
-	    rv->row_ends[0][1 - isdark] = x;
-	  rv->row_ends[1][1 - isdark] = x;
+	  dither_segment_t *dd = &(rv->ranges[i]);
+	  unsigned vmatrix;
+	  unsigned rangepoint;
+	  unsigned dpoint;
+	  unsigned subchannel;
+	  if (density <= dd->range[0])
+	    continue;
+	  dpoint = ditherpoint(d, dither_matrix, x);
 
-	  /*
-	   * Lay down all of the bits in the pixel.
-	   */
-	  if (bits == 1)
-	    {
-	      tptr[0] |= bit;
-	    }
+	  if (dd->is_same_ink)
+	    subchannel = 1;
 	  else
 	    {
-	      for (j = 1; j <= bits; j += j, tptr += length)
+	      rangepoint = ((density - dd->range[0]) << 16) / dd->range_span;
+	      rangepoint = (rangepoint * rv->density) >> 16;
+	      if (rangepoint >= dpoint)
+		subchannel = 1;
+	      else
+		subchannel = 0;
+	    }
+	  vmatrix = (dd->value[subchannel] * dpoint) >> 16;
+
+	  /*
+	   * After all that, printing is almost an afterthought.
+	   * Pick the actual dot size (using a matrix here) and print it.
+	   */
+	  if (adjusted >= vmatrix)
+	    {
+	      int isdark = dd->isdark[subchannel];
+	      bits = dd->bits[subchannel];
+	      tptr = dc->ptrs[1 - isdark] + d->ptr_offset;
+	      if (rv->row_ends[0][1 - isdark] == -1)
+		rv->row_ends[0][1 - isdark] = x;
+	      rv->row_ends[1][1 - isdark] = x;
+
+	      /*
+	       * Lay down all of the bits in the pixel.
+	       */
+	      if (bits == 1)
 		{
-		  if (j & bits)
-		    tptr[0] |= bit;
+		  tptr[0] |= bit;
+		}
+	      else
+		{
+		  for (j = 1; j <= bits; j += j, tptr += length)
+		    {
+		      if (j & bits)
+			tptr[0] |= bit;
+		    }
 		}
 	    }
+	  return;
 	}
-      return;
     }
-  return;
 }
 
 static inline void

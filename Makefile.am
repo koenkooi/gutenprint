@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.5 2001/06/30 06:07:54 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.6 2001/07/10 20:22:46 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify

@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.2.4.2 2001/06/30 03:20:00 sharkey Exp $ */
+/* $Id: unprint.c,v 1.2.4.3 2001/07/10 20:22:48 sharkey Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -30,6 +30,10 @@
 #include<limits.h>
 #include<string.h>
 
+#ifdef __GNUC__
+#define inline __inline__
+#endif
+
 #undef DEBUG_CANON
 
 typedef struct {
@@ -40,6 +44,7 @@ typedef struct {
   int absolute_horizontal_units; /* dpi, assumed to be >= relative */
   int relative_vertical_units; /* dpi */
   int absolute_vertical_units; /* dpi, assumed to be >= relative */
+  int horizontal_spacing;	/* Horizontal dot spacing */
   int top_margin; /* dots */
   int bottom_margin; /* dots */
   int page_height; /* dots */
@@ -105,9 +110,6 @@ line_type **page=NULL;
 /* sequential to Epson2 */
 #define ep2color(c)  ({0,1,2,4,257,258}[c])
 
-int  get_bits (unsigned char *p,int index);
-void set_bits (unsigned char *p,int index,int value);
-void mix_ink (ppmpixel p, int c, unsigned int a);
 void merge_line (line_type *p, unsigned char *l, int startl, int stopl, 
                  int color);
 void expand_line (unsigned char *src, unsigned char *dst, int height,
@@ -122,7 +124,9 @@ int rle_decode (unsigned char *inbuf, int n, int max);
 void parse_canon (FILE *fp_r);
      
 
-int get_bits(unsigned char *p,int index) {
+static inline int 
+get_bits(unsigned char *p,int index) 
+{
 
   /* p is a pointer to a bit stream, ordered MSb first.  Extract the
    * indexth bpp bit width field and return that value.  Ignore byte
@@ -130,16 +134,31 @@ int get_bits(unsigned char *p,int index) {
    */
 
   int value,b;
-
-  value=0;
-  for (b=0;b<pstate.bpp;b++) {
-    value*=2;
-    value|=(p[(index*pstate.bpp+b)/8]>>(7-((index*pstate.bpp+b)%8)))&1;
-  }
-  return(value);
+  unsigned addr;
+  switch (pstate.bpp)
+    {
+    case 1:
+      return (p[index >> 3] >> (7 - (index & 7))) & 1;
+    case 2:
+      return (p[index >> 2] >> ((3 - (index & 3)) << 1)) & 3;
+    case 4:
+      return (p[index >> 1] >> ((1 - (index & 1)) << 2)) & 0xf;
+    case 8:
+      return p[index];
+    default:
+      addr = (index*pstate.bpp);
+      value=0;
+      for (b=0;b<pstate.bpp;b++) {
+	value*=2;
+	value|=(p[(addr + b) >> 3] >> (7-((addr + b) & 7)))&1;
+      }
+      return(value);
+    }
 }
 
-void set_bits(unsigned char *p,int index,int value) {
+static inline void 
+set_bits(unsigned char *p,int index,int value) 
+{
 
   /* p is a pointer to a bit stream, ordered MSb first.  Set the
    * indexth bpp bit width field to value value.  Ignore byte
@@ -148,17 +167,38 @@ void set_bits(unsigned char *p,int index,int value) {
 
   int b;
 
-  for (b=pstate.bpp-1;b>=0;b--) {
-    if (value&1) {
-      p[(index*pstate.bpp+b)/8]|=1<<(7-((index*pstate.bpp+b)%8));
-    } else {
-      p[(index*pstate.bpp+b)/8]&=~(1<<(7-((index*pstate.bpp+b)%8)));
+  switch (pstate.bpp)
+    {
+    case 1:
+      p[index >> 3] &= ~(1 << (7 - (index & 7)));
+      p[index >> 3] |= value << (7 - (index & 7));
+      break;
+    case 2:
+      p[index >> 2] &= ~(3 << ((3 - (index & 3)) << 1));
+      p[index >> 2] |= value << ((3 - (index & 3)) << 1);
+      break;
+    case 4:
+      p[index >> 1] &= ~(0xf << ((1 - (index & 1)) << 2));
+      p[index >> 1] |= value << ((1 - (index & 1)) << 2);
+      break;
+    case 8:
+      p[index] = value;
+      break;
+    default:
+      for (b=pstate.bpp-1;b>=0;b--) {
+	if (value&1) {
+	  p[(index*pstate.bpp+b)/8]|=1<<(7-((index*pstate.bpp+b)%8));
+	} else {
+	  p[(index*pstate.bpp+b)/8]&=~(1<<(7-((index*pstate.bpp+b)%8)));
+	}
+	value/=2;
+      }
     }
-    value/=2;
-  }
 }
 
-void mix_ink(ppmpixel p, int c, unsigned int a) {
+static inline void 
+mix_ink(ppmpixel p, int c, unsigned int a) 
+{
 
   /* this is pretty crude */
 
@@ -183,10 +223,11 @@ void mix_ink(ppmpixel p, int c, unsigned int a) {
       p[i]*=ink[i];
     }
   }
-
 }
 
-void merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color){
+void 
+merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color)
+{
 
   int i;
   int temp,shift,height,lvalue,pvalue,oldstop;
@@ -229,7 +270,8 @@ void merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color
 }
 
 void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
-                  int left_ignore) {
+                  int left_ignore) 
+{
 
   /* src is a pointer to a bit stream which is composed of fields of height
    * bpp starting with the most significant bit of the first byte and
@@ -256,13 +298,17 @@ void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
   for (i=0;i<height;i++) {
     set_bits(dst,i*skip,get_bits(src,i+left_ignore));
   }
-
 }
 
-void write_output(FILE *fp_w) {
-  int c,l,p,left,right,first,last,width,height;
+void write_output(FILE *fp_w) 
+{
+  int c,l,p,left,right,first,last,width,height,i;
   unsigned int amount;
-  ppmpixel pixel;
+  ppmpixel *out_row;
+  int oversample = pstate.absolute_horizontal_units /
+    pstate.absolute_vertical_units;
+  if (oversample == 0)
+    oversample = 1;
 
   fprintf(stderr,"Margins: top: %d bottom: top+%d\n",pstate.top_margin,
           pstate.bottom_margin);
@@ -271,7 +317,7 @@ void write_output(FILE *fp_w) {
   for (last=pstate.bottom_margin-1;(last>first)&&
        (!page[last]);last--);
   if ((first<pstate.bottom_margin)&&(page[first])) {
-    height = last-first+1;
+    height = oversample * (last-first+1);
   } else {
     height = 0;
   }
@@ -292,29 +338,34 @@ void write_output(FILE *fp_w) {
   if (width<0) {
     width=0;
   }
+  out_row = malloc(sizeof(ppmpixel) * width);
+  /* start with white, add inks */
   fprintf(stderr,"Writing output...\n");
   /* write out the PPM header */
   fprintf(fp_w,"P6\n");
   fprintf(fp_w,"%d %d\n",width,height);
   fprintf(fp_w,"255\n");
   for (l=first;l<=last;l++) {
+    memset(out_row, 255, (sizeof(ppmpixel) * width));
     for (p=left;p<=right;p++) {
-      memset(pixel,255,3); /* start with white, add inks */
       for (c=0;c<MAX_INKS;c++) {
-        if ((page[l])&&(page[l]->line[c])&&
+	if ((page[l])&&(page[l]->line[c])&&
 	    (page[l]->startx[c]<=p)&&
 	    (page[l]->stopx[c]>=p)) {
-          amount=get_bits(page[l]->line[c],p-page[l]->startx[c]);
-          mix_ink(pixel,c,amount);
-        }
+	  amount=get_bits(page[l]->line[c],p-page[l]->startx[c]);
+	  mix_ink(out_row[p - left],c,amount);
+	}
       }
-      fwrite(pixel,sizeof(pixel),1,fp_w);
     }
+    for (i = 0; i < oversample; i++)
+      fwrite(out_row, sizeof(ppmpixel), width, fp_w);
   }
+  free(out_row);
 }
 
 #if 0
-int num_bits_zero_lsb(int i,int max) {
+int num_bits_zero_lsb(int i,int max) 
+{
 
   int n;
 
@@ -323,7 +374,8 @@ int num_bits_zero_lsb(int i,int max) {
 
 }
 
-int num_bits_zero_msb(int i, int max) {
+int num_bits_zero_msb(int i, int max) 
+{
 
   int n;
 
@@ -333,7 +385,8 @@ int num_bits_zero_msb(int i, int max) {
 }
 #endif
 
-void find_white(unsigned char *buf,int npix, int *left, int *right) {
+void find_white(unsigned char *buf,int npix, int *left, int *right) 
+{
 
 /* If a line has white borders on either side, count the number of
  * pixels and fill that info into left and right.
@@ -409,8 +462,9 @@ int update_page(unsigned char *buf, /* I - pixel data               */
 		int m,              /* I - height of area in pixels */
 		int n,              /* I - width of area in pixels  */
 		int color,          /* I - color of pixel data      */
-		int density         /* I - vertical density in dpi  */
-		) {
+		int density         /* I - horizontal density in dpi  */
+		) 
+{
 
   int y,skip,oldstart,oldstop,mi;
   int left_white,right_white;
@@ -491,9 +545,8 @@ sh=minibuf[0]+minibuf[1]*256;}
 #define getnoff(n,offset,error) if (!(count=fread(buf+offset,1,n,fp_r))){\
 fprintf(stderr,error);eject=1;continue;} else counter+=count;
 
-
-
-void parse_escp2(FILE *fp_r){
+void parse_escp2(FILE *fp_r)
+{
 
   int i,m=0,n=0,c=0;
   int currentcolor,currentbpp,density,eject,got_graphics;
@@ -578,7 +631,7 @@ void parse_escp2(FILE *fp_r){
             n=sh * 8 / pstate.bpp;
             get2("Error reading number of vertical dots!\n");
             m=sh;
-            density=pstate.relative_horizontal_units;
+            density=pstate.horizontal_spacing;
             ch=0; /* make sure ch!='.' and fall through */
         case '.': /* transfer raster image */
             got_graphics=1;
@@ -635,7 +688,7 @@ void parse_escp2(FILE *fp_r){
                 break;
             }
             break;
-        case 0x5C: /* set relative horizontal position */
+        case '\\': /* set relative horizontal position */
             get2("Error reading relative horizontal position.\n");
             if (pstate.xposition+(signed short)sh<0) {
               fprintf(stderr,"Warning! Attempt to move to -X region ignored.\n");
@@ -658,7 +711,7 @@ void parse_escp2(FILE *fp_r){
         case 'r': /* select printing color */
             get1("Error reading color.\n");
             if ((ch<=4)&&(ch!=3)) {
-              pstate.current_color=ch;
+              pstate.current_color=seqcolor(ch);
             } else {
               fprintf(stderr,"Invalid color %d.\n",ch);
             }
@@ -738,14 +791,25 @@ void parse_escp2(FILE *fp_r){
                     pstate.absolute_horizontal_units=
                     pstate.relative_horizontal_units=
                     pstate.relative_vertical_units=
+		    pstate.horizontal_spacing=
                     pstate.absolute_vertical_units=3600/buf[0];
+		    fprintf(stderr, "Setting units to 1/%d\n",
+			    pstate.absolute_horizontal_units);
                     break;
                   case 5:
+		    pstate.extraskip=1;
                     pstate.page_management_units=(buf[4]*256+buf[3])/buf[0];
                     pstate.relative_vertical_units=
                     pstate.absolute_vertical_units=(buf[4]*256+buf[3])/buf[1];
                     pstate.relative_horizontal_units=
+		    pstate.horizontal_spacing=
                     pstate.absolute_horizontal_units=(buf[4]*256+buf[3])/buf[2];
+		    fprintf(stderr, "Setting page management to 1/%d\n",
+			    pstate.page_management_units);
+		    fprintf(stderr, "Setting vertical to 1/%d\n",
+			    pstate.relative_vertical_units);
+		    fprintf(stderr, "Setting horizontal to 1/%d\n",
+			    pstate.relative_horizontal_units);
                     break;
                 }
                 break;
@@ -767,14 +831,14 @@ void parse_escp2(FILE *fp_r){
                 }
                 break;
               case 'e': /* set dot size */
-                if ((bufsize!=2)||(buf[0]!=0)||((buf[1]>4)&&(buf[1]!=0x10)&&(buf[1]!=0x11))) {
+                if ((bufsize!=2)||(buf[0]!=0)) {
                   fprintf(stderr,"Malformed dotsize setting command.\n");
                 } else {
                   if (got_graphics) {
                     fprintf(stderr,"Changing dotsize while printing not supported.\n");
                   } else {
                     pstate.dotsize=buf[1];
-                    if (pstate.dotsize&0x16) {
+                    if (pstate.dotsize&0x10) {
                       pstate.bpp=2;
                     } else {
                       pstate.bpp=1;
@@ -864,6 +928,23 @@ void parse_escp2(FILE *fp_r){
                 break;
               case 'S': /* set paper dimensions */
                 break;
+	      case 'D':
+		if (bufsize != 4)
+		  {
+		    fprintf(stderr, "Malformed set resolution request.\n");
+		  }
+		else
+		  {
+		    int res_base = (256 * buf[1]) + buf[0];
+		    pstate.nozzle_separation =
+		      pstate.absolute_vertical_units / (res_base / buf[2]);
+		    pstate.horizontal_spacing = res_base / buf[3];
+		    fprintf(stderr, "Setting vertical spacing to %d\n",
+			    pstate.nozzle_separation);
+		    fprintf(stderr, "Setting horizontal spacing to %d\n",
+			    pstate.horizontal_spacing);
+		  }
+		break;
               case 'r': /* select color */
                 if (bufsize!=2) {
                   fprintf(stderr,"Malformed color selection request.\n");
@@ -877,9 +958,9 @@ void parse_escp2(FILE *fp_r){
                   }
                 }
                 break;
-              case 0x5C: /* set relative horizontal position 700/EX */
+              case '\\': /* set relative horizontal position 700/EX */
               case '/': /* set relative horizontal position  740/750/1200 */
-                i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
+                i=(buf[3]<<8)|buf[2];
                 if (pstate.xposition+i<0) {
                   fprintf(stderr,"Warning! Attempt to move to -X region ignored.\n");
                   fprintf(stderr,"   Command:  ESC ( %c %X %X %X %X  Original position: %d\n",ch,buf[0],buf[1],buf[2],buf[3],pstate.xposition);
@@ -982,7 +1063,8 @@ int rle_decode(unsigned char *inbuf, int n, int max)
   return o;
 }
 
-void parse_canon(FILE *fp_r){
+void parse_canon(FILE *fp_r)
+{
 
   int m=0;
   int currentcolor,currentbpp,density,eject,got_graphics;
@@ -1181,15 +1263,10 @@ void parse_canon(FILE *fp_r){
 	     ch,counter-2);
    }
  }
-
 }
 
-
-
-
-
-
-int main(int argc,char *argv[]){
+int main(int argc,char *argv[])
+{
 
   int arg;
   char *s;
@@ -1254,7 +1331,7 @@ int main(int argc,char *argv[]){
       pstate.extraskip=1;
       parse_canon(fp_r);
     } else {
-      pstate.extraskip=2;
+      pstate.extraskip=2; 
       parse_escp2(fp_r);
     }
     fprintf(stderr,"Done reading.\n");

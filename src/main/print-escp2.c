@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.24.2.4 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: print-escp2.c,v 1.24.2.5 2001/07/10 20:22:47 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -445,8 +445,7 @@ static const escp2_variable_ink_t standard_3pl_1440_ink =
 
 static const stp_simple_dither_range_t standard_3pl_2880_dither_ranges[] =
 {
-  { 1.0,   0x1, 1, 1 },
-  { 3.0,   0x2, 1, 2 }
+  { 1.0,   0x1, 1, 1 }
 };
 
 static const escp2_variable_ink_t standard_3pl_2880_ink =
@@ -2292,6 +2291,10 @@ static const paper_t escp2_paper_list[] =
   {N_("Photo Quality Glossy Paper"), 6, 0, 1.00, 1, .999,
    1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
    1.0, 1.0, 0x6b, 0x1a, 0x01, NULL, NULL, NULL},
+  {N_("Ilford Heavy Paper"), 	     8, 0, .85, .5, 1.35,
+   1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+   1, 1.0, 0x80, 0x00, 0x02,
+   NULL, NULL, NULL },
   {N_("Other"),                      0, 0, 0.80, 0.125, .5,
    1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
    1, 1.0, 0x6b, 0x1a, 0x01, NULL, plain_paper_lum_adjustment, NULL},
@@ -3516,8 +3519,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   weave = stp_initialize_weave(nozzles, nozzle_separation,
 			       horizontal_passes, vertical_passes,
 			       vertical_oversample, ncolors, bits,
-			       (out_width * physical_xdpi / physical_ydpi),
-			       out_height, separation_rows,
+			       out_width, out_height, separation_rows,
 			       top * physical_ydpi / 72,
 			       (page_height * physical_ydpi / 72 +
 				escp2_extra_feed(model, nv) * physical_ydpi /
