@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.24 2001/09/08 17:13:48 rleigh Exp $"
+ * "$Id: print-color.c,v 1.25 2001/09/19 01:41:29 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1923,6 +1923,13 @@ stp_compute_lut(stp_vars_t v, size_t steps)
 	temp_pixel = 1.0 - pixel;
       else
 	temp_pixel = pixel;
+      if (contrast > 3.99999)
+	{
+	  if (temp_pixel < .5)
+	    temp_pixel = 0;
+	  else
+	    temp_pixel = 1;
+	}
       if (temp_pixel <= .000001 && contrast <= .0001)
 	temp_pixel = .5;
       else if (temp_pixel > 1)
