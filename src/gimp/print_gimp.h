@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.22 2002/10/28 12:02:55 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.23 2002/10/29 02:00:46 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -63,6 +63,11 @@
 #define ORIENT_LANDSCAPE        1       /* Landscape orientation */
 #define ORIENT_UPSIDEDOWN       2       /* Reverse portrait orientation */
 #define ORIENT_SEASCAPE         3       /* Reverse landscape orientation */
+
+#define UNIT_INCH		0
+#define UNIT_CM			1
+#define UNIT_POINT		2
+#define UNIT_MM			3
 
 typedef struct		/**** Printer List ****/
 {
