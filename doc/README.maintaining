@@ -49,7 +49,7 @@ something that you would like covering, please let me know!
 
  -- Roger Leigh <rleigh@debian.org>
 
- $Id: README.maintaining,v 1.17 2004/05/09 16:06:04 rleigh Exp $
+ $Id: README.maintaining,v 1.18 2004/05/10 21:33:44 rleigh Exp $
 
 
 1. Setting up the autotools
@@ -63,6 +63,10 @@ ii.  GNU automake (at least 1.5; 1.7 recommended)
 iii. GNU libtool (at least 1.4.3; 1.5 recommended)
 iv.  GNU gettext (at least 0.11.x)
 v.   GNU make (any recent version)
+
+and also
+
+vi.  pkg-config (at least 0.15.0)
 
 GNU autoconf made some incompatible changes between the 2.13 and 2.50
 stable releases.  You cannot use a configure.in written for 2.13 with
