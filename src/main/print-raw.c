@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.35 2004/05/07 19:20:33 rleigh Exp $"
+ * "$Id: print-raw.c,v 1.35.6.1 2004/07/22 03:26:12 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -346,14 +346,14 @@ static stp_family_t print_raw_module_data =
 static int
 print_raw_module_init(void)
 {
-  return stp_family_register(print_raw_module_data.printer_list);
+  return stp_family_register(print_raw_module_data.driver_list);
 }
 
 
 static int
 print_raw_module_exit(void)
 {
-  return stp_family_unregister(print_raw_module_data.printer_list);
+  return stp_family_unregister(print_raw_module_data.driver_list);
 }
 
 

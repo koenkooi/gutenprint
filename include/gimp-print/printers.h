@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.6 2004/05/07 19:20:23 rleigh Exp $"
+ * "$Id: printers.h,v 1.6.6.1 2004/07/22 03:26:09 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -205,7 +205,7 @@ typedef struct
 typedef struct stp_family
 {
   const stp_printfuncs_t *printfuncs;   /* printfuncs for the printer */
-  stp_list_t             *printer_list; /* list of printers */
+  stp_list_t             *driver_list; /* list of drivers */
 } stp_family_t;
 
 extern int stp_get_model_id(const stp_vars_t *v);
@@ -232,5 +232,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GIMP_PRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.6 2004/05/07 19:20:23 rleigh Exp $".
+ * End of "$Id: printers.h,v 1.6.6.1 2004/07/22 03:26:09 rlk Exp $".
  */

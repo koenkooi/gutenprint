@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.148 2004/05/30 01:26:16 rlk Exp $"
+ * "$Id: print-canon.c,v 1.148.4.1 2004/07/22 03:26:09 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -3107,14 +3107,14 @@ static stp_family_t print_canon_module_data =
 static int
 print_canon_module_init(void)
 {
-  return stp_family_register(print_canon_module_data.printer_list);
+  return stp_family_register(print_canon_module_data.driver_list);
 }
 
 
 static int
 print_canon_module_exit(void)
 {
-  return stp_family_unregister(print_canon_module_data.printer_list);
+  return stp_family_unregister(print_canon_module_data.driver_list);
 }
 
 

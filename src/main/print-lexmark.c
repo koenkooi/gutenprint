@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.146 2004/05/30 01:26:17 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.146.4.1 2004/07/22 03:26:11 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -3064,14 +3064,14 @@ static stp_family_t print_lexmark_module_data =
 static int
 print_lexmark_module_init(void)
 {
-  return stp_family_register(print_lexmark_module_data.printer_list);
+  return stp_family_register(print_lexmark_module_data.driver_list);
 }
 
 
 static int
 print_lexmark_module_exit(void)
 {
-  return stp_family_unregister(print_lexmark_module_data.printer_list);
+  return stp_family_unregister(print_lexmark_module_data.driver_list);
 }
 
 

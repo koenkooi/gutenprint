@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.50 2004/07/09 22:32:16 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.50.2.1 2004/07/22 03:26:11 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1956,14 +1956,14 @@ static stp_family_t print_olympus_module_data =
 static int
 print_olympus_module_init(void)
 {
-  return stp_family_register(print_olympus_module_data.printer_list);
+  return stp_family_register(print_olympus_module_data.driver_list);
 }
 
 
 static int
 print_olympus_module_exit(void)
 {
-  return stp_family_unregister(print_olympus_module_data.printer_list);
+  return stp_family_unregister(print_olympus_module_data.driver_list);
 }
 
 

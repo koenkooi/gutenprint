@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.322 2004/06/30 01:16:20 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.322.2.1 2004/07/22 03:26:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2706,14 +2706,14 @@ static stp_family_t print_escp2_module_data =
 static int
 print_escp2_module_init(void)
 {
-  return stp_family_register(print_escp2_module_data.printer_list);
+  return stp_family_register(print_escp2_module_data.driver_list);
 }
 
 
 static int
 print_escp2_module_exit(void)
 {
-  return stp_family_unregister(print_escp2_module_data.printer_list);
+  return stp_family_unregister(print_escp2_module_data.driver_list);
 }
 
 

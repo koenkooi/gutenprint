@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.78 2004/06/13 14:34:16 rlk Exp $"
+ * "$Id: print-ps.c,v 1.78.4.1 2004/07/22 03:26:11 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -961,14 +961,14 @@ static stp_family_t print_ps_module_data =
 static int
 print_ps_module_init(void)
 {
-  return stp_family_register(print_ps_module_data.printer_list);
+  return stp_family_register(print_ps_module_data.driver_list);
 }
 
 
 static int
 print_ps_module_exit(void)
 {
-  return stp_family_unregister(print_ps_module_data.printer_list);
+  return stp_family_unregister(print_ps_module_data.driver_list);
 }
 
 

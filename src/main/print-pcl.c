@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.134 2004/06/20 15:13:38 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.134.2.1 2004/07/22 03:26:11 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2765,14 +2765,14 @@ static stp_family_t print_pcl_module_data =
 static int
 print_pcl_module_init(void)
 {
-  return stp_family_register(print_pcl_module_data.printer_list);
+  return stp_family_register(print_pcl_module_data.driver_list);
 }
 
 
 static int
 print_pcl_module_exit(void)
 {
-  return stp_family_unregister(print_pcl_module_data.printer_list);
+  return stp_family_unregister(print_pcl_module_data.driver_list);
 }
 
 
