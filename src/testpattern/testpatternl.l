@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.15 2004/04/14 02:15:40 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.16 2004/04/14 02:21:21 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -39,7 +39,8 @@ static char *
 c_strstrip(char *s)
 {
   size_t len = strlen(s);
-  if (len >= 2 && s[0] == '"' && s[len - 1] == '"')
+  if (len >= 2 && ((s[0] == '"' && s[len - 1] == '"') ||
+		   (s[0] == '\'' && s[len - 1] == '\'')))
     {
       char *sn = malloc(len - 1);
       memcpy(sn, s + 1, len - 2);
