@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.9.2.1 2001/03/31 03:23:34 rlk Exp $"
+ * "$Id: print-color.c,v 1.9.2.2 2001/03/31 16:50:04 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -189,9 +189,9 @@ calc_hsl_to_rgb(unsigned short *rgb, double h, double s, double l)
 static inline void
 update_cmyk(unsigned short *rgb)
 {
-  int c = 65535 - rgb[0];
-  int m = 65535 - rgb[1];
-  int y = 65535 - rgb[2];
+  int c = rgb[0];
+  int m = rgb[1];
+  int y = rgb[2];
   int nc, nm, ny;
   int k;
   if (c == m && c == y)
@@ -226,9 +226,9 @@ update_cmyk(unsigned short *rgb)
   if (ny > 65535)
     ny = 65535;
 
-  rgb[0] = 65535 - nc;
-  rgb[1] = 65535 - nm;
-  rgb[2] = 65535 - ny;
+  rgb[0] = nc;
+  rgb[1] = nm;
+  rgb[2] = ny;
 }
 
 /*
@@ -265,18 +265,20 @@ lookup_value(unsigned short value, int lut_size, const unsigned short *lut,
  */
 
 static void
-gray_to_gray(const unsigned char *grayin,
+gray_to_gray(const stp_vars_t vars,
+	     const unsigned char *grayin,
 	     unsigned short *grayout,
-	     int    	width,
-	     int    	bpp,
+	     int *zero_mask,
+	     int width,
+	     int bpp,
 	     const unsigned char *cmap,
-	     const stp_vars_t	vars,
 	     const double *hue_map,
 	     const double *lum_map,
 	     const double *sat_map)
 {
   int i0 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
   if (width <= 0)
@@ -288,27 +290,26 @@ gray_to_gray(const unsigned char *grayin,
 	  i0 = grayin[0];
 	  o0 = lut->composite[i0];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       grayout[0] = o0;
       grayin ++;
       grayout ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-gray_alpha_to_gray(const unsigned char *grayin,
+gray_alpha_to_gray(const stp_vars_t vars,
+		   const unsigned char *grayin,
 		   unsigned short *grayout,
-		   int    	width,
-		   int    	bpp,
+		   int *zero_mask,
+		   int width,
+		   int bpp,
 		   const unsigned char *cmap,
-		   const stp_vars_t	vars,
 		   const double *hue_map,
 		   const double *lum_map,
 		   const double *sat_map)
@@ -316,6 +317,7 @@ gray_alpha_to_gray(const unsigned char *grayin,
   int i0 = -1;
   int i1 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
   if (width <= 0)
@@ -328,33 +330,33 @@ gray_alpha_to_gray(const unsigned char *grayin,
 	  i1 = grayin[1];
 	  o0 = lut->composite[i0 * i1 / 255 + 255 - i1];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       grayout[0] = o0;
       grayin += 2;
       grayout ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-gray_to_monochrome(const unsigned char *grayin,
+gray_to_monochrome(const stp_vars_t vars,
+		   const unsigned char *grayin,
 		   unsigned short *grayout,
-		   int    	width,
-		   int    	bpp,
+		   int *zero_mask,
+		   int width,
+		   int bpp,
 		   const unsigned char *cmap,
-		   const stp_vars_t	vars,
 		   const double *hue_map,
 		   const double *lum_map,
 		   const double *sat_map)
 {
   int i0 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   if (width <= 0)
     return;
@@ -368,21 +370,25 @@ gray_to_monochrome(const unsigned char *grayin,
 	    o0 = 0;
 	  else
 	    o0  = 65535;
+	  nz |= o0;
 	}
       grayout[0] = o0;
       grayin ++;
       grayout ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-gray_alpha_to_monochrome(const unsigned char *grayin,
+gray_alpha_to_monochrome(const stp_vars_t vars,
+			 const unsigned char *grayin,
 			 unsigned short *grayout,
-			 int    	width,
-			 int    	bpp,
+			 int *zero_mask,
+			 int width,
+			 int bpp,
 			 const unsigned char *cmap,
-			 const stp_vars_t	vars,
 			 const double *hue_map,
 			 const double *lum_map,
 			 const double *sat_map)
@@ -390,6 +396,7 @@ gray_alpha_to_monochrome(const unsigned char *grayin,
   int i0 = -1;
   int i1 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   if (width <= 0)
     return;
@@ -404,12 +411,15 @@ gray_alpha_to_monochrome(const unsigned char *grayin,
 	    o0 = 0;
 	  else
 	    o0  = 65535;
+	  nz |= o0;
 	}
       grayout[0] = o0;
       grayin += 2;
       grayout ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 /*
@@ -417,12 +427,13 @@ gray_alpha_to_monochrome(const unsigned char *grayin,
  */
 
 static void
-indexed_to_gray(const unsigned char *indexed,
+indexed_to_gray(const stp_vars_t vars,
+		const unsigned char *indexed,
 		unsigned short *gray,
-		int    width,
-		int    bpp,
+		int *zero_mask,
+		int width,
+		int bpp,
 		const unsigned char *cmap,
-		const stp_vars_t   vars,
 		const double *hue_map,
 		const double *lum_map,
 		const double *sat_map)
@@ -430,6 +441,7 @@ indexed_to_gray(const unsigned char *indexed,
   int i0 = -1;
   int o0 = 0;
   int i;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   unsigned char	gray_cmap[256];		/* Grayscale colormap */
   double density = stp_get_density(vars);
@@ -448,27 +460,26 @@ indexed_to_gray(const unsigned char *indexed,
 	  i0 = indexed[0];
 	  o0 = lut->composite[gray_cmap[i0]];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       gray[0] = o0;
       gray ++;
       indexed ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-indexed_alpha_to_gray(const unsigned char *indexed,
+indexed_alpha_to_gray(const stp_vars_t vars,
+		      const unsigned char *indexed,
 		      unsigned short *gray,
-		      int    width,
-		      int    bpp,
+		      int *zero_mask,
+		      int width,
+		      int bpp,
 		      const unsigned char *cmap,
-		      const stp_vars_t   vars,
 		      const double *hue_map,
 		      const double *lum_map,
 		      const double *sat_map)
@@ -476,6 +487,7 @@ indexed_alpha_to_gray(const unsigned char *indexed,
   int i0 = -1;
   int i1 = -1;
   int o0 = 0;
+  int nz = 0;
   int i;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   unsigned char	gray_cmap[256];		/* Grayscale colormap */
@@ -497,27 +509,26 @@ indexed_alpha_to_gray(const unsigned char *indexed,
 	  i1 = indexed[1];
 	  o0 = lut->composite[gray_cmap[i0 * i1 / 255] + 255 - i1];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       gray[0] = o0;
       gray ++;
       indexed += 2;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-indexed_to_monochrome(const unsigned char *indexed,
+indexed_to_monochrome(const stp_vars_t vars,
+		      const unsigned char *indexed,
 		      unsigned short *gray,
-		      int    width,
-		      int    bpp,
+		      int *zero_mask,
+		      int width,
+		      int bpp,
 		      const unsigned char *cmap,
-		      const stp_vars_t   vars,
 		      const double *hue_map,
 		      const double *lum_map,
 		      const double *sat_map)
@@ -525,6 +536,7 @@ indexed_to_monochrome(const unsigned char *indexed,
   int i0 = -1;
   int o0 = 0;
   int i;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   unsigned char	gray_cmap[256];		/* Grayscale colormap */
   if (width <= 0)
@@ -546,21 +558,25 @@ indexed_to_monochrome(const unsigned char *indexed,
 	    o0 = 0;
 	  else
 	    o0  = 65535;
+	  nz |= o0;
 	}
       gray[0] = o0;
       indexed ++;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-indexed_alpha_to_monochrome(const unsigned char *indexed,
+indexed_alpha_to_monochrome(const stp_vars_t vars,
+			    const unsigned char *indexed,
 			    unsigned short *gray,
-			    int    width,
-			    int    bpp,
+			    int *zero_mask,
+			    int width,
+			    int bpp,
 			    const unsigned char *cmap,
-			    const stp_vars_t   vars,
 			    const double *hue_map,
 			    const double *lum_map,
 			    const double *sat_map)
@@ -568,6 +584,7 @@ indexed_alpha_to_monochrome(const unsigned char *indexed,
   int i0 = -1;
   int i1 = -1;
   int o0 = 0;
+  int nz = 0;
   int i;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   unsigned char	gray_cmap[256];		/* Grayscale colormap */
@@ -579,7 +596,6 @@ indexed_alpha_to_monochrome(const unsigned char *indexed,
     gray_cmap[i] = (cmap[0] * LUM_RED +
 		    cmap[1] * LUM_GREEN +
 		    cmap[2] * LUM_BLUE) / 100;
-
   while (width)
     {
       if (i0 != indexed[0] || i1 != indexed[1])
@@ -591,12 +607,15 @@ indexed_alpha_to_monochrome(const unsigned char *indexed,
 	    o0 = 0;
 	  else
 	    o0  = 65535;
+	  nz |= o0;
 	}
       gray[0] = o0;
       indexed += 2;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 /*
@@ -604,12 +623,13 @@ indexed_alpha_to_monochrome(const unsigned char *indexed,
  */
 
 static void
-rgb_to_gray(const unsigned char *rgb,
+rgb_to_gray(const stp_vars_t vars,
+	    const unsigned char *rgb,
 	    unsigned short *gray,
-	    int    width,
-	    int    bpp,
+	    int *zero_mask,
+	    int width,
+	    int bpp,
 	    const unsigned char *cmap,
-	    const stp_vars_t   vars,
 	    const double *hue_map,
 	    const double *lum_map,
 	    const double *sat_map)
@@ -618,6 +638,7 @@ rgb_to_gray(const unsigned char *rgb,
   int i1 = -1;
   int i2 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
   if (width <= 0)
@@ -632,36 +653,36 @@ rgb_to_gray(const unsigned char *rgb,
 	  o0 = lut->composite[(i0 * LUM_RED + i1 * LUM_GREEN +
 			       i2 * LUM_BLUE) / 100];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       gray[0] = o0;
       rgb += 3;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-rgb_alpha_to_gray(const unsigned char *rgb,
-	    unsigned short *gray,
-	    int    width,
-	    int    bpp,
-	    const unsigned char *cmap,
-	    const stp_vars_t   vars,
-	    const double *hue_map,
-	    const double *lum_map,
-	    const double *sat_map)
+rgb_alpha_to_gray(const stp_vars_t vars,
+		  const unsigned char *rgb,
+		  unsigned short *gray,
+		  int *zero_mask,
+		  int width,
+		  int bpp,
+		  const unsigned char *cmap,
+		  const double *hue_map,
+		  const double *lum_map,
+		  const double *sat_map)
 {
   int i0 = -1;
   int i1 = -1;
   int i2 = -1;
   int i3 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
   if (width <= 0)
@@ -679,27 +700,26 @@ rgb_alpha_to_gray(const unsigned char *rgb,
 				     i2 * LUM_BLUE) *
 				    i3 / 25500 + 255 - i3)];
 	  if (density != 1.0)
-	    {
-	      double t = (65535.0 + ((o0 - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      o0 = t + .5;
-	    }
+	    o0 = .5 + (o0 * density);
+	  nz |= o0;
 	}
       gray[0] = o0;
       rgb += 4;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-rgb_to_monochrome(const unsigned char *rgb,
+rgb_to_monochrome(const stp_vars_t vars,
+		  const unsigned char *rgb,
 		  unsigned short *gray,
-		  int    width,
-		  int    bpp,
+		  int *zero_mask,
+		  int width,
+		  int bpp,
 		  const unsigned char *cmap,
-		  const stp_vars_t   vars,
 		  const double *hue_map,
 		  const double *lum_map,
 		  const double *sat_map)
@@ -708,6 +728,7 @@ rgb_to_monochrome(const unsigned char *rgb,
   int i1 = -1;
   int i2 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   if (width <= 0)
     return;
@@ -724,21 +745,25 @@ rgb_to_monochrome(const unsigned char *rgb,
 	    o0 = 0;
 	  else
 	    o0 = 65535;
+	  nz |= o0;
 	}
       gray[0] = o0;
       rgb += 3;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 static void
-rgb_alpha_to_monochrome(const unsigned char *rgb,
+rgb_alpha_to_monochrome(const stp_vars_t vars,
+			const unsigned char *rgb,
 			unsigned short *gray,
-			int    width,
-			int    bpp,
+			int *zero_mask,
+			int width,
+			int bpp,
 			const unsigned char *cmap,
-			const stp_vars_t   vars,
 			const double *hue_map,
 			const double *lum_map,
 			const double *sat_map)
@@ -748,6 +773,7 @@ rgb_alpha_to_monochrome(const unsigned char *rgb,
   int i2 = -1;
   int i3 = -1;
   int o0 = 0;
+  int nz = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   if (width <= 0)
     return;
@@ -767,12 +793,15 @@ rgb_alpha_to_monochrome(const unsigned char *rgb,
 	    o0 = 0;
 	  else
 	    o0 = 65535;
+	  nz |= o0;
 	}
       gray[0] = o0;
       rgb += 4;
       gray ++;
       width --;
     }
+  if (zero_mask)
+    *zero_mask = nz ? 0 : 1;
 }
 
 /*
@@ -780,12 +809,13 @@ rgb_alpha_to_monochrome(const unsigned char *rgb,
  */
 
 static void
-rgb_to_rgb(const unsigned char	*rgbin,
-	   unsigned short 	*rgbout,
-	   int    		width,
-	   int    		bpp,
-	   const unsigned char 	*cmap,
-	   const stp_vars_t  	vars,
+rgb_to_rgb(const stp_vars_t vars,
+	   const unsigned char *rgbin,
+	   unsigned short *rgbout,
+	   int *zero_mask,
+	   int width,
+	   int bpp,
+	   const unsigned char *cmap,
 	   const double *hue_map,
 	   const double *lum_map,
 	   const double *sat_map)
@@ -800,6 +830,9 @@ rgb_to_rgb(const unsigned char	*rgbin,
   int o0 = 0;
   int o1 = 0;
   int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   int compute_saturation = ssat <= .99999 || ssat >= 1.00001;
   int split_saturation = ssat > 1.4;
@@ -896,9 +929,6 @@ rgb_to_rgb(const unsigned char	*rgbin,
       if ((compute_saturation) &&
 	  (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
 	{
-	  rgbout[0] = 65535 - rgbout[0];
-	  rgbout[1] = 65535 - rgbout[1];
-	  rgbout[2] = 65535 - rgbout[2];
 	  calc_rgb_to_hsl(rgbout, &h, &s, &l);
 	  if (ssat < 1)
 	    s *= ssat;
@@ -911,9 +941,6 @@ rgb_to_rgb(const unsigned char	*rgbin,
 	  if (s > 1)
 	    s = 1.0;
 	  calc_hsl_to_rgb(rgbout, h, s, l);
-	  rgbout[0] = 65535 - rgbout[0];
-	  rgbout[1] = 65535 - rgbout[1];
-	  rgbout[2] = 65535 - rgbout[2];
 	}
       update_cmyk(rgbout);	/* Fiddle with the INPUT */
       rgbout[0] = lookup_value(rgbout[0], lut->steps,
@@ -928,9 +955,6 @@ rgb_to_rgb(const unsigned char	*rgbin,
       if ((split_saturation || hue_map || lum_map || sat_map) &&
 	  (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
 	{
-	  rgbout[0] = 65535 - rgbout[0];
-	  rgbout[1] = 65535 - rgbout[1];
-	  rgbout[2] = 65535 - rgbout[2];
 	  calc_rgb_to_hsl(rgbout, &h, &s, &l);
 	  if (split_saturation)
 	    {
@@ -993,9 +1017,6 @@ rgb_to_rgb(const unsigned char	*rgbin,
 		}
 	    }
 	  calc_hsl_to_rgb(rgbout, h, s, l);
-	  rgbout[0] = 65535 - rgbout[0];
-	  rgbout[1] = 65535 - rgbout[1];
-	  rgbout[2] = 65535 - rgbout[2];
 	}
       if (ld < 65536)
 	{
@@ -1003,33 +1024,43 @@ rgb_to_rgb(const unsigned char	*rgbin,
 	  for (i = 0; i < 3; i++)
 	    {
 	      unsigned t = rgbout[i];
-	      t = 65535 - (65535 - t) * ld / 65536;
+	      t = t * ld / 65536;
 	      rgbout[i] = (unsigned short) t;
 	    }
 	}
       o0 = rgbout[0];
       o1 = rgbout[1];
       o2 = rgbout[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
     out:
       rgbin += bpp;
       rgbout += 3;
       width --;
     }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
+    }
 }
 
 static void
-indexed_to_rgb(const unsigned char *indexed,
+indexed_to_rgb(const stp_vars_t vars,
+	       const unsigned char *indexed,
 	       unsigned short *rgb,
-	       int    width,
-	       int    bpp,
+	       int *zero_mask,
+	       int width,
+	       int bpp,
 	       const unsigned char *cmap,
-	       const stp_vars_t   vars,
 	       const double *hue_map,
 	       const double *lum_map,
 	       const double *sat_map)
 {
-  rgb_to_rgb(indexed, rgb, width, bpp, cmap, vars, hue_map, lum_map,
-	     sat_map);
+  rgb_to_rgb(vars, indexed, rgb, zero_mask, width, bpp, cmap,
+	     hue_map, lum_map, sat_map);
 }
 
 /*
@@ -1037,12 +1068,13 @@ indexed_to_rgb(const unsigned char *indexed,
  */
 
 static void
-gray_to_rgb(const unsigned char	*grayin,
-	    unsigned short 	*rgbout,
-	    int    		width,
-	    int    		bpp,
+gray_to_rgb(const stp_vars_t vars,
+	    const unsigned char	*grayin,
+	    unsigned short *rgbout,
+	    int *zero_mask,
+	    int width,
+	    int bpp,
 	    const unsigned char *cmap,
-	    const stp_vars_t  	vars,
 	    const double *hue_map,
 	    const double *lum_map,
 	    const double *sat_map)
@@ -1052,9 +1084,11 @@ gray_to_rgb(const unsigned char	*grayin,
   int o0 = 0;
   int o1 = 0;
   int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
-  double saturation = stp_get_saturation(vars);
   while (width > 0)
     {
       unsigned short trgb[3];
@@ -1105,35 +1139,39 @@ gray_to_rgb(const unsigned char	*grayin,
 			       lut->bin_size, lut->bin_shift);
       rgbout[2] = lookup_value(trgb[2], lut->steps, lut->blue, lut->shiftval,
 			       lut->bin_size, lut->bin_shift);
-      if (saturation != 1.0)
+      if (density != 1.0)
 	{
-	  double t;
 	  int i;
 	  for (i = 0; i < 3; i++)
-	    {
-	      t = (65535.0 + ((rgbout[i] - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      rgbout[i] = t + .5;
-	    }
+	    rgbout[i] = .5 + (rgbout[i] * density);
 	}
       o0 = rgbout[0];
       o1 = rgbout[1];
       o2 = rgbout[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
     out:
       grayin += bpp;
       rgbout += 3;
       width --;
     }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
+    }
 }
 
 static void
-fast_indexed_to_rgb(const unsigned char *indexed,
+fast_indexed_to_rgb(const stp_vars_t vars,
+		    const unsigned char *indexed,
 		    unsigned short *rgb,
-		    int    width,
-		    int    bpp,
+		    int *zero_mask,
+		    int width,
+		    int bpp,
 		    const unsigned char *cmap,
-		    const stp_vars_t   vars,
 		    const double *hue_map,
 		    const double *lum_map,
 		    const double *sat_map)
@@ -1143,6 +1181,9 @@ fast_indexed_to_rgb(const unsigned char *indexed,
   int o0 = 0;
   int o1 = 0;
   int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double isat = 1.0;
   double saturation = stp_get_saturation(vars);
@@ -1207,23 +1248,26 @@ fast_indexed_to_rgb(const unsigned char *indexed,
 	}
       if (density != 1.0)
 	{
-	  double t;
 	  int i;
 	  for (i = 0; i < 3; i++)
-	    {
-	      t = (65535.0 + ((rgb[i] - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      rgb[i] = t + .5;
-	    }
+	    rgb[i] = .5 + (rgb[i] * density);
 	}
       o0 = rgb[0];
       o1 = rgb[1];
       o2 = rgb[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
     out:
       indexed += bpp;
       rgb += 3;
       width --;
+    }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
     }
 }
 
@@ -1232,12 +1276,13 @@ fast_indexed_to_rgb(const unsigned char *indexed,
  */
 
 static void
-fast_rgb_to_rgb(const unsigned char	*rgbin,
-		unsigned short 	*rgbout,
-		int    		width,
-		int    		bpp,
-		const unsigned char 	*cmap,
-		const stp_vars_t  	vars,
+fast_rgb_to_rgb(const stp_vars_t vars,
+		const unsigned char *rgbin,
+		unsigned short *rgbout,
+		int *zero_mask,
+		int width,
+		int bpp,
+		const unsigned char *cmap,
 		const double *hue_map,
 		const double *lum_map,
 		const double *sat_map)
@@ -1250,6 +1295,9 @@ fast_rgb_to_rgb(const unsigned char	*rgbin,
   int o0 = 0;
   int o1 = 0;
   int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double isat = 1.0;
   double saturation = stp_get_saturation(vars);
@@ -1320,19 +1368,24 @@ fast_rgb_to_rgb(const unsigned char	*rgbin,
 	{
 	  int i;
 	  for (i = 0; i < 3; i++)
-	    {
-	      unsigned t = rgbout[i];
-	      t = 65535 - (65535 - t) * ld / 65536;
-	      rgbout[i] = (unsigned short) t;
-	    }
+	    rgbout[i] = rgbout[i] * ld / 65536;
 	}
       o0 = rgbout[0];
       o1 = rgbout[1];
       o2 = rgbout[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
     out:
       rgbin += bpp;
       rgbout += 3;
       width --;
+    }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
     }
 }
 
@@ -1341,12 +1394,13 @@ fast_rgb_to_rgb(const unsigned char	*rgbin,
  */
 
 static void
-fast_gray_to_rgb(const unsigned char	*grayin,
+fast_gray_to_rgb(const stp_vars_t vars,
+		 const unsigned char *grayin,
 		 unsigned short *rgbout,
-		 int    	width,
-		 int    	bpp,
-		 const unsigned char 	*cmap,
-		 const stp_vars_t  	vars,
+		 int *zero_mask,
+		 int width,
+		 int bpp,
+		 const unsigned char *cmap,
 		 const double *hue_map,
 		 const double *lum_map,
 		 const double *sat_map)
@@ -1356,6 +1410,9 @@ fast_gray_to_rgb(const unsigned char	*grayin,
   int o0 = 0;
   int o1 = 0;
   int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   double density = stp_get_density(vars);
   while (width > 0)
@@ -1401,23 +1458,26 @@ fast_gray_to_rgb(const unsigned char	*grayin,
 	}
       if (density != 1.0)
 	{
-	  double t;
 	  int i;
 	  for (i = 0; i < 3; i++)
-	    {
-	      t = (65535.0 + ((rgbout[i] - 65535.0) * density));
-	      if (t < 0.0)
-		t = 0.0;
-	      rgbout[i] = t + .5;
-	    }
+	    rgbout[i] = .5 + (rgbout[i] * density);
 	}
       o0 = rgbout[0];
       o1 = rgbout[1];
       o2 = rgbout[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
     out:
       grayin += bpp;
       rgbout += 3;
       width --;
+    }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
     }
 }
 
@@ -1466,7 +1526,7 @@ stp_free_lut(stp_vars_t v)
 /* #define PRINT_LUT */
 
 void
-stp_compute_lut(size_t steps, stp_vars_t v)
+stp_compute_lut(stp_vars_t v, size_t steps)
 {
   double	pixel,		/* Pixel value */
 		red_pixel,	/* Pixel value */
@@ -1568,10 +1628,17 @@ stp_compute_lut(size_t steps, stp_vars_t v)
        * Finally, fix up print gamma and scale
        */
 
-      pixel = 65535 * (1 - pow(pixel, print_gamma)) + .5;
-      red_pixel = 65535 * (1 - pow(red_pixel, print_gamma)) + .5;
-      green_pixel = 65535 * (1 - pow(green_pixel, print_gamma)) + .5;
-      blue_pixel = 65535 * (1 - pow(blue_pixel, print_gamma)) + .5;
+      pixel = 65535 * pow(pixel, print_gamma) + .5;
+      red_pixel = 65535 * pow(red_pixel, print_gamma) + .5;
+      green_pixel = 65535 * pow(green_pixel, print_gamma) + .5;
+      blue_pixel = 65535 * pow(blue_pixel, print_gamma) + .5;
+      if (stp_get_input_color_model(v) == stp_get_output_color_model(v))
+	{
+	  pixel = 65535 - pixel;
+	  red_pixel = 65535 - red_pixel;
+	  blue_pixel = 65535 - blue_pixel;
+	  green_pixel = 65535 - green_pixel;
+	}
 
       if (pixel <= 0.0)
 	lut->composite[i] = 0;

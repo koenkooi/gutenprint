@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.11.2.1 2001/03/31 03:23:33 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.11.2.2 2001/03/31 16:50:04 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1974,14 +1974,14 @@ gimp_update_adjusted_thumbnail (void)
 
   stp_set_density(vars, 1.0);
 
-  stp_compute_lut (256, vars);
+  stp_compute_lut (vars, 256);
   colorfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
 				 &adjusted_thumbnail_bpp, vars);
 
   for (y = 0; y < thumbnail_h; y++)
     {
-      (*colorfunc) (thumbnail_data + thumbnail_bpp * thumbnail_w * y,
-		     out, thumbnail_w, thumbnail_bpp, NULL, vars, NULL, NULL,
+      (*colorfunc) (vars, thumbnail_data + thumbnail_bpp * thumbnail_w * y,
+		     out, NULL, thumbnail_w, thumbnail_bpp, NULL, NULL, NULL,
 		     NULL);
       for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
 	{

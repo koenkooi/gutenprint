@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.4.6.1 2001/03/31 03:23:33 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.4.6.2 2001/03/31 16:50:04 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -336,7 +336,8 @@ extern void	stp_set_image_type (stp_vars_t vv, int val);
 extern void	stp_set_unit (stp_vars_t vv, int val);
 extern void	stp_set_page_width (stp_vars_t vv, int val);
 extern void	stp_set_page_height (stp_vars_t vv, int val);
-extern void	stp_set_color_model (stp_vars_t vv, int val);
+extern void	stp_set_input_color_model (stp_vars_t vv, int val);
+extern void	stp_set_output_color_model (stp_vars_t vv, int val);
 extern void	stp_set_brightness (stp_vars_t vv, float val);
 extern void	stp_set_scaling (stp_vars_t vv, float val);
 extern void	stp_set_gamma (stp_vars_t vv, float val);
@@ -368,7 +369,8 @@ extern int 	stp_get_image_type (const stp_vars_t vv);
 extern int 	stp_get_unit (const stp_vars_t vv);
 extern int 	stp_get_page_width (const stp_vars_t vv);
 extern int 	stp_get_page_height (const stp_vars_t vv);
-extern int 	stp_get_color_model (const stp_vars_t vv);
+extern int 	stp_get_input_color_model (const stp_vars_t vv);
+extern int 	stp_get_output_color_model (const stp_vars_t vv);
 extern float 	stp_get_brightness (const stp_vars_t vv);
 extern float 	stp_get_scaling (const stp_vars_t vv);
 extern float 	stp_get_gamma (const stp_vars_t vv);
@@ -394,14 +396,16 @@ extern stp_outfunc_t stp_get_errfunc (const stp_vars_t vv);
  * from (0..6) to (0..6) in increments of .125.  The hue_map is in CMY space,
  * so hue=0 is cyan.
  */
-typedef void (*stp_convert_t)(unsigned char *in, unsigned short *out,
+typedef void (*stp_convert_t)(const stp_vars_t vars, const unsigned char *in,
+			      unsigned short *out, int *zero_mask,
 			      int width, int bpp, const unsigned char *cmap,
-			      const stp_vars_t vars, const double *hue_map,
-			      const double *lum_map, const double *sat_map);
+			      const double *hue_map, const double *lum_map,
+			      const double *sat_map);
 
 extern void	stp_merge_printvars(stp_vars_t user, const stp_vars_t print);
+extern void	stp_allocate_lut(stp_vars_t v, size_t steps);
 extern void	stp_free_lut(stp_vars_t v);
-extern void	stp_compute_lut(size_t steps, stp_vars_t v);
+extern void	stp_compute_lut(stp_vars_t v, size_t steps);
 
 extern size_t	  stp_dither_algorithm_count(void);
 extern const char *stp_dither_algorithm_name(int);
@@ -443,5 +447,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.4.6.1 2001/03/31 03:23:33 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.4.6.2 2001/03/31 16:50:04 rlk Exp $".
  */

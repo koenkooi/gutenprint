@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.24 2001/03/26 13:37:57 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.24.2.1 2001/03/31 16:50:04 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -292,7 +292,7 @@ extern void	stp_dither(const unsigned short *, int, void *,
 			   unsigned char *, unsigned char *,
 			   unsigned char *, unsigned char *,
 			   unsigned char *, unsigned char *,
-			   int duplicate_line);
+			   int duplicate_line, int zero_mask);
 
 extern void	stp_fold(const unsigned char *line, int single_height,
 			 unsigned char *outbuf);
@@ -472,5 +472,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.24 2001/03/26 13:37:57 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.24.2.1 2001/03/31 16:50:04 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.h,v 1.4.4.1 2001/03/31 03:23:34 rlk Exp $"
+ * "$Id: printdef.h,v 1.4.4.2 2001/03/31 16:50:04 rlk Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -70,7 +70,8 @@ typedef struct					/* Plug-in variables */
   float app_gamma;		/* Application gamma */
   int	page_width;		/* Width of page in points */
   int	page_height;		/* Height of page in points */
-  int	color_model;		/* Color model for this device */
+  int	input_color_model;	/* Color model for this device */
+  int	output_color_model;	/* Color model for this device */
   void  *lut;			/* Look-up table */
   void  *driver_data;		/* Private data of the driver */
   unsigned char *cmap;		/* Color map */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.15.2.1 2001/03/31 03:23:34 rlk Exp $"
+ * "$Id: print-dither.c,v 1.15.2.2 2001/03/31 16:50:04 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1588,11 +1588,12 @@ print_color_fast(dither_t *d, dither_color_t *rv, int base,
  */
 
 static void
-stp_dither_monochrome(const unsigned short  *gray,	/* I - Grayscale pixels */
-		 int           	    row,	/* I - Current Y coordinate */
-		 void 		    *vd,
-		 unsigned char 	    *black,	/* O - Black bitmap pixels */
-		 int		    duplicate_line)
+stp_dither_monochrome(const unsigned short  *gray,
+		      int           	    row,
+		      void 		    *vd,
+		      unsigned char 	    *black,
+		      int		    duplicate_line,
+		      int		  zero_mask)
 {
   int		x,		/* Current X coordinate */
 		xerror,		/* X error count */
@@ -1616,26 +1617,14 @@ stp_dither_monochrome(const unsigned short  *gray,	/* I - Grayscale pixels */
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * bits);
+  if (zero_mask)
+    return;
   kptr = black;
   xerror = 0;
-  if (!duplicate_line)
-    {
-      d->last_line_was_empty = 1;
-      for (x = 0; x < d->src_width; x ++)
-	{
-	  if (gray[x] != 65535)
-	    {
-	      d->last_line_was_empty = 0;
-	      break;
-	    }
-	}
-    }
-  if (d->last_line_was_empty)
-    return;
   matrix_set_row(d, kdither, row);
   for (x = 0; x < dst_width; x++)
     {
-      if (gray[0] < 65535 && (d->density >= ditherpoint(d, kdither, x)))
+      if (gray[0] && (d->density >= ditherpoint(d, kdither, x)))
 	{
 	  tptr = kptr;
 	  for (j = 0; j < bits; j++, tptr += height)
@@ -1658,57 +1647,18 @@ stp_dither_monochrome(const unsigned short  *gray,	/* I - Grayscale pixels */
     }
 }
 
-static void
-generate_black(dither_t *d,
-	       const unsigned short *gray,
-	       int *nonzero,
-	       int row)
-{
-  register unsigned short *k = get_valueline(d, ECOLOR_K);
-  register int lnonzero = 0;
-  register int x;
-
-  if (d->src_width == d->dst_width)
-    {
-      for (x = d->dst_width; x; x--)
-	{
-	  lnonzero |= *k++ = ~*gray++;
-	}
-    }
-  else
-    {
-      register int xerror, xstep, xmod;
-      xstep  = d->src_width / d->dst_width;
-      xmod   = d->src_width % d->dst_width;
-      xerror = 0;
-      for (x = d->dst_width; x; x--)
-	{
-	  lnonzero |= *k++ = ~gray[0];
-	  gray += xstep;
-	  xerror += xmod;
-	  if (xerror >= d->dst_width)
-	    {
-	      xerror -= d->dst_width;
-	      gray ++;
-	    }
-	}
-    }
-
-  *nonzero = lnonzero;
-}
-
-
 /*
  * 'stp_dither_black()' - Dither grayscale pixels to black.
  * This is for grayscale output.
  */
 
 static void
-stp_dither_black_fast(const unsigned short   *gray,	/* I - Grayscale pixels */
-		  int           row,		/* I - Current Y coordinate */
-		  void 		*vd,
-		  unsigned char *black,		/* O - Black bitmap pixels */
-		  int		duplicate_line)
+stp_dither_black_fast(const unsigned short   *gray,
+		      int           row,
+		      void 		*vd,
+		      unsigned char *black,
+		      int		duplicate_line,
+		      int		  zero_mask)
 {
   int		x,		/* Current X coordinate */
 		height;		/* Height of output bitmap in bytes */
@@ -1721,7 +1671,6 @@ stp_dither_black_fast(const unsigned short   *gray,	/* I - Grayscale pixels */
   dither_matrix_t *kdither = &(d->dithermat[ECOLOR_K]);
   int dst_width = d->dst_width;
   int dither_very_fast = 0;
-  int nonzero;
   if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
     dither_very_fast = 1;
 
@@ -1730,12 +1679,7 @@ stp_dither_black_fast(const unsigned short   *gray,	/* I - Grayscale pixels */
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
-  if (!duplicate_line)
-    {
-      generate_black(d, gray, &nonzero, row);
-      d->last_line_was_empty = !nonzero;
-    }
-  if (d->last_line_was_empty)
+  if (zero_mask)
     return;
   kptr = black;
   matrix_set_row(d, &(d->dithermat[ECOLOR_K]), row);
@@ -1757,10 +1701,11 @@ stp_dither_black_fast(const unsigned short   *gray,	/* I - Grayscale pixels */
 
 static void
 stp_dither_black_ordered(const unsigned short   *gray,
-		     int           	row,
-		     void 		*vd,
-		     unsigned char 	*black,
-		     int		duplicate_line)
+			 int           	row,
+			 void 		*vd,
+			 unsigned char 	*black,
+			 int		duplicate_line,
+			 int		  zero_mask)
 {
 
   int		x,		/* Current X coordinate */
@@ -1771,7 +1716,6 @@ stp_dither_black_ordered(const unsigned short   *gray,
   dither_t *d = (dither_t *) vd;
   unsigned short *kl = get_valueline(d, ECOLOR_K);
   int terminate;
-  int nonzero;
   int ink_budget;
 
   bit = 128;
@@ -1781,17 +1725,11 @@ stp_dither_black_ordered(const unsigned short   *gray,
   height = (d->dst_width + 7) / 8;
 
   memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
+  if (zero_mask)
+    return;
   kptr = black;
   matrix_set_row(d, &(d->dithermat[ECOLOR_K]), row);
   matrix_set_row(d, &(d->pick[ECOLOR_K]), row);
-
-  if (!duplicate_line)
-    {
-      generate_black(d, gray, &nonzero, row);
-      d->last_line_was_empty = !nonzero;
-    }
-  if (d->last_line_was_empty)
-    return;
 
   for (x = 0; x < terminate; x ++)
     {
@@ -1812,11 +1750,12 @@ stp_dither_black_ordered(const unsigned short   *gray,
 }
 
 static void
-stp_dither_black_ed(const unsigned short   *gray,	/* I - Grayscale pixels */
-		int           	row,		/* I - Current Y coordinate */
-		void 		*vd,
-		unsigned char 	*black,		/* O - Black bitmap pixels */
-		int		duplicate_line)
+stp_dither_black_ed(const unsigned short   *gray,
+		    int           	row,
+		    void 		*vd,
+		    unsigned char 	*black,
+		    int		duplicate_line,
+		    int		  zero_mask)
 {
 
   int		x,		/* Current X coordinate */
@@ -1834,7 +1773,6 @@ stp_dither_black_ed(const unsigned short   *gray,	/* I - Grayscale pixels */
   int odb = d->spread;
   int odb_mask = (1 << odb) - 1;
   int ink_budget;
-  int nonzero;
 
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
@@ -1848,8 +1786,7 @@ stp_dither_black_ed(const unsigned short   *gray,	/* I - Grayscale pixels */
   memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   if (!duplicate_line)
     {
-      generate_black(d, gray, &nonzero, row);
-      if (nonzero)
+      if (!zero_mask)
 	d->last_line_was_empty = 0;
       else
 	d->last_line_was_empty++;
@@ -1919,52 +1856,6 @@ stp_dither_black_ed(const unsigned short   *gray,	/* I - Grayscale pixels */
 }
 
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
-
-static void
-generate_cmy(dither_t *d,
-	     const unsigned short *rgb,
-	     int *nonzero,
-	     int row)
-{
-  register int x;
-  register unsigned short *c = get_valueline(d, ECOLOR_C);
-  register unsigned short *m = get_valueline(d, ECOLOR_M);
-  register unsigned short *y = get_valueline(d, ECOLOR_Y);
-  register int lnonzero = 0;
-
-  if (d->src_width == d->dst_width)
-    {
-      for (x = d->dst_width; x; x--)
-	{
-	  lnonzero |= *c++ = ~*rgb++;
-	  lnonzero |= *m++ = ~*rgb++;
-	  lnonzero |= *y++ = ~*rgb++;
-	}
-    }
-  else
-    {
-      register int xerror, xstep, xmod;
-      xstep  = 3 * (d->src_width / d->dst_width);
-      xmod   = d->src_width % d->dst_width;
-      xerror = 0;
-      for (x = d->dst_width; x; x--)
-	{
-	  lnonzero |= *c++ = ~rgb[0];
-	  lnonzero |= *m++ = ~rgb[1];
-	  lnonzero |= *y++ = ~rgb[2];
-
-	  rgb += xstep;
-	  xerror += xmod;
-	  if (xerror >= d->dst_width)
-	    {
-	      xerror -= d->dst_width;
-	      rgb += 3;
-	    }
-	}
-    }
-
-  *nonzero = lnonzero;
-}
 
 static inline void
 update_cmy(const dither_t *d, int c, int m, int y, int k,
@@ -2105,17 +1996,18 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
 }
 
 static void
-stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
-		 int           row,	/* I - Current Y coordinate */
-		 void 	    *vd,
-		 unsigned char *cyan,	/* O - Cyan bitmap pixels */
-		 unsigned char *lcyan,	/* O - Light cyan bitmap pixels */
-		 unsigned char *magenta, /* O - Magenta bitmap pixels */
-		 unsigned char *lmagenta, /* O - Light magenta bitmap pixels */
-		 unsigned char *yellow,	/* O - Yellow bitmap pixels */
-		 unsigned char *lyellow, /* O - Light yellow bitmap pixels */
-		 unsigned char *black,	/* O - Black bitmap pixels */
-		 int	       duplicate_line)
+stp_dither_cmyk_fast(const unsigned short  *cmy,
+		     int           row,
+		     void 	    *vd,
+		     unsigned char *cyan,
+		     unsigned char *lcyan,
+		     unsigned char *magenta,
+		     unsigned char *lmagenta,
+		     unsigned char *yellow,
+		     unsigned char *lyellow,
+		     unsigned char *black,
+		     int	       duplicate_line,
+		     int		  zero_mask)
 {
   int		x,		/* Current X coordinate */
 		height;		/* Height of output bitmap in bytes */
@@ -2130,11 +2022,7 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
     		*lyptr,		/* Current light yellow pixel */
     		*kptr;		/* Current black pixel */
   dither_t	*d = (dither_t *) vd;
-  const unsigned short *cline = get_valueline(d, ECOLOR_C);
-  const unsigned short *mline = get_valueline(d, ECOLOR_M);
-  const unsigned short *yline = get_valueline(d, ECOLOR_Y);
   int i;
-  int nonzero;
 
   dither_color_t *cd = &(d->dither[ECOLOR_C]);
   dither_matrix_t *cdither = &(d->dithermat[ECOLOR_C]);
@@ -2149,15 +2037,7 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
   int mdither_very_fast = 0;
   int ydither_very_fast = 0;
   int kdither_very_fast = 0;
-
-  if (cd->nlevels == 1 && cd->ranges[0].bits_h == 1 && cd->ranges[0].isdark_h)
-    cdither_very_fast = 1;
-  if (md->nlevels == 1 && md->ranges[0].bits_h == 1 && md->ranges[0].isdark_h)
-    mdither_very_fast = 1;
-  if (yd->nlevels == 1 && yd->ranges[0].bits_h == 1 && yd->ranges[0].isdark_h)
-    ydither_very_fast = 1;
-  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
-    kdither_very_fast = 1;
+  int xerror, xstep, xmod;
 
   height = (d->dst_width + 7) / 8;
 
@@ -2175,34 +2055,27 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
     memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
-  /*
-   * First, generate the CMYK separation.  If there's nothing in
-   * this row, and we're using an ordered dither, there's no reason
-   * to do anything at all.
-   */
-  if (!duplicate_line)
-    {
-      generate_cmy(d, rgb, &nonzero, row);
-      if (nonzero)
-	d->last_line_was_empty = 0;
-      else
-	d->last_line_was_empty++;
-    }
-  else if (d->last_line_was_empty)
-    d->last_line_was_empty++;
-  /*
-   * First, generate the CMYK separation.  If there's nothing in
-   * this row, and we're using an ordered dither, there's no reason
-   * to do anything at all.
-   */
-  if (d->last_line_was_empty)
+
+  if ((zero_mask & 7) == 7)
     return;
+
+  if (cd->nlevels == 1 && cd->ranges[0].bits_h == 1 && cd->ranges[0].isdark_h)
+    cdither_very_fast = 1;
+  if (md->nlevels == 1 && md->ranges[0].bits_h == 1 && md->ranges[0].isdark_h)
+    mdither_very_fast = 1;
+  if (yd->nlevels == 1 && yd->ranges[0].bits_h == 1 && yd->ranges[0].isdark_h)
+    ydither_very_fast = 1;
+  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
+    kdither_very_fast = 1;
 
   /*
    * Boilerplate
    */
 
   bit = 128;
+  xstep  = 3 * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
   x = 0;
   cptr = cyan;
   mptr = magenta;
@@ -2227,9 +2100,9 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
        * First get the standard CMYK separation color values.
        */
 
-      c = cline[x];
-      m = mline[x];
-      y = yline[x];
+      c = cmy[0];
+      m = cmy[1];
+      y = cmy[2];
       oc = c;
       om = m;
       oy = y;
@@ -2286,6 +2159,18 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
 	  kptr ++;
 	  bit       = 128;
 	}
+      if (d->src_width == d->dst_width)
+	cmy += 3;
+      else
+	{
+	  cmy += xstep;
+	  xerror += xmod;
+	  if (xerror >= d->dst_width)
+	    {
+	      xerror -= d->dst_width;
+	      cmy += 3;
+	    }
+	}	  
       QUANT(17);
     }
   /*
@@ -2294,17 +2179,18 @@ stp_dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
 }
 
 static void
-stp_dither_cmyk_ordered(const unsigned short  *rgb,
-		    int           row,
-		    void 	    *vd,
-		    unsigned char *cyan,
-		    unsigned char *lcyan,
-		    unsigned char *magenta,
-		    unsigned char *lmagenta,
-		    unsigned char *yellow,
-		    unsigned char *lyellow,
-		    unsigned char *black,
-		    int		  duplicate_line)
+stp_dither_cmyk_ordered(const unsigned short  *cmy,
+			int           row,
+			void 	    *vd,
+			unsigned char *cyan,
+			unsigned char *lcyan,
+			unsigned char *magenta,
+			unsigned char *lmagenta,
+			unsigned char *yellow,
+			unsigned char *lyellow,
+			unsigned char *black,
+			int		  duplicate_line,
+			int		  zero_mask)
 {
   int		x,		/* Current X coordinate */
 		height;		/* Height of output bitmap in bytes */
@@ -2320,16 +2206,13 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
 		*kptr;		/* Current black pixel */
   int		bk = 0;
   dither_t	*d = (dither_t *) vd;
-  const unsigned short *cline = get_valueline(d, ECOLOR_C);
-  const unsigned short *mline = get_valueline(d, ECOLOR_M);
-  const unsigned short *yline = get_valueline(d, ECOLOR_Y);
-  int nonzero;
   int i;
 
   int		terminate;
   int		first_color = row % 3;
   int		printed_black;
   int		ink_budget;
+  int xerror, xstep, xmod;
 
   height = (d->dst_width + 7) / 8;
 
@@ -2352,12 +2235,7 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
    * this row, and we're using an ordered dither, there's no reason
    * to do anything at all.
    */
-  if (!duplicate_line)
-    {
-      generate_cmy(d, rgb, &nonzero, row);
-      d->last_line_was_empty = !nonzero;
-    }
-  if (d->last_line_was_empty)
+  if ((zero_mask & 7) == 7)
     return;
 
   /*
@@ -2365,6 +2243,9 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
    */
 
   bit = 128;
+  xstep  = 3 * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
   x = 0;
   terminate = d->dst_width;
   cptr = cyan;
@@ -2390,9 +2271,9 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
        * First get the standard CMYK separation color values.
        */
 
-      c = cline[x];
-      m = mline[x];
-      y = yline[x];
+      c = cmy[0];
+      m = cmy[1];
+      y = cmy[2];
       oc = c;
       om = m;
       oy = y;
@@ -2532,6 +2413,18 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
       first_color++;
       if (first_color >= 3)
 	first_color = 0;
+      if (d->src_width == d->dst_width)
+	cmy += 3;
+      else
+	{
+	  cmy += xstep;
+	  xerror += xmod;
+	  if (xerror >= d->dst_width)
+	    {
+	      xerror -= d->dst_width;
+	      cmy += 3;
+	    }
+	}	  
 
       QUANT(13);
   }
@@ -2541,17 +2434,18 @@ stp_dither_cmyk_ordered(const unsigned short  *rgb,
 }
 
 static void
-stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
-	       int           row,	/* I - Current Y coordinate */
-	       void 	    *vd,
-	       unsigned char *cyan,	/* O - Cyan bitmap pixels */
-	       unsigned char *lcyan,	/* O - Light cyan bitmap pixels */
-	       unsigned char *magenta,	/* O - Magenta bitmap pixels */
-	       unsigned char *lmagenta,	/* O - Light magenta bitmap pixels */
-	       unsigned char *yellow,	/* O - Yellow bitmap pixels */
-	       unsigned char *lyellow,	/* O - Light yellow bitmap pixels */
-	       unsigned char *black,	/* O - Black bitmap pixels */
-	       int		  duplicate_line)
+stp_dither_cmyk_ed(const unsigned short  *cmy,
+		   int           row,
+		   void 	    *vd,
+		   unsigned char *cyan,
+		   unsigned char *lcyan,
+		   unsigned char *magenta,
+		   unsigned char *lmagenta,
+		   unsigned char *yellow,
+		   unsigned char *lyellow,
+		   unsigned char *black,
+		   int		  duplicate_line,
+		   int		  zero_mask)
 {
   int		x,		/* Current X coordinate */
     		height;		/* Height of output bitmap in bytes */
@@ -2570,10 +2464,6 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
   int		*error[NCOLORS][ERROR_ROWS];
   int		bk = 0;
   dither_t	*d = (dither_t *) vd;
-  const unsigned short *cline = get_valueline(d, ECOLOR_C);
-  const unsigned short *mline = get_valueline(d, ECOLOR_M);
-  const unsigned short *yline = get_valueline(d, ECOLOR_Y);
-  int nonzero;
 
   int		terminate;
   int		direction = row & 1 ? 1 : -1;
@@ -2582,6 +2472,7 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
   int		first_color = row % 3;
   int		printed_black;
   int		ink_budget;
+  int xerror, xstep, xmod;
 
   height = (d->dst_width + 7) / 8;
 
@@ -2606,8 +2497,7 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
    */
   if (!duplicate_line)
     {
-      generate_cmy(d, rgb, &nonzero, row);
-      if (nonzero)
+      if ((zero_mask & 7) != 7)
 	d->last_line_was_empty = 0;
       else
 	d->last_line_was_empty++;
@@ -2623,6 +2513,11 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
 
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
+  xstep  = 3 * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = (direction == 1) ? 0 : (xmod * (d->dst_width - 1)) % d->dst_width;
+  if (direction == -1)
+    cmy += (3 * (d->dst_width - 1));
   terminate = (direction == 1) ? d->dst_width : -1;
 
   for (i = 0; i < NCOLORS; i++)
@@ -2682,9 +2577,9 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
        * First get the standard CMYK separation color values.
        */
 
-      c = cline[x];
-      m = mline[x];
-      y = yline[x];
+      c = cmy[0];
+      m = cmy[1];
+      y = cmy[2];
       oc = c;
       om = m;
       oy = y;
@@ -2853,6 +2748,18 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
 	  first_color++;
 	  if (first_color >= 3)
 	    first_color = 0;
+	  if (d->src_width == d->dst_width)
+	    cmy += 3;
+	  else
+	    {
+	      cmy += xstep;
+	      xerror += xmod;
+	      if (xerror >= d->dst_width)
+		{
+		  xerror -= d->dst_width;
+		  cmy += 3;
+		}
+	    }	  
 	}
       else
 	{
@@ -2872,6 +2779,18 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
 	  first_color--;
 	  if (first_color <= 0)
 	    first_color = 2;
+	  if (d->src_width == d->dst_width)
+	    cmy -= 3;
+	  else
+	    {
+	      cmy -= xstep;
+	      xerror -= xmod;
+	      if (xerror < 0)
+		{
+		  xerror += d->dst_width;
+		  cmy -= 3;
+		}
+	    }	  
 	}
       for (i = 0; i < NCOLORS; i++)
 	for (j = 0; j < ERROR_ROWS; j++)
@@ -2894,31 +2813,36 @@ stp_dither(const unsigned short  *input,
 	   unsigned char *yellow,
 	   unsigned char *lyellow,
 	   unsigned char *black,
-	   int		  duplicate_line)
+	   int		  duplicate_line,
+	   int		  zero_mask)
 {
   dither_t *d = (dither_t *) vd;
   switch (d->dither_class)
     {
     case DITHER_MONOCHROME:
-      stp_dither_monochrome(input, row, vd, black, duplicate_line);
+      stp_dither_monochrome(input, row, vd, black, duplicate_line, zero_mask);
       break;
     case DITHER_BLACK:
       if (d->dither_type & D_FAST_BASE)
-	stp_dither_black_fast(input, row, vd, black, duplicate_line);
+	stp_dither_black_fast(input, row, vd, black, duplicate_line,
+			      zero_mask);
       else if (d->dither_type & D_ORDERED_BASE)
-	stp_dither_black_ordered(input, row, vd, black, duplicate_line);
+	stp_dither_black_ordered(input, row, vd, black, duplicate_line,
+				 zero_mask);
       else
-	stp_dither_black_ed(input, row, vd, black, duplicate_line);
+	stp_dither_black_ed(input, row, vd, black, duplicate_line, zero_mask);
       break;
     case DITHER_CMYK:
       if (d->dither_type & D_FAST_BASE)
 	stp_dither_cmyk_fast(input, row, vd, cyan, lcyan, magenta, lmagenta,
-			     yellow, lyellow, black, duplicate_line);
+			     yellow, lyellow, black, duplicate_line,
+			     zero_mask);
       else if (d->dither_type & D_ORDERED_BASE)
 	stp_dither_cmyk_ordered(input, row, vd, cyan, lcyan, magenta, lmagenta,
-				yellow, lyellow, black, duplicate_line);
+				yellow, lyellow, black, duplicate_line,
+				zero_mask);
       else
 	stp_dither_cmyk_ed(input, row, vd, cyan, lcyan, magenta, lmagenta,
-			   yellow, lyellow, black, duplicate_line);
+			   yellow, lyellow, black, duplicate_line, zero_mask);
     }
 }
