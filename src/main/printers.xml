@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.83 2003/09/21 02:37:02 rlk Exp $"
+   "$Id: printers.xml,v 1.84 2003/10/15 07:47:19 m0m Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1447,6 +1447,10 @@
       <printer name="SONY UP-DP10" driver="sony-updp10">
         <color value="true"/>
         <model value="2000"/>
+      </printer>
+      <printer name="FUJIFILM CX-400" driver="fujifilm-cx400">
+        <color value="true"/>
+        <model value="3000"/>
       </printer>
     </family>
     <family name="raw">
