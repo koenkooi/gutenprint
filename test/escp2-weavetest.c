@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.13 2001/02/28 03:15:08 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.14 2001/03/01 02:05:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -351,7 +351,7 @@ main(int argc, char **argv)
 			&hpasses, &vpasses, &subpasses, &nrows, &first_line,
 			&phys_lines, &color_jet_arrangement);
 	  fflush(stdout);
-	  if (hpasses * subpasses > physjets)
+	  if (vpasses * subpasses > physjets)
 	    continue;
 	  printf("%d %d %d %d %d %d %d %d %d ", physjets, physsep, hpasses,
 			vpasses, subpasses, nrows, first_line, phys_lines,
