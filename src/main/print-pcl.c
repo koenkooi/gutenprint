@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.59.4.1 2002/11/03 00:10:00 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.59.4.2 2002/11/03 14:49:51 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1771,22 +1771,7 @@ pcl_parameters(const stp_printer_t printer,
       return(NULL);
   }
   else if (strcmp(name, "DitherAlgorithm") == 0)
-    {
-      if (stp_dither_algorithm_count() > 0)
-	{
-	  valptrs = stp_malloc(sizeof(stp_param_t) *
-			       stp_dither_algorithm_count());
-	  for (i = 0; i < stp_dither_algorithm_count(); i++)
-	    {
-	      valptrs[*count].name = c_strdup(stp_dither_algorithm_name(i));
-	      valptrs[*count].text = c_strdup(stp_dither_algorithm_text(i));
-	      (*count)++;
-	    }
-	  return(valptrs);
-	}
-      else
-	return(NULL);
-    }
+    return stp_dither_algorithms(count);
   else
     return (NULL);
 }
@@ -1886,9 +1871,7 @@ pcl_default_parameters(const stp_printer_t printer,
 	return(NULL);
     }
   else if (strcmp(name, "DitherAlgorithm") == 0)
-    {
-      return stp_dither_algorithm_name(0);
-    }
+    return stp_get_default_dither_algorithm();
   else
     return (NULL);
 }

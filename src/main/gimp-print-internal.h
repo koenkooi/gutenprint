@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.56 2002/11/01 01:31:11 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.56.4.1 2002/11/03 14:49:50 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -269,6 +269,9 @@ extern void	stp_default_media_size(const stp_printer_t printer,
 				       int *height);
 extern const stp_printfuncs_t *stp_printer_get_printfuncs(const stp_printer_t p);
 
+extern stp_param_t *stp_dither_algorithms(int *count);
+extern const char *stp_get_default_dither_algorithm(void);
+
 extern void *	stp_init_dither(int in_width, int out_width, int bpp,
 				int xdpi, int ydpi, stp_vars_t vars);
 extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
@@ -536,5 +539,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.56 2002/11/01 01:31:11 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.56.4.1 2002/11/03 14:49:50 rlk Exp $".
  */

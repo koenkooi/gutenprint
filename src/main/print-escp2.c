@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.191.4.1 2002/11/03 00:10:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.191.4.2 2002/11/03 14:49:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -448,16 +448,7 @@ escp2_parameters(const stp_printer_t printer,
 	}
     }
   else if (strcmp(name, "DitherAlgorithm") == 0)
-    {
-      if (stp_dither_algorithm_count() > 0)
-	{
-	  valptrs = stp_malloc(sizeof(stp_param_t) *
-			       stp_dither_algorithm_count());
-	  for (i = 0; i < stp_dither_algorithm_count(); i++)
-	    add_param(valptrs, stp_dither_algorithm_name(i),
-		      stp_dither_algorithm_text(i), count);
-	}
-    }
+    return stp_dither_algorithms(count);
   if (*count == 0 && valptrs)
     {
       stp_free(valptrs);
@@ -525,9 +516,7 @@ escp2_default_parameters(const stp_printer_t printer,
 	return slots->slots[0].name;
     }
   else if (strcmp(name, "DitherAlgorithm") == 0)
-    {
-      return stp_dither_algorithm_name(0);
-    }
+    return stp_get_default_dither_algorithm();
   return (NULL);
 }
 

@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.13.4.1 2002/11/03 00:10:00 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.13.4.2 2002/11/03 14:49:49 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -498,11 +498,6 @@ typedef void (*stp_convert_t) (const stp_vars_t vars, const unsigned char *in,
 
 extern void stp_merge_printvars(stp_vars_t user, const stp_vars_t print);
 
-extern size_t stp_dither_algorithm_count(void);
-extern const char * stp_dither_algorithm_name(int id);
-extern const char * stp_dither_algorithm_text(int id);
-extern const char * stp_default_dither_algorithm(void);
-
 extern int stp_known_papersizes(void);
 extern const stp_papersize_t stp_get_papersize_by_name(const char *name);
 extern const stp_papersize_t stp_get_papersize_by_size(int l, int w);
@@ -544,5 +539,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.13.4.1 2002/11/03 00:10:00 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.13.4.2 2002/11/03 14:49:49 rlk Exp $
  */

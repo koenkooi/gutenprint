@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.5.4.1 2002/11/03 00:10:00 rlk Exp $"
+ * "$Id: print-vars.c,v 1.5.4.2 2002/11/03 14:49:52 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -348,6 +348,9 @@ stp_set_parameter_n(stp_vars_t v, const char *parameter,
     stp_set_ink_type_n(v, value, bytes);
   else if (strcmp(parameter, "DitherAlgorithm"))
     stp_set_dither_algorithm_n(v, value, bytes);
+  else
+    stp_eprintf(v, "WARNING: Attempt to set unknown parameter %s to %s\n",
+		parameter, value);
 }
 
 const char *
@@ -366,7 +369,11 @@ stp_get_parameter(const stp_vars_t v, const char *parameter)
   else if (strcmp(parameter, "DitherAlgorithm"))
     return stp_get_dither_algorithm(v);
   else
-    return NULL;
+    {
+      stp_eprintf(v, "WARNING: Attempt to retrieve unknown parameter %s\n",
+		  parameter);
+      return NULL;
+    }
 }
 
 void
@@ -469,7 +476,8 @@ stp_set_printer_defaults(stp_vars_t v, const stp_printer_t p)
   stp_set_media_type(v, stp_printer_get_default_parameter(p, v, "MediaType"));
   stp_set_media_source(v, stp_printer_get_default_parameter(p, v,"InputSlot"));
   stp_set_media_size(v, stp_printer_get_default_parameter(p, v, "PageSize"));
-  stp_set_dither_algorithm(v, stp_default_dither_algorithm());
+  stp_set_dither_algorithm
+    (v, stp_printer_get_default_parameter(p, v, "DitherAlgorithm"));
   stp_set_driver(v, stp_printer_get_driver(p));
 }
 
@@ -489,10 +497,4 @@ const stp_vars_t
 stp_minimum_settings()
 {
   return (stp_vars_t) &min_vars;
-}
-
-const char *
-stp_default_dither_algorithm(void)
-{
-  return stp_dither_algorithm_name(0);
 }
