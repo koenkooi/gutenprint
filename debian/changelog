@@ -1,3 +1,10 @@
+gimp-print (4.1.5-2.01) unstable; urgency=low
+
+  * Recompile 4.1.5-2 with updated debhelper to fix dependencies
+  * Closes #90741
+
+ -- Eric Sharkey <sharkey@debian.org>  Fri,  6 Apr 2001 21:11:15 -0400
+
 gimp-print (4.1.5-2) unstable; urgency=low
 
   * Clean up build process so that things work even if some scripts
