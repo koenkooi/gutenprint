@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.61 2003/05/05 00:36:01 rlk Exp $
+dnl $Id: configure.ac,v 1.62 2003/05/07 21:17:23 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.61 $)
+AC_REVISION($Revision: 1.62 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -480,7 +480,10 @@ else
   fi
 fi
 if test "$CC" = "gcc" ; then
-  GNUCFLAGS="-Wall -Waggregate-return -Wcast-align -Wcast-qual -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline"
+  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline"
+  if test x${USE_MAINTAINER_MODE} = xyes ; then
+    GNUCFLAGS="${GNUCFLAGS} -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
+  fi
 fi
 AC_SUBST(GNUCFLAGS)
 
