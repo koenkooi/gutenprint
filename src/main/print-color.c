@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.18 2004/03/21 22:54:58 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.19 2004/03/21 23:16:19 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1416,6 +1416,7 @@ RGB_TO_KCMY_FUNC(fast_rgb, 8)
 RGB_TO_KCMY_FUNC(fast_rgb, 16)
 GENERIC_COLOR_FUNC(fast_rgb, kcmy)
 
+
 #define RGB_TO_KCMY_LINE_ART_FUNC(T, name)				\
 static unsigned								\
 name##_to_kcmy_line_art(stp_const_vars_t vars,				\
@@ -2054,6 +2055,84 @@ kcmy_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
 KCMY_TO_KCMY_RAW_FUNC(unsigned char, 8)
 KCMY_TO_KCMY_RAW_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(kcmy, kcmy_raw)
+
+static unsigned
+generic_kcmy_to_cmykrb(stp_const_vars_t vars, const unsigned short *in,
+		       unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
+  unsigned short nz[6];
+  int width = lut->image_width;
+  const unsigned short *input_cache = NULL;
+  const unsigned short *output_cache = NULL;
+  int i, j;
+  unsigned retval = 0;
+
+  for (i = 0; i < width; i++, out += 6, in += 4)
+    {
+      for (j = 0; j < 4; j++)
+	{
+	  out[j] = in[j];
+	  if (in[j])
+	    nz[j] = 1;
+	}
+      out[4] = 0;
+      out[5] = 0;
+    }
+  for (j = 0; j < 6; j++)
+    if (nz[j] == 0)
+      retval |= (1 << j);
+  return retval;
+}
+
+#define RGB_TO_CMYKRB_FUNC(name, bits)					  \
+static unsigned								  \
+name##_##bits##_to_cmykrb(stp_const_vars_t vars, const unsigned char *in, \
+			  unsigned short *out)				  \
+{									  \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	  \
+  if (!lut->cmyk_tmp)							  \
+    lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		  \
+  name##_##bits##_to_kcmy(vars, in, lut->cmyk_tmp);			  \
+  return generic_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		  \
+}									  \
+									  \
+static unsigned								  \
+name##_##bits##_to_cmykrb_line_art(stp_const_vars_t vars,		  \
+				   const unsigned char *in,		  \
+				   unsigned short *out)			  \
+{									  \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	  \
+  if (!lut->cmyk_tmp)							  \
+    lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		  \
+  name##_##bits##_to_kcmy(vars, in, lut->cmyk_tmp);			  \
+  return generic_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		  \
+}
+
+RGB_TO_CMYKRB_FUNC(gray, 8)
+RGB_TO_CMYKRB_FUNC(gray, 16)
+GENERIC_COLOR_FUNC(gray, cmykrb)
+GENERIC_COLOR_FUNC(gray, cmykrb_line_art)
+
+RGB_TO_CMYKRB_FUNC(rgb, 8)
+RGB_TO_CMYKRB_FUNC(rgb, 16)
+GENERIC_COLOR_FUNC(rgb, cmykrb)
+GENERIC_COLOR_FUNC(rgb, cmykrb_line_art)
+
+RGB_TO_CMYKRB_FUNC(cmyk, 8)
+RGB_TO_CMYKRB_FUNC(cmyk, 16)
+GENERIC_COLOR_FUNC(cmyk, cmykrb)
+GENERIC_COLOR_FUNC(cmyk, cmykrb_line_art)
+
+RGB_TO_CMYKRB_FUNC(kcmy, 8)
+RGB_TO_CMYKRB_FUNC(kcmy, 16)
+GENERIC_COLOR_FUNC(kcmy, cmykrb)
+GENERIC_COLOR_FUNC(kcmy, cmykrb_line_art)
+
+RGB_TO_CMYKRB_FUNC(fast_rgb, 8)
+RGB_TO_CMYKRB_FUNC(fast_rgb, 16)
+GENERIC_COLOR_FUNC(fast_rgb, cmykrb)
+GENERIC_COLOR_FUNC(fast_rgb, cmykrb_line_art)
 
 #define RAW_TO_RAW_FUNC(T, bits)					\
 static unsigned								\
