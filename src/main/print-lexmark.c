@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.75 2002/08/13 15:36:35 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.76 2002/08/21 00:47:43 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2032,9 +2032,11 @@ densityDivisor /= 1.2;
 #endif
 
   if (xdpi > ydpi)
-    dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     1, xdpi / ydpi, nv);
   else
-    dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     ydpi / xdpi, 1, nv);
 
   for (i = 0; i <= NCOLORS; i++)
     stp_dither_set_black_level(dither, i, 1.0);

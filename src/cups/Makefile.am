@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.55 2002/06/29 12:50:26 rlk Exp $
+## $Id: Makefile.am,v 1.56 2002/08/21 00:47:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -118,6 +118,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	    for ppdfile in * ; do \
 	      (cd ../..; $(INSTALL_DATA) ppd/$$language/$$ppdfile $(DESTDIR)$(cups_modeldir)/$$language) ; \
 	    done; \
+	  cd ..; \
 	  done \
 	fi
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.67 2002/07/20 22:01:39 rlk Exp $"
+ * "$Id: print-util.c,v 1.68 2002/08/21 00:47:43 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -198,7 +198,7 @@ static const stp_internal_vars_t max_vars =
 	"",			/* Source of output media */
 	"",			/* Ink type */
 	"",			/* Dither algorithm */
-	OUTPUT_RAW_CMYK,	/* Color or grayscale output */
+	OUTPUT_RAW_PRINTER,	/* Color or grayscale output */
 	2.0,			/* Output brightness */
 	100.0,			/* Scaling (100% means entire printable area, */
 				/*          -XXX means scale by PPI) */

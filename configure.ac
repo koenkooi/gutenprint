@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.17 2002/07/15 02:42:59 rlk Exp $
+dnl $Id: configure.ac,v 1.18 2002/08/21 00:47:39 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.17 $)
+AC_REVISION($Revision: 1.18 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -311,32 +311,46 @@ AM_PROG_LEX
 AC_PROG_YACC
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(CONVERT, convert)
-if test x${CONVERT} = x ; then
-  AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${CONVERT} = x ; then
+    AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROG(TEXI2HTML, texi2html)
-if test x${TEXI2HTML} = x ; then
-  AC_MSG_WARN([HTML documentation cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${TEXI2HTML} = x ; then
+    AC_MSG_WARN([HTML documentation cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROG(DVIPS, dvips)
-if test x${DVIPS} = x ; then
-  AC_MSG_WARN([PostScript documentation cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DVIPS} = x ; then
+    AC_MSG_WARN([PostScript documentation cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROG(DB2PDF, db2pdf)
-if test x${DB2PDF} = x ; then
-  AC_MSG_WARN([PDF user's guide cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DB2PDF} = x ; then
+    AC_MSG_WARN([PDF user's guide cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROGS(DVIPDF, dvipdf dvipdfm)
-if test x${DVIPDF} = x ; then
-  AC_MSG_WARN([PDF documentation cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DVIPDF} = x ; then
+    AC_MSG_WARN([PDF documentation cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROG(DB2PS, db2ps)
-if test x${DB2PS} = x ; then
-  AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DB2PS} = x ; then
+    AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+  fi
 fi
 AC_PATH_PROG(DB2HTML, db2html)
-if test x${DB2PS} = x ; then
-  AC_MSG_WARN([HTML user's guide cannot be regenerated!])
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DB2PS} = x ; then
+    AC_MSG_WARN([HTML user's guide cannot be regenerated!])
+  fi
 fi
 
 dnl foomatic checks
