@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.12 2003/06/08 21:55:51 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.13 2003/06/09 09:22:38 mtomlinson Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -77,7 +77,6 @@ typedef struct ink_defn
   unsigned range;
   unsigned value;
   unsigned bits;
-  unsigned dot_size;
 } stpi_ink_defn_t;
 
 /*
@@ -106,9 +105,6 @@ typedef struct shade_segment
   stpi_dis_t dis;
   stpi_dis_t *et_dis;
 
-  int numdotsizes;
-  stpi_ink_defn_t *dotsizes;
-
 } stpi_shade_segment_t;
 
 typedef struct dither_channel
@@ -134,7 +130,6 @@ typedef struct dither_channel
 
   int error_rows;
   int **errs;
-  unsigned short *vals;
 
   dither_matrix_t pick;
   dither_matrix_t dithermat;
@@ -267,5 +262,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.12 2003/06/08 21:55:51 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.13 2003/06/09 09:22:38 mtomlinson Exp $".
  */
