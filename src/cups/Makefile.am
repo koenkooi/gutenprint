@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.80 2004/09/17 18:38:10 rleigh Exp $
+## $Id: Makefile.am,v 1.81 2005/02/03 22:00:30 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ ppd-nonls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	for language in C ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
-	 ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ -p ppd/$$language ; \
+	  LANGUAGE=$$language ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ -p ppd/$$language ; \
 	done
 
 ppd-nls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
