@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.111 2000/09/02 21:52:18 rlk Exp $"
+ * "$Id: print.c,v 1.112 2000/09/08 15:34:05 easysw Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1090,7 +1090,7 @@ get_system_printers(void)
   {
     while (fgets(line, sizeof(line), pfile) != NULL) {
       if (!strncmp(line,"Press RETURN to continue",24)) {
-	char *ptr= index(line,':')+2;
+	char *ptr= strchr(line,':')+2;
 	if (ptr && strlen(ptr)<(ptr-line))
 	  strcpy(line,ptr);
       }
@@ -1163,5 +1163,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.111 2000/09/02 21:52:18 rlk Exp $".
+ * End of "$Id: print.c,v 1.112 2000/09/08 15:34:05 easysw Exp $".
  */

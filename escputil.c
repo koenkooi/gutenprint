@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.7 2000/08/04 01:07:45 rlk Exp $"
+ * "$Id: escputil.c,v 1.8 2000/09/08 15:34:05 easysw Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -413,7 +413,7 @@ do_ink_level(void)
       fprintf(stderr, "Cannot read from %s: %s\n", raw_device,strerror(errno));
       exit(1);
     }
-  ind = index(buf, 'I');
+  ind = strchr(buf, 'I');
   if (!ind || ind[1] != 'Q' || ind[2] != ':')
     {
       fprintf(stderr, "Cannot parse output from printer\n");
