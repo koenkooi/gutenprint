@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.70 2004/07/31 17:48:05 rlk Exp $"
+ * "$Id: panel.c,v 1.71 2004/08/01 20:11:12 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3127,7 +3127,6 @@ combo_callback(GtkWidget *widget, gpointer data)
   const gchar *value =
     stp_get_string_parameter(pv->v, option->fast_desc->name);
   reset_preview();
-  fprintf(stderr, "value %p %s new_value %p\n", value, value, new_value);
   if (!value || strcmp(value, new_value) != 0)
     {
       invalidate_frame();
