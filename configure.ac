@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.112 2004/07/31 20:48:04 rlk Exp $
+dnl $Id: configure.ac,v 1.113 2004/08/04 18:38:44 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.112 $)
+AC_REVISION($Revision: 1.113 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -296,7 +296,7 @@ STP_ARG_WITH_DETAILED([modules],
     fi)
 
 # Abort if a broken configuration was required
-if test x$disable_static = xyes; then
+if test x$enable_static = xyes; then
   if test $WITH_MODULES = no; then
     :
   elif test $WITH_MODULES = static; then
