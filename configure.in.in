@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.103.2.65 2003/12/18 02:09:39 rlk Exp $
+dnl $Id: configure.in.in,v 1.103.2.66 2003/12/24 02:02:01 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -172,6 +172,8 @@ AC_ARG_WITH(cups,
          AC_MSG_ERROR([${withval}: no such directory for --with-cups])
        fi ;;
   esac],[AC_MSG_RESULT([${BUILD_CUPS}]) ; cups_prefix="${prefix}"])
+
+
 
 AC_MSG_CHECKING([whether to build translated CUPS PPD files])
 AC_ARG_WITH(translated-ppds,
@@ -469,7 +471,14 @@ dnl define HAVE_GNU_LD if GNU ld is present
 if test "$ac_cv_prog_gnu_ld" = "yes" ; then
   AC_DEFINE(HAVE_GNU_LD,, [Define if GNU ld is present.])
 fi
-  
+
+AM_CONDITIONAL(BUILD_GENPPD_STATIC, test x"$enable_static" = xyes)
+
+if test "$enable_static" = no -a "$BUILD_CUPS" = yes ; then
+  AC_MSG_WARN([--enable-static is disabled, but CUPS is being built.])
+  AC_MSG_WARN([This may result in a *SILENTLY* incorrect build.])
+  AC_MSG_WARN([Please read the release notes carefully!])
+fi
 
 dnl GNU gettext checks.
 AM_GNU_GETTEXT
