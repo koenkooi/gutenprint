@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.1.2.1 2003/08/18 23:31:18 rlk Exp $"
+ * "$Id: image.h,v 1.1.2.2 2003/08/24 14:54:36 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -36,8 +36,6 @@ extern "C" {
 
 #define OUTPUT_GRAY             0       /* Grayscale output */
 #define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_RAW_CMYK         2       /* Raw CMYK output */
-#define OUTPUT_RAW_PRINTER	3	/* Printer-specific raw output */
 
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
@@ -57,31 +55,6 @@ extern "C" {
  * embedded in the output by some drivers.
  *
  * width() and height() return the dimensions of the image in pixels.
- *
- * bpp(), or bytes per pixel, is used in combination with the output type
- * and presence of a color map, if supplied, to determine the format
- * of the input:
- *
- * Output_type is OUTPUT_COLOR, or OUTPUT_GRAY:
- *
- *    bpp           No color map                Color map present
- *     1            grayscale                   indexed color (256 colors)
- *     2            grayscale w/alpha           indexed color w/alpha
- *     3            RGB                         N/A
- *     4            N/A                         RGB w/alpha (RGBA)
- *
- * Output_type is OUTPUT_CMYK:
- *
- *    bpp           No color map                Color map present
- *     4            8 bits/plane CMYK           N/A
- *     8            16 bits/plane CMYK          N/A
- *
- * Output type is OUTPUT_RAW_PRINTER:
- *
- *    If the printer supports OUTPUT_RAW_PRINTER, the bpp value should be
- *    2 x the number of channels desired to print (the precise modes
- *    available are printer-dependent).  Each plane is therefore 2 bytes
- *    (16 bits) deep.
  *
  * init() is used to perform any initialization required by the image
  * layer for the image.  It will be called once per image.  reset() is
@@ -171,6 +144,7 @@ typedef enum
 typedef enum
 {
   STP_IMAGE_GRAY,
+  STP_IMAGE_WHITE,
   STP_IMAGE_RGB,
   STP_IMAGE_CMY,
   STP_IMAGE_CMYK,
@@ -211,5 +185,5 @@ typedef struct stp_image
 
 #endif /* __GIMP_PRINT_IMAGE_H__ */
 /*
- * End of "$Id: image.h,v 1.1.2.1 2003/08/18 23:31:18 rlk Exp $".
+ * End of "$Id: image.h,v 1.1.2.2 2003/08/24 14:54:36 rlk Exp $".
  */
