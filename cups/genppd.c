@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.12 2000/10/12 03:08:40 easysw Exp $"
+ * "$Id: genppd.c,v 1.13 2000/10/17 01:18:50 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -237,8 +237,8 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
 		  "",
 		  "Softweave",
 		  "Microweave",
-		  "High Quality",
-		  "Highest Quality",
+		  "High",
+		  "Highest",
 		  "Emulated",
 		  "DMT",
 		  "monochrome"
@@ -577,10 +577,10 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
     */
 
     quality[0] = '\0';
-    if (sscanf(opts[i], "%d x %d DPI%s", &xdpi, &ydpi, quality) == 1)
-      if (sscanf(opts[i], "%dx%d DPI%s", &xdpi, &ydpi, quality) == 1)
+    if (sscanf(opts[i], "%d x %d%*s%s", &xdpi, &ydpi, quality) == 1)
+      if (sscanf(opts[i], "%dx%d%*s%s", &xdpi, &ydpi, quality) == 1)
       {
-	sscanf(opts[i], "%d DPI%s", &xdpi, quality);
+	sscanf(opts[i], "%d%*s%s", &xdpi, quality);
 	ydpi = xdpi;
       }
 
@@ -680,5 +680,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.12 2000/10/12 03:08:40 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.13 2000/10/17 01:18:50 easysw Exp $".
  */
