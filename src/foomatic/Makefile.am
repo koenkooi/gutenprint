@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.14 2003/04/01 00:39:13 tillkamppeter Exp $
+## $Id: Makefile.am,v 1.16.2.15 2003/04/18 23:15:27 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -134,6 +134,7 @@ CLEANFILES = $(noinst_PROGRAMS) foomatic-stamp
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = foomatic-printermap 		\
+	oldprinterids				\
 	foomatic-templates-gs/*.xml		\
 	foomatic-templates-ijs/*.xml
 
