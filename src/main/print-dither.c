@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.59 2002/01/15 19:18:28 ttonino Exp $"
+ * "$Id: print-dither.c,v 1.60 2002/01/21 20:07:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -310,7 +310,7 @@ reverse_row_ends(dither_t *d)
 {
   int i, j;
   for (i = 0; i < d->n_channels; i++)
-    for (j = 0; j < 2; j++)
+    for (j = 0; j < CHANNEL(d, i).subchannels; j++)
       {
 	int tmp = CHANNEL(d, i).row_ends[0][j];
 	CHANNEL(d, i).row_ends[0][j] =
