@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.2 2001/12/02 20:14:36 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.3 2001/12/06 00:57:08 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -224,6 +224,29 @@ typedef struct
 #define MODEL_MICROWEAVE_EXCEPTION	(13)
 #define MODEL_LIMIT			(14)
 
+typedef struct
+{
+  const char *attr_name;
+  int shift;
+  int bits;
+} escp2_printer_attr_t;
+
+typedef struct
+{
+  const char *name;
+  const char *text;
+  int hres;
+  int vres;
+  int softweave;
+  int microweave;
+  int vertical_passes;
+  int vertical_oversample;
+  int unidirectional;
+  int vertical_undersample;
+  int vertical_denominator;
+  int resid;
+} res_t;
+
 typedef struct escp2_printer
 {
   model_cap_t	flags;		/* Bitmask of flags, see below */
@@ -296,31 +319,7 @@ typedef struct escp2_printer
   const double *hue_adjustment;
   const double *sat_adjustment;
   const paperlist_t *paperlist;
+  const res_t *reslist;
 } escp2_stp_printer_t;
 
-typedef struct escp2_printer_attribute
-{
-  const char *attr_name;
-  int shift;
-  int bits;
-} escp2_printer_attr_t;
-
-typedef struct
-{
-  const char *name;
-  const char *text;
-  int hres;
-  int vres;
-  int softweave;
-  int microweave;
-  int vertical_passes;
-  int vertical_oversample;
-  int unidirectional;
-  int vertical_undersample;
-  int vertical_denominator;
-  int resid;
-} res_t;
-
-extern const res_t stp_escp2_reslist[];
-extern const int stp_escp2_nres;
 extern const escp2_stp_printer_t stp_escp2_model_capabilities[];
