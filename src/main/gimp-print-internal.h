@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.58.2.1 2002/11/10 01:24:33 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.58.2.2 2002/11/10 04:46:13 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -53,7 +53,7 @@
 #define COOKIE_VARS 	  0x1a18376c
 #define COOKIE_OPTION     0x3ab27f93
 #define COOKIE_PARAM_LIST 0x96cf0387
-
+#define COOKIE_PRINTER  0x0722922c
 
 typedef struct
 {
@@ -236,25 +236,18 @@ typedef struct stp_dither_matrix
 
 typedef struct
 {
-  stp_parameter_description_t (*parameters)(const stp_printer_t printer,
-					    const stp_vars_t v,
-					    const char *name);
-  void  (*media_size)(const stp_printer_t printer, const stp_vars_t v,
-                      int *width, int *height);
-  void  (*imageable_area)(const stp_printer_t printer,
-                          const stp_vars_t v,
-                          int *left, int *right, int *bottom, int *top);
-  void  (*limit)(const stp_printer_t printer, const stp_vars_t v,
-                 int *max_width, int *max_height,
+  void (*parameters)(const stp_vars_t v, const char *name,
+		     stp_parameter_description_t *);
+  void  (*media_size)(const stp_vars_t v, int *width, int *height);
+  void  (*imageable_area)(const stp_vars_t v,
+			  int *left, int *right, int *bottom, int *top);
+  void  (*limit)(const stp_vars_t v, int *max_width, int *max_height,
                  int *min_width, int *min_height);
-  int   (*print)(const stp_printer_t printer,
-		 const stp_vars_t v, stp_image_t *image);
-  const char *(*default_parameters)(const stp_printer_t printer,
-				    const stp_vars_t v,
-                                    const char *name);
-  void  (*describe_resolution)(const stp_printer_t printer, const stp_vars_t v,
-                               int *x, int *y);
-  int   (*verify)(const stp_printer_t p, const stp_vars_t v);
+  int   (*print)(const stp_vars_t v, stp_image_t *image);
+  const stp_parameter_value_t (*default_parameters)(const stp_vars_t v,
+						    const char *name);
+  void  (*describe_resolution)(const stp_vars_t v, int *x, int *y);
+  int   (*verify)(const stp_vars_t v);
 } stp_printfuncs_t;
 
 /*
@@ -269,13 +262,21 @@ extern int	stp_get_verified(stp_vars_t vv);
 
 extern void     stp_copy_options(stp_vars_t vd, const stp_vars_t vs);
 
-extern void	stp_default_media_size(const stp_printer_t printer,
-				       const stp_vars_t v, int *width,
+extern void	stp_default_media_size(const stp_vars_t v, int *width,
 				       int *height);
 extern const stp_printfuncs_t *stp_printer_get_printfuncs(const stp_printer_t p);
 
-extern void stp_dither_algorithms(stp_param_list_t);
-extern const char *stp_get_default_dither_algorithm(void);
+extern int stp_get_model(const stp_vars_t v);
+
+extern void
+stp_describe_internal_parameter(const stp_vars_t v, const char *name,
+				stp_parameter_description_t *description);
+
+extern stp_parameter_value_t
+stp_default_internal_parameter(const stp_vars_t v, const char *name);
+
+extern void stp_dither_algorithms(stp_param_string_list_t);
+extern stp_parameter_value_t stp_get_default_dither_algorithm(void);
 
 extern void *	stp_init_dither(int in_width, int out_width, int bpp,
 				int xdpi, int ydpi, stp_vars_t vars);
@@ -445,7 +446,7 @@ extern void stp_destroy_weave(void *);
 extern void stp_destroy_weave_params(void *vw);
 
 extern int
-stp_verify_printer_params(const stp_printer_t, const stp_vars_t);
+stp_verify_printer_params(const stp_vars_t);
 
 extern void stp_zprintf(const stp_vars_t v, const char *format, ...);
 
@@ -544,5 +545,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.58.2.1 2002/11/10 01:24:33 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.58.2.2 2002/11/10 04:46:13 rlk Exp $".
  */

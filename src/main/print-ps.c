@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.34 2002/11/05 02:45:46 rlk Exp $"
+ * "$Id: print-ps.c,v 1.34.2.1 2002/11/10 04:46:13 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -73,21 +73,20 @@ c_strdup(const char *s)
  * 'ps_parameters()' - Return the parameter values for the given parameter.
  */
 
-static stp_param_list_t
-ps_parameters(const stp_printer_t printer,
-	      const stp_vars_t v,
-              const char *name)
+static void
+ps_parameters(const stp_vars_t v, const char *name,
+	      stp_parameter_description_t *description)
 {
   int		i;
   char		line[1024],
 		lname[255],
 		loption[255],
 		*ltext;
-  stp_param_list_t valptrs = stp_param_list_allocate();
   const char *ppd_file = stp_get_ppd_file(v);
+  description->type = STP_PARAMETER_TYPE_INVALID;
 
   if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
-    return valptrs;
+    return;
 
   if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
   {
@@ -107,21 +106,27 @@ ps_parameters(const stp_printer_t printer,
       if (strcmp(name, "PageSize") == 0)
 	{
 	  int papersizes = stp_known_papersizes();
+	  description->type = STP_PARAMETER_TYPE_STRING_LIST;
+	  description->class = STP_PARAMETER_CLASS_FEATURE;
+	  description->level = STP_PARAMETER_LEVEL_BASIC;
+	  description->restrictions.string_list = stp_param_list_allocate();
 	  for (i = 0; i < papersizes; i++)
 	    {
 	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	      if (strlen(stp_papersize_get_name(pt)) > 0)
-		stp_param_list_add_param(valptrs, stp_papersize_get_name(pt),
-					 stp_papersize_get_text(pt));
+		stp_param_list_add_param
+		  (description->restrictions.string_list,
+		   stp_papersize_get_name(pt), stp_papersize_get_text(pt));
 	    }
 	}
-      return valptrs;
+      return;
     }
 
   rewind(ps_ppd);
 
   while (fgets(line, sizeof(line), ps_ppd) != NULL)
   {
+    description->restrictions.string_list = stp_param_list_allocate();
     if (line[0] != '*')
       continue;
 
@@ -135,17 +140,15 @@ ps_parameters(const stp_printer_t printer,
       else
         ltext = loption;
 
-      stp_param_list_add_param(valptrs, loption, ltext);
+      stp_param_list_add_param(description->restrictions.string_list,
+			       loption, ltext);
     }
   }
-
-  return (valptrs);
+  return;
 }
 
-static const char *
-ps_default_parameters(const stp_printer_t printer,
-		      const stp_vars_t v,
-		      const char *name)
+static const stp_parameter_value_t
+ps_default_parameters(const stp_vars_t v, const char *name)
 {
   int		i;
   char		line[1024],
@@ -153,9 +156,11 @@ ps_default_parameters(const stp_printer_t printer,
 		loption[255],
 		defname[255];
   const char *ppd_file = stp_get_ppd_file(v);
+  stp_parameter_value_t r;
+  r.str = NULL;
 
   if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
-    return (NULL);
+    return r;
 
   sprintf(defname, "Default%s", name);
 
@@ -182,13 +187,11 @@ ps_default_parameters(const stp_printer_t printer,
 	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	      if (strlen(stp_papersize_get_name(pt)) > 0)
 		{
-		  return stp_papersize_get_name(pt);
+		  r.str = stp_papersize_get_name(pt);
+		  return r;
 		}
 	    }
-	  return NULL;
 	}
-      else
-	return (NULL);
     }
 
   rewind(ps_ppd);
@@ -203,16 +206,16 @@ ps_default_parameters(const stp_printer_t printer,
 
     if (strcasecmp(lname, defname) == 0)
     {
-      return c_strdup(loption);
+      r.str = c_strdup(loption);
     }
   }
 
   if (strcmp(name, "Resolution") == 0)
     {
-      return "default";
+      r.str = "default";
     }
 
-  return NULL;
+  return r;
 }
 
 
@@ -221,8 +224,7 @@ ps_default_parameters(const stp_printer_t printer,
  */
 
 static void
-ps_media_size(const stp_printer_t printer,	/* I - Printer model */
-	      const stp_vars_t v,		/* I */
+ps_media_size(const stp_vars_t v,		/* I */
               int  *width,		/* O - Width in points */
               int  *height)		/* O - Height in points */
 {
@@ -230,16 +232,16 @@ ps_media_size(const stp_printer_t printer,	/* I - Printer model */
 
   stp_dprintf(STP_DBG_PS, v,
 	      "ps_media_size(%d, \'%s\', \'%s\', %08x, %08x)\n",
-	      stp_printer_get_model(printer), stp_get_ppd_file(v),
+	      stp_get_model(v), stp_get_ppd_file(v),
 	      stp_get_parameter(v, "PageSize"),
 	      width, height);
 
   if ((dimensions = ppd_find(stp_get_ppd_file(v), "PaperDimension",
-			     stp_get_parameter(v, "PageSize"), NULL))
+			     stp_get_parameter(v, "PageSize").str, NULL))
       != NULL)
     sscanf(dimensions, "%d%d", width, height);
   else
-    stp_default_media_size(printer, v, width, height);
+    stp_default_media_size(v, width, height);
 }
 
 
@@ -248,8 +250,7 @@ ps_media_size(const stp_printer_t printer,	/* I - Printer model */
  */
 
 static void
-ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
-		  const stp_vars_t v,      /* I */
+ps_imageable_area(const stp_vars_t v,      /* I */
                   int  *left,		/* O - Left position in points */
                   int  *right,		/* O - Right position in points */
                   int  *bottom,		/* O - Bottom position in points */
@@ -261,10 +262,10 @@ ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 	fbottom,
 	ftop;
   int width, height;
-  ps_media_size(printer, v, &width, &height);
+  ps_media_size(v, &width, &height);
 
   if ((area = ppd_find(stp_get_ppd_file(v), "ImageableArea",
-		       stp_get_parameter(v, "PageSize"), NULL))
+		       stp_get_parameter(v, "PageSize").str, NULL))
       != NULL)
     {
       stp_dprintf(STP_DBG_PS, v, "area = \'%s\'\n", area);
@@ -288,12 +289,11 @@ ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 }
 
 static void
-ps_limit(const stp_printer_t printer,	/* I - Printer model */
-	    const stp_vars_t v,  		/* I */
-	    int *width,
-	    int *height,
-	    int *min_width,
-	    int *min_height)
+ps_limit(const stp_vars_t v,  		/* I */
+	 int *width,
+	 int *height,
+	 int *min_width,
+	 int *min_height)
 {
   *width =	INT_MAX;
   *height =	INT_MAX;
@@ -305,10 +305,9 @@ ps_limit(const stp_printer_t printer,	/* I - Printer model */
  * This is really bogus...
  */
 static void
-ps_describe_resolution(const stp_printer_t printer, const stp_vars_t v,
-		       int *x, int *y)
+ps_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
-  const char *resolution = stp_get_parameter(v, "Resolution");
+  const char *resolution = stp_get_parameter(v, "Resolution").str;
   *x = -1;
   *y = -1;
   sscanf(resolution, "%dx%d", x, y);
@@ -320,18 +319,16 @@ ps_describe_resolution(const stp_printer_t printer, const stp_vars_t v,
  */
 
 static int
-ps_print(const stp_printer_t printer,
-	 const stp_vars_t v,
-         stp_image_t *image)
+ps_print(const stp_vars_t v, stp_image_t *image)
 {
   int		status = 1;
   unsigned char *cmap = stp_get_cmap(v);
-  int		model = stp_printer_get_model(printer);
+  int		model = stp_get_model(v);
   const char	*ppd_file = stp_get_ppd_file(v);
-  const char	*resolution = stp_get_parameter(v, "Resolution");
-  const char	*media_size = stp_get_parameter(v, "PageSize");
-  const char	*media_type = stp_get_parameter(v, "MediaType");
-  const char	*media_source = stp_get_parameter(v, "InputSlot");
+  const char	*resolution = stp_get_parameter(v, "Resolution").str;
+  const char	*media_size = stp_get_parameter(v, "PageSize").str;
+  const char	*media_type = stp_get_parameter(v, "MediaType").str;
+  const char	*media_source = stp_get_parameter(v, "InputSlot").str;
   int 		output_type = stp_get_output_type(v);
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -368,7 +365,7 @@ ps_print(const stp_printer_t printer,
                 image_bpp;
   stp_vars_t	nv = stp_allocate_copy(v);
 
-  if (!stp_printer_verify(printer, nv))
+  if (!stp_verify(nv))
     {
       stp_eprintf(nv, "Print options not verified; cannot print.\n");
       return 0;
@@ -394,8 +391,7 @@ ps_print(const stp_printer_t printer,
   out_width = stp_get_width(v);
   out_height = stp_get_height(v);
 
-  ps_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
-		    &page_top);
+  ps_imageable_area(nv, &page_left, &page_right, &page_bottom, &page_top);
   left -= page_left;
   top -= page_top;
   page_width = page_right - page_left;

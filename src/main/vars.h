@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.2.2.1 2002/11/10 01:24:33 rlk Exp $"
+ * "$Id: vars.h,v 1.2.2.2 2002/11/10 04:46:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -39,7 +39,7 @@ typedef struct					/* Plug-in variables */
   const char	*driver,		/* Name of printer "driver" */
 	*ppd_file,		/* PPD file */
         *resolution,		/* Resolution */
-	*media_size,		/* Media size */
+	*media_size_name,	/* Media size */
 	*media_type,		/* Media type */
 	*media_source,		/* Media source */
 	*ink_type,		/* Ink or cartridge */

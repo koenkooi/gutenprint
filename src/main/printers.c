@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.7.2.1 2002/11/10 01:24:33 rlk Exp $"
+ * "$Id: printers.c,v 1.7.2.2 2002/11/10 04:46:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -85,85 +85,91 @@ stp_get_printer_index_by_driver(const char *driver)
   return -1;
 }
 
-stp_parameter_description_t *
-stp_get_parameters(const stp_vars_t v, const char *name)
+const stp_printer_t
+stp_get_printer(const stp_vars_t v)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  return (printfuncs->parameters)(printer, v, name);
+  return stp_get_printer_by_driver(stp_get_driver(v));
 }
 
-const char *
+int
+stp_get_model(const stp_vars_t v)
+{
+  const stp_printer_t p = stp_get_printer(v);
+  return stp_printer_get_model(p);
+}
+
+void
+stp_describe_parameter(const stp_vars_t v, const char *name,
+		       stp_parameter_description_t *description)
+{
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  (printfuncs->parameters)(v, name, description);
+}
+
+extern const stp_parameter_value_t
 stp_get_default_parameter(const stp_vars_t v, const char *name)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  return (printfuncs->default_parameters)(printer, v, name);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  return (printfuncs->default_parameters)(v, name);
 }
 
 void
 stp_get_media_size(const stp_vars_t v, int *width, int *height)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  (printfuncs->media_size)(printer, v, width, height);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  (printfuncs->media_size)(v, width, height);
 }
 
 void
 stp_get_imageable_area(const stp_vars_t v,
 		       int *left, int *right, int *bottom, int *top)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  (printfuncs->imageable_area)(printer, v, left, right, bottom, top);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  (printfuncs->imageable_area)(v, left, right, bottom, top);
 }
 
 void
 stp_get_size_limit(const stp_vars_t v, int *max_width, int *max_height,
 		   int *min_width, int *min_height)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  (printfuncs->limit)(printer, v, max_width, max_height, min_width,min_height);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  (printfuncs->limit)(v, max_width, max_height, min_width,min_height);
 }
 
 void
 stp_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  (printfuncs->describe_resolution)(printer, v, x, y);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  (printfuncs->describe_resolution)(v, x, y);
 }
 
 int
 stp_verify(const stp_vars_t v)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  return (printfuncs->verify)(printer, v);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  return (printfuncs->verify)(v);
 }
 
 int
 stp_print(const stp_vars_t v, stp_image_t *image)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-  return (printfuncs->print)(printer, v, image);
+  const stp_printfuncs_t *printfuncs =
+    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+  return (printfuncs->print)(v, image);
 }
 
 static int
-verify_param(const stp_printer_t p, const stp_vars_t v, const char *parameter)
+verify_string_param(const stp_vars_t v, const char *parameter,
+		    stp_param_string_list_t vptr)
 {
-  const char *checkval = stp_get_parameter(v, parameter);
-  stp_param_list_t vptr = stp_printer_get_parameters(p, v, parameter);
+  const char *checkval = stp_get_parameter(v, parameter).str;
   size_t count = stp_param_list_count(vptr);
   int answer = 0;
   int i;
@@ -193,20 +199,59 @@ verify_param(const stp_printer_t p, const stp_vars_t v, const char *parameter)
   return answer;
 }
 
-#define CHECK_FLOAT_RANGE(v, component)					\
-do									\
-{									\
-  const stp_vars_t max = stp_maximum_settings();			\
-  const stp_vars_t min = stp_minimum_settings();			\
-  if (stp_get_##component((v)) < stp_get_##component(min) ||		\
-      stp_get_##component((v)) > stp_get_##component(max))		\
-    {									\
-      answer = 0;							\
-      stp_eprintf(v, _("%s out of range (value %f, min %f, max %f)\n"),	\
-		  #component, stp_get_##component(v),			\
-		  stp_get_##component(min), stp_get_##component(max));	\
-    }									\
-} while (0)
+static int
+verify_double_param(const stp_vars_t v, const char *parameter,
+			stp_param_double_bound_t *bounds)
+{
+  double checkval = stp_get_parameter(v, parameter).dbl;
+  if (checkval < bounds->lower || checkval > bounds->upper)
+    {
+      stp_eprintf(v, _("%s must be between %f and %f\n"),
+		  parameter, bounds->lower, bounds->upper);
+      return 0;
+    }
+  return 1;
+}
+
+static int
+verify_curve_param(const stp_vars_t v, const char *parameter,
+		       stp_param_double_bound_t *bounds)
+{
+  const stp_param_curve_t *curve = stp_get_parameter(v, parameter).curve;
+  size_t i;
+  if (curve->count == 0)
+    return 0;
+  for (i = 0; i < curve->count; i++)
+    if (curve->value[i] < bounds->lower || curve->value[i] > bounds->upper)
+      {
+	stp_eprintf(v, _("%s must be between %f and %f\n"),
+		    parameter, bounds->lower, bounds->upper);
+	return 0;
+      }
+  return 1;
+}
+
+static int
+verify_param(const stp_vars_t v, const char *parameter)
+{
+  stp_parameter_description_t desc;
+  stp_describe_parameter(v, parameter, &desc);
+  switch (desc.type)
+    {
+    case STP_PARAMETER_TYPE_STRING_LIST:
+      return verify_string_param(v, parameter, desc.restrictions.string_list);
+    case STP_PARAMETER_TYPE_DOUBLE:
+      return verify_double_param(v, parameter,
+				 &(desc.restrictions.double_bounds));
+    case STP_PARAMETER_TYPE_CURVE:
+      return verify_curve_param(v,parameter,&(desc.restrictions.curve_bounds));
+    case STP_PARAMETER_TYPE_RAW:
+    case STP_PARAMETER_TYPE_FILE:
+      return 1;			/* No way to verify this here */
+    default:
+      return 0;
+    }
+}
 
 #define CHECK_INT_RANGE(v, component)					\
 do									\
@@ -224,15 +269,14 @@ do									\
 } while (0)
 
 int
-stp_verify(const stp_vars_t v)
+stp_verify_printer_params(const stp_vars_t v)
 {
-  const stp_printer_t printer =
-    stp_get_printer_by_driver(stp_get_driver(v));
-  const char **params;
+  const stp_parameter_t *params;
+  const stp_printer_t p = stp_get_printer(v);
   int nparams;
   int i;
   int answer = 1;
-  int left, top, bottom, right, width, height;
+  int left, top, bottom, right;
   const stp_vars_t printvars = stp_printer_get_printvars(p);
 
   /*
@@ -240,21 +284,19 @@ stp_verify(const stp_vars_t v)
    * color output to black & white printers!
    */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
-      (stp_get_output_type(v) == OUTPUT_COLOR ||
-       stp_get_output_type(v) == OUTPUT_RAW_CMYK))
+      stp_get_output_type(v) == OUTPUT_COLOR)
     {
       answer = 0;
       stp_eprintf(v, _("Printer does not support color output\n"));
     }
-  if (strlen(stp_get_parameter(v, "PageSize")) > 0)
+  if (strlen(stp_get_parameter(v, "PageSize").str) > 0)
     {
-      answer &= verify_param(p, v, "PageSize");
+      answer &= verify_param(v, "PageSize");
     }
   else
     {
-      int min_height, min_width;
-      stp_printer_get_size_limit(p, v, &width, &height,
-				 &min_width, &min_height);
+      int width, height, min_height, min_width;
+      stp_get_size_limit(v, &width, &height, &min_width, &min_height);
       if (stp_get_page_height(v) <= min_height ||
 	  stp_get_page_height(v) > height ||
 	  stp_get_page_width(v) <= min_width || stp_get_page_width(v) > width)
@@ -264,7 +306,7 @@ stp_verify(const stp_vars_t v)
 	}
     }
 
-  stp_printer_get_imageable_area(p, v, &left, &right, &bottom, &top);
+  stp_get_imageable_area(v, &left, &right, &bottom, &top);
 
   if (stp_get_top(v) < top)
     {
@@ -302,27 +344,17 @@ stp_verify(const stp_vars_t v)
       stp_eprintf(v, _("Image is too long for the page\n"));
     }
 
-  CHECK_FLOAT_RANGE(v, gamma);
-  CHECK_FLOAT_RANGE(v, contrast);
-  CHECK_FLOAT_RANGE(v, cyan);
-  CHECK_FLOAT_RANGE(v, magenta);
-  CHECK_FLOAT_RANGE(v, yellow);
-  CHECK_FLOAT_RANGE(v, brightness);
-  CHECK_FLOAT_RANGE(v, density);
-  CHECK_FLOAT_RANGE(v, saturation);
   CHECK_INT_RANGE(v, image_type);
   CHECK_INT_RANGE(v, output_type);
   CHECK_INT_RANGE(v, input_color_model);
   CHECK_INT_RANGE(v, output_color_model);
 
-  params = stp_printer_list_parameters(p, v, &nparams);
+  params = stp_list_parameters(v, &nparams);
   for (i = 0; i < nparams; i++)
     {
-      if (stp_printer_parameter_class(p, v, params[i]) ==
-	  STP_PARAMETER_CLASS_PAGE_SIZE)
+      if (params[i].class == STP_PARAMETER_CLASS_PAGE_SIZE)
 	continue;
-      if (strlen(stp_get_parameter(v, params[i])) > 0)
-	answer &= verify_param(p, v, params[i]);
+      answer &= verify_param(v, params[i].name);
     }
   stp_set_verified(v, answer);
   return answer;

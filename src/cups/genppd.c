@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $"
+ * "$Id: genppd.c,v 1.49.2.1 2002/11/10 04:46:12 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -674,7 +674,6 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   driver     = stp_printer_get_driver(p);
   long_name  = stp_printer_get_long_name(p);
   printvars  = stp_printer_get_printvars(p);
-  model      = stp_printer_get_model(p);
   the_papers = NULL;
   cur_opt    = 0;
 
@@ -760,7 +759,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*TTRasterizer:	Type42\n");
 
   gzputs(fp, "*cupsVersion:	1.1\n");
-  gzprintf(fp, "*cupsModelNumber: \"%d\"\n", model);
+  gzprintf(fp, "*cupsModelNumber: \"0\"\n");
   gzputs(fp, "*cupsManualCopies: True\n");
   gzputs(fp, "*cupsFilter:	\"application/vnd.cups-raster 100 rastertoprinter\"\n");
   if (strcasecmp(manufacturer, "EPSON") == 0)
@@ -1168,5 +1167,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.49.2.1 2002/11/10 04:46:12 rlk Exp $".
  */
