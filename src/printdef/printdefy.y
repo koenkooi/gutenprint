@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.9 2002/10/27 02:28:58 rlk Exp $"
+ * "$Id: printdefy.y,v 1.10 2002/11/01 03:33:39 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -225,7 +225,7 @@ main(int argc, char **argv)
   for (i = 0; i < nprintfuncs; i++)
     printf("const extern stp_printfuncs_t stp_%s_printfuncs;\n",
 	   printfuncs[i]);
-  printf("const stp_internal_printer_t stp_printer_list[] =\n");
+  printf("static const stp_internal_printer_t stp_printer_list[] =\n");
   printf("{\n");
   retval = yyparse();
   printf("};\n\n");
