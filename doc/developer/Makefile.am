@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2004/03/28 21:17:31 rlk Exp $
+## $Id: Makefile.am,v 1.14 2004/05/07 19:06:10 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -117,7 +117,7 @@ html-stamp: $(MANUAL_SRC_FILES)
 	    if test -L $$file ; then \
 	      $(RM) -f $$file ; \
 	    fi ; \
-	    $(LN_S) $(srcdir)/$$file $file ; \
+	    $(LN_S) $(srcdir)/$$file $$file ; \
 	  done ; \
 	fi
 	$(DB2HTML) gimpprint.xml
