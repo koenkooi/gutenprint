@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.5 2004/09/29 00:41:45 rlk Exp $"
+ * "$Id: print.c,v 1.6 2004/11/01 20:46:34 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -25,7 +25,7 @@
 #include <config.h>
 #endif
 
-#include <gutenprintui/gutenprintui.h>
+#include <gutenprintui2/gutenprintui.h>
 #include "print_gimp.h"
 
 #include <sys/types.h>
