@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.15 2002/11/22 02:16:59 rlk Exp $"
+ * "$Id: testpattern.c,v 1.16 2002/12/28 15:46:18 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -390,7 +390,7 @@ main(int argc, char **argv)
   stp_merge_printvars(v, stp_printer_get_printvars(the_printer));
   if (stp_print(v, &theImage) != 1)
     return 1;
-  stp_free_vars(v);
+  stp_vars_free(v);
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.17 2002/12/27 02:21:41 rlk Exp $"
+ * "$Id: printer_options.c,v 1.18 2002/12/28 15:46:17 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -110,7 +110,7 @@ main(int argc, char **argv)
 	  printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
 		 driver, "Color", "BlackAndWhite", "Black and White");
 	}
-      stp_free_vars(pv);
+      stp_vars_free(pv);
     }
   return 0;
 }

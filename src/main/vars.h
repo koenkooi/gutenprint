@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.7 2002/12/26 23:26:06 rlk Exp $"
+ * "$Id: vars.h,v 1.8 2002/12/28 15:46:18 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,28 +31,28 @@ extern "C" {
 
 #include <sys/types.h>
 
-extern void	stp_set_color_data(stp_vars_t v, void * val);
 extern void	*stp_get_color_data(const stp_vars_t);
+extern void	stp_set_color_data(stp_vars_t v, void * val);
 
-extern void     stp_set_driver_data (stp_vars_t, void * val);
 extern void	*stp_get_driver_data (const stp_vars_t);
+extern void     stp_set_driver_data (stp_vars_t, void * val);
 
-extern void	stp_set_copy_color_data_func(stp_vars_t, copy_data_func_t);
 extern copy_data_func_t stp_get_copy_color_data_func(const stp_vars_t);
+extern void	stp_set_copy_color_data_func(stp_vars_t, copy_data_func_t);
 
+extern destroy_data_func_t stp_get_destroy_color_data_func(const stp_vars_t);
 extern void	stp_set_destroy_color_data_func(stp_vars_t,
 						destroy_data_func_t);
-extern destroy_data_func_t stp_get_destroy_color_data_func(const stp_vars_t);
 
-extern void	stp_set_copy_driver_data_func(stp_vars_t, copy_data_func_t);
 extern copy_data_func_t stp_get_copy_driver_data_func(const stp_vars_t);
+extern void	stp_set_copy_driver_data_func(stp_vars_t, copy_data_func_t);
 
+extern destroy_data_func_t stp_get_destroy_driver_data_func(const stp_vars_t);
 extern void	stp_set_destroy_driver_data_func(stp_vars_t,
 						 destroy_data_func_t);
-extern destroy_data_func_t stp_get_destroy_driver_data_func(const stp_vars_t);
 
-extern void     stp_set_verified(stp_vars_t, int value);
 extern int      stp_get_verified(const stp_vars_t);
+extern void     stp_set_verified(stp_vars_t, int value);
 
 extern void     stp_copy_options(stp_vars_t vd, const stp_vars_t vs);
 
@@ -69,5 +69,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc, const char *name);
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.7 2002/12/26 23:26:06 rlk Exp $".
+ * End of "$Id: vars.h,v 1.8 2002/12/28 15:46:18 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.12 2002/12/26 23:26:06 rlk Exp $"
+ * "$Id: print-vars.c,v 1.13 2002/12/28 15:46:18 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -358,7 +358,7 @@ check_vars(const stp_internal_vars_t *v)
 }
 
 void
-stp_free_vars(stp_vars_t vv)
+stp_vars_free(stp_vars_t vv)
 {
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
   check_vars(v);

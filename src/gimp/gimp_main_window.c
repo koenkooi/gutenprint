@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.97 2002/12/27 18:02:54 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.98 2002/12/28 15:46:17 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2308,16 +2308,16 @@ update_adjusted_thumbnail (void)
   if (stp_verify(nv) != 1)
     {
       stp_erprintf("did not verify!\n");
-      stp_free_vars(nv);
+      stp_vars_free(nv);
       return;
     }
   if (stp_print(nv, im) != 1)
     {
       stp_erprintf("did not print thumbnail!\n");
-      stp_free_vars(nv);
+      stp_vars_free(nv);
       return;
     }
-  stp_free_vars(nv);
+  stp_vars_free(nv);
 
   switch (physical_orientation)
     {

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2002/11/23 20:49:16 rleigh Exp $
+## $Id: Makefile.am,v 1.11 2002/12/28 15:46:18 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ INCLUDES = @INCLUDES@
 ## Programs
 
 noinst_PROGRAMS = xmldef
-xmldef_SOURCES = printdef.c printdef.h
+xmldef_SOURCES = printdef.c
 xmldef_LDADD = @LIBXML_LIBS@
 
 

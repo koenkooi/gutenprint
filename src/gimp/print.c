@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.37 2002/12/27 18:02:54 rlk Exp $"
+ * "$Id: print.c,v 1.38 2002/12/28 15:46:17 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -666,7 +666,7 @@ run (char   *name,		/* I - Name of print program. */
  cleanup:
   if (export == GIMP_EXPORT_EXPORT)
     gimp_image_delete (image_ID);
-  stp_free_vars(gimp_vars.v);
+  stp_vars_free(gimp_vars.v);
 }
 
 /*
@@ -1442,5 +1442,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.37 2002/12/27 18:02:54 rlk Exp $".
+ * End of "$Id: print.c,v 1.38 2002/12/28 15:46:17 rlk Exp $".
  */

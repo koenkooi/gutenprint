@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.2 2002/12/27 18:02:55 rlk Exp $"
+ * "$Id: print-raw.c,v 1.3 2002/12/28 15:46:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -181,13 +181,13 @@ raw_print(const stp_vars_t v, stp_image_t *image)
   if (!stp_verify(nv))
     {
       stp_eprintf(nv, _("Print options not verified; cannot print.\n"));
-      stp_free_vars(nv);
+      stp_vars_free(nv);
       return 0;
     }
   if (width != image->width(image) || height != image->height(image))
     {
       stp_eprintf(nv, _("Image dimensions must match paper dimensions"));
-      stp_free_vars(nv);
+      stp_vars_free(nv);
       return 0;
     }
   for (i = 0; i < ink_count; i++)
@@ -201,7 +201,7 @@ raw_print(const stp_vars_t v, stp_image_t *image)
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {
       stp_eprintf(nv, _("Internal error!  Output channels or input channels must be 1\n"));
-      stp_free_vars(nv);
+      stp_vars_free(nv);
       return 0;
     }
 
@@ -263,7 +263,7 @@ raw_print(const stp_vars_t v, stp_image_t *image)
     stp_free(final_out);
   stp_free(out);
   stp_free(in);
-  stp_free_vars(nv);
+  stp_vars_free(nv);
   return status;
 }
 
