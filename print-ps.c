@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.7 1999/10/26 02:10:30 rlk Exp $"
+ * "$Id: print-ps.c,v 1.8 1999/10/26 23:36:51 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -33,6 +33,9 @@
  * Revision History:
  *
  *   $Log: print-ps.c,v $
+ *   Revision 1.8  1999/10/26 23:36:51  rlk
+ *   Comment out all remaining 16-bit code, and rename 16-bit functions to "standard" names
+ *
  *   Revision 1.7  1999/10/26 02:10:30  rlk
  *   Mostly fix save/load
  *
@@ -592,20 +595,20 @@ ps_print(int       model,		/* I - Model (Level 1 or 2) */
     out_bpp = 3;
 
     if (image_bpp >= 3)
-      colorfunc = rgb_to_rgb16;
+      colorfunc = rgb_to_rgb;
     else
-      colorfunc = indexed_to_rgb16;
+      colorfunc = indexed_to_rgb;
   }
   else
   {
     out_bpp = 1;
 
     if (image_bpp >= 3)
-      colorfunc = rgb_to_gray16;
+      colorfunc = rgb_to_gray;
     else if (cmap == NULL)
-      colorfunc = gray_to_gray16;
+      colorfunc = gray_to_gray;
     else
-      colorfunc = indexed_to_gray16;
+      colorfunc = indexed_to_gray;
   }
 
  /*
@@ -1148,5 +1151,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 
 /*
- * End of "$Id: print-ps.c,v 1.7 1999/10/26 02:10:30 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.8 1999/10/26 23:36:51 rlk Exp $".
  */
