@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.7 2002/05/09 00:41:07 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.8 2002/05/09 00:43:07 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1065,7 +1065,7 @@ stp_get_printer_index_by_driver(const char *driver)
   int idx = 0;
   const stp_internal_printer_t *val = &(printers[0]);
   if (!driver)
-    return NULL;
+    return -1;
   for (idx = 0; idx < stp_known_printers(); idx++)
     {
       if (!strcmp(val->driver, driver))
