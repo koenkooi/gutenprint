@@ -1,5 +1,5 @@
 /*
- * "$Id: epson.c,v 1.3.2.1 2002/03/05 13:20:40 cpbs Exp $"
+ * "$Id: epson.c,v 1.3.2.2 2002/03/14 13:10:32 rlk Exp $"
  *
  *   EPSON backend for the Common UNIX Printing System.
  *
@@ -686,7 +686,14 @@ list_devices(void)
     if ((fd = open(device, O_RDWR)) >= 0)
     {
       close(fd);
-      printf("direct epson:%s \"EPSON\" \"Parallel Port #%d\"\n", device, i + 1);
+      printf("direct epson:%s \"EPSON\" \"Parallel Port #%d (interrupt-driven)\"\n", device, i + 1);
+    }
+
+    sprintf(device, "/dev/lpa%d", i);
+    if ((fd = open(device, O_RDWR)) >= 0)
+    {
+      close(fd);
+      printf("direct epson:%s \"EPSON\" \"Parallel Port #%d (polled)\"\n", device, i + 1);
     }
   }
 
@@ -708,5 +715,5 @@ list_devices(void)
 
 
 /*
- * End of "$Id: epson.c,v 1.3.2.1 2002/03/05 13:20:40 cpbs Exp $".
+ * End of "$Id: epson.c,v 1.3.2.2 2002/03/14 13:10:32 rlk Exp $".
  */
