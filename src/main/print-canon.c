@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.102 2003/01/18 21:00:42 rlk Exp $"
+ * "$Id: print-canon.c,v 1.103 2003/01/20 02:53:15 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2905,8 +2905,8 @@ canon_module_exit(void)
 
 
 /* Module header */
-#define stp_module_version canon_LTX_stp_module_version
-#define stp_module_data canon_LTX_stp_module_data
+#define stp_module_version stp_canon_LTX_stp_module_version
+#define stp_module_data stp_canon_LTX_stp_module_data
 
 stp_module_version_t stp_module_version = {0, 0};
 

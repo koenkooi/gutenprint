@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.12 2003/01/12 22:38:32 rlk Exp $"
+ * "$Id: print-papers.c,v 1.13 2003/01/20 02:53:17 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -44,7 +44,7 @@ static void stp_paper_freefunc(stp_list_item_t *item);
 static const char *stp_paper_namefunc(const stp_list_item_t *item);
 static const char *stp_paper_long_namefunc(const stp_list_item_t *item);
 
-stp_list_t *paper_list;
+static stp_list_t *paper_list;
 
 
 int

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.221 2003/01/18 21:00:55 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.222 2003/01/20 02:53:16 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1971,8 +1971,8 @@ escp2_module_exit(void)
 
 
 /* Module header */
-#define stp_module_version escp2_LTX_stp_module_version
-#define stp_module_data escp2_LTX_stp_module_data
+#define stp_module_version stp_escp2_LTX_stp_module_version
+#define stp_module_data stp_escp2_LTX_stp_module_data
 
 stp_module_version_t stp_module_version = {0, 0};
 
