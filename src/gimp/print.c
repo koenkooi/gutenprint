@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.59 2004/05/09 16:06:09 rleigh Exp $"
+ * "$Id: print.c,v 1.60 2004/05/17 16:44:08 davehill Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -259,6 +259,7 @@ run (char   *name,		/* I - Name of print program. */
       stpui_set_image_type("Whitescale");
       break;
     default:
+      break;
     }
 
   image = Image_GimpDrawable_new(drawable, image_ID);
