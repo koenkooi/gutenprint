@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.31.2.2 2001/05/28 22:51:40 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.31.2.3 2001/05/29 22:48:04 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -230,6 +230,37 @@ typedef struct stp_softweave
 	      unsigned char *out, unsigned char **optr);
 } stp_softweave_t;
 
+typedef struct stp_dither_matrix_short
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned short *data;
+} stp_dither_matrix_short_t;
+
+typedef struct stp_dither_matrix_normal
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned *data;
+} stp_dither_matrix_normal_t;
+
+typedef struct stp_dither_matrix
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const void *data;
+} stp_dither_matrix_t;
+
+extern const stp_dither_matrix_short_t stp_1_1_matrix;
+extern const stp_dither_matrix_short_t stp_2_1_matrix;
+extern const stp_dither_matrix_short_t stp_4_1_matrix;
+
 /*
  * Prototypes...
  */
@@ -247,18 +278,13 @@ extern void	stp_default_media_size(const stp_printer_t printer,
 extern void *	stp_init_dither(int in_width, int out_width,
 				int horizontal_aspect,
 				int vertical_aspect, stp_vars_t vars);
-extern void	stp_dither_set_matrix(void *vd, size_t x, size_t y,
-				      const unsigned *data, int transpose,
-				      int prescaled, int x_shear, int y_shear);
 extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
 					       size_t iterations,
 					       const unsigned *data,
 					       int prescaled,
 					       int x_shear, int y_shear);
-extern void	stp_dither_set_matrix_short(void *vd, size_t x, size_t y,
-					    const unsigned short *data,
-					    int transpose, int prescaled,
-					    int x_shear, int y_shear);
+extern void	stp_dither_set_matrix(void *vd, const stp_dither_matrix_t *mat,
+				      int transpose, int x_shear, int y_shear);
 extern void	stp_dither_set_transition(void *vd, double);
 extern void	stp_dither_set_density(void *vd, double);
 extern void	stp_dither_set_black_density(void *vd, double);
@@ -489,5 +515,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.31.2.2 2001/05/28 22:51:40 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.31.2.3 2001/05/29 22:48:04 rlk Exp $".
  */
