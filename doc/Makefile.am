@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27.2.1 2002/02/01 22:45:04 rleigh Exp $
+## $Id: Makefile.am,v 1.27.2.2 2002/02/16 00:54:41 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,8 @@ IMAGES = \
  print-setup.png
 
 EPS_IMAGES = $(addsuffix .eps,$(basename $(IMAGES)))
+
+TEXT_IMAGES = $(addsuffix .txt,$(basename $(IMAGES)))
 
 if MAINTAINER_MODE
 MAINT_MODE = true
@@ -186,6 +188,6 @@ mostlyclean-aminfo:
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
-EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES) FAQ.html README.maintaining
+EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES) $(TEXT_IMAGES) FAQ.html README.maintaining
 
 .PHONY: html ps pdf docs clean-manuals
