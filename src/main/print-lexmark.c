@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.134 2003/10/28 12:54:03 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.135 2003/11/08 03:14:36 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2118,7 +2118,7 @@ densityDivisor /= 1.2;
 	      break;
 	    }
 	}
-      stpi_dither(v, y, duplicate_line, zero_mask);
+      stpi_dither(v, y, duplicate_line, zero_mask, NULL);
       stpi_write_weave(v, (unsigned char **)cols.v);
 
       errval += errmod;

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.37 2003/05/30 12:11:35 rlk Exp $"
+ * "$Id: testdither.c,v 1.38 2003/11/08 03:14:36 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -445,21 +445,21 @@ main(int  argc,				/* I - Number of command-line arguments */
     {
       case DITHER_GRAY :
           image_get_row(gray, i);
-	  stpi_dither_internal(v, i, gray, 0, 0);
+	  stpi_dither_internal(v, i, gray, 0, 0, NULL);
 	  if (fp)
 	    write_gray(fp, black);
 	  break;
       case DITHER_COLOR :
       case DITHER_CMYK :
           image_get_row(rgb, i);
-	  stpi_dither_internal(v, i, rgb, 0, 0);
+	  stpi_dither_internal(v, i, rgb, 0, 0, NULL);
 	  if (fp)
 	    write_color(fp, cyan, magenta, yellow, black);
 	  break;
       case DITHER_PHOTO :
       case DITHER_PHOTO_CMYK :
           image_get_row(rgb, i);
-	  stpi_dither_internal(v, i, rgb, 0, 0);
+	  stpi_dither_internal(v, i, rgb, 0, 0, NULL);
 	  if (fp)
 	    write_photo(fp, cyan, lcyan, magenta, lmagenta, yellow, black);
 	  break;
@@ -905,5 +905,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.37 2003/05/30 12:11:35 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.38 2003/11/08 03:14:36 rlk Exp $".
  */

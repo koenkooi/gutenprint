@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.15 2003/11/02 00:29:36 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.16 2003/11/08 03:14:34 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -66,7 +66,8 @@ typedef struct
 
 #define MAX_SPREAD 32
 
-typedef void stpi_ditherfunc_t(stp_vars_t, int, const unsigned short *, int, int);
+typedef void stpi_ditherfunc_t(stp_vars_t, int, const unsigned short *, int,
+			       int, const unsigned char *);
 
 /*
  * An end of a dither segment, describing one ink
@@ -248,5 +249,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.15 2003/11/02 00:29:36 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.16 2003/11/08 03:14:34 rlk Exp $".
  */

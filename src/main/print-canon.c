@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.136 2003/10/28 12:54:03 rlk Exp $"
+ * "$Id: print-canon.c,v 1.137 2003/11/08 03:14:35 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2651,7 +2651,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 	}
     }
 
-    stpi_dither(v, y, duplicate_line, zero_mask);
+    stpi_dither(v, y, duplicate_line, zero_mask, NULL);
     canon_printfunc(v);
     errval += errmod;
     errline += errdiv;
