@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/10/04 02:24:22 andystewart Exp $
+## $Id: Makefile.am,v 1.6 2001/10/04 02:30:00 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -120,9 +120,8 @@ tmp-all-local: html
 	fi
 
 clean-local:
-	rm -f $(OUTPUTS)
+	rm -fr $(OUTPUTS)
 	rm -f *.tex *.log *.aux *.dvi *.tgz
-	rm -fr $(MANUAL)
 	rm -fr $(MANUAL).junk
 	rm -f $(MANUAL).out
 	rm -fr db2html.*
