@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.42.2.18 2003/09/11 00:11:03 rlk Exp $"
+# "$Id: printers.xml,v 1.42.2.19 2003/09/11 00:20:56 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -176,6 +176,13 @@
 <model value=8200>
 <gamma value=1.000>
 <density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON S200" driver="bjc-s200">
+<color>
+# model number 4202 is the USB product ID of the Canon S200x
+<model value=4202>
 <language value=canon>
 </printer>
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.39.2.12 2003/07/08 19:08:48 rleigh Exp $"
+ * "$Id: escputil.c,v 1.39.2.13 2003/09/11 00:20:55 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -213,6 +213,8 @@ stp_printer_t printer_list[] =
   { "C70",	N_("Stylus C70"),	4,	15,	0,	1,	7 },
   { "C80",	N_("Stylus C80"),	4,	15,	0,	1,	7 },
   { "C82",	N_("Stylus C82"),	4,	15,	0,	1,	7 },
+  { "C83",	N_("Stylus C83"),	4,	15,	0,	1,	7 },
+  { "C84",	N_("Stylus C84"),	4,	15,	0,	1,	7 },
   { "color",	N_("Stylus Color"),	1,	7,	0,	0,	0 },
   { "pro",	N_("Stylus Color Pro"),	1,	7,	0,	0,	0 },
   { "pro-xl",	N_("Stylus Color Pro XL"),1,	7,	0,	0,	0 },
