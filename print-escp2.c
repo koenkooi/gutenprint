@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.120 2000/04/04 00:12:21 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.120.2.1 2000/04/11 01:53:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -191,6 +191,16 @@ typedef struct escp2_printer
  * The green and blue will vary somewhat with different inks
  */
 
+static double dot_sizes[] = { 0.5, 0.832, 1.0 };
+
+static simple_dither_range_t variable_dither_ranges[] =
+{
+  { 0.25,  0x1, 0 },
+  { 0.416, 0x2, 0 },
+  { 0.5,   0x1, 1 },
+  { 0.832, 0x2, 1 },
+  { 1.0,   0x3, 1 }
+};
 
 /*
  * A lot of these are guesses
@@ -1095,16 +1105,33 @@ escp2_print(const printer_t *printer,		/* I - Model */
   v->saturation *= printer->printvars.saturation;
 
   if (landscape)
-    dither = init_dither(image_height, out_width, 1);
+    dither = init_dither(image_height, out_width);
   else
-    dither = init_dither(image_width, out_width, 1);
+    dither = init_dither(image_width, out_width);
   if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
     {
       dither_set_black_levels(dither, 1.5, 1.7, 1.7);
-      dither_set_black_lower(dither, .01);
+      dither_set_black_lower(dither, .05);
       dither_set_black_upper(dither, .4);
-      dither_set_light_inks(dither, .5, .5, .5);
     }
+  if (bits == 2)
+    {
+      dither_set_y_ranges_simple(dither, 3, dot_sizes, v->density);
+      dither_set_k_ranges_simple(dither, 3, dot_sizes, v->density);
+      if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
+	{
+	  dither_set_c_ranges(dither, 5, variable_dither_ranges, v->density);
+	  dither_set_m_ranges(dither, 5, variable_dither_ranges, v->density);
+	}
+      else
+	{	
+	  dither_set_c_ranges_simple(dither, 3, dot_sizes, v->density);
+	  dither_set_m_ranges_simple(dither, 3, dot_sizes, v->density);
+	}
+    }
+  else if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
+    dither_set_light_inks(dither, .5, .5, 0.0, v->density);
+	  
   switch (v->image_type)
     {
     case IMAGE_LINE_ART:
@@ -1120,7 +1147,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, 13);
       break;
     }	    
-  scale_dither(dither, real_horizontal_passes);
+  dither_set_density(dither, v->density);
 
   if (landscape)
   {
@@ -1146,24 +1173,13 @@ escp2_print(const printer_t *printer,		/* I - Model */
 
       (*colorfunc)(in, out, image_height, image_bpp, cmap, v);
 
-      if (bits == 1)
-	{
-	  if (v->image_type == IMAGE_MONOCHROME)
-	    dither_fastblack(out, x, dither, black);
-	  else if (output_type == OUTPUT_GRAY)
-	    dither_black(out, x, dither, black);
-	  else
-	    dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
-			yellow, 0, black);
-	}
+      if (v->image_type == IMAGE_MONOCHROME)
+	dither_fastblack(out, x, dither, black);
+      else if (output_type == OUTPUT_GRAY)
+	dither_black(out, x, dither, black);
       else
-	{
-	  if (output_type == OUTPUT_GRAY)
-	    dither_black_n(out, x, dither, black, 1);
-	  else
-	    dither_cmyk_n(out, x, dither, cyan, lcyan, magenta, lmagenta,
-			 yellow, 0, black, 1);
-	}
+	dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, 0, black);
 
       if (use_softweave)
 	escp2_write_weave(weave, prn, length, ydpi, model, out_width, left,
@@ -1211,24 +1227,13 @@ escp2_print(const printer_t *printer,		/* I - Model */
 
       (*colorfunc)(in, out, image_width, image_bpp, cmap, v);
 
-      if (bits == 1)
-	{
-	  if (v->image_type == IMAGE_MONOCHROME)
-	    dither_fastblack(out, y, dither, black);
-	  else if (output_type == OUTPUT_GRAY)
-	    dither_black(out, y, dither, black);
-	  else
-	    dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-			yellow, 0, black);
-	}
+      if (v->image_type == IMAGE_MONOCHROME)
+	dither_fastblack(out, y, dither, black);
+      else if (output_type == OUTPUT_GRAY)
+	dither_black(out, y, dither, black);
       else
-	{
-	  if (output_type == OUTPUT_GRAY)
-	    dither_black_n(out, y, dither, black, 1);
-	  else
-	    dither_cmyk_n(out, y, dither, cyan, lcyan, magenta, lmagenta,
-			 yellow, 0, black, 1);
-	}
+	dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, 0, black);
 
       if (use_softweave)
 	escp2_write_weave(weave, prn, length, ydpi, model, out_width, left,
@@ -2693,6 +2698,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.120.2.1  2000/04/11 01:53:06  rlk
+ *   Yet another dither hack
+ *
  *   Revision 1.120  2000/04/04 00:12:21  rlk
  *   640-related stuff
  *
@@ -3181,5 +3189,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.120 2000/04/04 00:12:21 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.120.2.1 2000/04/11 01:53:06 rlk Exp $".
  */
