@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36.2.2 2002/11/17 12:55:09 rleigh Exp $
+## $Id: Makefile.am,v 1.36.2.3 2002/11/18 23:18:32 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,11 +40,15 @@ lib_LTLIBRARIES = libgimpprint.la
 bin_SCRIPTS = gimpprint-config
 
 libgimpprint_la_SOURCES = \
+	dither.h \
+	dither-matrices.h \
 	gimp-print-internal.h \
 	list.h \
+	papers.h \
 	print-lexmark.c \
 	print-canon.c \
 	print-dither.c \
+	print-dither-matrices.c \
 	print-escp2.c \
 	print-escp2.h \
 	print-escp2-data.c \
@@ -57,15 +61,16 @@ libgimpprint_la_SOURCES = \
 	print-color.c \
 	print-weave.c \
 	print-version.c \
-	print-dither-matrices.c \
-	print-dither.h \
 	printers.c \
+	printers.h \
 	print-printers.c \
 	string-list.c \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h \
-	vars.h
+	util.h \
+	vars.h \
+	weave.h
 
 libgimpprint_la_LIBADD = $(GIMPPRINT_DEPLIBS)
 # Uncommment to build an unversioned library (version in soname)

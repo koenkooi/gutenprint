@@ -1,7 +1,7 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.58.2.5 2002/11/18 23:18:32 rleigh Exp $"
+ * "$Id: papers.h,v 1.1.2.1 2002/11/18 23:18:32 rleigh Exp $"
  *
- *   Print plug-in header file for the GIMP.
+ *   libgimpprint header.
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
@@ -30,35 +30,27 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_INTERNAL_H
-#define GIMP_PRINT_INTERNAL_INTERNAL_H
+#ifndef GIMP_PRINT_INTERNAL_PAPERS_H
+#define GIMP_PRINT_INTERNAL_PAPERS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-#define COOKIE_VARS      0x1a18376c
-#define COOKIE_OPTION     0x3ab27f93
-#define COOKIE_PARAM_LIST 0x96cf0387
-#define COOKIE_PRINTER  0x0722922c
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 
-#include "dither.h"
-#include "dither-matrices.h"
-#include "list.h"
-#include "papers.h"
-#include "printers.h"
-#include "util.h"
-#include "vars.h"
-#include "weave.h"
+extern void stp_default_media_size(const stp_vars_t v,
+				   int *width, int *height);
 
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_INTERNAL_H */
+#endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.58.2.5 2002/11/18 23:18:32 rleigh Exp $".
+ * End of "$Id: papers.h,v 1.1.2.1 2002/11/18 23:18:32 rleigh Exp $".
  */
