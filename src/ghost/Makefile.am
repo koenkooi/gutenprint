@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.23 2002/04/06 15:50:54 rlk Exp $
+## $Id: Makefile.am,v 1.24 2002/04/28 02:43:06 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,8 @@ EXTRA_DIST = \
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @IJS_CFLAGS@ @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
-LIBS = @IJS_LIBS@ @LIBS@ $(INTLLIBS)
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
+LIBS = @IJS_LIBS@ $(INTLLIBS) @LIBS@
 
 ## Programs
 
@@ -46,7 +47,7 @@ if BUILD_IJS
 bin_PROGRAMS = ijsgimpprint
 endif
 
-ijsgimpprint_LDADD = $(LIBGIMPPRINT_LIBS)
+ijsgimpprint_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 ijsgimpprint_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
