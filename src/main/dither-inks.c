@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.6 2003/04/27 17:32:49 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7 2003/05/08 02:33:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -134,7 +134,7 @@ stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s, int nleve
   s->ink_list = (stpi_ink_defn_t *)
     stpi_zalloc((s->nlevels + 1) * sizeof(stpi_ink_defn_t));
   s->bit_max = 0;
-  density *= sdensity;
+/*  density *= sdensity; */
   s->density = density * 65535;
   stpi_init_debug_messages(v);
   stpi_dprintf(STPI_DBG_INK, v,
@@ -226,7 +226,7 @@ stpi_dither_set_generic_ranges_full(stp_vars_t v, stpi_dither_channel_t *s,
   s->ink_list = (stpi_ink_defn_t *)
     stpi_zalloc((s->nlevels * 2) * sizeof(stpi_ink_defn_t));
   s->bit_max = 0;
-  density *= sdensity;
+/*  density *= sdensity; */
   s->density = density * 65535;
   stpi_init_debug_messages(v);
   stpi_dprintf(STPI_DBG_INK, v,

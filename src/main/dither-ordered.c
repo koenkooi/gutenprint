@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.4 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.5 2003/05/08 02:33:37 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -64,7 +64,6 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
   if (density > 65535)
     density = 65535;
   dither_value *= dc->density_adjustment;
-  xdensity *= dc->density_adjustment;
 
   /*
    * Look for the appropriate range into which the input value falls.
@@ -95,11 +94,11 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
       upper = dd->upper;
 
       if (dd->is_equal)
-	rangepoint = 32768 * dc->density_adjustment;
+	rangepoint = 32768;
       else
 	rangepoint =
-	  ((unsigned) (xdensity - lower->range)) * 65535 / dd->range_span *
-	  dc->density_adjustment;
+	  ((unsigned) (xdensity - lower->range)) * 65535 / dd->range_span;
+      rangepoint = d->virtual_dot_scale[rangepoint];
 
       /*
        * Compute the virtual dot size that we're going to print.
@@ -112,8 +111,7 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
       else if (dd->range_span == 0)
 	virtual_value = (upper->value + lower->value) / 2;
       else
-	virtual_value = lower->value +
-	  (dd->value_span * d->virtual_dot_scale[rangepoint] / 65535);
+	virtual_value = lower->value + (dd->value_span * rangepoint / 65535);
 
       /*
        * Compute the comparison value to decide whether to print at
@@ -146,6 +144,7 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
 	    subc = upper;
 	  else
 	    {
+	      rangepoint *= dc->density_adjustment;
 	      if (rangepoint >= ditherpoint(d, pick_matrix, x))
 		subc = upper;
 	      else

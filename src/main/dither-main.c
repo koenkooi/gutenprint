@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.15 2003/04/15 02:24:52 rlk Exp $"
+ * "$Id: dither-main.c,v 1.16 2003/05/08 02:33:37 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -427,6 +427,7 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 	  stpi_abort();
 	}
     }
+  stpi_dither_set_transition(v, 0.7);
 
   d->src_width = in_width;
   d->dst_width = out_width;
