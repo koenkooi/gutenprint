@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.60 2000/06/13 12:23:04 rlk Exp $"
+ * "$Id: print.h,v 1.61 2000/06/18 15:36:24 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -221,9 +221,8 @@ typedef struct
  * Prototypes...
  */
 
-extern void *	init_dither(int in_width, int out_width, vars_t *vars);
-extern void	dither_set_aspect_ratio(void *vd, int horizontal,
-					int vertical);
+extern void *	init_dither(int in_width, int out_width, int horizontal_aspect,
+			    int vertical_aspect, vars_t *vars);
 extern void	dither_set_density(void *vd, double);
 extern void 	dither_set_black_lower(void *vd, double);
 extern void 	dither_set_black_upper(void *vd, double);
@@ -394,5 +393,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.60 2000/06/13 12:23:04 rlk Exp $".
+ * End of "$Id: print.h,v 1.61 2000/06/18 15:36:24 rlk Exp $".
  */
