@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.70 2000/07/14 00:43:04 rlk Exp $"
+ * "$Id: print-dither.c,v 1.71 2000/07/14 12:14:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -530,7 +530,7 @@ init_dither(int in_width, int out_width, int horizontal_aspect,
     init_matrix(&(d->mat6), 257, 257, quic2, 0);
 
   copy_matrix(&(d->mat6), &(d->mat7));
-  exponential_scale_matrix(&(d->mat7), .6);
+  exponential_scale_matrix(&(d->mat7), .7);
   x_3 = d->mat6.x_size / 3;
   y_3 = d->mat6.y_size / 3;
 
