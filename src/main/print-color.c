@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.37 2004/03/27 04:38:36 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.38 2004/03/27 15:35:53 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -2639,7 +2639,7 @@ raw_kcmy_to_cmykrb(stp_const_vars_t vars, const unsigned short *in,
   return retval;
 }
 
-#define COLOR_TO_CMYKRB_FUNC(name, name2, name3, bits)			   \
+#define COLOR_TO_CMYKRB_FUNC(name, name2, name3, name4, bits)		   \
 static unsigned								   \
 name##_##bits##_to_##name2(stp_const_vars_t vars, const unsigned char *in, \
 			  unsigned short *out)				   \
@@ -2647,57 +2647,57 @@ name##_##bits##_to_##name2(stp_const_vars_t vars, const unsigned char *in, \
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
   if (!lut->cmyk_tmp)							   \
     lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		   \
-  name##_##bits##_to_##name2(vars, in, lut->cmyk_tmp);			   \
-  return name3##_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		   \
+  name##_##bits##_to_##name3(vars, in, lut->cmyk_tmp);			   \
+  return name4##_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		   \
 }
 
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb, generic, 8)
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb, generic, 16)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(gray, cmykrb)
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb_threshold, generic, 8)
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb_threshold, generic, 16)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb_threshold, kcmy_threshold, generic, 8)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb_threshold, kcmy_threshold, generic, 16)
 GENERIC_COLOR_FUNC(gray, cmykrb_threshold)
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb_raw, raw, 8)
-COLOR_TO_CMYKRB_FUNC(gray, cmykrb_raw, raw, 16)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb_raw, kcmy_raw, raw, 8)
+COLOR_TO_CMYKRB_FUNC(gray, cmykrb_raw, kcmy_raw, raw, 16)
 GENERIC_COLOR_FUNC(gray, cmykrb_raw)
 
-COLOR_TO_CMYKRB_FUNC(color, cmykrb, generic, 8)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb, generic, 16)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(color, cmykrb)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_threshold, generic, 8)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_threshold, generic, 16)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_threshold, kcmy_threshold, generic, 8)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_threshold, kcmy_threshold, generic, 16)
 GENERIC_COLOR_FUNC(color, cmykrb_threshold)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_fast, generic, 8)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_fast, generic, 16)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_fast, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_fast, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(color, cmykrb_fast)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_raw, raw, 8)
-COLOR_TO_CMYKRB_FUNC(color, cmykrb_raw, raw, 16)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_raw, kcmy_raw, raw, 8)
+COLOR_TO_CMYKRB_FUNC(color, cmykrb_raw, kcmy_raw, raw, 16)
 GENERIC_COLOR_FUNC(color, cmykrb_raw)
 
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb, generic, 8)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb, generic, 16)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(cmyk, cmykrb)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, generic, 8)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, generic, 16)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, kcmy_threshold, generic, 8)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, kcmy_threshold, generic, 16)
 GENERIC_COLOR_FUNC(cmyk, cmykrb_threshold)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, generic, 8)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, generic, 16)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(cmyk, cmykrb_fast)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_raw, raw, 8)
-COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_raw, raw, 16)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_raw, kcmy_raw, raw, 8)
+COLOR_TO_CMYKRB_FUNC(cmyk, cmykrb_raw, kcmy_raw, raw, 16)
 GENERIC_COLOR_FUNC(cmyk, cmykrb_raw)
 
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb, generic, 8)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb, generic, 16)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, generic, 8)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, generic, 16)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, kcmy_threshold, generic, 8)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, kcmy_threshold, generic, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb_threshold)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, generic, 8)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, generic, 16)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, kcmy, generic, 8)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, kcmy, generic, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb_fast)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, raw, 8)
-COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, raw, 16)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, kcmy_raw, raw, 8)
+COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, kcmy_raw, raw, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb_raw)
 
 #define CMYK_DISPATCH(name)						\
