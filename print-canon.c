@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.83 2000/09/05 10:55:11 rlk Exp $"
+ * "$Id: print-canon.c,v 1.84 2000/09/05 21:35:53 sharkey Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -580,7 +580,7 @@ canon_cmd(FILE *prn, /* I - the printer         */
   if (num) {
     va_start(ap, num);
     for (i=0; i<num; i++)
-      buffer[i]= va_arg(ap, unsigned char);
+      buffer[i]= (unsigned char) va_arg(ap, int);
     va_end(ap);
   }
 
