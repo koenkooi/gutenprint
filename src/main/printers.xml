@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.77 2003/08/25 13:34:19 m0m Exp $"
+   "$Id: printers.xml,v 1.78 2003/08/27 16:39:19 m0m Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1418,6 +1418,10 @@
       <printer name="OLYMPUS P400" driver="olympus-p400">
         <color value="true"/>
         <model value="1"/>
+      </printer>
+      <printer name="CANON CP100" driver="canon-cp100">
+        <color value="true"/>
+        <model value="1000"/>
       </printer>
     </family>
     <family name="raw">
