@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.12 2002/03/17 22:59:16 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.13 2002/03/18 09:30:58 mtomlinson Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -431,8 +431,8 @@ static const escp2_variable_ink_t photo_multishot_ink =
 static const stp_simple_dither_range_t standard_multishot_dither_ranges[] =
 {
   { 0.28,  0x1, 0, 2 },
-  { 0.58,  0x2, 0, 5 },
-  { 1.0,   0x3, 0, 8 }
+  { 0.58,  0x2, 0, 4 },
+  { 1.0,   0x3, 0, 7 }
 };
 
 static const escp2_variable_ink_t standard_multishot_ink =
