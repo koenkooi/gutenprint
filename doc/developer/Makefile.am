@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2004/09/17 18:37:43 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2005/01/30 16:01:52 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -98,7 +98,7 @@ gutenprint.pdf:  $(MANUAL_SRC_FILES)
 	    if test -L $$file ; then \
 	      $(RM) -f $$file ; \
 	    fi ; \
-	    $(LN_S) $(srcdir)/$$file $$file ; \
+	    $(LN_S) -f $(srcdir)/$$file $$file ; \
 	  done ; \
 	fi ; \
 	$(DB2PDF) gutenprint.xml
@@ -117,7 +117,7 @@ html-stamp: $(MANUAL_SRC_FILES)
 	    if test -L $$file ; then \
 	      $(RM) -f $$file ; \
 	    fi ; \
-	    $(LN_S) $(srcdir)/$$file $$file ; \
+	    $(LN_S) -f $(srcdir)/$$file $$file ; \
 	  done ; \
 	fi
 	$(DB2HTML) gutenprint.xml
