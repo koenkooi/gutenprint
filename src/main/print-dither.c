@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.4 2001/01/31 20:35:55 rleigh Exp $"
+ * "$Id: print-dither.c,v 1.5 2001/02/03 03:28:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1592,7 +1592,7 @@ generate_black(dither_t *d,
     }
   else
     {
-      xstep  = 3 * (d->src_width / d->dst_width);
+      xstep  = d->src_width / d->dst_width;
       xmod   = d->src_width % d->dst_width;
       xerror = 0;
       for (x = d->dst_width; x > 0; x--)
