@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.62 2000/06/19 16:40:40 jmv Exp $"
+ * "$Id: print.h,v 1.63 2000/06/20 00:20:54 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -133,11 +133,18 @@ typedef struct		/**** Printer List ****/
   vars_t v;
 } plist_t;
 
+typedef enum papersize_unit
+{
+  PAPERSIZE_ENGLISH,
+  PAPERSIZE_METRIC
+} papersize_unit_t;
+
 typedef struct
 {
   char name[32];
   unsigned width;
   unsigned length;
+  papersize_unit_t paper_unit;
 } papersize_t;
 
 /*
@@ -394,5 +401,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.62 2000/06/19 16:40:40 jmv Exp $".
+ * End of "$Id: print.h,v 1.63 2000/06/20 00:20:54 rlk Exp $".
  */
