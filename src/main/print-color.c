@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.42 2004/03/27 23:56:01 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.43 2004/03/28 02:06:06 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -56,6 +56,7 @@ typedef enum
   COLOR_CORRECTION_BRIGHT,
   COLOR_CORRECTION_ACCURATE,
   COLOR_CORRECTION_THRESHOLD,
+  COLOR_CORRECTION_DESATURATED,
   COLOR_CORRECTION_DENSITY,
   COLOR_CORRECTION_RAW
 } color_correction_enum_t;
@@ -74,6 +75,7 @@ static const color_correction_t color_corrections[] =
   { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE,    1 },
   { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT,      1 },
   { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED, 0 },
+  { "Desaturated", N_("Desaturated"),   COLOR_CORRECTION_DESATURATED, 0 },
   { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
   { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
   { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
@@ -296,6 +298,7 @@ typedef struct
   cached_curve_t lum_map;
   cached_curve_t sat_map;
   cached_curve_t gcr_curve;
+  unsigned short *gray_tmp;	/* Color -> Gray */
   unsigned short *cmy_tmp;	/* CMY -> CMYK */
   unsigned short *cmyk_tmp;	/* CMYK -> CMYKRB */
   unsigned char *in_data;
@@ -2338,11 +2341,11 @@ GRAY_TO_GRAY_RAW_FUNC(unsigned char, 8)
 GRAY_TO_GRAY_RAW_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(gray, gray_raw)
 
-#define COLOR_TO_GRAY_RAW_FUNC(T, bits)					\
+#define COLOR_TO_GRAY_RAW_FUNC(T, bits, invertable, name2)		\
 static unsigned								\
-color_##bits##_to_gray_raw(stp_const_vars_t vars,			\
-			   const unsigned char *in,			\
-			   unsigned short *out)				\
+color_##bits##_to_gray_##name2(stp_const_vars_t vars,			\
+			       const unsigned char *in,			\
+			       unsigned short *out)			\
 {									\
   int i;								\
   int i0 = -1;								\
@@ -2356,7 +2359,7 @@ color_##bits##_to_gray_raw(stp_const_vars_t vars,			\
   int l_green = LUM_GREEN;						\
   int l_blue = LUM_BLUE;						\
   unsigned mask = 0;							\
-  if (lut->invert_output)						\
+  if (lut->invert_output && invertable)					\
     mask = 0xffff;							\
 									\
   if (!lut->invert_output)						\
@@ -2386,16 +2389,18 @@ color_##bits##_to_gray_raw(stp_const_vars_t vars,			\
   return nz == 0;							\
 }
 
-COLOR_TO_GRAY_RAW_FUNC(unsigned char, 8)
-COLOR_TO_GRAY_RAW_FUNC(unsigned short, 16)
+COLOR_TO_GRAY_RAW_FUNC(unsigned char, 8, 1, raw)
+COLOR_TO_GRAY_RAW_FUNC(unsigned short, 16, 1, raw)
 GENERIC_COLOR_FUNC(color, gray_raw)
+COLOR_TO_GRAY_RAW_FUNC(unsigned char, 8, 0, noninvert)
+COLOR_TO_GRAY_RAW_FUNC(unsigned short, 16, 0, noninvert)
 
 
-#define CMYK_TO_GRAY_RAW_FUNC(T, bits)					    \
+#define CMYK_TO_GRAY_RAW_FUNC(T, bits, invertable, name2)		    \
 static unsigned								    \
-cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
-			  const unsigned char *in,			    \
-			  unsigned short *out)				    \
+cmyk_##bits##_to_gray_##name2(stp_const_vars_t vars,			    \
+			      const unsigned char *in,			    \
+			      unsigned short *out)			    \
 {									    \
   int i;								    \
   int i0 = -1;								    \
@@ -2411,7 +2416,7 @@ cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   int l_blue = LUM_BLUE;						    \
   int l_white = 0;							    \
   unsigned mask = 0;							    \
-  if (lut->invert_output)						    \
+  if (lut->invert_output && invertable)					    \
     mask = 0xffff;							    \
 									    \
   if (!lut->invert_output)						    \
@@ -2444,15 +2449,17 @@ cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   return nz ? 1 : 0;							    \
 }
 
-CMYK_TO_GRAY_RAW_FUNC(unsigned char, 8)
-CMYK_TO_GRAY_RAW_FUNC(unsigned short, 16)
+CMYK_TO_GRAY_RAW_FUNC(unsigned char, 8, 1, raw)
+CMYK_TO_GRAY_RAW_FUNC(unsigned short, 16, 1, raw)
 GENERIC_COLOR_FUNC(cmyk, gray_raw)
+CMYK_TO_GRAY_RAW_FUNC(unsigned char, 8, 0, noninvert)
+CMYK_TO_GRAY_RAW_FUNC(unsigned short, 16, 0, noninvert)
 
-#define KCMY_TO_GRAY_RAW_FUNC(T, bits)					    \
+#define KCMY_TO_GRAY_RAW_FUNC(T, bits, invertable, name2)		    \
 static unsigned								    \
-kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
-			  const unsigned char *in,			    \
-			  unsigned short *out)				    \
+kcmy_##bits##_to_gray_##name2(stp_const_vars_t vars,			    \
+			      const unsigned char *in,			    \
+			      unsigned short *out)			    \
 {									    \
   int i;								    \
   int i0 = -1;								    \
@@ -2468,7 +2475,7 @@ kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   int l_blue = LUM_BLUE;						    \
   int l_white = 0;							    \
   unsigned mask = 0;							    \
-  if (lut->invert_output)						    \
+  if (lut->invert_output && invertable)					    \
     mask = 0xffff;							    \
 									    \
   if (!lut->invert_output)						    \
@@ -2501,9 +2508,11 @@ kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   return nz ? 1 : 0;							    \
 }
 
-KCMY_TO_GRAY_RAW_FUNC(unsigned char, 8)
-KCMY_TO_GRAY_RAW_FUNC(unsigned short, 16)
+KCMY_TO_GRAY_RAW_FUNC(unsigned char, 8, 1, raw)
+KCMY_TO_GRAY_RAW_FUNC(unsigned short, 16, 1, raw)
 GENERIC_COLOR_FUNC(kcmy, gray_raw)
+KCMY_TO_GRAY_RAW_FUNC(unsigned char, 8, 0, noninvert)
+KCMY_TO_GRAY_RAW_FUNC(unsigned short, 16, 0, noninvert)
 
 #define CMYK_TO_KCMY_RAW_FUNC(T, bits)					\
 static unsigned								\
@@ -2693,6 +2702,49 @@ COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, kcmy_raw, raw, 8)
 COLOR_TO_CMYKRB_FUNC(kcmy, cmykrb_raw, kcmy_raw, raw, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb_raw)
 
+#define DESATURATED_FUNC(name, name2, bits)				 \
+static unsigned								 \
+name##_##bits##_to_##name2##_desaturated(stp_const_vars_t vars,		 \
+				         const unsigned char *in,	 \
+				         unsigned short *out)		 \
+{									 \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	 \
+  if (!lut->gray_tmp)							 \
+    lut->gray_tmp = stpi_malloc(2 * lut->image_width);			 \
+  name##_##bits##_to_gray_noninvert(vars, in, lut->gray_tmp);		 \
+  return gray_16_to_##name2(vars, (unsigned char *) lut->gray_tmp, out); \
+}
+
+DESATURATED_FUNC(color, color, 8)
+DESATURATED_FUNC(color, color, 16)
+GENERIC_COLOR_FUNC(color, color_desaturated)
+DESATURATED_FUNC(color, kcmy, 8)
+DESATURATED_FUNC(color, kcmy, 16)
+GENERIC_COLOR_FUNC(color, kcmy_desaturated)
+DESATURATED_FUNC(color, cmykrb, 8)
+DESATURATED_FUNC(color, cmykrb, 16)
+GENERIC_COLOR_FUNC(color, cmykrb_desaturated)
+
+DESATURATED_FUNC(cmyk, color, 8)
+DESATURATED_FUNC(cmyk, color, 16)
+GENERIC_COLOR_FUNC(cmyk, color_desaturated)
+DESATURATED_FUNC(cmyk, kcmy, 8)
+DESATURATED_FUNC(cmyk, kcmy, 16)
+GENERIC_COLOR_FUNC(cmyk, kcmy_desaturated)
+DESATURATED_FUNC(cmyk, cmykrb, 8)
+DESATURATED_FUNC(cmyk, cmykrb, 16)
+GENERIC_COLOR_FUNC(cmyk, cmykrb_desaturated)
+
+DESATURATED_FUNC(kcmy, color, 8)
+DESATURATED_FUNC(kcmy, color, 16)
+GENERIC_COLOR_FUNC(kcmy, color_desaturated)
+DESATURATED_FUNC(kcmy, kcmy, 8)
+DESATURATED_FUNC(kcmy, kcmy, 16)
+GENERIC_COLOR_FUNC(kcmy, kcmy_desaturated)
+DESATURATED_FUNC(kcmy, cmykrb, 8)
+DESATURATED_FUNC(kcmy, cmykrb, 16)
+GENERIC_COLOR_FUNC(kcmy, cmykrb_desaturated)
+
 #define CMYK_DISPATCH(name)						\
 static unsigned								\
 CMYK_to_##name(stp_const_vars_t vars, const unsigned char *in,		\
@@ -2715,13 +2767,16 @@ CMYK_DISPATCH(cmykrb)
 CMYK_DISPATCH(cmykrb_raw)
 CMYK_DISPATCH(cmykrb_fast)
 CMYK_DISPATCH(cmykrb_threshold)
+CMYK_DISPATCH(cmykrb_desaturated)
 CMYK_DISPATCH(color)
 CMYK_DISPATCH(color_raw)
 CMYK_DISPATCH(color_fast)
 CMYK_DISPATCH(color_threshold)
+CMYK_DISPATCH(color_desaturated)
 CMYK_DISPATCH(kcmy)
 CMYK_DISPATCH(kcmy_raw)
 CMYK_DISPATCH(kcmy_threshold)
+CMYK_DISPATCH(kcmy_desaturated)
 CMYK_DISPATCH(gray)
 CMYK_DISPATCH(gray_raw)
 CMYK_DISPATCH(gray_threshold)
@@ -2857,6 +2912,8 @@ generic_##from##_to_##to(stp_const_vars_t v,			\
     case COLOR_CORRECTION_ACCURATE:				\
     case COLOR_CORRECTION_BRIGHT:				\
       return from2##_to_##to(v, in, out);			\
+    case COLOR_CORRECTION_DESATURATED:				\
+      return from2##_to_##to##_desaturated(v, in, out);		\
     case COLOR_CORRECTION_THRESHOLD:				\
       return from2##_to_##to##_threshold(v, in, out);		\
     case COLOR_CORRECTION_DENSITY:				\
@@ -2880,6 +2937,8 @@ generic_##from##_to_##to(stp_const_vars_t v,			\
     case COLOR_CORRECTION_ACCURATE:				\
     case COLOR_CORRECTION_BRIGHT:				\
       return from2##_to_##to(v, in, out);			\
+    case COLOR_CORRECTION_DESATURATED:				\
+      return from2##_to_##to##_desaturated(v, in, out);		\
     case COLOR_CORRECTION_THRESHOLD:				\
       return from2##_to_##to##_threshold(v, in, out);		\
     case COLOR_CORRECTION_DENSITY:				\
@@ -2890,18 +2949,42 @@ generic_##from##_to_##to(stp_const_vars_t v,			\
     }								\
 }
 
+#define CONVERSION_FUNCTION_WITHOUT_DESATURATED(from, to, from2)	\
+static unsigned								\
+generic_##from##_to_##to(stp_const_vars_t v,				\
+			 const unsigned char *in,			\
+			 unsigned short *out)				\
+{									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));		\
+  switch (lut->color_correction->correction)				\
+    {									\
+    case COLOR_CORRECTION_UNCORRECTED:					\
+    case COLOR_CORRECTION_ACCURATE:					\
+    case COLOR_CORRECTION_BRIGHT:					\
+    case COLOR_CORRECTION_DESATURATED:					\
+      return from2##_to_##to(v, in, out);				\
+    case COLOR_CORRECTION_THRESHOLD:					\
+      return from2##_to_##to##_threshold(v, in, out);			\
+    case COLOR_CORRECTION_DENSITY:					\
+    case COLOR_CORRECTION_RAW:						\
+      return from2##_to_##to##_raw(v, in, out);				\
+    default:								\
+      return (unsigned) -1;						\
+    }									\
+}
+
 CONVERSION_FUNCTION_WITH_FAST(cmyk, color, CMYK)
 CONVERSION_FUNCTION_WITH_FAST(cmyk, cmykrb, CMYK)
 CONVERSION_FUNCTION_WITH_FAST(color, color, color)
 CONVERSION_FUNCTION_WITH_FAST(color, cmykrb, color)
 CONVERSION_FUNCTION_WITH_FAST(color, kcmy, color)
-CONVERSION_FUNCTION_WITHOUT_FAST(cmyk, gray, CMYK)
 CONVERSION_FUNCTION_WITHOUT_FAST(cmyk, kcmy, CMYK)
-CONVERSION_FUNCTION_WITHOUT_FAST(color, gray, color)
-CONVERSION_FUNCTION_WITHOUT_FAST(gray, gray, gray)
-CONVERSION_FUNCTION_WITHOUT_FAST(gray, color, gray)
-CONVERSION_FUNCTION_WITHOUT_FAST(gray, kcmy, gray)
-CONVERSION_FUNCTION_WITHOUT_FAST(gray, cmykrb, gray)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(cmyk, gray, CMYK)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(color, gray, color)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(gray, gray, gray)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(gray, color, gray)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(gray, kcmy, gray)
+CONVERSION_FUNCTION_WITHOUT_DESATURATED(gray, cmykrb, gray)
 
 static unsigned
 convert_to_gray(stp_const_vars_t v, const unsigned char *in, unsigned short *out)
@@ -3102,6 +3185,7 @@ copy_lut(void *vlut)
   cache_copy(&(dest->lum_map), &(src->lum_map));
   cache_copy(&(dest->sat_map), &(src->sat_map));
   cache_copy(&(dest->gcr_curve), &(src->gcr_curve));
+  /* Don't copy gray_tmp */
   /* Don't copy cmy_tmp */
   /* Don't copy cmyk_tmp */
   if (src->in_data)
@@ -3121,6 +3205,7 @@ free_lut(void *vlut)
   free_curve_cache(&(lut->lum_map));
   free_curve_cache(&(lut->sat_map));
   free_curve_cache(&(lut->gcr_curve));
+  SAFE_FREE(lut->gray_tmp);
   SAFE_FREE(lut->cmy_tmp);
   SAFE_FREE(lut->cmyk_tmp);
   SAFE_FREE(lut->in_data);
