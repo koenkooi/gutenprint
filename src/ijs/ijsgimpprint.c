@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.3 2002/01/21 20:47:16 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.4 2002/01/25 01:59:05 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -98,7 +98,13 @@ image_init(IMAGE *img, IjsPageHeader *ph)
   img->row_width = (ph->n_chan * ph->bps * ph->width + 7) >> 3;
   img->row_buf = (char *)malloc(img->row_width);
 
-  if ((img->bps == 8) && (img->n_chan == 1) &&
+  if ((img->bps == 1) && (img->n_chan == 1) &&
+      (strncmp(ph->cs, DeviceGray, strlen(DeviceGray)) == 0))
+    {
+      img->output_type = OUTPUT_MONOCHROME;
+      /* 8-bit greyscale */
+    }
+  else if ((img->bps == 8) && (img->n_chan == 1) &&
       (strncmp(ph->cs, DeviceGray, strlen(DeviceGray)) == 0))
     {
       img->output_type = OUTPUT_GRAY;
