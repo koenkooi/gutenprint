@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.13.2.1 2003/08/18 23:29:20 rlk Exp $"
+ * "$Id: color.h,v 1.13.2.2 2003/09/02 02:01:55 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -42,12 +42,12 @@ extern "C" {
 
 typedef enum
 {
-  STPI_COLOR_GRAY,
-  STPI_COLOR_WHITE,
-  STPI_COLOR_RGB,
-  STPI_COLOR_CMY,
-  STPI_COLOR_CMYK,
-  STPI_COLOR_RAW
+  STPI_COLOR_GRAY = 1000,
+  STPI_COLOR_WHITE = 1001,
+  STPI_COLOR_RGB = 1002,
+  STPI_COLOR_CMY = 1003,
+  STPI_COLOR_CMYK = 1004,
+  STPI_COLOR_RAW = 1005
 } stpi_color_model_t;
 
 typedef struct

@@ -1,5 +1,5 @@
 /*
- * "$Id: image.c,v 1.3.12.1 2003/08/18 23:29:20 rlk Exp $"
+ * "$Id: image.c,v 1.3.12.2 2003/09/02 02:01:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -44,31 +44,31 @@ stpi_image_reset(stp_image_t *image)
 stp_image_type_t
 stpi_image_type(stp_image_t *image)
 {
-  return image->image_type(image);
+  return image->get_image_type(image);
 }
 
 int
 stpi_image_bits_per_channel(stp_image_t *image)
 {
-  return image->bits_per_channel(image);
+  return image->get_bits_per_channel(image);
 }
 
 int
 stpi_image_channels(stp_image_t *image)
 {
-  return image->channels(image);
+  return image->get_channels(image);
 }
 
 int
 stpi_image_width(stp_image_t *image)
 {
-  return image->width(image);
+  return image->get_width(image);
 }
 
 int
 stpi_image_height(stp_image_t *image)
 {
-  return image->height(image);
+  return image->get_height(image);
 }
 
 stp_image_status_t

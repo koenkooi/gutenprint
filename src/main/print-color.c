@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.92.2.1 2003/08/18 23:31:19 rlk Exp $"
+ * "$Id: print-color.c,v 1.92.2.2 2003/09/02 02:01:55 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -218,10 +218,11 @@ typedef struct
 } curve_param_t;
 
 typedef struct {
-	int input_color_model, output_color_model;
-	int steps, linear_contrast_adjustment;
-	double print_gamma, app_gamma, screen_gamma;
-	double brightness, contrast;
+  stp_image_type_t image_type;
+  stpi_color_model_t output_color_model;
+  int steps, linear_contrast_adjustment;
+  double print_gamma, app_gamma, screen_gamma;
+  double brightness, contrast;
 } lut_params_t;
 
 static int standard_curves_initialized = 0;
@@ -1125,404 +1126,266 @@ RGB_TO_KCMY_FUNC(fast_gray8)
 RGB_TO_KCMY_FUNC(rgb8)
 RGB_TO_KCMY_FUNC(fast_rgb8)
 
-static unsigned
-gray_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 1;
-  int input_color_model = stp_get_input_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 4 * sizeof(unsigned short));
-
-  if (input_color_model == COLOR_MODEL_CMY)
-    {
-      for (i = 0; i < width; i++, out += 4, in++)
-	{
-	  if (in[0] >= 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out += 4, in++)
-	{
-	  if (in[0] < 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	    }
-	}
-    }
-  return z;
+#define MONO_TO_LINE_ART_FUNC(name1, name2, bits, channels, T, OP)		\
+static unsigned									\
+name1##_##bits##_to_##name2##_line_art(stp_const_vars_t vars, const void *in,	\
+				       unsigned short *out)			\
+{										\
+  const unsigned T *d_in = (const unsigned T *) in;				\
+  int i;									\
+  int z = 1;									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));		\
+  int width = lut->image_width;							\
+  memset(out, 0, width * channels * sizeof(unsigned short));			\
+										\
+  for (i = 0; i < width; i++, out += channels, d_in++)				\
+    {										\
+      if (d_in[0] OP (1 << bits) / 2)						\
+	{									\
+	  int j;								\
+	  z = 0;								\
+	  for (j = 0; j < channels; j++)					\
+	    out[0] = 65535;							\
+	}									\
+    }										\
+  return z;									\
 }
 
-static unsigned
-rgb_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
-		     unsigned short *out)
-{
-  int i;
-  int z = 15;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 4 * sizeof(unsigned short));
-  for (i = 0; i < width; i++, out += 4, in += 3)
-    {
-      unsigned c = 255 - in[0];
-      unsigned m = 255 - in[1];
-      unsigned y = 255 - in[2];
-      unsigned k = (c < m ? (c < y ? c : y) : (m < y ? m : y));
-      if (k >= 128)
-	{
-	  c -= k;
-	  m -= k;
-	  y -= k;
-	}
-      if (k >= 128)
-	{
-	  z &= 0xe;
-	  out[0] = 65535;
-	}
-      if (c >= 128)
-	{
-	  z &= 0xd;
-	  out[1] = 65535;
-	}
-      if (m >= 128)
-	{
-	  z &= 0xb;
-	  out[2] = 65535;
-	}
-      if (y >= 128)
-	{
-	  z &= 0x7;
-	  out[3] = 65535;
-	}
-    }
-  return z;
+MONO_TO_LINE_ART_FUNC(white, gray, 8, 1, char, <)
+MONO_TO_LINE_ART_FUNC(white, gray, 16, 1, short, <)
+MONO_TO_LINE_ART_FUNC(gray, gray, 8, 1, char, >=)
+MONO_TO_LINE_ART_FUNC(gray, gray, 16, 1, short, >=)
+MONO_TO_LINE_ART_FUNC(white, white, 8, 1, char, >=)
+MONO_TO_LINE_ART_FUNC(white, white, 16, 1, short, >=)
+MONO_TO_LINE_ART_FUNC(gray, white, 8, 1, char, <)
+MONO_TO_LINE_ART_FUNC(gray, white, 16, 1, short, <)
+MONO_TO_LINE_ART_FUNC(white, cmy, 8, 3, char, <)
+MONO_TO_LINE_ART_FUNC(white, cmy, 16, 3, short, <)
+MONO_TO_LINE_ART_FUNC(gray, cmy, 8, 3, char, >=)
+MONO_TO_LINE_ART_FUNC(gray, cmy, 16, 3, short, >=)
+MONO_TO_LINE_ART_FUNC(white, rgb, 8, 3, char, >=)
+MONO_TO_LINE_ART_FUNC(white, rgb, 16, 3, short, >=)
+MONO_TO_LINE_ART_FUNC(gray, rgb, 8, 3, char, <)
+MONO_TO_LINE_ART_FUNC(gray, rgb, 16, 3, short, <)
+MONO_TO_LINE_ART_FUNC(white, kcmy, 8, 4, char, <)
+MONO_TO_LINE_ART_FUNC(white, kcmy, 16, 4, short, <)
+MONO_TO_LINE_ART_FUNC(gray, kcmy, 8, 4, char, >=)
+MONO_TO_LINE_ART_FUNC(gray, kcmy, 16, 4, short, >=)
+
+#define THREE_TO_LINE_ART_FUNC(name1, name2, bits, T, OP)			\
+static unsigned									\
+name1##_##bits##_to_##name2##_line_art(stp_const_vars_t vars, const void *in,	\
+				       unsigned short *out)			\
+{										\
+  const unsigned T *d_in = (const unsigned T *) in;				\
+  int i;									\
+  int z = 7;									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));		\
+  int width = lut->image_width;							\
+  memset(out, 0, width * 3 * sizeof(unsigned short));				\
+  for (i = 0; i < width; i++, out += 3, d_in += 3)				\
+    {										\
+      if (d_in[0] OP (1 << bits) / 2)						\
+	{									\
+	  z &= 6;								\
+	  out[0] = 65535;							\
+	}									\
+      if (d_in[1] OP (1 << bits) / 2)						\
+	{									\
+	  z &= 5;								\
+	  out[1] = 65535;							\
+	}									\
+      if (d_in[2] OP (1 << bits) / 2)						\
+	{									\
+	  z &= 3;								\
+	  out[2] = 65535;							\
+	}									\
+    }										\
+  return z;									\
 }
 
-static unsigned
-cmyk_8_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 15;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 4 * sizeof(unsigned short));
-  for (i = 0; i < width; i++, out += 4, in += 4)
-    {
-      if (in[3])
-	{
-	  z &= 0xe;
-	  out[0] = 65535;
-	}
-      if (in[0])
-	{
-	  z &= 0xd;
-	  out[1] = 65535;
-	}
-      if (in[1])
-	{
-	  z &= 0xb;
-	  out[2] = 65535;
-	}
-      if (in[2])
-	{
-	  z &= 0x7;
-	  out[3] = 65535;
-	}
-    }
-  return z;
+THREE_TO_LINE_ART_FUNC(rgb, cmy, 8, char, <)
+THREE_TO_LINE_ART_FUNC(rgb, cmy, 16, short, <)
+THREE_TO_LINE_ART_FUNC(cmy, cmy, 8, char, >=)
+THREE_TO_LINE_ART_FUNC(cmy, cmy, 16, short, >=)
+THREE_TO_LINE_ART_FUNC(rgb, rgb, 8, char, >=)
+THREE_TO_LINE_ART_FUNC(rgb, rgb, 16, short, >=)
+THREE_TO_LINE_ART_FUNC(cmy, rgb, 8, char, <)
+THREE_TO_LINE_ART_FUNC(cmy, rgb, 16, short, <)
+
+#define RGB_TO_KCMY_LINE_ART_FUNC(bits, T)				\
+static unsigned								\
+rgb_##bits##_to_kcmy_line_art(stp_const_vars_t vars, const void *in,	\
+			      unsigned short *out)			\
+{									\
+  const unsigned T *d_in = (const unsigned T *) in;			\
+  int i;								\
+  int z = 15;								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int width = lut->image_width;						\
+  memset(out, 0, width * 4 * sizeof(unsigned short));			\
+  for (i = 0; i < width; i++, out += 4, d_in += 3)			\
+    {									\
+      unsigned c = ((1 << bits) - 1) - d_in[0];				\
+      unsigned m = ((1 << bits) - 1) - d_in[1];				\
+      unsigned y = ((1 << bits) - 1) - d_in[2];				\
+      unsigned k = (c < m ? (c < y ? c : y) : (m < y ? m : y));		\
+      if (k >= 1 << (bits - 1))						\
+	{								\
+	  z &= 0xe;							\
+	  out[0] = 65535;						\
+	}								\
+      else								\
+	{								\
+	  if (c >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0xd;							\
+	      out[1] = 65535;						\
+	    }								\
+	  if (m >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0xb;							\
+	      out[2] = 65535;						\
+	    }								\
+	  if (y >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0x7;							\
+	      out[3] = 65535;						\
+	    }								\
+	}								\
+    }									\
+  return z;								\
 }
 
-static unsigned
-cmyk_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 15;
-  const unsigned short *s_in = (const unsigned short *) in;
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 4 * sizeof(unsigned short));
-  for (i = 0; i < width; i++, out += 4, s_in += 4)
-    {
-      if (s_in[3])
-	{
-	  z &= 0xe;
-	  out[0] = 65535;
-	}
-      if (s_in[0])
-	{
-	  z &= 0xd;
-	  out[1] = 65535;
-	}
-      if (s_in[1])
-	{
-	  z &= 0xb;
-	  out[2] = 65535;
-	}
-      if (s_in[2])
-	{
-	  z &= 0x7;
-	  out[3] = 65535;
-	}
-    }
-  return z;
+RGB_TO_KCMY_LINE_ART_FUNC(8, char)
+RGB_TO_KCMY_LINE_ART_FUNC(16, short)
+
+#define CMY_TO_KCMY_LINE_ART_FUNC(bits, T)				\
+static unsigned								\
+cmy_##bits##_to_kcmy_line_art(stp_const_vars_t vars, const void *in,	\
+			      unsigned short *out)			\
+{									\
+  const unsigned T *d_in = (const unsigned T *) in;			\
+  int i;								\
+  int z = 15;								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int width = lut->image_width;						\
+  memset(out, 0, width * 4 * sizeof(unsigned short));			\
+  for (i = 0; i < width; i++, out += 4, d_in += 3)			\
+    {									\
+      unsigned c =  d_in[0];						\
+      unsigned m =  d_in[1];						\
+      unsigned y =  d_in[2];						\
+      unsigned k = (c < m ? (c < y ? c : y) : (m < y ? m : y));		\
+      if (k >= 1 << (bits - 1))						\
+	{								\
+	  z &= 0xe;							\
+	  out[0] = 65535;						\
+	}								\
+      else								\
+	{								\
+	  if (c >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0xd;							\
+	      out[1] = 65535;						\
+	    }								\
+	  if (m >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0xb;							\
+	      out[2] = 65535;						\
+	    }								\
+	  if (y >= 1 << (bits - 1))					\
+	    {								\
+	      z &= 0x7;							\
+	      out[3] = 65535;						\
+	    }								\
+	}								\
+    }									\
+  return z;								\
 }
 
-static unsigned
-gray_to_rgb_line_art(stp_const_vars_t vars, const unsigned char *in,
-		     unsigned short *out)
-{
-  int i;
-  int z = 7;
-  int input_color_model = stp_get_input_color_model(vars);
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 3 * sizeof(unsigned short));
+CMY_TO_KCMY_LINE_ART_FUNC(8, char)
+CMY_TO_KCMY_LINE_ART_FUNC(16, short)
 
-  if (input_color_model == output_color_model)
-    {
-      for (i = 0; i < width; i++, out += 3, in++)
-	{
-	  if (in[0] >= 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	      out[1] = 65535;
-	      out[2] = 65535;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out += 4, in++)
-	{
-	  if (in[0] < 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	      out[1] = 65535;
-	      out[2] = 65535;
-	    }
-	}
-    }
-  return z;
+#define CMYK_TO_KCMY_LINE_ART_FUNC(bits, T)				\
+static unsigned								\
+cmyk_##bits##_to_kcmy_line_art(stp_const_vars_t vars, const void *in,	\
+			       unsigned short *out)			\
+{									\
+  const unsigned T *d_in = (const unsigned T *) in;			\
+  int i;								\
+  int z = 15;								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int width = lut->image_width;						\
+  memset(out, 0, width * 4 * sizeof(unsigned short));			\
+  for (i = 0; i < width; i++, out += 4, d_in += 4)			\
+    {									\
+      if (d_in[3] >= 1 << (bits - 1))					\
+	{								\
+	  z &= 0xe;							\
+	  out[0] = 65535;						\
+	}								\
+      if (d_in[0] >= 1 << (bits - 1))					\
+	{								\
+	  z &= 0xd;							\
+	  out[1] = 65535;						\
+	}								\
+      if (d_in[1] >= 1 << (bits - 1))					\
+	{								\
+	  z &= 0xb;							\
+	  out[2] = 65535;						\
+	}								\
+      if (d_in[2] >= 1 << (bits - 1))					\
+	{								\
+	  z &= 0x7;							\
+	  out[3] = 65535;						\
+	}								\
+    }									\
+  return z;								\
 }
 
-static unsigned
-rgb_to_rgb_line_art(stp_const_vars_t vars, const unsigned char *in,
-		    unsigned short *out)
-{
-  int i;
-  int z = 7;
-  int input_color_model = stp_get_input_color_model(vars);
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * 3 * sizeof(unsigned short));
-  if (input_color_model == output_color_model)
-    {
-      for (i = 0; i < width; i++, out += 3, in += 3)
-	{
-	  if (in[0] >= 128)
-	    {
-	      z &= 6;
-	      out[0] = 65535;
-	    }
-	  if (in[1] >= 128)
-	    {
-	      z &= 5;
-	      out[1] = 65535;
-	    }
-	  if (in[2] >= 128)
-	    {
-	      z &= 3;
-	      out[2] = 65535;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out += 3, in += 3)
-	{
-	  if (in[0] < 128)
-	    {
-	      z &= 6;
-	      out[0] = 65535;
-	    }
-	  if (in[1] < 128)
-	    {
-	      z &= 5;
-	      out[1] = 65535;
-	    }
-	  if (in[2] < 128)
-	    {
-	      z &= 3;
-	      out[2] = 65535;
-	    }
-	}
-    }
-  return z;
+CMYK_TO_KCMY_LINE_ART_FUNC(8, char)
+CMYK_TO_KCMY_LINE_ART_FUNC(16, short)
+
+#define N_TO_MONO_LINE_ART_FUNC(name1, name2, bits, channels, T, OP)		\
+static unsigned									\
+name1##_##bits##_to_##name2##_line_art(stp_const_vars_t vars, const void *in,	\
+				       unsigned short *out)			\
+{										\
+  const unsigned T *d_in = (const unsigned T *) in;				\
+  int i;									\
+  int z = 1;									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));		\
+  int width = lut->image_width;							\
+  memset(out, 0, width * channels * sizeof(unsigned short));			\
+										\
+  for (i = 0; i < width; i++, out++, d_in += channels)				\
+    {										\
+      unsigned gval = 0;							\
+      int j;									\
+      for (j = 0; j < channels; j++)						\
+	gval += d_in[j];							\
+      if (gval OP (1 << bits) / 2 * 3)						\
+	{									\
+	  out[0] = 65535;							\
+	  z = 0;								\
+	}									\
+    }										\
+  return z;									\
 }
 
-static unsigned
-gray_to_gray_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 1;
-  int input_color_model = stp_get_input_color_model(vars);
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * sizeof(unsigned short));
-
-  if (input_color_model == output_color_model)
-    {
-      for (i = 0; i < width; i++, out++, in++)
-	{
-	  if (in[0] >= 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out++, in++)
-	{
-	  if (in[0] < 128)
-	    {
-	      z = 0;
-	      out[0] = 65535;
-	    }
-	}
-    }
-  return z;
-}
-
-static unsigned
-rgb_to_gray_line_art(stp_const_vars_t vars, const unsigned char *in,
-		     unsigned short *out)
-{
-  int i;
-  int z = 1;
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * sizeof(unsigned short));
-  if (output_color_model == COLOR_MODEL_RGB)
-    {
-      for (i = 0; i < width; i++, out++, in += 3)
-	{
-	  unsigned gval = in[0] + in[1] + in[2];
-	  if (gval >= 128 * 3)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out++, in += 3)
-	{
-	  unsigned gval = in[0] + in[1] + in[2];
-	  if (gval < 128 * 3)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  return z;
-}
-
-static unsigned
-cmyk_8_to_gray_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 1;
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * sizeof(unsigned short));
-  if (output_color_model == COLOR_MODEL_CMY)
-    {
-      for (i = 0; i < width; i++, out++, in += 4)
-	{
-	  unsigned gval = in[0] + in[1] + in[2] + in[3];
-	  if (gval >= 128 * 4)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out++, in += 4)
-	{
-	  unsigned gval = in[0] + in[1] + in[2] + in[3];
-	  if (gval < 128 * 4)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  return z;
-}
-
-static unsigned
-cmyk_to_gray_line_art(stp_const_vars_t vars, const unsigned char *in,
-		      unsigned short *out)
-{
-  int i;
-  int z = 1;
-  const unsigned short *s_in = (const unsigned short *) in;
-  int output_color_model = stpi_get_output_color_model(vars);
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  int width = lut->image_width;
-  memset(out, 0, width * sizeof(unsigned short));
-  if (output_color_model == COLOR_MODEL_CMY)
-    {
-      for (i = 0; i < width; i++, out++, s_in += 4)
-	{
-	  unsigned gval = s_in[0] + s_in[1] + s_in[2] + s_in[3];
-	  if (gval >= 128 * 4)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  else
-    {
-      for (i = 0; i < width; i++, out++, s_in += 4)
-	{
-	  unsigned gval = s_in[0] + s_in[1] + s_in[2] + s_in[3];
-	  if (gval < 128 * 4)
-	    {
-	      out[0] = 65535;
-	      z = 0;
-	    }
-	}
-    }
-  return z;
-}
-
+N_TO_MONO_LINE_ART_FUNC(cmy, white, 8, 3, char, <)
+N_TO_MONO_LINE_ART_FUNC(cmy, white, 16, 3, short, <)
+N_TO_MONO_LINE_ART_FUNC(cmy, gray, 8, 3, char, >=)
+N_TO_MONO_LINE_ART_FUNC(cmy, gray, 16, 3, short, >=)
+N_TO_MONO_LINE_ART_FUNC(rgb, white, 8, 3, char, >=)
+N_TO_MONO_LINE_ART_FUNC(rgb, white, 16, 3, short, >=)
+N_TO_MONO_LINE_ART_FUNC(rgb, gray, 8, 3, char, <)
+N_TO_MONO_LINE_ART_FUNC(rgb, gray, 16, 3, short, <)
+N_TO_MONO_LINE_ART_FUNC(cmyk, white, 8, 4, char, <)
+N_TO_MONO_LINE_ART_FUNC(cmyk, white, 16, 4, short, <)
+N_TO_MONO_LINE_ART_FUNC(cmyk, gray, 8, 4, char, >=)
+N_TO_MONO_LINE_ART_FUNC(cmyk, gray, 16, 4, short, >=)
 
 static unsigned
 cmyk_8_to_kcmy(stp_const_vars_t vars, const unsigned char *in,
@@ -1915,16 +1778,25 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
 }
 
 static void
-invert_curve(stp_curve_t curve, int in_model, int out_model)
+do_flip_curve(stp_curve_t curve)
 {
   double lo, hi;
+  stp_curve_get_bounds(curve, &lo, &hi);
+  stp_curve_rescale(curve, -1, STP_CURVE_COMPOSE_MULTIPLY,
+		    STP_CURVE_BOUNDS_RESCALE);
+  stp_curve_rescale(curve, lo + hi, STP_CURVE_COMPOSE_ADD,
+		    STP_CURVE_BOUNDS_RESCALE);
+}
+
+static void
+invert_curve(stp_curve_t curve, stp_image_type_t image_type,
+	     stpi_color_model_t out_model)
+{
   int i;
   size_t count;
   const double *data = stp_curve_get_data(curve, &count);
   double f_gamma = stp_curve_get_gamma(curve);
   double *tmp_data;
-
-  stp_curve_get_bounds(curve, &lo, &hi);
 
   if (f_gamma)
     stp_curve_set_gamma(curve, -f_gamma);
@@ -1936,12 +1808,37 @@ invert_curve(stp_curve_t curve, int in_model, int out_model)
       stp_curve_set_data(curve, count, tmp_data);
       stpi_free(tmp_data);
     }
-  if (in_model == out_model)
+  
+  switch (image_type)
     {
-      stp_curve_rescale(curve, -1, STP_CURVE_COMPOSE_MULTIPLY,
-			STP_CURVE_BOUNDS_RESCALE);
-      stp_curve_rescale(curve, lo + hi, STP_CURVE_COMPOSE_ADD,
-			STP_CURVE_BOUNDS_RESCALE);
+    case STP_IMAGE_GRAY:
+    case STP_IMAGE_CMY:
+    case STP_IMAGE_CMYK:
+      switch (out_model)
+	{
+	case STPI_COLOR_WHITE:
+	case STPI_COLOR_RGB:
+	  do_flip_curve(curve);
+	default:
+	  break;
+	}
+      break;
+    case STP_IMAGE_WHITE:
+    case STP_IMAGE_RGB:
+      switch (out_model)
+	{
+	case STPI_COLOR_GRAY:
+	case STPI_COLOR_CMY:
+	case STPI_COLOR_CMYK:
+	  do_flip_curve(curve);
+	default:
+	  break;
+	}
+      break;
+    case STP_IMAGE_RAW:
+      break;
+    default:
+      break;
     }
 }
 
@@ -1970,7 +1867,8 @@ stpi_compute_lut(stp_vars_t v, size_t steps, stpi_color_model_t color_model)
 #endif
 
 static void
-stpi_compute_lut(stp_vars_t v, size_t steps, stpi_color_model_t color_model)
+stpi_compute_lut(stp_vars_t v, stp_image_t *image, size_t steps,
+		 stpi_color_model_t color_model)
 {
   stp_const_curve_t hue = NULL;
   stp_const_curve_t lum = NULL;
@@ -1993,8 +1891,8 @@ stpi_compute_lut(stp_vars_t v, size_t steps, stpi_color_model_t color_model)
   if (stp_check_float_parameter(v, "YellowGamma", STP_PARAMETER_DEFAULTED))
     yellow = stp_get_float_parameter(v, "YellowGamma");
 
-  l.input_color_model = stp_get_input_color_model(v);
-  l.output_color_model = stpi_get_output_color_model(v);
+  l.image_type = stpi_image_type(image);
+  l.output_color_model = color_model;
   l.steps = steps;
   if (stp_check_boolean_parameter(v, "LinearContrast", STP_PARAMETER_DEFAULTED))
     l.linear_contrast_adjustment =
@@ -2111,7 +2009,7 @@ stpi_color_traditional_init(stp_vars_t v,
   if (steps != 256 && steps != 65536)
     return -1;
 
-  stpi_compute_lut(v, steps, color_model);
+  stpi_compute_lut(v, image, steps, color_model);
   lut = (lut_t *)(stpi_get_component_data(v, "Color"));
   lut->image_channels = image_channels;
   lut->image_bits_per_channel = image_bits_per_channel;
