@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.19.2.3 2000/04/13 12:01:44 rlk Exp $"
+ * "$Id: print-dither.c,v 1.19.2.4 2000/04/14 12:46:18 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -48,8 +48,23 @@
 #define ECOLOR_Y 2
 #define ECOLOR_K 3
 
+#if 0
 #define MATRIX_NB (6)
 #define MATRIX_SIZE (1 << (MATRIX_NB))
+#define MODOP(x, y) ((x) & ((y) - 1))
+#endif
+
+#if 0
+#define MATRIX_NB (4)
+#define MATRIX_SIZE (3 * 3 * 3 * 3)
+#define MODOP(x, y) ((x) % (y))
+#endif
+
+#if 1
+#define MATRIX_NB (3)
+#define MATRIX_SIZE (5 * 5 * 5)
+#define MODOP(x, y) ((x) % (y))
+#endif
 
 typedef struct dither_segment
 {
@@ -130,6 +145,67 @@ calc_ordered_point(unsigned x, unsigned y, int steps, int multiplier)
   return retval * multiplier;
 }
 
+static int
+calc_ordered_point_3(unsigned x, unsigned y, int steps, int multiplier)
+{
+  int i, j;
+  unsigned retval = 0;
+  static int map[9] = { 3, 2, 7, 8, 4, 0, 1, 6, 5 };
+  int divisor = 1;
+  int div1;
+  for (i = 0; i < steps; i++)
+    {
+      int xa = (x / divisor) % 3;
+      int ya = (y / divisor) % 3;
+      unsigned base;
+      base = map[ya + (xa * 3)];
+      div1 = 1;
+      for (j = i; j < steps - 1; j++)
+	div1 *= 9;
+      retval += base * div1;
+    }
+  return retval * multiplier;
+}
+
+/*
+ * This magic square taken from
+ * http://www.pse.che.tohoku.ac.jp/~msuzuki/MagicSquare.5x5.selfsim.html
+ *
+ * It is magic in the following ways:
+ * Rows and columns
+ * Major and minor diagonals
+ * Self-complementary
+ * Four neighbors at distance of 1 or 2 (diagonal or lateral)
+ */
+
+static int
+calc_ordered_point_5(unsigned x, unsigned y, int steps, int multiplier)
+{
+  int i, j;
+  unsigned retval = 0;
+  static int map[25] = { 00, 14, 21, 17,  8,
+			 22, 18,  5,  4, 11,
+			 9,   1, 12, 23, 15,
+			 13, 20, 19,  6,  2,
+			 16,  7,  3, 10, 24 };
+  int divisor = 1;
+  int div1;
+  for (i = 0; i < steps; i++)
+    {
+      int xa = (x / divisor) % 5;
+      int ya = (y / divisor) % 5;
+      unsigned base;
+      base = map[ya + (xa * 5)];
+      div1 = 1;
+      for (j = i; j < steps - 1; j++)
+	div1 *= 25;
+      retval += base * div1;
+    }
+  return retval * multiplier;
+}
+
+  
+
 void *
 init_dither(int in_width, int out_width)
 {
@@ -149,8 +225,9 @@ init_dither(int in_width, int out_width)
     for (y = 0; y < MATRIX_SIZE; y++)
       {
 	d->ordered_dither_matrix[x][y] =
-	  calc_ordered_point(x, y, MATRIX_NB,
-			     65536 / (MATRIX_SIZE * MATRIX_SIZE));
+	  calc_ordered_point_5(x, y, MATRIX_NB, 1);
+	d->ordered_dither_matrix[x][y] =
+	  d->ordered_dither_matrix[x][y] * 65536 / (MATRIX_SIZE * MATRIX_SIZE);
       }
 
   d->spread = 13;
@@ -284,15 +361,17 @@ dither_set_ranges(dither_color_t *s, int nlevels,
   s->nlevels = nlevels > 1 ? nlevels + 1 : nlevels;
   s->ranges = (dither_segment_t *)
     malloc(s->nlevels * sizeof(dither_segment_t));
+#if 0
   fprintf(stderr, "dither_set_ranges nlevels %d density %f\n", nlevels, density);
   for (i = 0; i < nlevels; i++)
     fprintf(stderr, "  level %d value %f pattern %x is_dark %d\n", i,
 	    ranges[i].value, ranges[i].bit_pattern, ranges[i].is_dark);
+#endif
   s->ranges[0].range_l = 0;
   s->ranges[0].value_l = ranges[0].value * 65536.0;
   s->ranges[0].bits_l = ranges[0].bit_pattern;
   s->ranges[0].isdark_l = ranges[0].is_dark;
-  if (i == nlevels - 1)
+  if (nlevels == 1)
     s->ranges[0].range_h = 65536;
   else
     s->ranges[0].range_h = ranges[0].value * 65536.0 * density;
@@ -348,6 +427,7 @@ dither_set_ranges(dither_color_t *s, int nlevels,
       s->ranges[i].range_span = s->ranges[i].range_h - s->ranges[i].range_l;
       s->ranges[i].value_span = s->ranges[i].value_h - s->ranges[i].value_l;
     }
+#if 0
   for (i = 0; i < s->nlevels; i++)
     {
       fprintf(stderr, "    level %d value_l %d value_h %d range_l %d range_h %d\n",
@@ -359,6 +439,7 @@ dither_set_ranges(dither_color_t *s, int nlevels,
       fprintf(stderr, "       rangespan %d valuespan %d\n",
 	      s->ranges[i].range_span, s->ranges[i].value_span);
     }
+#endif
   lbit = s->bit_max;
   s->signif_bits = 0;
   while (lbit > 0)
@@ -683,8 +764,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	  unsigned vmatrix;
 
 	  int xy3, yx3;
-	  xy3 = (x + y / 3) & (MATRIX_SIZE - 1);
-	  yx3 = (y + x / 3) & (MATRIX_SIZE - 1);
+	  xy3 = MODOP((x + y / 3), (MATRIX_SIZE));
+	  yx3 = MODOP((y + x / 3), (MATRIX_SIZE));
 	  /*
 	   * Where are we within the range.  If we're going to print at
 	   * all, this determines the probability of printing the darker
@@ -725,11 +806,11 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	      unsigned char *tptr;
 	      unsigned bits;
 	      
-	      xy3 = (x * 3 + y * 2) & (MATRIX_SIZE - 1);
-	      yx3 = (y * 3 + y * 2) & (MATRIX_SIZE - 1);
+	      xy3 = MODOP((x * 3 + y * 2), (MATRIX_SIZE));
+	      yx3 = MODOP((y * 3 + y * 2), (MATRIX_SIZE));
 #if 0
-	      xy3 = rand() & (MATRIX_SIZE - 1);
-	      yx3 = rand() & (MATRIX_SIZE - 1);
+	      xy3 = rand() % (MATRIX_SIZE - 1);
+	      yx3 = rand() % (MATRIX_SIZE - 1);
 #endif
 	      /*
 	       * FIXME we should use different matrices for each color
@@ -1216,6 +1297,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.19.2.4  2000/04/14 12:46:18  rlk
+ *   Other dithering options
+ *
  *   Revision 1.19.2.3  2000/04/13 12:01:44  rlk
  *   Much improved
  *
@@ -1272,5 +1356,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.19.2.3 2000/04/13 12:01:44 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.19.2.4 2000/04/14 12:46:18 rlk Exp $".
  */
