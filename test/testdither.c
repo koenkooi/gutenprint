@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.17 2002/09/25 00:35:06 rlk Exp $"
+ * "$Id: testdither.c,v 1.18 2002/10/27 02:38:36 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <string.h>
 
 /*
  * Definitions for dither test...
@@ -865,5 +866,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.17 2002/09/25 00:35:06 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.18 2002/10/27 02:38:36 rlk Exp $".
  */
