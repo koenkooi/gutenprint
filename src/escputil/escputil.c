@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.62 2004/05/09 16:06:07 rleigh Exp $"
+ * "$Id: escputil.c,v 1.63 2004/09/17 18:38:11 rleigh Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -23,7 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
+#include <gutenprint/gutenprint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -49,7 +49,7 @@
 #ifdef HAVE_READLINE_HISTORY_H
 #include <readline/history.h>
 #endif
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint-intl-internal.h>
 
 void do_align(void);
 char *do_get_input (const char *prompt);

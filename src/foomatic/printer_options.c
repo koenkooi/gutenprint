@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.43 2004/08/19 03:24:35 rlk Exp $"
+ * "$Id: printer_options.c,v 1.44 2004/09/17 18:38:12 rleigh Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -25,12 +25,8 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#ifdef INCLUDE_GIMP_PRINT_H
-#include INCLUDE_GIMP_PRINT_H
-#else
-#include <gimp-print/gimp-print.h>
-#endif
-#include <gimp-print/gimp-print-intl.h>
+#include <gutenprint/gutenprint.h>
+#include <gutenprint/gutenprint-intl.h>
 
 int
 main(int argc, char **argv)

@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversions.c,v 1.11 2004/07/24 02:07:21 rlk Exp $"
+ * "$Id: color-conversions.c,v 1.12 2004/09/17 18:38:17 rleigh Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -29,10 +29,10 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
-#include <gimp-print/curve-cache.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
+#include <gutenprint/curve-cache.h>
 #include <math.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>

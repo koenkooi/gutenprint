@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.h,v 1.4 2004/05/07 19:20:30 rleigh Exp $"
+ * "$Id: generic-options.h,v 1.5 2004/09/17 18:38:20 rleigh Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -18,8 +18,8 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_GENERIC_OPTIONS_H
-#define GIMP_PRINT_INTERNAL_GENERIC_OPTIONS_H
+#ifndef GUTENPRINT_INTERNAL_GENERIC_OPTIONS_H
+#define GUTENPRINT_INTERNAL_GENERIC_OPTIONS_H
 
 typedef struct
 {
@@ -64,4 +64,4 @@ extern void stpi_describe_generic_parameter(const stp_vars_t *v,
 					   const char *name,
 					   stp_parameter_t *description);
 
-#endif /* GIMP_PRINT_INTERNAL_GENERIC_OPTIONS_H */
+#endif /* GUTENPRINT_INTERNAL_GENERIC_OPTIONS_H */

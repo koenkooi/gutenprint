@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.17 2004/05/07 19:20:29 rleigh Exp $"
+ * "$Id: dither-ed.c,v 1.18 2004/09/17 18:38:17 rleigh Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -28,9 +28,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <string.h>
 #include "dither-impl.h"
 #include "dither-inlined-functions.h"

@@ -1,5 +1,5 @@
-## $Id: Makefile.am,v 1.5 2004/06/22 18:52:13 rleigh Exp $
-## Copyright (C) 2000 Roger Leigh
+## $Id: Makefile.am,v 1.6 2004/09/17 18:37:44 rleigh Exp $
+## Copyright (C) 2000,2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = gimp-print gimp-print-ui gimp-print-ui2
+SUBDIRS = gutenprint gutenprintui gutenprintui2
 
 include $(top_srcdir)/scripts/global.mk
 

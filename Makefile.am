@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.141 2004/05/09 16:06:04 rleigh Exp $
-## Copyright (C) 2000 Roger Leigh
+## $Id: Makefile.am,v 1.142 2004/09/17 18:37:41 rleigh Exp $
+## Copyright (C) 2000-2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ ChangeLog: ChangeLogStamp
 	    exit 1 ; \
 	  fi \
 	elif test -s ChangeLog ; then \
-	  echo "ChangeLog: This is not a CVS version of Gimp-Print" ; \
+	  echo "ChangeLog: This is not a CVS version of Gutenprint" ; \
 	  echo "ChangeLog: Not updating ChangeLog from CVS!" ; \
 	else \
 	  echo "ChangeLog: No ChangeLog or ChangeLog of zero size found!" ; \

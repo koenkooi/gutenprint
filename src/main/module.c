@@ -1,7 +1,7 @@
 /*
- * "$Id: module.c,v 1.24 2004/04/25 15:12:06 rleigh Exp $"
+ * "$Id: module.c,v 1.25 2004/09/17 18:38:21 rleigh Exp $"
  *
- *   libgimpprint module loader - load modules with libltdl/libdl.
+ *   Gutenprint module loader - load modules with libltdl/libdl.
  *
  *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
@@ -23,9 +23,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

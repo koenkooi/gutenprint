@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2004/06/28 22:11:19 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2004/09/17 18:38:13 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS) $(GIMP2_CFLAGS)
+LOCAL_CPPFLAGS = $(GUTENPRINT_CFLAGS) $(GIMP2_CFLAGS)
 
 
 ## Programs
@@ -43,8 +43,8 @@ print_SOURCES = \
 	print.c \
 	print_gimp.h
 
-print_LDADD = $(LIBPRINTUT) $(GIMP2_LIBS) $(GIMPPRINTUI2_LIBS)
-print_DEPENDENCIES = $(GIMPPRINTUI2_LIBS) $(GIMPPRINT_LIBS)
+print_LDADD = $(LIBPRINTUT) $(GIMP2_LIBS) $(GUTENPRINTUI2_LIBS)
+print_DEPENDENCIES = $(GUTENPRINTUI2_LIBS) $(GUTENPRINT_LIBS)
 
 
 ## Clean

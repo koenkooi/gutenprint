@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.14 2004/05/09 16:06:08 rleigh Exp $"
+ * "$Id: printer_margins.c,v 1.15 2004/09/17 18:38:12 rleigh Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -26,11 +26,7 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#ifdef INCLUDE_GIMP_PRINT_H
-#include INCLUDE_GIMP_PRINT_H
-#else
-#include <gimp-print/gimp-print.h>
-#endif
+#include <gutenprint/gutenprint.h>
 
 int
 main(int argc, char **argv) {

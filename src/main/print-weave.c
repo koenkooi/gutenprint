@@ -1,7 +1,7 @@
 /*
- * "$Id: print-weave.c,v 1.61 2004/05/07 19:20:34 rleigh Exp $"
+ * "$Id: print-weave.c,v 1.62 2004/09/17 18:38:26 rleigh Exp $"
  *
- *   Softweave calculator for gimp-print.
+ *   Softweave calculator for Gutenprint.
  *
  *   Copyright 2000 Charles Briscoe-Smith <cpbs@debian.org>
  *
@@ -29,9 +29,9 @@
 #include <config.h>
 #endif
 #include <string.h>
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.73 2004/08/19 03:24:36 rlk Exp $"
+ * "$Id: printers.c,v 1.74 2004/09/17 18:38:27 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -29,9 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <math.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>

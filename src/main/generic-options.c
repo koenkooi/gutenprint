@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.7 2004/05/07 19:20:30 rleigh Exp $"
+ * "$Id: generic-options.c,v 1.8 2004/09/17 18:38:20 rleigh Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -21,9 +21,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include "generic-options.h"
 #include <string.h>
 #include <limits.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.23 2004/07/24 02:22:30 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.24 2004/09/17 18:38:18 rleigh Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -30,8 +30,8 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_DITHER_IMPL_H
-#define GIMP_PRINT_INTERNAL_DITHER_IMPL_H
+#ifndef GUTENPRINT_INTERNAL_DITHER_IMPL_H
+#define GUTENPRINT_INTERNAL_DITHER_IMPL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -254,7 +254,7 @@ do									\
   }
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
+#endif /* GUTENPRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.23 2004/07/24 02:22:30 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.24 2004/09/17 18:38:18 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.17 2004/05/26 03:16:14 rlk Exp $"
+ * "$Id: string-list.c,v 1.18 2004/09/17 18:38:27 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -24,9 +24,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <string.h>
 
 static void

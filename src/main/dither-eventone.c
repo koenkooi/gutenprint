@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.39 2004/05/07 19:20:29 rleigh Exp $"
+ * "$Id: dither-eventone.c,v 1.40 2004/09/17 18:38:18 rleigh Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -29,9 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <string.h>
 #include <math.h>
 #include <limits.h>

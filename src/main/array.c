@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.15 2004/06/12 17:57:10 rlk Exp $"
+ * "$Id: array.c,v 1.16 2004/09/17 18:38:16 rleigh Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -25,9 +25,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.47 2004/07/24 02:22:30 rlk Exp $"
+ * "$Id: dither-main.c,v 1.48 2004/09/17 18:38:18 rleigh Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -28,9 +28,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif

@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.34 2004/07/30 01:21:28 rlk Exp $ */
+/* $Id: unprint.c,v 1.35 2004/09/17 18:38:28 rleigh Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -24,7 +24,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/util.h>
+#include <gutenprint/util.h>
 #include<stdio.h>
 #include<stdlib.h>
 #ifdef HAVE_LIMITS_H

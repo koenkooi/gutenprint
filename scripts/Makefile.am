@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.3 2003/05/29 21:48:07 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2004/09/17 18:38:09 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,6 @@ include $(top_srcdir)/scripts/global.mk
 # The autotools-installed scripts /should/ be automatically distributed.
 EXTRA_DIST = \
 	autogen.sh \
-	buildgimpprintdebs \
 	global.mk \
 	mkchlog
 

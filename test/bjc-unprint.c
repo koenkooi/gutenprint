@@ -1,4 +1,4 @@
-/* $Id: bjc-unprint.c,v 1.9 2004/05/09 16:06:26 rleigh Exp $ */
+/* $Id: bjc-unprint.c,v 1.10 2004/09/17 18:38:27 rleigh Exp $ */
 /*
  * Convert BJC-printjobs to xbm files, one for each color channel
  *
@@ -23,7 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/util.h>
+#include <gutenprint/util.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

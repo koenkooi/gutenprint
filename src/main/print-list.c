@@ -1,9 +1,9 @@
 /*
- * "$Id: print-list.c,v 1.19 2004/05/07 19:20:33 rleigh Exp $"
+ * "$Id: print-list.c,v 1.20 2004/09/17 18:38:25 rleigh Exp $"
  *
- *   libgimpprint list functions.  A doubly-linked list
- *   implementation, with callbacks for freeing, sorting, and
- *   retrieving nodes by name or long name.
+ *   Gutenprint list functions.  A doubly-linked list implementation,
+ *   with callbacks for freeing, sorting, and retrieving nodes by name
+ *   or long name.
  *
  *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
@@ -24,16 +24,16 @@
 
 /*
  * This file must include only standard C header files.  The core code must
- * compile on generic platforms that don't support glib, gimp, gimpprint, etc.
+ * compile on generic platforms that don't support glib, gimp, etc.
  */
 
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.86 2004/07/24 02:22:30 rlk Exp $
+## $Id: Makefile.am,v 1.87 2004/09/17 18:38:16 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,7 @@ print_olympus_la_LDFLAGS = -module -avoid-version
 print_raw_la_SOURCES = print-raw.c
 print_raw_la_LDFLAGS = -module -avoid-version
 
-lib_LTLIBRARIES = libgimpprint.la
+lib_LTLIBRARIES = libgutenprint.la
 
 module_SOURCES =				\
 	$(color_traditional_la_SOURCES)		\
@@ -96,7 +96,7 @@ module_SOURCES =				\
 	$(print_raw_la_SOURCES)
 
 if !BUILD_MODULES
-libgimpprint_modules = $(module_SOURCES)
+libgutenprint_modules = $(module_SOURCES)
 endif
 
 mxml_SOURCES =					\
@@ -105,14 +105,14 @@ mxml_SOURCES =					\
 	mxml-node.c				\
 	mxml-search.c
 
-libgimpprint_headers =				\
+libgutenprint_headers =				\
 	dither-impl.h				\
 	dither-inlined-functions.h		\
 	generic-options.h			\
-	gimp-print-internal.h			\
+	gutenprint-internal.h			\
 	util.h
 
-libgimpprint_la_SOURCES =			\
+libgutenprint_la_SOURCES =			\
 	array.c					\
 	bit-ops.c				\
 	channel.c				\
@@ -142,24 +142,24 @@ libgimpprint_la_SOURCES =			\
 	string-list.c				\
 	xml.c					\
 	$(mxml_SOURCES)				\
-	$(libgimpprint_headers)			\
-	$(libgimpprint_modules)
+	$(libgutenprint_headers)		\
+	$(libgutenprint_modules)
 
-libgimpprint_la_LIBADD = $(GIMPPRINT_LIBDEPS)
+libgutenprint_la_LIBADD = $(GUTENPRINT_LIBDEPS)
 # Uncommment to build an unversioned library (version in soname)
-libgimpprint_version = -release $(GIMPPRINT_VERSION)
+libgutenprint_version = -release $(GUTENPRINT_VERSION)
 # Uncomment to build a versioned library
-#libgimpprint_version = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-libgimpprint_la_LDFLAGS = $(libgimpprint_version) \
+#libgutenprint_version = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libgutenprint_la_LDFLAGS = $(libgutenprint_version) \
 	-rpath $(libdir)
 # libtool currently needs a patch for symbol export to work correctly
 # using a linker version script.
-#	-export-symbols $(srcdir)/libgimpprint.sym
+#	-export-symbols $(srcdir)/libgutenprint.sym
 
 
 ## Data
 
-pkgconfigdata_DATA = gimpprint.pc
+pkgconfigdata_DATA = gutenprint.pc
 
 pkgxmldata_DATA = \
 	dither-matrix-1x1.xml \
@@ -194,4 +194,4 @@ dist-hook: xmli18n-tmp.h
 CLEANFILES = xmli18n-tmp.h
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(pkgxmldata_DATA) libgimpprint.sym
+EXTRA_DIST = $(pkgxmldata_DATA) libgutenprint.sym

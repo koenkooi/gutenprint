@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.84 2004/08/23 12:02:11 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.85 2004/09/17 18:38:24 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -21,8 +21,8 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_ESCP2_H
-#define GIMP_PRINT_INTERNAL_ESCP2_H
+#ifndef GUTENPRINT_INTERNAL_ESCP2_H
+#define GUTENPRINT_INTERNAL_ESCP2_H
 
 /*
  * Maximum number of channels in a printer.  If Epson comes out with an
@@ -684,7 +684,7 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 #define PACKFUNC stp_pack_tiff
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
+#endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.84 2004/08/23 12:02:11 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.85 2004/09/17 18:38:24 rleigh Exp $".
  */

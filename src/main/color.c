@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.9 2004/05/07 19:20:28 rleigh Exp $"
+ * "$Id: color.c,v 1.10 2004/09/17 18:38:17 rleigh Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -28,9 +28,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <string.h>
 #include <stdlib.h>
 

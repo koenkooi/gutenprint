@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.63 2004/06/23 11:19:42 rlk Exp $"
+ * "$Id: print.c,v 1.64 2004/09/17 18:38:13 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -25,7 +25,7 @@
 #include <config.h>
 #endif
 
-#include <gimp-print-ui/gimp-print-ui.h>
+#include <gutenprintui/gutenprintui.h>
 #include "print_gimp.h"
 
 #include <sys/types.h>
@@ -178,7 +178,7 @@ run (char   *name,		/* I - Name of print program. */
       ;
 
  /*
-  * Initialise libgimpprint
+  * Initialise libgutenprint
   */
 
   stp_init();

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.34 2004/05/09 16:06:08 rleigh Exp $
+## $Id: Makefile.am,v 1.35 2004/09/17 18:38:12 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,13 +34,13 @@ EXTRA_DIST = README
 
 ## Variables
 
-LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS) @IJS_CFLAGS@
+LOCAL_CPPFLAGS = $(GUTENPRINT_CFLAGS) @IJS_CFLAGS@
 
 
 ## Programs
 
 if BUILD_GHOSTSCRIPT
-bin_PROGRAMS = ijsgimpprint
+bin_PROGRAMS = ijsgutenprint
 endif
 
-ijsgimpprint_LDADD = $(GIMPPRINT_LIBS) $(IJS_LIBS)
+ijsgutenprint_LDADD = $(GUTENPRINT_LIBS) $(IJS_LIBS)

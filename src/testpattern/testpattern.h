@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.14 2004/05/07 19:20:34 rleigh Exp $"
+ * "$Id: testpattern.h,v 1.15 2004/09/17 18:38:27 rleigh Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <gimp-print/gimp-print.h>
+#include <gutenprint/gutenprint.h>
 
 typedef struct
 {

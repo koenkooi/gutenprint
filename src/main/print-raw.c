@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.35 2004/05/07 19:20:33 rleigh Exp $"
+ * "$Id: print-raw.c,v 1.36 2004/09/17 18:38:26 rleigh Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -29,9 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include <string.h>
 #include <stdio.h>
 

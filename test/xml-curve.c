@@ -1,5 +1,5 @@
 /*
- * "$Id: xml-curve.c,v 1.5 2004/05/07 19:20:34 rleigh Exp $"
+ * "$Id: xml-curve.c,v 1.6 2004/09/17 18:38:28 rleigh Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include <gimp-print/gimp-print.h>
+#include <gutenprint/gutenprint.h>
 
 int main(int argc, char *argv[])
 {

@@ -1,5 +1,5 @@
 /*
- * "$Id: image.c,v 1.5 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: image.c,v 1.6 2004/09/17 18:38:21 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -24,8 +24,8 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
 
 void
 stp_image_init(stp_image_t *image)

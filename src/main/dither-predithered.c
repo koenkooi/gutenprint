@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-predithered.c,v 1.1 2004/07/24 02:22:30 rlk Exp $"
+ * "$Id: dither-predithered.c,v 1.2 2004/09/17 18:38:20 rleigh Exp $"
  *
  *   Very fast dither algorithm
  *
@@ -28,9 +28,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include "gimp-print-internal.h"
-#include <gimp-print/gimp-print-intl-internal.h>
+#include <gutenprint/gutenprint.h>
+#include "gutenprint-internal.h"
+#include <gutenprint/gutenprint-intl-internal.h>
 #include "dither-impl.h"
 #include "dither-inlined-functions.h"
 

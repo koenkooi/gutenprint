@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.34 2004/05/09 16:06:26 rleigh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.35 2004/09/17 18:38:28 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -67,12 +67,8 @@
 
 #define DEBUG_SIGNAL
 #define MIN(x, y) ((x) <= (y) ? (x) : (y))
-#ifdef INCLUDE_GIMP_PRINT_H
-#include INCLUDE_GIMP_PRINT_H
-#else
-#include <gimp-print/gimp-print.h>
-#endif
-#include <gimp-print-internal.h>
+#include <gutenprint/gutenprint.h>
+#include <gutenprint-internal.h>
 
 const char header[] = "Legend:\n"
 "A  Negative pass number.\n"

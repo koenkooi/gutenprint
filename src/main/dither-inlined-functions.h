@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inlined-functions.h,v 1.5 2004/04/27 23:23:46 rlk Exp $"
+ * "$Id: dither-inlined-functions.h,v 1.6 2004/09/17 18:38:18 rleigh Exp $"
  *
  *   Performance-critical functions that should be inlined, based on
  *   measurements.
@@ -26,6 +26,8 @@
  *   See ChangeLog
  */
 
+#ifndef GUTENPRINT_INTERNAL_DITHER_INLINED_FUNCTIONS_H
+#define GUTENPRINT_INTERNAL_DITHER_INLINED_FUNCTIONS_H
 
 /*
  * Inlining has yielded significant (measured) speedup, even with the
@@ -79,3 +81,5 @@ set_row_ends(stpi_dither_channel_t *dc, int x)
     dc->row_ends[0] = x;
   dc->row_ends[1] = x;
 }
+
+#endif /* GUTENPRINT_INTERNAL_DITHER_INLINED_FUNCTIONS_H */

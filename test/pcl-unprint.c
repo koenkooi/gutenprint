@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.10 2004/06/23 14:37:06 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.11 2004/09/17 18:38:28 rleigh Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -27,13 +27,13 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/util.h>
+#include <gutenprint/util.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
 
-static const char *id="@(#) $Id: pcl-unprint.c,v 1.10 2004/06/23 14:37:06 davehill Exp $";
+static const char *id="@(#) $Id: pcl-unprint.c,v 1.11 2004/09/17 18:38:28 rleigh Exp $";
 
 /*
  * Size of buffer used to read file

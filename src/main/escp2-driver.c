@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.22 2004/08/19 03:24:35 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.23 2004/09/17 18:38:20 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -29,9 +29,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print/gimp-print.h>
-#include <gimp-print/gimp-print-intl-internal.h>
-#include "gimp-print-internal.h"
+#include <gutenprint/gutenprint.h>
+#include <gutenprint/gutenprint-intl-internal.h>
+#include "gutenprint-internal.h"
 #include <string.h>
 #include "print-escp2.h"
 
