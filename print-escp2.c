@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.64 2000/02/08 11:54:39 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.65 2000/02/08 13:00:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.65  2000/02/08 13:00:07  rlk
+ *   Correct dot size for variable bits
+ *
  *   Revision 1.64  2000/02/08 11:54:39  rlk
  *   Remove spurious init string
  *
@@ -815,7 +818,10 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi,
 	else
 	  fwrite("\033(K\002\000\000\002", 7, 1, prn);	/* Color printing */
 
-        fwrite("\033(e\002\000\000\000", 7, 1, prn);	/* Default dots */
+	if (bits > 1)
+	  fwrite("\033(e\002\000\000\020", 7, 1, prn);	/* Default dots */
+	else
+	  fwrite("\033(e\002\000\000\000", 7, 1, prn);	/* Default dots */
 
         if (ydpi > 360)
 	  {
@@ -856,7 +862,10 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi,
 	      fwrite("\033(i\001\000\001", 6, 1, prn); /* Microweave on */
 	    else
 	      fwrite("\033(i\001\000\000", 6, 1, prn); /* Microweave off */
-	    fwrite("\033(e\002\000\000\020", 7, 1, prn);	/* Microdots */
+	    if (bits > 1)
+	      fwrite("\033(e\002\000\000\020", 7, 1, prn);	/* Default dots */
+	    else
+	      fwrite("\033(e\002\000\000\000", 7, 1, prn);	/* Default dots */
 	  }
 	else
 	  fwrite("\033(e\002\000\000\002", 7, 1, prn);	/* Whatever dots */
@@ -2712,5 +2721,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.64 2000/02/08 11:54:39 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.65 2000/02/08 13:00:07 rlk Exp $".
  */
