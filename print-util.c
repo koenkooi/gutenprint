@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.115 2000/08/20 01:47:33 rlk Exp $"
+ * "$Id: print-util.c,v 1.116 2000/08/20 22:47:33 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -43,13 +43,6 @@
 #ifndef __GNUC__
 #  define inline
 #endif /* !__GNUC__ */
-
-/*
- * EGCS 1.1.2/gcc 2.91 seems to have some particularly nasty inlining bugs
- */
-#if (__GNUC__ == 2 && __GNUC_MINOR__ == 91)
-#define inline
-#endif
 
 /*
  * RGB to grayscale luminance constants...
