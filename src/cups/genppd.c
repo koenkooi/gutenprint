@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.36.2.7 2002/11/07 12:00:52 rlk Exp $"
+ * "$Id: genppd.c,v 1.36.2.8 2002/12/22 14:54:56 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -429,7 +429,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
     fprintf(stderr, ".");
 
   gzputs(fp, "*PPD-Adobe: \"4.3\"\n");
-  gzputs(fp, "*%PPD file for CUPS/GIMP-print.\n");
+  gzputs(fp, "*%PPD file for CUPS/Gimp-Print.\n");
   gzputs(fp, "*%Copyright 1993-2001 by Easy Software Products, All Rights Reserved.\n");
   gzputs(fp, "*%This PPD file may be freely used and distributed under the terms of\n");
   gzputs(fp, "*%the GNU GPL.\n");
@@ -445,10 +445,10 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzprintf(fp, "*LanguageEncoding: %s\n", _("ISOLatin1"));
   gzprintf(fp, "*PCFileName:	\"%s.ppd\"\n", driver);
   gzprintf(fp, "*Manufacturer:	\"%s\"\n", manufacturer);
-  gzputs(fp, "*Product:	\"(GIMP-print v" VERSION ")\"\n");
+  gzputs(fp, "*Product:	\"(Gimp-Print v" VERSION ")\"\n");
   gzprintf(fp, "*ModelName:     \"%s\"\n", driver);
   gzprintf(fp, "*ShortNickName: \"%s\"\n", long_name);
-  gzprintf(fp, "*NickName:      \"%s, CUPS+GIMP-print v" VERSION "\"\n", long_name);
+  gzprintf(fp, "*NickName:      \"%s, CUPS+Gimp-Print v" VERSION "\"\n", long_name);
 #if CUPS_PPD_PS_LEVEL == 2
   gzputs(fp, "*PSVersion:	\"(2017.000) 705\"\n");
 #else
@@ -872,5 +872,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.36.2.7 2002/11/07 12:00:52 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.36.2.8 2002/12/22 14:54:56 rlk Exp $".
  */
