@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.24 2001/09/18 18:15:27 rleigh Exp $
+# $Id: rules,v 1.25 2001/10/19 16:36:42 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -75,6 +75,8 @@ binary-indep: build install ChangeLog
 	  if test ! -f gimpprint.html ; then \
 	    ln -s gimpprint_toc.html gimpprint.html ; \
 	  fi
+	cp doc/users_guide/*.pdf debian/gimpprint-doc/usr/share/doc/gimpprint-doc
+	cp -r doc/users_guide/html debian/gimpprint-doc/usr/share/doc/gimpprint-doc/html
 	dh_installexamples -i
 #	dh_installmenu -i
 #	dh_installlogrotate -i
