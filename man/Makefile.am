@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2002/08/27 21:12:43 rleigh Exp $
+## $Id: Makefile.am,v 1.10 2002/09/07 16:01:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ EXTRA_man_MANS = cups-calibrate.8 escputil.1 gimpprint.3 gimpprint-config.1
 
 ## Clean
 
-DISTCLEANFILES = cups-calibrate.8 cups-genppd.8.in escputil.1 gimpprint-config.1
+DISTCLEANFILES = cups-calibrate.8 cups-genppd.8 escputil.1 gimpprint-config.1
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = $(man_MANS)
