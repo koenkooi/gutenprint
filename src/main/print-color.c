@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.56.2.3 2003/02/09 00:52:22 rlk Exp $"
+ * "$Id: print-color.c,v 1.56.2.4 2003/02/09 20:13:38 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -184,7 +184,7 @@ static float_param_t float_parameters[] =
       N_("Optimize the settings for the type of image to be printed"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
-    }, 0.0, 0.0, 0.0, 1
+    }, 0.0, 0.0, 0.0, 0
   },
   {
     {
