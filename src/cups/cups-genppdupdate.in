@@ -1,5 +1,5 @@
 #! /usr/bin/perl -w
-# $Id: cups-genppdupdate.in,v 1.4 2003/07/12 21:27:29 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.5 2003/07/12 21:34:18 rlk Exp $
 # Update CUPS PPDs for Gimp-Print queues.
 # Copyright (C) 2002-2003 Roger Leigh (roger@whinlatter.uklinux.net)
 #
@@ -19,7 +19,6 @@
 
 use strict;
 use Getopt::Std;
-use Compress::Zlib;
 use Fcntl qw(:mode);
 use File::Temp qw(:POSIX);
 use File::Copy qw(mv);
@@ -217,12 +216,12 @@ sub update_ppd ($) {
 
     my $suffix = "\\" . $gzext; # Add '\', so m// matches the '.'.
     if ($source =~ m/.gz$/) { # Decompress input buffer
-	my $gz = gzopen($source, "rb")
-	    or die "$_: can't open for decompression: $gzerrno";
-	my $tmp;
-	$ source_data .= $tmp while $gz->gzread($tmp);
-	die "$_: can't decompress file: $gzerrno" if $gzerrno != Z_STREAM_END ;
-	$gz->gzclose();
+	open GZIN, "gunzip -c $source |"
+	    or die "$_: can't open for decompression: $!";
+	while (<GZIN>) {
+	    $source_data .= $_;
+	}
+	close GZIN;
     }
     else {
 	open SOURCE, $source
