@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.229.2.1 2003/02/08 23:13:25 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.229.2.2 2003/02/09 00:52:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -143,14 +143,14 @@ typedef struct escp2_init
 {							\
   "escp2_" #s, "escp2_" #s, NULL,			\
   STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,	\
-  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1			\
+  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1		\
 }
 
 #define PARAMETER_RAW(s)				\
 {							\
   "escp2_" #s, "escp2_" #s, NULL,			\
   STP_PARAMETER_TYPE_RAW, STP_PARAMETER_CLASS_FEATURE,	\
-  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1			\
+  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1		\
 }
 
 static const stp_parameter_t the_parameters[] =

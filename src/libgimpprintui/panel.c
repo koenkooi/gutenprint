@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.7 2003/02/08 23:13:24 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.8 2003/02/09 00:52:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -447,7 +447,7 @@ populate_option_table(GtkWidget *table, int p_class)
       if (level_count > 0 && current_pos > 0)
 	{
 	  GtkWidget *sep = gtk_hseparator_new();
-	  gtk_table_attach_defaults(GTK_TABLE(table), sep, 0, 3,
+	  gtk_table_attach_defaults(GTK_TABLE(table), sep, 0, 4,
 				    current_pos, current_pos + 1);
 	  gtk_widget_show(sep);
 	  current_pos++;
@@ -469,17 +469,18 @@ populate_option_table(GtkWidget *table, int p_class)
 	    {
 	    case STP_PARAMETER_TYPE_STRING_LIST:
 	      stpui_create_new_combo(opt, table, 0,
-				     vpos[desc->p_level][desc->p_type]++);
+				     vpos[desc->p_level][desc->p_type]++,
+				     !(desc->is_mandatory));
 	      break;
 	    case STP_PARAMETER_TYPE_DOUBLE:
-	      opt->info.flt.adjustment = 
-		stpui_scale_entry_new(GTK_TABLE(table), 0,
-				      vpos[desc->p_level][desc->p_type]++,
-				      _(desc->text), 200, 0,
-				      opt->info.flt.deflt,
-				      opt->info.flt.lower,
-				      opt->info.flt.upper,
-				      .001, .01, 3, TRUE, 0, 0, NULL);
+	      stpui_create_scale_entry(opt, GTK_TABLE(table), 0,
+				       vpos[desc->p_level][desc->p_type]++,
+				       _(desc->text), 200, 0,
+				       opt->info.flt.deflt,
+				       opt->info.flt.lower,
+				       opt->info.flt.upper,
+				       .001, .01, 3, TRUE, 0, 0, NULL,
+				       !(desc->is_mandatory));
 	      stpui_set_adjustment_tooltip(opt->info.flt.adjustment,
 					   _(desc->help));
 	      gtk_signal_connect(GTK_OBJECT(opt->info.flt.adjustment),
@@ -517,6 +518,8 @@ set_options_active(void)
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		      if (!desc->is_mandatory)
+			gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_CHECKBUTTON(adj)));
 		    }
 		}
 	      else
@@ -527,6 +530,7 @@ set_options_active(void)
 		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
 		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
 		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_CHECKBUTTON(adj)));
 		    }
 		}
 	      break;
@@ -715,11 +719,10 @@ create_positioning_frame (void)
   stpui_set_help_data (orientation_menu,
 		 _("Select the orientation: portrait, landscape, "
 		   "upside down, or seascape (upside down landscape)"));
-  stpui_table_attach_aligned (GTK_TABLE (table), 1, 0, _("Orientation:"),
-			      1.0, 0.5, orientation_menu, 3, TRUE);
-
+  stpui_table_attach_aligned (GTK_TABLE (table), 0, 0, _("Orientation:"),
+			      1.0, 0.5, orientation_menu, 4, TRUE, FALSE);
   sep = gtk_hseparator_new ();
-  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 4, 1, 2);
+  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 6, 1, 2);
   gtk_widget_show (sep);
 
   /*
@@ -736,27 +739,25 @@ create_positioning_frame (void)
     (table, 0, 4, _("Right Border:"),
      _("Distance from the right of the paper to the image"));
   top_entry = create_positioning_entry
-    (table, 2, 2, _("Top:"),
+    (table, 3, 2, _("Top:"),
      _("Distance from the top of the paper to the image"));
   bottom_entry = create_positioning_entry
-    (table, 2, 3, _("Bottom:"),
+    (table, 3, 3, _("Bottom:"),
      _("Distance from the top of the paper to bottom of the image"));
   bottom_border_entry = create_positioning_entry
-    (table, 2, 4, _("Bottom Border:"),
+    (table, 3, 4, _("Bottom Border:"),
      _("Distance from the bottom of the paper to the image"));
-
   /*
    * Center options
    */
 
   sep = gtk_hseparator_new ();
-  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 4, 5, 6);
+  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 6, 5, 6);
   gtk_widget_show (sep);
 
   box = gtk_hbox_new (TRUE, 4);
-  stpui_table_attach_aligned (GTK_TABLE (table), 0, 7, _("Center:"), 1.0, 0.5,
-			      box, 3, FALSE);
-
+  stpui_table_attach_aligned (GTK_TABLE (table), 0, 7, _("Center:"), 0.5, 0.5,
+			      box, 5, TRUE, FALSE);
   recenter_vertical_button = create_positioning_button
     (box, INVALID_TOP, _("Vertically"),
      _("Center the image vertically on the paper"));
@@ -950,7 +951,7 @@ create_new_printer_dialog (void)
   new_printer_entry = gtk_entry_new ();
   gtk_entry_set_max_length (GTK_ENTRY (new_printer_entry), 127);
   stpui_table_attach_aligned(GTK_TABLE (table), 0, 0, _("Printer Name:"), 1.0,
-			     0.5, new_printer_entry, 1, TRUE);
+			     0.5, new_printer_entry, 1, TRUE, FALSE);
 
   stpui_set_help_data(new_printer_entry,
 		_("Enter the name you wish to give this logical printer"));
@@ -1035,15 +1036,13 @@ create_printer_settings_frame (void)
 		_("Select the name of the printer (not the type, "
 		  "or model, of printer) that you wish to print to"));
   stpui_table_attach_aligned(GTK_TABLE (table), 0, vpos++, _("Printer Name:"),
-			     1.0, 0.5, event_box, 2, TRUE);
-
+			     0.0, 0.5, event_box, 1, TRUE, FALSE);
   printer_model_label = gtk_label_new ("");
   stpui_table_attach_aligned(GTK_TABLE (table), 0, vpos++, _("Printer Model:"),
-			     1.0, 0.0, printer_model_label, 2, TRUE);
-
+			     0.0, 0.0, printer_model_label, 1, TRUE, FALSE);
   printer_hbox = gtk_hbox_new (TRUE, 4);
   gtk_table_attach_defaults (GTK_TABLE (table), printer_hbox,
-			     1, 2, vpos, vpos + 1);
+			     1, 4, vpos, vpos + 1);
   vpos += 2;
   gtk_widget_show (printer_hbox);
 
@@ -1052,8 +1051,9 @@ create_printer_settings_frame (void)
    */
 
   button = gtk_button_new_with_label (_("Setup Printer..."));
-  stpui_set_help_data(button, _("Choose the printer model, PPD file, and command "
-			  "that is used to print to this printer"));
+  stpui_set_help_data(button,
+		      _("Choose the printer model, PPD file, and command "
+			"that is used to print to this printer"));
   gtk_misc_set_padding (GTK_MISC (GTK_BIN (button)->child), 2, 0);
   gtk_box_pack_start (GTK_BOX (printer_hbox), button, FALSE, TRUE, 0);
   gtk_widget_show (button);
@@ -1076,7 +1076,7 @@ create_printer_settings_frame (void)
                       GTK_SIGNAL_FUNC (new_printer_open_callback), NULL);
 
   sep = gtk_hseparator_new ();
-  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 4, vpos, vpos + 1);
+  gtk_table_attach_defaults (GTK_TABLE (table), sep, 0, 5, vpos, vpos + 1);
   gtk_widget_show (sep);
   vpos++;
 
@@ -1090,7 +1090,7 @@ create_printer_settings_frame (void)
   gtk_container_set_border_width (GTK_CONTAINER (page_size_table), 4);
   gtk_widget_show (page_size_table);
   gtk_table_attach_defaults(GTK_TABLE(table), page_size_table,
-			    0, 2, vpos, vpos + 1);
+			    0, 5, vpos, vpos + 1);
   vpos++;
   /*
    * Custom media size entries
@@ -1098,8 +1098,7 @@ create_printer_settings_frame (void)
 
   media_size_table = gtk_table_new (1, 1, FALSE);
   stpui_table_attach_aligned(GTK_TABLE (table), 0, vpos++, _("Dimensions:"),
-			     1.0, 0.5, media_size_table, 2, TRUE);
-
+			     0.0, 0.5, media_size_table, 4, TRUE, FALSE);
   custom_size_width = stpui_create_entry
     (media_size_table, 0, 2, _("Width:"),
      _("Width of the paper that you wish to print to"),
@@ -1116,7 +1115,7 @@ create_printer_settings_frame (void)
   gtk_container_set_border_width (GTK_CONTAINER (printer_features_table), 4);
   gtk_widget_show (printer_features_table);
   gtk_table_attach_defaults(GTK_TABLE(table), printer_features_table,
-			    0, 2, vpos, vpos + 1);
+			    0, 6, vpos, vpos + 1);
 }
 
 static void
@@ -1154,7 +1153,7 @@ create_scaling_frame (void)
   scaling_adjustment =
     stpui_scale_entry_new (GTK_TABLE (table), 0, 0, _("Scaling:"), 100, 75,
 			   100.0, minimum_image_percent, 100.0,
-			   1.0, 10.0, 1, TRUE, 0, 0, NULL);
+			   1.0, 10.0, 1, TRUE, 0, 0, NULL, FALSE);
   stpui_set_adjustment_tooltip(scaling_adjustment,
 			       _("Set the scale (size) of the image"));
   gtk_signal_connect (GTK_OBJECT (scaling_adjustment), "value_changed",
@@ -1193,7 +1192,7 @@ create_scaling_frame (void)
   scaling_percent = gtk_radio_button_new_with_label (NULL, _("Percent"));
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (scaling_percent));
   stpui_table_attach_aligned(GTK_TABLE (table), 0, 0, NULL, 0.5, 0.5,
-			     scaling_percent, 1, TRUE);
+			     scaling_percent, 2, TRUE, FALSE);
 
   stpui_set_help_data(scaling_percent, _("Scale the print to the size of the page"));
   gtk_signal_connect (GTK_OBJECT (scaling_percent), "toggled",
@@ -1201,7 +1200,7 @@ create_scaling_frame (void)
 
   scaling_ppi = gtk_radio_button_new_with_label (group, _("PPI"));
   stpui_table_attach_aligned(GTK_TABLE (table), 0, 1, NULL, 0.5, 0.5,
-			     scaling_ppi, 1, TRUE);
+			     scaling_ppi, 1, TRUE, FALSE);
 
   stpui_set_help_data(scaling_ppi,
 		_("Scale the print to the number of dots per inch"));
@@ -1272,7 +1271,7 @@ create_scaling_frame (void)
       unit->checkbox = gtk_radio_button_new_with_label(group, _(unit->name));
       group = gtk_radio_button_group(GTK_RADIO_BUTTON(unit->checkbox));
       stpui_table_attach_aligned(GTK_TABLE(table), i / 2, i % 2, NULL, 0.5,
-				 0.5, unit->checkbox, 1, TRUE);
+				 0.5, unit->checkbox, 1, TRUE, FALSE);
       stpui_set_help_data(unit->checkbox, _(unit->help));
       gtk_signal_connect(GTK_OBJECT(unit->checkbox), "toggled",
 			 GTK_SIGNAL_FUNC(unit_callback), (gpointer) i);
@@ -1350,7 +1349,7 @@ create_color_adjust_window (void)
 #if 0
   curve = gtk_gamma_curve_new();
   stpui_table_attach_aligned(GTK_TABLE (table), 0, color_option_count + 2,
-			     _("Curve:"), 1.0, 0.5, curve, 1, TRUE);
+			     _("Curve:"), 1.0, 0.5, curve, 1, TRUE, FALSE);
   gtk_curve_set_range(GTK_CURVE(GTK_GAMMA_CURVE(curve)->curve), 0.0, 200.0, 0.0, 200.0);
   gtk_widget_show(curve);
 #endif

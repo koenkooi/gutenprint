@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.56.2.2 2003/02/08 23:13:25 rlk Exp $"
+ * "$Id: print-color.c,v 1.56.2.3 2003/02/09 00:52:22 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -138,18 +138,10 @@ static float_param_t float_parameters[] =
   },
   {
     {
-      "Black", N_("GCR Transition"),
-      N_("Adjust the black gamma"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 0
-    }, 0.0, 1.0, 1.0, 1
-  },
-  {
-    {
       "CyanDensity", N_("Cyan Balance"),
       N_("Adjust the cyan balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 1
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -157,7 +149,7 @@ static float_param_t float_parameters[] =
       "MagentaDensity", N_("Magenta Balance"),
       N_("Adjust the magenta balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 2
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -165,7 +157,7 @@ static float_param_t float_parameters[] =
       "YellowDensity", N_("Yellow Balance"),
       N_("Adjust the yellow balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 3
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -173,7 +165,7 @@ static float_param_t float_parameters[] =
       "BlackDensity", N_("Black Balance"),
       N_("Adjust the black balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 0
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -191,8 +183,16 @@ static float_param_t float_parameters[] =
       "ImageOptimization", N_("Image Type"),
       N_("Optimize the settings for the type of image to be printed"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 0, 1, -1
+      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
     }, 0.0, 0.0, 0.0, 1
+  },
+  {
+    {
+      "Black", N_("GCR Transition"),
+      N_("Adjust the black gamma"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1, 0
+    }, 0.0, 1.0, 1.0, 1
   },
   {
     {
