@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.90 2000/09/28 00:57:53 rlk Exp $"
+ * "$Id: print.h,v 1.91 2000/11/12 15:44:21 rwisi Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -316,6 +316,18 @@ extern void	default_media_size(const printer_t *printer, const vars_t *v,
 				   int *width, int *length);
 
 
+extern char	**lexmark_parameters(const printer_t *printer, char *ppd_file,
+		                   char *name, int *count);
+extern void	lexmark_imageable_area(const printer_t *printer, const vars_t *v,
+				     int *left, int *right,
+				     int *bottom, int *top);
+extern void	lexmark_limit(const printer_t *printer, const vars_t *v,
+			    int *width, int *length);
+extern void	lexmark_print(const printer_t *printer, int copies, FILE *prn,
+			    Image image, const vars_t *v);
+extern const char *lexmark_default_resolution(const printer_t *printer);
+
+
 extern char	**escp2_parameters(const printer_t *printer, char *ppd_file,
 				   char *name, int *count);
 extern void	escp2_imageable_area(const printer_t *printer, const vars_t *v,
@@ -439,5 +451,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.90 2000/09/28 00:57:53 rlk Exp $".
+ * End of "$Id: print.h,v 1.91 2000/11/12 15:44:21 rwisi Exp $".
  */
