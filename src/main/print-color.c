@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.45 2003/01/11 15:59:13 rlk Exp $"
+ * "$Id: print-color.c,v 1.46 2003/01/12 04:01:50 mtomlinson Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1634,6 +1634,7 @@ compute_a_curve(stp_curve_t curve, size_t steps, double c_gamma,
   if (isteps != steps)
     stp_curve_resample(curve, steps);
   stp_free(tmp);
+  return curve;
 }
 
 static void
