@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.9 2003/04/15 02:24:50 rlk Exp $"
+ * "$Id: printer_margins.c,v 1.10 2004/03/14 05:29:46 tillkamppeter Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -53,6 +53,8 @@ main(int argc, char **argv) {
     printf("# Printer model %s, long name `%s'\n", driver,
 	   stp_printer_get_long_name(p));
     stp_describe_parameter(pv, "PageSize", &desc);
+    printf("$defaults{'%s'}{'PageSize'} = '%s';\n",
+	   driver, desc.deflt.str);
     num_opts = stp_string_list_count(desc.bounds.str);
     
     for (k = 0; k < num_opts; k++) {
@@ -83,6 +85,8 @@ main(int argc, char **argv) {
 	height = 0;
       }
 
+      printf("$stpdata{'%s'}{'PageSize'}{'%s'} = '%s';\n",
+	     driver, opt->name, opt->text);
       printf("$imageableareas{'%s'}{'%s'} = {\n",
 	     driver, opt->name);
       printf("  'left' => '%d',\n", left);
