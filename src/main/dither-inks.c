@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.18 2003/06/13 11:37:39 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.19 2003/11/01 15:44:56 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -99,7 +99,6 @@ stpi_dither_channel_destroy(stpi_dither_channel_t *channel)
       SAFE_FREE(channel->errs);
     }
   SAFE_FREE(channel->ranges);
-  SAFE_FREE(channel->shade.et_dis);
   stpi_dither_matrix_destroy(&(channel->pick));
   stpi_dither_matrix_destroy(&(channel->dithermat));
 }  
