@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.36 2001/08/04 16:47:57 rlk Exp $"
+ * "$Id: print-util.c,v 1.37 2001/08/07 00:50:26 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -777,7 +777,7 @@ stp_papersize_get_unit(const stp_papersize_t pt)
   return p->paper_unit;
 }
 
-#if 0
+#if 1
 /*
  * This is, of course, blatantly thread-unsafe.  However, it certainly
  * speeds up genppd by a lot!
