@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.23 2001/09/02 13:30:27 rlk Exp $"
+ * "$Id: print-color.c,v 1.24 2001/09/08 17:13:48 rleigh Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -30,8 +30,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
 

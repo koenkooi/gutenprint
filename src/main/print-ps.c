@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.24 2001/09/02 13:30:27 rlk Exp $"
+ * "$Id: print-ps.c,v 1.25 2001/09/08 17:13:48 rleigh Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -30,8 +30,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 #include <time.h>
 #include <string.h>
 #include <limits.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-version.c,v 1.5 2001/09/02 13:30:27 rlk Exp $"
+ * "$Id: print-version.c,v 1.6 2001/09/08 17:13:48 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,8 +31,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 
 const unsigned int gimpprint_major_version = GIMPPRINT_MAJOR_VERSION;
 const unsigned int gimpprint_minor_version = GIMPPRINT_MINOR_VERSION;

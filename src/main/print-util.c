@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.46 2001/09/06 23:53:31 rlk Exp $"
+ * "$Id: print-util.c,v 1.47 2001/09/08 17:13:48 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,8 +30,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
 #if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
