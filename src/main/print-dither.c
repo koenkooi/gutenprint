@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.88 2002/06/21 21:31:49 mtomlinson Exp $"
+ * "$Id: print-dither.c,v 1.89 2002/06/29 04:10:22 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -3633,8 +3633,14 @@ stp_dither_raw_cmyk_et(const unsigned short  *cmyk,
       
       advance_eventone_pre(d, cd, et, x);
 
-      for (i=0; i < d->n_channels; i++) {
-        int value = cmyk[i];
+      { int value = cmyk[3];		/* Order of input is C,M,Y,K */
+	CHANNEL(d, ECOLOR_K).o = value;				/* Remember value we want printed here */
+	CHANNEL(d, ECOLOR_K).v = value;
+	CHANNEL(d, ECOLOR_K).b = value;
+      }
+      
+      for (i=1; i < d->n_channels; i++) {
+        int value = cmyk[i-1];
 	CHANNEL(d, i).o = value;				/* Remember value we want printed here */
 	CHANNEL(d, i).v = value;
 	CHANNEL(d, i).b = value;
