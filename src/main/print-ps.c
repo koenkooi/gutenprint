@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.26.2.4 2002/12/08 21:12:57 rlk Exp $"
+ * "$Id: print-ps.c,v 1.26.2.5 2003/04/30 00:21:55 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -582,9 +582,16 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   stp_puts("gsave\n", v);
 
   stp_zprintf(v, "%d %d translate\n", left, top);
+
+  /* Force locale to "C", because decimal numbers in Postscript must
+     always be printed with a decimal point rather than the
+     locale-specific setting. */
+
+  setlocale(LC_ALL, "C");
   stp_zprintf(v, "%.3f %.3f scale\n",
           (double)out_width / ((double)image_width),
           (double)out_height / ((double)image_height));
+  setlocale(LC_ALL, "");
 
   in  = stp_zalloc(image_width * image_bpp);
   out = stp_zalloc((image_width * out_bpp + 3) * 2);
