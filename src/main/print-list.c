@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.21 2004/12/01 17:05:02 rleigh Exp $"
+ * "$Id: print-list.c,v 1.22 2004/12/06 00:39:48 rlk Exp $"
  *
  *   Gutenprint list functions.  A doubly-linked list implementation,
  *   with callbacks for freeing, sorting, and retrieving nodes by name
@@ -88,7 +88,7 @@ set_name_cache(stp_list_t *list,
 /**
  * Cache a list node by its long name.
  * @param list the list to use.
- * @param name the long name.
+ * @param long_name the long name.
  * @param cache the node to cache.
  */
 static void
