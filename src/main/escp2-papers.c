@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.9 2003/06/13 22:53:16 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.10 2003/08/02 21:17:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -259,8 +259,8 @@ static const paper_adjustment_t sp960_adjustments[] =
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
   { "Semigloss", 0.9, .4, 1.3, 1.0, 1.0, 1.0, 1, 1.0,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
-  { "Luster", 1.00, .5, .999, 1.0, 1.0, 1.0, 1.0, 1.0,
-    NULL, NULL, NULL },
+  { "Luster", 0.825, .1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
   { "GlossyPaper", 1.00, .5, .999, 1.0, 1.0, 1.0, 1.0, 1.0,
     NULL, NULL, NULL },
   { "Ilford", .85, .4, 1.35, 1.0, 1.0, 1.0, 1, 1.0,
