@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.36 2001/11/11 21:25:36 rlk Exp $"
+ * "$Id: genppd.c,v 1.37 2002/04/06 20:12:27 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -795,7 +795,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
            j <= stp_options[i].high;
 	   j += stp_options[i].step)
 	gzprintf(fp, "*%s %d/%.3f: \"\"\n", stp_options[i].name, j, j * 0.001);
-      gzprintf(fp, "*CloseUI *%s\n", stp_options[i].name);
+      gzprintf(fp, "*CloseUI: *%s\n", stp_options[i].name);
     }
 
  /*
@@ -854,5 +854,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.36 2001/11/11 21:25:36 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.37 2002/04/06 20:12:27 rlk Exp $".
  */
