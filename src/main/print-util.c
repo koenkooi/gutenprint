@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.50 2001/10/01 00:21:02 rlk Exp $"
+ * "$Id: print-util.c,v 1.51 2001/10/01 11:34:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1307,7 +1307,8 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
    * color output to black & white printers!
    */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
-      stp_get_output_type(v) == OUTPUT_COLOR)
+      (stp_get_output_type(v) == OUTPUT_COLOR ||
+       stp_get_output_type(v) == OUTPUT_RAW_CMYK))
     {
       answer = 0;
       stp_eprintf(v, "Printer does not support color output\n");
