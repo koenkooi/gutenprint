@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.57.2.4 2004/03/27 03:57:02 rlk Exp $"
+ * "$Id: panel.c,v 1.57.2.5 2004/03/28 04:24:27 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -742,7 +742,7 @@ populate_options(stp_const_vars_t v)
   for (idx = 0, i = 0; i < current_option_count; i++)
     {
       stp_parameter_t desc;
-      stp_parameter_t *param = stp_parameter_list_param(params, i);
+      const stp_parameter_t *param = stp_parameter_list_param(params, i);
       if (param->p_class == STP_PARAMETER_CLASS_OUTPUT ||
 	  param->p_class == STP_PARAMETER_CLASS_FEATURE ||
 	  (param->p_class == STP_PARAMETER_CLASS_CORE &&
