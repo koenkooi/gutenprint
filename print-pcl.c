@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.46 2000/04/20 02:49:25 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.47 2000/05/04 01:09:05 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1546,6 +1546,8 @@ pcl_print(const printer_t *printer,		/* I - Model */
   */
 
   v->density *= printer->printvars.density;
+  if (v->density > 1.0)
+    v->density = 1.0;
   v->saturation *= printer->printvars.saturation;
 
   if (landscape)
@@ -1910,6 +1912,22 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 /*
  *   $Log: print-pcl.c,v $
+ *   Revision 1.47  2000/05/04 01:09:05  rlk
+ *   Improve use of black ink to reduce sharp grain.
+ *
+ *   Improve weaving code for some corner cases (this will let us go x8 for some
+ *   important cases, if we really want to print that slowly).
+ *
+ *   Fix ESC 440 softweave
+ *
+ *   Fix use of microweave at 360 dpi (microweave should not be used at 360 on
+ *   any printer).
+ *
+ *   Try to improve dither smoothness a bit.
+ *
+ *   Fix ink constants for ESP 870
+ *   from Jean-Marc Verbavatz <verbavatz@ifrance.com>
+ *
  *   Revision 1.46  2000/04/20 02:49:25  rlk
  *   Clean up the solid color and line art modes a bit.
  *
@@ -2173,5 +2191,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-pcl.c,v 1.46 2000/04/20 02:49:25 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.47 2000/05/04 01:09:05 rlk Exp $".
  */
