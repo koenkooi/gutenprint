@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.7 2003/02/13 23:34:54 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.8 2003/02/26 03:19:23 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -43,6 +43,13 @@
 
 typedef struct
 {
+  GtkWidget *checkbox;
+  int current;
+  int deflt;
+} boolean_option_t;
+
+typedef struct
+{
   gint callback_id;
   char *default_val;
   stp_string_list_t params;
@@ -81,6 +88,7 @@ typedef struct
     list_option_t list;
     float_option_t flt;
     curve_option_t curve;
+    boolean_option_t bool;
   } info;
 } option_t;
 
