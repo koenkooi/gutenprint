@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.61 2003/10/18 23:29:00 rlk Exp $"
+ * "$Id: print-vars.c,v 1.62 2003/10/20 02:35:51 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -325,7 +325,7 @@ initialize_standard_vars(void)
       int i;
       for (i = 0; i < STP_PARAMETER_TYPE_INVALID; i++)
 	default_vars.params[i] = create_vars_list();
-      default_vars.driver = stpi_strdup(_("ps2"));
+      default_vars.driver = stpi_strdup("ps2");
       default_vars.color_conversion = stpi_strdup(_("traditional"));
       default_vars.internal_data = create_compdata_list();
       standard_vars_initialized = 1;
