@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.23 2002/05/25 18:30:39 sharkey Exp $
+# $Id: rules,v 1.2.2.24 2002/05/25 21:26:03 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -24,9 +24,7 @@ build-stamp: configure
 	ln -sf libgimpprint.files libgimpprint$(LIBRARY_VERSION).files ; \
 	ln -sf libgimpprint.postinst libgimpprint$(LIBRARY_VERSION).postinst ; \
 	cd .. ; \
-	mkdir debian/gimp-print-build ; \
-	cd debian/gimp-print-build ; \
-	BUILD_PACKAGE=true ../../configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-static --enable-shared --without-gimp --with-cups --without-ijs --with-foomatic --disable-test --without-translated-ppds --disable-cups-level3-ps --enable-maintainer-mode ; \
+	BUILD_PACKAGE=true ./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-static --enable-shared --without-gimp --with-cups --without-ijs --with-foomatic --disable-test --without-translated-ppds --disable-cups-level3-ps --enable-maintainer-mode ; \
 	$(MAKE) ; \
 	cd src/gimp ; \
 	$(MAKE) print
@@ -38,7 +36,7 @@ clean: debian/control
 	rm -f build-stamp 
 
 	# Add here commands to clean up after the build process.
-	rm -rf debian/gimp-print-build debian/gimp-print-install
+	rm -rf debian/gimp-print-install
 	rm -rf debian/libgimpprint$(LIBRARY_VERSION).files
 	rm -rf debian/libgimpprint$(LIBRARY_VERSION).postinst
 	-$(MAKE) distclean
@@ -52,11 +50,10 @@ install: build debian/control
 	dh_clean -k
 	dh_installdirs
 
-	cd debian/gimp-print-build ; \
-	$(MAKE) DESTDIR=`pwd`/../gimp-print-install install
+	$(MAKE) DESTDIR=`pwd`/debian/gimp-print-install install
 	
 	scripts/mkinstalldirs debian/gimp1.2-print/usr/lib/gimp/1.2/plug-ins
-	/usr/bin/install -c debian/gimp-print-build/src/gimp/.libs/print debian/gimp1.2-print/usr/lib/gimp/1.2/plug-ins/print
+	/usr/bin/install -c src/gimp/.libs/print debian/gimp1.2-print/usr/lib/gimp/1.2/plug-ins/print
 	
 	dh_movefiles --sourcedir=debian/gimp-print-install
 	rm debian/foomatic-db-gimp-print/usr/share/foomatic/kitload.log
