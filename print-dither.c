@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.26 2000/04/22 03:29:50 rlk Exp $"
+ * "$Id: print-dither.c,v 1.27 2000/04/22 03:57:47 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -891,6 +891,10 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 		  / d->d_cutoff;
 	    }
 
+	  if (invert_x)
+	    x = 1048519 - x;
+	  if (invert_y)
+	    y = 1048546 - y;
 	  if (randomizer == 0)
 	    vmatrix = virtual_value / 2;
 	  else
@@ -1431,6 +1435,11 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.27  2000/04/22 03:57:47  rlk
+ *   Break up ordered dither pattern a bit.
+ *
+ *   Fix Ghostscript driver slightly
+ *
  *   Revision 1.26  2000/04/22 03:29:50  rlk
  *   Try to vary the randomness -- more random at paler colors.
  *
@@ -1519,5 +1528,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.26 2000/04/22 03:29:50 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.27 2000/04/22 03:57:47 rlk Exp $".
  */

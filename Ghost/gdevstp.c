@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.9 2000/04/16 21:31:32 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.10 2000/04/22 03:57:47 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -433,7 +433,7 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Model", &model, 0, 17, code);
   code = stp_put_param_int(plist, "Quality", &qual, 0, 7, code);
   code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
-  code = stp_put_param_int(plist, "Dither", &algo, 0, 1, code);
+  code = stp_put_param_int(plist, "Dither", &algo, 0, 2, code);
   code = stp_put_param_float(plist, "Gamma", &gamma, 0.1, 3., code);
   code = stp_put_param_float(plist, "Saturation", &sat, 0.1, 9., code);
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
