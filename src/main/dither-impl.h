@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.1 2003/01/20 01:13:05 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.2 2003/01/20 02:43:47 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -65,6 +65,8 @@ typedef struct
 #define ERROR_ROWS 2
 
 #define MAX_SPREAD 32
+
+typedef void ditherfunc_t(stp_vars_t, int, const unsigned short *, int, int);
 
 /*
  * An end of a dither segment, describing one ink
@@ -217,7 +219,7 @@ typedef struct dither
   stp_dither_data_t dt;
 
   unsigned short virtual_dot_scale[65536];
-  void (*ditherfunc)(const unsigned short *, int, struct dither *, int, int);
+  ditherfunc_t *ditherfunc;
   void *aux_data;
   void (*aux_freefunc)(struct dither *);
 } dither_t;
@@ -237,19 +239,12 @@ do						\
 
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
 
-typedef void ditherfunc_t(const unsigned short *, int, struct dither *,
-			  int, int);
 
-extern ditherfunc_t stp_dither_raw_cmyk_fast;
-extern ditherfunc_t stp_dither_raw_cmyk_very_fast;
-extern ditherfunc_t stp_dither_raw_cmyk_ordered;
-extern ditherfunc_t stp_dither_raw_cmyk_ed;
-extern ditherfunc_t stp_dither_raw_cmyk_et;
-extern ditherfunc_t stp_dither_raw_fast;
-extern ditherfunc_t stp_dither_raw_very_fast;
-extern ditherfunc_t stp_dither_raw_ordered;
-extern ditherfunc_t stp_dither_raw_ed;
-extern ditherfunc_t stp_dither_raw_et;
+extern ditherfunc_t stp_dither_fast;
+extern ditherfunc_t stp_dither_very_fast;
+extern ditherfunc_t stp_dither_ordered;
+extern ditherfunc_t stp_dither_ed;
+extern ditherfunc_t stp_dither_et;
 
 extern void stp_dither_reverse_row_ends(dither_t *d);
 
@@ -317,5 +312,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.1 2003/01/20 01:13:05 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.2 2003/01/20 02:43:47 rlk Exp $".
  */
