@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.10.4.1 2004/03/26 03:04:37 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.10.4.2 2004/03/27 23:04:04 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -101,6 +101,7 @@ page_size		DBG(PAGESIZE); return PAGESIZE;
 ;			DBG(SEMI); return SEMI;
 mode			DBG(MODE); return MODE;
 cmyk			yylval.ival = CMYK;DBG(CMYK); return CMYK;
+kcmy			yylval.ival = CMYK;DBG(KCMY); return KCMY;
 rgb			yylval.ival = RGB;DBG(RGB); return RGB;
 cmy			yylval.ival = RGB;DBG(CMY); return CMY;
 grey			yylval.ival = GRAY;DBG(GRAY); return GRAY;

@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.35.4.2 2004/03/26 03:04:37 rlk Exp $"
+ * "$Id: testpattern.c,v 1.35.4.3 2004/03/27 23:04:04 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -713,6 +713,10 @@ fill_colors_##bits(unsigned char *data, size_t len, size_t scount,	  \
 	      s_data[0] = xvals[0];					  \
 	      s_data[1] = 0;						  \
 	      break;							  \
+	    case 3:							  \
+	      for (j = 1; j < 4; j++)					  \
+		s_data[j - 1] = xvals[j];				  \
+	      break;							  \
 	    case 4:							  \
 	      for (j = 0; j < 4; j++)					  \
 		s_data[j] = xvals[j];					  \
@@ -781,8 +785,6 @@ fill_pattern(testpattern_t *p, unsigned char *data, size_t width,
     default:
       break;
     }
-  if (invert_data)
-    invert_data(data, byte_depth);
 }
 
 
