@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.67 2000/10/12 11:52:13 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.68 2000/10/14 01:40:14 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -547,6 +547,19 @@ gimp_create_main_window (void)
   gtk_container_set_border_width (GTK_CONTAINER (table), 4);
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
+
+  (*current_printer->media_size) (current_printer, &vars, &paper_width,
+				  &paper_height);
+
+  (*current_printer->imageable_area) (current_printer, &vars, &left, &right,
+				      &bottom, &top);
+
+  /* Rationalise things a bit by measuring everything from the top left */
+  top = paper_height - top;
+  bottom = paper_height - bottom;
+
+  printable_width  = right - left;
+  printable_height = bottom - top;
 
   if (vars.scaling < 0.0)
     {

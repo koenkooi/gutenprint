@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.57 2000/10/04 01:08:16 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.58 2000/10/14 01:40:14 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -763,6 +763,19 @@ void gtk_create_main_window(void)
 		     GTK_FILL, GTK_FILL,
 		     0, 0);
     gtk_widget_show(box);
+
+    (*current_printer->media_size) (current_printer, &vars, &paper_width,
+				    &paper_height);
+
+    (*current_printer->imageable_area) (current_printer, &vars, &left, &right,
+				      &bottom, &top);
+
+    /* Rationalise things a bit by measuring everything from the top left */
+    top = paper_height - top;
+    bottom = paper_height - bottom;
+
+    printable_width  = right - left;
+    printable_height = bottom - top;
 
     if (vars.scaling < 0.0)
       {
