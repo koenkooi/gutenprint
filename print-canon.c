@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.92 2000/10/22 14:07:09 gandy Exp $"
+ * "$Id: print-canon.c,v 1.93 2000/10/22 14:52:36 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -989,7 +989,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   PUT("out_height", out_height,ydpi);
   */
 
-  left = ydpi * left / 72;
+  left = xdpi * left / 72;
 
   PUT("leftskip",left,xdpi);
 
