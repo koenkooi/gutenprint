@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.32.2.3 2002/11/16 21:39:06 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.32.2.4 2002/11/18 00:31:03 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -47,8 +47,6 @@ static void color_update (GtkAdjustment *adjustment);
 typedef struct
 {
   const char *name;
-  const char *text;
-  const char *help;
   GtkObject *adjustment;
   gfloat scale;
   gint is_color;
@@ -57,35 +55,14 @@ typedef struct
 
 static color_option_t color_options[] =
   {
-    { "Brightness", N_("Brightness:"), N_("Set the brightness of the print.\n"
-                            "0 is solid black, 2 is solid white"),
-      NULL, 10, 0, 1 },
-    { "Contrast", N_("Contrast:"), N_("Set the contrast of the print"),
-      NULL, 10, 0, 1 },
-    { "Cyan", N_("Cyan:"), N_("Set the cyan balance of the print"),
-      NULL, 10, 1, 1 },
-    { "Magenta", N_("Magenta:"), N_("Set the magenta balance of the print"),
-      NULL, 10, 1, 1 },
-    { "Yellow", N_("Yellow:"), N_("Set the yellow balance of the print"),
-      NULL, 10, 1, 1 },
-    { "Saturation", N_("Saturation:"),
-      N_("Adjust the saturation (color balance) of the print\n"
-	 "Use zero saturation to produce grayscale output "
-	 "using color and black inks"),
-      NULL, 100, 1, 1 },
-    { "Density", N_("Density:"),
-      N_("Adjust the density (amount of ink) of the print. "
-	 "Reduce the density if the ink bleeds through the "
-	 "paper or smears; increase the density if black "
-	 "regions are not solid."),
-      NULL, 100, 0, 0 },
-    { "Gamma", N_("Gamma:"),
-      N_("Adjust the gamma of the print. Larger values will "
-	 "produce a generally brighter print, while smaller "
-	 "values will produce a generally darker print. "
-	 "Black and white will remain the same, unlike with "
-	 "the brightness adjustment."),
-      NULL, 100, 0, 1 }
+    { "Brightness", NULL, 10,  0, 1 },
+    { "Contrast",   NULL, 10,  0, 1 },
+    { "Cyan",       NULL, 10,  1, 1 },
+    { "Magenta",    NULL, 10,  1, 1 },
+    { "Yellow",     NULL, 10,  1, 1 },
+    { "Saturation", NULL, 100, 1, 1 },
+    { "Density",    NULL, 100, 0, 0 },
+    { "Gamma",      NULL, 100, 0, 1 }
   };
 const static gint color_option_count = (sizeof(color_options) /
 					sizeof(color_option_t));
@@ -143,10 +120,6 @@ redraw_color_swatch (void)
 
   if (swatch == NULL || swatch->widget.window == NULL)
     return;
-
-#if 0
-  gdk_window_clear (swatch->widget.window);
-#endif
 
   if (gc == NULL)
     {
@@ -214,7 +187,6 @@ create_color_adjust_window (void)
   gtk_container_set_border_width (GTK_CONTAINER (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 4);
   gtk_table_set_row_spacings (GTK_TABLE (table), 2);
-/*  gtk_table_set_row_spacing (GTK_TABLE (table), 8, 6); */
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (color_adjust_dialog)->vbox),
 		      table, FALSE, FALSE, 0);
   gtk_widget_show (table);
@@ -249,14 +221,14 @@ create_color_adjust_window (void)
 	  desc.level == STP_PARAMETER_LEVEL_BASIC)
 	{
 	  opt->adjustment =
-	    gimp_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(opt->name),
+	    gimp_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(desc.text),
 				 200, 0, desc.deflt.dbl,
 				 desc.bounds.dbl.lower,
 				 desc.bounds.dbl.upper,
 				 desc.deflt.dbl / (opt->scale * 10),
 				 desc.deflt.dbl / opt->scale,
 				 3, TRUE, 0, 0, NULL, NULL);
-	  set_adjustment_tooltip(opt->adjustment, _(opt->help));
+	  set_adjustment_tooltip(opt->adjustment, _(desc.help));
 	  gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
 			     GTK_SIGNAL_FUNC(color_update), (gpointer) i);
 	}
@@ -309,25 +281,22 @@ color_update (GtkAdjustment *adjustment)
     }
 }
 
-static void
-set_adjustment_active (GtkObject *adj,
-		       gboolean   active)
-{
-  gtk_widget_set_sensitive (GTK_WIDGET (GIMP_SCALE_ENTRY_LABEL (adj)), active);
-  gtk_widget_set_sensitive (GTK_WIDGET (GIMP_SCALE_ENTRY_SCALE (adj)), active);
-  gtk_widget_set_sensitive (GTK_WIDGET (GIMP_SCALE_ENTRY_SPINBUTTON (adj)),
-                            active);
-}
-
 void
 set_color_sliders_active (gboolean active)
 {
   int i;
   for (i = 0; i < color_option_count; i++)
     {
-      color_option_t *opt = &(color_options[i]);
-      if (opt->is_color)
-	set_adjustment_active(opt->adjustment, active);
+      if (color_options[i].is_color)
+	{
+	  GtkObject *adj = color_options[i].adjustment;
+	  gtk_widget_set_sensitive
+	    (GTK_WIDGET (GIMP_SCALE_ENTRY_LABEL (adj)), active);
+	  gtk_widget_set_sensitive
+	    (GTK_WIDGET (GIMP_SCALE_ENTRY_SCALE (adj)), active);
+	  gtk_widget_set_sensitive
+	    (GTK_WIDGET (GIMP_SCALE_ENTRY_SPINBUTTON (adj)), active);
+	}
     }
 }
 
