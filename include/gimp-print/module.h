@@ -1,5 +1,5 @@
 /*
- * "$Id: module.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $"
+ * "$Id: module.h,v 1.2 2004/05/08 00:05:30 rlk Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl/libdl.
  *
@@ -91,12 +91,12 @@ typedef struct stp_module
 } stp_module_t;
 
 
-int stp_module_load(void);
-int stp_module_exit(void);
-int stp_module_open(const char *modulename);
-int stp_module_init(void);
-int stp_module_close(stp_list_item_t *module);
-stp_list_t *stp_module_get_class(stp_module_class_t class);
+extern int stp_module_load(void);
+extern int stp_module_exit(void);
+extern int stp_module_open(const char *modulename);
+extern int stp_module_init(void);
+extern int stp_module_close(stp_list_item_t *module);
+extern stp_list_t *stp_module_get_class(stp_module_class_t class);
 
 
 #ifdef __cplusplus
