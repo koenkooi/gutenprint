@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.70 2000/08/11 11:52:00 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.71 2000/08/23 02:07:56 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1773,9 +1773,8 @@ pcl_print(const printer_t *printer,		/* I - Model */
     {
       errlast = errline;
       Image_get_row(image, in, errline);
+      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
     }
-
-    (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
 
     if (do_cret)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.74 2000/08/12 17:27:35 rlk Exp $"
+ * "$Id: print.h,v 1.75 2000/08/23 02:07:56 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -302,11 +302,14 @@ extern void	calculate_row_parameters(void *w, int row, int subpass,
 extern void	destroy_weave_params(void *vw);
 
 
-extern void	dither_fastblack(unsigned short *, int, void *, unsigned char *);
+extern void	dither_fastblack(const unsigned short *, int, void *,
+				 unsigned char *);
 
-extern void	dither_black(unsigned short *, int, void *, unsigned char *);
+extern void	dither_black(const unsigned short *, int, void *,
+			     unsigned char *);
 
-extern void	dither_cmyk(unsigned short *, int, void *, unsigned char *,
+extern void	dither_cmyk(const unsigned short *, int, void *,
+			    unsigned char *,
 			    unsigned char *, unsigned char *,
 			    unsigned char *, unsigned char *,
 			    unsigned char *, unsigned char *);
@@ -399,5 +402,5 @@ verify_printer_params(const printer_t *, const vars_t *);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.74 2000/08/12 17:27:35 rlk Exp $".
+ * End of "$Id: print.h,v 1.75 2000/08/23 02:07:56 rlk Exp $".
  */

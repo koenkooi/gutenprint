@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.221 2000/08/21 11:31:12 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.222 2000/08/23 02:07:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2110,9 +2110,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     {
       errlast = errline;
       Image_get_row(image, in, errline);
+      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
     }
 
-    (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv);
 
     if (nv.image_type == IMAGE_MONOCHROME)
       dither_fastblack(out, y, dither, black);
