@@ -4,7 +4,7 @@
    XML description of papers known to libgimpprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.10 2003/04/20 22:33:49 rlk Exp $"
+   "$Id: papers.xml,v 1.11 2003/10/01 12:48:16 m0m Exp $"
 -->
 
 <!--
@@ -886,6 +886,26 @@
       <width value="279"/>
       <height value="540"/>
       <unit value="english-extended"/>
+    </paper>
+    <paper name="w288h387">
+      <description value="4x5 3/8"/>
+      <width value="288"/>
+      <height value="387"/>
+      <unit value="english-extended"/>
+    </paper>
+    <paper name="w253h337">
+      <description value="CP_L"/>
+      <comment value="89mm x 119mm"/>
+      <width value="253"/>
+      <height value="337"/>
+      <unit value="metric-extended"/>
+    </paper>
+    <paper name="w155h244">
+      <description value="Card"/>
+      <comment value="54mm x 86mm"/>
+      <width value="155"/>
+      <height value="244"/>
+      <unit value="metric-extended"/>
     </paper>
 <!--
     Custom
