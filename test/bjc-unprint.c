@@ -1,4 +1,4 @@
-/* $Id: bjc-unprint.c,v 1.7 2003/05/05 00:36:04 rlk Exp $ */
+/* $Id: bjc-unprint.c,v 1.8 2003/11/21 03:08:05 rlk Exp $ */
 /*
  * Convert BJC-printjobs to xbm files, one for each color channel
  *
@@ -28,7 +28,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
+#endif
 
 
 char *efnlc= 0,*efnlm= 0,*efnc= 0,*efnm= 0,*efny= 0,*efnk= 0;
