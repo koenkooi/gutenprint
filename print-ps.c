@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.27 2000/06/04 15:28:06 cpbs Exp $"
+ * "$Id: print-ps.c,v 1.28 2000/06/04 15:34:00 cpbs Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -427,9 +427,9 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
     * Swap left/top offsets...
     */
 
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
+    x    = left;
+    left = top;
+    top  = page_height - x - out_height;
   }
 
  /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.49 2000/05/30 09:50:33 gandy Exp $"
+ * "$Id: print-canon.c,v 1.50 2000/06/04 15:34:00 cpbs Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -925,9 +925,9 @@ canon_print(const printer_t *printer,		/* I - Model */
     landscape  = 1;
 
     /* Swap left/top offsets... */
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
+    x    = left;
+    left = top;
+    top  = page_height - x - out_height;
   }
 
   if (left < 0)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155 2000/06/02 11:52:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.156 2000/06/04 15:34:00 cpbs Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1144,9 +1144,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     * Swap left/top offsets...
     */
 
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
+    x    = left;
+    left = top;
+    top  = page_height - x - out_height;
   }
 
   if (left < 0)

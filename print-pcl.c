@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.52 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.53 2000/06/04 15:34:00 cpbs Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1353,9 +1353,9 @@ pcl_print(const printer_t *printer,		/* I - Model */
     * Swap left/top offsets...
     */
 
-    x    = top;
-    top  = left;
-    left = page_width - x - out_width;
+    x    = left;
+    left = top;
+    top  = page_height - x - out_height;
   }
 
   if (left < 0)
