@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.48 2003/01/14 00:23:42 rlk Exp $"
+ * "$Id: print-color.c,v 1.49 2003/01/18 04:19:21 mtomlinson Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1412,7 +1412,7 @@ compute_a_curve(stp_curve_t curve, size_t steps, double c_gamma,
   for (i = 0; i < isteps; i ++)
     {
       double temp_pixel, pixel;
-      pixel = (double) i / (double) (steps - 1);
+      pixel = (double) i / (double) (isteps - 1);
 
       if (input_color_model == COLOR_MODEL_CMY)
 	pixel = 1.0 - pixel;
