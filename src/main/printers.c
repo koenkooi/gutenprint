@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.71.6.2 2004/07/22 03:26:12 rlk Exp $"
+ * "$Id: printers.c,v 1.71.6.3 2004/07/24 00:58:40 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -68,6 +68,28 @@ struct stp_printer
   char       *long_name;        /* Long name for UI */
   char	     *manufacturer;	/* Printer manufacturer */
 };
+
+static int
+stpi_safe_init_printer_list(void)
+{
+  if (!printer_list)
+    {
+      printer_list = stp_list_create();
+      stp_list_set_freefunc(printer_list, stpi_printer_freefunc);
+      stp_list_set_namefunc(printer_list, stpi_printer_namefunc);
+      stp_list_set_long_namefunc(printer_list, stpi_printer_long_namefunc);
+    }
+  if (!driver_list)
+    {
+      driver_list = stp_list_create();
+      stp_list_set_freefunc(driver_list, stpi_driver_freefunc);
+      stp_list_set_namefunc(driver_list, stpi_driver_namefunc);
+      stp_list_set_long_namefunc(driver_list, stpi_driver_long_namefunc);
+      /* stp_list_set_sortfunc(driver_list, stpi_driver_sortfunc); */
+    }
+
+  return 0;
+}
 
 static int
 stpi_init_printer_list(void)
@@ -385,13 +407,7 @@ void
 stp_initialize_printer_defaults(void)
 {
   stp_list_item_t *driver_item;
-  if (driver_list == NULL)
-    {
-      stpi_init_printer_list();
-      stp_deprintf
-	(STP_DBG_PRINTERS,
-	 "stpi_family_register(): initialising printer_list...\n");
-    }
+  stpi_safe_init_printer_list();
   driver_item = stp_list_get_start(driver_list);
   while (driver_item)
     {
@@ -832,13 +848,8 @@ stp_family_register(stp_list_t *family)
   stp_list_item_t *driver_item;
   const stp_driver_t *driver;
 
-  if (driver_list == NULL)
-    {
-      stpi_init_printer_list();
-      stp_deprintf
-	(STP_DBG_PRINTERS,
-	 "stpi_family_register(): initialising driver_list...\n");
-    }
+  stpi_safe_init_printer_list();
+  stp_deprintf(STP_DBG_PRINTERS, "stp_family_register()\n");
 
   if (family)
     {
@@ -864,13 +875,8 @@ stp_family_unregister(stp_list_t *family)
   stp_list_item_t *old_driver_item;
   const stp_driver_t *driver;
 
-  if (driver_list == NULL)
-    {
-      stpi_init_printer_list();
-      stp_deprintf
-	(STP_DBG_PRINTERS,
-	 "stpi_family_unregister(): initialising driver_list...\n");
-    }
+  stpi_safe_init_printer_list();
+  stp_deprintf(STP_DBG_PRINTERS, "stp_family_unregister()\n");
 
   if (family)
     {
@@ -901,12 +907,10 @@ stp_driver_create_from_xmltree(stp_mxml_node_t *driver, /* The driver node */
 				const stp_printfuncs_t *printfuncs)
                                                        /* Family printfuncs */
 {
-  stp_mxml_node_t *prop;                                  /* Temporary node pointer */
-  const char *stmp;                                    /* Temporary string */
-  stp_driver_t *outdriver;                 /* Generated driver */
-  int
-    found_driver = 0,                                       /* Check driver */
-    model = 0;                                        /* Check model */
+  stp_mxml_node_t *prop;	/* Temporary node pointer */
+  const char *stmp;		/* Temporary string */
+  stp_driver_t *outdriver;	/* Generated driver */
+  int found_driver = 0;		/* Check driver */
 
   outdriver = stp_zalloc(sizeof(stp_driver_t));
   if (!outdriver)
@@ -918,8 +922,13 @@ stp_driver_create_from_xmltree(stp_mxml_node_t *driver, /* The driver node */
       return NULL;
     }
 
-  stmp = stp_mxmlElementGetAttr(driver, "driver");
+  stmp = stp_mxmlElementGetAttr(driver, "name");
   stp_set_driver(outdriver->printvars, (const char *) stmp);
+  stmp = stp_mxmlElementGetAttr(driver, "model");
+  if (stmp)
+    outdriver->model = stp_xmlstrtol(stmp);
+  else
+    outdriver->model = -1;
 
   outdriver->family = stp_strdup((const char *) family);
 
@@ -934,16 +943,7 @@ stp_driver_create_from_xmltree(stp_mxml_node_t *driver, /* The driver node */
       if (prop->type == STP_MXML_ELEMENT)
 	{
 	  const char *prop_name = prop->value.element.name;
-	  if (!strcmp(prop_name, "model"))
-	    {
-	      stmp = stp_mxmlElementGetAttr(prop, "value");
-	      if (stmp)
-		{
-		  outdriver->model = stp_xmlstrtol(stmp);
-		  model = 1;
-		}
-	    }
-	  else if (!strcmp(prop_name, "parameter"))
+	  if (!strcmp(prop_name, "parameter"))
 	    {
 	      const char *p_type = stp_mxmlElementGetAttr(prop, "type");
 	      const char *p_name = stp_mxmlElementGetAttr(prop, "name");
@@ -1007,14 +1007,15 @@ stp_driver_create_from_xmltree(stp_mxml_node_t *driver, /* The driver node */
 	}
       prop = prop->next;
     }
-  if (found_driver && model && printfuncs)
+  if (found_driver && printfuncs)
     {
+      outdriver->driver = stp_get_driver(outdriver->printvars);
       if (stp_get_debug_level() & STP_DBG_XML)
 	{
-	  stmp = stp_mxmlElementGetAttr(driver, "driver");
-	  stp_erprintf("stp_driver_create_from_xmltree: driver: %s\n", stmp);
+	  stmp = stp_mxmlElementGetAttr(driver, "name");
+	  stp_erprintf("stp_driver_create_from_xmltree: driver: %s %s\n", stmp,
+		       outdriver->driver);
 	}
-      outdriver->driver = stp_get_driver(outdriver->printvars);
       return outdriver;
     }
   stp_free(outdriver);
@@ -1035,14 +1036,6 @@ stp_printer_create_from_xmltree(stp_mxml_node_t *printer)
   outprinter->driver_name = stp_strdup((const char *) stmp);
   outprinter->long_name = stp_strdup(stp_mxmlElementGetAttr(printer, "name"));
   outprinter->manufacturer = stp_strdup(stp_mxmlElementGetAttr(printer, "manufacturer"));
-  outprinter->driver_p = stp_get_driver_by_name(outprinter->driver_name);
-  if (!outprinter->driver_p)
-    {
-      stp_erprintf("Cannot find driver %s for printer %s\n",
-		   outprinter->driver_name, outprinter->long_name);
-      stp_free(outprinter);
-      return NULL;
-    }
   stp_deprintf(STP_DBG_XML,
 	       "stp_printer_create_from_xmltree: printer: %s %s %s\n",
 	       outprinter->long_name, outprinter->driver_name,
@@ -1117,7 +1110,8 @@ stpi_xml_process_family(stp_mxml_node_t *family)     /* The family node */
 static void
 stpi_xml_process_printers(stp_mxml_node_t *printers)     /* The family node */
 {
-  stp_mxml_node_t *printer = printer->child;
+  stp_mxml_node_t *printer = printers->child;
+  stpi_safe_init_printer_list();
   while (printer)
     {
       if (printer->type == STP_MXML_ELEMENT)

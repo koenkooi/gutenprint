@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.101.2.2 2004/07/22 03:26:12 rlk Exp $"
+   "$Id: printers.xml,v 1.101.2.3 2004/07/24 00:58:41 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -12,14 +12,8 @@
   xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gimpprint.xsd">
   <printdef>
     <family name="ps">
-      <driver name="ps" model="0">
-        <parameter type="float" name="Gamma">1.000</parameter>
-        <parameter type="float" name="Density">1.000</parameter>
-      </driver>
-      <driver name="ps2" model="1">
-        <parameter type="float" name="Gamma">1.000</parameter>
-        <parameter type="float" name="Density">1.000</parameter>
-      </driver>
+      <driver name="ps" model="0"/>
+      <driver name="ps2" model="1"/>
     </family>
     <family name="canon">
       <driver name="bjc-30" model="30">
@@ -563,30 +557,19 @@
       </driver>
     </family>
     <family name="olympus">
-      <driver name="olympus-p10" model="2">
-      </driver>
-      <driver name="olympus-p300" model="0">
-      </driver>
-      <driver name="olympus-p400" model="1">
-      </driver>
-      <driver name="olympus-p440" model="3">
-      </driver>
-      <driver name="canon-cp100" model="1000">
-      </driver>
-      <driver name="canon-cp220" model="1001">
-      </driver>
-      <driver name="sony-updp10" model="2000">
-      </driver>
-      <driver name="fujifilm-cx400" model="3000">
-      </driver>
-      <driver name="fujifilm-cx550" model="3001">
-      </driver>
+      <driver name="olympus-p10" model="2"/>
+      <driver name="olympus-p300" model="0"/>
+      <driver name="olympus-p400" model="1"/>
+      <driver name="olympus-p440" model="3"/>
+      <driver name="canon-cp100" model="1000"/>
+      <driver name="canon-cp220" model="1001"/>
+      <driver name="sony-updp10" model="2000"/>
+      <driver name="fujifilm-cx400" model="3000"/>
+      <driver name="fujifilm-cx550" model="3001"/>
     </family>
     <family name="raw">
-      <driver name="raw-data-16" model="0">
-      </driver>
-      <driver name="raw-data-8" model="1">
-      </driver>
+      <driver name="raw-data-16" model="0"/>
+      <driver name="raw-data-8" model="1"/>
     </family>
     <printers>
       <printer name="Apollo P-2100" driver="pcl-690" manufacturer="Apollo"/>
@@ -660,7 +643,7 @@
       <printer name="Canon LBP-1260" driver="pcl-6" manufacturer="Canon"/>
       <printer name="Canon LBP-1760" driver="pcl-6" manufacturer="Canon"/>
       <printer name="Canon S100" driver="bjc-4300" manufacturer="Canon"/>
-      <printer name="Canon S300" driver="bjc-s800" manufacturer="Canon"/>
+      <printer name="Canon S300" driver="bjc-8200" manufacturer="Canon"/>
       <printer name="Canon S400" driver="bjc-3000" manufacturer="Canon"/>
       <printer name="Canon S450" driver="bjc-6200" manufacturer="Canon"/>
       <printer name="Canon S500" driver="bjc-8200" manufacturer="Canon"/>
@@ -974,19 +957,19 @@
       <printer name="HP E-printer E20" driver="pcl-601" manufacturer="HP"/>
       <printer name="HP LaserJet 2" driver="pcl-2" manufacturer="HP"/>
       <printer name="HP LaserJet 2D" driver="pcl-2" manufacturer="HP"/>
-      <printer name="HP LaserJet 2P" driver="pcl-2p s" manufacturer="HP"/>
-      <printer name="HP LaserJet 2P Plus" driver="pcl-2p s" manufacturer="HP"/>
-      <printer name="HP LaserJet 3" driver="pcl-3  s" manufacturer="HP"/>
-      <printer name="HP LaserJet 3D" driver="pcl-3  s" manufacturer="HP"/>
+      <printer name="HP LaserJet 2P" driver="pcl-2p" manufacturer="HP"/>
+      <printer name="HP LaserJet 2P Plus" driver="pcl-2p" manufacturer="HP"/>
+      <printer name="HP LaserJet 3" driver="pcl-3" manufacturer="HP"/>
+      <printer name="HP LaserJet 3D" driver="pcl-3" manufacturer="HP"/>
       <printer name="HP LaserJet 3P w/ PCL5" driver="pcl-4l" manufacturer="HP"/>
-      <printer name="HP LaserJet 3P w/PS" driver="pcl-3  s" manufacturer="HP"/>
+      <printer name="HP LaserJet 3P w/PS" driver="pcl-3" manufacturer="HP"/>
       <printer name="HP LaserJet 4" driver="pcl-4" manufacturer="HP"/>
       <printer name="HP LaserJet 4 Plus" driver="pcl-4" manufacturer="HP"/>
       <printer name="HP LaserJet 4L" driver="pcl-4l" manufacturer="HP"/>
       <printer name="HP LaserJet 4M" driver="pcl-4" manufacturer="HP"/>
       <printer name="HP LaserJet 4ML" driver="pcl-4" manufacturer="HP"/>
       <printer name="HP LaserJet 4P" driver="pcl-4" manufacturer="HP"/>
-      <printer name="HP LaserJet 4Si" driver="pcl-4" manufacturer="HP"/>
+      <printer name="HP LaserJet 4Si" driver="pcl-4si" manufacturer="HP"/>
       <printer name="HP LaserJet 4V" driver="pcl-4v" manufacturer="HP"/>
       <printer name="HP LaserJet 5" driver="pcl-5" manufacturer="HP"/>
       <printer name="HP LaserJet 5L" driver="pcl-4" manufacturer="HP"/>
