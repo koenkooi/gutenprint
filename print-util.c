@@ -1,12 +1,12 @@
 /*
- * "$Id: print-util.c,v 1.130 2000/09/04 19:46:00 rlk Exp $"
+ * "$Id: print-util.c,v 1.131 2000/09/05 21:42:23 cpbs Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
  *
- *   This program is free software; you can cyanistribute it and/or modify it
+ *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
  *   Software Foundation; either version 2 of the License, or (at your option)
  *   any later version.

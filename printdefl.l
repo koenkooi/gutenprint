@@ -1,11 +1,11 @@
 /*
- * "$Id: printdefl.l,v 1.4 2000/08/28 03:09:58 rlk Exp $"
+ * "$Id: printdefl.l,v 1.5 2000/09/05 21:42:24 cpbs Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
  *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
  *
- *   This program is free software; you can cyanistribute it and/or modify it
+ *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
  *   Software Foundation; either version 2 of the License, or (at your option)
  *   any later version.

@@ -1,12 +1,12 @@
 /*
- * "$Id: gtk_color_window.c,v 1.18 2000/09/02 21:52:17 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.19 2000/09/05 21:42:23 cpbs Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
  *	Robert Krawitz (rlk@alum.mit.edu), and Steve Miller (smiller@rni.net)
  *
- *   This program is free software; you can cyanistribute it and/or modify it
+ *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
  *   Software Foundation; either version 2 of the License, or (at your option)
  *   any later version.
