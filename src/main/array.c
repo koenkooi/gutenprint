@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.1 2003/03/19 20:29:38 rleigh Exp $"
+ * "$Id: array.c,v 1.2 2003/03/31 17:29:53 rleigh Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -74,14 +74,6 @@ stp_array_create(int x_size, int y_size)
   array_ctor(ret);
   return (stp_array_t) ret;
 }
-
-#define SAFE_FREE(x)				\
-do						\
-{						\
-  if ((x))					\
-    stpi_free((char *)(x));			\
-  ((x)) = NULL;					\
-} while (0)
 
 
 static void

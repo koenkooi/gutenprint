@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.3 2003/01/20 22:19:12 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.4 2003/03/31 17:29:54 rleigh Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -229,14 +229,6 @@ typedef struct dither
 #define CHANNEL_COUNT(d) ((d)->n_channels - (d)->n_ghost_channels)
 #define PHYSICAL_CHANNEL_COUNT(d) ((d)->n_channels)
 
-#define SAFE_FREE(x)				\
-do						\
-{						\
-  if ((x))					\
-    stpi_free((char *)(x));			\
-  ((x)) = NULL;					\
-} while (0)
-
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
 
 
@@ -312,5 +304,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.3 2003/01/20 22:19:12 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.4 2003/03/31 17:29:54 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.43 2003/03/30 12:52:40 rleigh Exp $"
+ * "$Id: print-vars.c,v 1.44 2003/03/31 17:29:54 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -224,14 +224,6 @@ stp_vars_create(void)
   stp_vars_copy(retval, (stp_vars_t)&default_vars);
   return (retval);
 }
-
-#define SAFE_FREE(x)				\
-do						\
-{						\
-  if ((x))					\
-    stpi_free((char *)(x));			\
-  ((x)) = NULL;					\
-} while (0)
 
 static void
 check_vars(const stpi_internal_vars_t *v)

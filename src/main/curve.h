@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.1 2003/03/30 12:52:39 rleigh Exp $"
+ * "$Id: curve.h,v 1.2 2003/03/31 17:29:54 rleigh Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+
+#include <gimp-print/curve.h>
 #include <gimp-print/sequence.h>
 
 #define COOKIE_CURVE 0x1ce0b247
@@ -60,8 +62,7 @@ extern const int stpi_curve_type_count;
 extern const char *stpi_wrap_mode_names[];
 extern const int stpi_wrap_mode_count;
 
-extern int stpi_curve_check_parameters(stpi_internal_curve_t *curve, size_t points);
-extern int stpi_curve_set_points(stpi_internal_curve_t *curve, size_t points);
+extern int stpi_curve_check_parameters(stp_curve_t *curve, size_t points);
 
 #ifdef __cplusplus
   }
