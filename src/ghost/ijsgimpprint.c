@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.20.4.1 2002/11/03 17:09:01 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.20.4.2 2002/11/03 20:16:54 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -789,6 +789,7 @@ gimp_image_progress_conclude(stp_image_t *image)
 static void
 stp_dbg(const char *msg, const stp_vars_t v)
 {
+  fprintf(stderr, "Settings: Model %s\n", stp_get_driver(v));
   fprintf(stderr,"%s Settings: c: %f  m: %f  y: %f\n",
 	  msg, stp_get_cyan(v), stp_get_magenta(v), stp_get_yellow(v));
   fprintf(stderr,"Settings: bright: %f  contrast: %f\n",
@@ -804,7 +805,6 @@ stp_dbg(const char *msg, const stp_vars_t v)
   fprintf(stderr, "Settings: MediaSource %s\n", stp_get_parameter(v, "InputSlot"));
   fprintf(stderr, "Settings: MediaType %s\n", stp_get_parameter(v, "MediaType"));
   fprintf(stderr, "Settings: MediaSize %s\n", stp_get_parameter(v, "PageSize"));
-  fprintf(stderr, "Settings: Model %s\n", stp_get_driver(v));
   fprintf(stderr, "Settings: InkType %s\n", stp_get_parameter(v, "InkType"));
 }
 
