@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/01/22 19:00:18 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2001/01/31 19:31:31 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,26 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
 
+
+INCLUDES = -I../intl
+
+
 noinst_LIBRARIES = libprintut.a
 
 libprintut_a_SOURCES =
 
 libprintut_a_LIBADD = @ALLOCA@ @LIBOBJS@
 
+
+noinst_LTLIBRARIES = libprintut-pic.la
+
+libprintut_pic_la_SOURCES =
+
+libprintut_pic_la_LIBADD = @LTLIBOBJS@
+
+
 noinst_HEADERS = getopt.h pathmax.h xmalloc.h
 
-INCLUDES = -I../intl
 
 MAINTAINERCLEANFILES = Makefile.in
 
