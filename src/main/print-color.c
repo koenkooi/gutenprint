@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.36 2004/03/27 04:13:55 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.37 2004/03/27 04:38:36 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -3064,9 +3064,6 @@ allocate_lut(void)
   lut_t *ret = stpi_zalloc(sizeof(lut_t));
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      stp_curve_t curve = stp_curve_create(STP_CURVE_WRAP_NONE);
-      stp_curve_set_bounds(curve, 0, 65535);
-      cache_set_curve(&(ret->channel_curves[i]), curve);
       ret->gamma_values[i] = 1.0;
     }
   ret->print_gamma = 1.0;
