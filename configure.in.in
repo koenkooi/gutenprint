@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.95 2001/11/08 13:15:18 rlk Exp $
+dnl $Id: configure.in.in,v 1.96 2001/11/10 14:19:06 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -529,6 +529,8 @@ if test x${BUILD_GIMP} = xyes -o -n "${BUILD_PACKAGE}" ; then
                  [SAVE_GTK_LIBS="$GIMP_LIBS"
                   SAVE_GTK_CFLAGS="$GIMP_CFLAGS"],
                   AC_MSG_ERROR(Cannot find GIMP libraries: Please run ldconfig as root and make sure gimptool is on your PATH.))
+    AM_PATH_GTK
+    GIMP_CFLAGS="${GTK_CFLAGS} ${GIMP_CFLAGS}"
   fi
 fi
 
