@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.53 2003/06/08 00:00:31 rlk Exp $"
+ * "$Id: print-vars.c,v 1.54 2003/06/08 14:08:01 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -361,6 +361,7 @@ stp_vars_free(stp_vars_t vv)
     stpi_list_destroy(v->params[i]);
   stpi_list_destroy(v->internal_data);
   SAFE_FREE(v->driver);
+  SAFE_FREE(v->color_conversion);
   stpi_free(v);
 }
 
