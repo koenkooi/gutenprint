@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.26 2001/06/09 19:49:39 rlk Exp $"
+ * "$Id: print-weave.c,v 1.27 2001/06/09 20:31:41 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -2219,6 +2219,15 @@ finalize_row(stp_softweave_t *sw, int row, int model, int width,
     }
 }
 
+static void *
+xzmalloc(size_t bytes)
+{
+  void *retval = stp_malloc(bytes);
+  if (retval)
+    memset(retval, 0, bytes);
+  return (retval);
+}
+
 void
 stp_write_weave(void *        vsw,
 		int           length,	/* I - Length of bitmap data */
@@ -2235,6 +2244,7 @@ stp_write_weave(void *        vsw,
   stp_lineactive_t *lineactives[8];
   const stp_linebufs_t *bufs[8];
   int xlength = (length + sw->horizontal_weave - 1) / sw->horizontal_weave;
+  int ylength = xlength * sw->horizontal_weave;
   unsigned char *comp_ptr;
   int i, j;
   int setactive;
@@ -2242,10 +2252,9 @@ stp_write_weave(void *        vsw,
   int cpass = sw->current_vertical_subpass * h_passes;
 
   if (!sw->fold_buf)
-    sw->fold_buf = stp_malloc(sw->bitwidth * length);
+    sw->fold_buf = xzmalloc(sw->bitwidth * ylength);
   if (!sw->comp_buf)
-    sw->comp_buf = stp_malloc(sw->bitwidth *
-			      (sw->compute_linewidth)(sw, length));
+    sw->comp_buf = xzmalloc(sw->bitwidth *(sw->compute_linewidth)(sw,ylength));
   if (sw->current_vertical_subpass == 0)
     initialize_row(sw, sw->lineno, xlength);
 
@@ -2258,8 +2267,8 @@ stp_write_weave(void *        vsw,
         for (i = 0; i < h_passes; i++)
 	  {
 	    if (!sw->s[i])
-	      sw->s[i] = stp_malloc(sw->bitwidth *
-				    (sw->compute_linewidth)(sw, length));
+	      sw->s[i] = xzmalloc(sw->bitwidth *
+				    (sw->compute_linewidth)(sw, ylength));
 	    lineoffs[i] = stp_get_lineoffsets(sw, sw->lineno, cpass + i,
 					      sw->head_offset[j]);
 	    lineactives[i] = stp_get_lineactive(sw, sw->lineno, cpass + i,
@@ -2333,7 +2342,7 @@ stp_write_weave(void *        vsw,
 	      for (i = 0; i < h_passes; i++)
 		{
 		  setactive = (sw->pack)(sw->s[i], sw->bitwidth * xlength,
-				       sw->comp_buf, &comp_ptr);
+					 sw->comp_buf, &comp_ptr);
 		  add_to_row(sw, sw->lineno, sw->comp_buf,
 			     comp_ptr - sw->comp_buf, j, setactive,
 			     lineoffs[i], lineactives[i], bufs[i]);
