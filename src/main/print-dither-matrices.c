@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.28 2003/10/20 02:53:21 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.29 2003/10/20 02:55:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -463,9 +463,9 @@ stpi_xml_dither_cache_get(int x, int y)
   if (stpi_debug_level & STPI_DBG_XML)
     stpi_erprintf("stpi_xml_dither_cache_get: lookup %dx%d... ", x, y);
   if (!dither_matrix_cache)
-  if (stpi_debug_level & STPI_DBG_XML)
     {
-      stpi_erprintf("cache does not exist\n");
+      if (stpi_debug_level & STPI_DBG_XML)
+	stpi_erprintf("cache does not exist\n");
       return NULL;
     }
 
