@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.83 2000/09/05 10:55:12 rlk Exp $"
+ * "$Id: print.h,v 1.84 2000/09/05 22:08:05 cpbs Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -68,6 +68,8 @@
 #define ORIENT_AUTO		-1	/* Best orientation */
 #define ORIENT_PORTRAIT		0	/* Portrait orientation */
 #define ORIENT_LANDSCAPE	1	/* Landscape orientation */
+#define ORIENT_UPSIDEDOWN	2	/* Reverse portrait orientation */
+#define ORIENT_SEASCAPE		3	/* Reverse landscape orientation */
 
 #define MAX_CARRIAGE_WIDTH	80 /* This really needs to go away */
 				/* For now, this is wide enough for 4B ISO */
@@ -453,5 +455,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.83 2000/09/05 10:55:12 rlk Exp $".
+ * End of "$Id: print.h,v 1.84 2000/09/05 22:08:05 cpbs Exp $".
  */
