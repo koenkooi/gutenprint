@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2002/10/28 22:29:40 rleigh Exp $
+## $Id: Makefile.am,v 1.15 2002/12/09 21:50:22 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -78,4 +78,3 @@ uninstall-local:
 DISTCLEANFILES = $(MAIN_MAN) $(EXTRA_man_MANS)
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(man_MANS)
