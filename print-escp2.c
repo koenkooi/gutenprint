@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.123 2000/04/18 12:21:52 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.124 2000/04/18 12:29:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1979,9 +1979,9 @@ escp2_write_microweave(FILE          *prn,	/* I - Print file or command */
 				MODEL_VARIABLE_4))
 		fprintf(prn, "\033($%c%c%c%c%c%c", 4, 0,
 			((offset * 1440 / ydpi) + i) & 255,
-			(((offset * 1440 / ydpi) >> 8) + i) & 255,
-			(((offset * 1440 / ydpi) >> 16) + i) & 255,
-			(((offset * 1440 / ydpi) >> 24) + i) & 255);
+			(((offset * 1440 / ydpi) + i) >> 8) & 255,
+			(((offset * 1440 / ydpi) + i) >> 16) & 255,
+			(((offset * 1440 / ydpi) + i) >> 24) & 255);
 	      else
 		fprintf(prn, "\033(\\%c%c%c%c%c%c", 4, 0, 160, 5,
 			((offset * 1440 / ydpi) + i) & 255,
@@ -2890,6 +2890,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.124  2000/04/18 12:29:04  rlk
+ *   One more microweave bug
+ *
  *   Revision 1.123  2000/04/18 12:21:52  rlk
  *   Fix incorrect printing for variable drop sizes
  *
@@ -3396,5 +3399,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.123 2000/04/18 12:21:52 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.124 2000/04/18 12:29:04 rlk Exp $".
  */
