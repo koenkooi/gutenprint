@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.24 2002/04/28 02:43:06 rlk Exp $
+## $Id: Makefile.am,v 1.25 2002/05/15 23:31:59 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,23 +41,18 @@ endif
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 gimp_print_version_SOURCES = gimp-print-version.c
 gimp_print_version_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-gimp_print_version_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 paper_sizes_SOURCES = paper_sizes.c
 paper_sizes_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-paper_sizes_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 stp_limits_SOURCES = stp_limits.c
 stp_limits_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-stp_limits_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 printers_SOURCES = printers.c
 printers_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-printers_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 
 ## Rules
