@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.49 2001/12/18 01:17:17 rlk Exp $"
+ * "$Id: print-dither.c,v 1.50 2001/12/18 01:25:12 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1276,21 +1276,6 @@ get_errline(dither_t *d, int row, int color)
       int size = 2 * MAX_SPREAD + (16 * ((d->dst_width + 7) / 8));
       CHANNEL(d, color).errs[row & 1] = stp_zalloc(size * sizeof(int));
       return CHANNEL(d, color).errs[row & 1] + MAX_SPREAD;
-    }
-}
-
-static unsigned short *
-get_valueline(dither_t *d, int color)
-{
-  if (color < 0 || color >= d->n_channels)
-    return NULL;
-  if (CHANNEL(d, color).vals)
-    return CHANNEL(d, color).vals;
-  else
-    {
-      int size = (8 * ((d->dst_width + 7) / 8));
-      CHANNEL(d, color).vals = stp_zalloc(size * sizeof(unsigned short));
-      return CHANNEL(d, color).vals;
     }
 }
 
