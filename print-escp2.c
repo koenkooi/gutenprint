@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.242 2000/09/06 02:09:30 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.243 2000/09/06 23:48:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2058,7 +2058,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	dither_set_adaptive_divisor(dither, 8);
       else
 	dither_set_adaptive_divisor(dither, 16);
-      dither_set_error_mix(dither, .5);
     }  
   else
     dither_set_adaptive_divisor(dither, 4);

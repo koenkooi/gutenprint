@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.52 2000/09/05 22:38:56 cpbs Exp $"
+ * "$Id: gimp_main_window.c,v 1.53 2000/09/06 23:48:45 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -213,7 +213,6 @@ gimp_create_main_window (void)
   GtkWidget *box;
   GtkWidget *box0;
   GtkWidget *box1;
-  GtkWidget *box2;
   GSList    *group;
 #ifdef DO_LINEAR
   GSList    *linear_group;
