@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.18 2003/01/20 01:43:15 rlk Exp $
+ *  $Id: gimp-print.h,v 1.19 2003/01/20 02:08:37 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -500,6 +500,8 @@ stp_parameter_list_append(stp_parameter_list_t list,
 extern void
 stp_describe_parameter(const stp_vars_t v, const char *name,
 		       stp_parameter_t *description);
+
+extern void stp_free_parameter_description(stp_parameter_t *description);
 
 extern const stp_parameter_t *
 stp_parameter_find_in_settings(const stp_vars_t v, const char *name);
@@ -1032,5 +1034,5 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.18 2003/01/20 01:43:15 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.19 2003/01/20 02:08:37 rlk Exp $
  */

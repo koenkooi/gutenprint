@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-cups.c,v 1.3 2003/01/05 23:06:23 rlk Exp $"
+ * "$Id: gimp-print-cups.c,v 1.4 2003/01/20 02:08:37 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -92,5 +92,6 @@ initialize_stp_options(void)
       opt->high = desc.bounds.dbl.upper * 1000;
       opt->defval = desc.deflt.dbl * 1000;
       opt->step = 50;
+      stp_free_parameter_description(&desc);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: stp_limits.c,v 1.7 2003/01/05 23:06:24 rlk Exp $"
+ * "$Id: stp_limits.c,v 1.8 2003/01/20 02:08:37 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -55,6 +55,7 @@ main(int argc, char **argv)
 		 p->name, desc.bounds.dbl.upper);
 	  printf("$stp_values{'DEFVAL'}{'%s'} = %.3f\n",
 		 p->name, desc.deflt.dbl);
+	  stp_free_parameter_description(&desc);
 	}
       else if (p->p_type == STP_PARAMETER_TYPE_INT)
 	{
@@ -66,6 +67,7 @@ main(int argc, char **argv)
 		 p->name, desc.bounds.integer.upper);
 	  printf("$stp_values{'DEFVAL'}{'%s'} = %d\n",
 		 p->name, desc.deflt.integer);
+	  stp_free_parameter_description(&desc);
 	}
     }
   stp_parameter_list_destroy(params);

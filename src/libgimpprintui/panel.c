@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.13 2003/01/20 01:43:16 rlk Exp $"
+ * "$Id: panel.c,v 1.14 2003/01/20 02:08:37 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1180,6 +1180,7 @@ create_color_adjust_window (void)
 	  gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
 			     GTK_SIGNAL_FUNC(color_update), (gpointer) i);
 	}
+      stp_free_parameter_description(&desc);
     }
 
   color_adjustment_table = gtk_table_new (1, 1, FALSE);
@@ -1969,6 +1970,7 @@ set_color_sliders_active (void)
 	  gtk_widget_hide(GTK_WIDGET (SCALE_ENTRY_SCALE (adj)));
 	  gtk_widget_hide(GTK_WIDGET (SCALE_ENTRY_SPINBUTTON (adj)));
 	}
+      stp_free_parameter_description(&desc);
     }
 }
 
