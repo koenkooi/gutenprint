@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.79.2.3 2004/03/28 02:07:37 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.79.2.4 2004/03/28 16:05:22 rlk Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -236,6 +236,18 @@ print_debug_block(const stp_vars_t v, const cups_image_t *cups)
   stp_parameter_list_free(params);
 }
 
+static int
+printer_supports_bw(stp_const_vars_t v)
+{
+  stp_parameter_t desc;
+  int status = 0;
+  stp_describe_parameter(v, "PrintingMode", &desc);
+  if (stp_string_list_is_present(desc.bounds.str, "BW"))
+    status = 1;
+  stp_parameter_description_free(&desc);
+  return status;
+}
+
 static stp_vars_t
 initialize_page(cups_image_t *cups, stp_const_vars_t default_settings)
 {
@@ -253,11 +265,15 @@ initialize_page(cups_image_t *cups, stp_const_vars_t default_settings)
   switch (cups->header.cupsColorSpace)
     {
     case CUPS_CSPACE_W :
-      stp_set_string_parameter(v, "PrintingMode", "BW");
+      /* Olympus photo printers don't support black & white ink! */
+      if (printer_supports_bw(v))
+	stp_set_string_parameter(v, "PrintingMode", "BW");
       stp_set_string_parameter(v, "InputImageType", "Whitescale");
       break;
     case CUPS_CSPACE_K :
-      stp_set_string_parameter(v, "PrintingMode", "BW");
+      /* Olympus photo printers don't support black & white ink! */
+      if (printer_supports_bw(v))
+	stp_set_string_parameter(v, "PrintingMode", "BW");
       stp_set_string_parameter(v, "InputImageType", "Grayscale");
       break;
     case CUPS_CSPACE_RGB :
@@ -858,8 +874,8 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
   new_percent = (int) (100.0 * cups->row / cups->header.cupsHeight);
   if (new_percent > cups->last_percent)
     {
-      fprintf(stderr, "INFO: Gimp-Print Printing page %d, %.0f%%\n",
-	      cups->page + 1, 100.0 * new_percent / cups->last_percent);
+      fprintf(stderr, "INFO: Gimp-Print Printing page %d, %d%%\n",
+	      cups->page + 1, new_percent);
       cups->last_percent = new_percent;
     }
 
@@ -940,5 +956,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.79.2.3 2004/03/28 02:07:37 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.79.2.4 2004/03/28 16:05:22 rlk Exp $".
  */
