@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.12 2002/05/25 18:30:42 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.13 2002/06/06 20:36:52 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -96,6 +96,7 @@ endif
 
 if BUILD_TRANSLATED_PPDS
 PPD_NLS = $(PPD_NLS_1)
+LINGUAS = $(ALL_LINGUAS)
 endif
 
 if USE_NLS
@@ -105,32 +106,24 @@ endif
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
-	  cd ppd ; \
-	  for language in * ; do \
-	    cd ..; \
-	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
-	    cd ppd/$$language; \
-	    for ppdfile in * ; do \
+	  for language in C $(LINGUAS) ; do \
+	    echo "Installing $$language locale PPD files..." ; \
+	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language ; \
+	    for ppdfile in ppd/$$language/* ; do \
 	      $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir)/$$language ; \
 	    done; \
-	    cd ..; \
 	  done \
 	fi
 
 uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
-	  cd ppd ; \
-	  for language in C $(ALL_LINGUAS) ; do \
-	    cd ..; \
-	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
-	    cd ppd/C ; \
-	    for ppdfile in * ; do \
-	      if test -f "$(DESTDIR)$(cups_modeldir)/$$language/$$ppdfile" ; then \
-	        $(RM) $(DESTDIR)$(cups_modeldir)/$$language/$$ppdfile ; \
+	  for language in C $(LINGUAS) ; do \
+	    echo "Removing $$language locale PPD files..." ; \
+	    for ppdfile in ppd/$$language/* ; do \
+	      if test -f "$(DESTDIR)$(cups_modeldir)/$$language/`basename $$ppdfile`" ; then \
+	        $(RM) -f $(DESTDIR)$(cups_modeldir)/$$language/`basename $$ppdfile` ; \
 	      fi ; \
 	    done; \
-	    cd ..; \
 	  done \
 	fi
 
@@ -198,7 +191,7 @@ ppd-nls: genppd
 	cd $(top_builddir)/po ; \
 	$(MAKE) ; \
 	$(MAKE) DESTDIR= prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
-	for language in $(ALL_LINGUAS) ; do \
+	for language in $(LINGUAS) ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
 	  LANGUAGE=$$language ./genppd --prefix=ppd/$$language --catalog=`pwd`/catalog/share/locale ; \

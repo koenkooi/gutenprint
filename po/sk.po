@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GIMP Print\n"
-"POT-Creation-Date: 2002-05-10 21:11-0400\n"
-"PO-Revision-Date: 2002-03-11 18:28+0100\n"
+"POT-Creation-Date: 2002-06-05 19:56-0400\n"
+"PO-Revision-Date: 2002-05-20 18:08+0100\n"
 "Last-Translator: Zdenko Podobný <zdpo@mailbox.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: src/main/print-canon.c:1313
 msgid "Fabric Sheets"
-msgstr ""
+msgstr "Normálny papier"
 
 #: src/main/print-canon.c:1314
 msgid "Envelope"
@@ -104,7 +104,7 @@ msgstr "Na¾ehµovacia fólia"
 
 #: src/main/print-canon.c:1317
 msgid "High Gloss Film"
-msgstr ""
+msgstr "Vysokolesklý film"
 
 #: src/main/print-canon.c:1318
 msgid "Glossy Photo Paper"
@@ -134,24 +134,24 @@ msgstr "Manuálne s preru¹ením"
 msgid "Manual without Pause"
 msgstr "Manuálne bez preru¹enia"
 
-#: src/escputil/escputil.c:584 src/main/print-canon.c:1689
+#: src/escputil/escputil.c:584 src/main/print-canon.c:1688
 #: src/main/print-lexmark.c:666
 msgid "Black"
 msgstr "Èierna"
 
-#: src/main/print-canon.c:1694
+#: src/main/print-canon.c:1693
 msgid "CMY Color"
 msgstr "CMY farba"
 
-#: src/main/print-canon.c:1699
+#: src/main/print-canon.c:1698
 msgid "CMYK Color"
 msgstr "CMYK farba"
 
-#: src/main/print-canon.c:1704
+#: src/main/print-canon.c:1703
 msgid "Photo CcMmY Color"
 msgstr "Fotografická CcMmY farba"
 
-#: src/main/print-canon.c:1709
+#: src/main/print-canon.c:1708
 msgid "Photo CcMmYK Color"
 msgstr "Fotografická CcMmYK farba"
 
@@ -1017,39 +1017,38 @@ msgstr "44 palcová rolka papiera"
 #: src/main/print-util.c:1274 src/main/print-util.c:1283
 #, c-format
 msgid "%s is not a valid parameter of type %s\n"
-msgstr ""
+msgstr "%s nie je platný parameter pre typ %s\n"
 
 #: src/main/print-util.c:1299
 #, c-format
 msgid "%s out of range (value %f, min %f, max %f)\n"
-msgstr ""
+msgstr "%s mimo rozsahu (hodnota %f, min %f, max %f)\n"
 
 #: src/main/print-util.c:1314
 #, c-format
 msgid "%s out of range (value %d, min %d, max %d)\n"
-msgstr ""
+msgstr "%s mimo rozsahu (hodnota %d, min %d, max %d)\n"
 
 #: src/main/print-util.c:1340
-#, fuzzy
 msgid "Printer does not support color output\n"
-msgstr "Tlaèiareò %s nevy¾aduje zarovnanie farebnej hlavy.\n"
+msgstr "Tlaèiareò nepodporuje farebný výstup\n"
 
 #: src/main/print-util.c:1358
 msgid "Image size is not valid\n"
-msgstr ""
+msgstr "Veµkos» obrázka nie je platná\n"
 
 #: src/main/print-util.c:1365
 msgid "Top margin must not be less than zero\n"
-msgstr ""
+msgstr "Horný okraj nemô¾e by» men¹í ako nula\n"
 
 #: src/main/print-util.c:1371
 msgid "Left margin must not be less than zero\n"
-msgstr ""
+msgstr "¥avý okraj nemô¾e by» men¹í ako nula\n"
 
 #: src/main/print-util.c:1428
 #, c-format
 msgid "%s is not a valid dither algorithm\n"
-msgstr ""
+msgstr "%s nie je platný algoritmus rozptylu\n"
 
 #. Specify language of PPD translation
 #. Translators: Specify the language of the PPD translation.
@@ -1147,7 +1146,7 @@ msgstr ""
 "Toto je iba orientaèný preklad licencie, ktorá platí v originálnom anglickom "
 "znení.\n"
 "\n"
-"Tento program je voµne ¹íøiteµný; mô¾ete ho redistribuova» a meni»\n"
+"Tento program je voµne ¹íriteµný; mô¾ete ho redistribuova» a meni»\n"
 "v súlade so V¹eobecnou verejnou licenciou GNU publikovanou\n"
 "vo Free Software Foundation; buï licenciou verzie 2 alebo\n"
 "(podµa va¹ej voµby) akoukoµvek nov¹ou.\n"
@@ -1244,7 +1243,7 @@ msgstr ""
 "    -P|--printer-name  Urèenie názvu tlaèiarne, s ktorou sa bude pracova».\n"
 "                       ©tandardne sa pou¾ije systémová tlaèiareò.\n"
 "    -r|--raw-device    Urèenie názvu zariadenia pre priamy zápis, ne¾ by sa\n"
-"                       mal pou¾i» tlaèová fronta.\n"
+"                       mal pou¾i» tlaèový front.\n"
 "    -u|--new           Tlaèiareò je nová tlaèiareò (Stylus Color 740 alebo\n"
 "                       nov¹ia).\n"
 "    -q|--quiet         zakázanie nápisu.\n"
@@ -1321,7 +1320,7 @@ msgstr ""
 "    -P Urèenie názvu tlaèiarne, s ktorou sa bude pracova».\n"
 "          ¹tandardne sa pou¾ije systémová tlaèiareò.\n"
 "    -r Urèenie názvu zariadenia pre priamy zápis, ne¾ by sa\n"
-"          mal pou¾i» tlaèová fronta.\n"
+"          mal pou¾i» tlaèový front.\n"
 "    -u Tlaèiareò je nová tlaèiareò (Stylus Color 740 alebo nov¹ia).\n"
 "    -q zakázanie nápisu.\n"
 "    -m Urèenie presného modelu tlaèiarne pre zarovnanie hlavy.\n"
@@ -1913,7 +1912,7 @@ msgid ""
 "OK, your printer is aligned, but the alignment has not been saved.\n"
 "If you wish to save the alignment, you must repeat this process.\n"
 msgstr ""
-"Vporiadku, va¹a tlaèiareò je  zarovnaná, ale zarovnanie nebolo ulo¾ené.\n"
+"V poriadku, va¹a tlaèiareò je  zarovnaná, ale zarovnanie nebolo ulo¾ené.\n"
 "Ak si ¾eláte ulo¾i» zarovnanie, musíte tento proces zopakova».\n"
 
 #: src/escputil/escputil.c:963
@@ -1944,29 +1943,31 @@ msgstr ""
 
 #: src/escputil/escputil.c:985
 msgid "About to save settings..."
-msgstr ""
+msgstr "O nastaveniach ukladania..."
 
 #: src/escputil/escputil.c:991
 msgid "failed!\n"
-msgstr ""
+msgstr "zlyhalo!\n"
 
 #: src/escputil/escputil.c:992
 msgid ""
 "Your settings were not saved successfully.  You must repeat the\n"
 "alignment procedure.\n"
 msgstr ""
+"Va¹e nastavenie sa nepodarilo úspe¹ne ulo¾i». Musíte zopakova»\n"
+"procedúru zarovnávania.\n"
 
 #: src/escputil/escputil.c:996
 msgid "succeeded!\n"
-msgstr ""
+msgstr "úspe¹ne!\n"
 
 #: src/escputil/escputil.c:997
 msgid "Your alignment settings have been saved to the printer.\n"
-msgstr ""
+msgstr "Va¹e nastavenia zarovnávania boli ulo¾ené do tlaèiarne.\n"
 
 #: src/escputil/escputil.c:1002
 msgid "Unrecognized command.\n"
-msgstr "Neznámi príkaz.\n"
+msgstr "Neznámy príkaz.\n"
 
 #: src/escputil/escputil.c:1005
 msgid "Final command was not confirmed.\n"
@@ -1996,20 +1997,18 @@ msgid "Press enter to continue > "
 msgstr "Pre pokraèovanie stlaète enter > "
 
 #: src/escputil/escputil.c:1042
-#, fuzzy
 msgid ""
 "Please inspect the print, and choose the best pair of lines in each "
 "pattern.\n"
 "Type a pair number, '?' for help, or 'r' to repeat the procedure.\n"
 msgstr ""
-"Preskúmajte  pozorne výtlaèok a zvoµte najlep¹í pár èiar\n"
-"vo vzorke #%d a potom opätovne vlo¾te stranu do tlaèiarne.\n"
-"Stlaète èíslo páru, '?' pre pomoc alebo 'r' pre opakovanie vzorky.\n"
+"Preskúmajte pozorne výtlaèok a zvoµte najlep¹í pár èiar v ka¾dej vzorke.\n"
+"Stlaète èíslo páru, '?' pre pomoc alebo 'r' pre zopakovanie procedúry.\n"
 
 #: src/escputil/escputil.c:1048
 #, c-format
 msgid "Pass #%d"
-msgstr ""
+msgstr "Prechod #%d"
 
 #: src/escputil/escputil.c:1054 src/escputil/escputil.c:1099
 msgid "Please insert a fresh sheet of paper.\n"
@@ -2029,13 +2028,12 @@ msgid "The best pair of lines should be numbered between 1 and %d.\n"
 msgstr "Najlep¹í pár èiar by mal ma» èíslo z rozpätia 1 a %d.\n"
 
 #: src/escputil/escputil.c:1091
-#, fuzzy
 msgid "Attempting to set alignment..."
-msgstr "Pokú¹am sa zisti» model tlaèiarne..."
+msgstr "Pokú¹am sa nastavi» zarovnávanie..."
 
 #: src/escputil/escputil.c:1094
 msgid "succeeded.\n"
-msgstr ""
+msgstr "úspe¹né.\n"
 
 #: src/escputil/escputil.c:1095
 #, c-format
@@ -2045,6 +2043,10 @@ msgid ""
 "pattern %d.  If it is not, you should repeat the process to get the best\n"
 "quality printing.\n"
 msgstr ""
+"Prekontrolujte prosím, èi je zarovnávanie správne. Potom, èo bude vzorka\n"
+"opä» vytlaèená, uistite sa, èi najlep¹ia vzorka pre ka¾dý riadok je vzorka %"
+"d. Ak nie je, mali by ste zopakova» tento proces, aby ste dostali najlep¹ie "
+"výsledky pri tlaèi.\n"
 
 #: src/escputil/escputil.c:1110
 #, c-format
@@ -2084,7 +2086,8 @@ msgstr ""
 "\n"
 "Tento nástroj vám pomô¾e so zarovnávaním tlaèovej hlavy pre farebnú tlaè "
 "atramentovej tlaèiarne Epson Stylus.\n"
-"Jeho nesprávne pou¾itie mô¾e spôsobi» ní¾enie kvality tlaèe a mô¾e po¹kodi»\n"
+"Jeho nesprávne pou¾itie mô¾e spôsobi» zní¾enie kvality tlaèe a mô¾e "
+"po¹kodi»\n"
 "samotnú tlaèiareò. Tento nástroj nebol odobrený spoloènos»ou Seiko Epson\n"
 "a je ponúknutý bez akejkoµvek záruky. Celé riziko za pou¾itie toho nástroja\n"
 "le¾í na vás.\n"
@@ -2272,7 +2275,7 @@ msgstr ""
 "Prispôsobiteµné mie¹anie roztylu v¹obecne poskytuje najlep¹í výsledok.\n"
 "Postupný rozptyl je rýchlej¹í a výsledná kvalita je podobná ako je na "
 "fotografiách.\n"
-"Rýchly a veµmi rýchly roztyl je podstatne rýchlej¹¹í a dobré výsledky "
+"Rýchly a veµmi rýchly roztyl je podstatne rýchlej¹í a dobré výsledky "
 "poskytuje pre text a èiarovú grafiku.\n"
 "Mie¹aný Floyd-Steinbergov roztyl v¹eobecne poskytuje menej kvalitný výstup."
 
@@ -2861,74 +2864,79 @@ msgstr "Súbor"
 #: src/ghost/ijsgimpprint.c:144
 #, c-format
 msgid "Bad color space: bps %d channels %d space %s\n"
-msgstr ""
+msgstr "Zlý farebný priestor: bps %d kanály %d priestor %s\n"
 
 #: src/ghost/ijsgimpprint.c:152
 msgid "No row buffer\n"
-msgstr ""
+msgstr "Neexistuje riadkový bufer\n"
 
 #: src/ghost/ijsgimpprint.c:181
 #, c-format
 msgid "Parameter %s out of range (value %f, min %f, max %f)\n"
-msgstr ""
+msgstr "Parameter %s je mimo rozsahu (hodnota %f, min %f, max %f)\n"
 
 #: src/ghost/ijsgimpprint.c:185 src/ghost/ijsgimpprint.c:207
 #, c-format
 msgid "Unable to parse parameter %s=%s (expect a number)\n"
-msgstr ""
+msgstr "Nie je mo¾né analyzova» parameter %s=%s (oèakáva sa èíslo)\n"
 
 #: src/ghost/ijsgimpprint.c:203
 #, c-format
 msgid "Parameter %s out of range (value %d, min %d, max %d)\n"
-msgstr ""
+msgstr "Parameter %s je mimo rozsahu (hodnota %d, min %d, max %d)\n"
 
 #: src/ghost/ijsgimpprint.c:345
 msgid "Printer must be specified with -sModel\n"
-msgstr ""
+msgstr "Tlaèiareò musí by» urèené pomocou -sModel\n"
 
 #: src/ghost/ijsgimpprint.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Printer %s is not a known model\n"
-msgstr "Neznámy typ tlaèiarne %s.\n"
+msgstr "Tlaèiareò %s nie je známy model\n"
 
 #: src/ghost/ijsgimpprint.c:589
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown option %s\n"
-msgstr "Neznáme nastavenie %c\n"
+msgstr "Neznáme nastavenie %s\n"
 
 #: src/ghost/ijsgimpprint.c:732
 #, c-format
 msgid "%.0f of %.0f\n"
+msgstr "%.0f z %.0f\n"
+
+#: src/ghost/ijsgimpprint.c:838
+#, c-format
+msgid "ijs_server_get_page_header failed %d\n"
 msgstr ""
 
-#: src/ghost/ijsgimpprint.c:844
+#: src/ghost/ijsgimpprint.c:849
 #, c-format
 msgid "image_init failed %d\n"
-msgstr ""
+msgstr "image_init zlyhalo %d\n"
 
-#: src/ghost/ijsgimpprint.c:855
+#: src/ghost/ijsgimpprint.c:860
 #, c-format
 msgid "Unable to open file descriptor: %s\n"
-msgstr ""
+msgstr "Nepodarilo sa otvori» popis súboru: %s\n"
 
-#: src/ghost/ijsgimpprint.c:867
-#, fuzzy, c-format
-msgid "Unable to open %s: %s\n"
-msgstr "Nie je mo¾né otvori» zariadenie %s: %s\n"
-
-#: src/ghost/ijsgimpprint.c:879
-#, fuzzy, c-format
-msgid "Unknown printer %s\n"
-msgstr "Neznáme nastavenie %c\n"
-
-#: src/ghost/ijsgimpprint.c:910
-msgid "Bad parameters; cannot continue!\n"
-msgstr ""
-
-#: src/ghost/ijsgimpprint.c:920
+#: src/ghost/ijsgimpprint.c:872
 #, c-format
-msgid "Get next row failed at %d\n"
-msgstr ""
+msgid "Unable to open %s: %s\n"
+msgstr "Nie je mo¾né otvori» %s: %s\n"
+
+#: src/ghost/ijsgimpprint.c:884
+#, c-format
+msgid "Unknown printer %s\n"
+msgstr "Neznáma tlaèiareò %s\n"
+
+#: src/ghost/ijsgimpprint.c:915
+msgid "Bad parameters; cannot continue!\n"
+msgstr "Zlé parametre; nie je mo¾né pokraèova»!\n"
+
+#: src/ghost/ijsgimpprint.c:925
+#, fuzzy, c-format
+msgid "Get next row failed at %.0f\n"
+msgstr "Získanie nasledujúceho riadku zlyhalo na %d\n"
 
 #~ msgid "Plain Paper Fast Load"
 #~ msgstr "Obyèajný papier rýchle nasadenie"
@@ -3121,32 +3129,3 @@ msgstr ""
 
 #~ msgid "HP Greeting Card"
 #~ msgstr "HP pohµadnica"
-
-#~ msgid ""
-#~ "Please insert your alignment test page in the printer once more\n"
-#~ "for the final save of your alignment settings.  When the printer\n"
-#~ "feeds the page through, your settings have been saved.\n"
-#~ msgstr ""
-#~ "Vlo¾te e¹te raz prosím va¹u testovaciu stránku pre zarovnanie\n"
-#~ "tlaèiarne pre finálne ulo¾enie vá¹ho nastavenia zarovnávania.\n"
-#~ "Keï tlaèiareò po¹le papier von, va¹e nastavenie bude ulo¾ené.\n"
-
-#~ msgid ""
-#~ "Please inspect the print, and choose the best pair of lines\n"
-#~ "in pattern #%d, and then insert a fresh page in the input tray.\n"
-#~ "Type a pair number, '?' for help, or 'r' to retry this pattern.\n"
-#~ msgstr ""
-#~ "Preskúmajte prosím výtlaèok a vyberte najlep¹í pár èiar\n"
-#~ "zo vzorky #%d a potom vlo¾te èistú stranu do vstupného zásobníka.\n"
-#~ "Stlaète èíslo páru, '?' pre pomocníka alebo 'r' na opakovanie tejto "
-#~ "vzorky.\n"
-
-#~ msgid ""
-#~ "Aligning phase %d, and performing final test.\n"
-#~ "Please insert a fresh sheet of paper.\n"
-#~ msgstr ""
-#~ "Fáza zarovnávania %d a vykonáva sa závereèný test.\n"
-#~ "Vlo¾te prosím èistý papier.\n"
-
-#~ msgid "Aligning phase %d, and starting phase %d.\n"
-#~ msgstr "Fáza zarovnávania %d a zaèínam fázu %d.\n"

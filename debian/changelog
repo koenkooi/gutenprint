@@ -1,3 +1,17 @@
+gimp-print (4.2.2-pre1-2) unstable; urgency=low
+
+  * New stable release, Closes: #148737
+  * Upgrade to debhelper version 4 (RL)
+  * Automate library versioning to work for stable and unstable series.
+    LIBRARY_VERSION is the library major version or -UPSTREAM_VERSION (RL)
+  * Update configure regeneration to work with configure.ac (RL)
+  * libgimpprint$(VERSION)-dev provides and conflicts with a virtual
+    package `libgimpprint-dev' (RL)
+  * Remove libgimpprint.postinst as ldconfig is called by debhelper (RL)
+  * Update package descriptions (RL)
+
+ -- Eric Sharkey <sharkey@debian.org>  Thu,  6 Jun 2002 15:35:28 -0400
+
 gimp-print (4.2.2-pre1-1) unstable; urgency=low
 
   * New upstream release, Closes: #147404, #139218
