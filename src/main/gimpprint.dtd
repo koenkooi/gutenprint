@@ -1,7 +1,7 @@
 <!-- ============================================================= -->
 <!--                    Gimp-Print DTD                             -->
 <!-- ============================================================= -->
-<!-- Version $Id: gimpprint.dtd,v 1.2 2002/11/23 20:49:15 rleigh Exp $
+<!-- Version $Id: gimpprint.dtd,v 1.3 2003/01/19 03:14:00 rlk Exp $
 -->
 <!--
 Copyright (C) 2002 Roger Leigh (roger@whinlatter.uklinux.net)
@@ -118,9 +118,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <!--                    Printer                                    -->
 <!--                    Printer definition                         -->
-<!ELEMENT  printer          (color?, model, cyan?,
+<!ELEMENT  printer          (color?, model, black?, cyan?,
                              magenta?, yellow?, brightness?,
-                             gamma?, density?, saturation?)          >
+                             gamma?, density?, saturation?,
+                             blackgamma?, cyangamma?, magentagamma?,
+                             yellowgamma?, gcrlower?, gcrupper?)     >
 <!--         name       Model name
              driver     Family driver                              -->
 <!ATTLIST  printer
