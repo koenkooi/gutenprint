@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.80 2000/03/01 12:48:07 rlk Exp $"
+ * "$Id: print-util.c,v 1.81 2000/03/01 13:09:43 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-util.c,v $
+ *   Revision 1.81  2000/03/01 13:09:43  rlk
+ *   fix alpha channel in rgb_to_gray...again
+ *
  *   Revision 1.80  2000/03/01 12:48:07  rlk
  *   fix alpha channel in rgb_to_gray
  *
@@ -812,7 +815,7 @@ rgb_to_gray(unsigned char *rgb,		/* I - RGB pixels */
 	  *gray = vars->lut.composite[((rgb[0] * LUM_RED +
 					rgb[1] * LUM_GREEN +
 					rgb[2] * LUM_BLUE) *
-				       rgb[3] / 100 + 255 - rgb[3])];
+				       rgb[3] / 25500 + 255 - rgb[3])];
 	  gray ++;
 	  rgb += bpp;
 	  width --;
@@ -1420,5 +1423,5 @@ get_printer_index_by_driver(const char *driver)
 }
 
 /*
- * End of "$Id: print-util.c,v 1.80 2000/03/01 12:48:07 rlk Exp $".
+ * End of "$Id: print-util.c,v 1.81 2000/03/01 13:09:43 rlk Exp $".
  */
