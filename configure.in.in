@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.38 2001/05/09 18:00:48 rleigh Exp $
+dnl $Id: configure.in.in,v 1.39 2001/05/11 22:38:28 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -274,7 +274,7 @@ AC_PATH_PROG(BISON_PROG, bison)
 AC_PATH_PROG(YACC_PROG, yacc)
 AC_PATH_PROG(PERL_PROG, perl)
 AC_PATH_PROG(TEXI2HTML_PROG, texi2html)
-if test x${TEXT2HTML} = x ; then
+if test x${TEXI2HTML_PROG} = x ; then
   AC_MSG_WARN([html documentation will not be regenerated!])
 fi
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/05/09 18:00:49 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2001/05/11 22:38:28 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -49,9 +49,10 @@ html-stamp: gimpprint.texi version.texi gpl.texi
 	  rm -rf manual-html ; \
 	  mkdir manual-html ; \
 	  cd manual-html ; \
-	    $(TEXI2HTML_PROG) -menu -split_node -number -expandinfo -I .. \
-	    ../gimpprint.texi ; \
+	    $(TEXI2HTML_PROG) -menu -split_node -number -expandinfo \
+	    -I ../$(srcdir) ../$(srcdir)/gimpprint.texi ; \
 	fi
+	
 	touch html-stamp
 
 dist-hook: html
