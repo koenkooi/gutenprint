@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.55.2.4 2000/06/20 01:13:09 jmv Exp $"
+ * "$Id: print.h,v 1.55.2.5 2000/06/23 01:58:28 jmv Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -216,6 +216,8 @@ typedef struct
    unsigned bits_h;
    int isdark_l;
    int isdark_h;
+   unsigned size_l;
+   unsigned size_h;
 } full_dither_range_t;
 
 /*
@@ -395,5 +397,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.55.2.4 2000/06/20 01:13:09 jmv Exp $".
+ * End of "$Id: print.h,v 1.55.2.5 2000/06/23 01:58:28 jmv Exp $".
  */
