@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2001/06/01 02:48:32 rlk Exp $
+## $Id: Makefile.am,v 1.10 2001/06/02 17:58:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -82,6 +82,7 @@ CLEANFILES = \
  $(srcdir)/gdevstp-weave.c \
  $(srcdir)/gdevstp-canon.c \
  $(srcdir)/gdevstp-dither.c \
+ $(srcdir)/gdevstp-dither-matrices.c \
  $(srcdir)/gdevstp-escp2.c \
  $(srcdir)/gdevstp-lexmark.c \
  $(srcdir)/gdevstp-pcl.c \
