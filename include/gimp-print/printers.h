@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.3 2004/04/11 21:48:51 rleigh Exp $"
+ * "$Id: printers.h,v 1.4 2004/04/11 22:29:57 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -22,7 +22,7 @@
  */
 
 /**
- * @file printers.h
+ * @file gimp-print/printers.h
  * @brief Printer functions.
  */
 
@@ -192,5 +192,5 @@ extern int stp_end_job(stp_const_vars_t v, stp_image_t *image);
 
 #endif /* __GIMP_PRINT_PRINTERS_H__ */
 /*
- * End of "$Id: printers.h,v 1.3 2004/04/11 21:48:51 rleigh Exp $".
+ * End of "$Id: printers.h,v 1.4 2004/04/11 22:29:57 rlk Exp $".
  */

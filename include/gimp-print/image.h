@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.4 2004/04/11 21:48:51 rleigh Exp $"
+ * "$Id: image.h,v 1.5 2004/04/11 22:29:43 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -22,7 +22,7 @@
  */
 
 /**
- * @file image.h
+ * @file gimp-print/image.h
  * @brief Image functions.
  */
 
@@ -131,5 +131,5 @@ typedef struct stp_image
 
 #endif /* __GIMP_PRINT_IMAGE_H__ */
 /*
- * End of "$Id: image.h,v 1.4 2004/04/11 21:48:51 rleigh Exp $".
+ * End of "$Id: image.h,v 1.5 2004/04/11 22:29:43 rlk Exp $".
  */
