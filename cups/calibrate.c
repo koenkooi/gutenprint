@@ -1,5 +1,5 @@
 /*
- * "$Id: calibrate.c,v 1.5 2000/09/20 22:52:06 rlk Exp $"
+ * "$Id: calibrate.c,v 1.6 2000/09/21 13:21:36 easysw Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
@@ -306,6 +306,13 @@ main(int  argc,
   puts("The basic color profile for these values is:");
   puts("");
   printf("    %s\n", cupsProfile);
+  puts("");
+  puts("You can add this to the PPD file for this printer to make this change");
+  puts("permanent, or use the following option with a printing command:");
+  puts("");
+  printf("    -o profile=%s\n", profile);
+  puts("");
+  puts("to use the profile for this job only.");
   puts("");
   puts("Calibration is complete.");
   return 0;
