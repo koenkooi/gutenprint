@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-search.c,v 1.4 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: mxml-search.c,v 1.5 2004/04/25 12:17:51 rleigh Exp $"
  *
  * Search/navigation functions for mini-XML, a small XML-like file
  * parsing library.
@@ -27,7 +27,7 @@
  * Include necessary headers...
  */
 
-#include "mxml.h"
+#include <gimp-print/mxml.h>
 #include "config.h"
 
 
@@ -195,5 +195,5 @@ stpi_mxmlWalkPrev(mxml_node_t *node,		/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-search.c,v 1.4 2003/07/23 01:51:27 rlk Exp $".
+ * End of "$Id: mxml-search.c,v 1.5 2004/04/25 12:17:51 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-very-fast.c,v 1.12 2003/11/08 03:14:35 rlk Exp $"
+ * "$Id: dither-very-fast.c,v 1.13 2004/04/25 12:17:51 rleigh Exp $"
  *
  *   Very fast dither algorithm
  *
@@ -64,7 +64,7 @@ stpi_dither_very_fast(stp_vars_t v,
 		      int zero_mask,
 		      const unsigned char *mask)
 {
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
+  stpi_dither_t *d = (stpi_dither_t *) stp_get_component_data(v, "Dither");
   int		x,
 		length;
   unsigned char *bit_patterns;
@@ -85,7 +85,7 @@ stpi_dither_very_fast(stp_vars_t v,
   xmod   = d->src_width % d->dst_width;
   xerror = 0;
 
-  bit_patterns = stpi_zalloc(sizeof(unsigned char) * CHANNEL_COUNT(d));
+  bit_patterns = stp_zalloc(sizeof(unsigned char) * CHANNEL_COUNT(d));
   for (i = 0; i < CHANNEL_COUNT(d); i++)
     {
       stpi_dither_channel_t *dc = &(CHANNEL(d, i));
@@ -131,5 +131,5 @@ stpi_dither_very_fast(stp_vars_t v,
 				 xerror, xstep, xmod);
 	}
     }
-  stpi_free(bit_patterns);
+  stp_free(bit_patterns);
 }

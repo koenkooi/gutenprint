@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml.h,v 1.4 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: mxml.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $"
  *
  * Header file for mini-XML, a small XML-like file parsing library.
  *
@@ -20,8 +20,8 @@
  * Prevent multiple inclusion...
  */
 
-#ifndef _mxml_h_
-#  define _mxml_h_
+#ifndef GIMP_PRINT_MXML_H
+#  define GIMP_PRINT_MXML_H
 
 /*
  * Include necessary headers...
@@ -165,9 +165,9 @@ extern mxml_node_t	*stpi_mxmlWalkPrev(mxml_node_t *node, mxml_node_t *top,
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */
-#endif /* !_mxml_h_ */
+#endif /* !GIMP_PRINT_MXML_H */
 
 
 /*
- * End of "$Id: mxml.h,v 1.4 2003/07/23 01:51:27 rlk Exp $".
+ * End of "$Id: mxml.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $".
  */

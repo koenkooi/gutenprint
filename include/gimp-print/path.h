@@ -1,9 +1,11 @@
 /*
- * "$Id: image.h,v 1.4 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: path.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $"
  *
- *   Print plug-in driver utility functions for the GIMP.
+ *   libgimpprint path functions header
  *
- *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
+ *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
+ *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
+ *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -20,25 +22,31 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
+ */
 
-#ifndef GIMP_PRINT_INTERNAL_IMAGE_H
-#define GIMP_PRINT_INTERNAL_IMAGE_H
+#ifndef GIMP_PRINT_PATH_H
+#define GIMP_PRINT_PATH_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void stpi_image_init(stp_image_t *image);
-extern void stpi_image_reset(stp_image_t *image);
-extern int stpi_image_width(stp_image_t *image);
-extern int stpi_image_height(stp_image_t *image);
-extern stp_image_status_t stpi_image_get_row(stp_image_t *image,
-					     unsigned char *data,
-					     size_t limit, int row);
-extern const char *stpi_image_get_appname(stp_image_t *image);
-extern void stpi_image_conclude(stp_image_t *image);
 
-#endif /* GIMP_PRINT_INTERNAL_IMAGE_H */
+extern stp_list_t *stp_path_search(stp_list_t *dirlist,
+				   const char *suffix);
+
+extern void stp_path_split(stp_list_t *list,
+			   const char *path);
+
+
+#ifdef __cplusplus
+  }
+#endif
+
+#endif /* GIMP_PRINT_PATH_H */
 /*
- * End of "$Id: image.h,v 1.4 2004/03/28 21:17:38 rlk Exp $".
+ * End of "$Id: path.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $".
  */

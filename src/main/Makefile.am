@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.82 2004/04/11 01:28:16 rlk Exp $
+## $Id: Makefile.am,v 1.83 2004/04/25 12:17:50 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -106,26 +106,14 @@ mxml_SOURCES =					\
 	mxml-attr.c				\
 	mxml-file.c				\
 	mxml-node.c				\
-	mxml-search.c				\
-	mxml.h
+	mxml-search.c
 
 libgimpprint_headers =				\
-	bit-ops.h				\
-	color.h					\
-	curve-cache.h				\
 	dither-impl.h				\
 	dither-inlined-functions.h		\
-	dither.h				\
 	generic-options.h			\
 	gimp-print-internal.h			\
-	image.h					\
-	module.h				\
-	path.h					\
-	printers.h				\
-	util.h					\
-	vars.h					\
-	weave.h					\
-	xml.h
+	util.h
 
 libgimpprint_la_SOURCES =			\
 	array.c					\

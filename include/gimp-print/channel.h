@@ -1,7 +1,7 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.71 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: channel.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $"
  *
- *   Print plug-in header file for the GIMP.
+ *   libgimpprint header.
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
@@ -30,27 +30,40 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_INTERNAL_H
-#define GIMP_PRINT_INTERNAL_INTERNAL_H
+#ifndef GIMP_PRINT_CHANNEL_H
+#define GIMP_PRINT_CHANNEL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-#include <gimp-print/gimp-print-module.h>
+extern void stp_channel_reset(stp_vars_t v);
+extern void stp_channel_reset_channel(stp_vars_t v, int channel);
 
-#include "util.h"
+extern void stp_channel_add(stp_vars_t v, unsigned channel,
+			    unsigned subchannel, double value);
 
+extern void stp_channel_set_density_adjustment(stp_vars_t v,
+					       int color, int subchannel,
+					       double adjustment);
+extern void stp_channel_set_ink_limit(stp_vars_t v, double limit);
+extern void stp_channel_set_cutoff_adjustment(stp_vars_t v,
+					      int color, int subchannel,
+					      double adjustment);
+extern void stp_channel_set_black_channel(stp_vars_t v, int channel);
+
+extern void stp_channel_initialize(stp_vars_t v, stp_image_t *image,
+				   int input_channel_count);
+
+extern void stp_channel_convert(stp_const_vars_t v, unsigned *zero_mask);
+
+extern unsigned short * stp_channel_get_input(stp_const_vars_t v);
+
+extern unsigned short * stp_channel_get_output(stp_const_vars_t v);
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_INTERNAL_H */
-/*
- * End of "$Id: gimp-print-internal.h,v 1.71 2004/04/25 12:17:51 rleigh Exp $".
- */
+#endif /* GIMP_PRINT_CHANNEL_H */

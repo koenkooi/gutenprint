@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.39 2004/04/11 21:48:49 rleigh Exp $
+ *  $Id: gimp-print.h,v 1.40 2004/04/25 12:17:49 rleigh Exp $
  *
  *   Gimp-Print header file
  *
@@ -36,8 +36,8 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef __GIMP_PRINT_H__
-#define __GIMP_PRINT_H__
+#ifndef GIMP_PRINT_H
+#define GIMP_PRINT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,7 +61,7 @@ extern "C" {
   }
 #endif
 
-#endif /* __GIMP_PRINT_H__ */
+#endif /* GIMP_PRINT_H */
 /*
- * End of $Id: gimp-print.h,v 1.39 2004/04/11 21:48:49 rleigh Exp $
+ * End of $Id: gimp-print.h,v 1.40 2004/04/25 12:17:49 rleigh Exp $
  */

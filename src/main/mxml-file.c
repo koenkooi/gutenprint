@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.4 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: mxml-file.c,v 1.5 2004/04/25 12:17:51 rleigh Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -36,7 +36,7 @@
  * Include necessary headers...
  */
 
-#include "mxml.h"
+#include <gimp-print/mxml.h>x
 #include "config.h"
 
 
@@ -1432,5 +1432,5 @@ mxml_write_ws(mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.4 2003/07/23 01:51:27 rlk Exp $".
+ * End of "$Id: mxml-file.c,v 1.5 2004/04/25 12:17:51 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.14 2003/11/08 03:14:34 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.15 2004/04/25 12:17:50 rleigh Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -99,7 +99,7 @@ stpi_dither_ordered(stp_vars_t v,
 		    int zero_mask,
 		    const unsigned char *mask)
 {
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
+  stpi_dither_t *d = (stpi_dither_t *) stp_get_component_data(v, "Dither");
   int		x,
 		length;
   unsigned char	bit;

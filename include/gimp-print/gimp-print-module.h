@@ -1,11 +1,10 @@
-/*
- * "$Id: path.h,v 1.3 2004/02/08 23:37:16 rleigh Exp $"
+/*		-*- Mode: C -*-
+ *  $Id: gimp-print-module.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $
  *
- *   libgimpprint path functions header
+ *   Gimp-Print module header file
  *
- *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
- *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
- *   Copyright 2002 Roger Leigh (rleigh@debian.org)
+ *   Copyright 1997-2002 Michael Sweet (mike@easysw.com) and
+ *      Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -20,6 +19,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Revision History:
+ *
+ *   See ChangeLog
+ */
+
+/**
+ * @file gimp-print-module.h
+ * @brief Gimp-Print module header.
+ * This header includes all of the public headers used by modules.
  */
 
 /*
@@ -27,23 +36,32 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_PATH_H
-#define GIMP_PRINT_INTERNAL_PATH_H
+#ifndef GIMP_PRINT_GIMP_PRINT_MODULE_H
+#define GIMP_PRINT_GIMP_PRINT_MODULE_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define STP_MODULE 1
 
-extern stpi_list_t *stpi_path_search(stpi_list_t *dirlist, const char *suffix);
-extern void stpi_path_split(stpi_list_t *list, const char *path);
+#include <gimp-print/gimp-print.h>
 
+#include <gimp-print/bit-ops.h>
+#include <gimp-print/channel.h>
+#include <gimp-print/color.h>
+#include <gimp-print/dither.h>
+#include <gimp-print/list.h>
+#include <gimp-print/module.h>
+#include <gimp-print/path.h>
+#include <gimp-print/weave.h>
+#include <gimp-print/xml.h>
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_PATH_H */
+#endif /* GIMP_PRINT_MODULE_H */
 /*
- * End of "$Id: path.h,v 1.3 2004/02/08 23:37:16 rleigh Exp $".
+ * End of $Id: gimp-print-module.h,v 1.1 2004/04/25 12:17:49 rleigh Exp $
  */

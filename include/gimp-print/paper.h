@@ -1,5 +1,5 @@
 /*
- * "$Id: paper.h,v 1.2 2004/04/07 18:57:51 rleigh Exp $"
+ * "$Id: paper.h,v 1.3 2004/04/25 12:17:49 rleigh Exp $"
  *
  *   libgimpprint paper functions.
  *
@@ -26,12 +26,14 @@
  * @brief Paper size functions.
  */
 
-#ifndef __GIMP_PRINT_PAPER_H__
-#define __GIMP_PRINT_PAPER_H__
+#ifndef GIMP_PRINT_PAPER_H
+#define GIMP_PRINT_PAPER_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <gimp-print/vars.h>
 
 /**
  * The papersize describes the dimensions of a paper.
@@ -116,13 +118,16 @@ extern const stp_papersize_t *stp_get_papersize_by_size(int length,
  */
 extern const stp_papersize_t *stp_get_papersize_by_index(int idx);
 
+extern void stp_default_media_size(stp_const_vars_t v,
+				   int *width, int *height);
+
 /** @} */
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* __GIMP_PRINT_PAPER_H__ */
+#endif /* GIMP_PRINT_PAPER_H */
 /*
- * End of "$Id: paper.h,v 1.2 2004/04/07 18:57:51 rleigh Exp $".
+ * End of "$Id: paper.h,v 1.3 2004/04/25 12:17:49 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-intl.h,v 1.4 2004/04/08 21:49:44 rleigh Exp $"
+ * "$Id: gimp-print-intl.h,v 1.5 2004/04/25 12:17:49 rleigh Exp $"
  *
  *   I18N header file for Gimp-Print.
  *
@@ -26,8 +26,8 @@
  * @brief Internationalisation functions.
  */
 
-#ifndef __GIMP_PRINT_INTL_H__
-#define __GIMP_PRINT_INTL_H__
+#ifndef GIMP_PRINT_INTL_H
+#define GIMP_PRINT_INTL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,4 +88,4 @@ INCLUDE_LOCALE_H
   }
 #endif
 
-#endif /* __GIMP_PRINT_INTL_H__ */
+#endif /* GIMP_PRINT_INTL_H */
