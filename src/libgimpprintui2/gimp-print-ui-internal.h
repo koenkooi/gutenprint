@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.2 2004/06/22 18:52:15 rleigh Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.3 2004/08/19 20:56:39 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -175,11 +175,8 @@ extern void stpui_disable_help (void);
 extern void stpui_set_help_data (GtkWidget *widget, const gchar *tooltip);
 
 extern GtkWidget *stpui_dialog_new(const gchar       *title,
-				   const gchar       *wmclass_name,
 				   GtkWindowPosition  position,
-				   gint               allow_shrink,
-				   gint               allow_grow,
-				   gint               auto_shrink,
+				   gboolean           resizable,
 				   /* specify action area buttons as va_list:
 				    *  const gchar    *label,
 				    *  GtkSignalFunc   callback,
