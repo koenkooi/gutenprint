@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.2 2000/02/13 02:01:38 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.3 2000/02/15 03:51:41 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -467,18 +467,23 @@ stp_open(gx_device *pdev)
                      &length);
 
   escp2_imageable_area(stp_data.model,	/* I - Printer model */
-                       none,			    /* I - PPD file (not used) */
+                       none,		/* I - PPD file (not used) */
                        stp_data.media,	/* I - Media size */
-                       &left,				/* O - Left position in points */
-                       &right,				/* O - Right position in points */
-                       &bottom,				/* O - Bottom position in points */
-                       &top);				/* O - Top position in points */
-        
-  /*!!!! fix for "+32 hack" in escp2-driver when setting printer Top/bottom margins */
+                       &left,		/* O - Left position in points */
+                       &right,		/* O - Right position in points */
+                       &bottom,		/* O - Bottom position in points */
+                       &top);		/* O - Top position in points */
+
+#if 0
+  /* This is now fixed in the driver.  The safest fix is to push the */
+  /* top in corresponding to the number of rows and spacing */
+  /*!!!! fix for "+32 hack" in escp2-driver when setting printer
+    Top/bottom margins */
   if(escp2_reslist[stp_data.resnr].softweave != 0)
   {
    top -= (32-6);
   }
+#endif
 
   st[1] = (float)bottom / 72;        /* bottom margin */
   st[3] = (float)(length-top) / 72;  /* top margin    */
