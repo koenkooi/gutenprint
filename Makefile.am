@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.134 2003/03/28 21:54:03 rleigh Exp $
+## $Id: Makefile.am,v 1.135 2003/05/20 21:19:29 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-SUBDIRS = include intl lib src samples test po man doc debian scripts
+SUBDIRS = include lib src samples test po man doc debian scripts
 DISTDIRS = m4 m4extra
 
 
