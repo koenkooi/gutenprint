@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.42 2003/02/22 17:20:26 rlk Exp $"
+ * "$Id: printers.c,v 1.43 2003/02/28 07:58:13 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -329,7 +329,7 @@ stp_end_job(const stp_vars_t v, stp_image_t *image)
     stpi_get_printfuncs(stp_get_printer(v));
   if (!stpi_get_verified(v))
     return 0;
-  if (stp_get_job_mode(v) == STP_JOB_MODE_JOB)
+  if (stp_get_job_mode(v) == STP_JOB_MODE_PAGE)
     return 1;
   if (printfuncs->end_job)
     return (printfuncs->end_job)(v, image);
