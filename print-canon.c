@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.46 2000/05/22 17:03:47 gandy Exp $"
+ * "$Id: print-canon.c,v 1.47 2000/05/28 11:50:41 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -467,7 +467,7 @@ canon_imageable_area(int  model,	/* I - Printer model */
   default_media_size(model, ppd_file, media_size, &width, &length);
 
   /* ok for BJC 6000 */
-  *left   = 9;
+  *left   = 11;
   *right  = width - 9;
   *top    = length- 10;
   *bottom = 18;
@@ -1033,7 +1033,7 @@ canon_print(const printer_t *printer,		/* I - Model */
     dither = init_dither(image_width, out_width, v);
 
   dither_set_black_levels(dither, 1.0, 1.0, 1.0);
-  dither_set_black_lower(dither, .4 / ((1 << (use_dmt+1)) - 1));
+  dither_set_black_lower(dither, .8 / ((1 << (use_dmt+1)) - 1));
   /* 
   if (use_glossy_film) 
   */
