@@ -1,3 +1,9 @@
+gimp-print (4.1.6-2) unstable; urgency=low
+
+  * Fix build dependencies to include flex, Closes: #96401
+
+ -- Eric Sharkey <sharkey@debian.org>  Tue,  8 May 2001 20:09:30 -0400
+
 gimp-print (4.1.6-1) unstable; urgency=low
 
   * New upstream release
