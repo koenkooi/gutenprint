@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.12 2003/06/13 10:51:45 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.13 2003/06/13 11:37:39 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -133,7 +133,10 @@ stpi_dither_ordered(stp_vars_t v,
 	    {
 	      if (raw[i] &&
 		  raw[i] >= ditherpoint(d, &(CHANNEL(d, i).dithermat), x))
-		CHANNEL(d, i).ptr[d->ptr_offset] |= bit;
+		{
+		  set_row_ends(&(CHANNEL(d, i)), x);
+		  CHANNEL(d, i).ptr[d->ptr_offset] |= bit;
+		}
 	    }
 	  ADVANCE_UNIDIRECTIONAL(d, bit, raw, CHANNEL_COUNT(d),
 				 xerror, xstep, xmod);
