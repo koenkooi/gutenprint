@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.3 2001/05/12 15:17:49 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.4 2001/05/20 22:10:20 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -59,8 +59,8 @@
 /* Concrete type to represent image */
 typedef struct
 {
-  GDrawable *drawable;
-  GPixelRgn  rgn;
+  GimpDrawable *drawable;
+  GimpPixelRgn  rgn;
 
   /*
    * Transformations we can impose on the image.  The transformations
@@ -127,7 +127,7 @@ static stp_image_t theImage =
 };
 
 stp_image_t *
-Image_GDrawable_new(GDrawable *drawable)
+Image_GimpDrawable_new(GimpDrawable *drawable)
 {
   Gimp_Image_t *i = xmalloc(sizeof(Gimp_Image_t));
   i->drawable = drawable;
@@ -337,5 +337,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.3 2001/05/12 15:17:49 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.4 2001/05/20 22:10:20 rlk Exp $".
  */

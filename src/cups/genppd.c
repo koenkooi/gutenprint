@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.13 2001/05/12 16:12:21 rlk Exp $"
+ * "$Id: genppd.c,v 1.14 2001/05/20 22:10:20 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -481,7 +481,6 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   gzprintf(fp, "*ImageType LineArt/Line Art:\t\"<</cupsRowCount 0>>setpagedevice\"\n");
   gzprintf(fp, "*ImageType SolidTone/Solid Tone:\t\"<</cupsRowCount 1>>setpagedevice\"\n");
   gzprintf(fp, "*ImageType Continuous/Photograph:\t\"<</cupsRowCount 2>>setpagedevice\"\n");
-  gzprintf(fp, "*ImageType Monochrome/Monochrome:\t\"<</cupsRowCount 3>>setpagedevice\"\n");
 
   gzputs(fp, "*CloseUI: *ImageType\n");
 
@@ -682,5 +681,5 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.13 2001/05/12 16:12:21 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.14 2001/05/20 22:10:20 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.25 2001/05/19 00:42:08 rlk Exp $"
+ * "$Id: print-util.c,v 1.26 2001/05/20 22:10:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1193,6 +1193,10 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
 
+  /*
+   * Note that in raw CMYK mode the user is responsible for not sending
+   * color output to black & white printers!
+   */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
       stp_get_output_type(v) == OUTPUT_COLOR)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.11 2001/05/12 16:12:21 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.12 2001/05/20 22:10:20 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -79,8 +79,8 @@ extern const char* stp_check_version (unsigned int required_major,
 
 #define OUTPUT_GRAY             0       /* Grayscale output */
 #define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_RAW_CMYK         2       /* Raw CMYK output */
-#define OUTPUT_GRAY_COLOR       3       /* Grayscale output using color */
+#define OUTPUT_MONOCHROME       2       /* Raw monochrome output */
+#define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
 
 #define ORIENT_AUTO             -1      /* Best orientation */
 #define ORIENT_PORTRAIT         0       /* Portrait orientation */
@@ -91,8 +91,7 @@ extern const char* stp_check_version (unsigned int required_major,
 #define IMAGE_LINE_ART          0
 #define IMAGE_SOLID_TONE        1
 #define IMAGE_CONTINUOUS        2
-#define IMAGE_MONOCHROME        3
-#define NIMAGE_TYPES            4
+#define NIMAGE_TYPES            3
 
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
@@ -569,5 +568,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.11 2001/05/12 16:12:21 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.12 2001/05/20 22:10:20 rlk Exp $".
  */
