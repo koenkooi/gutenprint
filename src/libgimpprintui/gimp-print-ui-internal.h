@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.11 2003/05/05 00:36:02 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.12 2003/06/05 23:27:43 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -33,6 +33,7 @@
 #define inline __inline__
 #endif
 
+#include <sys/types.h>
 #include <gtk/gtk.h>
 
 #ifdef INCLUDE_GIMP_PRINT_H
