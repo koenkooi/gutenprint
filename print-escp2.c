@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.206 2000/08/09 23:39:41 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.207 2000/08/11 11:50:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1309,6 +1309,13 @@ escp2_print(const printer_t *printer,		/* I - Model */
 			  scaling, image_width, image_height, image,
 			  &orientation, &page_width, &page_height,
 			  &out_width, &out_height, &left, &top);
+
+  /*
+   * Recompute the image height and width.  If the image has been
+   * rotated, these will change from previously.
+   */
+  image_height = Image_height(image);
+  image_width = Image_width(image);
 
  /*
   * Figure out the output resolution...
