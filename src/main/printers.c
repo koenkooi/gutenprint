@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.71 2004/05/23 23:40:24 rleigh Exp $"
+ * "$Id: printers.c,v 1.71.6.1 2004/07/17 02:42:26 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -862,26 +862,6 @@ stp_printer_create_from_xmltree(stp_mxml_node_t *printer, /* The printer node */
 {
   stp_mxml_node_t *prop;                                  /* Temporary node pointer */
   const char *stmp;                                    /* Temporary string */
- /* props[] (unused) is the correct tag sequence */
-  /*  const char *props[] =
-    {
-      "model",
-      "black",
-      "cyan",
-      "yellow",
-      "magenta",
-      "brightness",
-      "gamma",
-      "density",
-      "saturation",
-      "blackgamma",
-      "cyangamma",
-      "yellowgamma",
-      "magentagamma",
-      "gcrlower",
-      "gcrupper",
-      NULL
-      };*/
   stp_printer_t *outprinter;                 /* Generated printer */
   int
     driver = 0,                                       /* Check driver */
@@ -927,23 +907,40 @@ stp_printer_create_from_xmltree(stp_mxml_node_t *printer, /* The printer node */
 		  model = 1;
 		}
 	    }
-	  else
+	  else if (!strcmp(prop_name, "parameter"))
 	    {
-	      const stpi_xml_prop_t *stp_prop = stpi_xml_props;
-	      while (stp_prop->property)
+	      const char *p_type = stp_mxmlElementGetAttr(prop, "type");
+	      const char *p_name = stp_mxmlElementGetAttr(prop, "name");
+	      const char *p_val = stp_mxmlElementGetAttr(prop, "value");
+	      if (!p_type || !p_name || !p_val)
+		stp_erprintf("Bad property on printer %s\n",
+			     outprinter->long_name);
+	      else if (strcmp(p_type, "float") == 0)
+		stp_set_float_parameter(outprinter->printvars,
+					p_name, stp_xmlstrtod(p_val));
+	      else if (strcmp(p_type, "integer") == 0)
+		stp_set_int_parameter(outprinter->printvars,
+				      p_name, (int) stp_xmlstrtol(p_val));
+	      else if (strcmp(p_type, "boolean") == 0)
+		stp_set_boolean_parameter(outprinter->printvars,
+					  p_name, (int) stp_xmlstrtol(p_val));
+	      else if (strcmp(p_type, "string") == 0)
+		stp_set_string_parameter(outprinter->printvars, p_name, p_val);
+	      else if (strcmp(p_type, "curve") == 0)
 		{
-		  if (!strcmp(prop_name, stp_prop->property))
+		  stp_curve_t *curve = stp_curve_create_from_string(p_val);
+		  if (curve)
 		    {
-		      stmp = stp_mxmlElementGetAttr(prop, "value");
-		      if (stmp)
-			{
-			  stp_set_float_parameter(outprinter->printvars,
-						  stp_prop->parameter,
-						  (float) stp_xmlstrtod(stmp));
-			  break;
-			}
+		      stp_set_curve_parameter(outprinter->printvars,
+					      p_name, curve);
+		      stp_curve_destroy(curve);
 		    }
-		  stp_prop++;
+		}
+	      else
+		{
+		  stp_erprintf("Bad property %s type %s on printer %s\n",
+			       p_name, p_type, outprinter->long_name);
+		  continue;
 		}
 	    }
 	}
