@@ -1,10 +1,11 @@
 /*
- * "$Id: papers.h,v 1.5 2003/01/06 20:57:39 rleigh Exp $"
+ * "$Id: path.h,v 1.1 2003/01/06 20:57:39 rleigh Exp $"
  *
- *   libgimpprint header.
+ *   libgimpprint path functions header
  *
- *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
- *	Robert Krawitz (rlk@alum.mit.edu)
+ *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
+ *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
+ *   Copyright 2002 Roger Leigh (roger@whinlatter.uklinux.net)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -19,10 +20,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * Revision History:
- *
- *   See ChangeLog
  */
 
 /*
@@ -30,50 +27,23 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef GIMP_PRINT_INTERNAL_PAPERS_H
-#define GIMP_PRINT_INTERNAL_PAPERS_H
+#ifndef GIMP_PRINT_INTERNAL_PATH_H
+#define GIMP_PRINT_INTERNAL_PATH_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-
-typedef struct
-{
-  char *name;
-  char *text;
-  char *comment;
-  unsigned width;
-  unsigned height;
-  unsigned top;
-  unsigned left;
-  unsigned bottom;
-  unsigned right;
-  stp_papersize_unit_t paper_unit;
-} stp_internal_papersize_t;
-
-
-extern stp_list_t *stp_paper_list;
-
-
-extern int stp_init_paper_list(void);
-
-extern int stp_paper_create(stp_papersize_t pt);
-extern int stp_paper_destroy(stp_papersize_t pt);
-
-extern void stp_default_media_size(const stp_vars_t v,
-				   int *width, int *height);
+extern stp_list_t *stp_path_search(stp_list_t *dirlist, const char *suffix);
+extern void stp_path_split(stp_list_t *list, const char *path);
 
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
+#endif /* GIMP_PRINT_INTERNAL_PATH_H */
 /*
- * End of "$Id: papers.h,v 1.5 2003/01/06 20:57:39 rleigh Exp $".
+ * End of "$Id: path.h,v 1.1 2003/01/06 20:57:39 rleigh Exp $".
  */

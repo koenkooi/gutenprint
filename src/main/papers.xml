@@ -5,8 +5,15 @@
    XML description of papers known to libgimpprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.3 2002/11/27 22:35:09 rleigh Exp $"
+   "$Id: papers.xml,v 1.4 2003/01/06 20:57:39 rleigh Exp $"
 -->
+
+<!--
+   Sizes are converted to 1/72in, then rounded down so that we don't
+   print off the edge of the paper.
+-->
+
+
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

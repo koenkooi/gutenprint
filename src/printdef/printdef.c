@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.c,v 1.6 2003/01/01 02:46:30 rlk Exp $"
+ * "$Id: printdef.c,v 1.7 2003/01/06 20:57:43 rleigh Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -34,18 +34,6 @@
 #include "../main/util.h"
 #include "../main/vars.h"
 
-typedef struct
-{
-  const char *name;
-  const char *text;
-  unsigned width;
-  unsigned height;
-  unsigned top;
-  unsigned left;
-  unsigned bottom;
-  unsigned right;
-  stp_papersize_unit_t paper_unit;
-} stp_internal_papersize_t;
 
 void printer_output_start(void);
 void paper_output_start(void);

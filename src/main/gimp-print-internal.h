@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.63 2003/01/02 02:51:15 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.64 2003/01/06 20:57:37 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -49,7 +49,6 @@ extern "C" {
 #include "papers.h"
 #include "printers.h"
 #include "util.h"
-#include "vars.h"
 #include "weave.h"
 
 
@@ -59,5 +58,5 @@ extern "C" {
 
 #endif /* GIMP_PRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.63 2003/01/02 02:51:15 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.64 2003/01/06 20:57:37 rleigh Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2003/01/01 21:06:05 rleigh Exp $
+## $Id: Makefile.am,v 1.15 2003/01/06 20:57:36 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@ MAINT_CHARSET = latin1
 include $(top_srcdir)/scripts/global.mk
 
 SUBDIRS = 					\
-	printdef 				\
 	main					\
 	libgimpprintui				\
 	escputil				\
@@ -34,7 +33,8 @@ SUBDIRS = 					\
 	cups					\
 	foomatic				\
 	ghost					\
-	testpattern
+	testpattern				\
+	printdef
 
 
 ## Clean

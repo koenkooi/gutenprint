@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.5 2003/01/05 23:06:34 rlk Exp $"
+ * "$Id: printers.h,v 1.6 2003/01/06 20:57:43 rleigh Exp $"
  *
  *   libgimpprint header.
  *
@@ -43,6 +43,8 @@ extern "C" {
 
 
 #include "util.h"
+#include "vars.h"
+
 
 typedef struct
 {
@@ -61,12 +63,37 @@ typedef struct
   int   (*end_job)(const stp_vars_t v, stp_image_t *image);
 } stp_printfuncs_t;
 
+
+typedef struct stp_internal_printer
+{
+  int        cookie;            /* Magic number */
+  char       *long_name;        /* Long name for UI */
+  char       *family;           /* Printer family */
+  int        model;             /* Model number */
+  const stp_printfuncs_t *printfuncs;
+  stp_vars_t printvars;
+} stp_internal_printer_t;
+
+
+typedef struct stp_internal_family
+{
+  const stp_printfuncs_t *printfuncs;   /* printfuncs for the printer */
+  stp_list_t             *printer_list; /* list of printers */
+} stp_internal_family_t;
+
+
+extern stp_list_t *stp_printer_list;
+
+
 extern int stp_get_model(const stp_vars_t v);
 
 extern const stp_printfuncs_t *stp_printer_get_printfuncs(const stp_printer_t p);
 
 extern int stp_verify_printer_params(const stp_vars_t);
 extern int stp_init_printer_list(void);
+
+extern int stp_family_register(stp_list_t *family);
+extern int stp_family_unregister(stp_list_t *family);
 
 extern stp_parameter_list_t stp_printer_list_parameters(const stp_vars_t v);
 
@@ -81,5 +108,5 @@ stp_printer_describe_parameter(const stp_vars_t v, const char *name,
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.5 2003/01/05 23:06:34 rlk Exp $".
+ * End of "$Id: printers.h,v 1.6 2003/01/06 20:57:43 rleigh Exp $".
  */

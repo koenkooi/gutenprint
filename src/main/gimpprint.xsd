@@ -11,7 +11,7 @@ elementFormDefault="qualified">
       Requires Gimp-Print 4.3 or later
       Based on printers.xml and printdef
       Author: Roger Leigh (roger@whinlatter.uklinux.net)
-      $Id: gimpprint.xsd,v 1.2 2002/11/23 20:49:16 rleigh Exp $
+      $Id: gimpprint.xsd,v 1.3 2003/01/06 20:57:38 rleigh Exp $
     </xsd:documentation>
   </xsd:annotation>
 
@@ -55,7 +55,6 @@ elementFormDefault="qualified">
 	<xsd:element ref="gamma" minOccurs="0" maxOccurs="1"/>
 	<xsd:element ref="density" minOccurs="0" maxOccurs="1"/>
 	<xsd:element ref="saturation" minOccurs="0" maxOccurs="1"/>
-	<xsd:element ref="language" minOccurs="1" maxOccurs="1"/>
       </xsd:sequence>
     </xsd:complexType>
     <xsd:attributeGroup>
@@ -96,11 +95,6 @@ elementFormDefault="qualified">
   </xsd:element>
   <xsd:element name="saturation">
     <xsd:attributeGroup ref="saturationattrs" use="required"/>
-  </xsd:element>
-  <xsd:element name="language">
-    <xsd:attributeGroup>
-      <xsd:attribute name="value" type="token" use="required"/>
-    </xsd:attributeGroup>
   </xsd:element>
   <xsd:element name="paperdef">
     <xsd:complexType>
