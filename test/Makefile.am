@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/01/29 02:07:17 rlk Exp $
+## $Id: Makefile.am,v 1.5 2001/01/30 22:29:01 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ testdither_SOURCES = testdither.c
 testdither_LDADD = -lm $(GIMPPRINT_LIBS)
 
 $(GIMPPRINT_LIBS):
-	make -C ../src/main
+	$(MAKE) -C ../src/main
 
 EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
 CLEANFILES = $(EXTRA_PROGRAMS)

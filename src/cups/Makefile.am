@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.11 2001/01/26 20:27:15 rleigh Exp $
+## $Id: Makefile.am,v 1.12 2001/01/30 22:29:01 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ ppd:    genppd
 	./genppd
 
 $(GIMPPRINT_LIBS):
-	make -C ../main
+	$(MAKE) -C ../main
 
 dist-hook:
 	for dir in commands ; do \
