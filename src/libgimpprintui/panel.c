@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.1 2003/02/02 05:06:04 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.2 2003/02/02 15:48:41 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -107,9 +107,9 @@ static GtkWidget *file_browser;        /* FSD for print files */
 static GtkWidget *adjust_color_button;
 static GtkWidget *about_dialog;
 
-static GtkWidget *page_size_table_list[STP_PARAMETER_LEVEL_INVALID];
-static GtkWidget *printer_features_table_list[STP_PARAMETER_LEVEL_INVALID];
-static GtkWidget *color_adjustment_table_list[STP_PARAMETER_LEVEL_INVALID];
+static GtkWidget *page_size_table_list[STP_PARAMETER_LEVEL_INVALID * 2];
+static GtkWidget *printer_features_table_list[STP_PARAMETER_LEVEL_INVALID * 2];
+static GtkWidget *color_adjustment_table_list[STP_PARAMETER_LEVEL_INVALID * 2];
 
 static gboolean preview_valid = FALSE;
 static gboolean frame_valid = FALSE;
@@ -281,7 +281,7 @@ build_printer_combo(void)
 		    NULL);
 }
 
-void
+static void
 build_a_combo(option_t *option)
 {
   if (option->fast_desc &&
@@ -327,17 +327,25 @@ populate_options(const stp_vars_t v)
 	    case STP_PARAMETER_TYPE_STRING_LIST:
 	      gtk_widget_destroy(opt->info.list.combo);
 	      gtk_widget_destroy(opt->info.list.label);
-	      stp_string_list_free(opt->info.list.params);
+	      if (opt->info.list.params)
+		stp_string_list_free(opt->info.list.params);
+	      free(opt->info.list.default_val);
 	      break;
 	    case STP_PARAMETER_TYPE_DOUBLE:
-	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
-	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_SCALE(opt->info.flt.adjustment)));
-	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
+	      if (opt->info.flt.adjustment)
+		{
+		  gtk_widget_destroy
+		    (GTK_WIDGET(SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
+		  gtk_widget_destroy
+		    (GTK_WIDGET(SCALE_ENTRY_SCALE(opt->info.flt.adjustment)));
+		  gtk_widget_destroy
+		    (GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
+/*		  gtk_object_destroy(GTK_OBJECT(opt->info.flt.adjustment)); */
+		}
 	      break;
 	    default:
 	      break;
 	    }
-/*	  gtk_object_destroy(opt->info.flt.adjustment); */
 	}
       free(current_options);
     }
@@ -354,7 +362,7 @@ populate_options(const stp_vars_t v)
 	case STP_PARAMETER_TYPE_STRING_LIST:
 	  stp_describe_parameter(v, opt->fast_desc->name, &desc);
 	  opt->info.list.callback_id = -1;
-	  opt->info.list.default_val = desc.deflt.str;
+	  opt->info.list.default_val = g_strdup(desc.deflt.str);
 	  opt->info.list.params = stp_string_list_create_copy(desc.bounds.str);
 	  opt->info.list.combo = NULL;
 	  opt->info.list.label = NULL;
@@ -383,8 +391,8 @@ populate_option_table(GtkWidget **table, int p_class)
 {
   int i;
   int vpos[STP_PARAMETER_LEVEL_INVALID];
-  for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
-    vpos[i] = 0;
+  for (i = 0; i < STP_PARAMETER_LEVEL_INVALID * 2; i++)
+    vpos[i] = 1;
   for (i = 0; i < current_option_count; i++)
     {
       option_t *opt = &(current_options[i]);
@@ -394,13 +402,14 @@ populate_option_table(GtkWidget **table, int p_class)
 	  switch (desc->p_type)
 	    {
 	    case STP_PARAMETER_TYPE_STRING_LIST:
-	      stpui_create_new_combo(opt, table[desc->p_level], 0,
-				     vpos[desc->p_level]++);
+	      stpui_create_new_combo(opt, table[2 * desc->p_level], 0,
+				     vpos[2 * desc->p_level]++);
 	      break;
 	    case STP_PARAMETER_TYPE_DOUBLE:
 	      opt->info.flt.adjustment = 
-		stpui_scale_entry_new(GTK_TABLE(table[desc->p_level]),
-				      0, i + 1, _(desc->text), 200, 0,
+		stpui_scale_entry_new(GTK_TABLE(table[2 * desc->p_level + 1]),
+				      0, vpos[2 * desc->p_level + 1]++,
+				      _(desc->text), 200, 0,
 				      opt->info.flt.deflt,
 				      opt->info.flt.lower,
 				      opt->info.flt.upper,
@@ -417,7 +426,18 @@ populate_option_table(GtkWidget **table, int p_class)
 	}
     }
   for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
-    gtk_widget_show(table[i]);
+    {
+      if (vpos[2 * i] > 1 || vpos[ 2 * i + 1] > 1)
+	{
+	  gtk_widget_show(table[2 * i]);
+	  gtk_widget_show(table[2 * i + 1]);
+	}
+      else
+	{
+	  gtk_widget_hide(table[2 * i]);
+	  gtk_widget_hide(table[2 * i + 1]);
+	}
+    }
 }
 
 static void
@@ -459,6 +479,7 @@ static GtkWidget *
 create_table_list(GtkWidget **table_list)
 {
   int i;
+  GtkWidget *sep;
   GtkWidget *parent = gtk_table_new(1, 1, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (parent), 2);
   gtk_table_set_row_spacings (GTK_TABLE (parent), 0);
@@ -467,11 +488,24 @@ create_table_list(GtkWidget **table_list)
   for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
     {
       GtkWidget *table = gtk_table_new(1, 1, FALSE);
-      table_list[i] = table;
+      table_list[i * 2] = table;
       gtk_table_set_col_spacings (GTK_TABLE (table), 2);
       gtk_table_set_row_spacings (GTK_TABLE (table), 0);
       gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-      gtk_table_attach_defaults(GTK_TABLE(parent), table, 0, 2, i, i + 1);
+      gtk_table_attach_defaults(GTK_TABLE(parent), table, 0, 2,
+				2 * i, 2 * i + 1);
+      sep = gtk_hseparator_new();
+      gtk_table_attach_defaults(GTK_TABLE(table), sep, 0, 3, 0, 1);
+      if (i > 0)
+	gtk_widget_show(sep);
+      gtk_widget_show(table);
+      table = gtk_table_new(1, 1, FALSE);
+      table_list[i * 2 + 1] = table;
+      gtk_table_set_col_spacings (GTK_TABLE (table), 2);
+      gtk_table_set_row_spacings (GTK_TABLE (table), 0);
+      gtk_container_set_border_width(GTK_CONTAINER(table), 0);
+      gtk_table_attach_defaults(GTK_TABLE(parent), table, 0, 2,
+				2 * i + 1, 2 * i + 2);
       gtk_widget_show(table);
     }
   return parent;

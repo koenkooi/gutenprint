@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.56 2003/01/26 02:38:14 rlk Exp $"
+ * "$Id: print-color.c,v 1.56.2.1 2003/02/02 15:48:41 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -109,7 +109,7 @@ static float_param_t float_parameters[] =
       "AppGamma", N_("AppGamma"),
       N_("Gamma value assumed by application"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, -1
+      STP_PARAMETER_LEVEL_ADVANCED5, 1, 1, -1
     }, 0.1, 4.0, 1.0, 0
   },
   {
@@ -138,18 +138,18 @@ static float_param_t float_parameters[] =
   },
   {
     {
-      "Black", N_("Black"),
+      "Black", N_("GCR Transition"),
       N_("Adjust the black gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, 0
-    }, 0.0, 4.0, 1.0, 1
+      STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 0
+    }, 0.0, 1.0, 1.0, 1
   },
   {
     {
       "CyanDensity", N_("Cyan Balance"),
       N_("Adjust the cyan balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, 1
+      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 1
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -157,7 +157,7 @@ static float_param_t float_parameters[] =
       "MagentaDensity", N_("Magenta Balance"),
       N_("Adjust the magenta balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, 2
+      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 2
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -165,7 +165,7 @@ static float_param_t float_parameters[] =
       "YellowDensity", N_("Yellow Balance"),
       N_("Adjust the yellow balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, 3
+      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 3
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -173,7 +173,7 @@ static float_param_t float_parameters[] =
       "BlackDensity", N_("Black Balance"),
       N_("Adjust the black balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, 0
+      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, 0
     }, 0.0, 2.0, 1.0, 1
   },
   {
