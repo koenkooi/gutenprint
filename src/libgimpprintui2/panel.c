@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.1.2.1 2004/06/15 23:53:30 rleigh Exp $"
+ * "$Id: panel.c,v 1.1.2.2 2004/06/20 13:50:33 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3151,18 +3151,21 @@ combo_callback(GtkWidget *widget, gpointer data)
     stpui_combo_get_name(option->info.list.combo, option->info.list.params);
   const gchar *value =
     stp_get_string_parameter(pv->v, option->fast_desc->name);
-  reset_preview();
-  if (!value || strcmp(value, new_value) != 0)
+  if (value && new_value)
     {
-      invalidate_frame();
-      invalidate_preview_thumbnail();
-      stp_set_string_parameter(pv->v, option->fast_desc->name, new_value);
-      if (strcmp(option->fast_desc->name, "PageSize") == 0)
-	set_media_size(new_value);
-      g_idle_add(refresh_all_options, NULL);
-      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
-	update_adjusted_thumbnail();
-      preview_update();
+      reset_preview();
+      if (!value || strcmp(value, new_value) != 0)
+	{
+	  invalidate_frame();
+	  invalidate_preview_thumbnail();
+	  stp_set_string_parameter(pv->v, option->fast_desc->name, new_value);
+	  if (strcmp(option->fast_desc->name, "PageSize") == 0)
+	    set_media_size(new_value);
+	  g_idle_add(refresh_all_options, NULL);
+	  if (option->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
+	    update_adjusted_thumbnail();
+	  preview_update();
+	}
     }
 }
 
