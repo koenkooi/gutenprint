@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.75 2004/01/31 22:39:31 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.76 2004/02/28 20:05:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -518,6 +518,7 @@ extern const paper_adjustment_list_t stpi_escp2_standard_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_durabrite_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_photo2_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_photo3_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_sp960_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_matte_paper_adjustment_list;
@@ -543,7 +544,7 @@ extern const inkgroup_t stpi_escp2_c64_inkgroup;
 extern const inkgroup_t stpi_escp2_x80_inkgroup;
 extern const inkgroup_t stpi_escp2_photo_gen1_inkgroup;
 extern const inkgroup_t stpi_escp2_photo_gen2_inkgroup;
-extern const inkgroup_t stpi_escp2_photo_photo_gen2_inkgroup;
+extern const inkgroup_t stpi_escp2_photo_gen3_inkgroup;
 extern const inkgroup_t stpi_escp2_photo_pigment_inkgroup;
 extern const inkgroup_t stpi_escp2_photo7_japan_inkgroup;
 extern const inkgroup_t stpi_escp2_ultrachrome_inkgroup;
@@ -674,5 +675,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.75 2004/01/31 22:39:31 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.76 2004/02/28 20:05:04 rlk Exp $".
  */
