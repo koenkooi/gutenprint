@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.13 2004/02/08 23:37:16 rleigh Exp $
+# $Id: cups-genppdupdate.in,v 1.14 2004/05/23 11:43:24 rleigh Exp $
 # Update CUPS PPDs for Gimp-Print queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -122,7 +122,7 @@ if (!$quiet || $verbose) {
 	exit (0);
     } else {
 	print STDOUT "Failed to update any PPD files\n";
-	exit (1);
+	exit (0);
     }
 }
 
