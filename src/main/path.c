@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.4 2003/01/11 01:58:09 rlk Exp $"
+ * "$Id: path.c,v 1.5 2003/01/20 01:06:22 rlk Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -147,17 +147,12 @@ stp_path_merge(const char *path, /* Path */
 	       const char *file) /* Filename */
 {
   char *filename;                /* Filename to return */
-  int
-    namelen,                     /* Filename length */
-    nameidx;                     /* Index into filename */
-
-  namelen = strlen(path) + strlen(file) + 2;
+  int namelen = strlen(path) + strlen(file) + 2;
   filename = (char *) stp_malloc(namelen * sizeof(char));
-  strncpy (filename, path, strlen(path));
-  nameidx = strlen(path);
-  filename[nameidx++] = '/';
-  strcpy ((filename+nameidx), file);
-
+  strcpy (filename, path);
+  strcat (filename, "/");
+  strcat (filename, file);
+  filename[namelen - 1] = '\0';
   return filename;
 }
 
