@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.29.2.2 2002/10/21 02:20:23 rlk Exp $"
+ * "$Id: print-ps.c,v 1.29.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -411,9 +411,13 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   * Compute the output size...
   */
 
-  stp_compute_page_parameters(printer, nv, image,
-			      &page_width, &page_height, &out_width,
-			      &out_height, &left, &top);
+  out_width = stp_get_width(v);
+  out_height = stp_get_height(v);
+
+  ps_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
+		    &page_top);
+  page_width = page_right - page_left;
+  page_height = page_top - page_bottom;
 
   image_height = image->height(image);
   image_width = image->width(image);
@@ -430,18 +434,9 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   curtime = time(NULL);
 
-  ps_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
-		    &page_top);
+  left += page_left;
 
-  if (left < 0)
-    left = (page_width - out_width) / 2 + page_left;
-  else
-    left += page_left;
-
-  if (top < 0)
-    top  = (page_height + out_height) / 2 + page_bottom;
-  else
-    top = page_height - top + page_bottom;
+  top = page_height - top + page_bottom;
 
   stp_dprintf(STP_DBG_PS, v,
 	      "out_width = %d, out_height = %d\n", out_width, out_height);

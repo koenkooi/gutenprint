@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.7.12.3 2002/10/21 02:20:24 rlk Exp $"
+ * "$Id: printdefy.y,v 1.7.12.4 2002/10/22 00:55:01 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -74,7 +74,6 @@ output_the_printer(void)
   printf("    %d,\n", thePrinter.model);
   printf("    &stp_%s_printfuncs,\n", printfuncs[thePrinter.printvars.top]);
   printf("    {\n");
-  printf("      \"\",\n");	/* output_to */
   printf("      %s,\n", thePrinter.printvars.driver);	/* driver */
   printf("      \"\",\n");	/* ppd_file */
   printf("      \"\",\n");	/* resolution */
@@ -85,10 +84,10 @@ output_the_printer(void)
   printf("      \"\",\n");	/* dither_algorithm */
   printf("      %d,\n", thePrinter.printvars.output_type);
   printf("      %.3f,\n", thePrinter.printvars.brightness);
-  printf("      1.0,\n");	/* scaling */
-  printf("      -1,\n");	/* orientation */
-  printf("      0,\n");		/* top */
   printf("      0,\n");		/* left */
+  printf("      0,\n");		/* top */
+  printf("      0,\n");		/* width */
+  printf("      0,\n");		/* height */
   printf("      %.3f,\n", thePrinter.printvars.gamma);
   printf("      %.3f,\n", thePrinter.printvars.contrast);
   printf("      %.3f,\n", thePrinter.printvars.cyan);

@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.10.2.1 2002/10/21 01:15:31 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.10.2.2 2002/10/22 00:54:59 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -83,12 +83,6 @@ extern const char* stp_check_version (unsigned int required_major,
 #define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
 #define OUTPUT_RAW_PRINTER	4	/* Printer-specific raw output */
 
-#define ORIENT_AUTO             -1      /* Best orientation */
-#define ORIENT_PORTRAIT         0       /* Portrait orientation */
-#define ORIENT_LANDSCAPE        1       /* Landscape orientation */
-#define ORIENT_UPSIDEDOWN       2       /* Reverse portrait orientation */
-#define ORIENT_SEASCAPE         3       /* Reverse landscape orientation */
-
 #define IMAGE_LINE_ART          0
 #define IMAGE_SOLID_TONE        1
 #define IMAGE_CONTINUOUS        2
@@ -118,13 +112,7 @@ typedef enum stp_image_status
  * Abstract data type for interfacing with the image creation program
  * (in this case, the Gimp).
  *
- * The image layer need not implement transpose(), hflip(), vflip(),
- * crop(), rotate_ccw(), rotate_cw(), and rotate_180() if it does not
- * require that functionality or implements it internally.  This
- * functionality will likely be dropped in future releases.
- *
- * The image layer must implement all of the other members.  The
- * progress_init(), note_progress(), and progress_conclude() members
+ * The progress_init(), note_progress(), and progress_conclude() members
  * are used to enable the image layer to deliver notification of
  * progress to the user.  It is likely that these functions will be
  * dropped in the future, and if desired must be implemented in
@@ -176,14 +164,6 @@ typedef struct stp_image
 {
   void (*init)(struct stp_image *image);
   void (*reset)(struct stp_image *image);
-  void (*transpose)(struct stp_image *image);
-  void (*hflip)(struct stp_image *image);
-  void (*vflip)(struct stp_image *image);
-  void (*crop)(struct stp_image *image,
-               int left, int top, int right, int bottom);
-  void (*rotate_ccw)(struct stp_image *image);
-  void (*rotate_cw)(struct stp_image *image);
-  void (*rotate_180)(struct stp_image *image);
   int  (*bpp)(struct stp_image *image);
   int  (*width)(struct stp_image *image);
   int  (*height)(struct stp_image *image);
@@ -380,7 +360,6 @@ extern stp_vars_t stp_allocate_copy (const stp_vars_t vs);
 
 extern void stp_free_vars (stp_vars_t vv);
 
-extern void stp_set_output_to (stp_vars_t vv, const char *val);
 extern void stp_set_driver (stp_vars_t vv, const char *val);
 extern void stp_set_ppd_file (stp_vars_t vv, const char *val);
 extern void stp_set_resolution (stp_vars_t vv, const char *val);
@@ -393,8 +372,6 @@ extern void stp_set_dither_algorithm (stp_vars_t vv, const char *val);
 /*
  * The _n variants are used for strings that are not null-delimited.
  */
-extern void stp_set_output_to_n (stp_vars_t vv, const char *val,
-                                 int bytes);
 extern void stp_set_driver_n (stp_vars_t vv, const char *val,
                               int bytes);
 extern void stp_set_ppd_file_n (stp_vars_t vv, const char *val,
@@ -416,8 +393,9 @@ extern void stp_set_output_type (stp_vars_t vv, int val);
 extern void stp_set_orientation (stp_vars_t vv, int val);
 extern void stp_set_left (stp_vars_t vv, int val);
 extern void stp_set_top (stp_vars_t vv, int val);
+extern void stp_set_width (stp_vars_t vv, int val);
+extern void stp_set_height (stp_vars_t vv, int val);
 extern void stp_set_image_type (stp_vars_t vv, int val);
-extern void stp_set_unit (stp_vars_t vv, int val);
 extern void stp_set_page_width (stp_vars_t vv, int val);
 extern void stp_set_page_height (stp_vars_t vv, int val);
 
@@ -434,7 +412,6 @@ extern void stp_set_input_color_model (stp_vars_t vv, int val);
 extern void stp_set_output_color_model (stp_vars_t vv, int val);
 
 extern void stp_set_brightness (stp_vars_t vv, float val);
-extern void stp_set_scaling (stp_vars_t vv, float val);
 extern void stp_set_gamma (stp_vars_t vv, float val);
 extern void stp_set_contrast (stp_vars_t vv, float val);
 extern void stp_set_cyan (stp_vars_t vv, float val);
@@ -470,7 +447,6 @@ extern void stp_set_errfunc (const stp_vars_t vv, stp_outfunc_t val);
 extern void stp_set_outdata (stp_vars_t vv, void * val);
 extern void stp_set_errdata (stp_vars_t vv, void * val);
 
-extern const char * stp_get_output_to (const stp_vars_t vv);
 extern const char * stp_get_driver (const stp_vars_t vv);
 extern const char * stp_get_ppd_file (const stp_vars_t vv);
 extern const char * stp_get_resolution (const stp_vars_t vv);
@@ -480,17 +456,16 @@ extern const char * stp_get_media_source (const stp_vars_t vv);
 extern const char * stp_get_ink_type (const stp_vars_t vv);
 extern const char * stp_get_dither_algorithm (const stp_vars_t vv);
 extern int stp_get_output_type (const stp_vars_t vv);
-extern int stp_get_orientation (const stp_vars_t vv);
 extern int stp_get_left (const stp_vars_t vv);
 extern int stp_get_top (const stp_vars_t vv);
+extern int stp_get_width (const stp_vars_t vv);
+extern int stp_get_height (const stp_vars_t vv);
 extern int stp_get_image_type (const stp_vars_t vv);
-extern int stp_get_unit (const stp_vars_t vv);
 extern int stp_get_page_width (const stp_vars_t vv);
 extern int stp_get_page_height (const stp_vars_t vv);
 extern int stp_get_input_color_model (const stp_vars_t vv);
 extern int stp_get_output_color_model (const stp_vars_t vv);
 extern float stp_get_brightness (const stp_vars_t vv);
-extern float stp_get_scaling (const stp_vars_t vv);
 extern float stp_get_gamma (const stp_vars_t vv);
 extern float stp_get_contrast (const stp_vars_t vv);
 extern float stp_get_cyan (const stp_vars_t vv);
@@ -572,5 +547,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.10.2.1 2002/10/21 01:15:31 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.10.2.2 2002/10/22 00:54:59 rlk Exp $
  */

@@ -27,9 +27,9 @@ hsize 0.33
 # Vertical size, as fraction of paper width (defaults to 1.0)
 vsize 0.33
 # Left margin, as fraction of paper width (defaults to 0)
-left 0.0
+left 0.1
 # Top margin, as fraction of paper width (defaults to 0)
-top 0.0
+top 0.1
 
 # Output settings
 # These settings are used as the base values for all ramps.  These settings

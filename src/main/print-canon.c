@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.77.2.2 2002/10/21 02:20:21 rlk Exp $"
+ * "$Id: print-canon.c,v 1.77.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2280,6 +2280,10 @@ canon_print(const stp_printer_t printer,		/* I - Model */
                 delay_max;
   int		page_width,	/* Width of page */
 		page_height,	/* Length of page */
+		page_left,
+		page_top,
+		page_right,
+		page_bottom,
 		page_true_height,	/* True length of page */
 		out_width,	/* Width of image on page */
 		out_height,	/* Length of image on page */
@@ -2378,9 +2382,13 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   * Compute the output size...
   */
 
-  stp_compute_page_parameters(printer, nv, image,
-			      &page_width, &page_height, &out_width,
-			      &out_height, &left, &top);
+  out_width = stp_get_width(v);
+  out_height = stp_get_height(v);
+
+  canon_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
+		       &page_top);
+  page_width = page_right - page_left;
+  page_height = page_top - page_bottom;
 
   image_height = image->height(image);
   image_width = image->width(image);

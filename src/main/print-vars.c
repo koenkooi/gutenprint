@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.1.2.2 2002/10/21 02:20:24 rlk Exp $"
+ * "$Id: print-vars.c,v 1.1.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,7 +38,6 @@
 
 static const stp_internal_vars_t default_vars =
 {
-	"",			/* Name of file or command to print to */
 	N_ ("ps2"),	       	/* Name of printer "driver" */
 	"",			/* Name of PPD file */
 	"",			/* Output resolution */
@@ -49,11 +48,10 @@ static const stp_internal_vars_t default_vars =
 	"",			/* Dither algorithm */
 	OUTPUT_COLOR,		/* Color or grayscale output */
 	1.0,			/* Output brightness */
-	100.0,			/* Scaling (100% means entire printable area, */
-				/*          -XXX means scale by PPI) */
-	-1,			/* Orientation (-1 = automatic) */
-	-1,			/* X offset (-1 = center) */
-	-1,			/* Y offset (-1 = center) */
+	-1,			/* left */
+	-1,			/* top */
+	-1,			/* width */
+	-1,			/* height */
 	1.0,			/* Screen gamma */
 	1.0,			/* Contrast */
 	1.0,			/* Cyan */
@@ -62,7 +60,6 @@ static const stp_internal_vars_t default_vars =
 	1.0,			/* Output saturation */
 	1.0,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
-	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
@@ -72,8 +69,7 @@ static const stp_internal_vars_t default_vars =
 
 static const stp_internal_vars_t min_vars =
 {
-	"",			/* Name of file or command to print to */
-	N_ ("ps2"),			/* Name of printer "driver" */
+	N_ ("ps2"),		/* Name of printer "driver" */
 	"",			/* Name of PPD file */
 	"",			/* Output resolution */
 	"",			/* Size of output media */
@@ -83,11 +79,10 @@ static const stp_internal_vars_t min_vars =
 	"",			/* Dither algorithm */
 	0,			/* Color or grayscale output */
 	0,			/* Output brightness */
-	5.0,			/* Scaling (100% means entire printable area, */
-				/*          -XXX means scale by PPI) */
-	-1,			/* Orientation (-1 = automatic) */
-	-1,			/* X offset (-1 = center) */
-	-1,			/* Y offset (-1 = center) */
+	-1,			/* left */
+	-1,			/* top */
+	-1,			/* width */
+	-1,			/* height */
 	0.1,			/* Screen gamma */
 	0,			/* Contrast */
 	0,			/* Cyan */
@@ -96,7 +91,6 @@ static const stp_internal_vars_t min_vars =
 	0,			/* Output saturation */
 	.1,			/* Density */
 	0,			/* Image type */
-	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
@@ -106,8 +100,7 @@ static const stp_internal_vars_t min_vars =
 
 static const stp_internal_vars_t max_vars =
 {
-	"",			/* Name of file or command to print to */
-	N_ ("ps2"),			/* Name of printer "driver" */
+	N_ ("ps2"),		/* Name of printer "driver" */
 	"",			/* Name of PPD file */
 	"",			/* Output resolution */
 	"",			/* Size of output media */
@@ -117,11 +110,10 @@ static const stp_internal_vars_t max_vars =
 	"",			/* Dither algorithm */
 	OUTPUT_RAW_PRINTER,	/* Color or grayscale output */
 	2.0,			/* Output brightness */
-	100.0,			/* Scaling (100% means entire printable area, */
-				/*          -XXX means scale by PPI) */
-	-1,			/* Orientation (-1 = automatic) */
-	-1,			/* X offset (-1 = center) */
-	-1,			/* Y offset (-1 = center) */
+	-1,			/* left */
+	-1,			/* top */
+	-1,			/* width */
+	-1,			/* height */
 	4.0,			/* Screen gamma */
 	4.0,			/* Contrast */
 	4.0,			/* Cyan */
@@ -130,7 +122,6 @@ static const stp_internal_vars_t max_vars =
 	9.0,			/* Output saturation */
 	2.0,			/* Density */
 	NIMAGE_TYPES - 1,	/* Image type */
-	1,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
@@ -197,7 +188,6 @@ void
 stp_free_vars(stp_vars_t vv)
 {
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
-  SAFE_FREE(v->output_to);
   SAFE_FREE(v->driver);
   SAFE_FREE(v->ppd_file);
   SAFE_FREE(v->resolution);
@@ -255,7 +245,6 @@ stp_get_##s(const stp_vars_t vv)			\
   return v->s;						\
 }
 
-DEF_STRING_FUNCS(output_to)
 DEF_STRING_FUNCS(driver)
 DEF_STRING_FUNCS(ppd_file)
 DEF_STRING_FUNCS(resolution)
@@ -265,17 +254,16 @@ DEF_STRING_FUNCS(media_source)
 DEF_STRING_FUNCS(ink_type)
 DEF_STRING_FUNCS(dither_algorithm)
 DEF_FUNCS(output_type, int)
-DEF_FUNCS(orientation, int)
 DEF_FUNCS(left, int)
 DEF_FUNCS(top, int)
+DEF_FUNCS(width, int)
+DEF_FUNCS(height, int)
 DEF_FUNCS(image_type, int)
-DEF_FUNCS(unit, int)
 DEF_FUNCS(page_width, int)
 DEF_FUNCS(page_height, int)
 DEF_FUNCS(input_color_model, int)
 DEF_FUNCS(output_color_model, int)
 DEF_FUNCS(brightness, float)
-DEF_FUNCS(scaling, float)
 DEF_FUNCS(gamma, float)
 DEF_FUNCS(contrast, float)
 DEF_FUNCS(cyan, float)
@@ -346,7 +334,6 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
 {
   if (vs == vd)
     return;
-  stp_set_output_to(vd, stp_get_output_to(vs));
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_driver_data(vd, stp_get_driver_data(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));
@@ -357,15 +344,14 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_ink_type(vd, stp_get_ink_type(vs));
   stp_set_dither_algorithm(vd, stp_get_dither_algorithm(vs));
   stp_set_output_type(vd, stp_get_output_type(vs));
-  stp_set_orientation(vd, stp_get_orientation(vs));
   stp_set_left(vd, stp_get_left(vs));
   stp_set_top(vd, stp_get_top(vs));
+  stp_set_width(vd, stp_get_width(vs));
+  stp_set_height(vd, stp_get_height(vs));
   stp_set_image_type(vd, stp_get_image_type(vs));
-  stp_set_unit(vd, stp_get_unit(vs));
   stp_set_page_width(vd, stp_get_page_width(vs));
   stp_set_page_height(vd, stp_get_page_height(vs));
   stp_set_brightness(vd, stp_get_brightness(vs));
-  stp_set_scaling(vd, stp_get_scaling(vs));
   stp_set_gamma(vd, stp_get_gamma(vs));
   stp_set_contrast(vd, stp_get_contrast(vs));
   stp_set_cyan(vd, stp_get_cyan(vs));

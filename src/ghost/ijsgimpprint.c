@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.18 2002/10/08 00:58:03 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.18.2.1 2002/10/22 00:55:00 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -402,7 +402,6 @@ gimp_get_cb (void *get_cb_data,
       sprintf(buf, "%d", x);
       setlocale(LC_ALL, "");
       STP_DEBUG(fprintf(stderr, "Dpi %d %d (%d) %s\n", x, y, x, buf));
-      stp_set_scaling(v, -x);
       val = buf;
     }
   else if (!strcmp(key, "PrintableTopLeft"))
@@ -851,6 +850,7 @@ main (int argc, char **argv)
   stp_image_t si;
   stp_printer_t printer = NULL;
   FILE *f = NULL;
+  int l, t, r, b;
 
   memset(&img, 0, sizeof(img));
 
@@ -867,7 +867,6 @@ main (int argc, char **argv)
     }
   stp_set_top(img.v, 0);
   stp_set_left(img.v, 0);
-  stp_set_orientation(img.v, ORIENT_PORTRAIT);
 
   /* Error messages to stderr. */
   stp_set_errfunc(img.v, gimp_outfunc);
@@ -880,13 +879,6 @@ main (int argc, char **argv)
   memset(&si, 0, sizeof(si));
   si.init = gimp_image_init;
   si.reset = gimp_image_reset;
-  si.transpose = NULL;
-  si.hflip = NULL;
-  si.vflip = NULL;
-  si.crop = NULL;
-  si.rotate_ccw = NULL;
-  si.rotate_cw = NULL;
-  si.rotate_180 = NULL;
   si.bpp = gimp_image_bpp;
   si.width = gimp_image_width;
   si.height = gimp_image_height;
@@ -980,8 +972,11 @@ main (int argc, char **argv)
 
       stp_set_app_gamma(img.v, (float)1.7);
       stp_set_cmap(img.v, NULL);
-      stp_set_scaling(img.v, (float)-img.xres); /* resolution of image */
       stp_set_output_type(img.v, img.output_type); 
+      stp_printer_get_printfuncs(printer)->imageable_area(printer, img.v,
+							  &l, &r, &b, &t);
+      stp_set_width(img.v, r - l);
+      stp_set_height(img.v, t - b);
       STP_DEBUG(stp_dbg("about to print", img.v));
       if (stp_printer_get_printfuncs(printer)->verify(printer, img.v))
 	{

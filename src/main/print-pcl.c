@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.56.2.2 2002/10/21 02:20:23 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.56.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1949,6 +1949,10 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		*lmagenta;	/* Light Magenta bitmap data */
   int		page_width,	/* Width of page */
 		page_height,	/* Height of page */
+		page_left,
+		page_top,
+		page_right,
+		page_bottom,
 		out_width,	/* Width of image on page */
 		out_height,	/* Height of image on page */
 		out_bpp,	/* Output bytes per pixel */
@@ -2071,14 +2075,14 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   * Compute the output size...
   */
 
-  stp_compute_page_parameters(printer, nv, image,
-			      &page_width, &page_height, &out_width,
-			      &out_height, &left, &top);
+  out_width = stp_get_width(v);
+  out_height = stp_get_height(v);
 
-  /*
-   * Recompute the image height and width.  If the image has been
-   * rotated, these will change from previously.
-   */
+  pcl_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
+		     &page_top);
+  page_width = page_right - page_left;
+  page_height = page_top - page_bottom;
+
   image_height = image->height(image);
   image_width = image->width(image);
 

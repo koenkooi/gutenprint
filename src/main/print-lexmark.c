@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.77.2.2 2002/10/21 02:20:23 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.77.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1629,6 +1629,10 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   unsigned char	*in;		/* Input pixels */
   int page_width,	/* Width of page */
     page_height,	/* Length of page */
+    page_left,
+    page_top,
+    page_right,
+    page_bottom,
     page_true_height,	/* True length of page */
     out_width,	/* Width of image on page in pixles */
     out_height,	/* Length of image on page */
@@ -1813,9 +1817,13 @@ densityDivisor /= 1.2;
   * Compute the output size...
   */
 
-  stp_compute_page_parameters(printer, nv, image,
-			      &page_width, &page_height, &out_width,
-			      &out_height, &left, &top);
+  out_width = stp_get_width(v);
+  out_height = stp_get_height(v);
+
+  lexmark_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
+			 &page_top);
+  page_width = page_right - page_left;
+  page_height = page_top - page_bottom;
 
 #ifdef DEBUG
   stp_erprintf("page_right %d, page_left %d, page_top %d, page_bottom %d, left %d, top %d\n",page_right, page_left, page_top, page_bottom,left, top);

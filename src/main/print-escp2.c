@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.188.2.2 2002/10/21 02:20:22 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.188.2.3 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -679,7 +679,6 @@ escp2_set_remote_sequence(const escp2_init_t *init)
       print_remote_param(init->v, "Ink Type", stp_get_ink_type(init->v));
       print_remote_param(init->v, "Dither", stp_get_dither_algorithm(init->v));
       print_remote_int_param(init->v, "Output Type", stp_get_output_type(init->v));
-      print_remote_int_param(init->v, "Orientation", stp_get_orientation(init->v));
       print_remote_int_param(init->v, "Left", stp_get_left(init->v));
       print_remote_int_param(init->v, "Top", stp_get_top(init->v));
       print_remote_int_param(init->v, "Image Type", stp_get_image_type(init->v));
@@ -688,7 +687,6 @@ escp2_set_remote_sequence(const escp2_init_t *init)
       print_remote_int_param(init->v, "Input Model", stp_get_input_color_model(init->v));
       print_remote_int_param(init->v, "Output Model", stp_get_output_color_model(init->v));
       print_remote_float_param(init->v, "Brightness", stp_get_brightness(init->v));
-      print_remote_float_param(init->v, "Scaling", stp_get_scaling(init->v));
       print_remote_float_param(init->v, "Gamma", stp_get_gamma(init->v));
       print_remote_float_param(init->v, "App Gamma", stp_get_app_gamma(init->v));
       print_remote_float_param(init->v, "Contrast", stp_get_contrast(init->v));
@@ -1330,15 +1328,14 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   * Compute the output size...
   */
   image->init(image);
+  out_width = stp_get_width(v);
+  out_height = stp_get_height(v);
 
-  stp_compute_page_parameters(printer, nv, image,
-			      &page_width, &page_height, &out_width,
-			      &out_height, &left, &top);
+  escp2_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
+		       &page_top);
+  page_width = page_right - page_left;
+  page_height = page_top - page_bottom;
 
-  /*
-   * Recompute the image height and width.  If the image has been
-   * rotated, these will change from previously.
-   */
   stp_default_media_size(printer, nv, &n, &page_true_height);
 
  /*
@@ -1400,9 +1397,6 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
     init.use_fast_360 = 1;
   else
     init.use_fast_360 = 0;
-
-  escp2_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
-		       &page_top);
 
   /*
    * Set up the printer-specific parameters (weaving)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.72.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-util.c,v 1.72.2.2 2002/10/22 00:55:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -82,133 +82,6 @@ c_strdup(const char *s)
     }
   else
     return c_strndup(s, c_strlen(s));
-}
-
-void
-stp_compute_page_parameters(const stp_printer_t printer,
-			    const stp_vars_t v,
-			    stp_image_t *image, /* IO */
-			    int *page_width, /* O */
-			    int *page_height, /* O */
-			    int *out_width,	/* O */
-			    int *out_height, /* O */
-			    int *left, /* O */
-			    int *top) /* O */
-{
-  int page_right;
-  int page_left;
-  int page_top;
-  int page_bottom;
-  int image_width = image->width(image);
-  int image_height = image->height(image);
-  double scaling = stp_get_scaling(v);
-  int orientation = stp_get_orientation(v);
-  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(printer);
-
-  (printfuncs->imageable_area)(printer, v, &page_left, &page_right,
-			       &page_bottom, &page_top);
-  *page_width  = page_right - page_left;
-  *page_height = page_top - page_bottom;
-
-  /* In AUTO orientation, just orient the paper the same way as the image. */
-
-  if (orientation == ORIENT_AUTO)
-    {
-      if ((*page_width >= *page_height && image_width >= image_height)
-         || (*page_height >= *page_width && image_height >= image_width))
-        orientation = ORIENT_PORTRAIT;
-      else
-        orientation = ORIENT_LANDSCAPE;
-    }
-
-  if (orientation == ORIENT_LANDSCAPE)
-      image->rotate_ccw(image);
-  else if (orientation == ORIENT_UPSIDEDOWN)
-      image->rotate_180(image);
-  else if (orientation == ORIENT_SEASCAPE)
-      image->rotate_cw(image);
-
-  image_width  = image->width(image);
-  image_height = image->height(image);
-
-  /*
-   * Calculate width/height...
-   */
-
-  if (scaling == 0.0)
-    {
-      *out_width  = *page_width;
-      *out_height = *page_height;
-    }
-  else if (scaling < 0.0)
-    {
-      /*
-       * Scale to pixels per inch...
-       */
-
-      *out_width  = image_width * -72.0 / scaling;
-      *out_height = image_height * -72.0 / scaling;
-    }
-  else
-    {
-      /*
-       * Scale by percent...
-       */
-
-      /*
-       * Decide which orientation gives the proper fit
-       * If we ask for 50%, we do not want to exceed that
-       * in either dimension!
-       */
-
-      int twidth0 = *page_width * scaling / 100.0;
-      int theight0 = twidth0 * image_height / image_width;
-      int theight1 = *page_height * scaling / 100.0;
-      int twidth1 = theight1 * image_width / image_height;
-
-      *out_width = FMIN(twidth0, twidth1);
-      *out_height = FMIN(theight0, theight1);
-    }
-
-  if (*out_width == 0)
-    *out_width = 1;
-  if (*out_height == 0)
-    *out_height = 1;
-
-  /*
-   * Adjust offsets depending on the page orientation...
-   */
-
-  if (orientation == ORIENT_LANDSCAPE || orientation == ORIENT_SEASCAPE)
-    {
-      int x;
-
-      x     = *left;
-      *left = *top;
-      *top  = x;
-    }
-
-  if ((orientation == ORIENT_UPSIDEDOWN || orientation == ORIENT_SEASCAPE)
-      && *left >= 0)
-    {
-      *left = *page_width - *left - *out_width;
-      if (*left < 0)
-	*left = 0;
-    }
-
-  if ((orientation == ORIENT_UPSIDEDOWN || orientation == ORIENT_LANDSCAPE)
-      && *top >= 0)
-    {
-      *top = *page_height - *top - *out_height;
-      if (*top < 0)
-	*top = 0;
-    }
-
-  if (*left < 0)
-    *left = (*page_width - *out_width) / 2;
-
-  if (*top < 0)
-    *top  = (*page_height - *out_height) / 2;
 }
 
 void
@@ -298,6 +171,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   int count;
   int i;
   int answer = 1;
+  int left, top, bottom, right, width, height;
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
   const char *ppd_file = stp_get_ppd_file(v);
@@ -321,7 +195,6 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
     }
   else
     {
-      int height, width;
       int min_height, min_width;
       (*printfuncs->limit)(p, v, &width, &height, &min_width, &min_height);
       if (stp_get_page_height(v) <= min_height ||
@@ -345,6 +218,36 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
       stp_eprintf(v, _("Left margin must not be less than zero\n"));
     }
 
+  if (stp_get_width(v) <= 0)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Height must be greater than zero\n"));
+    }
+
+  if (stp_get_width(v) <= 0)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Width must be greater than zero\n"));
+    }
+
+  (*printfuncs->imageable_area)(p, v, &left, &right, &bottom, &top);
+  width = right - left;
+  height = top - bottom;
+
+  if (stp_get_left(v) + stp_get_width(v) > width)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Image is too wide for the page (left %d, width %d, limit%d)\n"),
+		  stp_get_left(v), stp_get_width(v), width);
+    }
+
+  if (stp_get_top(v) + stp_get_height(v) > height)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Image is too long for the page\n"));
+    }
+  
+
   CHECK_FLOAT_RANGE(v, gamma);
   CHECK_FLOAT_RANGE(v, contrast);
   CHECK_FLOAT_RANGE(v, cyan);
@@ -353,13 +256,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   CHECK_FLOAT_RANGE(v, brightness);
   CHECK_FLOAT_RANGE(v, density);
   CHECK_FLOAT_RANGE(v, saturation);
-  if (stp_get_scaling(v) > 0)
-    {
-      CHECK_FLOAT_RANGE(v, scaling);
-    }
-
   CHECK_INT_RANGE(v, image_type);
-  CHECK_INT_RANGE(v, unit);
   CHECK_INT_RANGE(v, output_type);
   CHECK_INT_RANGE(v, input_color_model);
   CHECK_INT_RANGE(v, output_color_model);
