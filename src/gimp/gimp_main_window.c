@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.6.4.5 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: gimp_main_window.c,v 1.6.4.6 2001/07/23 15:07:51 sharkey Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -27,7 +27,7 @@
 #endif
 #include "../../lib/libprintut.h"
 
-#define MAX_PREVIEW_PPI        (30)
+#define MAX_PREVIEW_PPI        (40)
 
 #include "print_gimp.h"
 
@@ -37,8 +37,12 @@
 /*
  * Constants for GUI.
  */
-#define PREVIEW_SIZE_VERT  380
-#define PREVIEW_SIZE_HORIZ 280
+#define PREVIEW_SIZE_VERT  360
+#define PREVIEW_SIZE_HORIZ 260
+#define MOVE_CONSTRAIN	   0
+#define MOVE_HORIZONTAL	   1
+#define MOVE_VERTICAL      2
+#define MOVE_ANY           (MOVE_HORIZONTAL | MOVE_VERTICAL)
 
 /*
  *  Main window widgets
@@ -50,6 +54,8 @@ static GtkWidget *ppvbox;
 
 static GtkWidget *print_dialog;           /* Print dialog window */
 static GtkWidget *recenter_button;
+static GtkWidget *recenter_vertical_button;
+static GtkWidget *recenter_horizontal_button;
 static GtkWidget *left_entry;
 static GtkWidget *right_entry;
 static GtkWidget *right_border_entry;
@@ -111,7 +117,9 @@ static gint	       old_left;	/* Previous position */
 static gint	       buttons_pressed = 0;
 static gint	       preview_active = 0;
 static gint	       buttons_mask = 0;
+static gint	       move_constraint = 0;
 static gint            mouse_button = -1;	/* Button being dragged with */
+static gint	       suppress_preview_reset = 0;
 
 static gint            printable_left;	/* Left pixel column of page */
 static gint            printable_top;	/* Top pixel row of page */
@@ -191,6 +199,13 @@ c_strdup(const gchar *s)
 
 static char **printer_list = 0;
 static int printer_count = 0;
+
+static void
+reset_preview(void)
+{
+  if (!suppress_preview_reset)
+    buttons_pressed = preview_active = 0;
+}
 
 static void
 set_entry_value(GtkWidget *entry, double value, int block)
@@ -279,7 +294,7 @@ create_top_level_structure(void)
    * controls.
    */
 
-  main_vbox = gtk_vbox_new (FALSE, 4);
+  main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 6);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (print_dialog)->vbox), main_vbox,
                       FALSE, FALSE, 0);
@@ -290,11 +305,11 @@ create_top_level_structure(void)
    * (right) controls
    */
 
-  ppp_hbox = gtk_hbox_new (FALSE, 6);
+  ppp_hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (main_vbox), ppp_hbox, FALSE, FALSE, 0);
   gtk_widget_show (ppp_hbox);
 
-  ppvbox = gtk_vbox_new (FALSE, 7);
+  ppvbox = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_end (GTK_BOX (ppp_hbox), GTK_WIDGET (ppvbox), FALSE, FALSE, 0);
   gtk_widget_show (ppvbox);
 }
@@ -303,21 +318,15 @@ static void
 create_preview(void)
 {
   GtkWidget *frame;
-  GtkWidget *vbox;
 
   frame = gtk_frame_new (_("Preview"));
   gtk_box_pack_start (GTK_BOX (ppp_hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  vbox = gtk_vbox_new (FALSE, 4);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 4);
-  gtk_container_add (GTK_CONTAINER (frame), vbox);
-  gtk_widget_show (vbox);
-
   preview = (GtkDrawingArea *) gtk_drawing_area_new ();
   gtk_drawing_area_size (preview, PREVIEW_SIZE_HORIZ + 1,
 			 PREVIEW_SIZE_VERT + 1);
-  gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (preview), FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (frame), GTK_WIDGET(preview));
   gtk_signal_connect (GTK_OBJECT (preview), "expose_event",
                       GTK_SIGNAL_FUNC (gimp_preview_update), NULL);
   gtk_signal_connect (GTK_OBJECT (preview), "button_press_event",
@@ -341,48 +350,41 @@ create_positioning_frame(void)
   GtkWidget *frame;
   GtkWidget *table;
   GtkWidget *box;
-  GSList    *group;
 
   frame = gtk_frame_new (_("Position"));
   gtk_box_pack_end (GTK_BOX (ppvbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
   table = gtk_table_new (4, 6, FALSE);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 4);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 4);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 2);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 2);
   gtk_container_set_border_width (GTK_CONTAINER (table), 4);
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  recenter_button = gtk_button_new_with_label (_("Center Image"));
-  gtk_misc_set_padding (GTK_MISC (GTK_BIN (recenter_button)->child), 16, 8);
+  box = gtk_hbox_new(TRUE, 4);
+  gtk_table_attach_defaults(GTK_TABLE(table), box, 0, 4, 0, 1);
+  gtk_widget_show(box);
+
+  recenter_vertical_button =
+    gtk_button_new_with_label (_("Center\nVertically"));
+  gtk_signal_connect(GTK_OBJECT (recenter_vertical_button), "clicked",
+                     GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
+  gtk_widget_show(recenter_vertical_button);
+  gtk_box_pack_start(GTK_BOX(box), recenter_vertical_button, FALSE, TRUE, 0);
+
+  recenter_button = gtk_button_new_with_label (_("Center\nImage"));
   gtk_signal_connect(GTK_OBJECT (recenter_button), "clicked",
-                     GTK_SIGNAL_FUNC (gimp_position_callback),
-		     NULL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
-                             NULL, 0, 0,
-                             recenter_button, 2, TRUE);
+                     GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
+  gtk_widget_show(recenter_button);
+  gtk_box_pack_start(GTK_BOX(box), recenter_button, FALSE, TRUE, 0);
 
-  box = gtk_vbox_new (FALSE, 2);
-  gimp_table_attach_aligned (GTK_TABLE (table), 2, 0,
-                             _("Units:"), 1.0, 0.15,
-                             box, 1, TRUE);
-
-
-  unit_inch = gtk_radio_button_new_with_label (NULL, _("Inch"));
-  group = gtk_radio_button_group (GTK_RADIO_BUTTON (unit_inch));
-  gtk_signal_connect (GTK_OBJECT (unit_inch), "toggled",
-                      GTK_SIGNAL_FUNC (gimp_unit_callback), (gpointer) 0);
-  gtk_box_pack_start (GTK_BOX (box), unit_inch, FALSE, FALSE, 0);
-  gtk_widget_show (unit_inch);
-
-
-  unit_cm = gtk_radio_button_new_with_label (group, _("cm"));
-  gtk_signal_connect (GTK_OBJECT (unit_cm), "toggled",
-                      GTK_SIGNAL_FUNC (gimp_unit_callback), (gpointer) 1);
-  gtk_box_pack_start (GTK_BOX (box), unit_cm, FALSE, FALSE, 0);
-  gtk_widget_show (unit_cm);
-
+  recenter_horizontal_button =
+    gtk_button_new_with_label (_("Center\nHorizontally"));
+  gtk_signal_connect(GTK_OBJECT (recenter_horizontal_button), "clicked",
+                     GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
+  gtk_widget_show(recenter_horizontal_button);
+  gtk_box_pack_start(GTK_BOX(box), recenter_horizontal_button, FALSE, TRUE, 0);
 
   left_entry = gtk_entry_new ();
   gtk_signal_connect (GTK_OBJECT (left_entry), "activate",
@@ -410,7 +412,7 @@ create_positioning_frame(void)
   gtk_signal_connect (GTK_OBJECT (right_border_entry), "activate",
                       GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
   gtk_widget_set_usize (right_border_entry, 60, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3, _("Right Border:"), 1.0,
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3, _("Right\nBorder:"), 1.0,
 			     0.5, right_border_entry, 1, TRUE);
 
   bottom_entry = gtk_entry_new ();
@@ -425,7 +427,7 @@ create_positioning_frame(void)
   gtk_signal_connect (GTK_OBJECT (bottom_border_entry), "activate",
                       GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
   gtk_widget_set_usize (bottom_border_entry, 60, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 2, 3, _("Bottom Border:"), 1.0,
+  gimp_table_attach_aligned (GTK_TABLE (table), 2, 3, _("Bottom\nBorder:"), 1.0,
 			     0.5, bottom_border_entry, 1, TRUE);
   /*
    * Orientation option menu.
@@ -446,7 +448,7 @@ create_positioning_frame(void)
 			  NULL);
   gimp_table_attach_aligned (GTK_TABLE (table), 0, 5,
                              _("Orientation:"), 1.0, 0.5,
-                             orientation_menu, 4, TRUE);
+                             orientation_menu, 2, FALSE);
 }
 
 static void
@@ -617,7 +619,6 @@ create_printer_settings_frame(void)
 {
   GtkWidget *frame;
   GtkWidget *table;
-  GtkWidget *vbox;
   GtkWidget *printer_hbox;
   GtkWidget *media_size_hbox;
   GtkWidget *button;
@@ -630,36 +631,28 @@ create_printer_settings_frame(void)
   gtk_box_pack_start (GTK_BOX (ppvbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  vbox = gtk_vbox_new (FALSE, 4);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 4);
-  gtk_container_add (GTK_CONTAINER (frame), vbox);
-  gtk_widget_show (vbox);
-
   table = gtk_table_new (9, 2, FALSE);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 4);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 4);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 2);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 2);
   gtk_container_set_border_width (GTK_CONTAINER (table), 4);
-  gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
-
-  printer_hbox = gtk_hbox_new (FALSE, 4);
-  label = gtk_label_new (_("Printer:"));
-  gtk_box_pack_start (GTK_BOX (printer_hbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
-  gtk_table_attach_defaults(GTK_TABLE(table), printer_hbox, 0, 2, 0, 1);
-  gtk_widget_show(printer_hbox);
 
   /*
    * Printer option menu.
    */
 
   printer_combo = gtk_combo_new ();
-  gtk_box_pack_start (GTK_BOX (printer_hbox), printer_combo, FALSE, FALSE, 0);
-  gtk_widget_show(printer_combo);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0, _("Printer:"), 1.0,
+			     0.5, printer_combo, 2, TRUE);
 
-  button = gtk_button_new_with_label (_("Setup..."));
+  printer_hbox = gtk_hbox_new (TRUE, 4);
+  gtk_table_attach_defaults(GTK_TABLE(table), printer_hbox, 1, 2, 1, 2);
+  gtk_widget_show(printer_hbox);
+
+  button = gtk_button_new_with_label (_("Setup Printer..."));
   gtk_misc_set_padding (GTK_MISC (GTK_BIN (button)->child), 2, 0);
-  gtk_box_pack_start (GTK_BOX (printer_hbox), button, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (printer_hbox), button, FALSE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (gimp_setup_open_callback), NULL);
   gtk_widget_show (button);
@@ -668,8 +661,8 @@ create_printer_settings_frame(void)
    * Define new printer dialog
    */
 
-  button = gtk_button_new_with_label (_("New..."));
-  gtk_box_pack_start (GTK_BOX (printer_hbox), button, FALSE, FALSE, 0);
+  button = gtk_button_new_with_label (_("New Printer..."));
+  gtk_box_pack_start (GTK_BOX (printer_hbox), button, FALSE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (gimp_new_printer_open_callback), NULL);
   gtk_widget_show (button);
@@ -679,23 +672,27 @@ create_printer_settings_frame(void)
    */
 
   media_size_combo = gtk_combo_new();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1, _("Media Size:"), 1.0,
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2, _("Media Size:"), 1.0,
 			     0.5, media_size_combo, 1, TRUE);
+
+  /*
+   * Custom media size entries
+   */
 
   media_size_hbox = gtk_hbox_new(FALSE, 4);
   gtk_container_set_border_width (GTK_CONTAINER (media_size_hbox), 0);
   gtk_widget_show (media_size_hbox);
 
-  /*
-   * Custom media size entries
-   */
+  label = gtk_label_new (_("Dimensions:"));
+  gtk_widget_show (label);
+  gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
 
   label = gtk_label_new (_("Width:"));
   gtk_box_pack_start (GTK_BOX (media_size_hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
   custom_size_width = gtk_entry_new();
-  gtk_widget_set_usize (custom_size_width, 60, 0);
+  gtk_widget_set_usize (custom_size_width, 40, 0);
   gtk_signal_connect(GTK_OBJECT(custom_size_width), "activate",
 		     GTK_SIGNAL_FUNC(gimp_media_size_callback), NULL);
   gtk_box_pack_start(GTK_BOX(media_size_hbox), custom_size_width, FALSE,
@@ -707,45 +704,45 @@ create_printer_settings_frame(void)
   gtk_widget_show (label);
 
   custom_size_height = gtk_entry_new();
-  gtk_widget_set_usize (custom_size_height, 60, 0);
+  gtk_widget_set_usize (custom_size_height, 50, 0);
   gtk_signal_connect(GTK_OBJECT(custom_size_height), "activate",
 		     GTK_SIGNAL_FUNC(gimp_media_size_callback), NULL);
   gtk_box_pack_start(GTK_BOX(media_size_hbox), custom_size_height, FALSE,
 		     FALSE, 0);
   gtk_widget_show(custom_size_height);
-  gtk_table_attach_defaults(GTK_TABLE(table), media_size_hbox, 0, 2, 2, 3);
+  gtk_table_attach_defaults(GTK_TABLE(table), media_size_hbox, 1, 2, 3, 4);
 
   /*
    * Media type combo box.
    */
 
   media_type_combo = gtk_combo_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3, _("Media Type:"), 1.0,
-			     0.5, media_type_combo, 1, TRUE);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4, _("Media Type:"), 1.0,
+			     0.5, media_type_combo, 2, TRUE);
 
   /*
    * Media source combo box.
    */
 
   media_source_combo = gtk_combo_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4, _("Media Source:"), 1.0,
-			     0.5, media_source_combo, 1, TRUE);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 5, _("Media Source:"), 1.0,
+			     0.5, media_source_combo, 2, TRUE);
 
   /*
    * Ink type combo box.
    */
 
   ink_type_combo = gtk_combo_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 5, _("Ink Type:"), 1.0,
-			     0.5, ink_type_combo, 1, TRUE);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 6, _("Ink Type:"), 1.0,
+			     0.5, ink_type_combo, 2, TRUE);
 
   /*
    * Resolution combo box.
    */
 
   resolution_combo = gtk_combo_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 6, _("Resolution:"), 1.0,
-			     0.5, resolution_combo, 1, TRUE);
+  gimp_table_attach_aligned (GTK_TABLE (table), 0, 7, _("Resolution:"), 1.0,
+			     0.5, resolution_combo, 2, TRUE);
 }
 
 static void
@@ -754,6 +751,8 @@ create_scaling_frame(void)
   GtkWidget *frame;
   GtkWidget *table;
   GtkWidget *box;
+  GtkWidget *vbox;
+  GtkWidget *hbox;
   GtkWidget *label;
   GSList    *group;
 
@@ -780,27 +779,34 @@ create_scaling_frame(void)
 			  stp_get_scaling(stp_maximum_settings()),
 			  1.0, 10.0, 1, TRUE, 0, 0, NULL, NULL);
   gtk_signal_connect (GTK_OBJECT (scaling_adjustment), "value_changed",
-                      GTK_SIGNAL_FUNC (gimp_scaling_update),
-                      NULL);
+                      GTK_SIGNAL_FUNC (gimp_scaling_update), NULL);
 
   box = gtk_hbox_new (FALSE, 7);
-  gimp_table_attach_aligned(GTK_TABLE(table), 0, 1, NULL, 0, 0, box, 1, FALSE);
+  gimp_table_attach_aligned(GTK_TABLE(table), -1, 1, NULL, 0, 0, box, 3, FALSE);
+
+  label = gtk_label_new("Scale By:");
+  gtk_widget_show(label);
+  gtk_box_pack_start (GTK_BOX(box), label, FALSE, TRUE, 0);
+
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show(vbox);
+  gtk_box_pack_start (GTK_BOX(box), vbox, FALSE, FALSE, 0);
 
   scaling_percent = gtk_radio_button_new_with_label (NULL, _("Percent"));
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (scaling_percent));
   gtk_signal_connect (GTK_OBJECT (scaling_percent), "toggled",
                       GTK_SIGNAL_FUNC (gimp_scaling_callback), NULL);
-  gtk_box_pack_start (GTK_BOX (box), scaling_percent, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), scaling_percent, FALSE, FALSE, 0);
   gtk_widget_show (scaling_percent);
 
   scaling_ppi = gtk_radio_button_new_with_label (group, _("PPI"));
   gtk_signal_connect (GTK_OBJECT (scaling_ppi), "toggled",
                       GTK_SIGNAL_FUNC (gimp_scaling_callback), NULL);
-  gtk_box_pack_start (GTK_BOX (box), scaling_ppi, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), scaling_ppi, FALSE, FALSE, 0);
   gtk_widget_show (scaling_ppi);
 
-  scaling_image = gtk_button_new_with_label (_("Set Image Scale"));
-  gtk_misc_set_padding (GTK_MISC (GTK_BIN (scaling_image)->child), 2, 0);
+  scaling_image = gtk_button_new_with_label (_("Image Size"));
+  gtk_misc_set_padding (GTK_MISC (GTK_BIN (scaling_image)->child), 8, 4);
   gtk_signal_connect (GTK_OBJECT (scaling_image), "clicked",
                       GTK_SIGNAL_FUNC (gimp_scaling_callback), NULL);
   gtk_box_pack_start (GTK_BOX (box), scaling_image, FALSE, TRUE, 0);
@@ -813,27 +819,68 @@ create_scaling_frame(void)
   gtk_box_pack_start (GTK_BOX (box), label, TRUE, FALSE, 0);
   gtk_widget_show (label);
 
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show(vbox);
+  gtk_box_pack_start (GTK_BOX(box), vbox, FALSE, FALSE, 0);
+
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show(hbox);
+  gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
   label = gtk_label_new (_("Width:"));
-  gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
   gtk_widget_show (label);
 
   width_entry = gtk_entry_new ();
   gtk_signal_connect (GTK_OBJECT (width_entry), "activate",
                       GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
   gtk_widget_set_usize (width_entry, 60, 0);
-  gtk_box_pack_start (GTK_BOX (box), width_entry, FALSE, FALSE, 0);
+  gtk_box_pack_end (GTK_BOX (hbox), width_entry, FALSE, TRUE, 0);
   gtk_widget_show (width_entry);
 
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show(hbox);
+  gtk_box_pack_start (GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
   label = gtk_label_new(_("Height:"));
-  gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
   gtk_widget_show (label);
 
   height_entry = gtk_entry_new ();
   gtk_signal_connect (GTK_OBJECT (height_entry), "activate",
                       GTK_SIGNAL_FUNC (gimp_position_callback), NULL);
   gtk_widget_set_usize (height_entry, 60, 0);
-  gtk_box_pack_end (GTK_BOX (box), height_entry, FALSE, FALSE, 0);
+  gtk_box_pack_end (GTK_BOX (hbox), height_entry, FALSE, TRUE, 0);
   gtk_widget_show (height_entry);
+
+  /*
+   * Use a dummy label as a spacer
+   */
+  label = gtk_label_new ("");
+  gtk_box_pack_start (GTK_BOX (box), label, TRUE, FALSE, 0);
+  gtk_widget_show (label);
+
+  label = gtk_label_new(_("Units:"));
+  gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
+
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show(vbox);
+  gtk_box_pack_end (GTK_BOX(box), vbox, FALSE, FALSE, 0);
+
+  unit_inch = gtk_radio_button_new_with_label (NULL, _("Inch"));
+  group = gtk_radio_button_group (GTK_RADIO_BUTTON (unit_inch));
+  gtk_signal_connect (GTK_OBJECT (unit_inch), "toggled",
+                      GTK_SIGNAL_FUNC (gimp_unit_callback), (gpointer) 0);
+  gtk_box_pack_start (GTK_BOX (vbox), unit_inch, FALSE, FALSE, 0);
+  gtk_widget_show (unit_inch);
+
+  unit_cm = gtk_radio_button_new_with_label (group, _("cm"));
+  gtk_signal_connect (GTK_OBJECT (unit_cm), "toggled",
+                      GTK_SIGNAL_FUNC (gimp_unit_callback), (gpointer) 1);
+  gtk_box_pack_end (GTK_BOX (vbox), unit_cm, FALSE, TRUE, 0);
+  gtk_widget_show (unit_cm);
+
 }
 
 static void
@@ -898,6 +945,10 @@ create_image_settings_frame(void)
    *  Color adjust button
    */
 
+  label = gtk_label_new (_(""));
+  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
+
   adjust_color_button = gtk_button_new_with_label (_("Adjust Color..."));
   gtk_misc_set_padding (GTK_MISC (GTK_BIN (adjust_color_button)->child), 2, 0);
   gtk_signal_connect_object (GTK_OBJECT (adjust_color_button), "clicked",
@@ -910,15 +961,19 @@ create_image_settings_frame(void)
    * Output type toggles.
    */
 
-  label = gtk_label_new (_("Output Type:"));
+  label = gtk_label_new (_(""));
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
   vbox = gtk_vbox_new (FALSE, 1);
   gtk_box_set_spacing(GTK_BOX(vbox), -4);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 0);
-  gtk_box_pack_end (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
+
+  label = gtk_label_new (_("Output Type:"));
+  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
 
   output_color = gtk_radio_button_new_with_label (NULL, _("Color"));
   output_type_group = gtk_radio_button_group (GTK_RADIO_BUTTON (output_color));
@@ -987,7 +1042,7 @@ gimp_create_main_window (void)
 static void
 gimp_scaling_update (GtkAdjustment *adjustment)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (stp_get_scaling(*pv) != adjustment->value)
     {
       if (GTK_TOGGLE_BUTTON (scaling_ppi)->active)
@@ -1011,7 +1066,7 @@ gimp_scaling_callback (GtkWidget *widget)
   gdouble max_ppi_scaling;
   gdouble min_ppi_scaling, min_ppi_scaling1, min_ppi_scaling2;
   gdouble current_scale;
-  buttons_pressed = preview_active = 0;
+  reset_preview();
 
   if (suppress_scaling_callback)
     return;
@@ -1242,11 +1297,19 @@ gimp_do_misc_updates (void)
 static void
 gimp_position_callback (GtkWidget *widget)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   suppress_preview_update++;
   if (widget == recenter_button)
     {
       stp_set_left(*pv, -1);
+      stp_set_top(*pv, -1);
+    }
+  else if (widget == recenter_horizontal_button)
+    {
+      stp_set_left(*pv, -1);
+    }
+  else if (widget == recenter_vertical_button)
+    {
       stp_set_top(*pv, -1);
     }
   else
@@ -1340,7 +1403,7 @@ gimp_plist_callback (GtkWidget *widget,
   gint		num_resolutions;	/* Number of resolutions */
   gchar		**resolutions;		/* Resolution strings */
   const gchar	*default_parameter;
-  buttons_pressed = preview_active = 0;
+  reset_preview();
 
   if (widget)
     {
@@ -1503,7 +1566,7 @@ static void
 gimp_media_size_callback (GtkWidget *widget,
 			  gpointer   data)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (widget == custom_size_width)
     {
       gint width_limit, height_limit;
@@ -1621,7 +1684,7 @@ gimp_media_type_callback (GtkWidget *widget,
 			  gpointer   data)
 {
   const gchar *new_media_type = Combo_get_text (media_type_combo);
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   stp_set_media_type(*pv, new_media_type);
   gimp_preview_update ();
 }
@@ -1634,7 +1697,7 @@ gimp_media_source_callback (GtkWidget *widget,
 			    gpointer   data)
 {
   const gchar *new_media_source = Combo_get_text (media_source_combo);
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   stp_set_media_source(*pv, new_media_source);
   gimp_preview_update ();
 }
@@ -1647,7 +1710,7 @@ gimp_ink_type_callback (GtkWidget *widget,
 			gpointer   data)
 {
   const gchar *new_ink_type = Combo_get_text (ink_type_combo);
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   stp_set_ink_type(*pv, new_ink_type);
   gimp_preview_update ();
 }
@@ -1660,7 +1723,7 @@ gimp_resolution_callback (GtkWidget *widget,
 			  gpointer   data)
 {
   const gchar *new_resolution = Combo_get_text (resolution_combo);
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   stp_set_resolution(*pv, new_resolution);
   gimp_preview_update ();
 }
@@ -1672,7 +1735,7 @@ static void
 gimp_orientation_callback (GtkWidget *widget,
 			   gpointer   data)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (stp_get_orientation(*pv) != (gint) data)
     {
       stp_set_orientation(*pv, (gint) data);
@@ -1689,7 +1752,7 @@ static void
 gimp_output_type_callback (GtkWidget *widget,
 			   gpointer   data)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
       stp_set_output_type(*pv, (gint) data);
@@ -1709,7 +1772,7 @@ static void
 gimp_unit_callback (GtkWidget *widget,
 			   gpointer   data)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
       stp_set_unit(*pv, (gint) data);
@@ -1724,7 +1787,7 @@ static void
 gimp_image_type_callback (GtkWidget *widget,
 			  gpointer   data)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
       stp_set_image_type(*pv, (gint) data);
@@ -1785,7 +1848,7 @@ gimp_printandsave_callback (void)
 static void
 gimp_save_callback (void)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   printrc_save ();
 }
 
@@ -1836,7 +1899,7 @@ gimp_setup_open_callback (void)
 {
   static int first_time = 1;
 
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   gimp_setup_update ();
 
   gtk_widget_show (setup_dialog);
@@ -1855,7 +1918,7 @@ gimp_setup_open_callback (void)
 static void
 gimp_new_printer_open_callback (void)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   gtk_entry_set_text(GTK_ENTRY(new_printer_entry), "");
   gtk_widget_show (new_printer_dialog);
 }
@@ -1866,7 +1929,7 @@ gimp_new_printer_open_callback (void)
 static void
 gimp_setup_ok_callback (void)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   stp_set_driver(*pv, stp_printer_get_driver(current_printer));
 
   stp_set_output_to(*pv, gtk_entry_get_text (GTK_ENTRY (output_cmd)));
@@ -1886,7 +1949,7 @@ gimp_new_printer_ok_callback (void)
 {
   const char *data = gtk_entry_get_text(GTK_ENTRY(new_printer_entry));
   gp_plist_t key;
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   initialize_printer(&key);
   (void) strncpy(key.name, data, sizeof(key.name) - 1);
   if (strlen(key.name))
@@ -1922,7 +1985,7 @@ gimp_print_driver_callback (GtkWidget      *widget, /* I - Driver list */
 			    gpointer        data)   /* I - Data */
 {
   stp_vars_t printvars;
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   data = gtk_clist_get_row_data (GTK_CLIST (widget), row);
   current_printer = stp_get_printer_by_index ((gint) data);
 
@@ -1952,7 +2015,7 @@ gimp_print_driver_callback (GtkWidget      *widget, /* I - Driver list */
 static void
 gimp_ppd_browse_callback (void)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   gtk_file_selection_set_filename (GTK_FILE_SELECTION (ppd_browser),
 				   gtk_entry_get_text (GTK_ENTRY (ppd_file)));
   gtk_widget_show (ppd_browser);
@@ -1964,7 +2027,7 @@ gimp_ppd_browse_callback (void)
 static void
 gimp_ppd_ok_callback (void)
 {
-  buttons_pressed = preview_active = 0;
+  reset_preview();
   gtk_widget_hide (ppd_browser);
   gtk_entry_set_text
     (GTK_ENTRY (ppd_file),
@@ -2317,11 +2380,13 @@ gimp_preview_update (void)
       GTK_ADJUSTMENT (scaling_adjustment)->value = -stp_get_scaling(*pv);
       if (!suppress_scaling_adjustment)
 	{
+	  suppress_preview_reset++;
 	  gtk_adjustment_changed (GTK_ADJUSTMENT (scaling_adjustment));
 	  suppress_scaling_callback = TRUE;
 	  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scaling_ppi), TRUE);
 	  suppress_scaling_callback = FALSE;
 	  gtk_adjustment_value_changed (GTK_ADJUSTMENT (scaling_adjustment));
+	  suppress_preview_reset--;
 	}
     }
   else
@@ -2432,6 +2497,10 @@ gimp_preview_button_callback (GtkWidget      *widget,
 	  buttons_mask = 1 << event->button;
 	  buttons_pressed++;
 	  preview_active = 1;
+	  if (event->state & GDK_SHIFT_MASK)
+	    move_constraint = MOVE_CONSTRAIN;
+	  else
+	    move_constraint = MOVE_ANY;
 	}
       else if (preview_active == 1)
 	{
@@ -2454,7 +2523,7 @@ gimp_preview_button_callback (GtkWidget      *widget,
 	    }
 	}
     }
-  else
+  else if (event->type == GDK_BUTTON_RELEASE)
     {
       buttons_pressed--;
       buttons_mask &= ~(1 << event->button);
@@ -2471,6 +2540,8 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 			      GdkEventMotion *event,
 			      gpointer        data)
 {
+  if (event->type != GDK_MOTION_NOTIFY)
+    return;
   if (preview_active != 1)
     return;
   if (stp_get_left(*pv) < 0 || stp_get_top(*pv) < 0)
@@ -2478,57 +2549,74 @@ gimp_preview_motion_callback (GtkWidget      *widget,
       stp_set_left(*pv, 72 * (printable_width - print_width) / 20);
       stp_set_top(*pv, 72 * (printable_height - print_height) / 20);
     }
+  if (move_constraint == MOVE_CONSTRAIN)
+    {
+      int dx = abs(event->x - mouse_x);
+      int dy = abs(event->y - mouse_y);
+      if (dx > dy && dx > 3)
+	move_constraint = MOVE_HORIZONTAL;
+      else if (dy > dx && dy > 3)
+	move_constraint = MOVE_VERTICAL;
+      else
+	return;
+    }
 
   if (mouse_button == 2)
     {
       int changes = 0;
-      int x_threshold = MAX (1, (preview_ppi * print_width) / 72);
       int y_threshold = MAX (1, (preview_ppi * print_height) / 72);
 
-      while (event->x - mouse_x >= x_threshold)
+      if (move_constraint & MOVE_HORIZONTAL)
 	{
-	  if (left + stp_get_left(*pv) + (print_width * 2) <= right)
+	  int x_threshold = MAX (1, (preview_ppi * print_width) / 72);
+	  while (event->x - mouse_x >= x_threshold)
 	    {
-	      stp_set_left(*pv, stp_get_left(*pv) + print_width);
-	      mouse_x += x_threshold;
-	      changes = 1;
+	      if (left + stp_get_left(*pv) + (print_width * 2) <= right)
+		{
+		  stp_set_left(*pv, stp_get_left(*pv) + print_width);
+		  mouse_x += x_threshold;
+		  changes = 1;
+		}
+	      else
+		break;
 	    }
-	  else
-	    break;
-	}
-      while (mouse_x - event->x >= x_threshold)
-	{
-	  if (stp_get_left(*pv) >= print_width)
+	  while (mouse_x - event->x >= x_threshold)
 	    {
-	      stp_set_left(*pv, stp_get_left(*pv) - print_width);
-	      mouse_x -= x_threshold;
-	      changes = 1;
+	      if (stp_get_left(*pv) >= print_width)
+		{
+		  stp_set_left(*pv, stp_get_left(*pv) - print_width);
+		  mouse_x -= x_threshold;
+		  changes = 1;
+		}
+	      else
+		break;
 	    }
-	  else
-	    break;
 	}
 
-      while (event->y - mouse_y >= y_threshold)
+      if (move_constraint & MOVE_VERTICAL)
 	{
-	  if (top + stp_get_top(*pv) + (print_height * 2) <= bottom)
+	  while (event->y - mouse_y >= y_threshold)
 	    {
-	      stp_set_top(*pv, stp_get_top(*pv) + print_height);
-	      mouse_y += y_threshold;
-	      changes = 1;
+	      if (top + stp_get_top(*pv) + (print_height * 2) <= bottom)
+		{
+		  stp_set_top(*pv, stp_get_top(*pv) + print_height);
+		  mouse_y += y_threshold;
+		  changes = 1;
+		}
+	      else
+		break;
 	    }
-	  else
-	    break;
-	}
-      while (mouse_y - event->y >= y_threshold)
-	{
-	  if (stp_get_top(*pv) >= print_height)
+	  while (mouse_y - event->y >= y_threshold)
 	    {
-	      stp_set_top(*pv, stp_get_top(*pv) - print_height);
-	      mouse_y -= y_threshold;
-	      changes = 1;
+	      if (stp_get_top(*pv) >= print_height)
+		{
+		  stp_set_top(*pv, stp_get_top(*pv) - print_height);
+		  mouse_y -= y_threshold;
+		  changes = 1;
+		}
+	      else
+		break;
 	    }
-	  else
-	    break;
 	}
       if (!changes)
 	return;
@@ -2542,13 +2630,17 @@ gimp_preview_motion_callback (GtkWidget      *widget,
       int changes = 0;
       if (mouse_button == 1)
 	{
-	  new_top += 72 * (event->y - mouse_y) / preview_ppi;
-	  new_left += 72 * (event->x - mouse_x) / preview_ppi;
+	  if (move_constraint & MOVE_VERTICAL)
+	    new_top += 72 * (event->y - mouse_y) / preview_ppi;
+	  if (move_constraint & MOVE_HORIZONTAL)
+	    new_left += 72 * (event->x - mouse_x) / preview_ppi;
 	}
       else
 	{
-	  new_top += event->y - mouse_y;
-	  new_left += event->x - mouse_x;
+	  if (move_constraint & MOVE_VERTICAL)
+	    new_top += event->y - mouse_y;
+	  if (move_constraint & MOVE_HORIZONTAL)
+	    new_left += event->x - mouse_x;
 	}
       if (new_top < 0)
 	new_top = 0;

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.4.5 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.6 2001/07/23 15:07:51 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -36,8 +36,6 @@
 
 #ifndef DISABLE_NLS
 #include "../../lib/libprintut.h"
-#else
-#define xmalloc malloc
 #endif
 
 /*
@@ -172,6 +170,8 @@ typedef struct stp_softweave
   int last_pass;		/* Number of the most recently printed pass */
 
   int jets;			/* Number of jets per color */
+  int virtual_jets;		/* Number of jets per color, taking into */
+				/* account the head offset */
   int separation;		/* Offset from one jet to the next in rows */
   void *weaveparm;		/* Weave calculation parameter block */
 
@@ -508,5 +508,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.4.5 2001/07/10 20:22:47 sharkey Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.6 2001/07/23 15:07:51 sharkey Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.3 2001/06/30 03:19:59 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.4 2001/07/23 15:07:50 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,11 @@ LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 ## Programs
 
-FOOMATIC_NOINST_BIN = printer_options paper_sizes gimp-print-version
+FOOMATIC_NOINST_BIN = printer_options paper_sizes gimp-print-version stp_limits
 
 noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
 
-EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes
+EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes stp_limits
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = $(LIBGIMPPRINT_LIBS)
@@ -50,6 +50,10 @@ gimp_print_version_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 paper_sizes_SOURCES = paper_sizes.c
 paper_sizes_LDADD = $(LIBGIMPPRINT_LIBS)
 paper_sizes_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+stp_limits_SOURCES = stp_limits.c
+stp_limits_LDADD = $(LIBGIMPPRINT_LIBS)
+stp_limits_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 
 ## Rules
@@ -68,7 +72,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 clean-local:
 	-rm -rf foomatic-db
 
-foomatic-data: printer_options gimp-print-version paper_sizes
+foomatic-data: stp_limits foomatic-generator
 	-rm -rf foomatic-db
 	./foomatic-generator
 

@@ -1,3 +1,9 @@
+gimp-print (4.1.99-a2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Eric Sharkey <sharkey@debian.org>  Mon, 23 Jul 2001 10:49:04 -0400
+
 gimp-print (4.1.99-a1-1) unstable; urgency=low
 
   * New upstream release  (first 4.2 pre-release)

@@ -1,13 +1,13 @@
-This is Gimp-Print version 4.1.99a1, the first alpha release leading up
-to the 4.2 stable release.  Gimp-print is the print facility for the
-Gimp, and in addition a suite of drivers that may be used with common
-UNIX spooling systems using GhostScript or CUPS.  These drivers
+This is Gimp-Print version 4.1.99a2, the second alpha release leading
+up to the 4.2 stable release.  Gimp-print is the print facility for
+the Gimp, and in addition a suite of drivers that may be used with
+common UNIX spooling systems using GhostScript or CUPS.  These drivers
 provide printing quality for UNIX/Linux in many cases equal to or
 better than proprietary vendor-supplied drivers, and can be used for
 many of the most demanding printing tasks.
 
 Please read this README, and the NEWS file carefully!  Many things
-have changed from Gimp-Print 4.0.
+have changed from previous releases.
 
 
 BASIC INSTALLATION
@@ -42,8 +42,7 @@ If you have installed the Gimp from source on Linux: after running
 make install, you must run ldconfig as root before attempting to build
 this plugin.
 
-Gimp-print 4.1 requires the Gimp 1.2.  As of Gimp-print 4.1.6, the
-plugin will no longer compile against the Gimp 1.0 or 1.1.
+Gimp-print 4.2 alpha requires the Gimp 1.2.
 
 
 GHOSTSCRIPT
@@ -53,39 +52,49 @@ use of this software for general printing purposes.  Please read
 src/ghost/README for more information, including how to build and
 install it, and available options; the build procedure here merely
 creates the necessary source files that you must add to your
-Ghostscript source.  To build the Ghostscript driver, you must run:
-
-./configure --with-ghost
-make
-cd src/ghost
-
-If you do not wish to build the Gimp Print plugin, you must run
-
-./configure --with-ghost --without-gimp
-
-Again, please be sure to read src/Ghost/README for the available
-options, which may change from release to release.  In particular, the
-source files may well change from release to release; be certain to
-follow the directions PRECISELY for each release!
+Ghostscript source.  The directions vary for different versions of
+Ghostscript.  Only Ghostscript 5.10, 5.50, and 6.51 are currently
+supported.  In particular, versions of Ghostscript that are not
+licensed under the GNU General Public License (GPL) are not supported,
+and this driver may not be distributed with such a version.
 
 
 CUPS
 
 This package includes a CUPS driver that may be built, allowing use of
-this software for general printing purposes.  To build the CUPS
-driver, you must run:
+this software for general printing purposes.  To build and install the
+CUPS driver, you must run:
 
 ./configure --with-cups
 make
 make install
 /etc/software/init.d/cups restart
 
-The last command varies with OS.  It may be /etc/init.d/cups,
-/etc/rc.d/cups, or even /etc/rc.d/init.d/cups.
+The last command varies with your operating system.  It is typically
+/etc/init.d/cups, /etc/rc.d/cups, or even /etc/rc.d/init.d/cups.
+
+Following this, you must reinstall any printers that you are using
+Gimp-Print PPD's with.  Such printers may be identified in any CUPS
+front end (e. g. KUPS, or via the web interface) because they look
+something like this:
+
+                EPSON Stylus Photo EX, CUPS+GIMP-print v4.1.8
+
+If the version number (in this case, 4.1.8) does not match the version
+of Gimp-Print that you are installing, you must use Modify Printer to
+force the new PPD file to get installed.  Failure to do so may lead to
+incorrect output and/or other errors.
+
+You may also have problems if you have a .lpoptions file that has old
+options set.  If you have problems printing, please remove any
+existing .lpoptions file in your home directory and try printing
+again.
 
 If you do not wish to build the Gimp Print plugin, you must run
 
 ./configure --with-cups --without-gimp
+
+You may also use CUPS with Foomatic.
 
 
 FOOMATIC
@@ -139,12 +148,14 @@ adjusted as necessary for particular combinations of ink, paper, and
 subject material.
 
 We recommend use of the Adaptive Hybrid dithering algorithm in most
-cases.  Users of four color printers may find that the Ordered
-dithering algorithm is faster and produces nearly as good output.  Use
-of this method is strongly discouraged on six color (photo) printers.
+cases.  Ordered dithering also works very well in many cases, and is
+somewhat faster, but it does not work very well with text and very
+fine details (certain kinds of line art).  Fast dithering is also
+quite usable in many cases.
 
-On most inkjet printers, 720 dpi will produce very high quality;
-1440x720 dpi will produce extremely high quality.
+On most inkjet printers, 600 or 720 dpi will produce very high
+quality; 1200x1200 or 1440x720 dpi will produce extremely high
+quality.
 
 
 SUPPORT

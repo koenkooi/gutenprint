@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.6 2001/07/10 20:22:46 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.7 2001/07/23 15:07:49 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = doc intl lib man src test po
+SUBDIRS = doc intl lib man src test po samples
 
 if MAINTAINER_MODE
 MAINT_MODE = true
@@ -97,6 +97,9 @@ install-ghost: all
 
 html:
 	$(MAKE) -C doc html
+
+ps:
+	$(MAKE) -C doc ps
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.4.5 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: print.c,v 1.4.4.6 2001/07/23 15:07:51 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -618,7 +618,7 @@ initialize_printer(gp_plist_t *printer)
 {
   printer->name[0] = '\0';
   printer->active=0;
-  printer->v = stp_allocate_copy(stp_default_settings());
+  printer->v = stp_allocate_vars();
 }
 
 #define GET_MANDATORY_INTERNAL_STRING_PARAM(param)	\
@@ -1313,5 +1313,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.4.5 2001/07/10 20:22:47 sharkey Exp $".
+ * End of "$Id: print.c,v 1.4.4.6 2001/07/23 15:07:51 sharkey Exp $".
  */

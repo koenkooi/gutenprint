@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.4.4 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: print-ps.c,v 1.5.4.5 2001/07/23 15:07:52 sharkey Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -679,6 +679,7 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
   int		i;		/* Looping var */
   unsigned	b;		/* Binary data word */
   unsigned char	c[5];		/* ASCII85 encoded chars */
+  static int	column = 0;	/* Current column */
 
 
   while (length > 3)
@@ -690,7 +691,10 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
     b = (((((d0 << 8) | d1) << 8) | d2) << 8) | d3;
 
     if (b == 0)
+    {
       stp_putc('z', v);
+      column ++;
+    }
     else
     {
       c[4] = (b % 85) + '!';
@@ -704,6 +708,13 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
       c[0] = b + '!';
 
       stp_zfwrite((const char *)c, 5, 1, v);
+      column += 5;
+    }
+
+    if (column > 72)
+    {
+      stp_putc('\n', v);
+      column = 0;
     }
 
     data += 4;
@@ -730,6 +741,7 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
     }
 
     stp_puts("~>\n", v);
+    column = 0;
   }
 }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: libprintut.h,v 1.2.4.1 2001/05/09 16:32:49 sharkey Exp $
+ * $Id: libprintut.h,v 1.2.4.2 2001/07/23 15:07:49 sharkey Exp $
  * Header for utility library functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -28,8 +28,11 @@
 #endif
 
 #ifndef HAVE_ASPRINTF
-#include <stdarg.h>
+#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
 #include <varargs.h>
+#else
+#include <stdarg.h>
+#endif
 extern int vasprintf (char **result, const char *format, va_list args);
 extern int asprintf (char **result, const char *format, ...);
 #endif

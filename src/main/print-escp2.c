@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.24.2.5 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: print-escp2.c,v 1.24.2.6 2001/07/23 15:07:52 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -313,6 +313,34 @@ static const escp2_variable_ink_t photo_4pl_ink =
   1.0
 };
 
+static const stp_simple_dither_range_t spro10000_photo_dither_ranges[] =
+{
+  { 0.17,  0x1, 0, 1 },
+  { 0.26,  0x2, 0, 2 },
+  { 0.661, 0x1, 1, 1 },
+  { 1.00,  0x2, 1, 2 }
+};
+
+static const escp2_variable_ink_t spro10000_photo_ink =
+{
+  spro10000_photo_dither_ranges,
+  sizeof(spro10000_photo_dither_ranges) / sizeof(stp_simple_dither_range_t),
+  1.0
+};
+
+static const stp_simple_dither_range_t spro10000_standard_dither_ranges[] =
+{
+  { 0.661, 0x1, 1, 1 },
+  { 1.00,  0x2, 1, 2 }
+};
+
+static const escp2_variable_ink_t spro10000_standard_ink =
+{
+  spro10000_standard_dither_ranges,
+  sizeof(spro10000_standard_dither_ranges) / sizeof(stp_simple_dither_range_t),
+  1.0
+};
+
 static const stp_simple_dither_range_t photo_4pl_1440_dither_ranges[] =
 {
   { 0.26,  0x1, 0, 1 },
@@ -347,7 +375,7 @@ static const escp2_variable_ink_t standard_6pl_ink =
 static stp_simple_dither_range_t standard_980_6pl_dither_ranges[] =
 {
   { 0.40,  0x1, 1, 1 },
-  { 0.675,  0x2, 1, 2 },
+  { 0.675, 0x2, 1, 2 },
   { 1.0,   0x3, 1, 3 }
 };
 
@@ -577,6 +605,22 @@ static const escp2_variable_inkset_t escp2_4pl_photo_inks =
   &photo_4pl_ink,
   &photo_4pl_ink,
   &standard_4pl_ink
+};
+
+static const escp2_variable_inkset_t spro10000_standard_inks =
+{
+  &spro10000_standard_ink,
+  &spro10000_standard_ink,
+  &spro10000_standard_ink,
+  &spro10000_standard_ink
+};
+
+static const escp2_variable_inkset_t spro10000_photo_inks =
+{
+  &spro10000_standard_ink,
+  &spro10000_photo_ink,
+  &spro10000_photo_ink,
+  &spro10000_standard_ink
 };
 
 static const escp2_variable_inkset_t escp2_4pl_1440_standard_inks =
@@ -811,6 +855,58 @@ static const escp2_variable_inklist_t variable_pigment_6color_inks =
       &escp2_pigment_photo_inks,
       &escp2_pigment_photo_inks,
       &escp2_pigment_photo_inks
+    }
+  }
+};
+
+static const escp2_variable_inklist_t spro10000_inks =
+{
+  {
+    {
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks
+    },
+    {
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks
+    }
+  },
+  {
+    {
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks,
+      &spro10000_standard_inks
+    },
+    {
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks,
+      &spro10000_photo_inks
     }
   }
 };
@@ -1161,6 +1257,9 @@ static const int c4pl_2880_dotsizes[] =
 static const int p4pl_2880_dotsizes[] =
 { 4, 4, 0x12, 2, 0x12, 2, 0x11, -1, 0x10, -1, -1, -1, 0x10 };
 
+static const int spro10000_dotsizes[] =
+{ 4, 0x11, 0x11, 0x11, 0x11, 0x10, 0x10, 0x10, 0x10, -1, -1, -1, -1 };
+
 
 /*
  * Densities are for:
@@ -1210,6 +1309,9 @@ static const double sp2000_densities[] =
 
 static const double spro_densities[] =
 { 2.0, 1.3, 1.3, .65, .65, .646, .646, .323, .323, .1615, .1615, .1615, .1615, .0808 };
+
+static const double spro10000_densities[] =
+{ 2.0, 1.3, 1.3, .65, .65, .431, .710, .216, .784, .216, .784, .392, .392, .196 };
 
 /*
  For each printhead (=color), the offset in escp2_base_separation (1/360")
@@ -1413,7 +1515,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_4 | MODEL_720DPI_600 | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
      | MODEL_VACUUM_NO),
     32, 4, 32, 4, 720, 360, INCH(17 / 2), INCH(44), 8, 9, 0, 30, 0, 1, 0,
@@ -1426,7 +1528,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_4 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
      | MODEL_VACUUM_NO),
     64, 2, 64, 2, 720, 360, INCH(17 / 2), INCH(44), 8, 9, 9, 40, 0, 1, 4,
@@ -1439,7 +1541,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_4 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
      | MODEL_VACUUM_NO),
     64, 2, 128, 1, 720, 360, INCH(17 / 2), INCH(44), 9, 9, 9, 40, 0, 1, 4,
@@ -1452,7 +1554,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_4 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1998 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
      | MODEL_VACUUM_NO),
     64, 2, 64, 2, 720, 360, INCH(17), INCH(44), 8, 9, 9, 40, 0, 1, 4,
@@ -1829,11 +1931,11 @@ static const escp2_stp_printer_t model_capabilities[] =
     &variable_3pl_4color_inks,
     standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment
   },
-  /* 35: Stylus Photo 780/790 */
+  /* 35: Stylus Photo 780/790/785 */
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_MULTI
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_YES | MODEL_YZEROMARGIN_YES
      | MODEL_VACUUM_NO),
     48, 3, 48, 3, 360, 360, INCH(17 / 2), INCH(44), 0, 0, 0, 0, 0, 1, 0,
@@ -1842,11 +1944,11 @@ static const escp2_stp_printer_t model_capabilities[] =
     &variable_4pl_6color_inks,
     standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment
   },
-  /* 36: Stylus Photo 890 */
+  /* 36: Stylus Photo 890/895 */
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_MULTI
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_YZEROMARGIN_YES
      | MODEL_VACUUM_NO),
     48, 3, 48, 3, 360, 360, INCH(17 / 2), INCH(44), 0, 0, 0, 0, 0, 1, 0,
@@ -1859,7 +1961,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_MULTI
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_NO
+     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_ENHANCED_MICROWEAVE_NO
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_YZEROMARGIN_YES
      | MODEL_VACUUM_NO),
     48, 3, 48, 3, 360, 360, INCH(13), INCH(44), 0, 0, 0, 0, 0, 1, 0,
@@ -1896,7 +1998,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 40: Stylus Pro 5500 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
+    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
@@ -1907,11 +2009,24 @@ static const escp2_stp_printer_t model_capabilities[] =
     &simple_6color_inks,
     standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment
   },
+  /* 41: Stylus Pro 10000 */
+  {
+    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE
+     | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO
+     | MODEL_VACUUM_YES),
+    1, 1, 1, 1, 1440, 1440, INCH(44), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
+    360, 1440, 1440, 14400,
+    default_head_offset, 1440, 720, spro10000_dotsizes, spro10000_densities,
+    &spro10000_inks,
+    standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment
+  },
 };
 
 typedef struct
 {
-  const char name[65];
+  const char *name;
   int hres;
   int vres;
   int softweave;
@@ -1930,10 +2045,8 @@ typedef struct
 
 static const res_t escp2_reslist[] =
 {
-  {N_("180 x 120 DPI"),                            180,  120,  0,0,1,1,0,1,0 },
-  {N_("180 x 120 DPI Unidirectional"),             180,  120,  0,0,1,1,1,1,0 },
-  {N_("360 x 120 DPI"),                            360,  120,  0,0,1,1,0,1,0 },
-  {N_("360 x 120 DPI Unidirectional"),             360,  120,  0,0,1,1,1,1,0 },
+  {N_("360 x 120 DPI"),                            360,  120,  1,0,1,1,0,3,0 },
+  {N_("360 x 120 DPI Unidirectional"),             360,  120,  1,0,1,1,1,3,0 },
   {N_("180 DPI"),                                  180,  180,  0,0,1,1,0,1,2 },
   {N_("180 DPI Unidirectional"),                   180,  180,  0,0,1,1,1,1,2 },
   {N_("360 DPI"),                                  360,  360,  0,0,1,1,0,1,4 },
@@ -1999,16 +2112,6 @@ static const res_t escp2_reslist[] =
 #endif
   { "", 0, 0, 0, 0, 0, 0, -1 }
 };
-
-typedef struct
-{
-  const char name[65];
-  int is_color;
-  int variable_dot_size;
-  int dot_size_bits;
-  stp_simple_dither_range_t *standard_dither;
-  stp_simple_dither_range_t *photo_dither;
-} ink_t;
 
 static const double plain_paper_lum_adjustment[49] =
 {
@@ -2224,7 +2327,7 @@ static const double pgpp_hue_adjustment[49] =
 
 typedef struct
 {
-  const char name[65];
+  const char *name;
   int paper_feed_sequence;
   int platen_gap;
   double base_density;
@@ -2883,9 +2986,8 @@ static void
 escp2_reset_printer(const stp_vars_t v, escp2_init_t *init)
 {
   /*
-   * Hack that seems to be necessary for these silly things to recognize
-   * the input.  It only needs to be done once per printer evidently, but
-   * it needs to be done.
+   * Magic initialization string that's needed to take printer out of
+   * packet mode.
    */
   if (escp2_has_cap(init->model, MODEL_INIT, MODEL_INIT_NEW, init->v))
     stp_zprintf(v, "%c%c%c\033\001@EJL 1284.4\n@EJL     \n\033@", 0, 0, 0);
@@ -3042,6 +3144,12 @@ escp2_set_margins(const stp_vars_t v, escp2_init_t *init)
 {
   int l = init->ydpi * (init->page_height - init->page_bottom) / 72;
   int t = init->ydpi * (init->page_height - init->page_top) / 72;
+
+  if (escp2_has_cap(init->model, MODEL_YZEROMARGIN, MODEL_YZEROMARGIN_YES,
+		    init->v))
+    /* Make the page 2/10" higher (probably ignored by the printer anyway) */
+    l += 144 * 720 / init->ydpi;
+
   if (escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_PRO, init->v) ||
       (!(escp2_has_cap(init->model, MODEL_VARIABLE_DOT,
 		       MODEL_VARIABLE_NORMAL, init->v)) &&
@@ -3073,7 +3181,7 @@ escp2_set_form_factor(const stp_vars_t v, escp2_init_t *init)
 
   if (escp2_has_cap(init->model, MODEL_YZEROMARGIN, MODEL_YZEROMARGIN_YES,
 		    init->v))
-    /* Make the page 2/10" higher (probably ignored by the printer anyway) */
+    /* Make the page higher (probably ignored by the printer anyway) */
     page_height += 144 * 720 / init->ydpi;
 
   if (escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_1999,
@@ -3105,6 +3213,8 @@ escp2_set_printhead_resolution(const stp_vars_t v, escp2_init_t *init)
 	xres = escp2_enhanced_xres(init->model, init->v);
       else
 	xres = escp2_xres(init->model, init->v);
+      if (init->xdpi < xres)
+	xres = init->xdpi;
       xres = escp2_resolution_scale(init->model, init->v) / xres;
 
       if (init->output_type == OUTPUT_GRAY)
@@ -3268,6 +3378,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   double lum_adjustment[49], sat_adjustment[49], hue_adjustment[49];
   int ncolors = 0;
   escp2_privdata_t privdata;
+  int drop_size;
 
   if (!stp_get_verified(nv))
     {
@@ -3360,6 +3471,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 	  vertical_passes = res->vertical_passes;
 	  vertical_oversample = res->vertical_oversample;
 	  unidirectional = res->unidirectional;
+	  drop_size = escp2_ink_type(model, resid, nv);
 	  break;
 	}
       else if (!strcmp(resolution, ""))
@@ -3383,8 +3495,6 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 	}
       nozzle_separation =
 	nozzle_separation * ydpi / escp2_base_separation(model, nv);
-      if (!escp2_has_cap(model, MODEL_VARIABLE_DOT, MODEL_VARIABLE_NORMAL, nv))
-	bits = 2;
     }
   else
     {
@@ -3394,6 +3504,10 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
       nozzles = 1;
       nozzle_separation = 1;
     }
+  if (drop_size & 0x10)
+    bits = 2;
+  else
+    bits = 1;
   if (horizontal_passes == 0)
     horizontal_passes = 1;
 
@@ -3409,6 +3523,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
       if (head_offset[i] > max_head_offset)
 	max_head_offset = head_offset[i];
     }
+
+  top += max_head_offset * nozzle_separation * 72 / ydpi;
 
  /*
   * Let the user know what we're doing...
@@ -3480,7 +3596,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
       * paper's top edge.  The value 18 was reported to be correct by
       * Mogens Jaeger.
       */
-      top += 18 * physical_ydpi / max_vres;
+      top += 28 * physical_ydpi / max_vres;
     }
 
  /*

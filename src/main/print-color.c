@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.5.4.4 2001/06/30 03:19:59 sharkey Exp $"
+ * "$Id: print-color.c,v 1.5.4.5 2001/07/23 15:07:51 sharkey Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -63,6 +63,7 @@ typedef struct
 
 #define FMAX(a, b) ((a) > (b) ? (a) : (b))
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
+
 
 static inline void
 calc_rgb_to_hsl(unsigned short *rgb, double *hue, double *sat,
@@ -860,10 +861,13 @@ rgb_to_rgb(const stp_vars_t vars,
 	    }
 	  else
 	    {
-	      i0 = rgbin[0];
-	      rgbout[0] = cmap[i0 * 3 + 0] * 257;
-	      rgbout[1] = cmap[i0 * 3 + 1] * 257;
-	      rgbout[2] = cmap[i0 * 3 + 2] * 257;
+	      i0 = rgbin[0] * 3;
+	      i1 = cmap[i0 + 1];
+	      i2 = cmap[i0 + 2];
+	      i0 = cmap[i0];
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
 	    }
 	  break;
 	case 2:
@@ -876,11 +880,15 @@ rgb_to_rgb(const stp_vars_t vars,
 	    }
 	  else
 	    {
-	      i0 = rgbin[0];
-	      i1 = rgbin[1];
-	      rgbout[0] = (cmap[i0 * 3 + 0] * i1 / 255 + 255 - i1) * 257;
-	      rgbout[1] = (cmap[i0 * 3 + 1] * i1 / 255 + 255 - i1) * 257;
-	      rgbout[2] = (cmap[i0 * 3 + 2] * i1 / 255 + 255 - i1) * 257;
+	      i0 = rgbin[0] * 3;
+	      i3 = rgbin[1];
+	      i1 = cmap[i0 + 1] * i3 / 255 + 255 - i3;
+	      i2 = cmap[i0 + 2] * i3 / 255 + 255 - i3;
+	      i0 = cmap[i0] * i3 / 255 + 255 - i3;
+
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
 	    }
 	  break;
 	case 3:
@@ -899,9 +907,9 @@ rgb_to_rgb(const stp_vars_t vars,
 	      i0 = rgbin[0];
 	      i1 = rgbin[1];
 	      i2 = rgbin[2];
-	      rgbout[0] = i0 * 257;
-	      rgbout[1] = i1 * 257;
-	      rgbout[2] = i2 * 257;
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
 	    }
 	  break;
 	case 4:
@@ -915,13 +923,13 @@ rgb_to_rgb(const stp_vars_t vars,
 	    }
 	  else
 	    {
-	      i0 = rgbin[0];
-	      i1 = rgbin[1];
-	      i2 = rgbin[2];
 	      i3 = rgbin[3];
-	      rgbout[0] = (i0 * i3 / 255 + 255 - i3) * 257;
-	      rgbout[1] = (i1 * i3 / 255 + 255 - i3) * 257;
-	      rgbout[2] = (i2 * i3 / 255 + 255 - i3) * 257;
+	      i0 = rgbin[0] * i3 / 255 + 255 - i3;
+	      i1 = rgbin[1] * i3 / 255 + 255 - i3;
+	      i2 = rgbin[2] * i3 / 255 + 255 - i3;
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
 	    }
 	  break;
 	}
@@ -1063,6 +1071,249 @@ indexed_to_rgb(const stp_vars_t vars,
 	     hue_map, lum_map, sat_map);
 }
 
+static void
+solid_rgb_to_rgb(const stp_vars_t vars,
+		 const unsigned char *rgbin,
+		 unsigned short *rgbout,
+		 int *zero_mask,
+		 int width,
+		 int bpp,
+		 const unsigned char *cmap,
+		 const double *hue_map,
+		 const double *lum_map,
+		 const double *sat_map)
+{
+  unsigned ld = stp_get_density(vars) * 65536;
+  double isat = 1.0;
+  double ssat = stp_get_saturation(vars);
+  int i0 = -1;
+  int i1 = -1;
+  int i2 = -1;
+  int i3 = -1;
+  int o0 = 0;
+  int o1 = 0;
+  int o2 = 0;
+  int nz0 = 0;
+  int nz1 = 0;
+  int nz2 = 0;
+  lut_t *lut = (lut_t *)(stp_get_lut(vars));
+  int compute_saturation = ssat <= .99999 || ssat >= 1.00001;
+  int split_saturation = ssat > 1.4;
+  if (split_saturation)
+    ssat = sqrt(ssat);
+  if (ssat > 1)
+    isat = 1.0 / ssat;
+  while (width > 0)
+    {
+      double h, s, l;
+      switch (bpp)
+	{
+	case 1:
+	  /*
+	   * No alpha in image, using colormap...
+	   */
+	  if (i0 == rgbin[0])
+	    {
+	      rgbout[0] = o0;
+	      rgbout[1] = o1;
+	      rgbout[2] = o2;
+	      goto out;
+	    }
+	  else
+	    {
+	      i0 = rgbin[0] * 3;
+	      i1 = cmap[i0 + 1];
+	      i2 = cmap[i0 + 2];
+	      i0 = cmap[i0];
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
+	    }
+	  break;
+	case 2:
+	  if (i0 == rgbin[0] && i1 == rgbin[1])
+	    {
+	      rgbout[0] = o0;
+	      rgbout[1] = o1;
+	      rgbout[2] = o2;
+	      goto out;
+	    }
+	  else
+	    {
+	      i0 = rgbin[0] * 3;
+	      i3 = rgbin[1];
+	      i1 = cmap[i0 + 1] * i3 / 255 + 255 - i3;
+	      i2 = cmap[i0 + 2] * i3 / 255 + 255 - i3;
+	      i0 = cmap[i0] * i3 / 255 + 255 - i3;
+
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
+	    }
+	  break;
+	case 3:
+	  /*
+	   * No alpha in image...
+	   */
+	  if (i0 == rgbin[0] && i1 == rgbin[1] && i2 == rgbin[2])
+	    {
+	      rgbout[0] = o0;
+	      rgbout[1] = o1;
+	      rgbout[2] = o2;
+	      goto out;
+	    }
+	  else
+	    {
+	      i0 = rgbin[0];
+	      i1 = rgbin[1];
+	      i2 = rgbin[2];
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
+	    }
+	  break;
+	case 4:
+	  if (i0 == rgbin[0] && i1 == rgbin[1] && i2 == rgbin[2] &&
+	      i3 == rgbin[3])
+	    {
+	      rgbout[0] = o0;
+	      rgbout[1] = o1;
+	      rgbout[2] = o2;
+	      goto out;
+	    }
+	  else
+	    {
+	      i3 = rgbin[3];
+	      i0 = rgbin[0] * i3 / 255 + 255 - i3;
+	      i1 = rgbin[1] * i3 / 255 + 255 - i3;
+	      i2 = rgbin[2] * i3 / 255 + 255 - i3;
+	      rgbout[0] = i0 | (i0 << 8);
+	      rgbout[1] = i1 | (i1 << 8);
+	      rgbout[2] = i2 | (i2 << 8);
+	    }
+	  break;
+	}
+      if ((compute_saturation) &&
+	  (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
+	{
+	  calc_rgb_to_hsl(rgbout, &h, &s, &l);
+	  if (ssat < 1)
+	    s *= ssat;
+	  else
+	    {
+	      double s1 = s * ssat;
+	      double s2 = 1.0 - ((1.0 - s) * isat);
+	      s = FMIN(s1, s2);
+	    }
+	  if (s > 1)
+	    s = 1.0;
+	  calc_hsl_to_rgb(rgbout, h, s, l);
+	}
+      update_cmyk(rgbout);	/* Fiddle with the INPUT */
+      rgbout[0] = lookup_value(rgbout[0], lut->steps,
+			       lut->red, lut->shiftval,
+			       lut->bin_size, lut->bin_shift);
+      rgbout[1] = lookup_value(rgbout[1], lut->steps,
+			       lut->green, lut->shiftval,
+			       lut->bin_size, lut->bin_shift);
+      rgbout[2] = lookup_value(rgbout[2], lut->steps,
+			       lut->blue, lut->shiftval,
+			       lut->bin_size, lut->bin_shift);
+      if ((split_saturation || hue_map || lum_map || sat_map) &&
+	  (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
+	{
+	  calc_rgb_to_hsl(rgbout, &h, &s, &l);
+	  if (split_saturation)
+	    {
+	      if (ssat < 1)
+		s *= ssat;
+	      else
+		{
+		  double s1 = s * ssat;
+		  double s2 = 1.0 - ((1.0 - s) * isat);
+		  s = FMIN(s1, s2);
+		}
+	    }
+	  if (s > 1)
+	    s = 1.0;
+	  if (hue_map || lum_map || sat_map)
+	    {
+	      if (hue_map)
+		{
+		  int ih;
+		  double eh;
+		  double nh = h * 8;
+		  ih = (int) nh;
+		  eh = nh - (double) ih;
+		  h = (ih / 8.0) + hue_map[ih] +
+		    eh * ((1.0 / 8.0) + hue_map[ih + 1] - hue_map[ih]);
+		  if (h < 0.0)
+		    h += 6.0;
+		  else if (h >= 6.0)
+		    h -= 6.0;
+		}
+	      if (sat_map)
+		{
+		  int ih;
+		  double eh;
+		  double nh = h * 8;
+		  ih = (int) nh;
+		  eh = nh - (double) ih;
+		  if (sat_map[ih] != 1.0 || sat_map[ih + 1] != 1.0)
+		    {
+		      double es = sat_map[ih] +
+			eh * (sat_map[ih + 1] - sat_map[ih]);
+		      s = 1.0 - pow(1.0 - s, es);
+		    }
+		}
+	    }
+	  calc_hsl_to_rgb(rgbout, h, s, l);
+	}
+      if (ld < 65536)
+	{
+	  int i;
+	  for (i = 0; i < 3; i++)
+	    {
+	      unsigned t = rgbout[i];
+	      t = t * ld / 65536;
+	      rgbout[i] = (unsigned short) t;
+	    }
+	}
+      o0 = rgbout[0];
+      o1 = rgbout[1];
+      o2 = rgbout[2];
+      nz0 |= o0;
+      nz1 |= o1;
+      nz2 |= o2;
+    out:
+      rgbin += bpp;
+      rgbout += 3;
+      width --;
+    }
+  if (zero_mask)
+    {
+      *zero_mask = nz0 ? 0 : 1;
+      *zero_mask |= nz1 ? 0 : 2;
+      *zero_mask |= nz2 ? 0 : 4;
+    }
+}
+
+static void
+solid_indexed_to_rgb(const stp_vars_t vars,
+		     const unsigned char *indexed,
+		     unsigned short *rgb,
+		     int *zero_mask,
+		     int width,
+		     int bpp,
+		     const unsigned char *cmap,
+		     const double *hue_map,
+		     const double *lum_map,
+		     const double *sat_map)
+{
+  solid_rgb_to_rgb(vars, indexed, rgb, zero_mask, width, bpp, cmap,
+		   hue_map, lum_map, sat_map);
+}
+
 /*
  * 'gray_to_rgb()' - Convert gray image data to RGB.
  */
@@ -1107,9 +1358,9 @@ gray_to_rgb(const stp_vars_t vars,
 	  else
 	    {
 	      i0 = grayin[0];
-	      trgb[0] = grayin[0] * 257;
-	      trgb[1] = grayin[0] * 257;
-	      trgb[2] = grayin[0] * 257;
+	      trgb[0] =
+	      trgb[1] =
+	      trgb[2] = i0 | (i0 << 8);
 	    }
 	}
       else
@@ -1123,13 +1374,10 @@ gray_to_rgb(const stp_vars_t vars,
 	    }
 	  else
 	    {
-	      int lookup = (grayin[0] * grayin[1] / 255 + 255 - grayin[1]) *
-		257;
-	      i0 = grayin[0];
-	      i1 = grayin[1];
-	      trgb[0] = lookup;
-	      trgb[1] = lookup;
-	      trgb[2] = lookup;
+	      i0 = (grayin[0] * grayin[1] / 255 + 255 - grayin[1]);
+	      trgb[0] =
+	      trgb[1] =
+	      trgb[2] = i0 | (i0 << 8);
 	    }
 	}
       update_cmyk(trgb);
@@ -1496,15 +1744,38 @@ cmyk_8_to_cmyk(const stp_vars_t vars,
   int i;
   int j;
   int nz[4];
+  static unsigned short	lut[256];
+  static double density = -1.0;
+  static double print_gamma = -1.0;
+
+
+  if (density != stp_get_density(vars) ||
+      print_gamma != stp_get_gamma(vars))
+  {
+    density     = stp_get_density(vars);
+    print_gamma = stp_get_gamma(vars);
+
+    for (i = 0; i < 256; i ++)
+      lut[i] = 65535.0 * density * pow((double)i / 255.0, print_gamma) + 0.5;
+  }
+
   for (i = 0; i < width; i++)
     {
-      for (j = 0; j < 4; j++)
-	{
-	  nz[j] |= cmykin[j];
-	  cmykout[j] = cmykin[j] * 257;
-	}
-      cmykin += 4;
-      cmykout += 4;
+      j = *cmykin++;
+      nz[0] |= j;
+      *cmykout++ = lut[j];
+
+      j = *cmykin++;
+      nz[1] |= j;
+      *cmykout++ = lut[j];
+
+      j = *cmykin++;
+      nz[2] |= j;
+      *cmykout++ = lut[j];
+
+      j = *cmykin++;
+      nz[3] |= j;
+      *cmykout++ = lut[j];
     }
   if (zero_mask)
     {
@@ -1531,15 +1802,26 @@ cmyk_to_cmyk(const stp_vars_t vars,
   int j;
   int nz[4];
   const unsigned short *scmykin = (const unsigned short *) cmykin;
+  double density = stp_get_density(vars) * 65535.0;
+  double print_gamma = stp_get_gamma(vars);
+
   for (i = 0; i < width; i++)
     {
-      for (j = 0; j < 4; j++)
-	{
-	  nz[j] |= cmykin[j];
-	  cmykout[j] = scmykin[j];
-	}
-      scmykin += 4;
-      cmykout += 4;
+      j = *scmykin++;
+      nz[0] |= j;
+      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
+
+      j = *scmykin++;
+      nz[1] |= j;
+      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
+
+      j = *scmykin++;
+      nz[2] |= j;
+      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
+
+      j = *scmykin++;
+      nz[3] |= j;
+      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
     }
   if (zero_mask)
     {
@@ -1808,25 +2090,32 @@ stp_choose_colorfunc(int output_type,
       break;
     case OUTPUT_COLOR:
       *out_bpp = 3;
-      if (stp_get_image_type(v) == IMAGE_CONTINUOUS)
+      switch (stp_get_image_type(v))
 	{
+	case IMAGE_CONTINUOUS:
 	  if (image_bpp >= 3)
 	    RETURN_COLORFUNC(rgb_to_rgb);
 	  else if (cmap == NULL)
 	    RETURN_COLORFUNC(gray_to_rgb);
 	  else
 	    RETURN_COLORFUNC(indexed_to_rgb);
-	}
-      else
-	{
+	case IMAGE_SOLID_TONE:
+	  if (image_bpp >= 3)
+	    RETURN_COLORFUNC(solid_rgb_to_rgb);
+	  else if (cmap == NULL)
+	    RETURN_COLORFUNC(gray_to_rgb);
+	  else
+	    RETURN_COLORFUNC(solid_indexed_to_rgb);
+	case IMAGE_LINE_ART:
 	  if (image_bpp >= 3)
 	    RETURN_COLORFUNC(fast_rgb_to_rgb);
 	  else if (cmap == NULL)
 	    RETURN_COLORFUNC(fast_gray_to_rgb);
 	  else
 	    RETURN_COLORFUNC(fast_indexed_to_rgb);
+	default:
+	  RETURN_COLORFUNC(NULL);
 	}
-      break;
     case OUTPUT_GRAY:
     default:
       *out_bpp = 1;

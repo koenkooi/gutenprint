@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.4.4 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: print-pcl.c,v 1.8.4.5 2001/07/23 15:07:52 sharkey Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -34,6 +34,7 @@
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 #include <stdio.h>
+#include <string.h>
 
 /* #define DEBUG */
 /* #define PCL_DEBUG_DISABLE_COMPRESSION */
@@ -1664,7 +1665,18 @@ pcl_default_parameters(const stp_printer_t printer,
     {
       for (i = 0; i < NUM_RESOLUTIONS; i++)
 	{
-	  if (caps->resolutions & pcl_resolutions[i].pcl_code)
+	  if ((caps->resolutions & pcl_resolutions[i].pcl_code) &&
+	      (pcl_resolutions[i].pcl_code >= PCL_RES_300_300))
+	    {
+	      return _(pcl_val_to_string(pcl_resolutions[i].pcl_code,
+					 pcl_resolutions, NUM_RESOLUTIONS));
+	    }
+	}
+      /* If printer can't handle at least 300x300, look for anything that */
+      /* works */
+      for (i = 0; i < NUM_RESOLUTIONS; i++)
+	{
+	  if ((caps->resolutions & pcl_resolutions[i].pcl_code))
 	    {
 	      return _(pcl_val_to_string(pcl_resolutions[i].pcl_code,
 					 pcl_resolutions, NUM_RESOLUTIONS));
@@ -1882,11 +1894,11 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   pcl_imageable_area(printer, nv, &page_left, &page_right,
                      &page_bottom, &page_top);
 #ifdef DEBUG
-  printf("Before stp_compute_page_parameters()\n");
-  printf("page_left = %d, page_right = %d, page_top = %d, page_bottom = %d\n",
+  stp_erprintf("Before stp_compute_page_parameters()\n");
+  stp_erprintf("page_left = %d, page_right = %d, page_top = %d, page_bottom = %d\n",
     page_left, page_right, page_top, page_bottom);
-  printf("top = %d, left = %d\n", top, left);
-  printf("scaling = %f, image_width = %d, image_height = %d\n", scaling,
+  stp_erprintf("top = %d, left = %d\n", top, left);
+  stp_erprintf("scaling = %f, image_width = %d, image_height = %d\n", scaling,
     image_width, image_height);
 #endif
 
@@ -1903,10 +1915,10 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   image_width = image->width(image);
 
 #ifdef DEBUG
-  printf("After stp_compute_page_parameters()\n");
-  printf("page_width = %d, page_height = %d\n", page_width, page_height);
-  printf("out_width = %d, out_height = %d\n", out_width, out_height);
-  printf("top = %d, left = %d\n", top, left);
+  stp_erprintf("After stp_compute_page_parameters()\n");
+  stp_erprintf("page_width = %d, page_height = %d\n", page_width, page_height);
+  stp_erprintf("out_width = %d, out_height = %d\n", out_width, out_height);
+  stp_erprintf("top = %d, left = %d\n", top, left);
 #endif /* DEBUG */
 
  /*
@@ -1944,7 +1956,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   pcl_media_size = pcl_convert_media_size(media_size, model);
 
 #ifdef DEBUG
-  printf("pcl_media_size = %d, media_size = %s\n", pcl_media_size, media_size);
+  stp_erprintf("pcl_media_size = %d, media_size = %s\n", pcl_media_size, media_size);
 #endif
 
  /*
@@ -1974,7 +1986,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
                          sizeof(pcl_media_sources) / sizeof(pcl_t));
 
 #ifdef DEBUG
-    printf("pcl_media_source = %d, media_source = %s\n", pcl_media_source,
+    stp_erprintf("pcl_media_source = %d, media_source = %s\n", pcl_media_source,
            media_source);
 #endif
 
@@ -1998,7 +2010,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
                        sizeof(pcl_media_types) / sizeof(pcl_t));
 
 #ifdef DEBUG
-    printf("pcl_media_type = %d, media_type = %s\n", pcl_media_type,
+    stp_erprintf("pcl_media_type = %d, media_type = %s\n", pcl_media_type,
            media_type);
 #endif
 
@@ -2295,7 +2307,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   {
     int duplicate_line = 1;
 #ifdef DEBUG
-    printf("pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
+    stp_erprintf("pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
            y, errline, errval, errmod, out_height);
 #endif /* DEBUG */
     if ((y & 63) == 0)

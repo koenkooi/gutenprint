@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.4 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.5 2001/07/23 15:07:52 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -34,7 +34,11 @@
 #include <gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
+#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
+#include <varargs.h>
+#else
 #include <stdarg.h>
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,7 +242,7 @@ stp_allocate_vars(void)
 {
   void *retval = stp_malloc(sizeof(stp_internal_vars_t));
   memset(retval, 0, sizeof(stp_internal_vars_t));
-  stp_copy_vars(retval, (const stp_vars_t) &default_vars);
+  stp_copy_vars(retval, (stp_vars_t)&default_vars);
   return (retval);
 }
 
@@ -246,7 +250,7 @@ stp_allocate_vars(void)
 do						\
 {						\
   if ((x))					\
-    stp_free((char *)(x));				\
+    stp_free((char *)(x));			\
   ((x)) = NULL;					\
 } while (0)
 
@@ -300,7 +304,6 @@ stp_free_vars(stp_vars_t vv)
   SAFE_FREE(v->media_source);
   SAFE_FREE(v->ink_type);
   SAFE_FREE(v->dither_algorithm);
-  stp_clear_all_options(vv);
 }
 
 #define DEF_STRING_FUNCS(s)				\
@@ -409,25 +412,25 @@ stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
   stp_internal_option_t *popt = NULL;
   if (opt)
     {
-      stp_internal_option_t *nopt = xmalloc(sizeof(stp_internal_option_t));
+      stp_internal_option_t *nopt = stp_malloc(sizeof(stp_internal_option_t));
       stp_set_verified(vd, 0);
       dest->options = nopt;
       memcpy(nopt, opt, sizeof(stp_internal_option_t));
-      nopt->name = xmalloc(strlen(opt->name) + 1);
+      nopt->name = stp_malloc(strlen(opt->name) + 1);
       strcpy(nopt->name, opt->name);
-      nopt->data = xmalloc(opt->length);
+      nopt->data = stp_malloc(opt->length);
       memcpy(nopt->data, opt->data, opt->length);
       opt = opt->next;
       popt = nopt;
       while (opt)
         {
-          nopt = xmalloc(sizeof(stp_internal_option_t));
+          nopt = stp_malloc(sizeof(stp_internal_option_t));
           memcpy(nopt, opt, sizeof(stp_internal_option_t));
           nopt->prev = popt;
           popt->next = nopt;
-          nopt->name = xmalloc(strlen(opt->name) + 1);
+          nopt->name = stp_malloc(strlen(opt->name) + 1);
           strcpy(nopt->name, opt->name);
-          nopt->data = xmalloc(opt->length);
+          nopt->data = stp_malloc(opt->length);
           memcpy(nopt->data, opt->data, opt->length);
           opt = opt->next;
           popt = nopt;
@@ -476,7 +479,6 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_cmap(vd, stp_get_cmap(vs));
   stp_set_outfunc(vd, stp_get_outfunc(vs));
   stp_set_errfunc(vd, stp_get_errfunc(vs));
-  stp_clear_all_options(vd);
   stp_copy_options(vd, vs);
   stp_set_verified(vd, stp_get_verified(vs));
 }
@@ -519,135 +521,9 @@ stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
   ICLAMP(saturation);
   stp_set_density(user, stp_get_density(user) * stp_get_density(print));
   ICLAMP(density);
-  if (stp_get_output_type(print) == OUTPUT_GRAY)
+  if (stp_get_output_type(print) == OUTPUT_GRAY &&
+      stp_get_output_type(user) == OUTPUT_COLOR)
     stp_set_output_type(user, OUTPUT_GRAY);
-}
-
-static stp_internal_option_t *
-stp_get_option_by_name_internal(const stp_vars_t vd, const char *name)
-{
-  const stp_internal_vars_t *v = (const stp_internal_vars_t *) vd;
-  stp_internal_option_t *opt = (stp_internal_option_t *)v->options;
-  while (opt)
-    {
-      if (!strcmp(opt->name, name))
-        return opt;
-      opt = opt->next;
-    }
-  return opt;
-}
-
-void
-stp_set_option(stp_vars_t vd, const char *name, const char *data, int bytes)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vd;
-  stp_internal_option_t *opt = stp_get_option_by_name_internal(v, name);
-  if (opt)
-    {
-      if (opt->length == bytes && !memcmp(opt->data, data, bytes))
-        return;
-      stp_free(opt->data);
-    }
-  else
-    {
-      stp_internal_option_t *popt = (stp_internal_option_t *) (v->options);
-      opt = xmalloc(sizeof(stp_internal_option_t));
-      opt->name = xmalloc(strlen(name) + 1);
-      strcpy(opt->name, name);
-      opt->next = popt;
-      if (popt)
-        popt->prev = opt;
-      v->options = opt;
-    }
-  opt->data = xmalloc(bytes);
-  opt->length = bytes;
-  memcpy(opt->data, data, bytes);
-}
-
-void
-stp_clear_option(stp_vars_t vd, const char *name)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vd;
-  stp_internal_option_t *opt = (stp_internal_option_t *) v->options;
-  while (opt)
-    {
-      if (!strcmp(opt->name, name))
-        {
-          stp_free(opt->name);
-          stp_free(opt->data);
-          if (opt->prev)
-            opt->prev->next = opt->next;
-          if (opt->next)
-            opt->next->prev = opt->prev;
-          stp_free(opt);
-          return;
-        }
-      opt = opt->next;
-    }
-}
-
-size_t
-stp_option_count(const stp_vars_t vd)
-{
-  const stp_internal_vars_t *v = (const stp_internal_vars_t *) vd;
-  size_t i = 0;
-  stp_internal_option_t *opt = v->options;
-  while (opt)
-    {
-      opt = opt->next;
-      i++;
-    }
-  return i;
-}
-
-const stp_option_t
-stp_get_option_by_name(const stp_vars_t v, const char *name)
-{
-  return stp_get_option_by_name_internal(v, name);
-}
-
-const stp_option_t
-stp_get_option_by_index(const stp_vars_t vd, size_t index)
-{
-  const stp_internal_vars_t *v = (const stp_internal_vars_t *) vd;
-  stp_internal_option_t *opt = v->options;
-  while (index-- && opt)
-    opt = opt->next;
-  return opt;
-}  
-
-const char *
-stp_option_data(const stp_option_t option)
-{
-  return ((const stp_internal_option_t *) option)->data;
-}
-
-const char *
-stp_option_name(const stp_option_t option)
-{
-  return ((const stp_internal_option_t *) option)->name;
-}
-
-size_t
-stp_option_length(const stp_option_t option)
-{
-  return ((const stp_internal_option_t *) option)->length;
-}
-
-void
-stp_clear_all_options(stp_vars_t vd)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *)vd;
-  stp_internal_option_t *opt = (stp_internal_option_t *)v->options;
-  while (opt)
-    {
-      stp_internal_option_t *nopt = opt->next;
-      stp_free(opt->name);
-      stp_free(opt->data);
-      stp_free(opt);
-      opt = nopt;
-    }
-  v->options = NULL;
 }
 
 /*
@@ -658,7 +534,7 @@ stp_clear_all_options(stp_vars_t vd)
  * Sizes are converted to 1/72in, then rounded down so that we don't
  * print off the edge of the paper.
  */
-static const stp_internal_papersize_t paper_sizes[] =
+static stp_internal_papersize_t paper_sizes[] =
 {
   /* Common imperial page sizes */
   { N_ ("Letter"),   612,  792, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 8.5in x 11in */
@@ -827,14 +703,14 @@ static const stp_internal_papersize_t paper_sizes[] =
   { N_ ("Custom"), 0, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
   { N_ ("89 mm Roll Paper"), 252, 0, 0, 0, 0, 0, PAPERSIZE_METRIC },
-  { N_ ("4\" Roll Paper"), 288, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
-  { N_ ("5\" Roll Paper"), 360, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("4 Inch Roll Paper"), 288, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("5 Inch Roll Paper"), 360, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { N_ ("210 mm Roll Paper"), 595, 0, 0, 0, 0, 0, PAPERSIZE_METRIC },
-  { N_ ("13\" Roll Paper"), 936, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
-  { N_ ("22\" Roll Paper"), 1584, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
-  { N_ ("24\" Roll Paper"), 1728, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
-  { N_ ("36\" Roll Paper"), 2592, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
-  { N_ ("44\" Roll Paper"), 3168, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("13 Inch Roll Paper"), 936, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("22 Inch Roll Paper"), 1584, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("24 Inch Roll Paper"), 1728, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("36 Inch Roll Paper"), 2592, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("44 Inch Roll Paper"), 3168, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
   { "",           0,    0, 0, 0, 0, 0, PAPERSIZE_METRIC }
 };
@@ -933,7 +809,7 @@ stp_get_papersize_by_name(const char *name)
   while (strlen(val->name) > 0)
     {
       if (!strcmp(_(val->name), name))
-	return (const stp_papersize_t) val;
+	return (stp_papersize_t) val;
       val++;
     }
   return NULL;
@@ -946,7 +822,7 @@ stp_get_papersize_by_index(int index)
   if (index < 0 || index >= stp_known_papersizes())
     return NULL;
   else
-    return (const stp_papersize_t) &(paper_sizes[index]);
+    return (stp_papersize_t) &(paper_sizes[index]);
 }
 
 #define IABS(a) ((a) > 0 ? a : -(a))
@@ -970,7 +846,7 @@ stp_get_papersize_by_size(int l, int w)
   for (i = 0; i < sizes; i++)
     {
       if (val->width == w && val->height == l)
-	return (const stp_papersize_t) val;
+	return (stp_papersize_t) val;
       else
 	{
 	  int myscore = paper_size_mismatch(l, w, val);
@@ -982,7 +858,7 @@ stp_get_papersize_by_size(int l, int w)
 	}
       val++;
     }
-  return (const stp_papersize_t) ref;
+  return (stp_papersize_t) ref;
 }
 
 void
@@ -1034,7 +910,7 @@ stp_get_printer_by_index(int idx)
 {
   if (idx < 0 || idx >= printer_count)
     return NULL;
-  return (const stp_printer_t) &(printers[idx]);
+  return (stp_printer_t) &(printers[idx]);
 }
 
 const stp_printer_t
@@ -1045,7 +921,7 @@ stp_get_printer_by_long_name(const char *long_name)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->long_name, long_name))
-	return (const stp_printer_t) val;
+	return (stp_printer_t) val;
       val++;
     }
   return NULL;
@@ -1059,7 +935,7 @@ stp_get_printer_by_driver(const char *driver)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->driver, driver))
-	return (const stp_printer_t) val;
+	return (stp_printer_t) val;
       val++;
     }
   return NULL;
@@ -1111,7 +987,7 @@ const stp_vars_t
 stp_printer_get_printvars(const stp_printer_t p)
 {
   const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return (const stp_vars_t) &(val->printvars);
+  return (stp_vars_t) &(val->printvars);
 }
 
 const char *
@@ -1398,11 +1274,7 @@ stp_minimum_settings()
 }
 
 #if defined DISABLE_NLS || !defined HAVE_VASPRINTF
-#if __STDC__
-# include <stdarg.h>
-#else
-# include <varargs.h>
-#endif
+#include <stdarg.h>
 
 static int vasprintf (char **result, const char *format, va_list args);
 static int int_vasprintf (char **result, const char *format, va_list *args);

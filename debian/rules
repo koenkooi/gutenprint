@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.11 2001/07/14 18:18:16 sharkey Exp $
+# $Id: rules,v 1.2.2.12 2001/07/23 15:07:49 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.4.5 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: print-canon.c,v 1.10.4.6 2001/07/23 15:07:51 sharkey Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -47,7 +47,11 @@
 #include <gimp-print-intl-internal.h>
 #include <string.h>
 #include <stdio.h>
+#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
+#include <varargs.h>
+#else
 #include <stdarg.h>
+#endif
 
 #if (0)
 #define DEBUG 1
@@ -1025,7 +1029,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_MODES(canon_nomodes),
 #ifndef EXPERIMENTAL_STUFF
     {-1,0,0,0,-1,-1}, /*150x150 300x300 600x600 1200x600 1200x1200 2400x2400*/
-    {1,1,1.8,1,1,1},  /*------- 300x300 600x600 1200x600 --------- ---------*/
+    {1,3.5,1.8,1,1,1},/*------- 300x300 600x600 1200x600 --------- ---------*/
     CANON_INK(canon_ink_standard),
 #endif
     standard_lum_adjustment,
@@ -1187,7 +1191,7 @@ static const double plain_paper_lum_adjustment[49] =
 };  
 
 typedef struct {
-  const char name[65];
+  const char *name;
   int media_code;
   double base_density;
   double k_lower_scale;
@@ -1724,6 +1728,9 @@ canon_default_parameters(const stp_printer_t printer,
       char tmp[100];
       int x,y;
       int t;
+      int min_res = caps->base_res;
+      while (min_res < 300)
+	min_res *= 2;
 
       for (x=1; x<6; x++)
 	{
@@ -1731,8 +1738,7 @@ canon_default_parameters(const stp_printer_t printer,
 	    {
 	      if ((t= canon_ink_type(caps,(x<<4)|y)) > -1)
 		{
-		  sprintf(tmp,"%dx%d DPI",
-			   (1<<x)/2*caps->base_res,(1<<y)/2*caps->base_res);
+		  sprintf(tmp,"%dx%d DPI", min_res, min_res);
 #ifdef DEBUG
 		  stp_erprintf("supports mode '%s'\n",tmp);
 #endif
@@ -1849,9 +1855,9 @@ canon_cmd(const stp_vars_t v, /* I - the printer         */
 #define PUT(WHAT,VAL,RES) do {} while (0)
 #endif
 
-#define ESC28 "\x1b\x28"
-#define ESC5b "\x1b\x5b"
-#define ESC40 "\x1b\x40"
+#define ESC28 "\033\050"
+#define ESC5b "\033\133"
+#define ESC40 "\033\100"
 
 #define MIN(a,b) (((a)<(b)) ? (a) : (b))
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
@@ -3027,7 +3033,7 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
 #ifdef DEBUG
     /* stp_erprintf("<%d%c>",*empty,("CMYKcmy"[coloridx])); */
 #endif
-    stp_zfwrite("\x1b\x28\x65\x02\x00", 5, 1, v);
+    stp_zfwrite("\033\050\145\002\000", 5, 1, v);
     stp_putc((*empty) >> 8 , v);
     stp_putc((*empty) & 255, v);
     *empty= 0;
@@ -3035,14 +3041,14 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
 
  /* Send a line of raster graphics... */
 
-  stp_zfwrite("\x1b\x28\x41", 3, 1, v);
+  stp_zfwrite("\033\050\101", 3, 1, v);
   stp_putc((newlength+1) & 255, v);
   stp_putc((newlength+1) >> 8, v);
   color= "CMYKcmy"[coloridx];
   if (!color) color= 'K';
   stp_putc(color,v);
   stp_zfwrite((const char *)comp_buf, newlength, 1, v);
-  stp_putc('\x0d', v);
+  stp_putc('\015', v);
   return 1;
 }
 
@@ -3089,7 +3095,7 @@ canon_write_line(const stp_vars_t v,	/* I - Print file or command */
     canon_write(v, caps, lc+dlc*l, l, 4, ydpi, empty, width, offset, bits);
 
   if (written||(empty==0))
-    stp_zfwrite("\x1b\x28\x65\x02\x00\x00\x01", 7, 1, v);
+    stp_zfwrite("\033\050\145\002\000\000\001", 7, 1, v);
   else
     (*empty)+= 1;
 }
