@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.3 2000/04/15 11:16:17 mitsch Exp $"
+ * "$Id: gimp_main_window.c,v 1.4 2000/04/15 11:53:53 mitsch Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -25,8 +25,6 @@
 #include "print_gimp.h"
 
 #ifndef GIMP_1_0
-
-#include <libgimp/gimpui.h>
 
 #include "print-intl.h"
 

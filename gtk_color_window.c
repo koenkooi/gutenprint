@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.4 2000/04/15 11:16:17 mitsch Exp $"
+ * "$Id: gtk_color_window.c,v 1.5 2000/04/15 11:53:53 mitsch Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -29,7 +29,6 @@
  *   See ChangeLog
  */
 
-#include "print.h"
 #include "print_gimp.h"
 
 #include "print-intl.h"

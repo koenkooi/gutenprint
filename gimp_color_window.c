@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.2 2000/04/15 11:16:17 mitsch Exp $"
+ * "$Id: gimp_color_window.c,v 1.3 2000/04/15 11:53:53 mitsch Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -26,15 +26,12 @@
 
 #ifndef GIMP_1_0
 
-#include <libgimp/gimpui.h>
-
 #include "print-intl.h"
 
 extern vars_t   vars;
 extern gint     plist_count;       /* Number of system printers */
 extern gint     plist_current;     /* Current system printer */
 extern plist_t  plist[MAX_PLIST];  /* System printers */
-
 
 GtkWidget *gimp_color_adjust_dialog;
 
