@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.24 2003/09/16 15:05:38 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.25 2003/09/18 02:42:42 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -701,10 +701,10 @@ olympus_parameters(stp_const_vars_t v, const char *name,
     }
   else if (strcmp(name, "Laminate") == 0)
     {
+      description->bounds.str = stp_string_list_create();
       if (caps->laminate)
         {
           const laminate_list_t *llist = caps->laminate;
-          description->bounds.str = stp_string_list_create();
 
           for (i = 0; i < llist->n_items; i++)
             {
