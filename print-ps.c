@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print-ps.c,v 1.2 1999/09/12 00:12:24 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -32,8 +32,8 @@
  * Revision History:
  *
  *   $Log: print-ps.c,v $
- *   Revision 1.1  1999/09/12 00:10:31  rlk
- *   Initial revision
+ *   Revision 1.2  1999/09/12 00:12:24  rlk
+ *   Current best stuff
  *
  *   Revision 1.14  1999/05/29 16:35:29  yosh
  *   * configure.in
@@ -512,8 +512,9 @@ ps_print(int       model,		/* I - Model (Level 1 or 2) */
          int       copies,		/* I - Number of copies */
          FILE      *prn,		/* I - File to print to */
          GDrawable *drawable,		/* I - Image to print */
-         guchar    *lut,		/* I - Brightness lookup table */
-         guchar    *cmap)		/* I - Colormap (for indexed images) */
+         lut_t     *lut,		/* I - Brightness lookup table */
+	 guchar    *cmap,		/* I - Colormap (for indexed images) */
+	 lut16_t   *lut16)		/* I - Brightness lookup table (16-bit) */
 {
   int		i, j;		/* Looping vars */
   int		x, y;		/* Looping vars */
@@ -1110,5 +1111,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 
 /*
- * End of "$Id: print-ps.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.2 1999/09/12 00:12:24 rlk Exp $".
  */
