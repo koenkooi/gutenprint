@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.20 2001/04/04 23:02:40 rlk Exp $"
+ * "$Id: print-dither.c,v 1.21 2001/04/05 01:07:47 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2263,11 +2263,13 @@ stp_dither_cmyk_fast(const unsigned short  *cmy,
 	{
 	  if (black)
 	    {
+	      unsigned lb = d->k_lower;
+	      unsigned ub = d->k_upper;
 	      k = USMIN(c, USMIN(m, y));
-	      if (k < d->densityh)
+	      if (k < lb)
 		k = 0;
-	      else
-		k = (d->density - 1) - ((d->density - 1 - k) * 2);
+	      else if (k < ub)
+		k = (k - lb) * ub / d->bound_range;
 	      c -= k;
 	      m -= k;
 	      y -= k;
