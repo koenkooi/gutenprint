@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.19 2001/07/16 20:54:20 easysw Exp $"
+ * "$Id: print-ps.c,v 1.20 2001/07/17 00:40:51 easysw Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -713,7 +713,7 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
 
     if (column > 72)
     {
-      stp_putc('\n');
+      stp_putc('\n', v);
       column = 0;
     }
 
