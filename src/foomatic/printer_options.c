@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.41 2004/05/09 16:06:08 rleigh Exp $"
+ * "$Id: printer_options.c,v 1.42 2004/06/20 15:13:38 davehill Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -52,6 +52,9 @@ main(int argc, char **argv)
       int printer_is_color = 0;
       if (strcmp(family, "ps") == 0 || strcmp(family, "raw") == 0)
 	continue;
+
+      /* Set Job Mode to "Job" as this enables the Duplex option */
+      stp_set_string_parameter(pv, "JobMode", "Job");
 
       stp_describe_parameter(pv, "PrintingMode", &desc);
       if (stp_string_list_is_present(desc.bounds.str, "Color"))

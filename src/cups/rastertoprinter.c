@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.88 2004/05/09 16:06:07 rleigh Exp $"
+ * "$Id: rastertoprinter.c,v 1.89 2004/06/20 15:13:37 davehill Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -320,6 +320,19 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
     stp_set_string_parameter(v, "PageSize", size->name);
   else
     fprintf(stderr, "ERROR: Gimp-Print Unable to get media size!\n");
+
+ /* 
+  * Duplex
+  * Note that the names MUST match those in the printer driver(s)
+  */
+
+  if (cups->header.Duplex != 0)
+    {
+      if (cups->header.Tumble != 0)
+        stp_set_string_parameter(v, "Duplex", "DuplexTumble");
+      else
+        stp_set_string_parameter(v, "Duplex", "DuplexNoTumble");
+    }
 
   stp_set_string_parameter(v, "JobMode", "Job");
   stp_get_media_size(v, &(cups->width), &(cups->height));
@@ -973,5 +986,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.88 2004/05/09 16:06:07 rleigh Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.89 2004/06/20 15:13:37 davehill Exp $".
  */
