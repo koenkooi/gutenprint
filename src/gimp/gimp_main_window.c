@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.39 2001/08/19 18:34:28 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.40 2001/08/20 23:46:30 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2191,7 +2191,8 @@ gimp_setup_update (void)
 
   adjustment =
     gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW (printer_crawler));
-  gtk_adjustment_set_value(adjustment, idx * (adjustment->step_increment + 5));
+  adjustment->step_increment = GTK_CLIST(printer_driver)->row_height;
+  gtk_adjustment_set_value(adjustment, idx * adjustment->step_increment);
 }
 
 /*
