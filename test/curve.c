@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.6 2002/11/30 17:55:46 rlk Exp $"
+ * "$Id: curve.c,v 1.7 2002/12/01 01:19:01 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -243,6 +243,15 @@ main(int argc, char **argv)
       global_error_count++;
     }
   stp_curve_print(stdout, curve2);
+  fprintf(stdout, "\n");
+  printf("compose add\n");
+  if (!stp_curve_compose(&curve3, curve1, curve2, STP_CURVE_COMPOSE_MULTIPLY, -1))
+    {
+      printf("add compose failed!\n");
+      global_error_count++;
+    }
+  else
+    stp_curve_print(stdout, curve3);
   fprintf(stdout, "\n");
   if (!stp_curve_read_string(linear_curve_1, curve1))
     {
