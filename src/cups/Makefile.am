@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.59 2002/11/22 02:16:57 rlk Exp $
+## $Id: Makefile.am,v 1.60 2002/12/09 21:51:58 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -75,10 +75,10 @@ canon_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
 epson_SOURCES = epson.c
 epson_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
 
-cups_genppd_SOURCES = genppd.c gimp-print-cups.c
+cups_genppd_SOURCES = genppd.c gimp-print-cups.c gimp-print-cups.h
 cups_genppd_LDADD = $(LIBPRINTUT) $(CUPS_LIBS) $(GENPPD_LIBS) $(LIBGIMPPRINT_LIBS)
 
-rastertoprinter_SOURCES = rastertoprinter.c gimp-print-cups.c
+rastertoprinter_SOURCES = rastertoprinter.c gimp-print-cups.c gimp-print-cups.h
 rastertoprinter_LDADD = $(LIBPRINTUT) $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
 
 
