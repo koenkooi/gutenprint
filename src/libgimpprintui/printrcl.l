@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.4 2003/03/30 19:42:20 rleigh Exp $"
+ * "$Id: printrcl.l,v 1.5 2003/06/14 21:37:03 rlk Exp $"
  *
  *   printrc parser
  *
@@ -77,6 +77,7 @@ Printer:		DBG(PRINTER); return PRINTER;
 Destination:		DBG(DESTINATION); return DESTINATION;
 Scaling:		DBG(SCALING); return SCALING;
 Orientation:		DBG(ORIENTATION); return ORIENTATION;
+Autosize-Roll-Paper:	DBG(AUTOSIZE_ROLL_PAPER); return AUTOSIZE_ROLL_PAPER;
 Unit:			DBG(UNIT); return UNIT;
 Driver:			DBG(DRIVER); return DRIVER;
 Left:			DBG(LEFT); return LEFT;
