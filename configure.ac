@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.118 2004/11/28 15:58:24 rleigh Exp $
+dnl $Id: configure.ac,v 1.119 2004/12/29 19:09:55 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.118 $)
+AC_REVISION($Revision: 1.119 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -374,7 +374,7 @@ else
 dnl Quote to protect sed regexes
   [gimptool_check_major=`echo "$gimptool_check_version" | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\1/'`]
   [gimptool_check_minor=`echo "$gimptool_check_version" | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
-  if test "$gimptool_check_major" -eq 2 -a "$gimptool_check_minor" -eq 0; then
+  if test "$gimptool_check_major" -eq 2; then
     BUILD_GIMP2="yes"
   else
     BUILD_GIMP2="no"

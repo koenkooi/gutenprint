@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2004/09/17 18:38:13 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2004/12/29 19:09:55 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ print_SOURCES = \
 	print.c \
 	print_gimp.h
 
-print_LDADD = $(LIBPRINTUT) $(GIMP2_LIBS) $(GUTENPRINTUI2_LIBS)
+print_LDADD = $(GIMP2_LIBS) $(GUTENPRINTUI2_LIBS)
 print_DEPENDENCIES = $(GUTENPRINTUI2_LIBS) $(GUTENPRINT_LIBS)
 
 
