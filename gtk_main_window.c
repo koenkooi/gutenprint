@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.45 2000/08/12 14:21:10 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.46 2000/08/13 17:24:51 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2325,8 +2325,8 @@ static void gtk_preview_update(void)
   gdk_draw_rectangle(preview->widget.window, gc, 1,
                      1 + printable_left + preview_ppi * vars.left / 72,
                      1 + printable_top + preview_ppi * vars.top / 72,
-                     preview_ppi * print_width / 72,
-                     preview_ppi * print_height / 72);
+                     (preview_ppi * print_width + 71) / 72,
+                     (preview_ppi * print_height + 71) / 72);
 
   /* draw orientation arrow pointing to top-of-paper */
   {
