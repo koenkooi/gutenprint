@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.1.2.1 2003/05/15 00:01:12 rlk Exp $"
+ * "$Id: channel.c,v 1.1.2.2 2003/05/16 01:31:22 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -67,20 +67,18 @@ stpi_channel_clear(void *vc)
 {
   stpi_channel_group_t *cg = (stpi_channel_group_t *) vc;
   int i;
-  if (cg->input_data)
-    stpi_free(cg->input_data);
-  if (cg->data && cg->data != cg->input_data)
-    stpi_free(cg->data);
   if (cg->channel_count > 0)
     {
       for (i = 0; i < cg->channel_count; i++)
 	{
-	  if (cg->c[i].sc)
-	    stpi_free(cg->c[i].sc);
+	  SAFE_FREE(cg->c[i].sc);
+	  SAFE_FREE(cg->c[i].lut);
 	}
     }
-  if (cg->c)
-    stpi_free(cg->c);
+  if (cg->data != cg->input_data)
+    SAFE_FREE(cg->data);
+  SAFE_FREE(cg->input_data);
+  SAFE_FREE(cg->c);
 }
 
 void
@@ -88,7 +86,8 @@ stpi_channel_reset(stp_vars_t v)
 {
   stpi_channel_group_t *cg =
     ((stpi_channel_group_t *) stpi_get_component_data(v, "Channel"));
-  stpi_channel_clear(cg);
+  if (cg)
+    stpi_channel_clear(cg);
 }
 
 static void
@@ -167,14 +166,14 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
       stpi_allocate_component_data(v, "Channel", NULL, stpi_channel_free, cg);
     }				   
   cg->data = stpi_malloc(sizeof(unsigned short) * cg->total_channels * width);
-  cg->input_data =
-    stpi_malloc(sizeof(unsigned short) * input_channel_count * width);
-  cg->input_channels = input_channel_count;
   if (!input_needs_splitting(v))
     {
       cg->data = cg->input_data;
       return;
     }
+  cg->input_data =
+    stpi_malloc(sizeof(unsigned short) * input_channel_count * width);
+  cg->input_channels = input_channel_count;
   for (i = 0; i < cg->channel_count; i++)
     {
       stpi_channel_t *c = &(cg->c[i]);
