@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.16 2001/07/14 17:49:42 rlk Exp $"
+# "$Id: printers.xml,v 1.17 2001/07/18 01:43:51 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -195,6 +195,46 @@
 <magenta value=0.95>
 <yellow value=1.0>
 <language value=lexmark>
+</printer>
+
+<printer name="EPSON Stylus C20SX" driver="escp2-c20">
+<color>
+<model value=21>
+<gamma value=0.585>
+<density value=1.0>
+<magenta value=0.95>
+<yellow value=0.9>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C20UX" driver="escp2-c20">
+<color>
+<model value=21>
+<gamma value=0.585>
+<density value=1.0>
+<magenta value=0.95>
+<yellow value=0.9>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C40SX" driver="escp2-c40">
+<color>
+<model value=21>
+<gamma value=0.585>
+<density value=1.0>
+<magenta value=0.95>
+<yellow value=0.9>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C40UX" driver="escp2-c40">
+<color>
+<model value=21>
+<gamma value=0.585>
+<density value=1.0>
+<magenta value=0.95>
+<yellow value=0.9>
+<language value=escp2>
 </printer>
 
 <printer name="EPSON Stylus Color" driver="escp2">

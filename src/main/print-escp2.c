@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.79 2001/07/16 20:54:20 easysw Exp $"
+ * "$Id: print-escp2.c,v 1.80 2001/07/18 01:43:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3210,6 +3210,8 @@ escp2_set_printhead_resolution(const stp_vars_t v, escp2_init_t *init)
 	xres = escp2_enhanced_xres(init->model, init->v);
       else
 	xres = escp2_xres(init->model, init->v);
+      if (init->xdpi < xres)
+	xres = init->xdpi;
       xres = escp2_resolution_scale(init->model, init->v) / xres;
 
       if (init->output_type == OUTPUT_GRAY)
