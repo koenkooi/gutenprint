@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.100 2002/12/29 20:36:40 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.101 2002/12/29 22:39:20 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2016,7 +2016,7 @@ static void
 save_callback (void)
 {
   reset_preview ();
-  printrc_save ();
+  call_printrc_save ();
 }
 
 /*
