@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.65 2003/07/12 21:27:29 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.66 2003/07/12 23:22:46 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -385,7 +385,9 @@ set_all_options(stp_vars_t v, cups_option_t *options, int num_options,
 	      if (ppd_option)
 		val = ppd_option->defchoice;
 	    }
-	  if (val && strcmp(val, "None") != 0)
+	  if (val && (strcmp(val, "None") != 0 ||
+		      (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST &&
+		       stp_string_list_is_present(desc.bounds.str, val))))
 	    {
 	      switch (desc.p_type)
 		{
@@ -714,12 +716,15 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
   {
     fprintf(stderr, "DEBUG2: GIMP-PRINT reading %d %d\n",
 	    bytes_per_line, cups->row);
-    cupsRasterReadPixels(cups->ras, data, bytes_per_line);
-    cups->row ++;
-    if (margin > 0)
+    while (cups->row < row)
       {
-	fprintf(stderr, "DEBUG2: GIMP-PRINT tossing right %d\n", margin);
-	throwaway_data(margin, cups);
+	cupsRasterReadPixels(cups->ras, data, bytes_per_line);
+	cups->row ++;
+	if (margin > 0)
+	  {
+	    fprintf(stderr, "DEBUG2: GIMP-PRINT tossing right %d\n", margin);
+	    throwaway_data(margin, cups);
+	  }
       }
 
    /*
@@ -840,5 +845,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.65 2003/07/12 21:27:29 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.66 2003/07/12 23:22:46 rlk Exp $".
  */
