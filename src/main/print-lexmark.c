@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.65.2.8 2002/12/08 21:12:52 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.65.2.9 2003/10/16 11:51:10 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2078,8 +2078,8 @@ densityDivisor /= 1.2;
   */
 
 
-  in  = stp_malloc(image_width * image_bpp);
-  out = stp_malloc(image_width * out_bpp * 2);
+  in  = stp_zalloc(image_width * image_bpp);
+  out = stp_zalloc(image_width * out_bpp * 2);
 
   /* calculate the memory we need for one line of the printer image (hopefully we are right) */
 #ifdef DEBUG

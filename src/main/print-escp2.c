@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.147.2.22 2003/01/22 23:59:11 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.147.2.23 2003/10/16 11:51:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1548,8 +1548,8 @@ escp2_do_print(const stp_printer_t printer,		/* I - Model */
       colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap,
 				       &out_bpp, nv);
 
-      in  = stp_malloc(image_width * image_bpp);
-      out = stp_malloc(image_width * out_bpp * 2);
+      in  = stp_zalloc(image_width * image_bpp);
+      out = stp_zalloc(image_width * out_bpp * 2);
 
       errdiv  = image_height / out_height;
       errmod  = image_height % out_height;
