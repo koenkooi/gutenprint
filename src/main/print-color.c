@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.4 2004/03/18 01:24:29 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.5 2004/03/20 01:53:01 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -89,6 +89,8 @@ typedef enum
 typedef struct
 {
   const char *name;
+  int input;
+  int output;
   color_id_t color_id;
   color_model_t color_model;
   unsigned channels;
@@ -96,14 +98,14 @@ typedef struct
 
 static const color_description_t color_descriptions[] =
 {
-  { "Grayscale",  COLOR_ID_GRAY,   COLOR_BLACK, CHANNEL_K },
-  { "Whitescale", COLOR_ID_WHITE,  COLOR_WHITE, CHANNEL_W },
-  { "RGB",        COLOR_ID_RGB,    COLOR_WHITE, CHANNEL_RGB },
-  { "CMY",        COLOR_ID_CMY,    COLOR_BLACK, CHANNEL_CMY },
-  { "CMYK",       COLOR_ID_CMYK,   COLOR_BLACK, CHANNEL_CMYK },
-  { "KCMY",       COLOR_ID_KCMY,   COLOR_BLACK, CHANNEL_CMYK },
-  { "CMYKRB",     COLOR_ID_CMYKRB, COLOR_BLACK, CHANNEL_CMYKRB },
-  { "Raw",        COLOR_ID_RAW,    COLOR_UNKNOWN, 0 },
+  { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK, CHANNEL_K },
+  { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE, CHANNEL_W },
+  { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE, CHANNEL_RGB },
+  { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK, CHANNEL_CMY },
+  { "CMYK",       1, 1, COLOR_ID_CMYK,   COLOR_BLACK, CHANNEL_CMYK },
+  { "KCMY",       1, 0, COLOR_ID_KCMY,   COLOR_BLACK, CHANNEL_CMYK },
+  { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK, CHANNEL_CMYKRB },
+  { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0 },
 };
 
 static const int color_description_count =
@@ -123,6 +125,37 @@ static const channel_depth_t channel_depths[] =
 
 static const int channel_depth_count =
 sizeof(channel_depths) / sizeof(channel_depth_t);
+
+typedef enum
+{
+  COLOR_CORRECTION_UNCORRECTED,
+  COLOR_CORRECTION_BRIGHT,
+  COLOR_CORRECTION_ACCURATE,
+  COLOR_CORRECTION_THRESHOLD,
+  COLOR_CORRECTION_DENSITY,
+  COLOR_CORRECTION_RAW
+} color_correction_enum_t;
+
+typedef struct
+{
+  const char *name;
+  const char *text;
+  color_correction_enum_t correction;
+} color_correction_t;
+
+static const color_correction_t color_corrections[] =
+{
+  { "None", N_("Default"), COLOR_CORRECTION_ACCURATE },
+  { "Accurate", N_("High Accuracy"), COLOR_CORRECTION_ACCURATE },
+  { "Bright", N_("Bright Colors"), COLOR_CORRECTION_BRIGHT },
+  { "Uncorrected", N_("Uncorrected"), COLOR_CORRECTION_UNCORRECTED },
+  { "Threshold", N_("Threshold"), COLOR_CORRECTION_THRESHOLD },
+  { "Density", N_("Density"), COLOR_CORRECTION_DENSITY },
+  { "Raw", N_("Raw"), COLOR_CORRECTION_RAW },
+};
+
+static const int color_correction_count =
+sizeof(color_corrections) / sizeof(color_correction_t);
 
 typedef struct
 {
@@ -2452,7 +2485,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 					  const char *name,
 					  stp_parameter_t *description)
 {
-  int i;
+  int i, j;
   description->p_type = STP_PARAMETER_TYPE_INVALID;
   initialize_standard_curves();
   if (name == NULL)
@@ -2463,9 +2496,6 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
       const float_param_t *param = &(float_parameters[i]);
       if (strcmp(name, param->param.name) == 0)
 	{
-	  if (param->channel_mask != CHANNEL_EVERY)
-	    {
-	    }
 	  stpi_fill_parameter_settings(description, &(param->param));
 	  if (param->color_only && stp_get_output_type(v) == OUTPUT_GRAY)
 	    description->is_active = 0;
@@ -2504,64 +2534,42 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	      if (!strcmp(param->param.name, "ColorCorrection"))
 		{
 		  description->bounds.str = stp_string_list_create();
-		  stp_string_list_add_string
-		    (description->bounds.str, "None", _("Default"));
-		  stp_string_list_add_string
-		    (description->bounds.str, "Accurate", _("High Accuracy"));
-		  stp_string_list_add_string
-		    (description->bounds.str, "Bright", _("Bright"));
-		  stp_string_list_add_string
-		    (description->bounds.str, "Threshold", _("Threshold"));
-		  stp_string_list_add_string
-		    (description->bounds.str, "Uncorrected", _("Uncorrected"));
-		  stp_string_list_add_string
-		    (description->bounds.str, "Raw", _("Raw"));
+		  for (j = 0; j < color_correction_count; j++)
+		    stp_string_list_add_string
+		      (description->bounds.str, color_corrections[j].name,
+		       _(color_corrections[j].text);
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
 	      else if (strcmp(name, "ChannelBitDepth") == 0)
 		{
 		  description->bounds.str = stp_string_list_create();
-		  stp_string_list_add_string(description->bounds.str, "8", "8");
-		  stp_string_list_add_string(description->bounds.str, "16", "16");
+		  for (j = 0; j < channel_depth_count; j++)
+		    stp_string_list_add_string
+		      (description->bounds.str, channel_depths[j].name,
+		       channel_depths[j].name);
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
 	      else if (strcmp(name, "InputImageType") == 0)
 		{
 		  description->bounds.str = stp_string_list_create();
-		  stp_string_list_add_string(description->bounds.str,
-					     "Grayscale", "Grayscale");
-		  stp_string_list_add_string(description->bounds.str,
-					     "Whitescale", "Whitescale");
-		  stp_string_list_add_string(description->bounds.str,
-					     "RGB", "RGB");
-		  stp_string_list_add_string(description->bounds.str,
-					     "CMY", "CMY");
-		  stp_string_list_add_string(description->bounds.str,
-					     "CMYK", "CMYK");
-		  stp_string_list_add_string(description->bounds.str,
-					     "KCMY", "KCMY");
+		  for (j = 0; j < color_description_count; j++)
+		    if (color_descriptions[j].input)
+		      stp_string_list_add_string
+			(description->bounds.str, color_descriptions[j].name,
+			 color_descriptions[j].name);
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
 	      else if (strcmp(name, "OutputImageType") == 0)
 		{
 		  description->bounds.str = stp_string_list_create();
-		  stp_string_list_add_string(description->bounds.str,
-					     "Grayscale", "Grayscale");
-		  stp_string_list_add_string(description->bounds.str,
-					     "Whitescale", "Whitescale");
-		  stp_string_list_add_string(description->bounds.str,
-					     "RGB", "RGB");
-		  stp_string_list_add_string(description->bounds.str,
-					     "CMY", "CMY");
-		  stp_string_list_add_string(description->bounds.str,
-					     "CMYK", "CMYK");
-		  stp_string_list_add_string(description->bounds.str,
-					     "CMYKRB", "CMYKRB");
-		  stp_string_list_add_string(description->bounds.str,
-					     "Raw", "Raw");
+		  for (j = 0; j < color_description_count; j++)
+		    if (color_descriptions[j].output)
+		      stp_string_list_add_string
+			(description->bounds.str, color_descriptions[j].name,
+			 color_descriptions[j].name);
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
