@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.173 2002/07/08 11:12:57 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.174 2002/07/12 01:54:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1530,7 +1530,7 @@ set_vertical_position(stp_softweave_t *sw, stp_pass_t *pass, int model,
 {
   escp2_privdata_t *pd = (escp2_privdata_t *) stp_get_driver_data(v);
   int advance = pass->logicalpassstart - sw->last_pass_offset -
-    escp2_separation_rows(model, v) - 1;
+    (escp2_separation_rows(model, v) - 1);
   advance *= pd->undersample;
   if (pass->logicalpassstart > sw->last_pass_offset ||
       pd->initial_vertical_offset != 0)
