@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.15 2004/09/17 18:38:11 rleigh Exp $
+# $Id: cups-genppdupdate.in,v 1.16 2004/10/31 21:03:12 rleigh Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -49,7 +49,7 @@ my $version = "@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@";
 
 my $ppd_dir = "@cups_conf_serverroot@/ppd"; # Location of in-use CUPS PPDs
 my $ppd_root_dir = "@cups_conf_datadir@/model";
-my $ppd_base_dir = "$ppd_root_dir/gimp-print/$version"; # Available PPDs
+my $ppd_base_dir = "$ppd_root_dir/gutenprint/$version"; # Available PPDs
 my $gzext = ".gz";
 my $updated_ppd_count = 0;
 
@@ -93,7 +93,7 @@ umask 0177;
 my @ppdglob = glob("$ppd_dir/*.{ppd,PPD}");
 my $ppdlist = join ' ', @ppdglob;
 if (@ppdglob) {
-    open PPDFILES, "grep -i -l Gutenprint $ppdlist|" or die "can't grep $ppd_dir/*: $!";
+    open PPDFILES, "egrep -i -l \"Gutenprint|Gimp-Print\" $ppdlist|" or die "can't grep $ppd_dir/*: $!";
     while (<PPDFILES>) {
 	chomp;
 	push @ppd_files,  $_;
