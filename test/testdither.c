@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.28 2003/01/20 22:19:59 rlk Exp $"
+ * "$Id: testdither.c,v 1.29 2003/03/20 02:01:13 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -228,11 +228,11 @@ main(int  argc,				/* I - Number of command-line arguments */
       continue;
     }
 
-    for (j = 0; j < 6; j ++)
+    for (j = 0; j < 5; j ++)
       if (strcmp(argv[i], stpi_dither_types[j]) == 0)
         break;
 
-    if (j < 6)
+    if (j < 5)
     {
       stpi_dither_type = j;
       continue;
@@ -872,5 +872,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.28 2003/01/20 22:19:59 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.29 2003/03/20 02:01:13 rlk Exp $".
  */
