@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.61 2002/05/01 00:31:52 rlk Exp $"
+ * "$Id: print-util.c,v 1.62 2002/05/01 00:43:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -793,6 +793,8 @@ static stp_internal_papersize_t paper_sizes[] =
     297, 684, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US Commercial 10 env */
   { "w315h414",		N_ ("A2 Invitation"),
     315, 414, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US A2 invitation */
+  { "Monarch",		N_ ("Monarch Envelope"),
+    279, 540, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* Monarch envelope (3.875 * 7.5) */
   { "Custom",		N_ ("Custom"),
     0, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
