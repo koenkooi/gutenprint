@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.11 2003/08/03 16:39:42 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.12 2003/08/03 17:42:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -257,8 +257,8 @@ static const paper_adjustment_t sp960_adjustments[] =
     NULL, NULL, NULL },
   { "GlossyPhoto", 0.9, .4, 1.3, 1.0, 1.0, 1.0, 1, 1.0,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
-  { "Semigloss", 0.9, .4, 1.3, 1.0, 1.0, 1.0, 1, 1.0,
-    pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
+  { "Semigloss", 0.9, .1, 1.0, 1.0, 1.0, 1.0, 1, 1.0,
+    NULL, NULL, NULL },
   { "Luster", 0.825, .1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
   { "GlossyPaper", 1.00, .5, .999, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -299,9 +299,9 @@ static const paper_adjustment_t ultrachrome_photo_adjustments[] =
     NULL, NULL, NULL },
   { "GlossyPhoto", 0.85, .02, 1.5, 1.0, 1.0, 1.0, 0.9, 1.0,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
-  { "Semigloss", 0.85, .02, 1.5, 1.0, 1.0, 1.0, 0.9, 1.0,
+  { "Semigloss", 0.85, .00, 1.5, 1.0, 1.0, 1.0, 0.9, 1.0,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment },
-  { "Luster", 1.00, .02, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+  { "Luster", 0.75, .02, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0,
     NULL, NULL, NULL },
   { "ArchivalMatte", 0.85, .02, 1.5, 1.0, 1.0, 1.0, 1, 1.0,
     NULL, NULL, NULL },
