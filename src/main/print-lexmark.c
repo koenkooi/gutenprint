@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.120.2.2 2003/05/22 01:15:39 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.120.2.3 2003/05/25 16:44:38 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -312,6 +312,70 @@ static const stp_parameter_t the_parameters[] =
 
 static int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
+
+typedef struct
+{
+  const stp_parameter_t param;
+  double min;
+  double max;
+  double defval;
+  int color_only;
+} float_param_t;
+
+static const float_param_t float_parameters[] =
+{
+  {
+    {
+      "CyanDensity", N_("Cyan Balance"),
+      N_("Adjust the cyan balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "MagentaDensity", N_("Magenta Balance"),
+      N_("Adjust the magenta balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "YellowDensity", N_("Yellow Balance"),
+      N_("Adjust the yellow balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "BlackDensity", N_("Black Balance"),
+      N_("Adjust the black balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "LightCyanTransition", N_("Light Cyan Transition"),
+      N_("Light Cyan Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+  {
+    {
+      "LightMagentaTransition", N_("Light Magenta Transition"),
+      N_("Light Magenta Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+};    
+
+static int float_parameter_count =
+sizeof(float_parameters) / sizeof(const float_param_t);
 
 /* returns the offset of the first jet when printing in the other direction */
 static int get_lr_shift(int mode)
@@ -1072,6 +1136,8 @@ lexmark_list_parameters(stp_const_vars_t v)
   int i;
   for (i = 0; i < the_parameter_count; i++)
     stp_parameter_list_add_param(ret, &(the_parameters[i]));
+  for (i = 0; i < float_parameter_count; i++)
+    stp_parameter_list_add_param(ret, &(float_parameters[i].param));
   return ret;
 }
 
@@ -1086,6 +1152,18 @@ lexmark_parameters(stp_const_vars_t v, const char *name,
 
   if (name == NULL)
     return;
+
+  for (i = 0; i < float_parameter_count; i++)
+    if (strcmp(name, float_parameters[i].param.name) == 0)
+      {
+	stpi_fill_parameter_settings(description,
+				     &(float_parameters[i].param));
+	description->deflt.dbl = float_parameters[i].defval;
+	description->bounds.dbl.upper = float_parameters[i].max;
+	description->bounds.dbl.lower = float_parameters[i].min;
+	return;
+      }
+
   for (i = 0; i < the_parameter_count; i++)
     if (strcmp(name, the_parameters[i].name) == 0)
       {
@@ -1442,6 +1520,14 @@ lexmark_advance_buffer(unsigned char *buf, int len, int num)
 }
 #endif
 
+static double
+get_double_param(stp_vars_t v, const char *param)
+{
+  if (param && stp_check_float_parameter(v, param, STP_PARAMETER_ACTIVE))
+    return stp_get_float_parameter(v, param);
+  else
+    return 1.0;
+}
 
 /**********************************************************
  * lexmark_print() - Print an image to a LEXMARK printer.
@@ -1872,17 +1958,53 @@ densityDivisor /= 1.2;
     if (cols.p.C)
       {
 	stpi_dither_set_inks(v, ECOLOR_C, 2, photo_dither_shades,
-			       stp_get_float_parameter(v, "Density"));
+			     stp_get_float_parameter(v, "Density"));
       }
     if (cols.p.M)
       {
 	stpi_dither_set_inks(v, ECOLOR_M, 2, photo_dither_shades,
-			       stp_get_float_parameter(v, "Density"));
+			     stp_get_float_parameter(v, "Density"));
       }
     if (cols.p.Y)
       {
 	stpi_dither_set_inks(v, ECOLOR_Y, 2, photo_dither_shades,
-			       stp_get_float_parameter(v, "Density"));
+			     stp_get_float_parameter(v, "Density"));
+      }
+  }
+
+  stpi_dither_set_density_adjustment(v, ECOLOR_K, 0,
+				     get_double_param(v, "BlackDensity") *
+				     get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment(v, ECOLOR_C, 0,
+				     get_double_param(v, "CyanDensity") *
+				     get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment(v, ECOLOR_M, 0,
+				     get_double_param(v, "MagentaDensity") *
+				     get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment(v, ECOLOR_Y, 0,
+				     get_double_param(v, "YellowDensity") *
+				     get_double_param(v, "Density"));
+  if (!use_dmt) {
+    if (cols.p.C)
+      {
+	stpi_dither_set_density_adjustment
+	  (v, ECOLOR_C, 1, (get_double_param(v, "CyanDensity") *
+			    get_double_param(v, "LightCyanTransition") *
+			    get_double_param(v, "Density")));
+      }
+    if (cols.p.M)
+      {
+	stpi_dither_set_density_adjustment
+	  (v, ECOLOR_M, 1, (get_double_param(v, "MagentaDensity") *
+			    get_double_param(v, "LightMagentaTransition") *
+			    get_double_param(v, "Density")));
+      }
+    if (cols.p.Y)
+      {
+	stpi_dither_set_density_adjustment
+	  (v, ECOLOR_Y, 1, (get_double_param(v, "YellowDensity") *
+			    get_double_param(v, "LightYellowTransition") *
+			    get_double_param(v, "Density")));
       }
   }
 

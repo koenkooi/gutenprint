@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.45.2.1 2003/05/22 01:15:39 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.45.2.2 2003/05/25 16:44:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -198,11 +198,13 @@ typedef struct
   int color;
   int subchannel;
   int head_offset;
+  const char *channel_density;
+  const char *subchannel_scale;
 } physical_subchannel_t;
 
 typedef struct
 {
-  const physical_subchannel_t *channels;
+  const physical_subchannel_t *subchannels;
   int n_subchannels;
 } ink_channel_t;
 
@@ -229,7 +231,6 @@ typedef struct
   const char *hue_adjustment;
   const char *sat_adjustment;
   const ink_channel_t *channels[PHYSICAL_CHANNEL_LIMIT];
-  const char *channel_parameter_names[PHYSICAL_CHANNEL_LIMIT];
 } escp2_inkname_t;
 
 typedef struct
@@ -489,5 +490,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.45.2.1 2003/05/22 01:15:39 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.45.2.2 2003/05/25 16:44:38 rlk Exp $".
  */

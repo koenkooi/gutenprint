@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.13 2003/05/25 01:50:04 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.14 2003/05/25 16:44:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -44,6 +44,8 @@ stpi_dither_translate_channel(stp_vars_t v, unsigned channel,
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   unsigned chan_idx;
+  if (!d)
+    return -1;
   if (channel >= d->channel_count)
     return -1;
   if (subchannel >= d->subchannel_count[channel])
@@ -376,10 +378,31 @@ stpi_dither_set_inks_simple(stp_vars_t v, int color, int nlevels,
 }
 
 void
+stpi_dither_set_density_adjustment(stp_vars_t v, int color, int subchannel,
+				   double adjustment)
+{
+  int idx = stpi_dither_translate_channel(v, color, subchannel);
+  if (idx >= 0)
+    {
+      stpi_dither_t *d =
+	(stpi_dither_t *) stpi_get_component_data(v, "Dither");
+      stpi_dither_channel_t *dc = &(CHANNEL(d, idx));
+      dc->density_adjustment = adjustment;
+      dc->sqrt_density_adjustment = sqrt(adjustment);
+    }
+}
+
+void
 stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 		     const stpi_shade_t *shades, double density)
 {
   int i, j;
+  int idx;
+  stpi_dither_channel_t *dc;
+  stpi_shade_segment_t *sp;
+  double k;
+  stpi_ink_defn_t *ip;
+  const stpi_dotsize_t *dp;
 
   /* Setting ink_gamma to different values changes the amount
      of photo ink used (or other lighter inks). Set to 0 it uses
@@ -396,9 +419,8 @@ stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 
   for (i=0; i < nshades; i++)
     {
-      int idx = stpi_dither_translate_channel(v, color, i);
-      stpi_dither_channel_t *dc = &(CHANNEL(d, idx));
-      stpi_shade_segment_t *sp;
+      idx = stpi_dither_translate_channel(v, color, i);
+      dc = &(CHANNEL(d, idx));
 
       if (dc->shades)
 	{
@@ -412,28 +434,28 @@ stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 
       dc->numshades = 1;
       dc->shades = stpi_zalloc(dc->numshades * sizeof(stpi_shade_segment_t));
-      dc->density_adjustment = stp_get_float_parameter(v, "Density");
-      dc->sqrt_density_adjustment = sqrt(density);
+      dc->density_adjustment = 1.0;
+      dc->sqrt_density_adjustment = 1.0;
 
       sp = &dc->shades[0];
       sp->value = 1.0;
       stpi_channel_add(v, color, i, shades[i].value, density);
       sp->density = 65536.0;
-      if (i == 0)
+      if (i == 0 || density == 0)
 	{
 	  sp->lower = 0;
 	  sp->trans = 0;
 	}
       else
 	{
-	  double k;
 	  k = 65536.0 * density * pow(shades[i-1].value, ink_gamma);
 	  sp->lower = k * shades[i-1].value + 0.5;
 	  sp->trans = k * shades[i].value + 0.5;
 
 	  /* Precompute some values */
 	  sp->div1 = (sp->density * (sp->trans - sp->lower)) / sp->trans;
-	  sp->div2 = (sp[-1].density * (sp->trans - sp->lower)) / sp->lower;
+	  sp->div2 = (CHANNEL(d, idx - 1).shades[0].density *
+		      (sp->trans - sp->lower)) / sp->lower;
 	}
 
       sp->numdotsizes = shades[i].numsizes;
@@ -442,8 +464,8 @@ stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 	stpi_dither_set_ranges(v, idx, &shades[i], density);
       for (j=0; j < sp->numdotsizes; j++)
 	{
-	  stpi_ink_defn_t *ip = &sp->dotsizes[j];
-	  const stpi_dotsize_t *dp = &shades[i].dot_sizes[j];
+	  ip = &sp->dotsizes[j];
+	  dp = &shades[i].dot_sizes[j];
 	  ip->value = dp->value * sp->density + 0.5;
 	  ip->range = density * ip->value;
 	  ip->bits = dp->bit_pattern;

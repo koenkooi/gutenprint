@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.104.2.3 2003/05/25 01:50:06 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.104.2.4 2003/05/25 16:44:38 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1524,6 +1524,70 @@ static const stp_parameter_t the_parameters[] =
 static int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
+typedef struct
+{
+  const stp_parameter_t param;
+  double min;
+  double max;
+  double defval;
+  int color_only;
+} float_param_t;
+
+static const float_param_t float_parameters[] =
+{
+  {
+    {
+      "CyanDensity", N_("Cyan Balance"),
+      N_("Adjust the cyan balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "MagentaDensity", N_("Magenta Balance"),
+      N_("Adjust the magenta balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "YellowDensity", N_("Yellow Balance"),
+      N_("Adjust the yellow balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "BlackDensity", N_("Black Balance"),
+      N_("Adjust the black balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "LightCyanTransition", N_("Light Cyan Transition"),
+      N_("Light Cyan Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+  {
+    {
+      "LightMagentaTransition", N_("Light Magenta Transition"),
+      N_("Light Magenta Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+};    
+
+static int float_parameter_count =
+sizeof(float_parameters) / sizeof(const float_param_t);
+
 /*
  * Convert a name into it's option value
  */
@@ -1763,6 +1827,8 @@ pcl_list_parameters(stp_const_vars_t v)
   int i;
   for (i = 0; i < the_parameter_count; i++)
     stp_parameter_list_add_param(ret, &(the_parameters[i]));
+  for (i = 0; i < float_parameter_count; i++)
+    stp_parameter_list_add_param(ret, &(float_parameters[i].param));
   return ret;
 }
 
@@ -1793,6 +1859,17 @@ pcl_parameters(stp_const_vars_t v, const char *name,
     caps->a4_margins.left_margin, caps->a4_margins.right_margin);
   stpi_deprintf(STPI_DBG_PCL, "Resolutions: %d\n", caps->resolutions);
   stpi_deprintf(STPI_DBG_PCL, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
+
+  for (i = 0; i < float_parameter_count; i++)
+    if (strcmp(name, float_parameters[i].param.name) == 0)
+      {
+	stpi_fill_parameter_settings(description,
+				     &(float_parameters[i].param));
+	description->deflt.dbl = float_parameters[i].defval;
+	description->bounds.dbl.upper = float_parameters[i].max;
+	description->bounds.dbl.lower = float_parameters[i].min;
+	return;
+      }
 
   for (i = 0; i < the_parameter_count; i++)
     if (strcmp(name, the_parameters[i].name) == 0)
@@ -2104,6 +2181,15 @@ pcl_printfunc(stp_vars_t v)
 	}
     }
 }  
+
+static double
+get_double_param(stp_vars_t v, const char *param)
+{
+  if (param && stp_check_float_parameter(v, param, STP_PARAMETER_ACTIVE))
+    return stp_get_float_parameter(v, param);
+  else
+    return 1.0;
+}
 
 static int
 pcl_do_print(stp_vars_t v, stp_image_t *image)
@@ -2606,6 +2692,33 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       stpi_dither_set_inks(v, ECOLOR_C, 2, photo_dither_shades, density);
       stpi_dither_set_inks(v, ECOLOR_M, 2, photo_dither_shades, density);
     }
+  if (black)
+    stpi_dither_set_density_adjustment(v, ECOLOR_K, 0,
+				       get_double_param(v, "BlackDensity") *
+				       get_double_param(v, "Density"));
+  if (cyan)
+    stpi_dither_set_density_adjustment(v, ECOLOR_C, 0,
+				       get_double_param(v, "CyanDensity") *
+				       get_double_param(v, "Density"));
+  if (magenta)
+    stpi_dither_set_density_adjustment(v, ECOLOR_M, 0,
+				       get_double_param(v, "MagentaDensity") *
+				       get_double_param(v, "Density"));
+  if (yellow)
+    stpi_dither_set_density_adjustment(v, ECOLOR_Y, 0,
+				       get_double_param(v, "YellowDensity") *
+				       get_double_param(v, "Density"));
+  if (lcyan)
+    stpi_dither_set_density_adjustment
+      (v, ECOLOR_C, 1, (get_double_param(v, "CyanDensity") *
+			get_double_param(v, "LightCyanTransition") *
+			get_double_param(v, "Density")));
+  if (lmagenta)
+    stpi_dither_set_density_adjustment
+      (v, ECOLOR_M, 1, (get_double_param(v, "MagentaDensity") *
+			get_double_param(v, "LightMagentaTransition") *
+			get_double_param(v, "Density")));
+    
 
   if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE))
     {

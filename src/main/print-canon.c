@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.120.2.3 2003/05/25 01:50:05 rlk Exp $"
+ * "$Id: print-canon.c,v 1.120.2.4 2003/05/25 16:44:36 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -233,12 +233,12 @@ typedef struct canon_variable_printmode
  * if you get better results. Please send mail to thaller@ph.tum.de
  */
 
-#define DECLARE_INK(name, density)					\
-static const canon_variable_ink_t name##_ink =				\
-{									\
-  density,								\
-  name##_shades,							\
-  sizeof(name##_shades) / sizeof(stpi_shade_t)				\
+#define DECLARE_INK(name, density)		\
+static const canon_variable_ink_t name##_ink =	\
+{						\
+  density,					\
+  name##_shades,				\
+  sizeof(name##_shades) / sizeof(stpi_shade_t)	\
 }
 
 #define SHADE(density, name)				\
@@ -1249,6 +1249,78 @@ static const stp_parameter_t the_parameters[] =
 static int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
+typedef struct
+{
+  const stp_parameter_t param;
+  double min;
+  double max;
+  double defval;
+  int color_only;
+} float_param_t;
+
+static const float_param_t float_parameters[] =
+{
+  {
+    {
+      "CyanDensity", N_("Cyan Balance"),
+      N_("Adjust the cyan balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "MagentaDensity", N_("Magenta Balance"),
+      N_("Adjust the magenta balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "YellowDensity", N_("Yellow Balance"),
+      N_("Adjust the yellow balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "BlackDensity", N_("Black Balance"),
+      N_("Adjust the black balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "LightCyanTransition", N_("Light Cyan Transition"),
+      N_("Light Cyan Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+  {
+    {
+      "LightMagentaTransition", N_("Light Magenta Transition"),
+      N_("Light Magenta Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+  {
+    {
+      "LightYellowTransition", N_("Light Yellow Transition"),
+      N_("Light Yellow Transition"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1
+    }, 0.0, 5.0, 1.0, 1
+  },
+};    
+
+static int float_parameter_count =
+sizeof(float_parameters) / sizeof(const float_param_t);
+
 static const paper_t *
 get_media_type(const char *name)
 {
@@ -1542,6 +1614,8 @@ canon_list_parameters(stp_const_vars_t v)
   int i;
   for (i = 0; i < the_parameter_count; i++)
     stp_parameter_list_add_param(ret, &(the_parameters[i]));
+  for (i = 0; i < float_parameter_count; i++)
+    stp_parameter_list_add_param(ret, &(float_parameters[i].param));
   return ret;
 }
 
@@ -1557,6 +1631,17 @@ canon_parameters(stp_const_vars_t v, const char *name,
 
   if (name == NULL)
     return;
+
+  for (i = 0; i < float_parameter_count; i++)
+    if (strcmp(name, float_parameters[i].param.name) == 0)
+      {
+	stpi_fill_parameter_settings(description,
+				     &(float_parameters[i].param));
+	description->deflt.dbl = float_parameters[i].defval;
+	description->bounds.dbl.upper = float_parameters[i].max;
+	description->bounds.dbl.lower = float_parameters[i].min;
+	return;
+      }
 
   for (i = 0; i < the_parameter_count; i++)
     if (strcmp(name, the_parameters[i].name) == 0)
@@ -2122,13 +2207,27 @@ canon_printfunc(stp_vars_t v)
   
 }
 
+static double
+get_double_param(stp_vars_t v, const char *param)
+{
+  if (param && stp_check_float_parameter(v, param, STP_PARAMETER_ACTIVE))
+    return stp_get_float_parameter(v, param);
+  else
+    return 1.0;
+}
+
 static void
-set_ink_ranges(stp_vars_t v, const canon_variable_ink_t *ink, int color)
+set_ink_ranges(stp_vars_t v, const canon_variable_ink_t *ink, int color,
+	       const char *channel_param, const char *subchannel_param)
 {
   if (!ink)
     return;
   stpi_dither_set_inks(v, color, ink->numshades, ink->shades,
 		       ink->density * stp_get_float_parameter(v, "Density"));
+  stpi_dither_set_density_adjustment
+    (v, color, 1, (get_double_param(v, channel_param) *
+		   get_double_param(v, subchannel_param) *
+		   get_double_param(v, "Density")));
 }
 
 /*
@@ -2433,11 +2532,26 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
-      set_ink_ranges(v, inks->c, ECOLOR_C);
-      set_ink_ranges(v, inks->m, ECOLOR_M);
-      set_ink_ranges(v, inks->y, ECOLOR_Y);
-      set_ink_ranges(v, inks->k, ECOLOR_K);
+      set_ink_ranges(v, inks->c, ECOLOR_C, "MagentaDensity",
+		     "LightCyanTransition");
+      set_ink_ranges(v, inks->m, ECOLOR_M, "MagentaDensity",
+		     "LightMagentaTransition");
+      set_ink_ranges(v, inks->y, ECOLOR_Y, "YellowDensity",
+		     "LightYellowTransition");
+      set_ink_ranges(v, inks->k, ECOLOR_K, "BlackDensity", NULL);
     }
+  stpi_dither_set_density_adjustment
+    (v, ECOLOR_C, 0,
+     get_double_param(v, "CyanDensity") * get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment
+    (v, ECOLOR_M, 0,
+     get_double_param(v, "MagentaDensity") * get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment
+    (v, ECOLOR_Y, 0,
+     get_double_param(v, "YellowDensity") * get_double_param(v, "Density"));
+  stpi_dither_set_density_adjustment
+    (v, ECOLOR_K, 0,
+     get_double_param(v, "BlackDensity") * get_double_param(v, "Density"));
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;

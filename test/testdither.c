@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.33.4.3 2003/05/25 03:23:50 rlk Exp $"
+ * "$Id: testdither.c,v 1.33.4.4 2003/05/25 16:44:38 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -28,9 +28,12 @@
 #else
 #include <gimp-print/gimp-print.h>
 #endif
+#define STPI_TESTDITHER
+
 #include "../lib/libprintut.h"
 #include "../src/main/gimp-print-internal.h"
 #include "../src/main/weave.h"
+#include "../src/main/dither.h"
 #include "../src/main/bit-ops.h"
 #include <stdio.h>
 #include <sys/time.h>
@@ -894,5 +897,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.33.4.3 2003/05/25 03:23:50 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.33.4.4 2003/05/25 16:44:38 rlk Exp $".
  */

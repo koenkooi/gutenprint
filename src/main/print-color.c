@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.75.2.4 2003/05/25 01:50:05 rlk Exp $"
+ * "$Id: print-color.c,v 1.75.2.5 2003/05/25 16:44:37 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -55,6 +55,7 @@ typedef struct
   int image_bpp;
   int image_width;
   int out_channels;
+  int channels_are_initialized;
   stp_convert_t colorfunc;
   stp_curve_t composite;
   stp_curve_t black;
@@ -77,7 +78,7 @@ typedef struct
   int color_only;
 } float_param_t;
 
-static float_param_t float_parameters[] =
+static const float_param_t float_parameters[] =
 {
   {
     {
@@ -154,38 +155,6 @@ static float_param_t float_parameters[] =
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 3
     }, 0.0, 4.0, 1.0, 1
-  },
-  {
-    {
-      "CyanDensity", N_("Cyan Balance"),
-      N_("Adjust the cyan balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1
-    }, 0.0, 2.0, 1.0, 1
-  },
-  {
-    {
-      "MagentaDensity", N_("Magenta Balance"),
-      N_("Adjust the magenta balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2
-    }, 0.0, 2.0, 1.0, 1
-  },
-  {
-    {
-      "YellowDensity", N_("Yellow Balance"),
-      N_("Adjust the yellow balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3
-    }, 0.0, 2.0, 1.0, 1
-  },
-  {
-    {
-      "BlackDensity", N_("Black Balance"),
-      N_("Adjust the black balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0
-    }, 0.0, 2.0, 1.0, 1
   },
   {
     {
@@ -1021,7 +990,7 @@ compute_gcr_curve(stp_const_vars_t vars)
   return curve;
 }
 
-static void
+static unsigned
 generic_rgb_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
 		    unsigned short *out)
 {
@@ -1033,6 +1002,9 @@ generic_rgb_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   const unsigned short *black_lookup;
   size_t points;
   int i;
+  int j;
+  int nz[4];
+  unsigned retval = 0;
 
   if (!lut->gcr_curve)
     {
@@ -1059,10 +1031,10 @@ generic_rgb_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   gcr_lookup = stp_curve_get_ushort_data(lut->gcr_curve, &points);
   stp_curve_resample(lut->black, lut->steps);
   black_lookup = stp_curve_get_ushort_data(lut->black, &points);
+  memset(nz, 0, sizeof(nz));
 
   for (i = 0; i < width; i++, out += 4, in += 3)
     {
-      int j;
       int c = in[0];
       int m = in[1];
       int y = in[2];
@@ -1105,7 +1077,13 @@ generic_rgb_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
 	  for (j = 1; j < 4; j++)
 	    out[j] -= kk;
 	}
+      for (j = 0; j < 4; j++)
+	nz[j] |= out[j];
     }
+  for (j = 0; j < 4; j++)
+    if (nz[j] == 0)
+      retval |= (1 << j);
+  return retval;
 }
 
 #define RGB_TO_KCMY_FUNC(name)						\
@@ -1117,7 +1095,7 @@ name##_to_kcmy(stp_const_vars_t vars, const unsigned char *in,		\
   if (!lut->cmy_tmp)							\
     lut->cmy_tmp = stpi_malloc(4 * 2 * lut->image_width);		\
   name##_to_rgb(vars, in, lut->cmy_tmp);				\
-  generic_rgb_to_kcmy(vars, lut->cmy_tmp, out);				\
+  return generic_rgb_to_kcmy(vars, lut->cmy_tmp, out);			\
 }
 
 RGB_TO_KCMY_FUNC(gray)
@@ -1277,6 +1255,14 @@ cmyk_to_gray(stp_const_vars_t vars, const unsigned char *in,
   return nz[0] ? 0 : 1;
 }
 
+static void
+initialize_channels(stp_vars_t v, stp_image_t *image)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  stpi_channel_initialize((stp_vars_t) v, image, lut->out_channels);
+  lut->channels_are_initialized = 1;
+}
+
 int
 stpi_color_get_row(stp_const_vars_t v, stp_image_t *image, int row,
 		   unsigned *zero_mask)
@@ -1287,7 +1273,8 @@ stpi_color_get_row(stp_const_vars_t v, stp_image_t *image, int row,
 			 lut->image_width * lut->image_bpp, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
-  stpi_channel_initialize((stp_vars_t) v, image, lut->out_channels);
+  if (!lut->channels_are_initialized)
+    initialize_channels((stp_vars_t) v, image);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
   if (zero_mask)
     *zero_mask = zero;
@@ -1319,6 +1306,7 @@ allocate_lut(void)
   ret->in_data = NULL;
   ret->colorfunc = NULL;
   ret->cmy_tmp = NULL;
+  ret->channels_are_initialized = 0;
   return ret;
 }
 
@@ -1900,7 +1888,7 @@ stpi_color_describe_parameter(stp_const_vars_t v, const char *name,
     return;
   for (i = 0; i < float_parameter_count; i++)
     {
-      float_param_t *param = &(float_parameters[i]);
+      const float_param_t *param = &(float_parameters[i]);
       if (strcmp(name, param->param.name) == 0)
 	{
 	  stpi_fill_parameter_settings(description, &(param->param));
