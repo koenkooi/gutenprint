@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.1 2002/02/01 22:52:48 rleigh Exp $
+## $Id: Makefile.am,v 1.16.2.2 2002/03/30 22:21:33 tillkamppeter Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -70,6 +70,12 @@ else
 INSTALL_DATA_LOCAL_DEPS =
 endif
 
+if BUILD_IJS
+FOOMATIC_GENERATOR_EXTRA_OPTS = -d all
+else
+FOOMATIC_GENERATOR_EXTRA_OPTS = -d noijs
+endif
+
 all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
@@ -89,7 +95,7 @@ foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator foomatic-printermap $(EXTRA_PROGRAMS)
 	-$(RM) -r foomatic-db
-	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates
+	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS)
 	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):

@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.9 2001/09/02 13:30:26 rlk Exp $"
+ * "$Id: printer_options.c,v 1.9.4.1 2002/03/30 22:21:33 tillkamppeter Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -95,6 +95,9 @@ main(int argc, char **argv)
 	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
 		     stp_printer_get_driver(p), "Color", "Color",
 		     "Color");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "RawCMYK",
+		     "Raw CMYK");
 	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
 		     stp_printer_get_driver(p), "Color", "Grayscale",
 		     "Gray Scale");
