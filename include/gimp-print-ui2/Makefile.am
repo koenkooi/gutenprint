@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.18.1 2004/06/15 23:53:30 rleigh Exp $
+## $Id: Makefile.am,v 1.1.2.1 2004/06/15 23:53:29 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,17 +25,14 @@ MAINT_CHARSET = latin1
 
 include $(top_srcdir)/scripts/global.mk
 
-SUBDIRS = 					\
-	main					\
-	libgimpprintui				\
-	libgimpprintui2				\
-	escputil				\
-	gimp					\
-	gimp2					\
-	cups					\
-	foomatic				\
-	ghost					\
-	testpattern
+
+pkgincludedir = $(includedir)/gimp-print-ui2
+
+
+## Data
+
+pkginclude_HEADERS = \
+	gimp-print-ui.h
 
 
 ## Clean

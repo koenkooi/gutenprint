@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.106 2004/05/31 14:00:11 rlk Exp $
+dnl $Id: configure.ac,v 1.106.2.1 2004/06/15 23:53:29 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.106 $)
+AC_REVISION($Revision: 1.106.2.1 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -127,7 +127,7 @@ gimpprint_ui_version=${GIMPPRINT_VERSION}
 gimpprintui2_version=${GIMPPRINT_VERSION}
 
 GIMPPRINT_UI_LIBDEPS="${GIMPPRINT_UI_LIBDEPS} \$(GIMPPRINT_LIBS)"
-
+GIMPPRINTUI2_LIBDEPS="${GIMPPRINTUI2_LIBDEPS} \$(GIMPPRINT_LIBS)"
 
 dnl Specify a configuration file.
 AM_CONFIG_HEADER([config.h])
@@ -899,6 +899,7 @@ AC_CONFIG_FILES([doc/users_guide/Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([include/gimp-print/Makefile])
 AC_CONFIG_FILES([include/gimp-print-ui/Makefile])
+AC_CONFIG_FILES([include/gimp-print-ui2/Makefile])
 AC_CONFIG_FILES([include/gimp-print/gimp-print-version.h])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([man/cups-calibrate.8])
@@ -936,10 +937,13 @@ AC_CONFIG_FILES([src/foomatic/mk_printerlist],
 AC_CONFIG_FILES([src/ghost/Makefile])
 AC_CONFIG_FILES([src/testpattern/Makefile])
 AC_CONFIG_FILES([src/gimp/Makefile])
+AC_CONFIG_FILES([src/gimp2/Makefile])
 AC_CONFIG_FILES([src/main/Makefile])
 AC_CONFIG_FILES([src/main/gimpprint.pc])
 AC_CONFIG_FILES([src/libgimpprintui/Makefile])
 AC_CONFIG_FILES([src/libgimpprintui/gimpprintui.pc])
+AC_CONFIG_FILES([src/libgimpprintui2/Makefile])
+AC_CONFIG_FILES([src/libgimpprintui2/gimpprintui2.pc])
 AC_CONFIG_FILES([cups-gimpprint.list])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([scripts/Makefile])
