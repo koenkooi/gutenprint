@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.72 2000/02/12 23:02:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.73 2000/02/13 02:01:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.73  2000/02/13 02:01:38  rlk
+ *   Build a Ghostscript driver!  No idea if it works yet...
+ *
  *   Revision 1.72  2000/02/12 23:02:00  rlk
  *   Change spacing for newer printers
  *
@@ -565,7 +568,11 @@ typedef struct {
   int vertical_passes;
 } res_t;
 
-const static res_t reslist[] = {
+const 
+#ifndef ESCP2_GHOST
+static
+#endif
+res_t escp2_reslist[] = {
   { "360 DPI", 360, 360, 0, 1, 1 },
   { "720 DPI Microweave", 720, 720, 0, 1, 1 },
   { "720 DPI Softweave", 720, 720, 1, 1, 1 },
@@ -667,8 +674,8 @@ escp2_parameters(int  model,		/* I - Printer model */
     }
   else if (strcmp(name, "Resolution") == 0)
     {
-      const res_t *res = &(reslist[0]);
-      valptrs = malloc(sizeof(char *) * sizeof(reslist) / sizeof(res_t));
+      const res_t *res = &(escp2_reslist[0]);
+      valptrs = malloc(sizeof(char *) * sizeof(escp2_reslist) / sizeof(res_t));
       *count = 0;
       while(res->hres)
 	{
@@ -1081,7 +1088,7 @@ escp2_print(int       model,		/* I - Model */
  /*
   * Figure out the output resolution...
   */
-  for (res = &reslist[0];;res++)
+  for (res = &escp2_reslist[0];;res++)
     {
       if (!strcmp(resolution, res->name))
 	{
@@ -2748,5 +2755,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.72 2000/02/12 23:02:00 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.73 2000/02/13 02:01:38 rlk Exp $".
  */
