@@ -1,38 +1,198 @@
 ## Process this file with automake to produce Makefile.in
+## $Id: Makefile.am,v 1.130 2002/09/21 14:59:52 rleigh Exp $
+## Copyright (C) 2000 Roger Leigh
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2, or (at your option)
+## any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-libexecdir = $(gimpplugindir)/plug-ins
+## Process this file with automake to produce Makefile.in.
 
-libexec_PROGRAMS = print
+AUTOMAKE_OPTIONS = 1.5 dist-bzip2 check-news gnu no-dependencies
 
-print_SOURCES = \
-	print-escp2.c	\
-	print-pcl.c	\
-	print-ps.c	\
-	print-util.c	\
-	print.c		\
-	print.h   
+@SET_MAKE@
 
-INCLUDES = \
-	-I$(top_srcdir)			\
-	$(GTK_CFLAGS)			\
-	-I$(includedir)
+MAINT_CHARSET = latin1
+ACLOCAL_AMFLAGS = -I m4 -I m4local
+DISTCHECK_CONFIGURE_FLAGS = --enable-non-native-prefix=\$$\{prefix\}
 
-AM_CPPFLAGS = \
-        -DLOCALEDIR=\""$(localedir)"\"	\
-	@LP_DEF@			\
-	@LPSTAT_DEF@			\
-	@LPR_DEF@			\
-	@LPC_DEF@
+## Variables
 
-LDADD = \
-	$(top_builddir)/libgimp/libgimp.la	\
-	$(top_builddir)/libgimp/libgimpui.la	\
-	$(GTK_LIBS)				\
-	$(INTLLIBS)
+SUBDIRS = include intl lib man src samples test po doc debian scripts
+DISTDIRS = m4 m4extra
 
-.PHONY: files
 
-files:
-	@files=`ls $(DISTFILES) 2> /dev/null`; for p in $$files; do \
-	  echo $$p; \
+## Rules
+
+# Libtool dependency
+libtool: $(LIBTOOL_DEPS)
+	$(SHELL) ./config.status --recheck
+
+ChangeLog:
+	@cd $(top_srcdir) ; \
+	if test -f $(top_builddir)/.noupdate ; then \
+	  echo "ChangeLog: .noupdate found: NOT updating ChangeLog from CVS" ; \
+	elif test -d CVS ; then \
+	  echo "ChangeLog: Updating ChangeLog from CVS" ; \
+	  cvs log -N | $(PERL) scripts/mkchlog > ChangeLog.tmp ; \
+	  if test -s ChangeLog.tmp ; then \
+	    mv ChangeLog.tmp ChangeLog ; \
+	  else \
+	    echo "ChangeLog: Failed to update ChangeLog ['touch .noupdate' to skip]" ; \
+	    $(RM) ChangeLog.tmp ; \
+	    exit 1 ; \
+	  fi \
+	elif test -s ChangeLog ; then \
+	  echo "ChangeLog: This is not a CVS version of GIMP-Print" ; \
+	  echo "ChangeLog: Not updating ChangeLog from CVS!" ; \
+	else \
+	  echo "ChangeLog: No ChangeLog or ChangeLog of zero size found!" ; \
+	  echo "ChangeLog: Failed to update ChangeLog ['touch .noupdate' to skip]" ; \
+	  exit 1 ; \
+	fi
+
+configure.in:
+	$(LN_S) $(srcdir)/configure.ac $(srcdir)/configure.in
+
+dist-hook:
+	for dir in $(DISTDIRS) ; do \
+	  if test -d $(srcdir)/$$dir ; then \
+	    mkdir $(distdir)/$$dir; \
+	    for dirfile in $(srcdir)/$$dir/*; do \
+	      if test -f $$dirfile ; then \
+	        cp -p $$dirfile $(distdir)/$$dir; \
+	      fi \
+	    done \
+	  fi \
 	done
+# Remove configure.in (libtool bug workaround)
+	$(RM) -f $(distdir)/configure.in
+# Remove any backup files found in distdir
+	$(FIND) $(distdir) -name '.*' -print | xargs $(RM) -rf
+	$(FIND) $(distdir) -name '#*' -print | xargs $(RM) -rf
+	$(FIND) $(distdir) -name '*~' -print | xargs $(RM) -rf
+
+maintainer-clean-local:
+	$(FIND) . -name '.*' -type f -print | xargs $(RM) -f
+	$(FIND) . -name '#*' -type f -print | xargs $(RM) -f
+	$(FIND) . -name '*~' -type f -print | xargs $(RM) -f
+
+install-cups: all
+	cd src/cups ; \
+	$(MAKE) install
+
+install-ghost: all
+	cd src/ghost ; \
+	$(MAKE) install
+
+install-gimp: all
+	cd src/gimp ; \
+	$(MAKE) install
+
+docs:
+	cd doc ; \
+	$(MAKE) docs
+
+html:
+	cd doc ; \
+	$(MAKE) html
+
+ps:
+	cd doc ; \
+	$(MAKE) ps
+
+pdf:
+	cd doc ; \
+	$(MAKE) pdf
+
+snapshot:
+	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`
+
+DEBUILD_OPTIONS = -us -uc
+deb: debian/changelog debian/control debian/rules
+	$(MAKE) dist
+	-$(RM) -r debian-build
+	-mkdir debian-build
+	cd debian-build ; \
+	mv ../$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)_$(VERSION).orig.tar.gz ; \
+	tar xfvz $(PACKAGE)_$(VERSION).orig.tar.gz ; \
+	cd $(PACKAGE)-$(VERSION) ; \
+	debuild $(DEBUILD_OPTIONS) ; \
+	cd .. ; \
+	$(RM) -r $(PACKAGE)-$(VERSION)
+
+debian/control:
+	debian/rules debian/control
+
+
+## Clean
+
+CLEANSCRIPTS = \
+	depcomp \
+	install-sh \
+	ltconfig \
+	mdate-sh \
+	missing \
+	mkinstalldirs
+
+CLEANMFOUR = \
+	codeset.m4 \
+	gettext.m4 \
+	glibc21.m4 \
+	iconv.m4 \
+	intdiv0.m4 \
+	inttypes_h.m4 \
+	inttypes.m4 \
+	inttypes-pri.m4 \
+	isc-posix.m4 \
+	lcmessage.m4 \
+	lib-ld.m4 \
+	lib-link.m4 \
+	lib-prefix.m4 \
+	progtest.m4 \
+	stdint_h.m4 \
+	uintmax_t.m4 \
+	ulonglong.m4
+
+CLEANPO = \
+	boldquot.sed \
+	en@boldquot.header \
+	en@quot.header \
+	insert-header.sin \
+	Makevars.template \
+	quot.sed \
+	remove-potcdate.sin \
+	Rules-quot
+
+CLEANFILES = .noupdate
+
+MAINTAINERCLEANFILES = \
+	ABOUT-NLS \
+	INSTALL \
+	aclocal.m4 \
+	config.h.in \
+	configure \
+	configure.in \
+	Makefile.in \
+	stamp-h.in \
+	stamp-h1.in \
+	stamp-h2.in \
+	stamp-h3.in \
+	stamp-h4.in \
+	$(addprefix scripts/, $(CLEANSCRIPTS)) \
+	$(addprefix m4/, $(CLEANMFOUR)) \
+	$(addprefix po/, $(CLEANPO))
+
+EXTRA_DIST = autogen.sh
+
+.PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLog
