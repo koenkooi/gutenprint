@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.1 2003/06/03 20:17:35 rleigh Exp $"
+ * "$Id: color.c,v 1.2 2003/11/09 15:19:36 rlk Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -36,7 +36,6 @@
 #include "module.h"
 
 
-static void stpi_color_freefunc(void *item);
 static const char* stpi_color_namefunc(const void *item);
 static const char* stpi_color_long_namefunc(const void *item);
 
