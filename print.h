@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.86 2000/09/06 23:48:46 rlk Exp $"
+ * "$Id: print.h,v 1.87 2000/09/12 18:58:45 easysw Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -138,7 +138,7 @@ typedef struct					/* Plug-in variables */
 typedef struct		/**** Printer List ****/
 {
   int	active;			/* Do we know about this printer? */
-  char	name[17];		/* Name of printer */
+  char	name[128];		/* Name of printer */
   vars_t v;
 } plist_t;
 
@@ -454,5 +454,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.86 2000/09/06 23:48:46 rlk Exp $".
+ * End of "$Id: print.h,v 1.87 2000/09/12 18:58:45 easysw Exp $".
  */
