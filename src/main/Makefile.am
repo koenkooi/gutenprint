@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.59 2003/01/19 22:27:29 rleigh Exp $
+## $Id: Makefile.am,v 1.60 2003/01/20 01:13:05 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,15 @@ libgimpprint_la_SOURCES = \
 	path.c \
 	path.h \
 	papers.h \
-	print-dither.c \
+	dither-main.c \
+	dither-ed.c \
+	dither-ordered.c \
+	dither-fast.c \
+	dither-eventone.c \
+	dither-very-fast.c \
+	dither-inks.c \
+	dither-impl.h \
+	dither-inlined-functions.h \
 	print-dither-matrices.c \
 	print-list.c \
 	print-util.c \
