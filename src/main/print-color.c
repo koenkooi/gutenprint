@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.15 2001/05/15 23:19:40 rlk Exp $"
+ * "$Id: print-color.c,v 1.16 2001/05/19 00:42:08 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -25,8 +25,6 @@
  * This file must include only standard C header files.  The core code must
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
-
-/* #define PRINT_DEBUG */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -975,7 +973,8 @@ rgb_to_rgb(const stp_vars_t vars,
 		  double nh = h * 8;
 		  ih = (int) nh;
 		  eh = nh - (double) ih;
-		  h = hue_map[ih] + eh * (hue_map[ih + 1] - hue_map[ih]);
+		  h = (ih / 8.0) + hue_map[ih] +
+		    eh * ((1.0 / 8.0) + hue_map[ih + 1] - hue_map[ih]);
 		  if (h < 0.0)
 		    h += 6.0;
 		  else if (h >= 6.0)
@@ -1608,7 +1607,7 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   double contrast = stp_get_contrast(v);
   double app_gamma = stp_get_app_gamma(v);
   double brightness = stp_get_brightness(v);
-  double screen_gamma = app_gamma / 4.0;	/* Why 1.7??? */
+  double screen_gamma = app_gamma / 4.0; /* "Empirical" */
   double pivot = .25;
   double ipivot = 1.0 - pivot;
   lut_t *lut;
