@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.26 2004/03/24 03:14:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.27 2004/03/24 13:04:24 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -256,7 +256,6 @@ typedef struct
 typedef struct
 {
   unsigned steps;
-  unsigned char *in_data;
   int channel_depth;
   int image_width;
   int in_channels;
@@ -280,6 +279,7 @@ typedef struct
   cached_curve_t gcr_curve;
   unsigned short *cmy_tmp;	/* CMY -> CMYK */
   unsigned short *cmyk_tmp;	/* CMYK -> CMYKRB */
+  unsigned char *in_data;
 } lut_t;
 
 typedef struct
@@ -2552,29 +2552,34 @@ copy_lut(void *vlut)
     return NULL;
   dest = allocate_lut();
   free_channels(dest);
+
+  dest->steps = src->steps;
+  dest->channel_depth = src->channel_depth;
+  dest->image_width = src->image_width;
+  dest->in_channels = src->in_channels;
+  dest->out_channels = src->out_channels;
+  /* Don't copy channels_are_initialized */
+  dest->invert_output = src->invert_output;
+  dest->input_color_description = src->input_color_description;
+  dest->output_color_description = src->output_color_description;
+  dest->color_correction = src->color_correction;
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
       cache_copy(&(dest->channel_curves[i]), &(src->channel_curves[i]));
       dest->gamma_values[i] = src->gamma_values[i];
     }
-  cache_copy(&(dest->hue_map), &(src->hue_map));
-  cache_copy(&(dest->lum_map), &(src->lum_map));
-  cache_copy(&(dest->sat_map), &(src->sat_map));
-  cache_copy(&(dest->gcr_curve), &(src->gcr_curve));
-  dest->steps = src->steps;
-  dest->in_channels = src->in_channels;
-  dest->out_channels = src->out_channels;
-  dest->channel_depth = src->channel_depth;
-  dest->image_width = src->image_width;
   dest->print_gamma = src->print_gamma;
   dest->app_gamma = src->app_gamma;
   dest->screen_gamma = src->screen_gamma;
   dest->contrast = src->contrast;
   dest->brightness = src->brightness;
-  dest->input_color_description = src->input_color_description;
-  dest->output_color_description = src->output_color_description;
-  dest->color_correction = src->color_correction;
-  dest->invert_output = src->invert_output;
+  dest->linear_contrast_adjustment = src->linear_contrast_adjustment;
+  cache_copy(&(dest->hue_map), &(src->hue_map));
+  cache_copy(&(dest->lum_map), &(src->lum_map));
+  cache_copy(&(dest->sat_map), &(src->sat_map));
+  cache_copy(&(dest->gcr_curve), &(src->gcr_curve));
+  /* Don't copy cmy_tmp */
+  /* Don't copy cmyk_tmp */
   if (src->in_data)
     {
       dest->in_data = stpi_malloc(src->image_width * src->in_channels);
