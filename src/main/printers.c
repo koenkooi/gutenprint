@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.37 2003/01/23 19:53:37 rleigh Exp $"
+ * "$Id: printers.c,v 1.38 2003/01/26 03:38:08 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -71,7 +71,7 @@ stp_printer_model_count(void)
   if (printer_list == NULL)
     {
       stpi_erprintf("No printer drivers found: "
-		   "are STP_DATA_PATH and STPI_MODULE_PATH correct?\n");
+		   "are STP_DATA_PATH and STP_MODULE_PATH correct?\n");
       stpi_init_printer_list();
     }
   return stpi_list_get_length(printer_list);
