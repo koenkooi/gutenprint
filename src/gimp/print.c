@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.25 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print.c,v 1.26 2002/10/28 12:02:54 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -790,7 +790,7 @@ do_print_dialog (gchar *proc_name)
   /*
    * Print dialog window...
    */
-  gimp_create_main_window();
+  create_main_window();
 
   gtk_main ();
   gdk_flush ();
@@ -1557,5 +1557,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.25 2002/10/27 00:43:02 rlk Exp $".
+ * End of "$Id: print.c,v 1.26 2002/10/28 12:02:54 rlk Exp $".
  */
