@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.1 2001/08/12 15:40:41 rlk Exp $"
+ * "$Id: testpattern.h,v 1.2 2001/08/14 00:12:58 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -19,10 +19,6 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 typedef struct
 {

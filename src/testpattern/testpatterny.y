@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.1 2001/08/12 15:40:41 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.2 2001/08/14 00:12:58 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -21,6 +21,10 @@
  */
 
 %{
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string.h>
 #include <stdio.h>
