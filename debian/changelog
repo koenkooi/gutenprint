@@ -3,7 +3,7 @@ gimp-print (4.2.0-3) unstable; urgency=low
   * Fix locales package description, Closes: #123796
   * Change conflicts to replaces, Closes: #123811
 
- -- Eric Sharkey <sharkey@debian.org>  Thu, 13 Dec 2001 10:20:10 -0500
+ -- Eric Sharkey <sharkey@debian.org>  Mon, 31 Dec 2001 12:02:42 -0500
 
 gimp-print (4.2.0-2) unstable; urgency=low
 
