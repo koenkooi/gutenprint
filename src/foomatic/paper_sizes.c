@@ -1,5 +1,5 @@
 /*
- * "$Id: paper_sizes.c,v 1.1 2001/04/21 21:48:46 rlk Exp $"
+ * "$Id: paper_sizes.c,v 1.2 2001/04/21 21:51:28 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -45,7 +45,7 @@ int nparams = sizeof(params) / sizeof(const char *);
 int
 main(int argc, char **argv)
 {
-  int i, j, k;
+  int i;
   for (i = 0; i < stp_known_papersizes(); i++)
     {
       const stp_papersize_t p = stp_get_papersize_by_index(i);
