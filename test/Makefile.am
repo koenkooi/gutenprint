@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.15.2.1 2001/05/27 21:52:02 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ EXTRA_PROGRAMS = escp2-weavetest unprint escp2-unprint pcl-unprint bjc-unprint t
 escp2_weavetest_SOURCES = escp2-weavetest.c
 
 escp2_weavetest.o: escp2_weavetest.c 
-escp2_weavetest_LDADD = $(LIBGIMPPRINT_LIBS)
+escp2_weavetest_LDADD = $(LIBGIMPPRINT_LIBS) -lm
 escp2_weavetest_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 unprint_SOURCES = unprint.c
@@ -46,7 +46,7 @@ pcl_unprint_SOURCES = pcl-unprint.c
 bjc_unprint_SOURCES = bjc-unprint.c
 
 testdither_SOURCES = testdither.c
-testdither_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+testdither_LDADD = $(LIBGIMPPRINT_LIBS) -lm
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
