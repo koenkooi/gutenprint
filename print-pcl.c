@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.86 2000/10/14 02:54:02 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.87 2000/10/16 00:39:23 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1747,8 +1747,14 @@ pcl_print(const printer_t *printer,		/* I - Model */
   out_width  = xdpi * out_width / 72;
   out_height = ydpi * out_height / 72;
 
+#ifdef DEBUG
+  fprintf(stderr, "left %d margin %d top %d margin %d width %d height %d\n",
+	  left, caps.left_margin, top, caps.top_margin, out_width, out_height);
+#endif
+
   fprintf(prn, "\033&a%dH", 10 * left);		/* Set left raster position */
-  fprintf(prn, "\033&a%dV", 10 * top);		/* Set top raster position */
+  fprintf(prn, "\033&a%dV", 10 * (top + caps.top_margin));
+				/* Set top raster position */
   fprintf(prn, "\033*r%dS", out_width);		/* Set raster width */
   fprintf(prn, "\033*r%dT", out_height);	/* Set raster height */
 
