@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.4 2002/05/03 01:30:28 rlk Exp $
+## $Id: Makefile.am,v 1.17.2.5 2002/05/15 23:19:36 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -153,7 +153,6 @@ bin_PROGRAMS = @IJS_BIN@
 EXTRA_PROGRAMS = ijsgimpprint
 
 ijsgimpprint_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-ijsgimpprint_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
 	cd ../main ; \
