@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/01/23 20:07:14 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2001/01/24 03:23:00 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,7 @@ INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 
 AM_CPPFLAGS =\
  -DLOCALEDIR=\""$(localedir)"\"\
- @MAINTAINER_CFLAGS@\
- @RELDATE_DEF@
+ @MAINTAINER_CFLAGS@
 
 libexecdir = $(gimptool_prefix)/plug-ins
 
