@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.3 2003/01/01 16:46:31 rlk Exp $"
+ * "$Id: panel.c,v 1.4 2003/01/05 03:04:45 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2158,6 +2158,7 @@ setup_update (void)
 {
   GtkAdjustment *adjustment;
   gint           idx;
+  const char *ppd_file_name = stp_get_ppd_file(pv->v);
 
   idx = stp_get_printer_index_by_driver (stp_get_driver (pv->v));
 
@@ -2165,7 +2166,10 @@ setup_update (void)
   gtk_label_set_text (GTK_LABEL (printer_model_label),
                       gettext (stp_printer_get_long_name (tmp_printer)));
 
-  gtk_entry_set_text (GTK_ENTRY (ppd_file), stp_get_ppd_file (pv->v));
+  if (ppd_file_name)
+    gtk_entry_set_text (GTK_ENTRY (ppd_file), ppd_file_name);
+  else
+    gtk_entry_set_text (GTK_ENTRY (ppd_file), "");
 
   if (strcmp(stp_printer_get_family(stp_get_printer(pv->v)), "ps") == 0)
     {
