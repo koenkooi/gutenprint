@@ -1,5 +1,5 @@
 /*
- * "$Id: list.h,v 1.2 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: list.h,v 1.3 2003/01/01 02:46:29 rlk Exp $"
  *
  *   libgimpprint list functions.
  *
@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+#define COOKIE_LIST    0xbfea218e
 
 struct stp_internal_list_node;
 
@@ -45,6 +46,7 @@ typedef struct stp_internal_list_node
 
 typedef struct stp_internal_list_head
 {
+  int cookie;			/* Magic cookie */
   int icache;                               /* index no of cached node */
   int length;                               /* number of nodes */
   struct stp_internal_list_node *start;     /* start node */

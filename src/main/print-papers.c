@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.7 2002/11/23 20:49:16 rleigh Exp $"
+ * "$Id: print-papers.c,v 1.8 2003/01/01 02:46:29 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -39,13 +39,24 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct
+{
+  const char *name;
+  const char *text;
+  unsigned width;
+  unsigned height;
+  unsigned top;
+  unsigned left;
+  unsigned bottom;
+  unsigned right;
+  stp_papersize_unit_t paper_unit;
+} stp_internal_papersize_t;
 
 /*
  * Sizes are converted to 1/72in, then rounded down so that we don't
  * print off the edge of the paper.
  */
 #include "papers-oldlist.h"
-
 
 int
 stp_known_papersizes(void)
