@@ -5,7 +5,7 @@
    XML description of papers known to libgimpprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.2 2002/11/27 02:59:01 rlk Exp $"
+   "$Id: papers.xml,v 1.3 2002/11/27 22:35:09 rleigh Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -155,7 +155,7 @@
     <paper name="w1584h2160">
       <description value="22x30"/>
       <comment value="Common watercolor paper"/>
-      <width value="1440"/>
+      <width value="1584"/>
       <height value="2160"/>
       <unit value="english"/>
     </paper>
