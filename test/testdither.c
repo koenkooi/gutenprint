@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.39 2003/11/14 12:12:11 rlk Exp $"
+ * "$Id: testdither.c,v 1.40 2004/02/22 17:06:36 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -45,7 +45,7 @@
  */
 
 #define IMAGE_WIDTH	5760	/* 8in * 720dpi */
-#define IMAGE_HEIGHT	720	/* 4in * 720dpi */
+#define IMAGE_HEIGHT	2880	/* 4in * 720dpi */
 #define BUFFER_SIZE	IMAGE_WIDTH
 
 #define IMAGE_MIXED	0	/* Mix of line types */
@@ -905,5 +905,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.39 2003/11/14 12:12:11 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.40 2004/02/22 17:06:36 rlk Exp $".
  */
