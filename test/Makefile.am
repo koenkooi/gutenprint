@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36 2002/11/27 22:34:29 rlk Exp $
+## $Id: Makefile.am,v 1.37 2002/12/22 18:29:46 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
-TESTS = run-testdither run-weavetest
+TESTS = curve run-testdither run-weavetest
 
 
 ## Programs
