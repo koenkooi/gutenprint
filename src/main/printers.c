@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.65 2004/04/10 03:37:53 rlk Exp $"
+ * "$Id: printers.c,v 1.66 2004/04/10 04:10:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -608,9 +608,10 @@ stpi_verify_parameter(stp_const_vars_t v, const char *parameter,
 {
   stp_parameter_t desc;
   quiet = 0;
-  stpi_dprintf(STPI_DBG_VARS, v, "  Verifying %s\n", parameter);
   stp_describe_parameter(v, parameter, &desc);
-  if (!desc.is_active)
+  stpi_dprintf(STPI_DBG_VARS, v, "  Verifying %s %d %d\n", parameter,
+	       desc.is_active, desc.read_only);
+  if (!desc.is_active || desc.read_only)
     {
       stp_parameter_description_free(&desc);
       return PARAMETER_INACTIVE;
