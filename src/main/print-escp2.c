@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.14 2004/03/27 23:56:02 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.15 2004/03/28 02:05:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2042,10 +2042,10 @@ setup_head_offset(stp_vars_t v)
   int channel_id = 0;
   int channel_limit = pd->logical_channels;
   const escp2_inkname_t *ink_type = pd->inkname;
-  pd->head_offset = stpi_zalloc(sizeof(int) * pd->channels_in_use);
-  if (pd->channels_in_use < pd->logical_channels)
+  if (pd->channels_in_use > pd->logical_channels)
     channel_limit = pd->channels_in_use;
-  for (i = 0; i < channel_limit; i++)
+  pd->head_offset = stpi_zalloc(sizeof(int) * channel_limit);
+  for (i = 0; i < pd->logical_channels; i++)
     {
       const ink_channel_t *channel = ink_type->channel_set->channels[i];
       if (channel)
