@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.56 2000/06/10 20:51:38 rlk Exp $"
+ * "$Id: print.h,v 1.57 2000/06/10 23:23:03 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -374,8 +374,15 @@ extern int			get_printer_index_by_driver(const char *);
 
 extern int			num_dither_algos;
 extern char			*dither_algo_names[];
+convert_t choose_colorfunc(int, int, const unsigned char *, int *);
+void
+compute_page_parameters(int page_right, int page_left, int page_top,
+			int page_bottom, int scaling, int image_width,
+			int image_height, int *orientation, int *page_width,
+			int *page_height, int *out_width, int *out_height,
+			int *left, int *top);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.56 2000/06/10 20:51:38 rlk Exp $".
+ * End of "$Id: print.h,v 1.57 2000/06/10 23:23:03 rlk Exp $".
  */
