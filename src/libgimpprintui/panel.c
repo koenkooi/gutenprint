@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.3 2003/02/02 20:43:58 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.4 2003/02/05 01:27:27 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -363,7 +363,11 @@ populate_options(const stp_vars_t v)
 	  stp_describe_parameter(v, opt->fast_desc->name, &desc);
 	  opt->info.list.callback_id = -1;
 	  opt->info.list.default_val = g_strdup(desc.deflt.str);
-	  opt->info.list.params = stp_string_list_create_copy(desc.bounds.str);
+	  if (desc.bounds.str)
+	    opt->info.list.params =
+	      stp_string_list_create_copy(desc.bounds.str);
+	  else
+	    opt->info.list.params = NULL;
 	  opt->info.list.combo = NULL;
 	  opt->info.list.label = NULL;
 	  opt->is_active = desc.is_active;
