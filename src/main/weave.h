@@ -1,5 +1,5 @@
 /*
- * "$Id: weave.h,v 1.5 2003/03/12 01:30:20 rlk Exp $"
+ * "$Id: weave.h,v 1.6 2003/03/20 02:09:31 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -203,12 +203,12 @@ extern int	stpi_pack_uncompressed(const unsigned char *line, int height,
 				       unsigned char **comp_ptr,
 				       int *first, int *last);
 
-extern void *stpi_initialize_weave(int jets, int separation, int oversample,
-				   int horizontal, int vertical,
-				   int ncolors, int width, int linewidth,
-				   int lineheight, int first_line,
-				   int phys_lines, int strategy,
-				   int *head_offset, stp_vars_t v,
+extern void *stpi_initialize_weave(stp_vars_t v, int jets, int separation,
+				   int oversample, int horizontal,
+				   int vertical, int ncolors, int width,
+				   int linewidth, int lineheight,
+				   int first_line, int phys_lines,
+				   int strategy, int *head_offset,
 				   void (*flushfunc)(stpi_softweave_t *sw,
 						     int passno,
 						     int vertical_subpass),
@@ -266,5 +266,5 @@ extern void stpi_destroy_weave(void *);
 
 #endif /* GIMP_PRINT_INTERNAL_WEAVE_H */
 /*
- * End of "$Id: weave.h,v 1.5 2003/03/12 01:30:20 rlk Exp $".
+ * End of "$Id: weave.h,v 1.6 2003/03/20 02:09:31 rlk Exp $".
  */
