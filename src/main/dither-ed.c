@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.5 2003/05/08 02:33:36 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.6 2003/05/10 01:50:37 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -302,7 +302,7 @@ print_color(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, int y,
 	    subc = upper;
 	  else
 	    {
-	      rangepoint *= dc->density_adjustment;
+	      rangepoint = rangepoint * upper->range / 65536;
 	      if (rangepoint >= ditherpoint(d, pick_matrix, x))
 		subc = upper;
 	      else

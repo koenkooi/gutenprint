@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.5 2003/05/08 02:33:37 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.6 2003/05/10 01:50:38 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -144,7 +144,7 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
 	    subc = upper;
 	  else
 	    {
-	      rangepoint *= dc->density_adjustment;
+	      rangepoint = rangepoint * upper->range / 65536;
 	      if (rangepoint >= ditherpoint(d, pick_matrix, x))
 		subc = upper;
 	      else
