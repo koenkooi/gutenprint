@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.128 2003/08/03 16:40:46 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.129 2003/08/08 22:09:41 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -307,6 +307,12 @@ static const stp_parameter_t the_parameters[] =
     N_("Resolution and quality of the print"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+  },
+  {
+    "InkChannels", N_("Ink Channels"),
+    N_("Ink Channels"),
+    STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_ADVANCED5, 0, 0, -1, 0
   },
 };
 
@@ -1241,6 +1247,21 @@ lexmark_parameters(stp_const_vars_t v, const char *name,
 			       media_sources[i].name,
 			       _(media_sources[i].name));
   }
+  else if (strcmp(name, "InkChannels") == 0)
+    {
+      if (caps->inks & LEXMARK_INK_CcMmYyK)
+	description->deflt.integer = 7;
+      else if (caps->inks & LEXMARK_INK_CcMmYK)
+	description->deflt.integer = 6;
+      else if (caps->inks & LEXMARK_INK_CMYK)
+	description->deflt.integer = 4;
+      else if (caps->inks & LEXMARK_INK_CMY)
+	description->deflt.integer = 3;
+      else
+	description->deflt.integer = 1;
+      description->bounds.integer.lower = -1;
+      description->bounds.integer.upper = -1;
+    }
 }
 
 /*
