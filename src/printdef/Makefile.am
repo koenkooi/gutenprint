@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2003/01/01 21:06:10 rleigh Exp $
+## $Id: Makefile.am,v 1.13 2003/01/26 21:46:08 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,10 @@ LOCAL_CFLAGS = $(GNUCFLAGS) @LIBXML_CFLAGS@
 
 ## Programs
 
+if BUILD_XMLDEF
 noinst_PROGRAMS = xmldef
+endif
+
 xmldef_SOURCES = printdef.c
 xmldef_LDADD = @LIBXML_LIBS@
 
