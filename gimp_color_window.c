@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.7 2000/06/15 11:50:57 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.8 2000/06/19 16:40:39 jmv Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -58,7 +58,7 @@ static void gimp_gamma_update      (GtkAdjustment *adjustment);
 
 static void gimp_dither_algo_callback (GtkWidget *widget,
 				       gpointer   data);
-static void gimp_build_dither_menu    (void);
+void gimp_build_dither_menu    (void);
 
 
 /*
@@ -299,7 +299,7 @@ gimp_gamma_update (GtkAdjustment *adjustment)
     }
 }
 
-static void
+void
 gimp_build_dither_menu (void)
 {
   GtkWidget *item;
