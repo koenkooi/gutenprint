@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.14 2003/06/04 11:54:36 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.15 2003/06/06 01:46:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -44,6 +44,7 @@
 #define DECLARE_INK(name, shades, dotsizes, density)	\
 static const escp2_variable_ink_t name##_ink =		\
 {							\
+  #name,						\
   density,						\
   sizeof(shades##_shades) / sizeof(double),		\
   sizeof(dotsizes##_dotsizes) / sizeof(double),		\
