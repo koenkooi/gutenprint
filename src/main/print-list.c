@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.14 2004/02/08 23:37:16 rleigh Exp $"
+ * "$Id: print-list.c,v 1.14.2.1 2004/03/05 02:57:55 rlk Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
@@ -269,8 +269,7 @@ stpi_list_get_end(const stpi_list_t *list)
 stpi_list_item_t *
 stpi_list_get_item_by_index(const stpi_list_t *list, int idx)
 {
-  const stpi_internal_list_head_t *lh =
-    (const stpi_internal_list_head_t *) list;
+  stpi_internal_list_head_t *lh = (stpi_internal_list_head_t *) list;
   stpi_internal_list_node_t *ln = NULL;
   int i; /* current index */
   int d = 0; /* direction of list traversal, 0=forward */
@@ -339,8 +338,8 @@ stpi_list_get_item_by_index(const stpi_list_t *list, int idx)
     }
 
   /* update cache */
-  ((stpi_internal_list_head_t *)lh)->icache = i;
-  ((stpi_internal_list_head_t *)lh)->cache = ln;
+  lh->icache = i;
+  lh->cache = ln;
 
   return (stpi_list_item_t *) ln;
 }
@@ -364,8 +363,7 @@ stpi_list_get_item_by_name_internal(const stpi_list_t *list, const char *name)
 stpi_list_item_t *
 stpi_list_get_item_by_name(const stpi_list_t *list, const char *name)
 {
-  const stpi_internal_list_head_t *lh =
-    (const stpi_internal_list_head_t *) list;
+  stpi_internal_list_head_t *lh = (stpi_internal_list_head_t *) list;
   stpi_internal_list_node_t *ln = NULL;
   check_list(lh);
 
@@ -385,10 +383,10 @@ stpi_list_get_item_by_name(const stpi_list_t *list, const char *name)
       ln = ln->next;
       if (ln)
 	{
-	  new_name = lh->namefunc((stpi_list_item_t *) ln->data);
+	  new_name = lh->namefunc((const stpi_list_item_t *) ln->data);
 	  if (strcmp(name, new_name) == 0)
 	    {
-	      set_name_cache((stpi_internal_list_head_t *) lh, new_name, ln);
+	      set_name_cache(lh, new_name, ln);
 	      return (stpi_list_item_t *) ln;
 	    }
 	}
@@ -396,10 +394,10 @@ stpi_list_get_item_by_name(const stpi_list_t *list, const char *name)
       ln = lh->cache;
       if (ln)
 	{
-	  new_name = lh->namefunc((stpi_list_item_t *) ln->data);
+	  new_name = lh->namefunc((const stpi_list_item_t *) ln->data);
 	  if (strcmp(name, new_name) == 0)
 	    {
-	      set_name_cache((stpi_internal_list_head_t *) lh, new_name, ln);
+	      set_name_cache(lh, new_name, ln);
 	      return (stpi_list_item_t *) ln;
 	    }
 	}
@@ -408,7 +406,7 @@ stpi_list_get_item_by_name(const stpi_list_t *list, const char *name)
   ln = stpi_list_get_item_by_name_internal(list, name);
 
   if (ln)
-    set_name_cache((stpi_internal_list_head_t *) lh, name, ln);
+    set_name_cache(lh, name, ln);
 
   return (stpi_list_item_t *) ln;
 }
@@ -434,8 +432,7 @@ stpi_list_get_item_by_long_name_internal(const stpi_list_t *list,
 stpi_list_item_t *
 stpi_list_get_item_by_long_name(const stpi_list_t *list, const char *long_name)
 {
-  const stpi_internal_list_head_t *lh =
-    (const stpi_internal_list_head_t *) list;
+  stpi_internal_list_head_t *lh = (stpi_internal_list_head_t *) list;
   stpi_internal_list_node_t *ln = NULL;
   check_list(lh);
 
@@ -455,11 +452,10 @@ stpi_list_get_item_by_long_name(const stpi_list_t *list, const char *long_name)
       ln = ln->next;
       if (ln)
 	{
-	  new_long_name = lh->long_namefunc((stpi_list_item_t *) ln->data);
+	  new_long_name = lh->long_namefunc((const stpi_list_item_t *) ln->data);
 	  if (strcmp(long_name, new_long_name) == 0)
 	    {
-	      set_long_name_cache((stpi_internal_list_head_t *) lh,
-				  new_long_name, ln);
+	      set_long_name_cache(lh, new_long_name, ln);
 	      return (stpi_list_item_t *) ln;
 	    }
 	}
@@ -467,11 +463,10 @@ stpi_list_get_item_by_long_name(const stpi_list_t *list, const char *long_name)
       ln = lh->cache;
       if (ln)
 	{
-	  new_long_name = lh->long_namefunc((stpi_list_item_t *) ln->data);
+	  new_long_name = lh->long_namefunc((const stpi_list_item_t *) ln->data);
 	  if (strcmp(long_name, new_long_name) == 0)
 	    {
-	      set_long_name_cache((stpi_internal_list_head_t *) lh,
-				  new_long_name, ln);
+	      set_long_name_cache(lh, new_long_name, ln);
 	      return (stpi_list_item_t *) ln;
 	    }
 	}
@@ -480,7 +475,7 @@ stpi_list_get_item_by_long_name(const stpi_list_t *list, const char *long_name)
   ln = stpi_list_get_item_by_long_name_internal(list, long_name);
 
   if (ln)
-    set_long_name_cache((stpi_internal_list_head_t *) lh, long_name, ln);
+    set_long_name_cache(lh, long_name, ln);
 
   return (stpi_list_item_t *) ln;
 }
@@ -629,7 +624,7 @@ stpi_list_item_create(stpi_list_t *list,
 	  lnn = (stpi_internal_list_node_t *) get_start_internal(list);
 	  while (lnn)
 	    {
-	      if (lnn == (stpi_internal_list_node_t *) next)
+	      if (lnn == (const stpi_internal_list_node_t *) next)
 		break;
 	      lnn = lnn->prev;
 	    }

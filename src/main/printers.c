@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.2 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.3 2004/03/05 02:57:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -113,11 +113,18 @@ check_printer(const stpi_internal_printer_t *p)
     bad_printer();
 }
 
-static inline const stpi_internal_printer_t *
-get_printer(stp_const_printer_t printer)
+static inline stpi_internal_printer_t *
+get_printer(stp_printer_t printer)
 {
-  const stpi_internal_printer_t *val =
-    (const stpi_internal_printer_t *) printer;
+  stpi_internal_printer_t *val = (stpi_internal_printer_t *) printer;
+  check_printer(val);
+  return val;
+}
+
+static inline const stpi_internal_printer_t *
+get_const_printer(stp_const_printer_t printer)
+{
+  const stpi_internal_printer_t *val = (const stpi_internal_printer_t *) printer;
   check_printer(val);
   return val;
 }
@@ -141,8 +148,7 @@ stp_get_printer_by_index(int idx)
 static void
 stpi_printer_freefunc(void *item)
 {
-  stpi_internal_printer_t *printer =
-    (stpi_internal_printer_t *) get_printer(item);
+  stpi_internal_printer_t *printer = get_printer(item);
   stpi_free(printer->long_name);
   stpi_free(printer->family);
   stpi_free(printer);
@@ -151,63 +157,63 @@ stpi_printer_freefunc(void *item)
 const char *
 stp_printer_get_driver(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->driver;
 }
 
 static const char *
 stpi_printer_namefunc(const void *item)
 {
-  const stpi_internal_printer_t *val = get_printer(item);
+  const stpi_internal_printer_t *val = get_const_printer(item);
   return val->driver;
 }
 
 const char *
 stp_printer_get_long_name(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->long_name;
 }
 
 static const char *
 stpi_printer_long_namefunc(const void *item)
 {
-  const stpi_internal_printer_t *val = get_printer(item);
+  const stpi_internal_printer_t *val = get_const_printer(item);
   return val->long_name;
 }
 
 const char *
 stp_printer_get_family(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->family;
 }
 
 const char *
 stp_printer_get_manufacturer(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->manufacturer;
 }
 
 int
 stp_printer_get_model(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->model;
 }
 
 static inline const stpi_printfuncs_t *
 stpi_get_printfuncs(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->printfuncs;
 }
 
 stp_const_vars_t
 stp_printer_get_defaults(stp_const_printer_t p)
 {
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return (stp_vars_t) val->printvars;
 }
 
@@ -269,7 +275,7 @@ int
 stpi_get_model_id(stp_const_vars_t v)
 {
   stp_const_printer_t p = stp_get_printer_by_driver(stp_get_driver(v));
-  const stpi_internal_printer_t *val = get_printer(p);
+  const stpi_internal_printer_t *val = get_const_printer(p);
   return val->model;
 }
 
@@ -701,7 +707,6 @@ stpi_verify_printer_params(stp_vars_t v)
 
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
   CHECK_INT_RANGE(v, job_mode, STP_JOB_MODE_PAGE, STP_JOB_MODE_JOB);
-  CHECK_INT_RANGE(v, image_type, STP_IMAGE_GRAYSCALE, STP_IMAGE_RAW);
   CHECK_INT_RANGE(v, image_channels, 0, STP_CHANNEL_LIMIT - 1);
 
   if (stp_get_image_channel_depth(v) != 8 &&

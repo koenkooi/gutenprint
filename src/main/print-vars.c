@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.62.4.2 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-vars.c,v 1.62.4.3 2004/03/05 02:57:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -71,8 +71,6 @@ typedef struct					/* Plug-in variables */
   char *driver;			/* Name of printer "driver" */
   char *color_conversion;       /* Color module in use */
   stp_job_mode_t job_mode;
-  stp_image_type_t image_type;
-  stp_output_type_t output_type;
   int   image_channel_depth;
   int   image_channels;
   int	left;			/* Offset from left-upper corner, points */
@@ -99,8 +97,6 @@ static stpi_internal_vars_t default_vars =
 	NULL,		       	/* Name of printer "driver" */
 	NULL,                   /* Name of color module */
 	STP_JOB_MODE_PAGE,	/* Job mode */
-	STP_IMAGE_INVALID,	/* Image type */
-	STP_OUTPUT_TYPE_INVALID,	/* Image type */
 	8,			/* Channel bit depth */
 	0			/* Channel count */
 };
@@ -129,9 +125,17 @@ check_vars(const stpi_internal_vars_t *v)
 }
 
 static inline stpi_internal_vars_t *
-get_vars(stp_const_vars_t vars)
+get_vars(stp_vars_t vars)
 {
   stpi_internal_vars_t *val = (stpi_internal_vars_t *) vars;
+  check_vars(val);
+  return val;
+}
+
+static inline const stpi_internal_vars_t *
+get_const_vars(stp_const_vars_t vars)
+{
+  const stpi_internal_vars_t *val = (const stpi_internal_vars_t *) vars;
   check_vars(val);
   return val;
 }
@@ -177,6 +181,17 @@ create_vars_list(void)
   return ret;
 }
 
+static void
+copy_to_raw(stp_raw_t *raw, const char *data, size_t bytes)
+{
+  char *ndata = stpi_malloc(bytes + 1);
+  ndata = stpi_malloc(bytes + 1);
+  memcpy(ndata, data, bytes);
+  ndata[bytes] = '\0';
+  raw->data = ndata;
+  raw->bytes = bytes;
+}
+
 static value_t *
 value_copy(const void *item)
 {
@@ -196,11 +211,7 @@ value_copy(const void *item)
     case STP_PARAMETER_TYPE_STRING_LIST:
     case STP_PARAMETER_TYPE_FILE:
     case STP_PARAMETER_TYPE_RAW:
-      ret->value.rval.bytes = v->value.rval.bytes;
-      ret->value.rval.data = stpi_malloc(ret->value.rval.bytes + 1);
-      memcpy((char *) ret->value.rval.data, v->value.rval.data,
-	     v->value.rval.bytes);
-      ((char *) (ret->value.rval.data))[v->value.rval.bytes] = '\0';
+      copy_to_raw(&(ret->value.rval), v->value.rval.data, v->value.rval.bytes);
       break;
     case STP_PARAMETER_TYPE_INT:
     case STP_PARAMETER_TYPE_BOOLEAN:
@@ -288,7 +299,7 @@ stpi_destroy_component_data(stp_vars_t vv, const char *name)
 void *
 stpi_get_component_data(stp_const_vars_t vv, const char *name)
 {
-  const stpi_internal_vars_t *v = get_vars(vv);
+  const stpi_internal_vars_t *v = get_const_vars(vv);
   stpi_list_item_t *item;
   item = stpi_list_get_item_by_name(v->internal_data, name);
   if (item)
@@ -398,24 +409,24 @@ pre##_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
 const char *							\
 pre##_get_##s(stp_const_vars_t vv)				\
 {								\
-  const stpi_internal_vars_t *v = get_vars(vv);			\
+  const stpi_internal_vars_t *v = get_const_vars(vv);		\
   return v->s;							\
 }
 
-#define DEF_FUNCS(s, t, pre)			\
-void						\
-pre##_set_##s(stp_vars_t vv, t val)		\
-{						\
-  stpi_internal_vars_t *v = get_vars(vv);	\
-  v->verified = 0;				\
-  v->s = val;					\
-}						\
-						\
-t						\
-pre##_get_##s(stp_const_vars_t vv)		\
-{						\
-  const stpi_internal_vars_t *v = get_vars(vv);	\
-  return v->s;					\
+#define DEF_FUNCS(s, t, pre)				\
+void							\
+pre##_set_##s(stp_vars_t vv, t val)			\
+{							\
+  stpi_internal_vars_t *v = get_vars(vv);		\
+  v->verified = 0;					\
+  v->s = val;						\
+}							\
+							\
+t							\
+pre##_get_##s(stp_const_vars_t vv)			\
+{							\
+  const stpi_internal_vars_t *v = get_const_vars(vv);	\
+  return v->s;						\
 }
 
 DEF_STRING_FUNCS(driver, stp)
@@ -428,8 +439,6 @@ DEF_FUNCS(page_width, int, stp)
 DEF_FUNCS(page_height, int, stp)
 DEF_FUNCS(page_number, int, stp)
 DEF_FUNCS(job_mode, stp_job_mode_t, stp)
-DEF_FUNCS(image_type, stp_image_type_t, stp)
-DEF_FUNCS(output_type, stp_output_type_t, stpi)
 DEF_FUNCS(image_channel_depth, int, stp)
 DEF_FUNCS(image_channels, int, stp)
 DEF_FUNCS(outdata, void *, stp)
@@ -447,13 +456,13 @@ stpi_set_verified(stp_vars_t vv, int val)
 int
 stpi_get_verified(stp_const_vars_t vv)
 {
-  const stpi_internal_vars_t *v = get_vars(vv);
+  const stpi_internal_vars_t *v = get_const_vars(vv);
   return v->verified;
 }
 
 static void
 set_default_raw_parameter(stpi_list_t *list, const char *parameter,
-			  const char *value, int bytes, int typ)
+			  const char *value, size_t bytes, int typ)
 {
   stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
   if (value && !item)
@@ -463,16 +472,13 @@ set_default_raw_parameter(stpi_list_t *list, const char *parameter,
       val->typ = typ;
       val->active = STP_PARAMETER_DEFAULTED;
       stpi_list_item_create(list, NULL, val);
-      val->value.rval.data = stpi_malloc(bytes + 1);
-      memcpy((char *) val->value.rval.data, value, bytes);
-      ((char *) val->value.rval.data)[bytes] = '\0';
-      val->value.rval.bytes = bytes;
+      copy_to_raw(&(val->value.rval), value, bytes);
     }
 }
 
 static void
 set_raw_parameter(stpi_list_t *list, const char *parameter, const char *value,
-		  int bytes, int typ)
+		  size_t bytes, int typ)
 {
   stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
   if (value)
@@ -493,10 +499,7 @@ set_raw_parameter(stpi_list_t *list, const char *parameter, const char *value,
 	  val->active = STP_PARAMETER_ACTIVE;
 	  stpi_list_item_create(list, NULL, val);
 	}
-      val->value.rval.data = stpi_malloc(bytes + 1);
-      memcpy((char *) val->value.rval.data, value, bytes);
-      ((char *) val->value.rval.data)[bytes] = '\0';
-      val->value.rval.bytes = bytes;
+      copy_to_raw(&(val->value.rval), value, bytes);
     }
   else if (item)
     stpi_list_item_destroy(list, item);
@@ -504,7 +507,7 @@ set_raw_parameter(stpi_list_t *list, const char *parameter, const char *value,
 
 void
 stp_set_string_parameter_n(stp_vars_t v, const char *parameter,
-			   const char *value, int bytes)
+			   const char *value, size_t bytes)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_STRING_LIST];
@@ -539,7 +542,7 @@ stp_set_string_parameter(stp_vars_t v, const char *parameter,
 
 void
 stp_set_default_string_parameter_n(stp_vars_t v, const char *parameter,
-				   const char *value, int bytes)
+				   const char *value, size_t bytes)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_STRING_LIST];
@@ -591,7 +594,7 @@ stp_get_string_parameter(stp_const_vars_t v, const char *parameter)
 
 void
 stp_set_raw_parameter(stp_vars_t v, const char *parameter,
-		      const void *value, int bytes)
+		      const void *value, size_t bytes)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_RAW];
@@ -601,7 +604,7 @@ stp_set_raw_parameter(stp_vars_t v, const char *parameter,
 
 void
 stp_set_default_raw_parameter(stp_vars_t v, const char *parameter,
-			      const void *value, int bytes)
+			      const void *value, size_t bytes)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_RAW];
@@ -638,7 +641,7 @@ stp_set_file_parameter(stp_vars_t v, const char *parameter,
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
-  int byte_count = 0;
+  size_t byte_count = 0;
   if (value)
     byte_count = strlen(value);
   set_raw_parameter(list, parameter, value, byte_count,
@@ -648,7 +651,7 @@ stp_set_file_parameter(stp_vars_t v, const char *parameter,
 
 void
 stp_set_file_parameter_n(stp_vars_t v, const char *parameter,
-			 const char *value, int byte_count)
+			 const char *value, size_t byte_count)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
@@ -663,7 +666,7 @@ stp_set_default_file_parameter(stp_vars_t v, const char *parameter,
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
-  int byte_count = 0;
+  size_t byte_count = 0;
   if (value)
     byte_count = strlen(value);
   set_default_raw_parameter(list, parameter, value, byte_count,
@@ -673,7 +676,7 @@ stp_set_default_file_parameter(stp_vars_t v, const char *parameter,
 
 void
 stp_set_default_file_parameter_n(stp_vars_t v, const char *parameter,
-				 const char *value, int byte_count)
+				 const char *value, size_t byte_count)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
@@ -1271,8 +1274,6 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_color_conversion(vd, stp_get_color_conversion(vs));
   stp_set_job_mode(vd, stp_get_job_mode(vs));
-  stp_set_image_type(vd, stp_get_image_type(vs));
-  stpi_set_output_type(vd, stpi_get_output_type(vs));
   stp_set_image_channel_depth(vd, stp_get_image_channel_depth(vs));
   stp_set_image_channels(vd, stp_get_image_channels(vs));
   stp_set_left(vd, stp_get_left(vs));

@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.3.4.2 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: vars.h,v 1.3.4.3 2004/03/05 02:57:54 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -34,6 +34,7 @@ extern "C" {
  * Constants...
  */
 
+#if 0
 typedef enum
 {
   STP_IMAGE_INVALID,
@@ -44,6 +45,7 @@ typedef enum
   STP_IMAGE_CMYK,
   STP_IMAGE_RAW
 } stp_image_type_t;
+#endif
 
 typedef enum
 {
@@ -242,11 +244,13 @@ extern int stp_get_width(stp_const_vars_t v);
 extern void stp_set_height(stp_vars_t v, int val);
 extern int stp_get_height(stp_const_vars_t v);
 
+#if 0
 /*
  * Set/get the type of the image
  */
 extern void stp_set_image_type(stp_vars_t v, stp_image_type_t val);
 extern stp_image_type_t stp_get_image_type(stp_const_vars_t v);
+#endif
 
 /*
  * Set/get the number of channels.  Only needed if the image type
@@ -371,11 +375,11 @@ stp_parameter_find_in_settings(stp_const_vars_t v, const char *name);
 extern void stp_set_string_parameter(stp_vars_t v, const char *parameter,
 				     const char *value);
 extern void stp_set_string_parameter_n(stp_vars_t v, const char *parameter,
-				       const char *value, int bytes);
+				       const char *value, size_t bytes);
 extern void stp_set_file_parameter(stp_vars_t v, const char *parameter,
 				   const char *value);
 extern void stp_set_file_parameter_n(stp_vars_t v, const char *parameter,
-				     const char *value, int bytes);
+				     const char *value, size_t bytes);
 extern void stp_set_float_parameter(stp_vars_t v, const char *parameter,
 				    double value);
 extern void stp_set_int_parameter(stp_vars_t v, const char *parameter,
@@ -387,7 +391,7 @@ extern void stp_set_curve_parameter(stp_vars_t v, const char *parameter,
 extern void stp_set_array_parameter(stp_vars_t v, const char *parameter,
 				    stp_const_array_t value);
 extern void stp_set_raw_parameter(stp_vars_t v, const char *parameter,
-				  const void *value, int bytes);
+				  const void *value, size_t bytes);
 
 extern void stp_scale_float_parameter(stp_vars_t v, const char *param,
 				      double scale);
@@ -397,13 +401,13 @@ extern void stp_set_default_string_parameter(stp_vars_t v,
 					     const char *value);
 extern void stp_set_default_string_parameter_n(stp_vars_t v,
 					       const char *parameter,
-					       const char *value, int bytes);
+					       const char *value, size_t bytes);
 extern void stp_set_default_file_parameter(stp_vars_t v,
 					   const char *parameter,
 					   const char *value);
 extern void stp_set_default_file_parameter_n(stp_vars_t v,
 					     const char *parameter,
-					     const char *value, int bytes);
+					     const char *value, size_t bytes);
 extern void stp_set_default_float_parameter(stp_vars_t v,
 					    const char *parameter,
 					    double value);
@@ -421,7 +425,7 @@ extern void stp_set_default_array_parameter(stp_vars_t v,
 					    stp_const_array_t value);
 extern void stp_set_default_raw_parameter(stp_vars_t v,
 					  const char *parameter,
-					  const void *value, int bytes);
+					  const void *value, size_t bytes);
 
 extern const char *stp_get_string_parameter(stp_const_vars_t v,
 					    const char *param);
@@ -586,5 +590,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.2 2004/03/01 03:07:44 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.3 2004/03/05 02:57:54 rlk Exp $".
  */
