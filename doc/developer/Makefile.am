@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/12/01 15:07:50 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2001/12/01 15:20:28 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ MAINT_CHARSET = latin1
 ## Variables
 
 MANUAL = gimpprint
-HTMLDIR = programmer-html
+HTMLDIR = developer-html
 DOCS = $(MANUAL).dvi $(MANUAL).ps html
 
 IMAGES =
