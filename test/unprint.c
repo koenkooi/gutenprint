@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.8 2001/06/10 21:07:29 rlk Exp $ */
+/* $Id: unprint.c,v 1.9 2001/07/11 02:03:24 rlk Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -926,6 +926,8 @@ void parse_escp2(FILE *fp_r)
                     pstate.monomode=buf[1];
                 }
                 break;
+	      case 's':		/* Set print speed */
+		break;
               case 'S': /* set paper dimensions */
                 break;
 	      case 'D':
