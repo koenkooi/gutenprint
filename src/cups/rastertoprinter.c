@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.71 2003/09/25 23:43:20 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.72 2003/10/18 23:35:26 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -602,7 +602,10 @@ main(int  argc,				/* I - Number of command-line arguments */
       print_debug_block(&cups);
       if (!stp_verify(v))
 	{
-	  fprintf(stderr, "ERROR: Gimp-Print options failed to verify, set LogLevel to debug2 to identify why\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: options failed to verify.\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: Make sure that you are using ESP Ghostscript rather\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: than GNU or AFPL Ghostscript with CUPS.\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: If this is not the cause, set LogLevel to debug2 to identify the problem.\n");
 	  goto cups_abort;
 	}
 
@@ -916,5 +919,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.71 2003/09/25 23:43:20 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.72 2003/10/18 23:35:26 rlk Exp $".
  */
