@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.40 2001/08/13 23:59:13 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.41 2001/08/19 18:34:28 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1823,12 +1823,16 @@ pcl_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 static void
 pcl_limit(const stp_printer_t printer,	/* I - Printer model */
 	  const stp_vars_t v,  		/* I */
-	  int  *width,			/* O - Left position in points */
-	  int  *height)			/* O - Top position in points */
+	  int *width,
+	  int *height,
+	  int *min_width,
+	  int *min_height)
 {
   const pcl_cap_t *caps= pcl_get_model_capabilities(stp_printer_get_model(printer));
   *width =	caps->max_width;
   *height =	caps->max_height;
+  *min_width = 1;
+  *min_height = 1;
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.41 2001/08/14 00:11:14 easysw Exp $"
+ * "$Id: print-util.c,v 1.42 2001/08/19 18:34:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1308,9 +1308,11 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   else
     {
       int height, width;
-      (*printfuncs->limit)(p, v, &width, &height);
-      if (stp_get_page_height(v) <= 0 || stp_get_page_height(v) > height ||
-	  stp_get_page_width(v) <= 0 || stp_get_page_width(v) > width)
+      int min_height, min_width;
+      (*printfuncs->limit)(p, v, &width, &height, &min_width, &min_height);
+      if (stp_get_page_height(v) <= min_height ||
+	  stp_get_page_height(v) > height ||
+	  stp_get_page_width(v) <= min_width || stp_get_page_width(v) > width)
 	{
 	  answer = 0;
 	  stp_eprintf(v, "Image size is not valid\n");
