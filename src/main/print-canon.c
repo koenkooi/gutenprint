@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.2.2 2001/02/21 02:24:07 rlk Exp $"
+ * "$Id: print-canon.c,v 1.10.2.3 2001/02/21 03:04:56 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1231,11 +1231,11 @@ canon_printhead_colors(const char *name, canon_cap_t caps)
 static unsigned char
 canon_size_type(const stp_vars_t v, canon_cap_t caps)
 {
-  const stp_papersize_t *pp = stp_get_papersize_by_size(stp_get_page_height(v),
-							stp_get_page_width(v));
+  const stp_papersize_t pp = stp_get_papersize_by_size(stp_get_page_height(v),
+						       stp_get_page_width(v));
   if (pp)
     {
-      const char *name = pp->name;
+      const char *name = stp_papersize_get_name(pp);
       /* used internally: do not translate */
       /* built ins: */
       if (!strcmp(name,_("A5")))          return 0x01;
@@ -1431,21 +1431,23 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
 
   if (strcmp(name, "PageSize") == 0) {
     int height_limit, width_limit;
-    const stp_papersize_t *papersizes = stp_get_papersizes();
-    valptrs = xmalloc(sizeof(char *) * stp_known_papersizes());
+    int papersizes = stp_known_papersizes();
+    valptrs = xmalloc(sizeof(char *) * papersizes);
     *count = 0;
 
     width_limit = caps.max_width;
     height_limit = caps.max_height;
 
-    for (i = 0; i < stp_known_papersizes(); i++) {
-      if (strlen(papersizes[i].name) > 0 &&
-	  papersizes[i].width <= width_limit &&
-	  papersizes[i].height <= height_limit) {
-	valptrs[*count] = xmalloc(strlen(papersizes[i].name) + 1);
-	strcpy(valptrs[*count], papersizes[i].name);
-	(*count)++;
-      }
+    for (i = 0; i < papersizes; i++) {
+      const stp_papersize_t pt = stp_get_papersize_by_index(i);
+      if (strlen(stp_papersize_get_name(pt)) > 0 &&
+	  stp_papersize_get_width(pt) <= width_limit &&
+	  stp_papersize_get_height(pt) <= height_limit)
+	{
+	  valptrs[*count] = xmalloc(strlen(stp_papersize_get_name(pt)) + 1);
+	  strcpy(valptrs[*count], stp_papersize_get_name(pt));
+	  (*count)++;
+	}
     }
     return (valptrs);
   }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.3 2001/02/21 02:24:08 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.4 2001/02/21 03:04:56 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -86,6 +86,14 @@ typedef struct stp_internal_printer
   const stp_printfuncs_t *printfuncs;
   stp_internal_vars_t printvars;
 } stp_internal_printer_t;
+
+typedef struct
+{
+  char *name;
+  unsigned width;
+  unsigned height;
+  stp_papersize_unit_t paper_unit;
+} stp_internal_papersize_t;
 
 static stp_internal_vars_t default_vars =
 {
@@ -406,7 +414,7 @@ stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
  * Sizes are converted to 1/72in, then rounded down so that we don't
  * print off the edge of the paper.
  */
-const static stp_papersize_t paper_sizes[] =
+const static stp_internal_papersize_t paper_sizes[] =
 {
   /* Common imperial page sizes */
   { N_ ("Letter"),   612,  792, PAPERSIZE_ENGLISH },	/* 8.5in x 11in */
@@ -580,48 +588,79 @@ const static stp_papersize_t paper_sizes[] =
 int
 stp_known_papersizes(void)
 {
-  return sizeof(paper_sizes) / sizeof(stp_papersize_t);
+  return sizeof(paper_sizes) / sizeof(stp_internal_papersize_t);
 }
 
-const stp_papersize_t *
-stp_get_papersizes(void)
+const char *
+stp_papersize_get_name(const stp_papersize_t pt)
 {
-  return paper_sizes;
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->name;
 }
 
-const stp_papersize_t *
+unsigned
+stp_papersize_get_width(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->width;
+}
+
+unsigned
+stp_papersize_get_height(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->height;
+}
+
+stp_papersize_unit_t
+stp_papersize_get_unit(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->paper_unit;
+}
+
+const stp_papersize_t
 stp_get_papersize_by_name(const char *name)
 {
-  const stp_papersize_t *val = &(paper_sizes[0]);
+  const stp_internal_papersize_t *val = &(paper_sizes[0]);
   while (strlen(val->name) > 0)
     {
       if (!strcasecmp(_(val->name), name))
-	return val;
+	return (const stp_papersize_t) val;
       val++;
     }
   return NULL;
 }
 
+const stp_papersize_t
+stp_get_papersize_by_index(int index)
+{
+  if (index < 0 || index >= stp_known_papersizes())
+    return NULL;
+  else
+    return (const stp_papersize_t) &(paper_sizes[index]);
+}
+
 #define IABS(a) ((a) > 0 ? a : -(a))
 
 static int
-paper_size_mismatch(int l, int w, const stp_papersize_t *val)
+paper_size_mismatch(int l, int w, const stp_internal_papersize_t *val)
 {
   int hdiff = IABS(l - (int) val->height);
   int vdiff = fabs(w - (int) val->width);
   return hdiff + vdiff;
 }
 
-const stp_papersize_t *
+const stp_papersize_t
 stp_get_papersize_by_size(int l, int w)
 {
   int score = INT_MAX;
-  const stp_papersize_t *ref = NULL;
-  const stp_papersize_t *val = &(paper_sizes[0]);
+  const stp_internal_papersize_t *ref = NULL;
+  const stp_internal_papersize_t *val = &(paper_sizes[0]);
   while (strlen(val->name) > 0)
     {
       if (val->width == w && val->height == l)
-	return val;
+	return (const stp_papersize_t) val;
       else
 	{
 	  int myscore = paper_size_mismatch(l, w, val);
@@ -633,7 +672,7 @@ stp_get_papersize_by_size(int l, int w)
 	}
       val++;
     }
-  return ref;
+  return (const stp_papersize_t) ref;
 }
 
 void
@@ -650,7 +689,7 @@ stp_default_media_size(const stp_printer_t printer,
     }
   else
     {
-      const stp_papersize_t *papersize =
+      const stp_papersize_t papersize =
 	stp_get_papersize_by_name(stp_get_media_size(v));
       if (!papersize)
 	{
@@ -659,8 +698,8 @@ stp_default_media_size(const stp_printer_t printer,
 	}
       else
 	{
-	  *width = papersize->width;
-	  *height = papersize->height;
+	  *width = stp_papersize_get_width(papersize);
+	  *height = stp_papersize_get_height(papersize);
 	}
       if (*width == 0)
 	*width = 612;

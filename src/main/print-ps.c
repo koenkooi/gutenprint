@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.2.2 2001/02/21 02:24:08 rlk Exp $"
+ * "$Id: print-ps.c,v 1.5.2.3 2001/02/21 03:04:56 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -97,15 +97,17 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
     {
       if (strcmp(name, "PageSize") == 0)
 	{
-	  const stp_papersize_t *papersizes = stp_get_papersizes();
-	  valptrs = xmalloc(sizeof(char *) * stp_known_papersizes());
+	  int papersizes = stp_known_papersizes();
+	  valptrs = xmalloc(sizeof(char *) * papersizes);
 	  *count = 0;
-	  for (i = 0; i < stp_known_papersizes(); i++)
+	  for (i = 0; i < papersizes; i++)
 	    {
-	      if (strlen(papersizes[i].name) > 0)
+	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
+	      if (strlen(stp_papersize_get_name(pt)) > 0)
 		{
-		  valptrs[*count] = xmalloc(strlen(papersizes[i].name) + 1);
-		  strcpy(valptrs[*count], papersizes[i].name);
+		  valptrs[*count] =
+		    xmalloc(strlen(stp_papersize_get_name(pt)) +1 );
+		  strcpy(valptrs[*count], stp_papersize_get_name(pt));
 		  (*count)++;
 		}
 	    }

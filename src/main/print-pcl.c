@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.2.2 2001/02/21 02:24:08 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.8.2.3 2001/02/21 03:04:56 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1430,26 +1430,30 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
 
   if (strcmp(name, "PageSize") == 0)
     {
-      const stp_papersize_t *papersizes = stp_get_papersizes();
+      unsigned height_limit = caps.max_height;
+      unsigned width_limit = caps.max_width;
+      int papersizes = stp_known_papersizes();
 #ifdef PCL_NO_CUSTOM_PAPERSIZES
       int use_custom = 0;
 #else
       int use_custom = ((caps.stp_printer_type & PCL_PRINTER_CUSTOM_SIZE)
                          == PCL_PRINTER_CUSTOM_SIZE);
 #endif
-      valptrs = xmalloc(sizeof(char *) * stp_known_papersizes());
+      valptrs = xmalloc(sizeof(char *) * papersizes);
       *count = 0;
-      for (i = 0; i < stp_known_papersizes(); i++)
+      for (i = 0; i < papersizes; i++)
 	{
-	  if (strlen(papersizes[i].name) > 0 &&
-	      papersizes[i].width <= caps.max_width &&
-	      papersizes[i].height <= caps.max_height &&
-              ((use_custom == 1) || ((use_custom == 0) &&
-              (pcl_convert_media_size(papersizes[i].name, model) != -1)))
-             )
+	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
+	  if (strlen(stp_papersize_get_name(pt)) > 0 &&
+	      stp_papersize_get_width(pt) <= width_limit &&
+	      stp_papersize_get_height(pt) <= height_limit &&
+              ((use_custom == 1) ||
+	       ((use_custom == 0) &&
+		(pcl_convert_media_size(stp_papersize_get_name(pt), model)
+		 != -1))))
 	    {
-	      valptrs[*count] = xmalloc(strlen(papersizes[i].name) + 1);
-	      strcpy(valptrs[*count], papersizes[i].name);
+	      valptrs[*count] = xmalloc(strlen(stp_papersize_get_name(pt)) +1);
+	      strcpy(valptrs[*count], stp_papersize_get_name(pt));
 	      (*count)++;
 	    }
 	}
@@ -1629,7 +1633,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		pcl_media_type, /* PCL media type code */
 		pcl_media_source;	/* PCL media source code */
   stp_vars_t	nv = stp_allocate_copy(v);
-  const stp_papersize_t *pp;
+  stp_papersize_t pp;
 
   caps = pcl_get_model_capabilities(model);
 
@@ -1750,7 +1754,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     media_size = stp_get_media_size(v);
   else if ((pp = stp_get_papersize_by_size(stp_get_page_height(v),
 					   stp_get_page_width(v))) != NULL)
-    media_size = pp->name;
+    media_size = stp_papersize_get_name(pp);
   else
     media_size = "";
 
