@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.23.2.3 2003/06/19 02:27:55 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.23.2.4 2003/06/19 02:52:39 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -636,7 +636,11 @@ stpi_dither_array_create_from_file(const char* file)
   doc = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
   (void) fclose(fp);
 
-  ret = xml_doc_get_dither_array(doc);
+  if (doc)
+    {
+      ret = xml_doc_get_dither_array(doc);
+      mxmlDelete(doc);
+    }
 
   stpi_xml_exit();
 

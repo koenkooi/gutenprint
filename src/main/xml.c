@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.21.2.4 2003/06/19 02:19:32 rlk Exp $"
+ * "$Id: xml.c,v 1.21.2.5 2003/06/19 02:52:39 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -214,6 +214,7 @@ stpi_xml_init_defaults(void)
 int
 stpi_xml_parse_file(const char *file) /* File to parse */
 {
+  mxml_node_t *doc;
   mxml_node_t *cur;
   FILE *fp;
 
@@ -230,10 +231,10 @@ stpi_xml_parse_file(const char *file) /* File to parse */
 
   stpi_xml_init();
 
-  cur = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
+  doc = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
   fclose(fp);
 
-  cur = cur->child;
+  cur = doc->child;
   while (cur &&
 	 (cur->type != MXML_ELEMENT ||
 	  strcmp(cur->value.element.name, "gimp-print") != 0))
@@ -258,7 +259,7 @@ stpi_xml_parse_file(const char *file) /* File to parse */
   /* The XML file was read and is the right format */
 
   stpi_xml_process_gimpprint(cur, file);
-  mxmlDelete(cur);
+  mxmlDelete(doc);
 
   stpi_xml_exit();
 
