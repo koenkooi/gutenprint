@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.109 2004/06/22 18:52:12 rleigh Exp $
+dnl $Id: configure.ac,v 1.110 2004/06/28 22:11:18 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.109 $)
+AC_REVISION($Revision: 1.110 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -675,7 +675,7 @@ fi
 STP_GIMP_LIBS
 STP_GIMP_PLUG_IN_DIR
 STP_GIMP2_LIBS
-STP_GIMP2_PLUG_IN_DIR
+dnl STP_GIMP2_PLUG_IN_DIR is obsolete
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -863,6 +863,7 @@ AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP2_CFLAGS)
 AC_SUBST(GIMP2_LIBS)
 AC_SUBST(gimp_plug_indir)
+AC_SUBST(gimp2_plug_indir)
 AC_SUBST(GIMPPRINT_CFLAGS)
 AC_SUBST(GIMPPRINT_LIBS)
 AC_SUBST(GIMPPRINT_LIBDEPS)

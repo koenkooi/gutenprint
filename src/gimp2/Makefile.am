@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2004/06/22 18:52:14 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2004/06/28 22:11:19 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS) $(GIMP2_CFLAGS)
 ## Programs
 
 if BUILD_GIMP2
-gimp_plug_in_PROGRAMS = print
+gimp2_plug_in_PROGRAMS = print
 endif
 
 print_SOURCES = \
