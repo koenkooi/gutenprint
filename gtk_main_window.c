@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.14.2.2 2000/06/18 02:33:16 jmv Exp $"
+ * "$Id: gtk_main_window.c,v 1.14.2.3 2000/06/20 01:13:08 jmv Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -32,6 +32,7 @@
 #include "print_gimp.h"
 
 #include "print-intl.h"
+#include <math.h>
 
 /*
  * Constants for GUI...
@@ -64,6 +65,8 @@ static GtkWidget* width_entry;
 static GtkWidget* top_entry;
 static GtkWidget* bottom_entry;
 static GtkWidget* height_entry;
+static GtkWidget* unit_inch;
+static GtkWidget* unit_cm;
 static GtkWidget* media_size;             /* Media size option button */
 static GtkWidget* media_size_menu=NULL;   /* Media size menu */
 static GtkWidget* media_type;             /* Media type option button */
@@ -148,6 +151,7 @@ static void gtk_media_source_callback(GtkWidget *, gint);
 static void gtk_ink_type_callback(GtkWidget *, gint);
 static void gtk_resolution_callback(GtkWidget *, gint);
 static void gtk_output_type_callback(GtkWidget *, gint);
+static void gtk_unit_callback(GtkWidget *, gint);
 #ifdef DO_LINEAR
 static void gtk_linear_callback(GtkWidget *, gint);
 #endif
@@ -191,7 +195,7 @@ static GtkWidget* dialog;     /* Dialog window */
  *****************************************************************************/
 void gtk_create_main_window(void)
 {
-    int        i,j;        /* Looping var */
+    int        i;        /* Looping var */
     char       s[100];     /* Text string */
     GtkWidget* label;      /* Label string */
     GtkWidget* hbbox;      /* button_box for OK/Cancel buttons */
@@ -402,6 +406,37 @@ void gtk_create_main_window(void)
     gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
     gtk_widget_set_usize(entry, 60, 0);
     gtk_widget_show(entry);
+
+    label = gtk_label_new(_("Units:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_table_attach(GTK_TABLE(table),
+		     label, 0, 1, 13, 14, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_show(label);
+    box = gtk_hbox_new(FALSE, 8);
+    gtk_table_attach(GTK_TABLE(table),
+		     box,
+		     1, 2,
+		     13, 14,
+		     GTK_FILL, GTK_FILL,
+		     0, 0);
+    gtk_widget_show(box);
+    unit_inch = button = gtk_radio_button_new_with_label(NULL, _("Inch"));
+    group = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
+    if (vars.unit == 0)
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
+    gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    unit_cm = button = gtk_radio_button_new_with_label(group, _("Cm"));
+    if (vars.unit)
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
+    gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    gtk_signal_connect(GTK_OBJECT(unit_inch), "toggled",
+		       (GtkSignalFunc)gtk_unit_callback, (gpointer)0);
+    gtk_signal_connect(GTK_OBJECT(unit_cm), "toggled",
+		       (GtkSignalFunc)gtk_unit_callback, (gpointer)1);
 
     /***
      * Media size option menu...
@@ -967,11 +1002,12 @@ void gtk_create_main_window(void)
 	gtk_widget_show (list);
     for (i = 0; i < known_printers(); i ++)
     {
+        char *tmp;
 	if (!strcmp(the_printer->long_name, ""))
 	    continue;
-	gtk_clist_insert(GTK_CLIST(list), i, &gettext(the_printer->long_name));
+	tmp = gettext(the_printer->long_name);
+	gtk_clist_insert(GTK_CLIST(list), i, &tmp);
 	gtk_clist_set_row_data(GTK_CLIST(list), i, (gpointer)i);
-	gtk_widget_show(item);
 	the_printer++;
     }
     gtk_table_attach(GTK_TABLE(table),
@@ -1339,6 +1375,11 @@ static void gtk_do_misc_updates(void)
   else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_color), TRUE);
 
+  if (plist[plist_current].v.unit == 0)
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unit_inch), TRUE);
+  else
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unit_cm), TRUE);
+
 #ifdef DO_LINEAR
   if (plist[plist_current].v.linear == 0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(linear_off), TRUE);
@@ -1377,31 +1418,35 @@ static void gtk_do_misc_updates(void)
 static void gtk_position_callback(GtkWidget *widget)
 {
   int dontcheck = 0;
+  double unit_scaler = 1.0;
 
-
+  if(vars.unit) unit_scaler = 1.0 / 2.54;
   if (widget == top_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) - top;
+      vars.top = ((new_value * unit_scaler + 1.0 / 144) * 72) - top;
     }
   else if (widget == left_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.left = ((new_value + 1.0 / 144) * 72) - left;
+      vars.left = ((new_value * unit_scaler + 1.0 / 144) * 72) - left;
     }
   else if (widget == bottom_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.top = ((new_value + 1.0 / 144) * 72) - (top + print_height);
+      vars.top = ((new_value * unit_scaler + 1.0 / 144) * 72) -
+			  (top + print_height);
     }
   else if (widget == right_entry)
     {
       gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
-      vars.left = ((new_value + 1.0 / 144) * 72) - (left + print_width);
+      vars.left = ((new_value * unit_scaler + 1.0 / 144) * 72) -
+			  (left + print_width);
     }
   else if (widget == width_entry)
     {
-      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
+      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget))) *
+			  unit_scaler;
       if (vars.scaling >= 0) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_ppi), TRUE);
 	gtk_scaling_callback (scaling_ppi);
@@ -1411,7 +1456,8 @@ static void gtk_position_callback(GtkWidget *widget)
     }
   else if (widget == height_entry)
     {
-      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget)));
+      gfloat new_value = atof(gtk_entry_get_text(GTK_ENTRY(widget))) *
+			  unit_scaler;
       if (vars.scaling >= 0) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_ppi), TRUE);
 	gtk_scaling_callback (scaling_ppi);
@@ -1473,6 +1519,7 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
  /*
   * Now get option parameters...
   */
+  gtk_build_dither_menu();
 
   if (num_media_sizes > 0)
   {
@@ -1688,6 +1735,22 @@ static void gtk_output_type_callback(GtkWidget *widget,
   {
     vars.output_type = data;
     plist[plist_current].v.output_type = data;
+  }
+}
+
+/****************************************************************************
+ *
+ * gtk_unit_callback() - Update the current Unit...
+ *
+ ****************************************************************************/
+static void gtk_unit_callback(GtkWidget *widget,
+				     gint      data)
+{
+  if (GTK_TOGGLE_BUTTON(widget)->active)
+  {
+    vars.unit = data;
+    plist[plist_current].v.unit = data;
+	gtk_preview_update();
   }
 }
 
@@ -1958,6 +2021,7 @@ static void gtk_preview_update(void)
   static GdkGC	*gc = NULL,	/* Normal graphics context */
 		*gcinv = NULL;	/* GC for inverted drawing (arrow) */
   char s[255];
+  double unit_scaler;
 
   if (preview->widget.window == NULL)
     return;
@@ -2092,33 +2156,35 @@ static void gtk_preview_update(void)
   plist[plist_current].v.top = vars.top;
 
 
-  sprintf(s, "%.2f", (top + vars.top) / 72.0);
+  if(vars.unit) unit_scaler = 72.0/2.54;
+  else unit_scaler = 72.0;
+  sprintf(s, "%.2f", (top + vars.top) / unit_scaler);
   gtk_signal_handler_block_by_data(GTK_OBJECT(top_entry), NULL);
   gtk_entry_set_text(GTK_ENTRY(top_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(top_entry), NULL);
 
-  sprintf(s, "%.2f", (left + vars.left) / 72.0);
+  sprintf(s, "%.2f", (left + vars.left) / unit_scaler);
   gtk_signal_handler_block_by_data(GTK_OBJECT(left_entry), NULL);
   gtk_entry_set_text(GTK_ENTRY(left_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(left_entry), NULL);
 
   gtk_signal_handler_block_by_data(GTK_OBJECT(bottom_entry), NULL);
-  sprintf(s, "%.2f", ((top + vars.top) + print_height) / 72.0);
+  sprintf(s, "%.2f", ((top + vars.top) + print_height) / unit_scaler);
   gtk_entry_set_text(GTK_ENTRY(bottom_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(bottom_entry), NULL);
 
   gtk_signal_handler_block_by_data(GTK_OBJECT(right_entry), NULL);
-  sprintf(s, "%.2f", (left + vars.left + print_width) / 72.0);
+  sprintf(s, "%.2f", (left + vars.left + print_width) / unit_scaler);
   gtk_entry_set_text(GTK_ENTRY(right_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(right_entry), NULL);
 
   gtk_signal_handler_block_by_data(GTK_OBJECT(width_entry), NULL);
-  sprintf(s, "%.2f", print_width / 72.0);
+  sprintf(s, "%.2f", print_width / unit_scaler);
   gtk_entry_set_text(GTK_ENTRY(width_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(width_entry), NULL);
 
   gtk_signal_handler_block_by_data(GTK_OBJECT(height_entry), NULL);
-  sprintf(s, "%.2f", print_height / 72.0);
+  sprintf(s, "%.2f", print_height / unit_scaler);
   gtk_entry_set_text(GTK_ENTRY(height_entry), s);
   gtk_signal_handler_unblock_by_data(GTK_OBJECT(height_entry), NULL);
 

@@ -3,7 +3,7 @@
 #define RASTER 0
 unsigned char RASTERP[16], *rasterp;
 /*
- * "$Id: print-dither.c,v 1.53.2.5 2000/06/18 02:33:16 jmv Exp $"
+ * "$Id: print-dither.c,v 1.53.2.6 2000/06/20 01:13:08 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -535,7 +535,7 @@ init_dither(int in_width, int out_width, vars_t *v)
   dither_set_black_upper(d, .7);
   dither_set_black_levels(d, 1.0, 1.0, 1.0);
   dither_set_randomizers(d, 1.0, 1.0, 1.0, 1.0);
-  dither_set_ink_darkness(d, .5, .25, .15);
+  dither_set_ink_darkness(d, .4, .20, .12);
   dither_set_density(d, 1, 1.0);
   return d;
 }
@@ -557,8 +557,8 @@ dither_set_density(void *vd, int oversampling, double dither_density)
     density = 1;
   else if (density < 0)
     density = 0;
-  d->k_upper = d->k_upper * dither_density;
-  d->k_lower = d->k_lower * dither_density;
+  d->k_upper = d->k_upper * density;
+  d->k_lower = d->k_lower * density;
   d->density = (int) ((65536 * density) + .5);
   d->dither_density = (int) ((65536 * dither_density) + .5);
   d->d_cutoff = d->density / 16;
@@ -571,7 +571,7 @@ dither_set_max_ink(void *vd, int levels, double max_ink)
 {
   dither_t *d = (dither_t *) vd;
   d->ink_limit = max_ink*levels+0.5;
-  if(d->ink_limit < 1) d->ink_limit = 1;
+  if(d->ink_limit < 1) d->ink_limit = levels;
 #ifdef VERBOSE
   fprintf(stderr, "Maxink: %f %d\n", max_ink, d->ink_limit);
 #endif
@@ -1272,7 +1272,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
        * range.
        */
       if (dd->range_span == 0 ||
-	  (dd->value_span == 0 && dd->isdark_l == dd->isdark_h))
+		  dd->value_l == 0 ||
+		 (dd->value_span == 0 && dd->isdark_l == dd->isdark_h))
 	rangepoint = 32768;
       else
 	rangepoint =
@@ -1285,7 +1286,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
        * This is scaled between the high and low value.
        */
 
-      if (dd->value_span == 0)
+      if (dd->value_span == 0 || dd->value_l == 0)
 	virtual_value = dd->value_h;
       else if (dd->range_span == 0)
 	virtual_value = (dd->value_h + dd->value_l) / 2;
@@ -1392,7 +1393,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 	  unsigned dot_size;
 	  unsigned arangepoint;
 	      
-	  if (dd->isdark_h == dd->isdark_l && dd->bits_h == dd->bits_l)
+	  if (dd->value_l == 0 ||
+		 (dd->isdark_h == dd->isdark_l && dd->bits_h == dd->bits_l))
 	    {
 	      isdark = dd->isdark_h;
 	      bits = dd->bits_h;
@@ -1412,7 +1414,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 			   * should be fine; there's no transitions whit only
 			   * one ink level.
 			   */
-		if(adjusted < (int)dd->value_l/2)
+		if(adjusted < (int)dd->value_l * 2 /3)
 				arangepoint = 0;
 		else if(adjusted > (int)dd->value_h)
 				arangepoint = 65535;
@@ -1740,8 +1742,7 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
   ok = (c * d->c_darkness + m * d->m_darkness + y * d->y_darkness) / 64;
   if ( ok > lb )
   {
-    kl = (unsigned) ( ok - lb ) * d->dither_density /
-			( d->dither_density - lb );
+    kl = (unsigned) ( ok - lb ) * d->density / ( d->density - lb );
     if (kl > 65535)
 		kl = 65535;
 	    
@@ -1754,7 +1755,7 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
     if ( ok > ub )
     	ks = 65535;
     else
-    	ks = (unsigned) ( ok - lb ) * d->dither_density / ( ub - lb );
+    	ks = (unsigned) ( ok - lb ) * 65535 / ( ub - lb );
     if (ks > 65535)
     	ks = 65535;
 	    
@@ -1765,17 +1766,21 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
    * following line can be tried instead:    
    * ak = ks;
    */
-    ak = ks*ks/d->dither_density;
-    bk = kl * (unsigned) ak / d->density;
+    ak = ks*ks/65535;
+    bk = kl * (unsigned) ak / 65535;
   }
   else
-    bk = 0;
+    bk = kl = 0;
   if(bk <= 0)
-	  bk = ok = 0;
+	  bk = ok = kl = 0;
+  else
+  /* with ordered base, density should not be in excess of gray */
+  if ((d->dither_type & D_ORDERED_BASE) && bk > k)
+		bk = k;
   *nc = c;
   *nm = m;
   *ny = y;
-  *nk = ok; /* That's a density value */
+  *nk = kl; /* That's a density value */
   *jk = bk; /* That's the adjusted value */
   return;
 }

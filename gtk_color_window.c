@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.9.2.1 2000/06/18 02:33:16 jmv Exp $"
+ * "$Id: gtk_color_window.c,v 1.9.2.2 2000/06/20 01:13:08 jmv Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -88,7 +88,7 @@ static void gtk_gamma_update(GtkAdjustment *);
 static void gtk_gamma_callback(GtkWidget *);
 static void gtk_close_adjust_callback(void);
 static void gtk_dither_algo_callback(GtkWidget *, gint);
-static void gtk_build_dither_menu(void);
+void gtk_build_dither_menu(void);
 
 
 /*****************************************************************************
@@ -1020,7 +1020,7 @@ static void gtk_close_adjust_callback(void)
  * gtk_build_dither_menu() - builds the dither algorithm option menu.
  *
  ***************************************************************************/
-static void gtk_build_dither_menu()
+void gtk_build_dither_menu()
 {
     int		i;	/* Looping var */
     GtkWidget	*item;	/* Menu item */

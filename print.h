@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.55.2.3 2000/06/18 02:33:17 jmv Exp $"
+ * "$Id: print.h,v 1.55.2.4 2000/06/20 01:13:09 jmv Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -122,6 +122,7 @@ typedef struct					/* Plug-in variables */
   float	saturation;		/* Output saturation */
   float	density;		/* Maximum output density */
   int	image_type;		/* Image type (line art etc.) */
+  int	unit;			/* Unit for preview area 0=Inches 1=Cm (metric) */
   lut_t *lut;			/* Look-up table */
 } vars_t;
 
@@ -394,5 +395,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.55.2.3 2000/06/18 02:33:17 jmv Exp $".
+ * End of "$Id: print.h,v 1.55.2.4 2000/06/20 01:13:09 jmv Exp $".
  */
