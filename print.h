@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.93 2000/11/19 03:34:42 rlk Exp $"
+ * "$Id: print.h,v 1.94 2000/12/03 18:40:11 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -197,7 +197,7 @@ typedef struct printer
  */
 typedef void (*convert_t)(unsigned char *in, unsigned short *out, int width,
 			  int bpp, unsigned char *cmap, const vars_t *vars,
-			  const double *hue_map);
+			  const double *hue_map, const double *lum_map);
 
 typedef struct
 {
@@ -483,5 +483,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.93 2000/11/19 03:34:42 rlk Exp $".
+ * End of "$Id: print.h,v 1.94 2000/12/03 18:40:11 rlk Exp $".
  */

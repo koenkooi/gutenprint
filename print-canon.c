@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.100 2000/11/30 13:26:52 gandy Exp $"
+ * "$Id: print-canon.c,v 1.101 2000/12/03 18:40:10 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2142,7 +2142,7 @@ canon_print(const printer_t *printer,		/* I - Model */
       errlast = errline;
       duplicate_line = 0;
       Image_get_row(image, in, errline);
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv, NULL);
+      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv, NULL, NULL);
     }
 
     if (nv.image_type == IMAGE_MONOCHROME)
