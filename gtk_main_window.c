@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.54 2000/09/09 02:42:11 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.55 2000/09/09 23:15:12 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -22,6 +22,9 @@
  */
 
 #include "print_gimp.h"
+
+#ifndef NEW_UI_ONLY
+
 #define MAX_PREVIEW_PPI        (20)
 
 #include "print-intl.h"
@@ -2436,3 +2439,5 @@ static void gtk_show_adjust_button_callback(GtkWidget * w)
 {
     gtk_widget_show(gtk_color_adjust_dialog);
 }
+
+#endif  /* ! NEW_UI_ONLY */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.19 2000/09/05 21:42:23 cpbs Exp $"
+ * "$Id: gtk_color_window.c,v 1.20 2000/09/09 23:15:12 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -22,6 +22,8 @@
  */
 
 #include "print_gimp.h"
+
+#ifndef NEW_UI_ONLY
 
 #include "print-intl.h"
 
@@ -1142,3 +1144,5 @@ gtk_dither_algo_callback (GtkWidget *widget,
   strcpy(plist[plist_current].v.dither_algorithm,
 	 dither_algo_names[data]);
 }
+
+#endif  /* ! NEW_UI_ONLY */

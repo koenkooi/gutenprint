@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.28 2000/09/05 01:37:30 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.29 2000/09/09 23:15:13 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -58,6 +58,10 @@
 
 #if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
 #define GIMP_1_0
+#endif
+
+#if !defined(GIMP_PRINT_MAINT) && !defined(GIMP_1_0)
+#define NEW_UI_ONLY
 #endif
 
 /*
