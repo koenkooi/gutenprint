@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.119 2000/03/27 13:51:09 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.119.2.1 2000/03/29 03:23:01 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1090,9 +1090,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     dither = init_dither(image_width, out_width, 1);
   if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
     {
-      dither_set_black_levels(dither, 1.5, 1.7, 1.7);
-      dither_set_black_lower(dither, .01);
-      dither_set_black_upper(dither, .4);
+      dither_set_black_levels(dither, 1.5, 1.7, 1.9);
+      dither_set_black_lower(dither, .3);
+      dither_set_black_upper(dither, .5);
       dither_set_light_inks(dither, .5, .5, .5);
     }
   switch (v->image_type)
@@ -1143,8 +1143,8 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	  else if (output_type == OUTPUT_GRAY)
 	    dither_black(out, x, dither, black);
 	  else
-	    dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
-			yellow, 0, black);
+	    dither_cmyk_ordered(out, x, dither, cyan, lcyan, magenta, lmagenta,
+				yellow, 0, black);
 	}
       else
 	{
@@ -1208,8 +1208,8 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	  else if (output_type == OUTPUT_GRAY)
 	    dither_black(out, y, dither, black);
 	  else
-	    dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-			yellow, 0, black);
+	    dither_cmyk_ordered(out, y, dither, cyan, lcyan, magenta, lmagenta,
+				yellow, 0, black);
 	}
       else
 	{
@@ -1332,6 +1332,76 @@ escp2_split_2_2(int length,
 }
 
 static void
+escp2_split_2_4(int length,
+		const unsigned char *in,
+		unsigned char *outhi,
+		unsigned char *outlo)
+{
+  int i;
+  for (i = 0; i < length * 2; i++)
+    {
+      unsigned char inbyte = in[i];
+      outlo[i] = inbyte & 0x0f;
+      outhi[i] = inbyte & 0xf0;
+    }
+}
+
+static void
+escp2_split_2_8(int length,
+		const unsigned char *in,
+		unsigned char *outhi,
+		unsigned char *outlo)
+{
+  int i;
+  for (i = 0; i < length * 2; i++)
+    {
+      unsigned char inbyte = in[i];
+      if (i & 1)
+	{
+	  outlo[i] = inbyte;
+	  outhi[i] = 0;
+	}
+      else
+	{
+	  outlo[i] = 0;
+	  outhi[i] = inbyte;
+	}
+    }
+}
+
+static void
+escp2_split_2_even(int length,
+		   const unsigned char *in,
+		   unsigned char *outhi,
+		   unsigned char *outlo)
+{
+  int i, j;
+  int row = 0;
+  for (i = 0; i < length * 2; i++)
+    {
+      unsigned char inbyte = in[i];
+      outlo[i] = 0;
+      outhi[i] = 0;
+      for (j = 1; j <= 128; j += j)
+	{
+	  if (inbyte & j)
+	    {
+	      if (row == 0)
+		{
+		  outlo[i] |= j;
+		  row = 1;
+		}
+	      else
+		{
+		  outhi[i] |= j;
+		  row = 0;
+		}
+	    }
+	}
+    }
+}
+
+static void
 escp2_split_4(int length,
 	      const unsigned char *in,
 	      unsigned char *out0,
@@ -1366,6 +1436,120 @@ escp2_split_4_2(int length,
       out1[i] = inbyte & 0x30;
       out2[i] = inbyte & 0x0c;
       out3[i] = inbyte & 0x03;
+    }
+}
+
+static void
+escp2_split_4_4(int length,
+		const unsigned char *in,
+		unsigned char *out0,
+		unsigned char *out1,
+		unsigned char *out2,
+		unsigned char *out3)
+{
+  int i;
+  for (i = 0; i < length; i++)
+    {
+      unsigned char inbyte = in[i];
+      switch (i & 1)
+	{
+	case 0:
+	  out0[i] = inbyte & 0xf0;
+	  out1[i] = inbyte & 0x0f;
+	  out2[i] = 0;
+	  out3[i] = 0;
+	  break;
+	case 1:
+	  out0[i] = 0;
+	  out1[i] = 0;
+	  out2[i] = inbyte & 0xf0;
+	  out3[i] = inbyte & 0x0f;
+	  break;
+	}
+    }
+}
+
+static void
+escp2_split_4_8(int length,
+		const unsigned char *in,
+		unsigned char *out0,
+		unsigned char *out1,
+		unsigned char *out2,
+		unsigned char *out3)
+{
+  int i;
+  for (i = 0; i < length; i++)
+    {
+      unsigned char inbyte = in[i];
+      switch (i & 3)
+	{
+	case 0:
+	  out0[i] = inbyte;
+	  out1[i] = 0;
+	  out2[i] = 0;
+	  out3[i] = 0;
+	  break;
+	case 1:
+	  out0[i] = 0;
+	  out1[i] = inbyte;
+	  out2[i] = 0;
+	  out3[i] = 0;
+	  break;
+	case 2:
+	  out0[i] = 0;
+	  out1[i] = 0;
+	  out2[i] = inbyte;
+	  out3[i] = 0;
+	  break;
+	case 3:
+	  out0[i] = 0;
+	  out1[i] = 0;
+	  out2[i] = 0;
+	  out3[i] = inbyte;
+	  break;
+	}
+    }
+}
+
+static void
+escp2_split_4_even(int length,
+		   const unsigned char *in,
+		   unsigned char *out0,
+		   unsigned char *out1,
+		   unsigned char *out2,
+		   unsigned char *out3)
+{
+  int i, j;
+  int row = 0;
+  for (i = 0; i < length; i++)
+    {
+      unsigned char inbyte = in[i];
+      out0[i] = 0;
+      out1[i] = 0;
+      out2[i] = 0;
+      out3[i] = 0;
+      for (j = 1; j <= 128; j += j)
+	{
+	  if (inbyte & j)
+	    {
+	      switch (row)
+		{
+		case 0:
+		  out0[i] |= j;
+		  break;
+		case 1:
+		  out1[i] |= j;
+		  break;
+		case 2:
+		  out2[i] |= j;
+		  break;
+		case 3:
+		  out3[i] |= j;
+		  break;
+		}
+	      row = (row + 1) & 3;
+	    }
+	}
     }
 }
 
@@ -2613,7 +2797,7 @@ escp2_write_weave(void *        vsw,
 		{
 		case 4:
 		  if (sw->bitwidth == 1)
-		    escp2_split_4(length, in, s[0], s[1], s[2], s[3]);
+		    escp2_split_4_even(length, in, s[0], s[1], s[2], s[3]);
 		  else
 		    escp2_split_4_2(length, in, s[0], s[1], s[2], s[3]);
 		  break;
@@ -2621,7 +2805,7 @@ escp2_write_weave(void *        vsw,
 		  if (sw->horizontal_weave == 1)
 		    {
 		      if (sw->bitwidth == 1)
-			escp2_split_2(xlength, in, s[0], s[1]);
+			escp2_split_2_even(xlength, in, s[0], s[1]);
 		      else
 			escp2_split_2_2(xlength, in, s[0], s[1]);
 		    }
@@ -2629,12 +2813,12 @@ escp2_write_weave(void *        vsw,
 		    {		    
 		      if (sw->bitwidth == 1)
 			{
-			  escp2_split_2(xlength, s[1], s[1], s[3]);
-			  escp2_split_2(xlength, s[0], s[0], s[2]);
+			  escp2_split_2_even(xlength, s[1], s[1], s[3]);
+			  escp2_split_2_2(xlength, s[0], s[0], s[2]);
 			}
 		      else
 			{
-			  escp2_split_2_2(xlength, s[1], s[1], s[3]);
+			  escp2_split_2_even(xlength, s[1], s[1], s[3]);
 			  escp2_split_2_2(xlength, s[0], s[0], s[2]);
 			}
 		    }
@@ -2677,6 +2861,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.119.2.1  2000/03/29 03:23:01  rlk
+ *   Put this in for safety and for people to play with it
+ *
  *   Revision 1.119  2000/03/27 13:51:09  rlk
  *   Try again for microweave...
  *
@@ -3162,5 +3349,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.119 2000/03/27 13:51:09 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.119.2.1 2000/03/29 03:23:01 rlk Exp $".
  */

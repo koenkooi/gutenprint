@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.18 2000/03/22 00:53:06 rlk Exp $"
+ * "$Id: print-dither.c,v 1.18.2.1 2000/03/29 03:23:01 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,6 +30,7 @@
 
 
 #include "print.h"
+#include "dither_matrix.c"
 
 #define IABS(a) ((a) >= 0 ? (a) : -(a))
 
@@ -51,6 +52,7 @@
 typedef struct dither
 {
   int *errs[ERROR_ROWS][NCOLORS];
+  unsigned ordered_dither_matrix[64][64];
   int src_width;
   int dst_width;
   int horizontal_overdensity;
@@ -122,11 +124,41 @@ typedef struct dither
 
 } dither_t;
 
+/*
+ * Bayer's dither matrix using Judice, Jarvis, and Ninke recurrence relation
+ * http://www.cs.rit.edu/~sxc7922/Project/CRT.htm
+ */
+static int
+calc_ordered_point(unsigned x, unsigned y, int steps)
+{
+  int i;
+  unsigned retval = 0;
+  static int map[4] = { 0, 2, 3, 1 };
+  for (i = 0; i < steps; i++)
+    {
+      int xa = (x >> i) & 1;
+      int ya = (y >> i) & 1;
+      unsigned base;
+      base = map[ya + (xa * 2)];
+      retval += base << (2 * ((steps - 1) - i));
+    }
+  return retval;
+}
+
 void *
 init_dither(int in_width, int out_width, int horizontal_overdensity)
 {
+  int x, y;
   dither_t *d = malloc(sizeof(dither_t));
   memset(d, 0, sizeof(dither_t));
+
+  for (x = 0; x < 64; x++)
+    for (y = 0; y < 64; y++)
+      {
+	d->ordered_dither_matrix[x][y] = calc_ordered_point(x, y, 6);
+	d64y[x][y] = 4095 - (d64k[x][y]);
+	d64m[x][y] = 4095 - (d64c[x][y]);
+      }
 
   d->horizontal_overdensity = horizontal_overdensity;
   switch (horizontal_overdensity)
@@ -834,7 +866,7 @@ do {									\
   else									\
     {									\
       int compare = (comp0 * d->l##r##_level) >> 16;			\
-      if (r <= (d->l##r##_level))					\
+      if (r <= (d->l##r##_level / 2))					\
 	{								\
 	  if (r > compare)						\
 	    {								\
@@ -1274,7 +1306,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
        */
       ok = k;
       nk = k + (ditherk) / 8;
-      tk = (((c * d->c_darkness) + (m * d->m_darkness) + (y * d->y_darkness))
+      tk = (((oc * d->c_darkness) + (om * d->m_darkness) + (oy * d->y_darkness))
 	    >> 6);
       kdarkness = MAX(tk, ak);
       if (kdarkness < d->k_upper)
@@ -1365,6 +1397,340 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
     UPDATE_DITHER(c, 2, x, d->dst_width);
     UPDATE_DITHER(m, 3, x, d->dst_width);
     UPDATE_DITHER(y, 0, x, d->dst_width);
+
+    /*****************************************************************
+     * Advance the loop
+     *****************************************************************/
+
+    INCREMENT_COLOR();
+  }
+  /*
+   * Main loop ends here!
+   */
+}
+
+#if 0
+#define DO_PRINT_COLOR_ORDERED(r, R, color, x, y, xoff, yoff, d1, pvar)	   \
+do {									   \
+  int tmp = r;								   \
+  unsigned o = d->ordered_dither_matrix[(x + y/3 + xoff) & 63][(y + x/3 + yoff) & 63]; \
+  unsigned me = tmp >> 4;						   \
+  if (me > o)								   \
+    {									   \
+      DO_PRINT_COLOR(color);						   \
+      pvar = 1;								   \
+    }									   \
+  else if (me == o)							   \
+    {									   \
+      unsigned rem = tmp & 15;						   \
+      if (rem > (ditherbit##d1 & 15))					   \
+	{								   \
+	  DO_PRINT_COLOR(color);					   \
+	  pvar = 1;							   \
+	}								   \
+    }									   \
+} while (0)
+#else
+#define DO_PRINT_COLOR_ORDERED(r, R, color, x, y, xoff, yoff, d1, pvar)	\
+do {									\
+  int tmp = r;								\
+  unsigned o = d64##R[(x) & 63][(y) & 63];				\
+  unsigned me = tmp >> 4;						\
+  if (me > o)								\
+    {									\
+      DO_PRINT_COLOR(color);						\
+      pvar = 1;								\
+    }									\
+  else if (me == o)							\
+    {									\
+      unsigned rem = tmp & 15;						\
+      if (rem > (ditherbit##d1 & 15))					\
+	{								\
+	  DO_PRINT_COLOR(color);					\
+	  pvar = 1;							\
+	}								\
+    }									\
+} while (0)
+#endif
+
+#define PRINT_COLOR_ORDERED(r, color, x, y, xoff, yoff, d1, d2)		\
+do {									\
+  int pvar = 0;								\
+  if (!l##color)							\
+    DO_PRINT_COLOR_ORDERED(r, r, r, x, y, xoff, yoff, d1, pvar);	\
+  else									\
+    {									\
+      if (r <= (d->l##r##_level / 2))					\
+	DO_PRINT_COLOR_ORDERED(r * 65536 / d->l##r##_level, r, l##r,	\
+			       x, y, xoff, yoff, d1, pvar);		\
+      else								\
+	{								\
+	  DO_PRINT_COLOR_ORDERED(r - (d->l##r##_level / 2), r, r, x, y,	\
+				 xoff, yoff, d1, pvar);			\
+	  if (!pvar)							\
+	    DO_PRINT_COLOR_ORDERED(32768, r, l##r,			\
+				   x, y, xoff + 3, yoff + 3, d1, pvar);	\
+	}								\
+    }									\
+} while (0)
+
+/*
+ * 'dither_cmyk6()' - Dither RGB pixels to cyan, magenta, light cyan,
+ * light magenta, yellow, and black.
+ *
+ * Added by Robert Krawitz <rlk@alum.mit.edu> August 30, 1999.
+ */
+
+void
+dither_cmyk_ordered(unsigned short  *rgb,
+		    int           row,
+		    void *vd,
+		    unsigned char *cyan,
+		    unsigned char *lcyan,
+		    unsigned char *magenta,
+		    unsigned char *lmagenta,
+		    unsigned char *yellow,
+		    unsigned char *lyellow,
+		    unsigned char *black)
+{
+  int		x,		/* Current X coordinate */
+		xerror,		/* X error count */
+		xstep,		/* X step */
+		xmod,		/* X error modulus */
+		length;		/* Length of output bitmap in bytes */
+  long		c, m, y, k,	/* CMYK values */
+		oc, om, ok, oy,
+		divk;		/* Inverse of K */
+  int		diff;		/* Average color difference */
+  unsigned char	bit,		/* Current bit */
+		*cptr,		/* Current cyan pixel */
+		*mptr,		/* Current magenta pixel */
+		*yptr,		/* Current yellow pixel */
+		*lmptr,		/* Current light magenta pixel */
+		*lcptr,		/* Current light cyan pixel */
+		*lyptr,		/* Current light yellow pixel */
+		*kptr;		/* Current black pixel */
+  int		ditherbit;	/* Random dither bitmask */
+  int nk;
+  int ck;
+  int bk;
+  int ub, lb;
+  int ditherbit0, ditherbit1, ditherbit2, ditherbit3;
+  int density;
+  dither_t *d = (dither_t *) vd;
+
+  /*
+   * If d->horizontal_overdensity is > 1, we want to output a bit only so many
+   * times that a bit would be generated.  These serve as counters for making
+   * that decision.  We make these variable static rather than reinitializing
+   * at zero each line to avoid having a line of bits near the edge of the
+   * image.
+   */
+
+  int terminate;
+  int direction = row & 1 ? 1 : -1;
+  int k_offset = 32768 - (32768 >> d->k_randomizer);
+
+  bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
+  x = (direction == 1) ? 0 : d->dst_width - 1;
+  terminate = (direction == 1) ? d->dst_width : -1;
+
+  xstep  = 3 * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  length = (d->dst_width + 7) / 8;
+
+  cptr = cyan;
+  mptr = magenta;
+  yptr = yellow;
+  lcptr = lcyan;
+  lmptr = lmagenta;
+  lyptr = lyellow;
+  kptr = black;
+  xerror = 0;
+  if (direction == -1)
+    {
+      cptr = cyan + length - 1;
+      if (lcptr)
+	lcptr = lcyan + length - 1;
+      mptr = magenta + length - 1;
+      if (lmptr)
+	lmptr = lmagenta + length - 1;
+      yptr = yellow + length - 1;
+      if (lyptr)
+	lyptr = lyellow + length - 1;
+      if (kptr)
+	kptr = black + length - 1;
+      xstep = -xstep;
+      rgb += 3 * (d->src_width - 1);
+      xerror = ((d->dst_width - 1) * xmod) % d->dst_width;
+      xmod = -xmod;
+    }
+
+  memset(cyan, 0, length);
+  if (lcyan)
+    memset(lcyan, 0, length);
+  memset(magenta, 0, length);
+  if (lmagenta)
+    memset(lmagenta, 0, length);
+  memset(yellow, 0, length);
+  if (lyellow)
+    memset(lyellow, 0, length);
+  if (black)
+    memset(black, 0, length);
+
+  /*
+   * Main loop starts here!
+   */
+  for (ditherbit = rand(),
+	 ditherbit0 = ditherbit & 0xffff,
+	 ditherbit1 = ((ditherbit >> 8) & 0xffff),
+	 ditherbit2 = (((ditherbit >> 16) & 0x7fff) +
+		       ((ditherbit & 0x100) << 7)),
+	 ditherbit3 = (((ditherbit >> 24) & 0x7f) + ((ditherbit & 1) << 7) +
+		       ((ditherbit >> 8) & 0xff00));
+       x != terminate;
+       x += direction)
+  {
+   /*
+    * First compute the standard CMYK separation color values...
+    */
+		   
+    int maxlevel;
+    int ak;
+    int kdarkness;
+
+    c = 65535 - (unsigned) rgb[0];
+    m = 65535 - (unsigned) rgb[1];
+    y = 65535 - (unsigned) rgb[2];
+    oc = c;
+    om = m;
+    oy = y;
+    k = MIN(c, MIN(m, y));
+    maxlevel = MAX(c, MAX(m, y));
+
+    if (black != NULL)
+    {
+     /*
+      * Since we're printing black, adjust the black level based upon
+      * the amount of color in the pixel (colorful pixels get less black)...
+      */
+      int xdiff = (IABS(c - m) + IABS(c - y) + IABS(m - y)) / 3;
+      int tk, pvar;
+
+      diff = 65536 - xdiff;
+      diff = ((long long) diff * (long long) diff * (long long) diff) >> 32;
+      diff--;
+      if (diff < 0)
+	diff = 0;
+      k    = (int) (((unsigned) diff * (unsigned) k) >> 16);
+      ak = k;
+      divk = 65535 - k;
+      if (divk == 0)
+        c = m = y = 0;	/* Grayscale */
+      else
+      {
+       /*
+        * Full color; update the CMY values for the black value and reduce
+        * CMY as necessary to give better blues, greens, and reds... :)
+        */
+	unsigned ck = c - k;
+	unsigned mk = m - k;
+	unsigned yk = y - k;
+
+        c  = ((unsigned) (65535 - ((rgb[2] + rgb[1]) >> 3))) * ck /
+	  (unsigned) divk;
+        m  = ((unsigned) (65535 - ((rgb[1] + rgb[0]) >> 3))) * mk /
+	  (unsigned) divk;
+        y  = ((unsigned) (65535 - ((rgb[0] + rgb[2]) >> 3))) * yk /
+	  (unsigned) divk;
+      }
+
+      /*
+       * kdarkness is an artificially computed darkness value for deciding
+       * how much black vs. CMY to use for the k component.  This is
+       * empirically determined.
+       */
+      ok = k;
+      nk = k;
+      tk = (((oc * d->c_darkness) + (om * d->m_darkness) + (oy * d->y_darkness))
+	    >> 6);
+      kdarkness = tk;
+      if (kdarkness < d->k_upper)
+	{
+	  int rb;
+	  ub = d->k_upper;
+	  lb = d->k_lower;
+	  rb = ub - lb;
+	  if (kdarkness <= lb)
+	    {
+	      bk = 0;
+	      ub = 0;
+	      lb = 1;
+	    }
+	  else if (kdarkness < ub)
+	    {
+	      if (rb == 0 || (ditherbit % rb) < (kdarkness - lb))
+		bk = nk;
+	      else
+		bk = 0;
+	    }
+	  else
+	    {
+	      ub = 1;
+	      lb = 1;
+	      bk = nk;
+	    }
+	}
+      else
+	{
+	  bk = nk;
+	}
+      ck = nk - bk;
+    
+      c += (d->k_clevel * ck) >> 6;
+      m += (d->k_mlevel * ck) >> 6;
+      y += (d->k_ylevel * ck) >> 6;
+
+      /*
+       * Don't allow cmy to grow without bound.
+       */
+      if (c > 65535)
+	c = 65535;
+      if (m > 65535)
+	m = 65535;
+      if (y > 65535)
+	y = 65535;
+      k = bk;
+      
+      DO_PRINT_COLOR_ORDERED(k, k, k, x, row, 0, 0, 0, pvar);
+
+    }
+    else
+    {
+     /*
+      * We're not printing black, but let's adjust the CMY levels to produce
+      * better reds, greens, and blues...
+      */
+
+      unsigned ck = c - k;
+      unsigned mk = m - k;
+      unsigned yk = y - k;
+
+      ok = 0;
+      c  = ((unsigned) (65535 - rgb[1] / 4)) * ck / 65535 + k;
+      m  = ((unsigned) (65535 - rgb[2] / 4)) * mk / 65535 + k;
+      y  = ((unsigned) (65535 - rgb[0] / 4)) * yk / 65535 + k;
+    }
+
+    density = (c + m + y) >> d->overdensity_bits;
+    density += density;
+
+    if (!kptr || !(*kptr & bit))
+      {
+	PRINT_COLOR_ORDERED(c, cyan, x, row, 3, 0, 1, 2);
+	PRINT_COLOR_ORDERED(m, magenta, x, row, 3, 3, 2, 3);
+	PRINT_COLOR_ORDERED(y, yellow, x, row, 0, 3, 3, 0);
+      }
 
     /*****************************************************************
      * Advance the loop
@@ -1770,7 +2136,7 @@ dither_cmyk_n(unsigned short  *rgb,	/* I - RGB pixels */
        */
       ok = k;
       nk = k + (ditherk) / 8;
-      tk = (((c * d->c_darkness) + (m * d->m_darkness) + (y * d->y_darkness))
+      tk = (((oc * d->c_darkness) + (om * d->m_darkness) + (oy * d->y_darkness))
 	    >> 6);
       kdarkness = MAX(tk, ak);
       if (kdarkness < d->k_upper)
@@ -1876,6 +2242,9 @@ dither_cmyk_n(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.18.2.1  2000/03/29 03:23:01  rlk
+ *   Put this in for safety and for people to play with it
+ *
  *   Revision 1.18  2000/03/22 00:53:06  rlk
  *   Some more minor dithering fixup
  *
@@ -1938,5 +2307,5 @@ dither_cmyk_n(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.18 2000/03/22 00:53:06 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.18.2.1 2000/03/29 03:23:01 rlk Exp $".
  */
