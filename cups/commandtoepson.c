@@ -1,5 +1,5 @@
 /*
- * "$Id: commandtoepson.c,v 1.3 2000/06/18 20:29:56 easysw Exp $"
+ * "$Id: commandtoepson.c,v 1.4 2000/06/18 20:59:57 easysw Exp $"
  *
  *   EPSON ESC/P2 command filter for the CUPS driver development kit.
  *
@@ -52,6 +52,7 @@ main(int  argc,		/* I - Number of command-line arguments */
   FILE	*fp;		/* Command file */
   char	line[1024],	/* Line from file */
 	*lineptr;	/* Pointer into line */
+  int	feedpage;	/* Feed the page */
 
 
  /*
@@ -85,10 +86,17 @@ main(int  argc,		/* I - Number of command-line arguments */
     fp = stdin;
 
  /*
+  * Reset the printer...
+  */
+
+  pwrite("\033@", 2);
+
+ /*
   * Enter remote mode...
   */
 
-  pwrite("\033@\033(R\010\000\000REMOTE1", 15);
+  pwrite("\033(R\010\000\000REMOTE1", 13);
+  feedpage = 0;
 
  /*
   * Read the commands from the file and send the appropriate commands...
@@ -142,8 +150,9 @@ main(int  argc,		/* I - Number of command-line arguments */
       pwrite("DT\003\000\000", 5);
       putchar(phase & 255);
       putchar(phase >> 8);
+      feedpage = 1;
     }
-    else if (strncasecmp(lineptr, "PrintSelfTestPrint", 18) == 0)
+    else if (strncasecmp(lineptr, "PrintSelfTestPage", 17) == 0)
     {
      /*
       * Print version info and nozzle check...
@@ -151,6 +160,7 @@ main(int  argc,		/* I - Number of command-line arguments */
 
       pwrite("VI\002\000\000\000", 6);
       pwrite("NC\002\000\000\000", 6);
+      feedpage = 1;
     }
     else if (strncasecmp(lineptr, "ReportLevels", 12) == 0)
     {
@@ -192,6 +202,23 @@ main(int  argc,		/* I - Number of command-line arguments */
   pwrite("\033\000\000\000", 4);
 
  /*
+  * Eject the page as needed...
+  */
+
+  if (feedpage)
+  {
+    putchar(13);
+    putchar(10);
+    putchar(12);
+  }
+
+ /*
+  * Reset the printer...
+  */
+
+  pwrite("\033@", 2);
+
+ /*
   * Close the command file and return...
   */
 
@@ -203,5 +230,5 @@ main(int  argc,		/* I - Number of command-line arguments */
 
 
 /*
- * End of "$Id: commandtoepson.c,v 1.3 2000/06/18 20:29:56 easysw Exp $".
+ * End of "$Id: commandtoepson.c,v 1.4 2000/06/18 20:59:57 easysw Exp $".
  */
