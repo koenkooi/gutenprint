@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.6.4.3 2003/01/17 00:26:29 rlk Exp $"
+ * "$Id: dither.h,v 1.6.4.4 2003/01/18 20:46:57 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -174,7 +174,6 @@ extern void stp_dither_set_matrix(stp_vars_t v, const stp_dither_matrix_t *mat,
 extern void stp_dither_set_matrix_from_curve(stp_vars_t v,
 					     const stp_curve_t curve);
 extern void stp_dither_set_transition(stp_vars_t v, double);
-extern void stp_dither_set_density(stp_vars_t v, double);
 extern void stp_dither_set_randomizer(stp_vars_t v, int color, double);
 extern void stp_dither_set_ranges(stp_vars_t v, int color, int nlevels,
 				  const stp_dither_range_simple_t *ranges,
@@ -208,5 +207,5 @@ extern void stp_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.6.4.3 2003/01/17 00:26:29 rlk Exp $".
+ * End of "$Id: dither.h,v 1.6.4.4 2003/01/18 20:46:57 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101.2.5 2003/01/18 14:10:51 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.6 2003/01/18 20:46:57 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2370,7 +2370,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 			      inks->k->density *
 			      stp_get_float_parameter(nv, "Density"));
     }
-  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;

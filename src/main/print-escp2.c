@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.6 2003/01/18 14:10:51 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.7 2003/01/18 20:46:58 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -128,6 +128,7 @@ typedef struct escp2_init
   int channel_limit;
   int use_fast_360;
   int print_op;
+  int rescale_density;
   const res_t *res;
   const escp2_inkname_t *inkname;
   const input_slot_t *input_slot;
@@ -1087,8 +1088,7 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
       k_upper *= .5;
     }
 
-  if (init->output_type != OUTPUT_RAW_PRINTER &&
-      init->output_type != OUTPUT_RAW_CMYK)
+  if (init->rescale_density)
     stp_scale_float_parameter
       (nv, "Density",
        paper_density * escp2_density(init->model, init->res->resid, nv));
@@ -1205,22 +1205,21 @@ setup_inks(const escp2_init_t *init)
   inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
   if (inks)
     {
+      stp_init_debug_messages(nv);
       for (i = 0; i < init->channel_limit; i++)
 	{
 	  const escp2_variable_ink_t *ink = (*inks)[i];
 	  if (ink)
 	    {
 	      stp_dither_set_ranges(nv, i, ink->numranges, ink->range,
-				    ink->density * paper_k_upper *
-				    stp_get_float_parameter(nv, "Density"));
+				    ink->density * paper_k_upper);
 
 	      stp_dither_set_shades(nv, i, ink->numshades, ink->shades,
-				    ink->density * paper_k_upper *
-				    stp_get_float_parameter(nv, "Density"));
+				    ink->density * paper_k_upper);
 	    }
 	}
+      stp_flush_debug_messages(nv);
     }
-  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 }
 
 static int
@@ -1352,6 +1351,11 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	  return 0;
 	}
     }
+
+  if (output_type == OUTPUT_RAW_CMYK || output_type == OUTPUT_RAW_PRINTER)
+    init.rescale_density = 0;
+  else
+    init.rescale_density = 1;
 
   privdata.undersample = 1;
   privdata.denominator = 1;

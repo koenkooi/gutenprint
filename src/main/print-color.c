@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.48.2.4 2003/01/18 17:38:57 rlk Exp $"
+ * "$Id: print-color.c,v 1.48.2.5 2003/01/18 20:46:57 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1148,7 +1148,7 @@ compute_gcr_curve(const stp_vars_t vars)
       for (i = ceil(k_lower); i < k_upper; i += step)
 	{
 	  double where = (i - k_lower) / (k_upper - k_lower);
-	  tmp_data[i] = k_upper * pow(where, k_gamma) / 65535;
+	  tmp_data[i] = k_upper * (1.0 - pow(1.0 - where, k_gamma)) / 65535;
 	}
       for (i = ceil(k_upper); i < 65536; i += step)
 	tmp_data[i] = i / 65535.0;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115.2.5 2003/01/18 17:39:00 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.6 2003/01/18 20:46:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -86,6 +86,7 @@ typedef struct ink_defn
 {
   unsigned range;
   unsigned value;
+  unsigned xvalue;
   unsigned bits;
   unsigned dot_size;
   int subchannel;
@@ -160,6 +161,7 @@ typedef struct dither_channel
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
+  float sqrt_density_adjustment;
   float density_adjustment;
 
   int v;
@@ -191,9 +193,6 @@ typedef struct dither
   int dst_width;		/* Output width */
 
   float fdensity;
-  int density;			/* Desired density, 0-1.0 (scaled 0-65535) */
-  int density2;			/* Density * 2 */
-  int densityh;			/* Density / 2 */
 
   int spread;			/* With Floyd-Steinberg, how widely the */
   int spread_mask;		/* error is distributed.  This should be */
@@ -202,10 +201,6 @@ typedef struct dither
 
   int dither_type;
 
-  int d_cutoff;			/* When ordered dither is used, threshold */
-				/* above which no randomness is used. */
-  double adaptive_input;
-  int adaptive_input_set;
   int adaptive_limit;
 
   int x_aspect;			/* Aspect ratio numerator */
@@ -215,6 +210,8 @@ typedef struct dither
 
   int *offset0_table;
   int *offset1_table;
+
+  int d_cutoff;
 
   int oversampling;
   int last_line_was_empty;
@@ -553,7 +550,13 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   shade.subchannel = 0;
   shade.dot_sizes = &ds;
   shade.numsizes = 1;
+  if (stp_check_float_parameter(v, "Density"))
+    d->fdensity = stp_get_float_parameter(v, "Density");
+  else
+    d->fdensity = 1.0;
+  d->d_cutoff = 4096;
 
+  stp_init_debug_messages(v);
   for (i = 0; i < d->n_channels; i++)
     {
       stp_dither_set_ranges(v, i, 1, &r, 1.0);
@@ -561,38 +564,35 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
       PHYSICAL_CHANNEL(d, i).numshades = 0;
       /* stp_dither_set_shades(v, i, 1, &shade, 1.0); */
       PHYSICAL_CHANNEL(d, i).errs = stp_zalloc(d->error_rows * sizeof(int *));
+      PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
       switch (i)
 	{
 	case 0:
 	  if (stp_check_float_parameter(v, "BlackDensity"))
 	    PHYSICAL_CHANNEL(d, i).density_adjustment =
 	      stp_get_float_parameter(v, "BlackDensity");
-	  else
-	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
 	  break;
 	case 1:
 	  if (stp_check_float_parameter(v, "CyanDensity"))
 	    PHYSICAL_CHANNEL(d, i).density_adjustment =
 	      stp_get_float_parameter(v, "CyanDensity");
-	  else
-	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
 	  break;
 	case 2:
 	  if (stp_check_float_parameter(v, "MagentaDensity"))
 	    PHYSICAL_CHANNEL(d, i).density_adjustment =
 	      stp_get_float_parameter(v, "MagentaDensity");
-	  else
-	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
 	  break;
 	case 3:
 	  if (stp_check_float_parameter(v, "YellowDensity"))
 	    PHYSICAL_CHANNEL(d, i).density_adjustment =
 	      stp_get_float_parameter(v, "YellowDensity");
-	  else
-	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
 	  break;
 	}
+      PHYSICAL_CHANNEL(d, i).density_adjustment *= d->fdensity;
+      PHYSICAL_CHANNEL(d, i).sqrt_density_adjustment =
+	sqrt(PHYSICAL_CHANNEL(d, i).density_adjustment);
     }
+  stp_flush_debug_messages(v);
   d->offset0_table = NULL;
   d->offset1_table = NULL;
   if (xdpi > ydpi)
@@ -606,8 +606,7 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
       d->y_aspect = 1;
     }
   d->transition = 1.0;
-  d->adaptive_input = .75;
-  d->adaptive_input_set = 0;
+  d->adaptive_limit = .75 * 65535;
 
   if (d->dither_type == D_VERY_FAST)
     {
@@ -665,7 +664,6 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
     {
       stp_dither_set_randomizer(v, i, 1.0);
     }
-  stp_dither_set_density(v, 1.0);
   d->dt.channel_count = 0;
   d->dt.c = NULL;
 }
@@ -780,28 +778,10 @@ stp_dither_set_transition(stp_vars_t v, double exponent)
 }
 
 void
-stp_dither_set_density(stp_vars_t v, double density)
-{
-  dither_t *d = (dither_t *) stp_get_dither_data(v);
-  if (density > 1)
-    density = 1;
-  else if (density < 0)
-    density = 0;
-  d->fdensity = density;
-  d->density = (int) ((65535 * density) + .5);
-  d->density2 = 2 * d->density;
-  d->densityh = d->density / 2;
-  d->d_cutoff = d->density / 16;
-  d->adaptive_limit = d->density * d->adaptive_input;
-}
-
-void
 stp_dither_set_adaptive_limit(stp_vars_t v, double limit)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
-  d->adaptive_input = limit;
-  d->adaptive_input_set = 1;
-  d->adaptive_limit = d->density * limit;
+  d->adaptive_limit = limit;
 }
 
 void
@@ -829,7 +809,6 @@ stp_dither_set_ink_spread(stp_vars_t v, int spread)
 	}
     }
   d->spread_mask = (1 << d->spread) - 1;
-  d->adaptive_limit = d->density * d->adaptive_input;
 }
 
 void
@@ -903,6 +882,9 @@ stp_dither_finalize_ranges(stp_vars_t v, dither_channel_t *s)
 		  i, s->ranges[i].lower->value, s->ranges[i].upper->value,
 		  s->ranges[i].lower->range, s->ranges[i].upper->range);
       stp_dprintf(STP_DBG_INK, v,
+		  "    xvalue[0] %d xvalue[1] %d\n",
+		  s->ranges[i].lower->xvalue, s->ranges[i].upper->xvalue);
+      stp_dprintf(STP_DBG_INK, v,
 		  "       bits[0] %d bits[1] %d subchannel[0] %d subchannel[1] %d\n",
 		  s->ranges[i].lower->bits, s->ranges[i].upper->bits,
 		  s->ranges[i].lower->subchannel, s->ranges[i].upper->subchannel);
@@ -910,16 +892,13 @@ stp_dither_finalize_ranges(stp_vars_t v, dither_channel_t *s)
 		  "       rangespan %d valuespan %d same_ink %d equal %d\n",
 		  s->ranges[i].range_span, s->ranges[i].value_span,
 		  s->ranges[i].is_same_ink, s->ranges[i].is_equal);
-      if (!d->adaptive_input_set && i > 0 &&
-	  s->ranges[i].lower->range >= d->adaptive_limit)
+      if (i > 0 && s->ranges[i].lower->range >= d->adaptive_limit)
 	{
 	  d->adaptive_limit = s->ranges[i].lower->range + 1;
 	  if (d->adaptive_limit > 65535)
 	    d->adaptive_limit = 65535;
-	  d->adaptive_input = (double) d->adaptive_limit / (double) d->density;
-	  stp_dprintf(STP_DBG_INK, v,
-		      "Setting adaptive limit to %d, input %f\n",
-		      d->adaptive_limit, d->adaptive_input);
+	  stp_dprintf(STP_DBG_INK, v, "Setting adaptive limit to %d\n",
+		      d->adaptive_limit);
 	}
     }
   if (s->nlevels == 1 && s->ranges[0].upper->bits == 1 &&
@@ -941,6 +920,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
 			      const stp_dither_range_simple_t *ranges,
 			      double density)
 {
+  double sdensity = s->density_adjustment;
   int i;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -954,7 +934,9 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
   s->ink_list = (ink_defn_t *)
     stp_zalloc((s->nlevels + 1) * sizeof(ink_defn_t));
   s->bit_max = 0;
+  density *= sdensity;
   s->density = density * 65535;
+  stp_init_debug_messages(v);
   stp_dprintf(STP_DBG_INK, v,
 	      "stp_dither_set_generic_ranges nlevels %d density %f\n",
 	      nlevels, density);
@@ -966,6 +948,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
   s->ranges[0].upper = &s->ink_list[1];
   s->ink_list[0].range = 0;
   s->ink_list[0].value = ranges[0].value * 65535.0;
+  s->ink_list[0].xvalue = ranges[0].value * 65535.0 * sdensity;
   s->ink_list[0].bits = ranges[0].bit_pattern;
   s->ink_list[0].subchannel = ranges[0].subchannel;
   s->ink_list[0].dot_size = ranges[0].dot_size;
@@ -978,6 +961,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
   s->ink_list[1].value = ranges[0].value * 65535.0;
   if (s->ink_list[1].value > 65535)
     s->ink_list[1].value = 65535;
+  s->ink_list[1].xvalue = ranges[0].value * 65535.0 * sdensity;
   s->ink_list[1].bits = ranges[0].bit_pattern;
   if (ranges[0].bit_pattern > s->bit_max)
     s->bit_max = ranges[0].bit_pattern;
@@ -1000,6 +984,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
 	  s->ink_list[l].value = ranges[i].value * 65535.0;
 	  if (s->ink_list[l].value > 65535)
 	    s->ink_list[l].value = 65535;
+	  s->ink_list[l].xvalue = ranges[i].value * 65535.0 * sdensity;
 	  s->ink_list[l].bits = ranges[i].bit_pattern;
 	  if (ranges[i].bit_pattern > s->bit_max)
 	    s->bit_max = ranges[i].bit_pattern;
@@ -1018,6 +1003,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
       s->ranges[i].value_span = s->ink_list[i+1].value - s->ink_list[i].value;
     }
   stp_dither_finalize_ranges(v, s);
+  stp_flush_debug_messages(v);
 }
 
 static void
@@ -1026,6 +1012,7 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
 				   const stp_dither_range_full_t *ranges,
 				   double density)
 {
+  double sdensity = s->density_adjustment;
   int i, j, k;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -1039,7 +1026,9 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
   s->ink_list = (ink_defn_t *)
     stp_zalloc((s->nlevels * 2) * sizeof(ink_defn_t));
   s->bit_max = 0;
+  density *= sdensity;
   s->density = density * 65535;
+  stp_init_debug_messages(v);
   stp_dprintf(STP_DBG_INK, v,
 	      "stp_dither_set_ranges nlevels %d density %f\n",
 	      nlevels, density);
@@ -1058,7 +1047,8 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
 	    s->bit_max = ranges[i].bits[k];
 	  s->ink_list[2*j+k].dot_size = ranges[i].bits[k]; /* FIXME */
 	  s->ink_list[2*j+k].value = ranges[i].value[k] * 65535;
-	  s->ink_list[2*j+k].range = s->ink_list[2*j+k].value*density;
+	  s->ink_list[2*j+k].xvalue = ranges[i].value[k] * 65535 * sdensity;
+	  s->ink_list[2*j+k].range = s->ink_list[2 * j + k].value * density;
 	  s->ink_list[2*j+k].bits = ranges[i].bits[k];
 	  s->ink_list[2*j+k].subchannel = ranges[i].subchannel[k];
 	}
@@ -1074,6 +1064,7 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
   s->ink_list[2*j+1] = s->ink_list[2*j];
   s->ink_list[2*j+1].range = 65535;
   s->ink_list[2*j+1].value = 65535;	/* ??? Is this correct ??? */
+  s->ink_list[2*j+1].xvalue = 65535 * sdensity;	/* ??? Is this correct ??? */
   s->ranges[j].lower = &s->ink_list[2*j];
   s->ranges[j].upper = &s->ink_list[2*j+1];
   s->ranges[j].range_span =
@@ -1081,6 +1072,7 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
   s->ranges[j].value_span = 0;
   s->nlevels = j+1;
   stp_dither_finalize_ranges(v, s);
+  stp_flush_debug_messages(v);
 }
 
 void
@@ -1344,10 +1336,11 @@ update_dither(dither_t *d, int channel, int width,
   int i, dist, dist1;
   int delta, delta1;
   int offset;
+  int xs = 65535 / CHANNEL(d, channel).density_adjustment;
   if (tmp == 0)
     return error0[direction];
-  if (tmp > 65535)
-    tmp = 65535;
+  if (tmp > xs)
+    tmp = xs;
   if (d->spread >= 16 || o >= 2048)
     {
       tmp += tmp;
@@ -1428,6 +1421,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
   int base = dc->b;
   int density = dc->o;
   int adjusted = dc->v;
+  int xdensity = density;
   unsigned randomizer = dc->randomizer;
   dither_matrix_t *pick_matrix = &(dc->pick);
   dither_matrix_t *dither_matrix = &(dc->dithermat);
@@ -1452,6 +1446,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
     return adjusted;
   if (density > 65535)
     density = 65535;
+  xdensity *= dc->density_adjustment;
 
   /*
    * Look for the appropriate range into which the input value falls.
@@ -1465,7 +1460,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
     {
       dd = &(dc->ranges[i]);
 
-      if (density <= dd->lower->range)
+      if (xdensity <= dd->lower->range)
 	continue;
 
       /*
@@ -1477,7 +1472,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 	{
 	  dither_type -= D_ADAPTIVE_BASE;
 
-	  if (base <= d->adaptive_limit)
+	  if (i < levels || base <= d->adaptive_limit)
 	    {
 	      dither_type = D_ORDERED;
 	      dither_value = base;
@@ -1485,6 +1480,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 	  else if (adjusted <= 0)
 	    return adjusted;
 	}
+      dither_value *= dc->density_adjustment;
 
       /*
        * Where are we within the range.  If we're going to print at
@@ -1501,7 +1497,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 
       if (!dd->is_equal)
 	rangepoint =
-	  ((unsigned) (density - lower->range)) * 65535 / dd->range_span;
+	  ((unsigned) (xdensity - lower->range)) * 65535 / dd->range_span;
 
       /*
        * Compute the virtual dot size that we're going to print.
@@ -1576,7 +1572,6 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      dither_value = dither_value * d->fdensity * dc->density_adjustment;
       if (dither_value >= vmatrix)
 	{
 	  ink_defn_t *subc;
@@ -1585,7 +1580,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 	    subc = upper;
 	  else
 	    {
-	      rangepoint = rangepoint * dc->density / 65535u;
+	      rangepoint *= dc->density_adjustment;
 	      if (rangepoint >= ditherpoint(d, pick_matrix, x))
 		subc = upper;
 	      else
@@ -1613,9 +1608,18 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 		}
 	    }
 	  if (dither_type & D_ORDERED_BASE)
-	    adjusted = -(int) v / 2;
+	    {
+	      double adj = -(int) v;
+	      adj /= 2.0;
+	      adj /= dc->density_adjustment;
+	      adjusted = adj;
+	    }
 	  else
-	    adjusted -= v;
+	    {
+	      double adj = v;
+	      adj /= dc->density_adjustment;
+	      adjusted -= adj;
+	    }
 	}
       return adjusted;
     }
@@ -1628,6 +1632,7 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
 {
   int density = dc->o;
   int adjusted = dc->v;
+  int xdensity = density;
   dither_matrix_t *pick_matrix = &(dc->pick);
   dither_matrix_t *dither_matrix = &(dc->dithermat);
   unsigned rangepoint;
@@ -1650,6 +1655,8 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
     return 0;
   if (density > 65535)
     density = 65535;
+  dither_value *= dc->density_adjustment;
+  xdensity *= dc->density_adjustment;
 
   /*
    * Look for the appropriate range into which the input value falls.
@@ -1663,7 +1670,7 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
     {
       dd = &(dc->ranges[i]);
 
-      if (density <= dd->lower->range)
+      if (xdensity <= dd->lower->range)
 	continue;
 
       /*
@@ -1680,10 +1687,11 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
       upper = dd->upper;
 
       if (dd->is_equal)
-	rangepoint = 32768;
+	rangepoint = 32768 * dc->density_adjustment;
       else
 	rangepoint =
-	  ((unsigned) (density - lower->range)) * 65535 / dd->range_span;
+	  ((unsigned) (xdensity - lower->range)) * 65535 / dd->range_span *
+	  dc->density_adjustment;
 
       /*
        * Compute the virtual dot size that we're going to print.
@@ -1722,7 +1730,6 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      dither_value = dither_value * d->fdensity * dc->density_adjustment;
       if (dither_value >= vmatrix)
 	{
 	  ink_defn_t *subc;
@@ -1731,7 +1738,6 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
 	    subc = upper;
 	  else
 	    {
-	      rangepoint = rangepoint * dc->density / 65535u;
 	      if (rangepoint >= ditherpoint(d, pick_matrix, x))
 		subc = upper;
 	      else
@@ -1771,6 +1777,7 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
 {
   int density = dc->o;
   int adjusted = dc->v;
+  int xdensity = density;
   dither_matrix_t *dither_matrix = &(dc->dithermat);
   int i;
   int levels = dc->nlevels - 1;
@@ -1780,6 +1787,8 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
 
   if (density <= 0 || adjusted <= 0)
     return;
+  adjusted *= dc->density_adjustment;
+  xdensity *= dc->density_adjustment;
   for (i = levels; i >= 0; i--)
     {
       dither_segment_t *dd = &(dc->ranges[i]);
@@ -1790,7 +1799,7 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
       ink_defn_t *subc;
 
       range0 = dd->lower->range;
-      if (density <= range0)
+      if (xdensity <= range0)
 	continue;
       dpoint = ditherpoint(d, dither_matrix, x);
 
@@ -1798,20 +1807,19 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
 	subc = dd->upper;
       else
 	{
-	  rangepoint = ((density - range0) << 16) / dd->range_span;
-	  rangepoint = (rangepoint * dc->density) >> 16;
+	  rangepoint = ((xdensity - range0) << 16) / dd->range_span *
+	    dc->density_adjustment;
 	  if (rangepoint >= dpoint)
 	    subc = dd->upper;
 	  else
 	    subc = dd->lower;
 	}
-      vmatrix = (subc->value * dpoint) >> 16;
+      vmatrix = ((subc->value * dpoint) >> 16);
 
       /*
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      adjusted = adjusted * d->fdensity * dc->density_adjustment;
       if (adjusted >= vmatrix && dc->ptrs[subc->subchannel])
 	{
 	  int subchannel = subc->subchannel;
@@ -2299,7 +2307,8 @@ stp_dither_raw_cmyk_very_fast(const unsigned short  *cmyk,
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
 	  dither_channel_t *dc = &(CHANNEL(d, i));
-	  if (dc->ptrs[0] && dc->v > ditherpoint_fast(d, &(dc->dithermat), x))
+	  if (dc->ptrs[0] && (dc->v * CHANNEL(d, i).density_adjustment >
+	       ditherpoint_fast(d, &(dc->dithermat), x)))
 	    {
 	      set_row_ends(dc, x, 0);
 	      dc->ptrs[0][d->ptr_offset] |= bit;
