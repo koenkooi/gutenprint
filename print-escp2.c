@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.62 2000/02/08 00:26:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.63 2000/02/08 00:29:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,10 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.63  2000/02/08 00:29:18  rlk
+ *   Is the separation really 6 lines for the 740?  That's very unusual.
+ *   Usually it's 8 lines.  But we shall see...
+ *
  *   Revision 1.62  2000/02/08 00:26:18  rlk
  *   Some kind of silly magic init string that it appears these printers want.
  *
@@ -492,7 +496,7 @@ model_cap_t model_capabilities[] =
   (MODEL_PAPER_LARGE | MODEL_IMAGEABLE_600 | MODEL_INIT_440
    | MODEL_HASBLACK_YES | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT
    | MODEL_VARIABLE_4
-   | MODEL_1440DPI_YES | MODEL_MAKE_NOZZLES(48) | MODEL_MAKE_SEPARATION(6)),
+   | MODEL_1440DPI_YES | MODEL_MAKE_NOZZLES(48) | MODEL_MAKE_SEPARATION(8)),
   /* Stylus Color 900 */
   (MODEL_PAPER_LARGE | MODEL_IMAGEABLE_600 | MODEL_INIT_440
    | MODEL_HASBLACK_YES | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT
@@ -2703,5 +2707,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.62 2000/02/08 00:26:18 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.63 2000/02/08 00:29:18 rlk Exp $".
  */
