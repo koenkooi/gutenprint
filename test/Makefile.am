@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2001/11/10 14:42:43 rlk Exp $
+## $Id: Makefile.am,v 1.31 2001/12/14 02:47:15 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@ AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
 
-TESTS = testdither run-weavetest
+TESTS = run-testdither run-weavetest
 
 
 ## Programs
@@ -70,4 +70,4 @@ $(LIBGIMPPRINT_LIBS):
 CLEANFILES = $(EXTRA_PROGRAMS) mixed-color-1bit.ppm
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
+EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest run-testdither

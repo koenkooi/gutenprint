@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53 2001/11/10 00:12:20 rlk Exp $"
+ * "$Id: print-util.c,v 1.54 2001/12/14 02:47:15 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1588,6 +1588,19 @@ stp_malloc (size_t size)
   register void *memptr = NULL;
 
   if ((memptr = malloc (size)) == NULL)
+    {
+      fputs("Virtual memory exhausted.\n", stderr);
+      exit (EXIT_FAILURE);
+    }
+  return (memptr);
+}
+
+void *
+stp_realloc (void *ptr, size_t size)
+{
+  register void *memptr = NULL;
+
+  if (size > 0 && ((memptr = realloc (ptr, size)) == NULL))
     {
       fputs("Virtual memory exhausted.\n", stderr);
       exit (EXIT_FAILURE);
