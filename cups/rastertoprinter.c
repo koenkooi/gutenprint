@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.15 2001/01/20 02:34:15 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.16 2001/01/20 23:10:58 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -300,7 +300,8 @@ main(int  argc,				/* I - Number of command-line arguments */
     else
       fprintf(stderr, "ERROR: Unable to get media size!\n");
 
-    opts = (*(printer->parameters))(printer, NULL, "Resolution", &num_opts);
+    opts = (*(printer->printfuncs->parameters))(printer, NULL, "Resolution",
+						&num_opts);
     if (cups.header.cupsCompression < 0 ||
 	cups.header.cupsCompression >= num_opts)
       fprintf(stderr, "ERROR: Unable to set printer resolution!\n");
@@ -323,7 +324,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: v.ink_type |%s|\n", v.ink_type);
     fprintf(stderr, "DEBUG: v.dither_algorithm |%s|\n", v.dither_algorithm);
     if (stp_verify_printer_params(printer, &v))
-      (*printer->print)(printer, stdout, &theImage, &v);
+      (*printer->printfuncs->print)(printer, stdout, &theImage, &v);
     else
       fputs("ERROR: Invalid printer settings!\n", stderr);
 
@@ -561,5 +562,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 }
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.15 2001/01/20 02:34:15 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.16 2001/01/20 23:10:58 rlk Exp $".
  */
