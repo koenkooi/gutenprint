@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.46 2002/12/09 21:53:58 rleigh Exp $
+## $Id: Makefile.am,v 1.47 2002/12/27 02:04:53 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -109,7 +109,7 @@ print-papers.c: $(srcdir)/papers-oldlist.h
 $(srcdir)/papers-oldlist.h: ../printdef/xmldef $(srcdir)/papers.xml
 	../printdef/xmldef papers $(srcdir)/papers.xml > $(srcdir)/papers-oldlist.h
 
-../printdef/xmldef: $(addprefix ../printdef/, printdef.c printdef.h)
+../printdef/xmldef: $(addprefix ../printdef/, printdef.c)
 	cd ../printdef ; \
 	$(MAKE) xmldef
 
