@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.14 2004/04/11 02:45:46 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.15 2004/04/14 02:15:40 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -66,7 +66,7 @@ do							\
 digit		[0-9]
 integer		[-+]?{digit}+
 float		[-+]?{digit}+(\.{digit}+)?([eE][-+]?{digit}+)?
-string		([\"][^\"]+[\"])|([a-zA-Z0-9_][-a-zA-Z0-9_]*)
+string		([\"][^\"]+[\"])|([a-zA-Z0-9_][-a-zA-Z0-9_]*)|([\'][^\']*[\'])
 ws		[ \t]+
 
 %%
