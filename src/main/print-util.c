@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.10 2002/06/05 23:52:05 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.10.2.1 2002/07/22 02:50:24 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1448,6 +1448,11 @@ stp_minimum_settings()
 {
   return (stp_vars_t) &min_vars;
 }
+
+/*
+ * We cannot avoid use of the (non-ANSI) vsnprintf here; ANSI does
+ * not provide a safe, length-limited sprintf function.
+ */
 
 #define STP_VASPRINTF(result, bytes, format)				\
 {									\
