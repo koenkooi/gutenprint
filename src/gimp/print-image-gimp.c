@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: print-image-gimp.c,v 1.3 2001/05/12 15:17:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -292,19 +292,22 @@ Image_get_row(stp_image_t *image, unsigned char *data, int row)
   else
     gimp_pixel_rgn_get_row(&(i->rgn), data,
                            i->ox, i->oy + row * i->increment, i->w);
-  if (i->mirror) {
-    /* Flip row -- probably inefficiently */
-    int f, l, b = i->drawable->bpp;
-    for (f = 0, l = i->w - 1; f < l; f++, l--) {
-      int c;
-      unsigned char tmp;
-      for (c = 0; c < b; c++) {
-        tmp = data[f*b+c];
-        data[f*b+c] = data[l*b+c];
-        data[l*b+c] = tmp;
-      }
+  if (i->mirror)
+    {
+      /* Flip row -- probably inefficiently */
+      int f, l, b = i->drawable->bpp;
+      for (f = 0, l = i->w - 1; f < l; f++, l--)
+	{
+	  int c;
+	  unsigned char tmp;
+	  for (c = 0; c < b; c++)
+	    {
+	      tmp = data[f*b+c];
+	      data[f*b+c] = data[l*b+c];
+	      data[l*b+c] = tmp;
+	    }
+	}
     }
-  }
 }
 
 static void
@@ -334,5 +337,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.3 2001/05/12 15:17:49 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.10 2001/05/01 23:39:48 rlk Exp $"
+ * "$Id: print.c,v 1.11 2001/05/12 15:17:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -220,7 +220,7 @@ usr1_handler (int signal)
   usr1_interrupt = 1;
 }
 
-static void
+void
 gimp_writefunc(void *file, const char *buf, size_t bytes)
 {
   FILE *prn = (FILE *)file;
@@ -1432,5 +1432,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.10 2001/05/01 23:39:48 rlk Exp $".
+ * End of "$Id: print.c,v 1.11 2001/05/12 15:17:49 rlk Exp $".
  */
