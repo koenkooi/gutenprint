@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.92 2000/05/05 15:14:09 gandy Exp $"
+ * "$Id: print.c,v 1.93 2000/05/05 15:38:03 mitsch Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -769,7 +769,7 @@ printrc_load(void)
   * Generate the filename for the current user...
   */
 
-#ifdef GIMP_1_0
+#if (GIMP_MINOR_VERSION == 0)
   home = getenv("HOME");
   if (home == NULL)
     filename=g_strdup("/.gimp/printrc");
@@ -916,7 +916,7 @@ printrc_save(void)
   * Generate the filename for the current user...
   */
 
-#ifdef GIMP_1_0  
+#if (GIMP_MINOR_VERSION == 0)
   home = getenv("HOME");
   if (home == NULL)
     filename=g_strdup("/.gimp/printrc");
@@ -1151,5 +1151,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.92 2000/05/05 15:14:09 gandy Exp $".
+ * End of "$Id: print.c,v 1.93 2000/05/05 15:38:03 mitsch Exp $".
  */
