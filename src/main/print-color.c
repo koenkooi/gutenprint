@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.85 2003/07/12 21:27:30 rlk Exp $"
+ * "$Id: print-color.c,v 1.86 2003/07/18 21:56:07 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -135,7 +135,7 @@ static const float_param_t float_parameters[] =
   },
   {
     {
-      "Cyan", N_("Cyan"),
+      "CyanGamma", N_("Cyan"),
       N_("Adjust the cyan gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 1, 1
@@ -143,7 +143,7 @@ static const float_param_t float_parameters[] =
   },
   {
     {
-      "Magenta", N_("Magenta"),
+      "MagentaGamma", N_("Magenta"),
       N_("Adjust the magenta gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 2, 1
@@ -151,7 +151,7 @@ static const float_param_t float_parameters[] =
   },
   {
     {
-      "Yellow", N_("Yellow"),
+      "YellowGamma", N_("Yellow"),
       N_("Adjust the yellow gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 3, 1
@@ -180,7 +180,7 @@ static const float_param_t float_parameters[] =
 #endif
   {
     {
-      "Black", N_("GCR Transition"),
+      "BlackGamma", N_("GCR Transition"),
       N_("Adjust the gray component transition rate"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1

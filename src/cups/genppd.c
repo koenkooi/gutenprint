@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.77 2003/07/12 23:41:47 rlk Exp $"
+ * "$Id: genppd.c,v 1.78 2003/07/18 21:56:07 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -85,8 +85,6 @@
 #ifndef CUPS_PPD_PS_LEVEL
 #  define CUPS_PPD_PS_LEVEL 3
 #endif
-#include "gimp-print-cups.h"
-
 
 /*
  * File handling stuff...
@@ -323,7 +321,6 @@ main(int  argc,			    /* I - Number of command-line arguments */
  */
 
   stp_init();
-  initialize_stp_options();
 
  /*
   * Set the language...
@@ -1373,5 +1370,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.77 2003/07/12 23:41:47 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.78 2003/07/18 21:56:07 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.58 2003/06/20 00:54:41 rlk Exp $"
+ * "$Id: printers.c,v 1.59 2003/07/18 21:56:07 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -688,10 +688,10 @@ typedef struct
 
 static const stpi_xml_prop_t stpi_xml_props[] =
 {
-  { "black", "Black" },
-  { "cyan", "Cyan" },
-  { "yellow", "Yellow" },
-  { "magenta", "Magenta" },
+  { "black", "BlackGamma" },
+  { "cyan", "CyanGamma" },
+  { "yellow", "YellowGamma" },
+  { "magenta", "MagentaGamma" },
   { "brightness", "Brightness" },
   { "gamma", "Gamma" },
   { "density", "Density" },
