@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/12/01 17:25:01 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2001/12/02 03:02:35 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -84,11 +84,10 @@ html: html-stamp
 html-stamp: $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS) $(info_TEXINFOS))
 	$(RM) -rf $(HTMLDIR)-tmp
 	mkdir $(HTMLDIR)-tmp
-	if test -n "$(IMAGES)" ; then \
-	  for image in $(addprefix $(srcdir)/, $(IMAGES)) ; do \
-	    cp -p $$image $(HTMLDIR)-tmp ; \
-	  done ; \
-	fi
+	images="$(addprefix $(srcdir)/, $(IMAGES))"; \
+	for image in $$images ; do \
+	  cp -p $$image $(HTMLDIR)-tmp ; \
+	done
 	cd $(HTMLDIR)-tmp ; \
 	$(TEXI2HTML) -menu -split_node -number -expandinfo \
 	      -I ../$(srcdir) ../$(srcdir)/$(MANUAL).texi 2>&1
