@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.6 2000/08/06 21:00:13 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.7 2000/09/02 21:52:17 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -20,14 +20,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * Contents:
- *
- *   See print.h for prototypes
- *
- * Revision History:
- *
- *   See ChangeLog
  */
 
 #include "print_gimp.h"
@@ -294,5 +286,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.6 2000/08/06 21:00:13 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.7 2000/09/02 21:52:17 rlk Exp $".
  */

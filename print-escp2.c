@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.232 2000/09/02 01:28:16 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.233 2000/09/02 21:52:17 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -19,18 +19,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * Contents:
- *
- *   escp2_parameters()     - Return the parameter values for the given
- *                            parameter.
- *   escp2_imageable_area() - Return the imageable area of the page.
- *   escp2_print()          - Print an image to an EPSON printer.
- *   escp2_write()          - Send 6-color ESC/P2 graphics using TIFF packbits compression.
- *
- * Revision History:
- *
- *   See ChangeLog
  */
 
 #ifndef WEAVETEST
@@ -1743,7 +1731,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
   int 		output_type = v->output_type;
   int		orientation = v->orientation;
   char          *ink_type = v->ink_type;
-  float 	scaling = v->scaling;
+  double	scaling = v->scaling;
   int		top = v->top;
   int		left = v->left;
   int		y;		/* Looping vars */

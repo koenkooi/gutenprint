@@ -1,4 +1,4 @@
-/* $Id: escp2-unprint.c,v 1.2 2000/06/15 11:50:57 rlk Exp $ */
+/* $Id: escp2-unprint.c,v 1.3 2000/09/02 21:52:17 rlk Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -166,11 +166,11 @@ void mix_ink(ppmpixel p, int c, unsigned int a) {
 
   /* this is pretty crude */
 
-  float ink[3];
-  float size;
+  double ink[3];
+  double size;
 
   if (pstate.dotsize&0x10) {
-    size=(float)a/3.0;
+    size=(double)a/3.0;
   } else {
     size=1.0;
   }

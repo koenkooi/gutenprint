@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.110 2000/08/30 17:16:45 davehill Exp $"
+ * "$Id: print.c,v 1.111 2000/09/02 21:52:18 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -19,27 +19,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * Contents:
- *
- *   main()                   - Main entry - just call gimp_main()...
- *   query()                  - Respond to a plug-in query...
- *   run()                    - Run the plug-in...
- *   print_dialog()           - Pop up the print dialog...
- *   dialog_create_ivalue()   - Create an integer value control...
- *   dialog_iscale_update()   - Update the value field using the scale.
- *   dialog_ientry_update()   - Update the value field using the text entry.
- *   print_driver_callback()  - Update the current printer driver...
- *   media_size_callback()    - Update the current media size...
- *   print_command_callback() - Update the print command...
- *   output_type_callback()   - Update the current output type...
- *   print_callback()         - Start the print...
- *   cancel_callback()        - Cancel the print...
- *   close_callback()         - Exit the print dialog application.
- *
- * Revision History:
- *
- *   See ChangeLog
  */
 
 #include "print_gimp.h"
@@ -1184,5 +1163,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.110 2000/08/30 17:16:45 davehill Exp $".
+ * End of "$Id: print.c,v 1.111 2000/09/02 21:52:18 rlk Exp $".
  */
