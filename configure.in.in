@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.82 2001/10/06 21:19:07 rlk Exp $
+dnl $Id: configure.in.in,v 1.83 2001/10/11 01:50:51 andystewart Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -317,6 +317,10 @@ AC_PATH_PROG(DB2PDF, db2pdf)
 AC_PATH_PROG(DB2PS, db2ps)
 AC_PATH_PROG(DB2HTML, db2html)
 AC_PATH_PROG(PS2PDF, ps2pdf)
+AC_PATH_PROG(PDFJADETEX, pdfjadetex)
+if test x${PDFJADETEX} = x ; then
+  AC_MSG_WARN([PDF documentation cannot be generated!])
+fi
 AC_PATH_PROG(JADE, jade)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(PS2PDF, ps2pdf)
