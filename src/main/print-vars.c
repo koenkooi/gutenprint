@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.41 2003/03/16 23:07:45 rlk Exp $"
+ * "$Id: print-vars.c,v 1.42 2003/03/19 00:14:34 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1183,8 +1183,7 @@ stp_set_printer_defaults(stp_vars_t v, const stp_printer_t p)
   for (i = 0; i < count; i++)
     {
       const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->p_class == STP_PARAMETER_CLASS_FEATURE ||
-	  p->p_class == STP_PARAMETER_CLASS_PAGE_SIZE)
+      if (p->is_mandatory)
 	{
 	  stp_describe_parameter(v, p->name, &desc);
 	  switch (p->p_type)
