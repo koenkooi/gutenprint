@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.23 2001/10/23 23:22:55 rlk Exp $
+## $Id: Makefile.am,v 1.24 2001/10/27 17:16:37 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ IMAGES = \
  print-color.png \
  print-main.png \
  print-setup.png
-   
+
 EPS_IMAGES = $(addsuffix .eps,$(basename $(IMAGES)))
 
 if MAINTAINER_MODE

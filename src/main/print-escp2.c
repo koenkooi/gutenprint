@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.137 2001/10/26 12:00:22 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.138 2001/10/27 17:16:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3206,7 +3206,7 @@ verify_resolution(const res_t *res,
     }
   return 0;
 }
-  
+
 
 /*
  * 'escp2_parameters()' - Return the parameter values for the given parameter.

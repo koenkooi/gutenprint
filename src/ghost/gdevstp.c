@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.13 2001/09/24 02:46:44 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.14 2001/10/27 17:16:38 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -520,7 +520,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
       free(pinktypestr);
       free(palgorithmstr);
       free(pqualitystr);
-      
+
       return code;
     }
 
