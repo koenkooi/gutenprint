@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.24 2003/07/12 21:20:56 rlk Exp $"
+ * "$Id: xml.c,v 1.25 2003/07/23 01:51:27 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -243,7 +243,7 @@ stpi_xml_parse_file(const char *file) /* File to parse */
   if (cur == NULL || cur->type != MXML_ELEMENT)
     {
       stpi_erprintf("stp_xml_parse_file: %s: parse error\n", file);
-      stpi_mxmlDelete(cur);
+      stpi_mxmlDelete(doc);
       return 1;
     }
 
@@ -252,7 +252,7 @@ stpi_xml_parse_file(const char *file) /* File to parse */
       stpi_erprintf
 	("XML file of the wrong type, root node is %s != gimp-print",
 	 cur->value.element.name);
-      stpi_mxmlDelete(cur);
+      stpi_mxmlDelete(doc);
       return 1;
     }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml.h,v 1.3 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: mxml.h,v 1.4 2003/07/23 01:51:27 rlk Exp $"
  *
  * Header file for mini-XML, a small XML-like file parsing library.
  *
@@ -136,6 +136,8 @@ extern mxml_node_t	*stpi_mxmlFindElement(mxml_node_t *node, mxml_node_t *top,
 					 const char *value, int descend);
 extern mxml_node_t	*stpi_mxmlLoadFile(mxml_node_t *top, FILE *fp,
 			              mxml_type_t (*cb)(mxml_node_t *));
+extern mxml_node_t	*stpi_mxmlLoadString(mxml_node_t *top, const char *s,
+			                mxml_type_t (*cb)(mxml_node_t *));
 extern mxml_node_t	*stpi_mxmlNewElement(mxml_node_t *parent, const char *name);
 extern mxml_node_t	*stpi_mxmlNewInteger(mxml_node_t *parent, int integer);
 extern mxml_node_t	*stpi_mxmlNewOpaque(mxml_node_t *parent, const char *opaque);
@@ -143,8 +145,13 @@ extern mxml_node_t	*stpi_mxmlNewReal(mxml_node_t *parent, double real);
 extern mxml_node_t	*stpi_mxmlNewText(mxml_node_t *parent, int whitespace,
 			             const char *string);
 extern void		stpi_mxmlRemove(mxml_node_t *node);
+extern char		*stpi_mxmlSaveAllocString(mxml_node_t *node,
+			        	     int (*cb)(mxml_node_t *, int));
 extern int		stpi_mxmlSaveFile(mxml_node_t *node, FILE *fp,
 			             int (*cb)(mxml_node_t *, int));
+extern int		stpi_mxmlSaveString(mxml_node_t *node, char *buffer,
+			               int bufsize,
+			               int (*cb)(mxml_node_t *, int));
 extern mxml_node_t	*stpi_mxmlWalkNext(mxml_node_t *node, mxml_node_t *top,
 			              int descend);
 extern mxml_node_t	*stpi_mxmlWalkPrev(mxml_node_t *node, mxml_node_t *top,
@@ -162,5 +169,5 @@ extern mxml_node_t	*stpi_mxmlWalkPrev(mxml_node_t *node, mxml_node_t *top,
 
 
 /*
- * End of "$Id: mxml.h,v 1.3 2003/06/20 00:15:13 rlk Exp $".
+ * End of "$Id: mxml.h,v 1.4 2003/07/23 01:51:27 rlk Exp $".
  */
