@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.67 2003/06/03 20:17:38 rleigh Exp $"
+ * "$Id: print-ps.c,v 1.68 2003/06/20 00:54:41 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -67,37 +67,37 @@ static const stp_parameter_t the_parameters[] =
     "PageSize", N_("Page Size"),
     N_("Size of the paper being printed to"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
     "MediaType", N_("Media Type"),
     N_("Type of media (plain paper, photo paper, etc.)"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
     "InputSlot", N_("Media Source"),
     N_("Source (input slot) of the media"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
     "InkType", N_("Ink Type"),
     N_("Type of ink in the printer"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
     "Resolution", N_("Resolution"),
     N_("Resolution and quality of the print"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
     "PPDFile", N_("PPDFile"),
     N_("PPD File"),
     STP_PARAMETER_TYPE_FILE, STP_PARAMETER_CLASS_FEATURE,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
 };
 
