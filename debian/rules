@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.10 2001/07/14 18:05:45 sharkey Exp $
+# $Id: rules,v 1.2.2.11 2001/07/14 18:18:16 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -11,7 +11,7 @@ export DH_COMPAT=2
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-UPSTREAM_VERSION = $(shell dpkg-parsechangelog | grep ^Version | sed "s/.* //" | sed "s/-[^-]*//")
+UPSTREAM_VERSION = $(shell dpkg-parsechangelog | grep ^Version | sed "s/.* //" | sed "s/-[^-]*$$//")
 
 build: build-stamp debian/control
 build-stamp: configure
