@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.90 2005/04/03 17:36:18 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.91 2005/04/05 00:14:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -237,6 +237,13 @@ typedef struct
   const inklist_t *const *inklists;
   short n_inklists;
 } inkgroup_t;
+
+typedef struct
+{
+  const char *listname;
+  int count;
+  const char *const *names;
+} channel_name_t;
     
 
 /*
@@ -496,6 +503,7 @@ typedef struct escp2_printer
   const stp_raw_t *postinit_remote_sequence;
 /*****************************************************************************/
   const printer_weave_list_t *const printer_weaves;
+  const channel_name_t *channel_names;
 } stpi_escp2_printer_t;
 
 extern const stpi_escp2_printer_t stpi_escp2_model_capabilities[];
@@ -684,5 +692,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.90 2005/04/03 17:36:18 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.91 2005/04/05 00:14:22 rlk Exp $".
  */

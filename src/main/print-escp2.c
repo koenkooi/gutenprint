@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.334 2005/04/03 17:36:17 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.335 2005/04/05 00:14:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -307,6 +307,12 @@ static const stp_parameter_t the_parameters[] =
     "InkChannels", N_("Ink Channels"), N_("Advanced Printer Functionality"),
     N_("Ink Channels"),
     STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_INTERNAL, 0, 0, -1, 0, 0
+  },
+  {
+    "ChannelNames", N_("Channel Names"), N_("Advanced Printer Functionality"),
+    N_("Channel Names"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_INTERNAL, 0, 0, -1, 0, 0
   },
   {
@@ -647,6 +653,7 @@ DEF_COMPOSITE_ACCESSOR(reslist, const res_t *const *)
 DEF_COMPOSITE_ACCESSOR(inkgroup, const inkgroup_t *)
 DEF_COMPOSITE_ACCESSOR(input_slots, const input_slot_list_t *)
 DEF_COMPOSITE_ACCESSOR(quality_list, const quality_list_t *)
+DEF_COMPOSITE_ACCESSOR(channel_names, const channel_name_t *)
 
 static const channel_count_t *
 get_channel_count_by_name(const char *name)
@@ -1636,6 +1643,17 @@ escp2_parameters(const stp_vars_t *v, const char *name,
   else if (strcmp(name, "InkChannels") == 0)
     {
       description->deflt.integer = escp2_physical_channels(v);
+    }
+  else if (strcmp(name, "ChannelNames") == 0)
+    {
+      const channel_name_t *channel_names = escp2_channel_names(v);
+      description->bounds.str = stp_string_list_create();
+      for (i = 0; i < channel_names->count; i++)
+	stp_string_list_add_string
+	  (description->bounds.str,
+	   channel_names->names[i], channel_names->names[i]);
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
   else if (strcmp(name, "SupportsPacketMode") == 0)
     {
