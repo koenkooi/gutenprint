@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.130 2002/09/21 14:59:52 rleigh Exp $
+## $Id: Makefile.am,v 1.131 2002/10/09 22:05:39 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@ DISTDIRS = m4 m4extra
 
 # Libtool dependency
 libtool: $(LIBTOOL_DEPS)
+	cd $(srcdir); \
 	$(SHELL) ./config.status --recheck
 
 ChangeLog:
