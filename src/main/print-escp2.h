@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.43.2.1 2003/05/01 00:55:33 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.43.2.2 2003/05/01 01:09:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -36,22 +36,6 @@
 typedef unsigned long model_cap_t;
 typedef unsigned long model_featureset_t;
 
-
-/*
- * Definition of the multi-level inks available to a given printer.
- * Each printer may use a different kind of ink droplet for variable
- * and single drop size for each supported horizontal resolution and
- * type of ink (4 or 6 color).
- *
- * Recall that 6 color ink is treated as simply another kind of
- * multi-level ink, but the driver offers the user a choice of 4 and
- * 6 color ink, so we need to define appropriate inksets for both
- * kinds of ink.
- *
- * Stuff like the MIS 4 and 6 "color" monochrome inks doesn't fit into
- * this model very nicely, so we'll either have to special case it
- * or find some way of handling it in here.
- */
 
 #define RES_LOW		 0
 #define RES_360		 1
@@ -408,5 +392,5 @@ extern const res_t stpi_escp2_sc660_reslist[];
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.43.2.1 2003/05/01 00:55:33 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.43.2.2 2003/05/01 01:09:28 rlk Exp $".
  */
