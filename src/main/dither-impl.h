@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.5.2.2 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.5.2.3 2003/05/20 01:51:32 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -129,7 +129,6 @@ typedef struct dither_channel
 				/* threshold values (0-65535).  With ordered */
 				/* dithering, how much randomness is added */
 				/* to the matrix value. */
-  int nlevels;
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
@@ -148,7 +147,9 @@ typedef struct dither_channel
   stpi_shade_segment_t *shades;
   int numshades;
 
+  int nlevels;
   stpi_dither_segment_t *ranges;
+
   int error_rows;
   int **errs;
   unsigned short *vals;
@@ -292,5 +293,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.5.2.2 2003/05/18 15:29:43 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.5.2.3 2003/05/20 01:51:32 rlk Exp $".
  */

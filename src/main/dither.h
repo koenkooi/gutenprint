@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.17.4.3 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither.h,v 1.17.4.4 2003/05/20 01:51:32 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -123,29 +123,6 @@ extern void stpi_dither_matrix_set_row(dither_matrix_t *mat, int y);
 extern stp_array_t stpi_find_standard_dither_array(int x_aspect, int y_aspect);
 
 
-
-typedef struct
-{
-  double value;
-  unsigned bit_pattern;
-  unsigned dot_size;
-} stpi_dither_range_simple_t;
-
-typedef struct
-{
-  double value;
-  double lower;
-  double upper;
-  unsigned bit_pattern;
-  unsigned dot_size;
-} stpi_dither_range_t;
-
-typedef struct
-{
-   double value[2];
-   unsigned bits[2];
-} stpi_dither_range_full_t;
-
 typedef struct stpi_dotsize
 {
   unsigned bit_pattern;
@@ -182,9 +159,6 @@ extern void stpi_dither_set_randomizer(stp_vars_t v, int color, double);
 extern void stpi_dither_set_ranges(stp_vars_t v, int color, int nlevels,
 				   const stpi_dither_range_simple_t *ranges,
 				   double density);
-extern void stpi_dither_set_ranges_full(stp_vars_t v, int color, int nlevels,
-					const stpi_dither_range_full_t *ranges,
-					double density);
 extern void stpi_dither_set_ranges_and_shades_simple(stp_vars_t v,
 						     int color, int nlevels,
 						     const double *levels,
@@ -216,5 +190,5 @@ extern void stpi_dither_internal(stp_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.17.4.3 2003/05/18 15:29:43 rlk Exp $".
+ * End of "$Id: dither.h,v 1.17.4.4 2003/05/20 01:51:32 rlk Exp $".
  */

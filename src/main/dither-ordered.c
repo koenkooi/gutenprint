@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.7.2.2 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7.2.3 2003/05/20 01:51:32 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -51,7 +51,6 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
   unsigned char *tptr;
   unsigned bits;
   unsigned v;
-  unsigned dot_size;
   int levels = dc->nlevels - 1;
   int dither_value = adjusted;
   stpi_dither_segment_t *dd;
@@ -151,7 +150,6 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
 	    }
 	  bits = subc->bits;
 	  v = subc->value;
-	  dot_size = subc->dot_size;
 	  if (dc->ptr)
 	    {
 	      tptr = dc->ptr;

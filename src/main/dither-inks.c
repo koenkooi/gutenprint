@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.5 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.6 2003/05/20 01:51:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -58,9 +58,74 @@ stpi_dither_get_channel(stp_vars_t v, unsigned channel, unsigned subchannel)
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int place = stpi_dither_translate_channel(v, channel, subchannel);
   if (place >= 0)
-    return d->cdata[place];
+    return d->channel[place].base_ptr;
   else
     return NULL;
+}
+
+static void
+insert_channel(stpi_dither_t *d, int channel)
+{
+  unsigned oc = d->channel_count;
+  int i;
+  d->channel_index =
+    stpi_realloc (d->channel_index, sizeof(unsigned) * (channel + 1));
+  d->subchannel_count =
+    stpi_realloc (d->subchannel_count, sizeof(unsigned) * (channel + 1));
+  for (i = oc; i < channel; i++)
+    {
+      d->channel_index[i] = d->channel_index[oc - 1];
+      d->subchannel_count[i] = 0;
+    }
+  d->channel_count = channel + 1;
+}
+
+static void
+initialize_channel(stpi_dither_channel_t *channel)
+{
+  memset(channel, 0, sizeof(stpi_dither_channel_t));
+}
+
+static void
+insert_subchannel(stpi_dither_t *d, int channel, int subchannel)
+{
+  int i;
+  unsigned oc = d->subchannel_count[channel];
+  unsigned increment = subchannel - oc;
+  unsigned old_place = d->channel_index[channel] + oc;
+  stpi_dither_channel_t *nc =
+    stpi_malloc(sizeof(stpi_dither_channel_t) *
+		(d->total_channel_count + increment));
+      
+  if (d->channel)
+    {
+      /*
+       * Copy the old channels, including all subchannels of the current
+       * channel that already existed.
+       */
+      memcpy(nc, d->channel, sizeof(stpi_dither_channel_t) * old_place);
+      if (old_place < d->total_channel_count)
+	/*
+	 * If we're inserting a new subchannel in the middle somewhere,
+	 * we need to move everything else up
+	 */
+	memcpy(nc + old_place + increment,
+	       d->channel + old_place,
+	       (sizeof(stpi_dither_channel_t) *
+		(d->total_channel_count - old_place)));
+      stpi_free(d->channel);
+    }
+  d->channel = nc;
+  for (i = 0; i < increment; i++)
+    initialize_channel(&(d->channel[old_place + i]));
+  if (channel < d->channel_count - 1)
+    {
+      /* Now fix up the subchannel offsets */
+      for (i = channel + 1; i < d->channel_count; i++)
+	d->channel_index[i] += increment;
+    }
+  d->subchannel_count[channel] = subchannel;
+  d->total_channel_count += increment;
 }
 
 void
@@ -68,67 +133,11 @@ stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
 			unsigned channel, unsigned subchannel)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  int i;
   if (channel >= d->channel_count)
-    {
-      unsigned oc = d->channel_count;
-      d->channel_index =
-	stpi_realloc (d->channel_index, sizeof(unsigned) * (channel + 1));
-      d->subchannel_count =
-	stpi_realloc (d->subchannel_count, sizeof(unsigned) * (channel + 1));
-      for (i = oc; i < channel; i++)
-	{
-	  d->channel_index[i] = d->channel_index[oc - 1];
-	  d->subchannel_count[i] = 0;
-	}
-      d->channel_count = channel + 1;
-    }
+    insert_channel(d, channel);
   if (subchannel > d->subchannel_count[channel])
-    {
-      unsigned oc = d->subchannel_count[channel];
-      unsigned increment = subchannel - oc;
-      unsigned old_place = d->channel_index[channel] + oc;
-      unsigned char **nc = stpi_malloc(sizeof(unsigned char) *
-				       (d->total_channel_count + increment));
-      
-      if (d->cdata)
-	{
-	  /*
-	   * Copy the old channels, including all subchannels of the current
-	   * channel that already existed.
-	   */
-	  memcpy(nc, d->cdata, sizeof(unsigned char *) * old_place);
-	  if (old_place < d->total_channel_count)
-	    /*
-	     * If we're inserting a new subchannel in the middle somewhere,
-	     * we need to move everything else up
-	     */
-	    memcpy(nc + old_place + increment, d->cdata + old_place,
-		   (sizeof(unsigned char *) *
-		    (d->total_channel_count - old_place)));
-	  stpi_free(d->cdata);
-	}
-      d->cdata = nc;
-      if (increment > 1)
-	{
-	  /*
-	   * We're adding a new subchannel off the end of the previous
-	   * list of subchannels, so we have to clear out any missing
-	   * slots.
-	   */
-	  for (i = 0; i < increment - 1; i++)
-	    d->cdata[old_place + i] = 0;
-	}
-      if (channel < d->channel_count - 1)
-	{
-	  /* Now fix up the subchannel offsets */
-	  for (i = channel + 1; i < d->channel_count; i++)
-	    d->channel_index[i] += increment;
-	}
-      d->subchannel_count[channel] = subchannel;
-      d->total_channel_count += increment;
-    }
-  d->cdata[d->channel_index[channel] + subchannel] = data;
+    insert_subchannel(d, channel, subchannel);
+  d->channel[d->channel_index[channel] + subchannel].base_ptr = data;
 }
 
 static void
@@ -195,12 +204,12 @@ stpi_dither_finalize_ranges(stp_vars_t v, stpi_dither_channel_t *s)
 }
 
 static void
-stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s,
-			       int nlevels,
-			       const stpi_dither_range_simple_t *ranges,
-			       double density)
+stpi_dither_set_ranges(stp_vars_t v, stpi_dither_channel_t *s,
+		       const stpi_shade_t *shade, double density)
 {
   double sdensity = s->density_adjustment;
+  const stpi_dotsize_t *ranges = shade->dot_sizes;
+  int nlevels = shade->numsizes;
   int i;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->ink_list);
@@ -227,7 +236,6 @@ stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s,
   s->ink_list[0].value = ranges[0].value * 65535.0;
   s->ink_list[0].xvalue = ranges[0].value * 65535.0 * sdensity;
   s->ink_list[0].bits = ranges[0].bit_pattern;
-  s->ink_list[0].dot_size = ranges[0].dot_size;
   if (nlevels == 1)
     s->ink_list[1].range = 65535;
   else
@@ -241,7 +249,6 @@ stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s,
   s->ink_list[1].bits = ranges[0].bit_pattern;
   if (ranges[0].bit_pattern > s->bit_max)
     s->bit_max = ranges[0].bit_pattern;
-  s->ink_list[1].dot_size = ranges[0].dot_size;
   s->ranges[0].range_span = s->ranges[0].upper->range;
   s->ranges[0].value_span = 0;
   if (s->nlevels > 1)
@@ -263,7 +270,6 @@ stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s,
 	  s->ink_list[l].bits = ranges[i].bit_pattern;
 	  if (ranges[i].bit_pattern > s->bit_max)
 	    s->bit_max = ranges[i].bit_pattern;
-	  s->ink_list[l].dot_size = ranges[i].dot_size;
 	  s->ranges[i].range_span =
 	    s->ink_list[l].range - s->ink_list[i].range;
 	  s->ranges[i].value_span =
@@ -278,80 +284,6 @@ stpi_dither_set_generic_ranges(stp_vars_t v, stpi_dither_channel_t *s,
     }
   stpi_dither_finalize_ranges(v, s);
   stpi_flush_debug_messages(v);
-}
-
-static void
-stpi_dither_set_generic_ranges_full(stp_vars_t v, stpi_dither_channel_t *s,
-				    int nlevels,
-				    const stpi_dither_range_full_t *ranges,
-				    double density)
-{
-  double sdensity = s->density_adjustment;
-  int i, j, k;
-  SAFE_FREE(s->ranges);
-  SAFE_FREE(s->ink_list);
-
-  s->nlevels = nlevels+1;
-  s->ranges = (stpi_dither_segment_t *)
-    stpi_zalloc(s->nlevels * sizeof(stpi_dither_segment_t));
-  s->ink_list = (stpi_ink_defn_t *)
-    stpi_zalloc((s->nlevels * 2) * sizeof(stpi_ink_defn_t));
-  s->bit_max = 0;
-/*  density *= sdensity; */
-  s->density = density * 65535;
-  stpi_init_debug_messages(v);
-  stpi_dprintf(STPI_DBG_INK, v,
-	       "stpi_dither_set_ranges nlevels %d density %f\n",
-	      nlevels, density);
-  for (i = 0; i < nlevels; i++)
-    stpi_dprintf(STPI_DBG_INK, v,
-		 "  level %d value: low %f high %f pattern low %x high %x",
-		 i, ranges[i].value[0], ranges[i].value[1],
-		 ranges[i].bits[0], ranges[i].bits[1]);
-  for(i=j=0; i < nlevels; i++)
-    {
-      for (k = 0; k < 2; k++)
-	{
-	  if (ranges[i].bits[k] > s->bit_max)
-	    s->bit_max = ranges[i].bits[k];
-	  s->ink_list[2*j+k].dot_size = ranges[i].bits[k]; /* FIXME */
-	  s->ink_list[2*j+k].value = ranges[i].value[k] * 65535;
-	  s->ink_list[2*j+k].xvalue = ranges[i].value[k] * 65535 * sdensity;
-	  s->ink_list[2*j+k].range = s->ink_list[2 * j + k].value * density;
-	  s->ink_list[2*j+k].bits = ranges[i].bits[k];
-	}
-      s->ranges[j].lower = &s->ink_list[2*j];
-      s->ranges[j].upper = &s->ink_list[2*j+1];
-      s->ranges[j].range_span =
-	s->ranges[j].upper->range - s->ranges[j].lower->range;
-      s->ranges[j].value_span =
-	s->ranges[j].upper->value - s->ranges[j].lower->value;
-      j++;
-    }
-  s->ink_list[2*j] = s->ink_list[2*(j-1)+1];
-  s->ink_list[2*j+1] = s->ink_list[2*j];
-  s->ink_list[2*j+1].range = 65535;
-  s->ink_list[2*j+1].value = 65535;	/* ??? Is this correct ??? */
-  s->ink_list[2*j+1].xvalue = 65535 * sdensity;	/* ??? Is this correct ??? */
-  s->ranges[j].lower = &s->ink_list[2*j];
-  s->ranges[j].upper = &s->ink_list[2*j+1];
-  s->ranges[j].range_span =
-    s->ranges[j].upper->range - s->ranges[j].lower->range;
-  s->ranges[j].value_span = 0;
-  s->nlevels = j+1;
-  stpi_dither_finalize_ranges(v, s);
-  stpi_flush_debug_messages(v);
-}
-
-void
-stpi_dither_set_ranges(stp_vars_t v, int color, int nlevels,
-		      const stpi_dither_range_simple_t *ranges, double density)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  if (color < 0 || color >= CHANNEL_COUNT(d))
-    return;
-  stpi_dither_set_generic_ranges(v, &(CHANNEL(d, color)), nlevels,
-				 ranges, density);
 }
 
 void
@@ -379,16 +311,6 @@ stpi_dither_set_ranges_and_shades_simple(stp_vars_t v, int color, int nlevels,
   stpi_dither_set_shades(v, color, 1, &s, density);
   stpi_free(r);
   stpi_free(d);
-}
-
-void
-stpi_dither_set_ranges_full(stp_vars_t v, int color, int nlevels,
-			   const stpi_dither_range_full_t *ranges,
-			   double density)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  stpi_dither_set_generic_ranges_full(v, &(CHANNEL(d, color)), nlevels,
-				     ranges, density);
 }
 
 void
@@ -427,6 +349,7 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
   for (i=0; i < dc->numshades; i++)
     {
       stpi_shade_segment_t *sp = &dc->shades[i];
+      int idx = stpi_dither_translate_channel(v, color, i);
       sp->value = 0;
       stpi_channel_add(v, color, i, shades[i].value);
       sp->density = 65536.0 * shades[i].value + 0.5;
@@ -449,7 +372,8 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
 
       sp->numdotsizes = shades[i].numsizes;
       sp->dotsizes = stpi_zalloc(sp->numdotsizes * sizeof(stpi_ink_defn_t));
-
+      if (idx > 0)
+	stpi_dither_set_ranges(v, &(CHANNEL(d, idx)), sp, density);
       for (j=0; j < sp->numdotsizes; j++)
 	{
 	  stpi_ink_defn_t *ip = &sp->dotsizes[j];
