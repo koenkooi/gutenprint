@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.40 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: dither-main.c,v 1.41 2004/04/02 02:28:28 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -125,12 +125,12 @@ stpi_dither_describe_parameter(stp_const_vars_t v, const char *name,
     }
   else if (strcmp(name, "DitherAlgorithm") == 0)
     {
+      stpi_fill_parameter_settings(description, &(dither_parameters[1]));
       if (stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) &&
 	  stpi_get_quality_by_name(stp_get_string_parameter(v, "Quality")))
 	description->is_active = 0;
       else
 	{
-	  stpi_fill_parameter_settings(description, &(dither_parameters[1]));
 	  description->bounds.str = stp_string_list_create();
 	  for (i = 0; i < num_dither_algos; i++)
 	    {
