@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.72.2.2 2002/10/22 00:55:00 rlk Exp $"
+ * "$Id: print-util.c,v 1.72.2.3 2002/10/24 00:30:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -171,6 +171,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   int count;
   int i;
   int answer = 1;
+  int paper_width, paper_height;
   int left, top, bottom, right, width, height;
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
@@ -206,19 +207,22 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 	}
     }
 
-  if (stp_get_top(v) < 0)
+  (*printfuncs->media_size)(p, v, &width, &height);
+  (*printfuncs->imageable_area)(p, v, &left, &right, &bottom, &top);
+
+  if (stp_get_top(v) < height - top)
     {
       answer = 0;
       stp_eprintf(v, _("Top margin must not be less than zero\n"));
     }
 
-  if (stp_get_left(v) < 0)
+  if (stp_get_left(v) < left)
     {
       answer = 0;
       stp_eprintf(v, _("Left margin must not be less than zero\n"));
     }
 
-  if (stp_get_width(v) <= 0)
+  if (stp_get_height(v) <= 0)
     {
       answer = 0;
       stp_eprintf(v, _("Height must be greater than zero\n"));
@@ -230,18 +234,17 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
       stp_eprintf(v, _("Width must be greater than zero\n"));
     }
 
-  (*printfuncs->imageable_area)(p, v, &left, &right, &bottom, &top);
   width = right - left;
   height = top - bottom;
 
-  if (stp_get_left(v) + stp_get_width(v) > width)
+  if (stp_get_left(v) + stp_get_width(v) > right)
     {
       answer = 0;
       stp_eprintf(v, _("Image is too wide for the page (left %d, width %d, limit%d)\n"),
-		  stp_get_left(v), stp_get_width(v), width);
+		  stp_get_left(v), stp_get_width(v), right);
     }
 
-  if (stp_get_top(v) + stp_get_height(v) > height)
+  if (stp_get_top(v) + stp_get_height(v) > height - bottom)
     {
       answer = 0;
       stp_eprintf(v, _("Image is too long for the page\n"));

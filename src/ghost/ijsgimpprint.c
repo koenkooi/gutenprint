@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.18.2.1 2002/10/22 00:55:00 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.18.2.2 2002/10/24 00:30:05 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -837,7 +837,6 @@ stp_dbg(const char *msg, const stp_vars_t v)
   fprintf(stderr, "Settings: MediaSize %s\n", stp_get_media_size(v));
   fprintf(stderr, "Settings: Model %s\n", stp_get_driver(v));
   fprintf(stderr, "Settings: InkType %s\n", stp_get_ink_type(v));
-  fprintf(stderr, "Settings: OutputTo %s\n", stp_get_output_to(v));
 }
 
 int

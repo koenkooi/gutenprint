@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2002/09/21 14:59:52 rleigh Exp $
+## $Id: Makefile.am,v 1.29.2.1 2002/10/24 00:30:04 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ MAINT_CHARSET = latin1
 
 ## Variables
 
-DISTDIRS = foomatic-templates-gs foomatic-templates-ijs
+DISTDIRS = foomatic-templates-ijs
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
@@ -67,22 +67,11 @@ else
 INSTALL_DATA_LOCAL_DEPS =
 endif
 
-if BUILD_IJS
-FOOMATIC_GENERATOR_EXTRA_OPTS = -d all
-FOOMATIC_IJS = yes
-else
-FOOMATIC_GENERATOR_EXTRA_OPTS = -d noijs
-FOOMATIC_IJS =
-endif
-
 all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print ; \
-	  if test -n "$(FOOMATIC_IJS)" ; then \
-	    $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print-ijs ; \
-	  fi ; \
+	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print-ijs ; \
 	fi
 
 install-kit:
