@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.258 2003/05/07 00:17:08 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.259 2003/05/07 02:21:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -923,7 +923,7 @@ adjust_density_and_ink_type(stp_vars_t v, stp_image_t *image)
 	  double xdensity = density;
 	  while (density > 1.0 && resid >= RES_360)
 	    {
-	      int tresid = xresid - 2;
+	      int tresid = xresid - 1;
 	      int bits_now = escp2_bits(v, resid);
 	      double density_now = escp2_density(v, resid);
 	      int bits_then = escp2_bits(v, tresid);
