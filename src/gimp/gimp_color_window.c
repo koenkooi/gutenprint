@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.32.2.2 2002/11/16 20:03:52 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.32.2.3 2002/11/16 21:39:06 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -112,14 +112,17 @@ dither_algo_callback (GtkWidget *widget, gpointer data)
 void
 build_dither_combo (void)
 {
-  stp_string_list_t vec;
+  stp_string_list_t vec = NULL;
   stp_parameter_t desc;
   stp_describe_parameter(pv->v, "DitherAlgorithm", &desc);
-  vec = desc.bounds.str;
-  if (stp_get_string_parameter(pv->v, "DitherAlgorithm")[0] == '\0')
-    stp_set_string_parameter(pv->v, "DitherAlgorithm", desc.deflt.str);
-  else if (stp_string_list_count(vec) == 0)
-    stp_set_string_parameter(pv->v, "DitherAlgorithm", NULL);
+  if (desc.type == STP_PARAMETER_TYPE_STRING_LIST)
+    {
+      vec = desc.bounds.str;
+      if (stp_get_string_parameter(pv->v, "DitherAlgorithm")[0] == '\0')
+	stp_set_string_parameter(pv->v, "DitherAlgorithm", desc.deflt.str);
+      else if (stp_string_list_count(vec) == 0)
+	stp_set_string_parameter(pv->v, "DitherAlgorithm", NULL);
+    }
 
   plist_build_combo (dither_algo_combo,
 		     vec,
@@ -128,7 +131,8 @@ build_dither_combo (void)
 		     &dither_algo_callback,
 		     &dither_algo_callback_id,
 		     NULL);
-  stp_string_list_free(vec);
+  if (vec)
+    stp_string_list_free(vec);
 }
 
 void

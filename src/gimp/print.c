@@ -1,5 +1,5 @@
 /*
-* "$Id: print.c,v 1.33.2.2 2002/11/16 20:03:52 rlk Exp $"
+* "$Id: print.c,v 1.33.2.3 2002/11/16 21:39:06 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1201,8 +1201,9 @@ printrc_load(void)
 	      stp_set_float_parameter(key.v, keyword, atof(value));
 	      break;
 	    default:
-	      printf("Unrecognized keyword `%s' in printrc; value `%s'\n",
-		     keyword, value);
+	      if (strlen(value))
+		printf("Unrecognized keyword `%s' in printrc; value `%s' (%d)\n",
+		       keyword, value, desc.type);
 	    }
 	}
       }
@@ -1311,27 +1312,31 @@ printrc_save(void)
 	fprintf(fp, "Image-Type: %d\n", stp_get_image_type(p->v));
 
 	for (j = 0; j < count; j++)
-	  switch (params[j].type)
-	    {
-	    case STP_PARAMETER_TYPE_STRING_LIST:
-	    case STP_PARAMETER_TYPE_FILE:
-	      fprintf(fp, "%s: %s\n", params[j].name,
-		      stp_get_string_parameter(p->v, params[j].name));
-	      break;
-	    case STP_PARAMETER_TYPE_DOUBLE:
-	      fprintf(fp, "%s: %f\n", params[j].name,
-		      stp_get_float_parameter(p->v, params[j].name));
-	      break;
-	    case STP_PARAMETER_TYPE_CURVE:
-	      curve = stp_get_curve_parameter(p->v, params[j].name);
-	      fprintf(fp, "%s: %d", params[j].name, curve->count);
-	      for (k = 0; k < curve->count; k++)
-		fprintf(fp, ";%f", curve->value[k]);
-	      fprintf(fp, "\n");
-	      break;
-	    default:
-	      break;
-	    }
+	  {
+	    if (strcmp(params[j].name, "AppGamma") == 0)
+	      continue;
+	    switch (params[j].type)
+	      {
+	      case STP_PARAMETER_TYPE_STRING_LIST:
+	      case STP_PARAMETER_TYPE_FILE:
+		fprintf(fp, "%s: %s\n", params[j].name,
+			stp_get_string_parameter(p->v, params[j].name));
+		break;
+	      case STP_PARAMETER_TYPE_DOUBLE:
+		fprintf(fp, "%s: %f\n", params[j].name,
+			stp_get_float_parameter(p->v, params[j].name));
+		break;
+	      case STP_PARAMETER_TYPE_CURVE:
+		curve = stp_get_curve_parameter(p->v, params[j].name);
+		fprintf(fp, "%s: %d", params[j].name, curve->count);
+		for (k = 0; k < curve->count; k++)
+		  fprintf(fp, ";%f", curve->value[k]);
+		fprintf(fp, "\n");
+		break;
+	      default:
+		break;
+	      }
+	  }
 #ifdef DEBUG
         fprintf(stderr, "Wrote printer %d: %s\n", i, p->name);
 #endif
@@ -1554,5 +1559,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.33.2.2 2002/11/16 20:03:52 rlk Exp $".
+ * End of "$Id: print.c,v 1.33.2.3 2002/11/16 21:39:06 rlk Exp $".
  */

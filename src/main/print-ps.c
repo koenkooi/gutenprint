@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.34.2.3 2002/11/16 20:03:53 rlk Exp $"
+ * "$Id: print-ps.c,v 1.34.2.4 2002/11/16 21:39:07 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -120,6 +120,7 @@ ps_parameters(const stp_vars_t v, const char *name,
 		  (description->bounds.str,
 		   stp_papersize_get_name(pt), stp_papersize_get_text(pt));
 	    }
+	  description->type = STP_PARAMETER_TYPE_STRING_LIST;
 	  description->deflt.str =
 	    stp_string_list_param(description->bounds.str, 0)->name;
 	}
@@ -130,10 +131,10 @@ ps_parameters(const stp_vars_t v, const char *name,
 
   rewind(ps_ppd);
   stp_fill_parameter_settings(description, name);
+  description->bounds.str = stp_string_list_allocate();
 
   while (fgets(line, sizeof(line), ps_ppd) != NULL)
   {
-    description->bounds.str = stp_string_list_allocate();
     if (line[0] != '*')
       continue;
 
@@ -150,9 +151,19 @@ ps_parameters(const stp_vars_t v, const char *name,
       stp_string_list_add_param(description->bounds.str,
 			       loption, ltext);
     }
-    description->deflt.str =
-      stp_string_list_param(description->bounds.str, 0)->name;
   }
+  if (stp_string_list_count(description->bounds.str) > 0)
+    {
+      description->type = STP_PARAMETER_TYPE_STRING_LIST;
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
+    }
+  else
+    {
+      stp_string_list_free(description->bounds.str);
+      description->bounds.str = NULL;
+      description->type = STP_PARAMETER_TYPE_INVALID;
+    }
   return;
 }
 

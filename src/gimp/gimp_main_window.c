@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.87.2.3 2002/11/16 20:03:52 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.87.2.4 2002/11/16 21:39:06 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1441,8 +1441,11 @@ plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 {
   gint      i; /* Looping var */
   GList    *list = 0;
-  gint num_items = stp_string_list_count(items);
+  gint num_items = 0;
   GtkEntry *entry = GTK_ENTRY (GTK_COMBO (combo)->entry);
+
+  if (items)
+    num_items = stp_string_list_count(items);
 
   if (*callback_id != -1)
     gtk_signal_disconnect (GTK_OBJECT (entry), *callback_id);
@@ -1673,7 +1676,10 @@ do_all_updates(void)
       stp_parameter_t desc;
       list_option_t *option = &(the_list_options[i]);
       if (option->params)
-	stp_string_list_free(option->params);
+	{
+	  stp_string_list_free(option->params);
+	  option->params = NULL;
+	}
       stp_describe_parameter(pv->v, option->name, &desc);
       if (desc.type == STP_PARAMETER_TYPE_STRING_LIST)
 	{
@@ -1682,13 +1688,14 @@ do_all_updates(void)
 	    stp_set_string_parameter(pv->v, option->name, desc.deflt.str);
 	  else if (option->params == NULL)
 	    stp_set_string_parameter(pv->v, option->name, NULL);
-	  plist_build_combo(option->combo, option->params,
-			    stp_get_string_parameter(pv->v, option->name),
-			    desc.deflt.str, combo_callback,
-			    &(option->callback_id), option);
-	  if (option->extra)
-	    (option->extra)(stp_get_string_parameter(pv->v, option->name));
 	}
+      plist_build_combo(option->combo, option->params,
+			stp_get_string_parameter(pv->v, option->name),
+			desc.deflt.str, combo_callback,
+			&(option->callback_id), option);
+	
+      if (option->extra)
+	(option->extra)(stp_get_string_parameter(pv->v, option->name));
     }
 
   build_dither_combo ();
