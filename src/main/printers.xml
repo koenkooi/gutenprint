@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.81 2003/09/18 02:45:20 rlk Exp $"
+   "$Id: printers.xml,v 1.82 2003/09/18 03:02:37 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -297,46 +297,31 @@
       <printer name="EPSON Stylus C70" driver="escp2-c70">
         <color value="true"/>
         <model value="44"/>
-        <cyan value="0.96"/>
-        <magenta value="1.02"/>
-        <yellow value="1.02"/>
-        <gamma value="0.688"/>
+        <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus C80" driver="escp2-c80">
         <color value="true"/>
         <model value="44"/>
-        <cyan value="0.96"/>
-        <magenta value="1.02"/>
-        <yellow value="1.02"/>
-        <gamma value="0.688"/>
+        <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus C82" driver="escp2-c82">
         <color value="true"/>
         <model value="55"/>
-        <cyan value="0.96"/>
-        <magenta value="1.02"/>
-        <yellow value="1.02"/>
-        <gamma value="0.688"/>
+        <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus C83" driver="escp2-c83">
         <color value="true"/>
         <model value="60"/>
-        <cyan value="0.96"/>
-        <magenta value="1.02"/>
-        <yellow value="1.02"/>
-        <gamma value="0.688"/>
+        <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus C84" driver="escp2-c84">
         <color value="true"/>
         <model value="60"/>
-        <cyan value="0.96"/>
-        <magenta value="1.02"/>
-        <yellow value="1.02"/>
-        <gamma value="0.688"/>
+        <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus Color" driver="escp2">
