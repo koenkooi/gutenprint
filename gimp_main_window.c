@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.64 2000/10/04 00:37:55 mitsch Exp $"
+ * "$Id: gimp_main_window.c,v 1.65 2000/10/04 00:56:22 mitsch Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -824,7 +824,7 @@ gimp_create_main_window (void)
    */
 
   table = gtk_table_new (5, 2, FALSE);
-  gtk_container_border_width (GTK_CONTAINER (table), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 4);
   gtk_table_set_row_spacings (GTK_TABLE (table), 8);
   gtk_table_set_row_spacing (GTK_TABLE (table), 0, 100);
