@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2003/05/20 01:48:27 rlk Exp $
+## $Id: Makefile.am,v 1.6 2003/06/12 17:43:42 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,9 @@ pkgconfigdatadir = $(prefix)/lib/pkgconfig
 
 ## Programs
 
+if BUILD_LIBGIMPPRINTUI
 lib_LTLIBRARIES = libgimpprintui.la
+endif
 
 libgimpprintui_la_SOURCES =			\
 	printrcy.y				\

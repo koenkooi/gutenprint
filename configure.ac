@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.67 2003/06/08 15:53:41 rlk Exp $
+dnl $Id: configure.ac,v 1.68 2003/06/12 17:43:40 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.67 $)
+AC_REVISION($Revision: 1.68 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -313,7 +313,7 @@ else
 fi
 
 AM_PATH_GTK(1.2.0,
-  BUILD_LIBGIMPPRINT_UI="yes"
+  BUILD_LIBGIMPPRINTUI="yes"
   GIMPPRINT_UI_LIBDEPS="${GIMPPRINT_UI_LIBDEPS} ${GTK_LIBS}"
   gimpprint_ui_libdeps="${gimpprint_ui_libdeps} ${GTK_LIBS}",
   BUILD_LIBGIMPPRINTUI="no")
@@ -323,10 +323,10 @@ STP_ARG_WITH([gimp],
              [BUILD_GIMP],
              [(automatic)])
 
-STP_ARG_WITH([gimpprintui],
-             [build Gimp-Print user interface library],
-             [BUILD_LIBGIMPPRINTUI],
-             [(automatic)])
+STP_ARG_ENABLE([libgimpprintui],
+               [build Gimp-Print user interface library],
+               [BUILD_LIBGIMPPRINTUI],
+               [(automatic)])
 
 STP_ARG_ENABLE([samples],
                [install sample images],
@@ -652,6 +652,8 @@ AM_CONDITIONAL(BUILD_ESCPUTIL, test x${BUILD_ESCPUTIL} = xyes)
 AM_CONDITIONAL(BUILD_TEST, test x${BUILD_TEST} = xyes)
 
 AM_CONDITIONAL(BUILD_TESTPATTERN, test x${BUILD_TESTPATTERN} = xyes)
+
+AM_CONDITIONAL(BUILD_LIBGIMPPRINTUI, test x${BUILD_LIBGIMPPRINTUI} = xyes)
 
 AM_CONDITIONAL(BUILD_GIMP, test x${BUILD_GIMP} = xyes)
 
