@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.94 2001/05/03 18:06:29 rleigh Exp $
+## $Id: Makefile.am,v 1.95 2001/05/03 20:00:51 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ ChangeLog:
 	fi
 
 dist-hook:
-	for dir in debian doc scripts ; do \
+	for dir in debian scripts ; do \
 	  if test -d $(top_srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
 	    for dirfile in $(top_srcdir)/$$dir/*; do \
