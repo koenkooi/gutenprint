@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.6 2002/01/21 01:37:34 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.7 2002/01/21 13:50:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2380,7 +2380,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
      MODEL_DEINITIALIZE_JE_NO),
     1, 1, 1, 1, 1, 1,
     1440, 1440, 360, 1440, 1440, 14400, -1, 1440, 720, 90, 90,
-    INCH(13), INCH(1200), INCH(7/2), INCH(7/2), 9, 9, 9, 40, 9, 9, 9, 40,
+    INCH(13), INCH(1200), INCH(2), INCH(4), 9, 9, 0, 9, 9, 9, 0, 9,
     0, 1, 0, 0, default_head_offset, 0, 0,
     spro_dotsizes, spro_densities, &simple_6color_inks,
     standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
@@ -2588,7 +2588,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
      MODEL_DEINITIALIZE_JE_NO),
     1, 1, 1, 1, 1, 1,
     1440, 1440, 360, 1440, 1440, 14400, -1, 1440, 720, 90, 90,
-    INCH(13), INCH(1200), INCH(7/2), INCH(7/2), 9, 9, 9, 40, 9, 9, 9, 40,
+    INCH(13), INCH(1200), INCH(2), INCH(4), 9, 9, 0, 9, 9, 9, 0, 9,
     0, 1, 0, 0, default_head_offset, 0, 0,
     spro_dotsizes, spro_densities, &simple_6color_inks,
     standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
