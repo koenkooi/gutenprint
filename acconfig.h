@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.9 2001/02/19 19:32:52 rleigh Exp $
+ * $Id: acconfig.h,v 1.10 2001/03/09 21:23:35 rleigh Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -49,6 +49,7 @@
 
 /* Define if libc does no provide */
 #undef HAVE_ASPRINTF
+#undef HAVE_VASPRINTF
 #undef HAVE_GETOPT_LONG
 #undef HAVE_RANDOM
 #undef HAVE_POLL
