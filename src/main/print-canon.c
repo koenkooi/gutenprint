@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.30 2001/03/31 20:56:53 rlk Exp $"
+ * "$Id: print-canon.c,v 1.31 2001/04/01 20:01:24 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2252,6 +2252,8 @@ canon_print(const stp_printer_t printer,		/* I - Model */
       else
 	stp_dither_set_transition(dither, .5);
     }
+  else
+    stp_dither_set_transition(dither, .6);
 
   /* used internally: do not translate */
   if (!strcmp(stp_get_dither_algorithm(nv), _("Ordered")))

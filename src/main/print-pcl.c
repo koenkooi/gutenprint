@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.17 2001/03/31 20:56:53 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.18 2001/04/01 20:01:24 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2087,6 +2087,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 
     if (do_6color)
       stp_dither_set_light_inks(dither, .25, .25, 0.0, stp_get_density(nv));
+  stp_dither_set_transition(dither, .6);
 
   switch (stp_get_image_type(nv))
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.22 2001/03/31 20:56:53 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.23 2001/04/01 20:01:24 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1612,6 +1612,7 @@ lexmark_describe_resolution(printer,
 			  (lmagenta)? (0.3333) : (0.0),
 			  (lyellow) ? (0.3333) : (0.0), stp_get_density(nv));
   }
+  stp_dither_set_transition(dither, .6);
 
   switch (stp_get_image_type(nv))
     {
