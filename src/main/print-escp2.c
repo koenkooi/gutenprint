@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68.2.6 2001/05/27 02:15:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68.2.7 2001/05/27 15:59:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2556,7 +2556,10 @@ escp2_parameters(const stp_printer_t printer,	/* I - Printer model */
 	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	  if (strlen(stp_papersize_get_name(pt)) > 0 &&
 	      stp_papersize_get_width(pt) <= width_limit &&
-	      stp_papersize_get_height(pt) <= height_limit)
+	      stp_papersize_get_height(pt) <= height_limit &&
+	      (stp_papersize_get_height(pt) > 0 ||
+	       stp_papersize_get_width(pt) == 0 ||
+	       escp2_has_cap(model, MODEL_ROLLFEED, MODEL_ROLLFEED_YES, v)))
 	    {
 	      valptrs[*count] =
 		stp_malloc(strlen(stp_papersize_get_name(pt)) + 1);

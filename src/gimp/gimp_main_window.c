@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.18.2.1 2001/05/27 01:55:23 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.18.2.2 2001/05/27 15:59:52 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1636,6 +1636,7 @@ gimp_media_size_callback (GtkWidget *widget,
 		size *= 2.54;
 	      g_snprintf(s, sizeof(s), "%.2f", size);
 	      gtk_entry_set_text(GTK_ENTRY(custom_size_width), s);
+	      gtk_widget_set_sensitive(GTK_WIDGET(custom_size_width), TRUE);
 	      gtk_entry_set_editable(GTK_ENTRY(custom_size_width), TRUE);
 	      stp_set_page_width(plist[plist_current].v, default_width);
 	      stp_set_page_width(vars, default_width);
@@ -1647,6 +1648,7 @@ gimp_media_size_callback (GtkWidget *widget,
 		size *= 2.54;
 	      g_snprintf(s, sizeof(s), "%.2f", size);
 	      gtk_entry_set_text(GTK_ENTRY(custom_size_width), s);
+	      gtk_widget_set_sensitive(GTK_WIDGET(custom_size_width), FALSE);
 	      gtk_entry_set_editable(GTK_ENTRY(custom_size_width), FALSE);
 	      stp_set_page_width(plist[plist_current].v,
 				 stp_papersize_get_width(pap));
@@ -1661,6 +1663,7 @@ gimp_media_size_callback (GtkWidget *widget,
 		size *= 2.54;
 	      g_snprintf(s, sizeof(s), "%.2f", size);
 	      gtk_entry_set_text(GTK_ENTRY(custom_size_height), s);
+	      gtk_widget_set_sensitive(GTK_WIDGET(custom_size_height), TRUE);
 	      gtk_entry_set_editable(GTK_ENTRY(custom_size_height), TRUE);
 	      stp_set_page_height(plist[plist_current].v, default_height);
 	      stp_set_page_height(vars, default_height);
@@ -1672,6 +1675,7 @@ gimp_media_size_callback (GtkWidget *widget,
 		size *= 2.54;
 	      g_snprintf(s, sizeof(s), "%.2f", size);
 	      gtk_entry_set_text(GTK_ENTRY(custom_size_height), s);
+	      gtk_widget_set_sensitive(GTK_WIDGET(custom_size_height), FALSE);
 	      gtk_entry_set_editable(GTK_ENTRY(custom_size_height), FALSE);
 	      stp_set_page_height(plist[plist_current].v,
 				  stp_papersize_get_height(pap));
