@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.12.8.1 2004/03/20 21:38:41 rlk Exp $"
+ * "$Id: printers.h,v 1.12.8.2 2004/03/27 15:12:14 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -67,6 +67,7 @@ extern int stpi_verify_printer_params(stp_vars_t);
 
 extern int stpi_family_register(stpi_list_t *family);
 extern int stpi_family_unregister(stpi_list_t *family);
+extern void stpi_initialize_printer_defaults(void);
 
 extern stp_parameter_list_t stpi_printer_list_parameters(stp_const_vars_t v);
 
@@ -82,5 +83,5 @@ const char *stpi_describe_output(stp_const_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.12.8.1 2004/03/20 21:38:41 rlk Exp $".
+ * End of "$Id: printers.h,v 1.12.8.2 2004/03/27 15:12:14 rlk Exp $".
  */

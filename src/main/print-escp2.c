@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.11 2004/03/27 02:44:59 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.12 2004/03/27 15:12:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1025,6 +1025,16 @@ get_inktype(stp_const_vars_t v)
 	  if (strcmp(ink_type, ink_list->inknames[i]->name) == 0)
 	    return ink_list->inknames[i];
 	}
+    }
+  /*
+   * If we couldn't find anything, try again with the default ink type.
+   * This may mean duplicate work, but that's cheap enough.
+   */
+  ink_type = get_default_inktype(v);
+  for (i = 0; i < ink_list->n_inks; i++)
+    {
+      if (strcmp(ink_type, ink_list->inknames[i]->name) == 0)
+	return ink_list->inknames[i];
     }
   return NULL;
 }

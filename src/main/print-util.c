@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.99.6.1 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-util.c,v 1.99.6.2 2004/03/27 15:12:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -458,6 +458,8 @@ stp_init(void)
       /* Initialise modules */
       if (stpi_module_init())
 	return 1;
+      /* Set up defaults for core parameters */
+      stpi_initialize_printer_defaults();
     }
 
   stpi_is_initialised = 1;

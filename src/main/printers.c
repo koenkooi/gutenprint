@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.7 2004/03/27 00:52:01 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.8 2004/03/27 15:12:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -95,7 +95,7 @@ null_printer(void)
 {
   stpi_erprintf("Null stp_printer_t! Please report this bug.\n");
   stpi_abort();
-}  
+}
 
 static void
 bad_printer(void)
@@ -296,20 +296,20 @@ stpi_printer_describe_parameter(stp_const_vars_t v, const char *name,
   (printfuncs->parameters)(v, name, description);
 }
 
-void
-stp_set_printer_defaults(stp_vars_t v, stp_const_printer_t printer)
+static void
+set_printer_defaults(stp_vars_t v, int core_only)
 {
   stp_parameter_list_t *params;
   int count;
   int i;
   stp_parameter_t desc;
-  stp_set_driver(v, stp_printer_get_driver(printer));
   params = stp_get_parameter_list(v);
   count = stp_parameter_list_count(params);
   for (i = 0; i < count; i++)
     {
       const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->is_mandatory)
+      if (p->is_mandatory &&
+	  (!core_only || p->p_class == STP_PARAMETER_CLASS_CORE))
 	{
 	  stp_describe_parameter(v, p->name, &desc);
 	  switch (p->p_type)
@@ -345,6 +345,33 @@ stp_set_printer_defaults(stp_vars_t v, stp_const_printer_t printer)
 	}
     }
   stp_parameter_list_free(params);
+}
+
+void
+stp_set_printer_defaults(stp_vars_t v, stp_const_printer_t printer)
+{
+  stp_set_driver(v, stp_printer_get_driver(printer));
+  set_printer_defaults(v, 0);
+}
+
+void
+stpi_initialize_printer_defaults(void)
+{
+  stpi_list_item_t *printer_item;
+  if (printer_list == NULL)
+    {
+      stpi_init_printer_list();
+      if (stpi_debug_level & STPI_DBG_PRINTERS)
+	stpi_erprintf
+	  ("stpi_family_register(): initialising printer_list...\n");
+    }
+  printer_item = stpi_list_get_start(printer_list);
+  while (printer_item)
+    {
+      set_printer_defaults
+	(get_printer(stpi_list_item_get_data(printer_item))->printvars, 1);
+      printer_item = stpi_list_item_next(printer_item);
+    }
 }
 
 void
@@ -444,6 +471,7 @@ verify_string_param(stp_const_vars_t v, const char *parameter,
 		    stp_parameter_t *desc, int quiet)
 {
   stpi_parameter_verify_t answer = PARAMETER_OK;
+  stpi_dprintf(STPI_DBG_VARS, v, "    Verifying string %s\n", parameter);
   if (desc->is_mandatory ||
       stp_check_string_parameter(v, parameter, STP_PARAMETER_ACTIVE))
     {
@@ -451,6 +479,8 @@ verify_string_param(stp_const_vars_t v, const char *parameter,
       stp_string_list_t vptr = desc->bounds.str;
       size_t count = 0;
       int i;
+      stpi_dprintf(STPI_DBG_VARS, v, "     value %s\n",
+		   checkval ? checkval : "(null)");
       if (vptr)
 	count = stp_string_list_count(vptr);
       answer = PARAMETER_BAD;
@@ -489,6 +519,7 @@ static int
 verify_double_param(stp_const_vars_t v, const char *parameter,
 		    stp_parameter_t *desc, int quiet)
 {
+  stpi_dprintf(STPI_DBG_VARS, v, "    Verifying double %s\n", parameter);
   if (desc->is_mandatory ||
       stp_check_float_parameter(v, parameter, STP_PARAMETER_ACTIVE))
     {
@@ -510,6 +541,7 @@ static int
 verify_int_param(stp_const_vars_t v, const char *parameter,
 		 stp_parameter_t *desc, int quiet)
 {
+  stpi_dprintf(STPI_DBG_VARS, v, "    Verifying int %s\n", parameter);
   if (desc->is_mandatory ||
       stp_check_int_parameter(v, parameter, STP_PARAMETER_ACTIVE))
     {
@@ -534,6 +566,7 @@ verify_curve_param(stp_const_vars_t v, const char *parameter,
 		    stp_parameter_t *desc, int quiet)
 {
   stpi_parameter_verify_t answer = 1;
+  stpi_dprintf(STPI_DBG_VARS, v, "    Verifying curve %s\n", parameter);
   if (desc->bounds.curve &&
       (desc->is_mandatory ||
        stp_check_curve_parameter(v, parameter, STP_PARAMETER_ACTIVE)))
@@ -575,6 +608,7 @@ stpi_verify_parameter(stp_const_vars_t v, const char *parameter,
 {
   stp_parameter_t desc;
   quiet = 0;
+  stpi_dprintf(STPI_DBG_VARS, v, "  Verifying %s\n", parameter);
   stp_describe_parameter(v, parameter, &desc);
   if (!desc.is_active)
     {
@@ -731,6 +765,9 @@ stpi_verify_printer_params(stp_vars_t v)
   for (i = 0; i < nparams; i++)
     {
       const stp_parameter_t *param = stp_parameter_list_param(params, i);
+      stpi_dprintf(STPI_DBG_VARS, v, "Checking %s %d %d\n", param->name,
+		   param->is_active, param->verify_this_parameter);
+
       if (strcmp(param->name, "PageSize") != 0 &&
 	  param->is_active && param->verify_this_parameter &&
 	  stpi_verify_parameter(v, param->name, 0) == 0)
@@ -796,7 +833,7 @@ stpi_family_register(stpi_list_t *family)
 	{
 	  printer = get_printer(stpi_list_item_get_data(printer_item));
 	  if (!stpi_list_get_item_by_name(printer_list,
-					 stp_get_driver(printer->printvars)))
+					  stp_get_driver(printer->printvars)))
 	    stpi_list_item_create(printer_list, NULL, printer);
 	  printer_item = stpi_list_item_next(printer_item);
 	}
