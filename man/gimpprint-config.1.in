@@ -1,5 +1,5 @@
 '\" t
-.\" $Id: gimpprint-config.1.in,v 1.2 2001/05/06 22:08:52 rleigh Exp $
+.\" $Id: gimpprint-config.1.in,v 1.2.8.1 2002/07/23 00:54:06 rlk Exp $
 .\" Copyright (C) 2000 Roger Leigh <rl117@york.ac.uk>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,6 @@ linker flags that should be used to compile and link programs that use
 that are included with \fIGIMP-PRINT\fP.
 
 .SH OPTIONS
-.l
 \fIgimpprint-config\fP accepts the following options:
 .TP 8
 .B  \-\-version

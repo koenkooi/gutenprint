@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.2 2001/08/14 00:12:58 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.2.6.1 2002/07/23 00:54:08 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -78,6 +78,7 @@ hsize			DBG(HSIZE) return HSIZE;
 vsize			DBG(VSIZE) return VSIZE;
 blackline		DBG(BLACKLINE) return BLACKLINE;
 pattern			DBG(PATTERN) return PATTERN;
+image			DBG(IMAGE) return IMAGE;
 
 {integer}		yylval.ival = atoi(yytext); DBG(tINT) return tINT;
 {float}			yylval.dval = strtod(yytext, NULL); DBG(tDOUBLE) return tDOUBLE;

@@ -1,5 +1,5 @@
 '\" t
-.\" $Id: escputil.1.in,v 1.4.4.1 2002/04/07 14:30:30 rlk Exp $
+.\" $Id: escputil.1.in,v 1.4.4.2 2002/07/23 00:54:06 rlk Exp $
 .\" Copyright (C) 2000 Robert Krawitz <rlk@alum.mit.edu>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,6 @@ include head alignment, head cleaning, nozzle check, printer
 identification, and retrieval of ink level from the printer.
 
 .SH OPTIONS
-.l
 \fIescputil\fP accepts the following options:
 .TP 8
 .B \-P, \-\-printer-name \fI<printer>\fP
