@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.9 2002/11/28 17:53:50 rlk Exp $"
+ * "$Id: curve.c,v 1.10 2002/11/28 17:54:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -622,7 +622,7 @@ stp_curve_read(FILE *f, stp_curve_t curve)
   int points;
 
   check_curve(icurve);
-  fscanf(f, "STP_CURVE;%31s;%31s;%n",
+  fscanf(f, "STP_CURVE;%31s ;%31s ;%n",
 	 curve_type_name,
 	 wrap_mode_name,
 	 &noffset);
