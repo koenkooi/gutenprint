@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.147.2.10 2002/09/02 00:47:38 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.147.2.11 2002/09/02 00:50:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1329,6 +1329,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
       nozzles = 1;
       privdata.min_nozzles = 1;
       nozzle_separation = 1;
+      init.nozzle_separation = nozzle_separation;
       init.use_black_parameters = 0;
     }
   init.nozzles = nozzles;
