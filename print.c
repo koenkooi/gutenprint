@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.123 2000/09/17 02:40:51 rlk Exp $"
+ * "$Id: print.c,v 1.124 2000/09/17 02:45:07 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1039,9 +1039,12 @@ printrc_load(void)
 	  if (strcmp(_("File"), key.name) == 0
 	      && strcmp(plist[0].name, _("File")) == 0)
 	  {
-	    p = &plist[0];
-	    memcpy(p, &key, sizeof(plist_t));
-	    p->active = 1;
+	    if (get_printer_by_driver(key.v.driver))
+	      {
+		p = &plist[0];
+		memcpy(p, &key, sizeof(plist_t));
+		p->active = 1;
+	      }
 	  }
 	  else
 	  {
@@ -1136,9 +1139,12 @@ printrc_load(void)
 	if (strcmp(_("File"), key.name) == 0
 	    && strcmp(plist[0].name, _("File")) == 0)
 	  {
-	    p = &plist[0];
-	    memcpy(p, &key, sizeof(plist_t));
-	    p->active = 1;
+	    if (get_printer_by_driver(key.v.driver))
+	      {
+		p = &plist[0];
+		memcpy(p, &key, sizeof(plist_t));
+		p->active = 1;
+	      }
 	  }
 	else
 	  {
@@ -1488,5 +1494,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.123 2000/09/17 02:40:51 rlk Exp $".
+ * End of "$Id: print.c,v 1.124 2000/09/17 02:45:07 rlk Exp $".
  */
