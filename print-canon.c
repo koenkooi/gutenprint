@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.68 2000/06/29 22:59:07 cpbs Exp $"
+ * "$Id: print-canon.c,v 1.69 2000/08/02 00:59:36 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -831,7 +831,7 @@ canon_print(const printer_t *printer,		/* I - Model */
    * Choose the correct color conversion function...
    */
 
-  colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp);
+  colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
 
  /*
   * Figure out the output resolution...

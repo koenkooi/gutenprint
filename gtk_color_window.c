@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.14 2000/07/18 00:13:01 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.15 2000/08/02 00:59:36 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -39,7 +39,6 @@ extern int plist_current;    /* Current system printer */
 extern plist_t  *plist;       /* System printers */
 
 GtkWidget* gtk_color_adjust_dialog;
-extern void gimp_do_color_updates(void);
 
 static GtkWidget* brightness_scale;	/* Scale for brightness */
 static GtkWidget* brightness_entry;	/* Text entry widget for brightness */
