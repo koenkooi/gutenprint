@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.23 2004/09/17 18:38:20 rleigh Exp $"
+ * "$Id: escp2-driver.c,v 1.24 2005/04/03 01:14:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -150,6 +150,7 @@ print_debug_params(stp_vars_t *v)
   print_remote_int_param(v, "Separation_rows", pd->separation_rows);
   print_remote_int_param(v, "Pseudo_separation_rows", pd->pseudo_separation_rows);
   print_remote_int_param(v, "Extra_720dpi_separation", pd->extra_720dpi_separation);
+  print_remote_int_param(v, "Use_aux_channels", pd->use_aux_channels);
   print_remote_param(v, "Ink name", pd->inkname->name);
   print_remote_int_param(v, "  channels", pd->inkname->channel_set->channel_count);
   print_remote_int_param(v, "  inkset", pd->inkname->inkset);
