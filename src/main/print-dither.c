@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.44 2001/09/14 02:12:34 rlk Exp $"
+ * "$Id: print-dither.c,v 1.44.4.1 2002/01/24 01:46:48 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1102,10 +1102,10 @@ stp_free_dither(void *vd)
 	      CHANNEL(d, j).errs[i] = NULL;
 	    }
 	}
-      stp_free(CHANNEL(d, i).dither.ranges);
-      CHANNEL(d, i).dither.ranges = NULL;
-      destroy_matrix(&(CHANNEL(d, i).pick));
-      destroy_matrix(&(CHANNEL(d, i).dithermat));
+      stp_free(CHANNEL(d, j).dither.ranges);
+      CHANNEL(d, j).dither.ranges = NULL;
+      destroy_matrix(&(CHANNEL(d, j).pick));
+      destroy_matrix(&(CHANNEL(d, j).dithermat));
     }
   if (d->offset0_table)
     {
