@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.22 2002/03/23 11:49:08 rleigh Exp $
+## $Id: Makefile.am,v 1.23 2002/04/06 15:50:54 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,12 +30,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
 	COPYING \
-	Makefile \
-	Makefile.am \
 	README \
 	contrib.mak.addon.in \
-	debian-patch \
-	debian-patch-stp \
 	gdevstp.c
 
 ## Variables
