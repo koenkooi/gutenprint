@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.51 2000/02/04 01:02:15 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.52 2000/02/04 02:07:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.52  2000/02/04 02:07:52  rlk
+ *   1440 dpi stupidity
+ *
  *   Revision 1.51  2000/02/04 01:02:15  rlk
  *   Prelim support for 850/860/870/1200; fix stupid bug in ESC(S
  *
@@ -2190,7 +2193,7 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
   pass_t *pass = get_pass_by_pass(sw, passno);
   int *linecount = get_linecount_by_pass(sw, passno);
   int lwidth = (width + (sw->horizontal_weave - 1)) / sw->horizontal_weave;
-  int microoffset = vertical_subpass & sw->horizontal_weave;
+  int microoffset = vertical_subpass & (sw->horizontal_weave - 1);
   if (pass->physpassstart > sw->last_pass_offset)
     {
       int advance = pass->logicalpassstart - sw->last_pass_offset;
@@ -2712,5 +2715,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.51 2000/02/04 01:02:15 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.52 2000/02/04 02:07:52 rlk Exp $".
  */
