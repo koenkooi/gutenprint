@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.1.2.2 2003/05/16 01:31:22 rlk Exp $"
+ * "$Id: channel.c,v 1.1.2.3 2003/05/16 02:13:09 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -59,8 +59,20 @@ typedef struct
   size_t width;
   unsigned short *input_data;
   unsigned short *data;
+  int initialized;
 } stpi_channel_group_t;
 
+
+static void
+clear_a_channel(stpi_channel_group_t *cg, int channel)
+{
+  if (channel < cg->channel_count)
+    {
+      SAFE_FREE(cg->c[channel].sc);
+      SAFE_FREE(cg->c[channel].lut);
+      cg->c[channel].subchannel_count = 0;
+    }
+}
 
 static void
 stpi_channel_clear(void *vc)
@@ -68,17 +80,16 @@ stpi_channel_clear(void *vc)
   stpi_channel_group_t *cg = (stpi_channel_group_t *) vc;
   int i;
   if (cg->channel_count > 0)
-    {
-      for (i = 0; i < cg->channel_count; i++)
-	{
-	  SAFE_FREE(cg->c[i].sc);
-	  SAFE_FREE(cg->c[i].lut);
-	}
-    }
+    for (i = 0; i < cg->channel_count; i++)
+      clear_a_channel(cg, i);
   if (cg->data != cg->input_data)
     SAFE_FREE(cg->data);
   SAFE_FREE(cg->input_data);
   SAFE_FREE(cg->c);
+  cg->channel_count = 0;
+  cg->total_channels = 0;
+  cg->input_channels = 0;
+  cg->initialized = 0;
 }
 
 void
@@ -88,6 +99,15 @@ stpi_channel_reset(stp_vars_t v)
     ((stpi_channel_group_t *) stpi_get_component_data(v, "Channel"));
   if (cg)
     stpi_channel_clear(cg);
+}
+
+void
+stpi_channel_reset_channel(stp_vars_t v, int channel)
+{
+  stpi_channel_group_t *cg =
+    ((stpi_channel_group_t *) stpi_get_component_data(v, "Channel"));
+  if (cg)
+    clear_a_channel(cg, channel);
 }
 
 static void
@@ -165,15 +185,9 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
       cg = stpi_zalloc(sizeof(stpi_channel_group_t));
       stpi_allocate_component_data(v, "Channel", NULL, stpi_channel_free, cg);
     }				   
-  cg->data = stpi_malloc(sizeof(unsigned short) * cg->total_channels * width);
-  if (!input_needs_splitting(v))
-    {
-      cg->data = cg->input_data;
-      return;
-    }
-  cg->input_data =
-    stpi_malloc(sizeof(unsigned short) * input_channel_count * width);
-  cg->input_channels = input_channel_count;
+  if (cg->initialized)
+    return;
+  cg->initialized = 1;
   for (i = 0; i < cg->channel_count; i++)
     {
       stpi_channel_t *c = &(cg->c[i]);
@@ -204,8 +218,16 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
 	}     
       cg->total_channels += c->subchannel_count;
     }
-  cg->data = stpi_malloc(sizeof(unsigned short) * cg->total_channels * width);
+  cg->input_channels = input_channel_count;
   cg->width = width;
+  cg->data = stpi_malloc(sizeof(unsigned short) * cg->total_channels * width);
+  if (!input_needs_splitting(v))
+    {
+      cg->input_data = cg->data;
+      return;
+    }
+  cg->input_data =
+    stpi_malloc(sizeof(unsigned short) * cg->input_channels * width);
 }
 
 void

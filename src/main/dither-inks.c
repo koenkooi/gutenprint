@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.2 2003/05/16 02:13:10 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -351,7 +351,7 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
     SAFE_FREE(dc->shades);
   }
 
-  stpi_channel_reset(v);
+  stpi_channel_reset_channel(v, color);
 
   dc->numshades = nshades;
   dc->shades = stpi_zalloc(nshades * sizeof(stpi_shade_segment_t));

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.75.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.75.2.2 2003/05/16 02:13:10 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -54,6 +54,7 @@ typedef struct
   unsigned char *in_data;
   int image_bpp;
   int image_width;
+  int out_channels;
   stp_convert_t colorfunc;
   stp_curve_t composite;
   stp_curve_t black;
@@ -1283,6 +1284,7 @@ stpi_color_get_row(stp_const_vars_t v, stp_image_t *image, int row,
 			 lut->image_width * lut->image_bpp, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
+  stpi_channel_initialize(v, image, lut->out_channels);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
   if (zero_mask)
     *zero_mask = zero;
@@ -1665,11 +1667,12 @@ set_null_colorfunc(void)
   stpi_erprintf("No colorfunc chosen!\n");
 }
 
-#define SET_COLORFUNC(x)						    \
-stpi_dprintf(STPI_DBG_COLORFUNC, v,					    \
-	    "at line %d stp_choose_colorfunc(type %d bpp %d) ==> %s, %d\n", \
-	    __LINE__, stp_get_output_type(v), image_bpp, #x, out_channels); \
-lut->colorfunc = x;							    \
+#define SET_COLORFUNC(x)						     \
+stpi_dprintf(STPI_DBG_COLORFUNC, v,					     \
+	     "at line %d stp_choose_colorfunc(type %d bpp %d) ==> %s, %d\n", \
+	     __LINE__, stp_get_output_type(v), image_bpp, #x,		     \
+	     lut->out_channels);					     \
+lut->colorfunc = x;							     \
 break
 
 int
@@ -1677,7 +1680,6 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 {
   const char *image_type = stp_get_string_parameter(v, "ImageOptimization");
   int itype = 0;
-  int out_channels = 0;
   int image_bpp = stpi_image_bpp(image);
   lut_t *lut;
   if (steps != 256 && steps != 65536)
@@ -1701,7 +1703,7 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
   switch (stp_get_output_type(v))
     {
     case OUTPUT_RAW_CMYK:
-      out_channels = 4;
+      lut->out_channels = 4;
       switch (image_bpp)
 	{
 	case 1:
@@ -1743,7 +1745,7 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 	}
       break;
     case OUTPUT_COLOR:
-      out_channels = 3;
+      lut->out_channels = 3;
       switch (image_bpp)
 	{
 	case 3:
@@ -1786,10 +1788,10 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 	  set_null_colorfunc();
 	  SET_COLORFUNC(NULL);
 	}
-      out_channels = image_bpp / 2;
+      lut->out_channels = image_bpp / 2;
       SET_COLORFUNC(raw_to_raw);
     case OUTPUT_GRAY:
-      out_channels = 1;
+      lut->out_channels = 1;
       switch (image_bpp)
 	{
 	case 1:
@@ -1809,9 +1811,8 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
       set_null_colorfunc();
       SET_COLORFUNC(NULL);
     }
-  stpi_channel_initialize(v, image, out_channels);
   lut->in_data = stpi_malloc(stpi_image_width(image) * image_bpp);
-  return out_channels;
+  return lut->out_channels;
 }
 
 static void

@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.8.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: color.h,v 1.8.2.2 2003/05/16 02:13:10 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -52,20 +52,17 @@ extern int stpi_color_get_row(stp_const_vars_t v, stp_image_t *image,
 
 extern stp_parameter_list_t stpi_color_list_parameters(stp_const_vars_t v);
 
-extern void
-stpi_color_describe_parameter(stp_const_vars_t v, const char *name,
-			      stp_parameter_t *description);
+extern void stpi_color_describe_parameter(stp_const_vars_t v, const char *name,
+					  stp_parameter_t *description);
 
-extern void
-stpi_channel_reset(stp_vars_t v);
+extern void stpi_channel_reset(stp_vars_t v);
+extern void stpi_channel_reset_channel(stp_vars_t v, int channel);
 
-extern void
-stpi_channel_add(stp_vars_t v, unsigned channel, unsigned subchannel,
-		 double value);
+extern void stpi_channel_add(stp_vars_t v, unsigned channel,
+			     unsigned subchannel, double value);
 
-extern void
-stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
-			int input_channel_count);
+extern void stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
+				    int input_channel_count);
 
 extern void stpi_channel_convert(stp_const_vars_t v);
 
