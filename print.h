@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.80 2000/09/03 23:57:32 anikin Exp $"
+ * "$Id: print.h,v 1.81 2000/09/04 19:46:00 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -99,16 +99,6 @@
  * Printer driver control structure.  See "print.c" for the actual list...
  */
 
-typedef struct
-{
-  unsigned steps;
-  unsigned short *composite;
-  unsigned short *red;
-  unsigned short *green;
-  unsigned short *blue;
-} lut_t;
-
-
 typedef struct					/* Plug-in variables */
 {
   char	output_to[256],		/* Name of file or command to print to */
@@ -140,7 +130,7 @@ typedef struct					/* Plug-in variables */
   float app_gamma;		/* Application gamma */
   int	page_width;		/* Width of page in points */
   int	page_height;		/* Height of page in points */
-  lut_t *lut;			/* Look-up table */
+  void  *lut;			/* Look-up table */
   unsigned char *cmap;		/* Color map */
 } vars_t;
 
@@ -320,16 +310,24 @@ extern void	destroy_weave_params(void *vw);
 
 
 extern void	dither_fastblack(const unsigned short *, int, void *,
-				 unsigned char *);
+				 unsigned char *, int duplicate_line);
 
 extern void	dither_black(const unsigned short *, int, void *,
-			     unsigned char *);
+			     unsigned char *, int duplicate_line);
 
 extern void	dither_cmyk(const unsigned short *, int, void *,
 			    unsigned char *,
 			    unsigned char *, unsigned char *,
 			    unsigned char *, unsigned char *,
-			    unsigned char *, unsigned char *);
+			    unsigned char *, unsigned char *,
+			    int duplicate_line);
+
+extern void	dither_cmyk_fast(const unsigned short *, int, void *,
+				 unsigned char *,
+				 unsigned char *, unsigned char *,
+				 unsigned char *, unsigned char *,
+				 unsigned char *, unsigned char *,
+			    int duplicate_line);
 
 extern void	merge_printvars(vars_t *user, const vars_t *print);
 extern void	free_lut(vars_t *v);
@@ -463,5 +461,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.80 2000/09/03 23:57:32 anikin Exp $".
+ * End of "$Id: print.h,v 1.81 2000/09/04 19:46:00 rlk Exp $".
  */
