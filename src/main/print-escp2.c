@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.289 2003/09/26 22:29:23 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.290 2003/10/07 03:10:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1395,6 +1395,8 @@ internal_imageable_area(stp_const_vars_t v, int use_paper_margins,
     {
       *left -= 80 / (360 / 72);	/* 80 per the Epson manual */
       *right += 80 / (360 / 72);	/* 80 per the Epson manual */
+      *bottom += escp2_nozzles(v) * escp2_nozzle_separation(v) * 72 /
+	escp2_base_separation(v);
     }
 }
 
@@ -1585,11 +1587,17 @@ adjust_print_quality(stp_vars_t v, stp_image_t *image)
       k_lower = pt->k_lower;
       k_upper = pt->k_upper;
       k_transition = pt->k_transition;
+      stp_set_default_float_parameter(v, "CyanDensity", 1.0);
       stp_scale_float_parameter(v, "CyanDensity", pt->cyan);
+      stp_set_default_float_parameter(v, "MagentaDensity", 1.0);
       stp_scale_float_parameter(v, "MagentaDensity", pt->magenta);
+      stp_set_default_float_parameter(v, "YellowDensity", 1.0);
       stp_scale_float_parameter(v, "YellowDensity", pt->yellow);
+      stp_set_default_float_parameter(v, "BlackDensity", 1.0);
       stp_scale_float_parameter(v, "BlackDensity", pt->black);
+      stp_set_default_float_parameter(v, "Saturation", 1.0);
       stp_scale_float_parameter(v, "Saturation", pt->saturation);
+      stp_set_default_float_parameter(v, "Gamma", 1.0);
       stp_scale_float_parameter(v, "Gamma", pt->gamma);
     }
 
