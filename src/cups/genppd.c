@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.90 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: genppd.c,v 1.91 2004/04/10 03:37:48 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1205,7 +1205,7 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 	      const stp_parameter_t *lparam =
 		stp_parameter_list_param(param_list, l);
 	      if (lparam->p_class != j || lparam->p_level != k ||
-		  is_special_option(lparam->name) ||
+		  is_special_option(lparam->name) || lparam->read_only ||
 		  (lparam->p_type != STP_PARAMETER_TYPE_STRING_LIST &&
 		   lparam->p_type != STP_PARAMETER_TYPE_BOOLEAN &&
 		   lparam->p_type != STP_PARAMETER_TYPE_DOUBLE))
@@ -1522,5 +1522,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.90 2004/03/28 21:17:37 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.91 2004/04/10 03:37:48 rlk Exp $".
  */

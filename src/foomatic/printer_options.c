@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.35 2004/04/02 01:52:02 rlk Exp $"
+ * "$Id: printer_options.c,v 1.36 2004/04/10 03:37:49 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -73,7 +73,7 @@ main(int argc, char **argv)
       for (k = 0; k < nparams; k++)
 	{
 	  const stp_parameter_t *p = stp_parameter_list_param(params, k);
-	  if (p->p_level > STP_PARAMETER_LEVEL_ADVANCED4 ||
+	  if (p->read_only || p->p_level > STP_PARAMETER_LEVEL_ADVANCED4 ||
 	      (p->p_class != STP_PARAMETER_CLASS_OUTPUT &&
 	       p->p_class != STP_PARAMETER_CLASS_FEATURE))
 	    continue;
@@ -81,6 +81,27 @@ main(int argc, char **argv)
 	  stp_describe_parameter(pv, p->name, &desc);
 	  if (desc.is_active)
 	    {
+	      if (desc.p_type == STP_PARAMETER_TYPE_DOUBLE &&
+		  !desc.is_mandatory)
+		{
+		  /*
+		   * Create a dummy option that enables or disables
+		   * the option as appropriate
+		   */
+		  printf("$longnames{'Enable%s'} = 'Enable %s';\n",
+			 p->name, p->text);
+		  printf("$param_classes{'Enable%s'} = %d;\n",
+			 p->name, p->p_class);
+		  printf("$param_levels{'Enable%s'} = %d;\n",
+			 p->name, p->p_level);
+		  printf("$defaults{'%s'}{'Enable%s'} = 'Disabled';\n",
+			 driver, p->name);
+		  printf("$stpdata{'%s'}{'Enable%s'}{'0'} = 'Disabled';\n",
+			 driver, desc.name);
+		  printf("$stpdata{'%s'}{'Enable%s'}{'1'} = 'Enabled';\n",
+			 driver, desc.name);
+		}
+		  
 	      printf("$longnames{'%s'} = '%s';\n",
 		     p->name, p->text);
 	      printf("$param_classes{'%s'} = %d;\n",

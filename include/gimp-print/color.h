@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.2 2004/04/07 18:57:50 rleigh Exp $"
+ * "$Id: color.h,v 1.3 2004/04/10 03:37:48 rlk Exp $"
  *
  *   libgimpprint color functions.
  *
@@ -22,7 +22,7 @@
  */
 
 /**
- * @file color.h
+ * @file include/gimp-print/color.h
  * @brief Color functions.
  */
 
@@ -94,5 +94,5 @@ stp_color_get_long_name(stp_const_color_t c);
 
 #endif /* GIMP_PRINT_COLOR_H */
 /*
- * End of "$Id: color.h,v 1.2 2004/04/07 18:57:50 rleigh Exp $".
+ * End of "$Id: color.h,v 1.3 2004/04/10 03:37:48 rlk Exp $".
  */
