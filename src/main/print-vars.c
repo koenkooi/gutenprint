@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.6.2.5 2002/11/16 22:34:49 rlk Exp $"
+ * "$Id: print-vars.c,v 1.6.2.6 2002/11/18 00:30:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -169,7 +169,12 @@ static const stp_parameter_t global_parameters[] =
     },
     {
       "DitherAlgorithm", N_("Dither Algorithm"),
-      N_("Dithering method"),
+      N_("Choose the dither algorithm to be used.\n"
+	 "Adaptive Hybrid usually produces the best all-around quality.\n"
+	 "EvenTone is a new, experimental algorithm that often produces excellent results.\n"
+	 "Ordered is faster and produces almost as good quality on photographs.\n"
+	 "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
+	 "Hybrid Floyd-Steinberg generally produces inferior output."),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC
     },
@@ -187,13 +192,20 @@ static const stp_parameter_t global_parameters[] =
     },
     {
       "Density", N_("Density"),
-      N_("Amount of ink used in printing"),
+      N_("Adjust the density (amount of ink) of the print. "
+	 "Reduce the density if the ink bleeds through the "
+	 "paper or smears; increase the density if black "
+	 "regions are not solid."),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC
     },
     {
       "Gamma", N_("Gamma"),
-      N_("Adjust the gamma of the print (lower is darker, higher is lighter)"),
+      N_("Adjust the gamma of the print. Larger values will "
+	 "produce a generally brighter print, while smaller "
+	 "values will produce a generally darker print. "
+	 "Black and white will remain the same, unlike with "
+	 "the brightness adjustment."),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC
     },
@@ -223,7 +235,9 @@ static const stp_parameter_t global_parameters[] =
     },
     {
       "Saturation", N_("Saturation"),
-      N_("Color saturation (0 is grayscale, larger numbers produce more brilliant colors"),
+      N_("Adjust the saturation (color balance) of the print\n"
+	 "Use zero saturation to produce grayscale output "
+	 "using color and black inks"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC
     },
@@ -714,11 +728,9 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
 				stp_parameter_t *description)
 {
   const stp_parameter_t *param = global_parameters;
-  description->class = STP_PARAMETER_CLASS_OUTPUT;
-  description->level = STP_PARAMETER_LEVEL_BASIC;
   if (strcmp(name, "DitherAlgorithm") == 0)
     {
-      description->type = STP_PARAMETER_TYPE_STRING_LIST;
+      stp_fill_parameter_settings(description, name);
       description->bounds.str = stp_string_list_allocate();
       stp_dither_algorithms(description->bounds.str);
       description->deflt.str = 
@@ -730,9 +742,7 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
       if (param->type == STP_PARAMETER_TYPE_DOUBLE &&
 	  strcmp(name, param->name) == 0)
 	{
-	  description->type = param->type;
-	  description->class = param->class;
-	  description->level = param->level;
+	  stp_fill_parameter_settings(description, name);
 	  if (description->type == STP_PARAMETER_TYPE_DOUBLE)
 	    {
 	      description->bounds.dbl.lower =
