@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.73 2000/08/06 21:00:14 rlk Exp $"
+ * "$Id: print.h,v 1.74 2000/08/12 17:27:35 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -287,6 +287,7 @@ extern void	dither_set_max_ink(void *vd, int, double);
 extern void	dither_set_x_oversample(void *vd, int os);
 extern void	dither_set_y_oversample(void *vd, int os);
 extern void	dither_set_adaptive_divisor(void *vd, unsigned divisor);
+extern void	dither_set_error_mix(void *vd, double);
 
 
 extern void	free_dither(void *);
@@ -398,5 +399,5 @@ verify_printer_params(const printer_t *, const vars_t *);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.73 2000/08/06 21:00:14 rlk Exp $".
+ * End of "$Id: print.h,v 1.74 2000/08/12 17:27:35 rlk Exp $".
  */
