@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.32 2001/10/12 00:36:42 rlk Exp $"
+# "$Id: printers.xml,v 1.33 2001/10/15 18:39:12 davehill Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -852,6 +852,14 @@
 </printer>
 
 <printer name="HP DeskJet 842C" driver="pcl-842">
+<color>
+<model value=840>	# Uses 840 driver
+<gamma value=0.818>
+<density value=0.786>
+<language value=pcl>
+</printer>
+
+<printer name="HP DeskJet 845C" driver="pcl-845">
 <color>
 <model value=840>	# Uses 840 driver
 <gamma value=0.818>
