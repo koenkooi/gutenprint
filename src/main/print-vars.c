@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.17 2003/01/01 16:46:34 rlk Exp $"
+ * "$Id: print-vars.c,v 1.18 2003/01/03 07:51:55 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,6 +38,7 @@
 #endif
 #include "vars.h"
 #include <string.h>
+#include <stdlib.h>
 
 #define COOKIE_VARS      0x1a18376c
 
@@ -998,7 +999,7 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
       stp_fill_parameter_settings(description, name);
       description->bounds.str = stp_string_list_allocate();
       stp_dither_algorithms(description->bounds.str);
-      description->deflt.str = 
+      description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
       return;
     }
@@ -1006,7 +1007,7 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
   param = stp_parameter_find(list, name);
   stp_parameter_list_destroy(list);
 
-  if (param->type == STP_PARAMETER_TYPE_DOUBLE &&
+  if (param && param->type == STP_PARAMETER_TYPE_DOUBLE &&
       strcmp(name, param->name) == 0)
     {
       stp_fill_parameter_settings(description, name);
