@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.263 2000/10/02 23:40:27 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.264 2000/10/10 01:56:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3580,14 +3580,14 @@ typedef struct			/* Weave parameters for a specific pass */
 } pass_t;
 
 typedef union {			/* Offsets from the start of each line */
-  off_t v[6];			/* (really pass) */
+  unsigned long v[6];		/* (really pass) */
   struct {
-    off_t k;
-    off_t m;
-    off_t c;
-    off_t y;
-    off_t M;
-    off_t C;
+    unsigned long k;
+    unsigned long m;
+    unsigned long c;
+    unsigned long y;
+    unsigned long M;
+    unsigned long C;
   } p;
 } lineoff_t;
 
