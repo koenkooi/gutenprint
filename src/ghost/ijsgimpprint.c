@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.2.2.1 2002/02/15 02:01:28 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.2.2.2 2002/02/21 03:13:19 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -150,8 +150,8 @@ image_init(IMAGE *img, IjsPageHeader *ph)
 static void
 image_finish(IMAGE *img)
 {
-  if (img->row_buf);
-  free(img->row_buf);
+  if (img->row_buf)
+    free(img->row_buf);
   img->row_buf = NULL;
 }
 
