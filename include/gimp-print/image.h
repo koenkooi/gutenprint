@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: image.h,v 1.2 2003/10/13 02:00:03 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -42,6 +42,8 @@ extern "C" {
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
 #define NCOLOR_MODELS           2
+
+#define STP_CHANNEL_LIMIT	(32)
 
 /*
  * Abstract data type for interfacing with the image creation program
@@ -201,5 +203,5 @@ typedef struct stp_image
 
 #endif /* __GIMP_PRINT_IMAGE_H__ */
 /*
- * End of "$Id: image.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $".
+ * End of "$Id: image.h,v 1.2 2003/10/13 02:00:03 rlk Exp $".
  */
