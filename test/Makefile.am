@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.26 2001/08/13 23:59:13 rlk Exp $
+## $Id: Makefile.am,v 1.27 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,8 @@ testdither_LDADD = $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../src/main
+	cd ../src/main ; \
+	$(MAKE)
 
 
 ## Clean

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/08/25 16:19:50 rlk Exp $
+## $Id: Makefile.am,v 1.13 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,8 @@ foomatic-stamp: foomatic-generator $(EXTRA_PROGRAMS)
 	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../../src/main
+	cd ../main ; \
+	$(MAKE)
 
 
 ## Clean

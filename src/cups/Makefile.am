@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.34 2001/09/08 22:13:04 rlk Exp $
+## $Id: Makefile.am,v 1.35 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -178,7 +178,8 @@ ppd-stamp: genppd
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../main
+	cd ../main ; \
+	$(MAKE)
 
 dist-hook:
 	for dir in commands ; do \

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2001/06/03 18:35:03 rleigh Exp $
+## $Id: Makefile.am,v 1.17 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,8 @@ uninstall-libexecPROGRAMS: $(libexec_PROGRAMS)
 	done
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../main
+	cd ../main ; \
+	$(MAKE)
 
 
 ## Clean

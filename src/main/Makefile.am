@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.26 2001/09/08 17:13:48 rleigh Exp $
+## $Id: Makefile.am,v 1.27 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,8 @@ print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
 printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
-	$(MAKE) -C ../printdef
+	cd ../printdef ; \
+	$(MAKE)
 
 
 ## Clean

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.110 2001/09/09 20:40:26 rleigh Exp $
+## $Id: Makefile.am,v 1.111 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -108,20 +108,25 @@ gimp-dist:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-GIMP-DIST
 
 install-cups: all
-	$(MAKE) -C src/cups install
+	cd src/cups ; \
+	$(MAKE) install
 
 install-ghost: all
-	$(MAKE) -C src/ghost install
+	cd src/ghost ; \
+	$(MAKE) install
 
 ## @-@-@-@-@ YES-GIMP @-@-@-@-@
 install-gimp: all
-	$(MAKE) -C src/gimp install
+	cd src/gimp ; \
+	$(MAKE) install
 
 html:
-	$(MAKE) -C doc html
+	cd doc ; \
+	$(MAKE) html
 
 ps:
-	$(MAKE) -C doc ps
+	cd doc ; \
+	$(MAKE) ps
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`

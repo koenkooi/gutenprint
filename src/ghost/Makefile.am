@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2001/09/02 13:30:26 rlk Exp $
+## $Id: Makefile.am,v 1.15 2001/09/17 20:37:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,8 @@ gdevstp-%: $(srcdir)/../main/print-% Makefile
 printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
-	        $(MAKE) -C ../printdef
+	cd ../printdef ; \
+	$(MAKE)
 
 
 ## Clean
