@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.91 2003/02/15 23:10:47 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.92 2003/02/19 17:45:45 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1178,6 +1178,40 @@ static const pcl_cap_t pcl_model_capabilities[] =
     {12, 12, 10, 10},	/* Check/Fix */
     PCL_COLOR_NONE,
     PCL_PRINTER_LJ,
+    {
+      PCL_PAPERSIZE_EXECUTIVE,
+      PCL_PAPERSIZE_STATEMENT,
+      PCL_PAPERSIZE_LETTER,
+      PCL_PAPERSIZE_LEGAL,
+      PCL_PAPERSIZE_A4,
+      PCL_PAPERSIZE_MONARCH_ENV,
+      PCL_PAPERSIZE_COMMERCIAL10_ENV,
+      PCL_PAPERSIZE_DL_ENV,
+      PCL_PAPERSIZE_C5_ENV,
+      PCL_PAPERSIZE_C6_ENV,
+      -1,
+    },
+    { -1,			/* No selectable paper types */
+    },
+    {
+      PCL_PAPERSOURCE_STANDARD,
+      PCL_PAPERSOURCE_MANUAL,
+      PCL_PAPERSOURCE_LJ_TRAY1,
+      PCL_PAPERSOURCE_LJ_TRAY2,
+      PCL_PAPERSOURCE_LJ_TRAY3,
+      PCL_PAPERSOURCE_LJ_TRAY4,
+      -1,
+    },
+  },
+  /* LaserJet IIP (TIFF but no blankline) */
+  { 21,
+    17 * 72 / 2, 14 * 72,
+    1, 1,				/* Min paper size */
+    PCL_RES_150_150 | PCL_RES_300_300,
+    {12, 12, 18, 18},
+    {12, 12, 10, 10},	/* Check/Fix */
+    PCL_COLOR_NONE,
+    PCL_PRINTER_LJ | PCL_PRINTER_TIFF,
     {
       PCL_PAPERSIZE_EXECUTIVE,
       PCL_PAPERSIZE_STATEMENT,

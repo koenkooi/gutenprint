@@ -5,7 +5,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.67 2003/01/28 14:40:21 davehill Exp $"
+   "$Id: printers.xml,v 1.68 2003/02/19 17:45:49 davehill Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1210,6 +1210,12 @@
       <printer name="HP LaserJet II series" driver="pcl-2">
         <color value="false"/>
         <model value="2"/>
+        <gamma value="1.000"/>
+        <density value="1.000"/>
+      </printer>
+      <printer name="HP LaserJet IIP series" driver="pcl-2p">
+        <color value="false"/>
+        <model value="21"/>
         <gamma value="1.000"/>
         <density value="1.000"/>
       </printer>
