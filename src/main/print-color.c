@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.43 2004/03/28 02:06:06 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.44 2004/03/28 04:02:02 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -2595,6 +2595,8 @@ generic_kcmy_to_cmykrb(stp_const_vars_t vars, const unsigned short *in,
   int i, j;
   unsigned retval = 0;
 
+  memset(nz, 0, sizeof(nz));
+
   for (i = 0; i < width; i++, out += 6, in += 4)
     {
       for (j = 0; j < 4; j++)
@@ -2623,6 +2625,8 @@ raw_kcmy_to_cmykrb(stp_const_vars_t vars, const unsigned short *in,
   const unsigned short *output_cache = NULL;
   int i, j;
   unsigned retval = 0;
+
+  memset(nz, 0, sizeof(nz));
 
   for (i = 0; i < width; i++, out += 6, in += 4)
     {
@@ -3577,7 +3581,7 @@ setup_channel(stp_vars_t v, int i, const channel_param_t *p)
   stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n", gamma_name, lut->gamma_values[i]);
   compute_one_lut(lut, i);
 }
-  
+
 
 static void
 stpi_compute_lut(stp_vars_t v)
