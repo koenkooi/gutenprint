@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.13 1999/10/26 23:36:51 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.14 1999/10/26 23:58:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.14  1999/10/26 23:58:31  rlk
+ *   indentation
+ *
  *   Revision 1.13  1999/10/26 23:36:51  rlk
  *   Comment out all remaining 16-bit code, and rename 16-bit functions to "standard" names
  *
@@ -434,7 +437,7 @@ escp2_print(int       model,		/* I - Model */
             FILE      *prn,		/* I - File to print to */
 	    Image     image,		/* I - Image to print */
             unsigned char    *cmap,	/* I - Colormap (for indexed images) */
-	    lut_t     *lut,		/* I - Brightness lookup table (16-bit) */
+	    lut_t     *lut,		/* I - Brightness lookup table */
 	    float     saturation	/* I - Saturation */
 	    )
 {
@@ -1118,5 +1121,5 @@ escp2_write(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.13 1999/10/26 23:36:51 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.14 1999/10/26 23:58:31 rlk Exp $".
  */
