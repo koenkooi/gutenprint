@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.27 2003/11/20 03:46:06 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.27.4.1 2004/03/26 02:02:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -109,15 +109,17 @@ static const escp2_dropsize_t escp2_1_5pl_1440_dropsizes =
 static const escp2_dropsize_t escp2_1_5pl_2880_dropsizes =
   { "1_5pl_2880", 3, { 0.25, 0.50, 1.0 } };
 
-/* Stylus Photo R300 -- guesses based on PM-G800 */
+/* Stylus Photo R300 */
 static const escp2_dropsize_t escp2_r300_360_dropsizes =
-  { "r300_360", 3, { 0.25, 0.5, 1.0 } };
+  { "r300_360", 3, { 0.15, 0.3, 1.0 } };
 static const escp2_dropsize_t escp2_r300_720_dropsizes =
-  { "r300_720", 3, { 0.35, 0.70, 1.0 } };
+  { "r300_720", 3, { 0.15, 0.5, 1.0 } };
 static const escp2_dropsize_t escp2_r300_1440_dropsizes =
-  { "r300_1440", 3, { 0.231, 0.462, 1.0 } };
+  { "r300_1440", 3, { 0.25, 0.5, 1.0 } };
 static const escp2_dropsize_t escp2_r300_2880_dropsizes =
   { "r300_2880", 2, { 0.5, 1.0 } };
+static const escp2_dropsize_t escp2_r300_2880_1440_dropsizes =
+  { "r300_2880_1440", 1, { 1.0 } };
 
 /* Stylus C80 */
 static const escp2_dropsize_t escp2_economy_pigment_dropsizes =
@@ -241,8 +243,8 @@ const escp2_drop_list_t stpi_escp2_variable_3pl_pmg_drops =
   &escp2_r300_720_dropsizes,
   &escp2_r300_1440_dropsizes,
   &escp2_r300_2880_dropsizes,
-  &escp2_r300_2880_dropsizes,
-  &escp2_r300_2880_dropsizes,
+  &escp2_r300_2880_1440_dropsizes,
+  &escp2_r300_2880_1440_dropsizes,
 };
 
 const escp2_drop_list_t stpi_escp2_variable_1_5pl_drops =

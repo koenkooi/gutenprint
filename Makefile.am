@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.136 2003/11/23 03:52:46 rlk Exp $
+## $Id: Makefile.am,v 1.136.4.1 2004/03/26 02:02:52 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,23 @@ libtool: $(LIBTOOL_DEPS)
 	cd $(srcdir); \
 	$(SHELL) ./config.status --recheck
 
-ChangeLog:
+# This rather strange-looking code ensures that the change log is only
+# rebuilt if any of the CVS/Entries files have changed since the change log
+# was last built.
+
+ChangeLogPhony:
+	@cd $(top_srcdir) ; \
+	for f in `find . -name Entries -print | grep CVS` ; do \
+	  if /usr/bin/test ! -f ChangeLogStamp -o ChangeLogStamp -ot $$f ; then \
+	    rm -f ChangeLogStamp ; \
+	    touch ChangeLogStamp ; \
+	  fi ; \
+	done
+
+ChangeLogStamp: ChangeLogPhony
+	@/bin/true
+
+ChangeLog: ChangeLogStamp
 	@cd $(top_srcdir) ; \
 	if test -f $(top_builddir)/.noupdate ; then \
 	  echo "ChangeLog: .noupdate found: NOT updating ChangeLog from CVS" ; \
@@ -191,6 +207,6 @@ MAINTAINERCLEANFILES = \
 	$(addprefix m4/, $(CLEANMFOUR)) \
 	$(addprefix po/, $(CLEANPO))
 
-EXTRA_DIST = autogen.sh
+EXTRA_DIST = autogen.sh ChangeLogStamp
 
-.PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLog
+.PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLogPhony

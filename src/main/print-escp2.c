@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.8 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.9 2004/03/26 02:02:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -127,14 +127,14 @@ static const res_t *escp2_find_resolution(stp_const_vars_t v);
 {									\
   "escp2_" #s, "escp2_" #s, N_("Advanced Printer Functionality"), NULL,	\
   STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,			\
-  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1				\
+  STP_PARAMETER_LEVEL_INTERNAL, 0, 1, -1, 1				\
 }
 
 #define PARAMETER_RAW(s)						\
 {									\
   "escp2_" #s, "escp2_" #s, N_("Advanced Printer Functionality"), NULL,	\
   STP_PARAMETER_TYPE_RAW, STP_PARAMETER_CLASS_FEATURE,			\
-  STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1				\
+  STP_PARAMETER_LEVEL_INTERNAL, 0, 1, -1, 1				\
 }
 
 typedef struct
@@ -215,8 +215,8 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, -1, 1
   },
   {
-    "FullBleed", N_("Full Bleed"), N_("Basic Printer Setup"),
-    N_("Full Bleed"),
+    "FullBleed", N_("Borderless"), N_("Basic Printer Setup"),
+    N_("Print without borders"),
     STP_PARAMETER_TYPE_BOOLEAN, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
@@ -324,6 +324,8 @@ static const stp_parameter_t the_parameters[] =
   PARAMETER_INT(alternate_alignment_choices),
   PARAMETER_INT(cd_x_offset),
   PARAMETER_INT(cd_y_offset),
+  PARAMETER_INT(cd_page_width),
+  PARAMETER_INT(cd_page_height),
   PARAMETER_RAW(preinit_sequence),
   PARAMETER_RAW(postinit_remote_sequence)
 };
@@ -572,6 +574,8 @@ DEF_SIMPLE_ACCESSOR(min_paper_width, unsigned)
 DEF_SIMPLE_ACCESSOR(min_paper_height, unsigned)
 DEF_SIMPLE_ACCESSOR(cd_x_offset, int)
 DEF_SIMPLE_ACCESSOR(cd_y_offset, int)
+DEF_SIMPLE_ACCESSOR(cd_page_width, int)
+DEF_SIMPLE_ACCESSOR(cd_page_height, int)
 DEF_SIMPLE_ACCESSOR(extra_feed, unsigned)
 DEF_SIMPLE_ACCESSOR(pseudo_separation_rows, int)
 DEF_SIMPLE_ACCESSOR(base_separation, int)
@@ -878,27 +882,27 @@ verify_resolution_by_paper_type(stp_const_vars_t v, const res_t *res)
       switch (paper->paper_class)
 	{
 	case PAPER_PLAIN:
-	  if (res->vres > 720 || res->hres > 720)
+	  if (res->printed_vres > 720 || res->hres > 720)
 	    return 0;
 	  break;
 	case PAPER_GOOD:
-	  if (res->vres < 180 || res->hres < 360 ||
-	      res->vres > 720 || res->hres > 1440)
+	  if (res->printed_vres < 180 || res->hres < 360 ||
+	      res->printed_vres > 720 || res->hres > 1440)
 	    return 0;
 	  break;
 	case PAPER_PHOTO:
-	  if (res->vres < 360 || 
+	  if (res->printed_vres < 360 || 
 	      (res->hres < 720 && res->hres < escp2_max_hres(v)))
 	    return 0;
 	  break;
 	case PAPER_PREMIUM_PHOTO:
-	  if (res->vres < 720 ||
+	  if (res->printed_vres < 720 ||
 	      (res->hres < 720 && res->hres < escp2_max_hres(v)))
 	    return 0;
 	  break;
 	case PAPER_TRANSPARENCY:
-	  if (res->vres < 360 || res->hres < 360 ||
-	      res->vres > 720 || res->hres > 720)
+	  if (res->printed_vres < 360 || res->hres < 360 ||
+	      res->printed_vres > 720 || res->hres > 720)
 	    return 0;
 	  break;
 	}
@@ -912,8 +916,7 @@ verify_resolution(stp_const_vars_t v, const res_t *res)
   int nozzle_width =
     (escp2_base_separation(v) / escp2_nozzle_separation(v));
   int nozzles = escp2_nozzles(v);
-  int resid = compute_resid(res);
-  if (escp2_ink_type(v, resid) != -1 &&
+  if (escp2_ink_type(v, compute_printed_resid(res)) != -1 &&
       res->vres <= escp2_max_vres(v) &&
       res->hres <= escp2_max_hres(v) &&
       res->vres >= escp2_min_vres(v) &&
@@ -922,7 +925,7 @@ verify_resolution(stp_const_vars_t v, const res_t *res)
        ((res->vres / nozzle_width) * nozzle_width) == res->vres))
     {
       int xdpi = res->hres;
-      int physical_xdpi = escp2_base_res(v, resid);
+      int physical_xdpi = escp2_base_res(v, compute_resid(res));
       int horizontal_passes, oversample;
       if (physical_xdpi > xdpi)
 	physical_xdpi = xdpi;
@@ -2334,14 +2337,23 @@ setup_page(stp_vars_t v)
     {
       int left_center = escp2_cd_x_offset(v);
       int top_center = escp2_cd_y_offset(v);
+      if (escp2_cd_page_width(v))
+	pd->page_right = escp2_cd_page_width(v);
+      else
+	extra_left = left_center - (pd->page_right / 2);
+      if (escp2_cd_page_height(v))
+	{
+	  pd->page_bottom = escp2_cd_page_height(v);
+	  pd->page_true_height = escp2_cd_page_height(v);
+	}
+      else
+	extra_top = top_center - (pd->page_bottom / 2);
       pd->cd_inner_radius = 43 * pd->micro_units * 10 / 254 / 2;
       pd->cd_outer_radius = pd->page_right * pd->micro_units / 72 / 2;
       pd->cd_x_offset =
 	((pd->page_right / 2) - stp_get_left(v)) * pd->micro_units / 72;
       pd->cd_y_offset =
-	((pd->page_right / 2) - stp_get_top(v)) * pd->micro_units / 72;
-      extra_left = left_center - (pd->page_right / 2);
-      extra_top = top_center - (pd->page_bottom / 2);
+	((pd->page_bottom / 2) - stp_get_top(v)) * pd->micro_units / 72;
     }
 
   pd->page_right += extra_left + 1;
@@ -2498,7 +2510,7 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   int i;
   escp2_privdata_t *pd = get_privdata(v);
   int out_channels;		/* Output bytes per pixel */
-  int line_width = (pd->image_scaled_width + 7) / 8 * pd->bitwidth;
+  int line_width = (pd->image_printed_width + 7) / 8 * pd->bitwidth;
   int weave_pattern = STPI_WEAVE_ZIGZAG;
   if (stp_check_string_parameter(v, "Weave", STP_PARAMETER_ACTIVE))
     {
@@ -2524,8 +2536,8 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      1,
      pd->channels_in_use,
      pd->bitwidth,
-     pd->image_scaled_width,
-     pd->image_scaled_height,
+     pd->image_printed_width,
+     pd->image_printed_height,
      pd->image_top * pd->res->vres / 72,
      (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72,
      pd->head_offset,

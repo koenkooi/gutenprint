@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.93.2.1 2004/03/01 03:07:44 rlk Exp $"
+   "$Id: printers.xml,v 1.93.2.2 2004/03/26 02:02:53 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -585,12 +585,24 @@
         <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
+      <printer name="EPSON Stylus Photo R200" driver="escp2-r200" manufacturer="EPSON">
+        <color value="true"/>
+        <model value="63"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
       <printer name="EPSON Stylus Photo R300" driver="escp2-r300" manufacturer="EPSON">
         <model value="63"/>
         <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus Photo RX500" driver="escp2-rx500" manufacturer="EPSON">
+        <model value="63"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus Photo RX600" driver="escp2-rx600" manufacturer="EPSON">
+        <color value="true"/>
         <model value="63"/>
         <gamma value="0.731"/>
         <density value="1.0"/>
