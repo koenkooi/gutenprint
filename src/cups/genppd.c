@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.3 2001/01/22 21:44:25 rleigh Exp $"
+ * "$Id: genppd.c,v 1.4 2001/01/23 00:13:13 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -53,7 +53,6 @@
 #include <cups/raster.h>
 
 #include <gimp-print.h>
-#include <gimp-print-internal.h>
 
 /*
  * File handling stuff...
@@ -635,5 +634,5 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.3 2001/01/22 21:44:25 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.4 2001/01/23 00:13:13 rlk Exp $".
  */
