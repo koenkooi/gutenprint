@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.69 2000/08/09 23:39:41 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.70 2000/08/11 11:52:00 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1402,6 +1402,10 @@ pcl_print(const printer_t *printer,		/* I - Model */
 			  &orientation, &page_width, &page_height,
 			  &out_width, &out_height, &left, &top);
 
+  /*
+   * Recompute the image height and width.  If the image has been
+   * rotated, these will change from previously.
+   */
   image_height = Image_height(image);
   image_width = Image_width(image);
 
