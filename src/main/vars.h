@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.8 2002/12/28 15:46:18 rlk Exp $"
+ * "$Id: vars.h,v 1.9 2003/01/02 02:51:16 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,6 +30,9 @@ extern "C" {
 #endif
 
 #include <sys/types.h>
+
+typedef void *(*copy_data_func_t)(const stp_vars_t);
+typedef void (*destroy_data_func_t)(stp_vars_t);
 
 extern void	*stp_get_color_data(const stp_vars_t);
 extern void	stp_set_color_data(stp_vars_t v, void * val);
@@ -69,5 +72,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc, const char *name);
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.8 2002/12/28 15:46:18 rlk Exp $".
+ * End of "$Id: vars.h,v 1.9 2003/01/02 02:51:16 rlk Exp $".
  */

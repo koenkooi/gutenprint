@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.3 2002/11/24 02:46:49 rlk Exp $"
+ * "$Id: printers.h,v 1.4 2003/01/02 02:51:16 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -44,6 +44,21 @@ extern "C" {
 
 #include "util.h"
 
+typedef struct
+{
+  void  (*parameters)(const stp_vars_t v, const char *name,
+		      stp_parameter_t *);
+  void  (*media_size)(const stp_vars_t v, int *width, int *height);
+  void  (*imageable_area)(const stp_vars_t v,
+			  int *left, int *right, int *bottom, int *top);
+  void  (*limit)(const stp_vars_t v, int *max_width, int *max_height,
+                 int *min_width, int *min_height);
+  int   (*print)(const stp_vars_t v, stp_image_t *image);
+  void  (*describe_resolution)(const stp_vars_t v, int *x, int *y);
+  int   (*verify)(const stp_vars_t v);
+  int   (*start_job)(const stp_vars_t v, stp_image_t *image);
+  int   (*end_job)(const stp_vars_t v, stp_image_t *image);
+} stp_printfuncs_t;
 
 extern int stp_get_model(const stp_vars_t v);
 
@@ -59,5 +74,5 @@ extern int stp_init_printer_list(void);
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.3 2002/11/24 02:46:49 rlk Exp $".
+ * End of "$Id: printers.h,v 1.4 2003/01/02 02:51:16 rlk Exp $".
  */
