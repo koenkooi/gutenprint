@@ -543,7 +543,7 @@
 <language value=escp2>
 </printer>
 
-<printer name="EPSON Stylus Pro 5000" driver="escp2-5000">
+<printer name="EPSON Stylus Pro 5500" driver="escp2-5500">
 <color>
 <model value=40>
 <gamma value=0.585>

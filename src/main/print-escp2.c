@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68.2.1 2001/05/25 22:38:24 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68.2.2 2001/05/25 22:56:12 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1681,7 +1681,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(13), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -1693,7 +1693,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(24), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -1705,7 +1705,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(24), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -1717,7 +1717,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(44), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -1729,7 +1729,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(44), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -1837,7 +1837,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL
      | MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
-     | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
+     | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_ENHANCED_MICROWEAVE_YES
      | MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO),
     64, 2, 64, 2, 1440, 1440, INCH(13), INCH(1200), 9, 9, 0, 9, 0, 1, 0,
     360, 1440, 1440, 14400,
@@ -2767,6 +2767,8 @@ escp2_set_remote_sequence(const stp_vars_t v, escp2_init_t *init)
 {
   /* Magic remote mode commands, whatever they do */
   if (escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_1999,
+		    init->v) ||
+      escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_PRO,
 		    init->v))
     {
       int feed_sequence = 0;
@@ -2930,6 +2932,8 @@ escp2_set_form_factor(const stp_vars_t v, escp2_init_t *init)
     page_height += 144 * 720 / init->ydpi;
 
   if (escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_1999,
+		    init->v) || 
+      escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_PRO,
 		    init->v))
     stp_zprintf(v, "\033(S\010%c%c%c%c%c%c%c%c%c", 0,
 		((page_width >> 0) & 0xff), ((page_width >> 8) & 0xff),
@@ -3008,6 +3012,8 @@ escp2_deinit_printer(const stp_vars_t v, escp2_init_t *init)
 	   /* ESC/P2 reset */
 	   "\033@", v);
   if (escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_1999,
+		    init->v) ||
+      escp2_has_cap(init->model, MODEL_COMMAND, MODEL_COMMAND_PRO,
 		    init->v))
     {
       stp_zprintf(v, /* Enter remote mode */
