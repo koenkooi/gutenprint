@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.52.2.2 2000/06/17 13:13:27 jmv Exp $"
+ * "$Id: print-pcl.c,v 1.52.2.3 2000/06/17 13:40:02 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1582,7 +1582,7 @@ pcl_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, 14);
       break;
     }	    
-  dither_set_density(dither, nv.density);
+  dither_set_density(dither, 1, nv.density);
 
   in  = malloc(image_width * image_bpp);
   out = malloc(image_width * out_bpp * 2);

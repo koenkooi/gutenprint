@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.49.2.2 2000/06/17 13:13:26 jmv Exp $"
+ * "$Id: print-canon.c,v 1.49.2.3 2000/06/17 13:40:02 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -980,7 +980,7 @@ canon_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, 14);
       break;
     }	    
-  dither_set_density(dither, nv.density);
+  dither_set_density(dither, 1, nv.density);
 
   if (use_dmt)
     {
