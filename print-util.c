@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.125 2000/09/02 21:52:18 rlk Exp $"
+ * "$Id: print-util.c,v 1.126 2000/09/03 01:22:25 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1698,7 +1698,7 @@ compute_page_parameters(int page_right,	/* I */
 			int page_left, /* I */
 			int page_top, /* I */
 			int page_bottom, /* I */
-			int scaling, /* I */
+			double scaling, /* I */
 			int image_width, /* I */
 			int image_height, /* I */
 			Image image, /* IO */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.77 2000/08/28 03:48:08 anikin Exp $"
+ * "$Id: print.h,v 1.78 2000/09/03 01:22:26 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -407,7 +407,7 @@ extern convert_t choose_colorfunc(int, int, const unsigned char *, int *,
 				  const vars_t *);
 extern void
 compute_page_parameters(int page_right, int page_left, int page_top,
-			int page_bottom, int scaling, int image_width,
+			int page_bottom, double scaling, int image_width,
 			int image_height, Image image, int *orientation,
 			int *page_width, int *page_height, int *out_width,
 			int *out_height, int *left, int *top);
@@ -427,5 +427,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.77 2000/08/28 03:48:08 anikin Exp $".
+ * End of "$Id: print.h,v 1.78 2000/09/03 01:22:26 rlk Exp $".
  */
