@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.217 2000/08/20 23:36:28 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.218 2000/08/21 01:35:58 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -714,7 +714,7 @@ static escp2_printer_t model_capabilities[] =
      | MODEL_ROLLFEED_YES | MODEL_ZEROMARGIN_NO),
     1, 1, 128, 720, INCH(17), INCH(55), 8, 9, 9, 49, 4, 0,
     { 3, 2, -1, 1, 1, 1, 1 },
-    { 2.0, 1.3, 1.3, .646, 0, .646, 0, 0, 0 },
+    { 2.0, 1.3, 1.3, .646, .646, .323, .323, .1615, .0808 },
     &simple_4color_inks
   },
 
