@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.67 2000/02/10 00:28:32 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68 2000/02/11 01:03:36 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.68  2000/02/11 01:03:36  rlk
+ *   Fix Epson left margin
+ *
  *   Revision 1.67  2000/02/10 00:28:32  rlk
  *   Fix landscape vs. portrait problem
  *
@@ -1200,6 +1203,8 @@ escp2_print(int       model,		/* I - Model */
 
   if (left < 0)
     left = (page_width - out_width) / 2 + page_left;
+  else
+    left = left + page_left;
 
   if (top < 0)
     top  = (page_height + out_height) / 2 + page_bottom;
@@ -2727,5 +2732,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.67 2000/02/10 00:28:32 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.68 2000/02/11 01:03:36 rlk Exp $".
  */
