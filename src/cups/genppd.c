@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.76 2003/07/12 23:23:59 rlk Exp $"
+ * "$Id: genppd.c,v 1.77 2003/07/12 23:41:47 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1170,13 +1170,12 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 		    case STP_PARAMETER_TYPE_DOUBLE:
 		      if (desc.is_mandatory)
 			{
-			  gzprintf(fp, "*DefaultStp%s: %d\n", desc.name,
-				   (int) (desc.deflt.dbl * 1000));
+			  gzprintf(fp, "*DefaultStp%s: None\n", desc.name);
 			}
 		      for (i = desc.bounds.dbl.lower * 1000;
 			   i <= desc.bounds.dbl.upper * 1000 ; i += 100)
 			{
-			  if (desc.deflt.dbl * 1000 == i)
+			  if (desc.deflt.dbl * 1000 == i && desc.is_mandatory)
 			    {
 			      gzprintf(fp, "*Stp%s None/%.3f: \"\"\n",
 				       desc.name, ((double) i) * .001);
@@ -1186,7 +1185,10 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 			    gzprintf(fp, "*Stp%s %d/%.3f: \"\"\n",
 				     desc.name, i, ((double) i) * .001);
 			}
-		      if (! printed_default_value)
+		      if (!desc.is_mandatory)
+			gzprintf(fp, "*Stp%s None/None: \"\"\n",
+				 desc.name, desc.deflt.dbl);
+		      else if (! printed_default_value)
 			gzprintf(fp, "*Stp%s None/%.3f: \"\"\n",
 				 desc.name, desc.deflt.dbl);
 		      gzprintf(fp, "*CloseUI: *Stp%s\n\n", desc.name);
@@ -1371,5 +1373,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.76 2003/07/12 23:23:59 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.77 2003/07/12 23:41:47 rlk Exp $".
  */
