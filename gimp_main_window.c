@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.54 2000/09/07 21:16:14 cpbs Exp $"
+ * "$Id: gimp_main_window.c,v 1.55 2000/09/09 02:26:01 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1666,7 +1666,7 @@ gimp_save_callback (void)
 }
 
 /*
- *  gimp_setup_open__callback() -
+ *  gimp_setup_open_callback() -
  */
 static void
 gimp_setup_open_callback (void)
@@ -1702,8 +1702,8 @@ gimp_setup_open_callback (void)
   gtk_widget_show (setup_dialog);
   adjustment =
     gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(printer_crawler));
-  gtk_adjustment_set_value(adjustment, idx * adjustment->step_increment +
-			   adjustment->page_size);
+  gtk_adjustment_set_value(adjustment,
+			   idx * (adjustment->step_increment + 3));
   gtk_widget_show (setup_dialog);
 }
 
