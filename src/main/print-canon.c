@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.75 2002/03/02 00:26:42 rlk Exp $"
+ * "$Id: print-canon.c,v 1.75.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2546,9 +2546,11 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   */
 
   if (xdpi > ydpi)
-    dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     1, xdpi / ydpi, nv);
   else
-    dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     ydpi / xdpi, 1, nv);
 
   for (i = 0; i <= NCOLORS; i++)
     stp_dither_set_black_level(dither, i, 1.0);

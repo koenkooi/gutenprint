@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.8 2001/11/06 02:44:42 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.8.6.1 2002/07/21 03:19:48 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -81,6 +81,7 @@ extern const char* stp_check_version (unsigned int required_major,
 #define OUTPUT_COLOR            1       /* Color output */
 #define OUTPUT_MONOCHROME       2       /* Raw monochrome output */
 #define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
+#define OUTPUT_RAW_PRINTER	4	/* Printer-specific raw output */
 
 #define ORIENT_AUTO             -1      /* Best orientation */
 #define ORIENT_PORTRAIT         0       /* Portrait orientation */
@@ -580,5 +581,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.8 2001/11/06 02:44:42 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.8.6.1 2002/07/21 03:19:48 rlk Exp $
  */

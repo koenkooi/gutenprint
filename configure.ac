@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.17 2002/07/15 02:42:59 rlk Exp $
+dnl $Id: configure.ac,v 1.17.2.1 2002/07/21 03:19:48 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.17 $)
+AC_REVISION($Revision: 1.17.2.1 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -399,7 +399,7 @@ else
   fi
 fi
 if test "$CC" = "gcc" ; then
-  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic"
+  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -ansi"
 fi
 AC_SUBST(GNUCFLAGS)
 

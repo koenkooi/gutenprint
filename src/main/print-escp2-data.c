@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49 2002/07/21 01:47:36 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1862,7 +1862,7 @@ DECLARE_INK_CHANNEL(c80_quadtone);
 
 static const escp2_inkname_t three_color_composite_inkset = 
 {
-  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0,
+  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     NULL, &standard_cyan_channels,
@@ -1872,7 +1872,7 @@ static const escp2_inkname_t three_color_composite_inkset =
 
 static const escp2_inkname_t x80_three_color_composite_inkset = 
 {
-  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0,
+  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     NULL, &x80_cyan_channels,
@@ -1882,7 +1882,7 @@ static const escp2_inkname_t x80_three_color_composite_inkset =
 
 static const escp2_inkname_t c80_three_color_composite_inkset = 
 {
-  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0,
+  "RGB", N_ ("Three Color Composite"), 1, INKSET_CMYK, 0, 0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     NULL, &c80_cyan_channels,
@@ -1892,7 +1892,7 @@ static const escp2_inkname_t c80_three_color_composite_inkset =
 
 static const escp2_inkname_t four_color_standard_inkset =
 {
-  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0,
+  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &standard_black_channels, &standard_cyan_channels,
@@ -1902,7 +1902,7 @@ static const escp2_inkname_t four_color_standard_inkset =
 
 static const escp2_inkname_t x80_four_color_standard_inkset =
 {
-  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0,
+  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &x80_black_channels, &x80_cyan_channels,
@@ -1912,7 +1912,7 @@ static const escp2_inkname_t x80_four_color_standard_inkset =
 
 static const escp2_inkname_t c80_four_color_standard_inkset =
 {
-  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0,
+  "CMYK", N_ ("Four Color Standard"), 1, INKSET_CMYK, .25, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &c80_black_channels, &c80_cyan_channels,
@@ -1922,7 +1922,7 @@ static const escp2_inkname_t c80_four_color_standard_inkset =
 
 static const escp2_inkname_t six_color_photo_inkset =
 {
-  "PhotoCMYK", N_ ("Six Color Photo"), 1, INKSET_CcMmYK, .5, 1.0,
+  "PhotoCMYK", N_ ("Six Color Photo"), 1, INKSET_CcMmYK, .5, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &photo_black_channels, &photo_cyan_channels,
@@ -1932,7 +1932,7 @@ static const escp2_inkname_t six_color_photo_inkset =
 
 static const escp2_inkname_t five_color_photo_composite_inkset =
 {
-  "PhotoCMY", N_ ("Five Color Photo Composite"), 1, INKSET_CcMmYK, 0, 0,
+  "PhotoCMY", N_ ("Five Color Photo Composite"), 1, INKSET_CcMmYK, 0, 0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     NULL, &photo_cyan_channels,
@@ -1942,7 +1942,7 @@ static const escp2_inkname_t five_color_photo_composite_inkset =
 
 static const escp2_inkname_t j_seven_color_enhanced_inkset =
 {
-  "Photo7J", N_ ("Seven Color Enhanced"), 1, INKSET_CcMmYyK, .5, 1.0,
+  "Photo7J", N_ ("Seven Color Enhanced"), 1, INKSET_CcMmYyK, .5, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &photo_black_channels, &photo_cyan_channels,
@@ -1952,7 +1952,7 @@ static const escp2_inkname_t j_seven_color_enhanced_inkset =
 
 static const escp2_inkname_t j_six_color_enhanced_composite_inkset =
 {
-  "PhotoEnhanceJ", N_ ("Six Color Enhanced Composite"), 1, INKSET_CcMmYyK, .5, 1.0,
+  "PhotoEnhanceJ", N_ ("Six Color Enhanced Composite"), 1, INKSET_CcMmYyK, .5, 1.0, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     NULL, &standard_cyan_channels,
@@ -1962,7 +1962,7 @@ static const escp2_inkname_t j_six_color_enhanced_composite_inkset =
 
 static const escp2_inkname_t seven_color_photo_inkset =
 {
-  "PhotoCMYK7", N_ ("Seven Color Photo"), 1, INKSET_CcMmYKk, .1, .25,
+  "PhotoCMYK7", N_ ("Seven Color Photo"), 1, INKSET_CcMmYKk, .1, .25, 4,
   standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
   {
     &photo2_black_channels, &photo_cyan_channels,
@@ -1972,7 +1972,7 @@ static const escp2_inkname_t seven_color_photo_inkset =
 
 static const escp2_inkname_t piezo_quadtone_inkset =
 {
-  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
+  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0, 1,
   NULL, NULL, NULL,
   {
     &quadtone_channels, NULL, NULL, NULL
@@ -1981,7 +1981,7 @@ static const escp2_inkname_t piezo_quadtone_inkset =
 
 static const escp2_inkname_t c80_piezo_quadtone_inkset =
 {
-  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
+  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0, 1,
   NULL, NULL, NULL,
   {
     &c80_quadtone_channels, NULL, NULL, NULL

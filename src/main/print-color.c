@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.27 2001/12/18 01:17:17 rlk Exp $"
+ * "$Id: print-color.c,v 1.27.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1806,25 +1806,30 @@ cmyk_to_cmyk(const stp_vars_t vars,
 {
   int i;
   int j;
-  int nz[4];
+  int nz[32];
+  int colors;
   const unsigned short *scmykin = (const unsigned short *) cmykin;
+  if (bpp < 0)
+    colors = (-bpp) / 2;
+  else
+    colors = 4;
 
   for (i = 0; i < width; i++)
     {
-      for (j = 0; j < 4; j++)
+      for (j = 0; j < colors; j++)
 	{
 	  nz[j] |= scmykin[j];
 	  cmykout[j] = scmykin[j];
 	}
-      scmykin += 4;
-      cmykout += 4;
+      scmykin += colors;
+      cmykout += colors;
     }
   if (zero_mask)
     {
-      *zero_mask = nz[0] ? 0 : 1;
-      *zero_mask |= nz[1] ? 0 : 2;
-      *zero_mask |= nz[2] ? 0 : 4;
-      *zero_mask |= nz[3] ? 0 : 8;
+      *zero_mask = 0;
+      for (i = 0; i < colors; i++)
+	if (nz[i])
+	  *zero_mask |= 1 << i;
     }
 }
 
@@ -2080,16 +2085,16 @@ stp_choose_colorfunc(int output_type,
 	}
       break;
     case OUTPUT_RAW_CMYK:
-      *out_bpp = 4;
-      switch (image_bpp)
-	{
-	case 4:
-	  RETURN_COLORFUNC(cmyk_8_to_cmyk);
-	case 8:
-	  RETURN_COLORFUNC(cmyk_to_cmyk);
-	default:
-	  RETURN_COLORFUNC(NULL);
-	}
+	  *out_bpp = 4;
+	  switch (image_bpp)
+	    {
+	    case 4:
+	      RETURN_COLORFUNC(cmyk_8_to_cmyk);
+	    case 8:
+	      RETURN_COLORFUNC(cmyk_to_cmyk);
+	    default:
+	      RETURN_COLORFUNC(NULL);
+	    }
       break;
     case OUTPUT_COLOR:
       *out_bpp = 3;
@@ -2119,6 +2124,11 @@ stp_choose_colorfunc(int output_type,
 	default:
 	  RETURN_COLORFUNC(NULL);
 	}
+    case OUTPUT_RAW_PRINTER:
+      if (image_bpp & 1)
+	RETURN_COLORFUNC(NULL);
+      *out_bpp = image_bpp / 2;
+      RETURN_COLORFUNC(cmyk_to_cmyk);
     case OUTPUT_GRAY:
     default:
       *out_bpp = 1;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.17 2002/07/20 20:51:30 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.17.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -20,6 +20,8 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+#define PHYSICAL_CHANNEL_LIMIT 7
 
 /*
  * Printer capabilities.
@@ -112,7 +114,7 @@ typedef struct escp2_variable_ink
   double density;
 } escp2_variable_ink_t;
 
-typedef const escp2_variable_ink_t *escp2_variable_inkset_t[NCOLORS];
+typedef const escp2_variable_ink_t *escp2_variable_inkset_t[PHYSICAL_CHANNEL_LIMIT];
 
 typedef const escp2_variable_inkset_t *escp2_variable_inklist_t[][RES_N / 2];
 
@@ -238,10 +240,11 @@ typedef struct
   inkset_id_t inkset;
   double k_lower;
   double k_upper;
+  int channel_limit;
   const double *lum_adjustment;
   const double *hue_adjustment;
   const double *sat_adjustment;
-  const ink_channel_t *channels[NCOLORS];
+  const ink_channel_t *channels[PHYSICAL_CHANNEL_LIMIT];
 } escp2_inkname_t;
 
 typedef struct

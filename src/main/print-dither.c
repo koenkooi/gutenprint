@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.92 2002/07/13 03:45:07 mtomlinson Exp $"
+ * "$Id: print-dither.c,v 1.92.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -220,7 +220,11 @@ static ditherfunc_t
   stp_dither_raw_cmyk_very_fast,
   stp_dither_raw_cmyk_ordered,
   stp_dither_raw_cmyk_ed,
-  stp_dither_raw_cmyk_et;
+  stp_dither_raw_cmyk_et,
+  stp_dither_raw_fast,
+  stp_dither_raw_very_fast,
+  stp_dither_raw_ordered,
+  stp_dither_raw_ed;
 
 
 #define CHANNEL(d, c) ((d)->channel[(c)])
@@ -386,8 +390,8 @@ do								\
 } while (0)
 
 void *
-stp_init_dither(int in_width, int out_width, int horizontal_aspect,
-		int vertical_aspect, stp_vars_t v)
+stp_init_dither(int in_width, int out_width, int image_bpp,
+		int horizontal_aspect, int vertical_aspect, stp_vars_t v)
 {
   int i;
   dither_t *d = stp_zalloc(sizeof(dither_t));
@@ -483,6 +487,29 @@ stp_init_dither(int in_width, int out_width, int horizontal_aspect,
 	  break;
 	default:
 	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_ed, v);
+	  break;
+	}
+    case OUTPUT_RAW_PRINTER:
+      d->n_channels = image_bpp / 2;
+      d->n_input_channels = image_bpp / 2;
+      switch (d->dither_type)
+	{
+	case D_FAST:
+	  SET_DITHERFUNC(d, stp_dither_raw_fast, v);
+	  break;
+	case D_VERY_FAST:
+	  SET_DITHERFUNC(d, stp_dither_raw_very_fast, v);
+	  break;
+	case D_ORDERED:
+	  SET_DITHERFUNC(d, stp_dither_raw_ordered, v);
+	  break;
+#if 0
+	case D_EVENTONE:
+	  SET_DITHERFUNC(d, stp_dither_raw_et, v);
+	  break;
+#endif
+	default:
+	  SET_DITHERFUNC(d, stp_dither_raw_ed, v);
 	  break;
 	}
       break;
@@ -3745,6 +3772,206 @@ stp_dither_raw_cmyk_et(const unsigned short  *cmyk,
     for (i = 0; i < d->n_channels; i++)
       stp_free(error[i]);
     stp_free(error);
+}
+
+static void
+stp_dither_raw_fast(const unsigned short  *raw,
+		    int           row,
+		    dither_t 	    *d,
+		    int	       duplicate_line,
+		    int		  zero_mask)
+{
+  int		x,
+		length;
+  unsigned char	bit;
+  int i;
+
+  int dst_width = d->dst_width;
+  int xerror, xstep, xmod;
+  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
+      ((1 << d->n_input_channels) - 1))
+    return;
+
+  length = (d->dst_width + 7) / 8;
+
+  bit = 128;
+  xstep  = d->n_channels * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
+  x = 0;
+
+  QUANT(14);
+  for (; x != dst_width; x++)
+    {
+      for (i = 0; i < d->n_channels; i++)
+	{
+	  CHANNEL(d, i).v = raw[i];
+	  CHANNEL(d, i).o = CHANNEL(d, i).v;
+	  if (CHANNEL(d, i).ptrs[0])
+	    print_color_fast(d, &(CHANNEL(d, i)), x, row, bit, length);
+	}
+      QUANT(16);
+      ADVANCE_UNIDIRECTIONAL(d, bit, raw, d->n_channels, xerror, xmod);
+      QUANT(17);
+    }
+}
+
+static void
+stp_dither_raw_very_fast(const unsigned short  *raw,
+			 int           row,
+			 dither_t 	    *d,
+			 int	       duplicate_line,
+			 int		  zero_mask)
+{
+  int		x,
+		length;
+  unsigned char	bit;
+  int i;
+
+  int dst_width = d->dst_width;
+  int xerror, xstep, xmod;
+  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
+      ((1 << d->n_input_channels) - 1))
+    return;
+
+  for (i = 0; i < d->n_channels; i++)
+    if (!(CHANNEL(d, i).very_fast))
+      {
+	stp_dither_raw_fast(raw, row, d, duplicate_line, zero_mask);
+	return;
+      }
+
+  length = (d->dst_width + 7) / 8;
+
+  bit = 128;
+  xstep  = d->n_channels * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
+  x = 0;
+
+  QUANT(14);
+  for (; x != dst_width; x++)
+    {
+      for (i = 0; i < d->n_channels; i++)
+	{
+	  dither_channel_t *dc = &(CHANNEL(d, i));
+	  dc->v = raw[i];
+	  if (dc->ptrs[0] && dc->v > ditherpoint_fast(d, &(dc->dithermat), x))
+	    {
+	      set_row_ends(dc, x, 0);
+	      dc->ptrs[0][d->ptr_offset] |= bit;
+	    }
+	}
+      QUANT(16);
+      ADVANCE_UNIDIRECTIONAL(d, bit, raw, d->n_channels, xerror, xmod);
+      QUANT(17);
+    }
+}
+
+static void
+stp_dither_raw_ordered(const unsigned short  *raw,
+		       int           row,
+		       dither_t 	    *d,
+		       int		  duplicate_line,
+		       int		  zero_mask)
+{
+  int		x,
+		length;
+  unsigned char	bit;
+  int i;
+
+  int		terminate;
+  int xerror, xstep, xmod;
+
+  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
+      ((1 << d->n_input_channels) - 1))
+    return;
+
+  length = (d->dst_width + 7) / 8;
+
+  bit = 128;
+  xstep  = d->n_channels * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = 0;
+  x = 0;
+  terminate = d->dst_width;
+
+  QUANT(6);
+  for (; x != terminate; x ++)
+    {
+      for (i = 0; i < d->n_channels; i++)
+	{
+	  CHANNEL(d, i).v = raw[i];
+	  CHANNEL(d, i).o = CHANNEL(d, i).v;
+	  print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit, length, 0);
+	}
+
+      QUANT(11);
+      ADVANCE_UNIDIRECTIONAL(d, bit, raw, d->n_channels, xerror, xmod);
+      QUANT(13);
+  }
+}
+
+static void
+stp_dither_raw_ed(const unsigned short  *raw,
+		  int           row,
+		  dither_t 	    *d,
+		  int		  duplicate_line,
+		  int		  zero_mask)
+{
+  int		x,
+    		length;
+  unsigned char	bit;
+  int		i;
+  int		*ndither;
+  int		***error;
+
+  int		terminate;
+  int		direction = row & 1 ? 1 : -1;
+  int xerror, xstep, xmod;
+
+  length = (d->dst_width + 7) / 8;
+  if (!shared_ed_initializer(d, row, duplicate_line, zero_mask, length,
+			     direction, &error, &ndither))
+    return;
+
+  x = (direction == 1) ? 0 : d->dst_width - 1;
+  bit = 1 << (7 - (x & 7));
+  xstep  = d->n_channels * (d->src_width / d->dst_width);
+  xmod   = d->src_width % d->dst_width;
+  xerror = (xmod * x) % d->dst_width;
+  terminate = (direction == 1) ? d->dst_width : -1;
+
+  if (direction == -1)
+    raw += (d->n_channels * (d->src_width - 1));
+
+  QUANT(6);
+  for (; x != terminate; x += direction)
+    {
+      int extra_k;
+      extra_k = compute_black(d) + CHANNEL(d, ECOLOR_K).v;
+      for (i = 0; i < d->n_channels; i++)
+	{
+	  CHANNEL(d, i).v = raw[i];
+	  CHANNEL(d, i).o = CHANNEL(d, i).v;
+	  CHANNEL(d, i).b = CHANNEL(d, i).v;
+	  CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
+	  CHANNEL(d, i).v = print_color(d, &(CHANNEL(d, i)), x, row, bit,
+					length, 0, d->dither_type);
+	  ndither[i] = update_dither(d, i, d->src_width,
+				     direction, error[i][0], error[i][1]);
+	}
+      QUANT(12);
+      ADVANCE_BIDIRECTIONAL(d, bit, raw, direction, d->n_channels, xerror,
+			    xmod, error, d->n_channels, d->error_rows);
+      QUANT(13);
+    }
+  stp_free(ndither);
+  for (i = 1; i < d->n_channels; i++)
+    stp_free(error[i]);
+  stp_free(error);
+  if (direction == -1)
+    reverse_row_ends(d);
 }
 
 void

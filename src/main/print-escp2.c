@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.180 2002/07/21 02:15:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.180.2.1 2002/07/21 03:19:49 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -115,6 +115,7 @@ typedef struct escp2_init
   int initial_vertical_offset;
   int total_channels;
   int use_black_parameters;
+  int channel_limit;
   const char *paper_type;
   const char *media_source;
   const escp2_inkname_t *inkname;
@@ -954,7 +955,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
 
   inks = escp2_inks(init->model, init->resid, init->inkname->inkset, nv);
   if (inks)
-    for (i = 0; i < NCOLORS; i++)
+    for (i = 0; i < init->channel_limit; i++)
       if ((*inks)[i])
 	stp_dither_set_ranges(dither, i, (*inks)[i]->count, (*inks)[i]->range,
 			      (*inks)[i]->density * paper_k_upper *
@@ -1015,7 +1016,7 @@ count_channels(const escp2_inkname_t *inks)
 {
   int answer = 0;
   int i;
-  for (i = 0; i < NCOLORS; i++)
+  for (i = 0; i < inks->channel_limit; i++)
     if (inks->channels[i])
       answer += inks->channels[i]->n_subchannels;
   return answer;
@@ -1054,7 +1055,7 @@ static const ink_channel_t default_black_channels =
 
 static const escp2_inkname_t default_black_ink =
 {
-  NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL,
+  NULL, NULL, 0, 0, 0, 0, 1, NULL, NULL, NULL,
   {
     &default_black_channels, NULL, NULL, NULL
   }
@@ -1394,6 +1395,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   init.v = nv;
   init.inkname = ink_type;
   init.total_channels = total_channels;
+  init.channel_limit = channel_limit;
 
   escp2_init_printer(&init);
 
@@ -1415,9 +1417,11 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   errline  = 0;
 
   if (xdpi > ydpi)
-    dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     1, xdpi / ydpi, nv);
   else
-    dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, nv);
+    dither = stp_init_dither(image_width, out_width, image_bpp,
+			     ydpi / xdpi, 1, nv);
 
   adjust_print_quality(&init, dither,
 		       &lum_adjustment, &sat_adjustment, &hue_adjustment);
