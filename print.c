@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.128 2000/10/14 01:40:14 rlk Exp $"
+ * "$Id: print.c,v 1.128.2.1 2000/11/17 23:53:50 mitsch Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -327,7 +327,11 @@ run (char   *name,		/* I - Name of print program. */
     ;
 #endif
 
+#ifdef INIT_I18N_UI
+  INIT_I18N_UI();
+#else
   INIT_LOCALE ("gimp-print");
+#endif
 
   /*
    * Initialize parameter data...
@@ -1506,5 +1510,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.128 2000/10/14 01:40:14 rlk Exp $".
+ * End of "$Id: print.c,v 1.128.2.1 2000/11/17 23:53:50 mitsch Exp $".
  */
