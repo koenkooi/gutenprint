@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.139 2003/11/14 04:01:13 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140 2003/12/13 00:16:36 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -3012,7 +3012,7 @@ canon_write(stp_vars_t v,		/* I - Print file or command */
 
   if (*empty) {
     stpi_zfwrite("\033\050\145\002\000", 5, 1, v);
-    stpi_put16_le(*empty, v);
+    stpi_put16_be(*empty, v);
     *empty= 0;
   }
 
