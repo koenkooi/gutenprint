@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.16 2000/09/22 12:18:48 easysw Exp $"
+# "$Id: Makefile.in,v 1.17 2000/10/12 01:54:37 easysw Exp $"
 #
 #   Makefile for the CUPS drivers.
 #
@@ -107,7 +107,7 @@ clean:
 # Install all targets...
 #
 
-install:
+install:	all
 	$(ECHO) Installing calibration utility...
 	$(SILENT) if test ! -d $(bindir); then \
 		$(MKDIR) $(bindir); \
@@ -225,5 +225,5 @@ rastertoprinter.o:	cups-print.h cups-quickmatrix257.h cups-ran.367.179.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.16 2000/09/22 12:18:48 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.17 2000/10/12 01:54:37 easysw Exp $".
 #

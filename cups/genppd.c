@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.10 2000/09/18 13:09:04 easysw Exp $"
+ * "$Id: genppd.c,v 1.11 2000/10/12 01:54:37 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -237,10 +237,11 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
 		  "",
 		  "Softweave",
 		  "Microweave",
-		  "High",
-		  "Highest",
+		  "High Quality",
+		  "Highest Quality",
 		  "Emulated",
-		  "DMT"
+		  "DMT",
+		  "monochrome"
 		};
   static char	*qnames[] =		/* Quality names for resolution */
 		{
@@ -250,7 +251,8 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
 		  "hq",
 		  "hq2",
 		  "emul",
-		  "dmt"
+		  "dmt",
+		  "mono"
 		};
   static char	*dithers[][2] =
 		{
@@ -561,10 +563,11 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
 
     quality[0] = '\0';
     if (sscanf(opts[i], "%d x %d DPI%s", &xdpi, &ydpi, quality) == 1)
-    {
-      sscanf(opts[i], "%d DPI%s", &xdpi, quality);
-      ydpi = xdpi;
-    }
+      if (sscanf(opts[i], "%dx%d DPI%s", &xdpi, &ydpi, quality) == 1)
+      {
+	sscanf(opts[i], "%d DPI%s", &xdpi, quality);
+	ydpi = xdpi;
+      }
 
    /*
     * Figure out the quality index...
@@ -662,5 +665,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.10 2000/09/18 13:09:04 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.11 2000/10/12 01:54:37 easysw Exp $".
  */
