@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.45 2003/04/09 02:59:55 rlk Exp $"
+ * "$Id: printers.c,v 1.46 2003/04/09 03:03:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -300,6 +300,7 @@ stp_verify(const stp_vars_t v)
   int status;
   stpi_prune_inactive_options(nv);
   status = (printfuncs->verify)(nv);
+  stpi_set_verified(v, stpi_get_verified(nv));
   stp_vars_free(nv);
   return status;
 }
