@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.12 2003/10/24 23:10:29 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.13 2003/11/16 20:35:21 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -447,7 +447,8 @@ static void
 set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int microoffset = vertical_subpass & (pd->horizontal_passes - 1);
+  int microoffset = (vertical_subpass & (pd->horizontal_passes - 1)) *
+    pd->image_scaled_width / pd->image_printed_width;
   int pos = pd->image_left_position + microoffset;
 
   if (pos != 0)

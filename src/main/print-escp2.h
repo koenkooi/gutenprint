@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.71 2003/11/16 03:26:09 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.72 2003/11/16 20:35:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -147,6 +147,8 @@ typedef struct
   const char *text;
   short hres;
   short vres;
+  short printed_hres;
+  short printed_vres;
   short softweave;
   short microweave;
   short vertical_passes;
@@ -628,8 +630,10 @@ typedef struct
   int image_width;		/* Width of printed region (points) */
   int image_top;		/* First printed row (points) */
   int image_left;		/* Left edge of image (points) */
-  int image_scaled_width;	/* Width of printed region (dots) */
-  int image_scaled_height;	/* Height of printed region (dots) */
+  int image_scaled_width;	/* Width of physical printed region (dots) */
+  int image_printed_width;	/* Width of printed region (dots) */
+  int image_scaled_height;	/* Height of physical printed region (dots) */
+  int image_printed_height;	/* Height of printed region (dots) */
   int image_left_position;	/* Left dot position of image */
 
   /* Transitory state */
@@ -662,5 +666,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.71 2003/11/16 03:26:09 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.72 2003/11/16 20:35:22 rlk Exp $".
  */
