@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.104 2003/05/09 23:21:36 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.104.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2138,7 +2138,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   int		left = stp_get_left(v);
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
-  unsigned short *out;
   unsigned char *black,		/* Black bitmap data */
 		*cyan,		/* Cyan bitmap data */
 		*magenta,	/* Magenta bitmap data */
@@ -2159,7 +2158,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 		errval,		/* Current error value */
 		errline,	/* Current raster line */
 		errlast;	/* Last raster line loaded */
-  int		zero_mask;
+  unsigned	zero_mask;
   int           image_height,
                 image_width,
                 image_bpp;
@@ -2640,8 +2639,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
   out_channels = stpi_color_init(v, image, 65536);
 
-  out = stpi_malloc(image_width * out_channels * 2);
-
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;
   errval  = 0;
@@ -2678,13 +2675,13 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     {
       errlast = errline;
       duplicate_line = 0;
-      if (stpi_color_get_row(v, image, errline, out, &zero_mask))
+      if (stpi_color_get_row(v, image, errline, &zero_mask))
 	{
 	  status = 2;
 	  break;
 	}
     }
-    stpi_dither(v, y, out, duplicate_line, zero_mask);
+    stpi_dither(v, y, duplicate_line, zero_mask);
     pcl_printfunc(v);
     stpi_deprintf(STPI_DBG_PCL,"pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
 		  y, errline, errval, errmod, out_height);
@@ -2712,8 +2709,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
  /*
   * Cleanup...
   */
-
-  stpi_free(out);
 
   if (black != NULL)
     stpi_free(black);

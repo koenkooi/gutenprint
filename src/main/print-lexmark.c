@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.120 2003/05/09 23:21:35 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.120.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1466,7 +1466,6 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   int		n;		/* Output number */
-  unsigned short *out;	/* Output pixels (16-bit) */
   int page_width,	/* Width of page */
     page_height,	/* Length of page */
     page_left,
@@ -1484,7 +1483,7 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
     errval,		/* Current error value */
     errline,	/* Current raster line */
     errlast;	/* Last raster line loaded */
-  int           zero_mask;
+  unsigned      zero_mask;
   int           image_height,
                 image_width,
                 image_bpp;
@@ -1935,8 +1934,6 @@ densityDivisor /= 1.2;
 
   out_channels = stpi_color_init(v, image, 65536);
 
-  out = stpi_malloc(image_width * out_channels * 2);
-
   /* calculate the memory we need for one line of the printer image (hopefully we are right) */
 #ifdef DEBUG
   stpi_erprintf("---------- buffer mem size = %d\n", (((((pass_length/8)*11)/10)+40) * out_width)+200);
@@ -1981,13 +1978,13 @@ densityDivisor /= 1.2;
 	{
 	  errlast = errline;
 	  duplicate_line = 0;
-	  if (stpi_color_get_row(v, image, errline, out, &zero_mask))
+	  if (stpi_color_get_row(v, image, errline, &zero_mask))
 	    {
 	      status = 2;
 	      break;
 	    }
 	}
-      stpi_dither(v, y, out, duplicate_line, zero_mask);
+      stpi_dither(v, y, duplicate_line, zero_mask);
       stpi_write_weave(v, (unsigned char **)cols.v);
 
       errval += errmod;
@@ -2007,7 +2004,6 @@ densityDivisor /= 1.2;
   /*
   * Cleanup...
   */
-  stpi_free(out);
   if (privdata.outbuf != NULL) {
     stpi_free(privdata.outbuf);/* !!!!!!!!!!!!!! */
   }

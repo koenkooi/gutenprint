@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7 2003/05/08 02:33:36 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -327,7 +327,7 @@ stpi_dither_set_ranges_full(stp_vars_t v, int color, int nlevels,
 
 void
 stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
-		      const stpi_shade_t *shades, double density)
+		       const stpi_shade_t *shades, double density)
 {
   int i, j;
 
@@ -351,6 +351,8 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
     SAFE_FREE(dc->shades);
   }
 
+  stpi_channel_reset(v);
+
   dc->numshades = nshades;
   dc->shades = stpi_zalloc(nshades * sizeof(stpi_shade_segment_t));
 
@@ -358,6 +360,7 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
     stpi_shade_segment_t *sp = &dc->shades[i];
     sp->subchannel = shades[i].subchannel;
     sp->value = 0;
+    stpi_channel_add(v, color, i, shades[i].value);
     sp->density = 65536.0 * shades[i].value + 0.5;
     if (i == 0) {
       sp->lower = 0;

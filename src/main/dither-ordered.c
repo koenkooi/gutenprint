@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.7 2003/05/10 03:18:38 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -178,12 +178,12 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
   return 0;
 }
 
-static void
-stpi_dither_raw_ordered(stp_vars_t v,
-		       int row,
-		       const unsigned short *raw,
-		       int duplicate_line,
-		       int zero_mask)
+void
+stpi_dither_ordered(stp_vars_t v,
+		    int row,
+		    const unsigned short *raw,
+		    int duplicate_line,
+		    int zero_mask)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int		x,
@@ -220,71 +220,4 @@ stpi_dither_raw_ordered(stp_vars_t v,
       ADVANCE_UNIDIRECTIONAL(d, bit, raw, CHANNEL_COUNT(d), xerror, xstep, xmod);
       QUANT(13);
   }
-}
-
-static void
-stpi_dither_raw_cmyk_ordered(stp_vars_t v,
-			    int row,
-			    const unsigned short *cmyk,
-			    int duplicate_line,
-			    int zero_mask)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  int		x,
-		length;
-  unsigned char	bit;
-  int i;
-
-  int		terminate;
-  int xerror, xstep, xmod;
-
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
-    return;
-
-  length = (d->dst_width + 7) / 8;
-
-  bit = 128;
-  xstep  = 4 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = 0;
-  x = 0;
-  terminate = d->dst_width;
-
-  QUANT(6);
-  for (; x != terminate; x ++)
-    {
-      int extra_k;
-      CHANNEL(d, ECOLOR_K).v = cmyk[3];
-      CHANNEL(d, ECOLOR_C).v = cmyk[0];
-      CHANNEL(d, ECOLOR_M).v = cmyk[1];
-      CHANNEL(d, ECOLOR_Y).v = cmyk[2];
-      extra_k = CHANNEL(d, ECOLOR_K).v;
-      for (i = 0; i < CHANNEL_COUNT(d); i++)
-	{
-	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  if (i != ECOLOR_K)
-	    CHANNEL(d, i).o += extra_k;
-	  print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit, length, 0);
-	}
-
-      QUANT(11);
-      ADVANCE_UNIDIRECTIONAL(d, bit, cmyk, 4, xerror, xstep, xmod);
-      QUANT(13);
-  }
-}
-
-void
-stpi_dither_ordered(stp_vars_t v,
-		   int row,
-		   const unsigned short *input,
-		   int duplicate_line,
-		   int zero_mask)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  if (d->dither_class != OUTPUT_RAW_CMYK ||
-      d->n_ghost_channels > 0)
-    stpi_dither_raw_ordered(v, row, input, duplicate_line, zero_mask);
-  else
-    stpi_dither_raw_cmyk_ordered(v, row, input, duplicate_line, zero_mask);
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.17 2003/04/15 02:24:53 rlk Exp $"
+ * "$Id: dither.h,v 1.17.4.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -207,8 +207,8 @@ extern unsigned char *stpi_dither_get_channel(stp_vars_t v,
 					      unsigned channel,
 					      unsigned subchannel);
 
-extern void stpi_dither(stp_vars_t v, int row, const unsigned short *input,
-			int duplicate_line, int zero_mask);
+extern void stpi_dither(stp_vars_t v, int row, int duplicate_line,
+			int zero_mask);
 
 
 #ifdef __cplusplus
@@ -217,5 +217,5 @@ extern void stpi_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.17 2003/04/15 02:24:53 rlk Exp $".
+ * End of "$Id: dither.h,v 1.17.4.1 2003/05/12 01:22:49 rlk Exp $".
  */

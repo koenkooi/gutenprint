@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.7 2003/05/10 03:18:38 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.7.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -412,12 +412,12 @@ shared_ed_deinitializer(stpi_dither_t *d,
   SAFE_FREE(ndither);
 }
 
-static void
-stpi_dither_raw_ed(stp_vars_t v,
-		  int row,
-		  const unsigned short *raw,
-		  int duplicate_line,
-		  int zero_mask)
+void
+stpi_dither_ed(stp_vars_t v,
+	       int row,
+	       const unsigned short *raw,
+	       int duplicate_line,
+	       int zero_mask)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int		x,
@@ -468,84 +468,4 @@ stpi_dither_raw_ed(stp_vars_t v,
   shared_ed_deinitializer(d, error, ndither);
   if (direction == -1)
     stpi_dither_reverse_row_ends(d);
-}
-
-static void
-stpi_dither_raw_cmyk_ed(stp_vars_t v,
-		       int row,
-		       const unsigned short *cmyk,
-		       int duplicate_line,
-		       int zero_mask)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  int		x,
-    		length;
-  unsigned char	bit;
-  int		i;
-  int		*ndither;
-  int		***error;
-
-  int		terminate;
-  int		direction = row & 1 ? 1 : -1;
-  int xerror, xstep, xmod;
-
-  length = (d->dst_width + 7) / 8;
-  if (!shared_ed_initializer(d, row, duplicate_line, zero_mask, length,
-			     direction, &error, &ndither))
-    return;
-
-  x = (direction == 1) ? 0 : d->dst_width - 1;
-  bit = 1 << (7 - (x & 7));
-  xstep  = 4 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = (xmod * x) % d->dst_width;
-  terminate = (direction == 1) ? d->dst_width : -1;
-
-  if (direction == -1)
-    cmyk += (4 * (d->src_width - 1));
-
-  QUANT(6);
-  for (; x != terminate; x += direction)
-    {
-      int extra_k;
-      CHANNEL(d, ECOLOR_K).v = cmyk[3];
-      CHANNEL(d, ECOLOR_C).v = cmyk[0];
-      CHANNEL(d, ECOLOR_M).v = cmyk[1];
-      CHANNEL(d, ECOLOR_Y).v = cmyk[2];
-      extra_k = CHANNEL(d, ECOLOR_K).v;
-      for (i = 0; i < CHANNEL_COUNT(d); i++)
-	{
-	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  if (i != ECOLOR_K)
-	    CHANNEL(d, i).o += extra_k;
-	  CHANNEL(d, i).b = CHANNEL(d, i).v;
-	  CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
-	  CHANNEL(d, i).v = print_color(d, &(CHANNEL(d, i)), x, row, bit,
-					length, 0, d->stpi_dither_type);
-	  ndither[i] = update_dither(d, i, d->src_width,
-				     direction, error[i][0], error[i][1]);
-	}
-      QUANT(12);
-      ADVANCE_BIDIRECTIONAL(d, bit, cmyk, direction, 4, xerror, xstep, xmod, error,
-			    CHANNEL_COUNT(d), d->error_rows);
-      QUANT(13);
-    }
-  shared_ed_deinitializer(d, error, ndither);
-  if (direction == -1)
-    stpi_dither_reverse_row_ends(d);
-}
-
-void
-stpi_dither_ed(stp_vars_t v,
-	      int row,
-	      const unsigned short *input,
-	      int duplicate_line,
-	      int zero_mask)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  if (d->dither_class != OUTPUT_RAW_CMYK ||
-      d->n_ghost_channels > 0)
-    stpi_dither_raw_ed(v, row, input, duplicate_line, zero_mask);
-  else
-    stpi_dither_raw_cmyk_ed(v, row, input, duplicate_line, zero_mask);
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.120 2003/05/09 23:21:34 rlk Exp $"
+ * "$Id: print-canon.c,v 1.120.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2208,7 +2208,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   int		n;		/* Output number */
-  unsigned short *out;	/* Output pixels (16-bit) */
   canon_privdata_t privdata;
   int		page_width,	/* Width of page */
 		page_height,	/* Length of page */
@@ -2226,7 +2225,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 		errval,		/* Current error value */
 		errline,	/* Current raster line */
 		errlast;	/* Last raster line loaded */
-  int		zero_mask;
+  unsigned	zero_mask;
   int           bits= 1;
   int           image_height,
                 image_width,
@@ -2530,8 +2529,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 
   out_channels = stpi_color_init(v, image, 65536);
 
-  out = stpi_zalloc(image_width * out_channels * 2);
-
   for (i = 0; i < 7; i++)
     {
       if (privdata.cols[i])
@@ -2551,14 +2548,14 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
     {
       errlast = errline;
       duplicate_line = 0;
-      if (stpi_color_get_row(v, image, errline, out, &zero_mask))
+      if (stpi_color_get_row(v, image, errline, &zero_mask))
 	{
 	  status = 2;
 	  break;
 	}
     }
 
-    stpi_dither(v, y, out, duplicate_line, zero_mask);
+    stpi_dither(v, y, duplicate_line, zero_mask);
     canon_printfunc(v);
     errval += errmod;
     errline += errdiv;
@@ -2590,8 +2587,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
  /*
   * Cleanup...
   */
-
-  stpi_free(out);
 
   for (i = 0; i < 7; i++)
     if (privdata.cols[i])

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.24 2003/04/15 02:24:56 rlk Exp $"
+ * "$Id: print-raw.c,v 1.24.4.1 2003/05/12 01:22:50 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -173,7 +173,6 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
   int		y;		/* Looping vars */
   stp_vars_t	nv = stp_vars_create_copy(v);
   int out_channels;
-  unsigned short *out;	/* Output pixels (16-bit) */
   unsigned short *final_out = NULL;
   int		status = 1;
   int bytes_per_channel = raw_model_capabilities[model].output_bits / 8;
@@ -205,6 +204,10 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 	  }
     }
 
+  stpi_channel_reset(nv);
+  for (i = 0; i < ink_channels; i++)
+    stpi_channel_add(nv, i, 0, 1.0);
+
   if (bytes_per_channel == 1)
     out_channels = stpi_color_init(nv, image, 256);
   else
@@ -217,7 +220,6 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
       return 0;
     }
 
-  out = stpi_malloc(width * out_channels * 2);
   if (out_channels != ink_channels)
     final_out = stpi_malloc(width * ink_channels * 2);
 
@@ -227,11 +229,12 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 
   for (y = 0; y < height; y++)
     {
+      unsigned short *out = stpi_channel_get_input(nv);
       unsigned short *real_out = out;
-      int zero_mask;
+      unsigned zero_mask;
       if ((y & 63) == 0)
 	stpi_image_note_progress(image, y, height);
-      if (stpi_color_get_row(nv, image, y, out, &zero_mask))
+      if (stpi_color_get_row(nv, image, y, &zero_mask))
 	{
 	  status = 2;
 	  break;
@@ -270,7 +273,6 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
   stpi_image_progress_conclude(image);
   if (final_out)
     stpi_free(final_out);
-  stpi_free(out);
   stp_vars_free(nv);
   return status;
 }

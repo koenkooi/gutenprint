@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.259 2003/05/07 02:21:52 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.259.2.1 2003/05/12 01:22:49 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1386,7 +1386,7 @@ setup_page(stp_vars_t v)
 }
 
 static int
-escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
+escp2_print_data(stp_vars_t v, stp_image_t *image)
 {
   escp2_privdata_t *pd = get_privdata(v);
   int errdiv  = stpi_image_height(image) / pd->image_scaled_height;
@@ -1402,7 +1402,7 @@ escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
   for (y = 0; y < pd->image_scaled_height; y ++)
     {
       int duplicate_line = 1;
-      int zero_mask;
+      unsigned zero_mask;
       if ((y & 63) == 0)
 	stpi_image_note_progress(image, y, pd->image_scaled_height);
 
@@ -1410,12 +1410,12 @@ escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
 	{
 	  errlast = errline;
 	  duplicate_line = 0;
-	  if (stpi_color_get_row(v, image, errline, out, &zero_mask))
+	  if (stpi_color_get_row(v, image, errline, &zero_mask))
 	    return 2;
 	}
       QUANT(1);
 
-      stpi_dither(v, y, out, duplicate_line, zero_mask);
+      stpi_dither(v, y, duplicate_line, zero_mask);
       QUANT(2);
 
       stpi_write_weave(v, pd->cols);
@@ -1441,7 +1441,6 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   int status;
   int i;
   escp2_privdata_t *pd = get_privdata(v);
-  unsigned short *out;	/* Output pixels (16-bit) */
   int out_channels;		/* Output bytes per pixel */
   int line_width = (pd->image_scaled_width + 7) / 8 * pd->bitwidth;
 
@@ -1475,14 +1474,11 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   allocate_channels(v, line_width);
   setup_inks(v);
 
-  out = stpi_malloc(stpi_image_width(image) * out_channels * 2);
-
-  status = escp2_print_data(v, image, out);
+  status = escp2_print_data(v, image);
 
   /*
    * Cleanup...
    */
-  stpi_free(out);
   if (!pd->printed_something)
     stpi_send_command(v, "\n", "");
   stpi_send_command(v, "\f", "");	/* Eject page */
