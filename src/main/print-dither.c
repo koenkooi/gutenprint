@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115.2.4 2003/01/18 02:50:34 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.5 2003/01/18 17:39:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -160,6 +160,7 @@ typedef struct dither_channel
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
+  float density_adjustment;
 
   int v;
   int o;
@@ -189,6 +190,7 @@ typedef struct dither
   int src_width;		/* Input width */
   int dst_width;		/* Output width */
 
+  float fdensity;
   int density;			/* Desired density, 0-1.0 (scaled 0-65535) */
   int density2;			/* Density * 2 */
   int densityh;			/* Density / 2 */
@@ -470,40 +472,37 @@ stp_set_dither_function(stp_vars_t v, int image_bpp)
   switch (d->dither_class)
     {
     case OUTPUT_GRAY:
-      d->n_channels = 1;
-      d->n_input_channels = 1;
-      switch (d->dither_type)
-	{
-	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_fast, v);
-	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, v);
-	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_raw_ordered, v);
-	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_raw_et, v);
-	default:
-	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
-	}
-      break;
-    case OUTPUT_RAW_PRINTER:
-      d->n_channels = image_bpp / 2;
-      d->n_input_channels = image_bpp / 2;
-      switch (d->dither_type)
-	{
-	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_fast, v);
-	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, v);
-	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_raw_ordered, v);
-	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_raw_et, v);
-	default:
-	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
-	}
-      break;
     case OUTPUT_COLOR:
+    case OUTPUT_RAW_PRINTER:
+      switch (d->dither_class)
+	{
+	case OUTPUT_GRAY:
+	  d->n_channels = 1;
+	  d->n_input_channels = 1;
+	  break;
+	case OUTPUT_COLOR:
+	  d->n_channels = 4;
+	  d->n_input_channels = 3;
+	  break;
+	case OUTPUT_RAW_PRINTER:
+	  d->n_channels = image_bpp / 2;
+	  d->n_input_channels = image_bpp / 2;
+	  break;
+	}
+      switch (d->dither_type)
+	{
+	case D_FAST:
+	  RETURN_DITHERFUNC(stp_dither_raw_fast, v);
+	case D_VERY_FAST:
+	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, v);
+	case D_ORDERED:
+	  RETURN_DITHERFUNC(stp_dither_raw_ordered, v);
+	case D_EVENTONE:
+	  RETURN_DITHERFUNC(stp_dither_raw_et, v);
+	default:
+	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
+	}
+      break;
     case OUTPUT_RAW_CMYK:
       d->n_channels = 4;
       d->n_input_channels = 4;
@@ -562,6 +561,37 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
       PHYSICAL_CHANNEL(d, i).numshades = 0;
       /* stp_dither_set_shades(v, i, 1, &shade, 1.0); */
       PHYSICAL_CHANNEL(d, i).errs = stp_zalloc(d->error_rows * sizeof(int *));
+      switch (i)
+	{
+	case 0:
+	  if (stp_check_float_parameter(v, "BlackDensity"))
+	    PHYSICAL_CHANNEL(d, i).density_adjustment =
+	      stp_get_float_parameter(v, "BlackDensity");
+	  else
+	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
+	  break;
+	case 1:
+	  if (stp_check_float_parameter(v, "CyanDensity"))
+	    PHYSICAL_CHANNEL(d, i).density_adjustment =
+	      stp_get_float_parameter(v, "CyanDensity");
+	  else
+	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
+	  break;
+	case 2:
+	  if (stp_check_float_parameter(v, "MagentaDensity"))
+	    PHYSICAL_CHANNEL(d, i).density_adjustment =
+	      stp_get_float_parameter(v, "MagentaDensity");
+	  else
+	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
+	  break;
+	case 3:
+	  if (stp_check_float_parameter(v, "YellowDensity"))
+	    PHYSICAL_CHANNEL(d, i).density_adjustment =
+	      stp_get_float_parameter(v, "YellowDensity");
+	  else
+	    PHYSICAL_CHANNEL(d, i).density_adjustment = 1;
+	  break;
+	}
     }
   d->offset0_table = NULL;
   d->offset1_table = NULL;
@@ -757,6 +787,7 @@ stp_dither_set_density(stp_vars_t v, double density)
     density = 1;
   else if (density < 0)
     density = 0;
+  d->fdensity = density;
   d->density = (int) ((65535 * density) + .5);
   d->density2 = 2 * d->density;
   d->densityh = d->density / 2;
@@ -1545,6 +1576,7 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
+      dither_value = dither_value * d->fdensity * dc->density_adjustment;
       if (dither_value >= vmatrix)
 	{
 	  ink_defn_t *subc;
@@ -1690,6 +1722,7 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
+      dither_value = dither_value * d->fdensity * dc->density_adjustment;
       if (dither_value >= vmatrix)
 	{
 	  ink_defn_t *subc;
@@ -1778,6 +1811,7 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
+      adjusted = adjusted * d->fdensity * dc->density_adjustment;
       if (adjusted >= vmatrix && dc->ptrs[subc->subchannel])
 	{
 	  int subchannel = subc->subchannel;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.48.2.3 2003/01/18 14:10:51 rlk Exp $"
+ * "$Id: print-color.c,v 1.48.2.4 2003/01/18 17:38:57 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -61,6 +61,7 @@ typedef struct
   stp_curve_t hue_map;
   stp_curve_t lum_map;
   stp_curve_t sat_map;
+  stp_curve_t gcr_curve;
   unsigned short *cmy_tmp;
 } lut_t;
 
@@ -114,7 +115,7 @@ static float_param_t float_parameters[] =
   {
     {
       "Cyan", N_("Cyan"),
-      N_("Adjust the cyan balance"),
+      N_("Adjust the cyan gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1
     }, 0.0, 4.0, 1.0, 1
@@ -122,7 +123,7 @@ static float_param_t float_parameters[] =
   {
     {
       "Magenta", N_("Magenta"),
-      N_("Adjust the magenta balance"),
+      N_("Adjust the magenta gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1
     }, 0.0, 4.0, 1.0, 1
@@ -130,10 +131,50 @@ static float_param_t float_parameters[] =
   {
     {
       "Yellow", N_("Yellow"),
-      N_("Adjust the yellow balance"),
+      N_("Adjust the yellow gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1
     }, 0.0, 4.0, 1.0, 1
+  },
+  {
+    {
+      "Black", N_("Black"),
+      N_("Adjust the black gamma"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1
+    }, 0.0, 4.0, 1.0, 1
+  },
+  {
+    {
+      "CyanDensity", N_("Cyan Balance"),
+      N_("Adjust the cyan balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "MagentaDensity", N_("Magenta Balance"),
+      N_("Adjust the magenta balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "YellowDensity", N_("Yellow Balance"),
+      N_("Adjust the yellow balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "BlackDensity", N_("Black Balance"),
+      N_("Adjust the black balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1
+    }, 0.0, 2.0, 1.0, 1
   },
   {
     {
@@ -152,7 +193,23 @@ static float_param_t float_parameters[] =
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 0, 1
     }, 0.0, 0.0, 0.0, 1
-  }
+  },
+  {
+    {
+      "GCRLower", N_("GCR Lower Bound"),
+      N_("Lower bound of gray component reduction"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1
+    }, 0.0, 1.0, 0.2, 1
+  },
+  {
+    {
+      "GCRUpper", N_("GCR Upper Bound"),
+      N_("Upper bound of gray component reduction"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1
+    }, 0.0, 5.0, 0.5, 1
+  },
 };
 
 static const int float_parameter_count =
@@ -171,6 +228,7 @@ static stp_curve_t hue_map_bounds = NULL;
 static stp_curve_t lum_map_bounds = NULL;
 static stp_curve_t sat_map_bounds = NULL;
 static stp_curve_t color_curve_bounds = NULL;
+static stp_curve_t gcr_curve_bounds = NULL;
 
 static curve_param_t curve_parameters[] =
 {
@@ -229,6 +287,14 @@ static curve_param_t curve_parameters[] =
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 0, 1
     }, &lum_map_bounds, 1
+  },
+  {
+    {
+      "GCRCurve", N_("Gray Component Reduction"),
+      N_("Gray component reduction curve"),
+      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1
+    }, &gcr_curve_bounds, 1
   },
 };
 
@@ -1049,13 +1115,14 @@ fast_gray_to_rgb(const stp_vars_t vars,
     }
 }
 
-static void
+static stp_curve_t
 compute_gcr_curve(const stp_vars_t vars)
 {
   stp_curve_t curve;
   lut_t *lut = (lut_t *)(stp_get_color_data(vars));
   double k_lower = 0.0;
   double k_upper = 1.0;
+  double k_gamma = 1.0;
   double *tmp_data = stp_malloc(sizeof(double) * lut->steps);
   int step = 65535 / (lut->steps - 1); /* 1 or 257 */
   int i;
@@ -1064,6 +1131,8 @@ compute_gcr_curve(const stp_vars_t vars)
     k_upper = stp_get_float_parameter(vars, "GCRUpper");
   if (stp_check_float_parameter(vars, "GCRLower"))
     k_lower = stp_get_float_parameter(vars, "GCRLower");
+  if (stp_check_float_parameter(vars, "Black"))
+    k_gamma = stp_get_float_parameter(vars, "Black");
   k_upper *= 65535;
   k_lower *= 65535;
 
@@ -1077,22 +1146,27 @@ compute_gcr_curve(const stp_vars_t vars)
   if (k_upper < 65535)
     {
       for (i = ceil(k_lower); i < k_upper; i += step)
-	tmp_data[i] = k_upper * (i - k_lower) / (k_upper - k_lower);
+	{
+	  double where = (i - k_lower) / (k_upper - k_lower);
+	  tmp_data[i] = k_upper * pow(where, k_gamma) / 65535;
+	}
       for (i = ceil(k_upper); i < 65536; i += step)
-	tmp_data[i] = i;
+	tmp_data[i] = i / 65535.0;
     }
   else if (k_lower < 65535)
     for (i = ceil(k_lower); i < 65536; i += step)
-      tmp_data[i] = k_upper * (i - k_lower) / (k_upper - k_lower);
+      {
+	double where = (i - k_lower) / (k_upper - k_lower);
+	tmp_data[i] = k_upper * pow(where, k_gamma) / 65535;
+      }
   curve = stp_curve_allocate(STP_CURVE_WRAP_NONE);
-  stp_curve_set_bounds(curve, 0.0, 65535.0);
   if (! stp_curve_set_data(curve, lut->steps, tmp_data))
     {
       stp_eprintf(vars, "set curve data failed!\n");
       stp_abort();
     }
-  stp_set_curve_parameter(vars, "GCRCurve", curve);
   stp_free(tmp_data);
+  return curve;
 }
 
 static void
@@ -1106,17 +1180,23 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
   lut_t *lut = (lut_t *)(stp_get_color_data(vars));
   int step = 65535 / (lut->steps - 1); /* 1 or 257 */
 
-  stp_curve_t gcr_curve;
   const unsigned short *gcr_lookup;
   size_t points;
   int i;
 
-  if (!stp_check_curve_parameter(vars, "GCRCurve"))
-    compute_gcr_curve(vars);
-  gcr_curve = stp_get_curve_parameter(vars, "GCRCurve");
+  if (!lut->gcr_curve)
+    {
+      if (stp_check_curve_parameter(vars, "GCRCurve"))
+	lut->gcr_curve =
+	  stp_curve_allocate_copy(stp_get_curve_parameter(vars, "GCRCurve"));
+      else
+	lut->gcr_curve = compute_gcr_curve(vars);
+      stp_curve_rescale(lut->gcr_curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
+      stp_curve_resample(lut->gcr_curve, 65536);
+    }
 
-  stp_curve_resample(gcr_curve, 65536);
-  gcr_lookup = stp_curve_get_ushort_data(gcr_curve, &points);
+  gcr_lookup = stp_curve_get_ushort_data(lut->gcr_curve, &points);
 
   for (i = 0; i < width; i++, out += 4, in += 3)
     {
@@ -1383,6 +1463,7 @@ allocate_lut(void)
   ret->hue_map = NULL;
   ret->lum_map = NULL;
   ret->sat_map = NULL;
+  ret->gcr_curve = NULL;
   ret->steps = 0;
   ret->image_bpp = 0;
   ret->image_width = 0;
@@ -1410,6 +1491,8 @@ copy_lut(const stp_vars_t v)
     dest->lum_map = stp_curve_allocate_copy(src->lum_map);
   if (src->sat_map)
     dest->sat_map = stp_curve_allocate_copy(src->sat_map);
+  if (src->gcr_curve)
+    dest->gcr_curve = stp_curve_allocate_copy(src->gcr_curve);
   dest->steps = src->steps;
   dest->colorfunc = src->colorfunc;
   dest->image_bpp = src->image_bpp;
@@ -1442,6 +1525,8 @@ stp_free_lut(stp_vars_t v)
 	stp_curve_destroy(lut->lum_map);
       if (lut->sat_map)
 	stp_curve_destroy(lut->sat_map);
+      if (lut->gcr_curve)
+	stp_curve_destroy(lut->gcr_curve);
       if (lut->in_data)
 	stp_free(lut->in_data);
       if (lut->cmy_tmp)
@@ -1608,6 +1693,8 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   if (composite_curve)
     {
       stp_curve_copy(lut->composite, composite_curve);
+      stp_curve_rescale(lut->composite, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_resample(lut->composite, steps);
     }
   else
@@ -1618,6 +1705,8 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   if (cyan_curve)
     {
       stp_curve_copy(lut->cyan, cyan_curve);
+      stp_curve_rescale(lut->cyan, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_resample(lut->cyan, steps);
     }
   else
@@ -1628,6 +1717,8 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   if (magenta_curve)
     {
       stp_curve_copy(lut->magenta, magenta_curve);
+      stp_curve_rescale(lut->magenta, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_resample(lut->magenta, steps);
     }
   else
@@ -1638,6 +1729,8 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   if (yellow_curve)
     {
       stp_curve_copy(lut->yellow, yellow_curve);
+      stp_curve_rescale(lut->yellow, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_resample(lut->yellow, steps);
     }
   else
@@ -1826,7 +1919,9 @@ stp_color_describe_parameter(const stp_vars_t v, const char *name,
       sat_map_bounds = stp_curve_allocate_read_string
 	("STP_CURVE;Wrap ;Linear ;2;0.0;0.0;4.0:0;0;");
       color_curve_bounds = stp_curve_allocate_read_string
-	("STP_CURVE;Nowrap ;Linear ;2;1.0;0.0;65535.0:");
+	("STP_CURVE;Nowrap ;Linear ;2;1.0;0.0;1.0:");
+      gcr_curve_bounds = stp_curve_allocate_read_string
+	("STP_CURVE;Nowrap ;Linear ;2;1.0;0.0;1.0:");
       standard_curves_initialized = 1;
     }
   for (i = 0; i < float_parameter_count; i++)
