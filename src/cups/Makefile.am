@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.28 2001/07/21 14:14:28 rlk Exp $
+## $Id: Makefile.am,v 1.29 2001/08/03 21:22:12 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -120,6 +120,8 @@ install-data-hook:
 ## Rules
 
 .PHONY: ppd
+
+all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 ppd: ppd-stamp
 ppd-stamp: genppd
