@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.107 2003/01/26 02:38:14 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.108 2003/02/09 23:20:38 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1798,8 +1798,10 @@ densityDivisor /= 1.2;
 #endif
 
 
-  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
-  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
+  if (!stp_check_float_parameter(nv, "GCRLower", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  if (!stp_check_float_parameter(nv, "GCRUpper", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
   stpi_dither_init(nv, image, out_width, xdpi, ydpi);
 
 	/*
@@ -1826,7 +1828,7 @@ densityDivisor /= 1.2;
    * Output the page...
   */
 
-  if (!stp_check_curve_parameter(nv, "HueMap"))
+  if (!stp_check_curve_parameter(nv, "HueMap", STP_PARAMETER_ACTIVE))
     {
       hue_adjustment = stpi_read_and_compose_curves
 	(lexmark_hue_adjustment(caps, nv),
@@ -1834,7 +1836,7 @@ densityDivisor /= 1.2;
       stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
       stp_curve_free(hue_adjustment);
     }
-  if (!stp_check_curve_parameter(nv, "LumMap"))
+  if (!stp_check_curve_parameter(nv, "LumMap", STP_PARAMETER_ACTIVE))
     {
       lum_adjustment = stpi_read_and_compose_curves
 	(lexmark_lum_adjustment(caps, nv),
@@ -1842,7 +1844,7 @@ densityDivisor /= 1.2;
       stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
       stp_curve_free(lum_adjustment);
     }
-  if (!stp_check_curve_parameter(nv, "SatMap"))
+  if (!stp_check_curve_parameter(nv, "SatMap", STP_PARAMETER_ACTIVE))
     {
       sat_adjustment = stpi_read_and_compose_curves
 	(lexmark_sat_adjustment(caps, nv),
