@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.72 2003/10/18 23:35:26 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.73 2003/11/05 12:25:22 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -603,7 +603,16 @@ main(int  argc,				/* I - Number of command-line arguments */
       if (!stp_verify(v))
 	{
 	  fprintf(stderr, "ERROR: Gimp-Print: options failed to verify.\n");
-	  fprintf(stderr, "ERROR: Gimp-Print: Make sure that you are using ESP Ghostscript rather\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: Please make sure that the PPD file you are using\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: matches the version of Gimp-Print you have installed.\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: In particular, if you have upgraded your version of\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: Gimp-Print recently, you must reinstall all printer\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: queues.  If the previous installed version of Gimp-Print\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: was 4.3.19 or higher, you can use the `cups-genppdupdate'\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: program to do this; if the previous installed version\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: was older, you can use the Modify Printer command via\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: the CUPS web interface: http://localhost:631/printers.\n");
+	  fprintf(stderr, "ERROR: Gimp-Print: Also, make sure that you are using ESP Ghostscript rather\n");
 	  fprintf(stderr, "ERROR: Gimp-Print: than GNU or AFPL Ghostscript with CUPS.\n");
 	  fprintf(stderr, "ERROR: Gimp-Print: If this is not the cause, set LogLevel to debug2 to identify the problem.\n");
 	  goto cups_abort;
@@ -919,5 +928,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.72 2003/10/18 23:35:26 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.73 2003/11/05 12:25:22 rlk Exp $".
  */
