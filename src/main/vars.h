@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.9 2003/01/02 02:51:16 rlk Exp $"
+ * "$Id: vars.h,v 1.10 2003/01/05 23:06:34 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -63,14 +63,10 @@ extern const stp_vars_t stp_minimum_settings(void);
 extern const stp_vars_t stp_maximum_settings(void);
 
 extern void
-stp_describe_internal_parameter(const stp_vars_t v, const char *name,
-				stp_parameter_t *description);
-
-extern void
-stp_fill_parameter_settings(stp_parameter_t *desc, const char *name);
-
+stp_fill_parameter_settings(stp_parameter_t *desc,
+			    const stp_parameter_t *param);
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.9 2003/01/02 02:51:16 rlk Exp $".
+ * End of "$Id: vars.h,v 1.10 2003/01/05 23:06:34 rlk Exp $".
  */

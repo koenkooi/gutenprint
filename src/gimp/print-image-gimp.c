@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.9 2002/12/30 16:48:01 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.10 2003/01/05 23:06:25 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -384,7 +384,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	    }
 
 	}
-    }      
+    }
   if (im->mirror)
     {
       /* Flip row -- probably inefficiently */
@@ -453,5 +453,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.9 2002/12/30 16:48:01 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.10 2003/01/05 23:06:25 rlk Exp $".
  */

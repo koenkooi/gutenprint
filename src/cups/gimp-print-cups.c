@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-cups.c,v 1.2 2002/11/22 02:16:57 rlk Exp $"
+ * "$Id: gimp-print-cups.c,v 1.3 2003/01/05 23:06:23 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -83,7 +83,7 @@ initialize_stp_options(void)
     {
       struct stp_option *opt = &(stp_options[i]);
       stp_describe_parameter(stp_default_settings(), opt->iname, &desc);
-      if (desc.type != STP_PARAMETER_TYPE_DOUBLE)
+      if (desc.p_type != STP_PARAMETER_TYPE_DOUBLE)
 	{
 	  fprintf(stderr, "Parameter %s isn't right!\n", opt->iname);
 	  exit(1);

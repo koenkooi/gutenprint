@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.1 2003/01/02 02:51:14 rlk Exp $"
+ * "$Id: color.h,v 1.2 2003/01/05 23:06:27 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -53,6 +53,12 @@ extern int stp_color_init(stp_vars_t v, stp_image_t *image, size_t steps);
  */
 extern int stp_color_get_row(const stp_vars_t v, stp_image_t *image,
 			     int row, unsigned short *out, int *zero_mask);
+
+extern stp_parameter_list_t stp_color_list_parameters(const stp_vars_t v);
+
+extern void
+stp_color_describe_parameter(const stp_vars_t v, const char *name,
+			     stp_parameter_t *description);
 
 #ifdef __cplusplus
   }

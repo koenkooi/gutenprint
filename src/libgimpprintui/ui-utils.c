@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.1 2002/12/31 20:39:21 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.2 2003/01/05 23:06:27 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -49,7 +49,7 @@ static void *thumbnail_private_data;
 static gint
 dialog_delete_callback (GtkWidget *widget,
 			GdkEvent  *event,
-			gpointer   data) 
+			gpointer   data)
 {
   GtkSignalFunc  cancel_callback;
   GtkWidget     *cancel_widget;
@@ -501,7 +501,7 @@ stpui_scale_entry_new(GtkTable    *table,
 
       return_adj = adjustment;
     }
-    
+
   if (spinbutton_usize > 0)
     gtk_widget_set_usize (spinbutton, spinbutton_usize, -1);
 

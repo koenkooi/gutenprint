@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.54 2002/12/29 20:16:20 rlk Exp $"
+ * "$Id: genppd.c,v 1.55 2003/01/05 23:06:23 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -523,7 +523,7 @@ checkcat (const struct dirent *localedir)
 	  status = 1;
 	}
      }
- 
+
   free (catpath);
 
   errno = savederr;
@@ -539,7 +539,7 @@ void *
 xmalloc (size_t size)
 {
   register void *p = NULL;
-  
+
   if ((p = malloc (size)) == NULL)
     {
       fprintf (stderr, "cups-genppd: Memory allocation failed: %s.\n",
@@ -1078,5 +1078,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.54 2002/12/29 20:16:20 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.55 2003/01/05 23:06:23 rlk Exp $".
  */
