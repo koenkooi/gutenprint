@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.60 2003/02/05 16:40:22 easysw Exp $"
+ * "$Id: genppd.c,v 1.61 2003/02/22 17:20:15 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -767,7 +767,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
   for (i = 0; i < num_opts; i++)
   {
-    stp_papersize_t papersize;
+    stp_papersize_t *papersize;
     opt = stp_string_list_param(desc.bounds.str, i);
     papersize = stp_get_papersize_by_name(opt->name);
 
@@ -783,8 +783,8 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
       continue;
     }
 
-    width  = stp_papersize_get_width(papersize);
-    height = stp_papersize_get_height(papersize);
+    width  = papersize->width;
+    height = papersize->height;
 
     if (width <= 0 || height <= 0)
       continue;
@@ -1153,5 +1153,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.60 2003/02/05 16:40:22 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.61 2003/02/22 17:20:15 rlk Exp $".
  */

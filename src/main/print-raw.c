@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.20 2003/02/15 23:10:48 rlk Exp $"
+ * "$Id: print-raw.c,v 1.21 2003/02/22 17:20:26 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -124,13 +124,11 @@ raw_parameters(const stp_vars_t v, const char *name,
       description->bounds.str = stp_string_list_create();
       for (i = 0; i < papersizes; i++)
 	{
-	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
-	  if (stp_papersize_get_width(pt) == 0 &&
-	      stp_papersize_get_height(pt) == 0)
+	  const stp_papersize_t *pt = stp_get_papersize_by_index(i);
+	  if (pt->width == 0 && pt->height == 0)
 	    {
 	      stp_string_list_add_string(description->bounds.str,
-					stp_papersize_get_name(pt),
-					stp_papersize_get_text(pt));
+					 pt->name, pt->text);
 	      break;
 	    }
 	}

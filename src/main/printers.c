@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.41 2003/02/16 17:34:07 rlk Exp $"
+ * "$Id: printers.c,v 1.42 2003/02/22 17:20:26 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -347,8 +347,10 @@ verify_string_param(const stp_vars_t v, const char *parameter,
     {
       const char *checkval = stp_get_string_parameter(v, parameter);
       stp_string_list_t vptr = desc->bounds.str;
-      size_t count = stp_string_list_count(vptr);
+      size_t count = 0;
       int i;
+      if (vptr)
+	count = stp_string_list_count(vptr);
       answer = 0;
       if (checkval == NULL)
 	{

@@ -1,5 +1,5 @@
 /*
- * "$Id: paper_sizes.c,v 1.5 2002/11/18 23:06:19 rleigh Exp $"
+ * "$Id: paper_sizes.c,v 1.6 2003/02/22 17:20:16 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -39,10 +39,8 @@ main(int argc, char **argv)
   stp_init();
   for (i = 0; i < stp_known_papersizes(); i++)
     {
-      const stp_papersize_t p = stp_get_papersize_by_index(i);
-      printf("%s %d %d\n", stp_papersize_get_name(p),
-	     stp_papersize_get_width(p),
-	     stp_papersize_get_height(p));
+      const stp_papersize_t *p = stp_get_papersize_by_index(i);
+      printf("%s %d %d\n", p->name, p->width, p->height);
     }
   return 0;
 }
