@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.1 2001/01/06 14:51:45 rleigh Exp $
+ * $Id: acconfig.h,v 1.2 2001/01/22 19:58:37 rleigh Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -25,6 +25,9 @@
 
 /* Package version*/
 #undef VERSION
+
+/* CUPS data directory */
+#undef CUPS_DATADIR
 
 /* Define if GNU ld is present */
 #undef HAVE_GNU_LD
