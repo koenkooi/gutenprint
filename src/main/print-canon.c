@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.149 2004/07/31 01:50:11 rlk Exp $"
+ * "$Id: print-canon.c,v 1.150 2004/07/31 18:21:57 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1399,7 +1399,7 @@ canon_printhead_type(const char *name, const canon_cap_t * caps)
     if (caps->inks & CANON_INK_K)    return 0;
   }
 
-  stp_deprintf(STP_DBG_CANON,"canon: Unknown head combo '%s' - reverting to black",name);
+  stp_deprintf(STP_DBG_CANON,"canon: Unknown head combo '%s' - reverting to black\n",name);
   return 0;
 }
 
@@ -1422,7 +1422,7 @@ canon_printhead_colors(const char *name, const canon_cap_t * caps)
     if (caps->inks & CANON_INK_K)    return COLOR_MONOCHROME;
   }
 
-  stp_deprintf(STP_DBG_CANON,"canon: Unknown head combo '%s' - reverting to black",name);
+  stp_deprintf(STP_DBG_CANON,"canon: Unknown head combo '%s' - reverting to black\n",name);
   return COLOR_MONOCHROME;
 }
 
