@@ -4,13 +4,19 @@
 # Created: 1993-05-16
 # Public domain
 
-# $Id: mkinstalldirs,v 1.2 2000/09/09 20:17:08 rlk Exp $
+# $Id: mkinstalldirs,v 1.3 2000/09/13 01:02:42 rlk Exp $
 
 errstatus=0
 
-base=`dirname $1`/
 
-extras=`find Ghost/stp-interfaces -type d -print | sed "s,^,$base,"`
+# A really nasty hack to allow 'make gdist' to work properly while
+# not confusing make install
+# I take full responsibility for this botch --rlk
+
+if [ -n "$1" -a -z "`echo $1 | grep '^/'`" ] ; then
+   base=`dirname $1`/
+   extras=`find Ghost/stp-interfaces -type d -print | sed "s,^,$base,"`
+fi
 
 for file in "$@" $extras
 do
