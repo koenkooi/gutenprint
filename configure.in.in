@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.114 2002/02/14 12:50:28 rlk Exp $
+dnl $Id: configure.in.in,v 1.115 2002/02/14 12:55:19 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ dnl Specify a configuration file.
 AM_CONFIG_HEADER(config.h)
 
 dnl Available languages (translations)
-ALL_LINGUAS="en_GB sv no fr da pl"
+ALL_LINGUAS="en_GB sv no fr da pl sk"
 AC_SUBST(ALL_LINGUAS)
 
 dnl Compiler options and definitions
