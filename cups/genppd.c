@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.14 2000/12/10 14:11:14 rlk Exp $"
+ * "$Id: genppd.c,v 1.15 2000/12/18 02:05:25 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -534,7 +534,7 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
   for (i = 0; i < num_dither_algos; i ++)
   {
     char *s;
-    char *copy = malloc(strlen(dither_algo_names[i] + 1));
+    char *copy = malloc(strlen(dither_algo_names[i]) + 1);
     char *d = copy;
     s = dither_algo_names[i];
     do
@@ -564,7 +564,7 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
   for (i = 0; i < num_opts; i ++)
   {
     char *s;
-    char *copy = malloc(strlen(opts[i] + 1));
+    char *copy = malloc(strlen(opts[i]) + 1);
     char *d = copy;
    /* 
     * Strip resolution name to its essentials...
@@ -665,5 +665,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.14 2000/12/10 14:11:14 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.15 2000/12/18 02:05:25 rlk Exp $".
  */
