@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.24 2000/02/09 02:56:27 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.25 2000/02/10 00:28:32 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.25  2000/02/10 00:28:32  rlk
+ *   Fix landscape vs. portrait problem
+ *
  *   Revision 1.24  2000/02/09 02:56:27  rlk
  *   Put lut inside vars
  *
@@ -816,9 +819,9 @@ pcl_print(int       model,		/* I - Model */
   else
     writefunc = pcl_mode2;
 
-  dither = init_dither(image_width, out_width, 1);
   if (landscape)
   {
+    dither = init_dither(image_height, out_width, 1);
     in  = malloc(image_height * image_bpp);
     out = malloc(image_height * out_bpp * 2);
 
@@ -908,6 +911,7 @@ pcl_print(int       model,		/* I - Model */
   }
   else
   {
+    dither = init_dither(image_width, out_width, 1);
     in  = malloc(image_width * image_bpp);
     out = malloc(image_width * out_bpp * 2);
 
@@ -1154,5 +1158,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.24 2000/02/09 02:56:27 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.25 2000/02/10 00:28:32 rlk Exp $".
  */

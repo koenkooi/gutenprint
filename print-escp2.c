@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.66 2000/02/09 02:56:27 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.67 2000/02/10 00:28:32 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.67  2000/02/10 00:28:32  rlk
+ *   Fix landscape vs. portrait problem
+ *
  *   Revision 1.66  2000/02/09 02:56:27  rlk
  *   Put lut inside vars
  *
@@ -1260,7 +1263,6 @@ escp2_print(int       model,		/* I - Model */
       lmagenta = NULL;
     }
   }
-  dither = init_dither(image_width, out_width, horizontal_passes);
     
  /*
   * Output the page, rotating as necessary...
@@ -1268,6 +1270,7 @@ escp2_print(int       model,		/* I - Model */
 
   if (landscape)
   {
+    dither = init_dither(image_height, out_width, horizontal_passes);
     in  = malloc(image_height * image_bpp);
     out = malloc(image_height * out_bpp * 2);
 
@@ -1330,6 +1333,7 @@ escp2_print(int       model,		/* I - Model */
   }
   else
   {
+    dither = init_dither(image_width, out_width, horizontal_passes);
     in  = malloc(image_width * image_bpp);
     out = malloc(image_width * out_bpp * 2);
 
@@ -2723,5 +2727,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.66 2000/02/09 02:56:27 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.67 2000/02/10 00:28:32 rlk Exp $".
  */
