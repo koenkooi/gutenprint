@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.12 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: sequence.c,v 1.13 2004/04/04 15:15:09 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -383,9 +383,9 @@ stpi_sequence_create_from_xmltree(mxml_node_t *da)
       goto error;
     }
 
-  if (stpi_debug_level & STPI_DBG_XML)
-    stpi_erprintf("stpi_sequence_create_from_xmltree: stp_sequence_set_size: %d\n",
-		  point_count);
+  stpi_deprintf(STPI_DBG_XML,
+		"stpi_sequence_create_from_xmltree: stp_sequence_set_size: %d\n",
+		point_count);
   stp_sequence_set_size(ret, point_count);
   stp_sequence_set_bounds(ret, low, high);
 

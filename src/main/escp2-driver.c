@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.17 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.18 2004/04/04 15:15:08 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -202,7 +202,7 @@ escp2_set_remote_sequence(stp_vars_t v)
   /* Magic remote mode commands, whatever they do */
   escp2_privdata_t *pd = get_privdata(v);
 
-  if (stpi_debug_level & STPI_DBG_MARK_FILE)
+  if (stpi_get_debug_level() & STPI_DBG_MARK_FILE)
     print_debug_params(v);
   if (pd->advanced_command_set || pd->input_slot)
     {

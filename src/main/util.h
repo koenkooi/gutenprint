@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.29 2003/08/20 13:57:51 m0m Exp $"
+ * "$Id: util.h,v 1.30 2004/04/04 15:15:09 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -88,8 +88,8 @@ extern void stpi_catprintf(char **strp, const char *format, ...)
 #define STPI_DBG_XML            0x10000
 #define STPI_DBG_VARS           0x20000
 #define STPI_DBG_OLYMPUS        0x40000
-extern unsigned long stpi_debug_level;
 
+extern unsigned long stpi_get_debug_level(void);
 extern void stpi_dprintf(unsigned long level, stp_const_vars_t v,
 			 const char *format, ...)
        __attribute__((format(__printf__, 3, 4)));
@@ -196,5 +196,5 @@ extern void stpi_init_printer(void);
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.29 2003/08/20 13:57:51 m0m Exp $".
+ * End of "$Id: util.h,v 1.30 2004/04/04 15:15:09 rlk Exp $".
  */

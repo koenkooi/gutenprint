@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.12 2004/03/29 00:23:36 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.13 2004/04/04 15:15:09 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -85,6 +85,10 @@ steps			DBG(STEPS); return STEPS;
 ink_limit		DBG(INK_LIMIT); return INK_LIMIT;
 printer			DBG(PRINTER); return PRINTER;
 parameter		DBG(PARAMETER); return PARAMETER;
+parameter_int		DBG(PARAMETER_INT); return PARAMETER_INT;
+parameter_string	DBG(PARAMETER); return PARAMETER;
+parameter_float		DBG(PARAMETER_FLOAT); return PARAMETER_FLOAT;
+parameter_curve		DBG(PARAMETER_CURVE); return PARAMETER_CURVE;
 density			DBG(DENSITY); return DENSITY;
 top			DBG(TOP); return TOP;
 left			DBG(LEFT); return LEFT;

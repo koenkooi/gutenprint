@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.100 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: print-util.c,v 1.101 2004/04/04 15:15:09 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -300,7 +300,7 @@ stpi_erprintf(const char *format, ...)
   va_end(args);
 }
 
-unsigned long stpi_debug_level = 0;
+static unsigned long stpi_debug_level = 0;
 
 static void
 stpi_init_debug(void)
@@ -316,6 +316,13 @@ stpi_init_debug(void)
 	  stpi_erprintf("Gimp-Print %s %s\n", VERSION, RELEASE_DATE);
 	}
     }
+}
+
+unsigned long
+stpi_get_debug_level(void)
+{
+  stpi_init_debug();
+  return stpi_debug_level;
 }
 
 void

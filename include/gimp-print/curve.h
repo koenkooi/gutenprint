@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.5 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: curve.h,v 1.6 2004/04/04 15:15:08 rlk Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -276,6 +276,7 @@ extern int stp_curve_rescale(stp_curve_t curve, double scale,
 extern int stp_curve_write(FILE *file, stp_const_curve_t curve);
 extern char *stp_curve_write_string(stp_const_curve_t curve);
 
+extern stp_curve_t stp_curve_create_from_stream(FILE* fp);
 extern stp_curve_t stp_curve_create_from_file(const char* file);
 extern stp_curve_t stp_curve_create_from_string(const char* string);
 
@@ -316,5 +317,5 @@ extern int stp_curve_compose(stp_curve_t *retval,
 
 #endif /* __GIMP_PRINT_CURVE_H__ */
 /*
- * End of "$Id: curve.h,v 1.5 2003/06/29 14:41:54 rleigh Exp $".
+ * End of "$Id: curve.h,v 1.6 2004/04/04 15:15:08 rlk Exp $".
  */
