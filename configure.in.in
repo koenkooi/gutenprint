@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.79 2001/10/03 20:18:24 rleigh Exp $
+dnl $Id: configure.in.in,v 1.80 2001/10/03 21:31:05 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -292,14 +292,14 @@ AC_PROG_YACC
 AM_PROG_LEX
 AC_PATH_PROG(BISON_PROG, bison)
 AC_PATH_PROG(YACC_PROG, yacc)
-AC_PATH_PROG(PERL_PROG, perl)
-AC_PATH_PROG(CONVERT_PROG, convert)
-AC_PATH_PROG(TEXI2HTML_PROG, texi2html)
-if test x${TEXI2HTML_PROG} = x ; then
+AC_PATH_PROG(PERL, perl)
+AC_PATH_PROG(CONVERT, convert)
+AC_PATH_PROG(TEXI2HTML, texi2html)
+if test x${TEXI2HTML} = x ; then
   AC_MSG_WARN([html documentation cannot be regenerated!])
 fi
-AC_PATH_PROG(DVIPS_PROG, dvips)
-if test x${DVIPS_PROG} = x ; then
+AC_PATH_PROG(DVIPS, dvips)
+if test x${DVIPS} = x ; then
   AC_MSG_WARN([PostScript documentation cannot be generated!])
 fi
 AC_PATH_PROG(DB2PDF, db2pdf)

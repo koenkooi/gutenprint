@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/10/03 20:18:24 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2001/10/03 21:31:06 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,7 @@ $(MANUAL).pdf: $(MANUAL).ps
 	if test ! -d figures ; then \
 	  mkdir figures ; \
 	fi
-	$(CONVERT_PROG) $(srcdir)/$(basename $@).png EPDF:$@
+	$(CONVERT) $(srcdir)/$(basename $@).png EPDF:$@
 
 ps: $(MANUAL).ps
 
@@ -93,7 +93,7 @@ $(MANUAL).ps:  $(MANUAL).sgml $(EPS_IMAGES)
 	if test ! -d figures ; then \
 	  mkdir figures ; \
 	fi
-	$(CONVERT_PROG) $(srcdir)/$(basename $@).png EPS2:$@
+	$(CONVERT) $(srcdir)/$(basename $@).png EPS2:$@
 
 $(MANUAL).ps.gz: $(MANUAL).ps
 	rm -f $(MANUAL).ps.gz
@@ -148,7 +148,7 @@ clean-local:
 #
 
 index.sgml:
-	perl /usr/share/sgml/docbook/docbook-dsssl-stylesheets-1.64/bin/collateindex.pl -N -o index.sgml
+	$(PERL) /usr/share/sgml/docbook/docbook-dsssl-stylesheets-1.64/bin/collateindex.pl -N -o index.sgml
 
 	$(JADE)	-V html-index \
 		-t sgml \
