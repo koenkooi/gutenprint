@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.28 2000/01/29 02:34:30 rlk Exp $"
+ * "$Id: print.h,v 1.29 2000/02/01 09:01:40 gandy Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -207,6 +207,16 @@ extern void	default_media_size(int model, char *ppd_file, char *media_size,
 		                   int *width, int *length);
 
 
+extern char	**canon_parameters(int model, char *ppd_file, char *name,
+		                   int *count);
+extern void	canon_imageable_area(int model, char *ppd_file,
+				     char *media_size, int *left, int *right,
+				     int *bottom, int *top);
+extern void	canon_print(int model, int copies, FILE *prn,
+			    Image image, unsigned char *cmap,
+			    lut_t *lut, vars_t *v);
+
+
 extern char	**escp2_parameters(int model, char *ppd_file, char *name,
 		                   int *count);
 extern void	escp2_imageable_area(int model, char *ppd_file,
@@ -250,5 +260,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.28 2000/01/29 02:34:30 rlk Exp $".
+ * End of "$Id: print.h,v 1.29 2000/02/01 09:01:40 gandy Exp $".
  */

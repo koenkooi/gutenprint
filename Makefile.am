@@ -5,6 +5,7 @@ libexecdir = $(gimpplugindir)/plug-ins
 libexec_PROGRAMS = print
 
 print_SOURCES = \
+	print-canon.c   \
 	print-escp2.c	\
 	print-pcl.c	\
 	print-ps.c	\
@@ -26,6 +27,7 @@ AM_CPPFLAGS = \
 
 LDADD = \
 	$(top_builddir)/libgimp/libgimp.la	\
+	$(top_builddir)/libgimp/libgimpui.la	\
 	$(GTK_LIBS)				\
 	$(INTLLIBS)
 
