@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/09/18 18:15:27 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2001/10/03 20:18:24 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 @SET_MAKE@
 
 MAINT_CHARSET = latin1
+
+SUBDIRS = users_guide
 
 
 ## Variables
@@ -54,7 +56,7 @@ all-local: html
 	    echo "all-local: Not removing manual-html" ; \
 	  else \
 	    rm -rf manual-html ; \
-	    ln -s $(srcdir)/manual-html manual-html ; \
+	    $(LN_S) $(srcdir)/manual-html manual-html ; \
 	  fi \
 	else \
 	  echo "all-local: $(srcdir)/manual-html not found" ; \
