@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2002/09/21 14:59:52 rleigh Exp $
+## $Id: Makefile.am,v 1.11 2002/12/09 21:55:21 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,8 @@ if BUILD_TESTPATTERN
 bin_PROGRAMS = testpattern
 endif
 
-LFLAGS = -i
-YFLAGS = -d
+AM_LFLAGS = -i
+AM_YFLAGS = -d
 
 testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
 testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
@@ -62,7 +62,6 @@ endif
 
 ## Clean
 
-DISTCLEANFILES = testpatternl.c testpatterny.c testpatterny.h
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in testpatternl.c testpatterny.c testpatterny.h
 
 EXTRA_DIST =  testpatterny.h $(pkgdata_DATA)
