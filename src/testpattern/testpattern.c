@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.20 2003/01/05 23:06:35 rlk Exp $"
+ * "$Id: testpattern.c,v 1.21 2003/01/11 15:59:28 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -276,7 +276,7 @@ main(int argc, char **argv)
 	  levels = atoi(optarg);
 	  break;
 	case 'p':
-	  printer = c_strdup(optarg);
+	  printer = optarg;
 	  break;
 	case 'q':
 	  noblackline = 1;
@@ -396,6 +396,7 @@ main(int argc, char **argv)
   if (stp_print(v, &theImage) != 1)
     return 1;
   stp_vars_free(v);
+  free(the_testpatterns);
   return 0;
 }
 
