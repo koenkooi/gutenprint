@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.39 2004/02/16 21:05:34 rlk Exp $
+## $Id: Makefile.am,v 1.40 2004/03/12 03:09:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ endif
 
 if BUILD_FOOMATIC
 noinst_PROGRAMS = printer_options printer_margins paper_sizes gimp-print-version \
-	stp_limits printers
+	printers
 endif
 
 printer_options_SOURCES = printer_options.c
@@ -54,9 +54,6 @@ gimp_print_version_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
 
 paper_sizes_SOURCES = paper_sizes.c
 paper_sizes_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
-
-stp_limits_SOURCES = stp_limits.c
-stp_limits_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
 
 printers_SOURCES = printers.c
 printers_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
