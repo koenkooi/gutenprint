@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.15.2.2 2000/10/29 13:44:40 rlk Exp $"
+ * "$Id: escputil.c,v 1.15.2.3 2001/06/19 15:16:17 easysw Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -137,8 +137,10 @@ printer_t printer_list[] =
   { "640",	"Stylus Color 640",	1,	15 },
   { "660",	"Stylus Color 660",	1,	15 },
   { "670",	"Stylus Color 670",	3,	15 },
+  { "680",	"Stylus Color 680",	3,	15 },
   { "740",	"Stylus Color 740",	3,	15 },
   { "760",	"Stylus Color 760",	3,	15 },
+  { "777",	"Stylus Color 777",	3,	15 },
   { "800",	"Stylus Color 800",	1,	7 },
   { "850",	"Stylus Color 850",	1,	7 },
   { "860",	"Stylus Color 860",	3,	15 },
