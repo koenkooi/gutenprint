@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.38 2003/05/20 01:48:27 rlk Exp $
+## $Id: Makefile.am,v 1.39 2004/02/16 21:05:34 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ clean-local:
 
 foomatic-data: foomatic-stamp
 
-foomatic-stamp: foomatic-generator foomatic-printermap $(noinst_PROGRAMS) mk_printerlist
+foomatic-stamp: foomatic-generator foomatic-printermap $(noinst_PROGRAMS) mk_printerlist $(top_srcdir)/src/main/printers.xml $(top_srcdir)/src/main/papers.xml
 	-$(RM) -r foomatic-db
 	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS)
 	touch foomatic-stamp
