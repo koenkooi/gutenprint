@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.16 2001/07/28 01:42:25 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.17 2001/08/13 22:42:48 easysw Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -138,7 +138,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   cups_option_t		*options;	/* CUPS options */
   const char		*val;		/* CUPS option value */
   int			num_res;	/* Number of printer resolutions */
-  char			**res;		/* Printer resolutions */
+  stp_param_t		*res;		/* Printer resolutions */
   float			stp_gamma,	/* STP options */
 			stp_brightness,
 			stp_cyan,
@@ -406,6 +406,10 @@ main(int  argc,				/* I - Number of command-line arguments */
       case CUPS_CSPACE_CMYK :
           stp_set_output_type(v, OUTPUT_RAW_CMYK);
 	  break;
+      default :
+          fprintf(stderr, "ERROR: Bad colorspace %d!",
+	          cups.header.cupsColorSpace);
+	  break;
     }
 
     if (cups.header.cupsRowStep >= stp_dither_algorithm_count())
@@ -430,7 +434,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     if (cups.header.cupsCompression >= num_res)
       fprintf(stderr, "ERROR: Unable to set printer resolution!\n");
     else
-      stp_set_resolution(v, res[cups.header.cupsCompression]);
+      stp_set_resolution(v, res[cups.header.cupsCompression].name);
 
    /*
     * Print the page...
@@ -751,5 +755,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.16 2001/07/28 01:42:25 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.17 2001/08/13 22:42:48 easysw Exp $".
  */

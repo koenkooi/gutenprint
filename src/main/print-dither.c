@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.40 2001/08/07 00:48:32 rlk Exp $"
+ * "$Id: print-dither.c,v 1.41 2001/08/13 22:42:49 easysw Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -53,16 +53,17 @@
 typedef struct
 {
   const char *name;
+  const char *text;
   int id;
 } dither_algo_t;
 
 static const dither_algo_t dither_algos[] =
 {
-  { N_ ("Adaptive Hybrid"),        D_ADAPTIVE_HYBRID },
-  { N_ ("Ordered"),                D_ORDERED },
-  { N_ ("Fast"),                   D_FAST },
-  { N_ ("Very Fast"),              D_VERY_FAST },
-  { N_ ("Hybrid Floyd-Steinberg"), D_FLOYD_HYBRID }
+  { "Adaptive",	N_ ("Adaptive Hybrid"),        D_ADAPTIVE_HYBRID },
+  { "Ordered",	N_ ("Ordered"),                D_ORDERED },
+  { "Fast",	N_ ("Fast"),                   D_FAST },
+  { "VeryFast",	N_ ("Very Fast"),              D_VERY_FAST },
+  { "Floyd",	N_ ("Hybrid Floyd-Steinberg"), D_FLOYD_HYBRID }
 };
 
 static const int num_dither_algos = sizeof(dither_algos)/sizeof(dither_algo_t);
@@ -212,7 +213,15 @@ stp_dither_algorithm_name(int id)
 {
   if (id < 0 || id >= num_dither_algos)
     return NULL;
-  return _(dither_algos[id].name);
+  return (dither_algos[id].name);
+}
+
+const char *
+stp_dither_algorithm_text(int id)
+{
+  if (id < 0 || id >= num_dither_algos)
+    return NULL;
+  return _(dither_algos[id].text);
 }
 
 static inline int
