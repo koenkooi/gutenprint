@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.9.2.3 2001/03/31 17:18:35 rlk Exp $"
+ * "$Id: print-color.c,v 1.9.2.4 2001/03/31 20:11:29 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1567,6 +1567,9 @@ stp_compute_lut(stp_vars_t v, size_t steps)
       double temp_pixel;
       pixel = (double) i / (double) (steps - 1);
 
+      if (stp_get_input_color_model(v) == COLOR_MODEL_CMY)
+	pixel = 1.0 - pixel;
+
       /*
        * First, correct contrast
        */
@@ -1632,7 +1635,7 @@ stp_compute_lut(stp_vars_t v, size_t steps)
       red_pixel = 65535 * pow(red_pixel, print_gamma) + .5;
       green_pixel = 65535 * pow(green_pixel, print_gamma) + .5;
       blue_pixel = 65535 * pow(blue_pixel, print_gamma) + .5;
-      if (stp_get_input_color_model(v) == stp_get_output_color_model(v))
+      if (stp_get_output_color_model(v) == COLOR_MODEL_RGB)
 	{
 	  pixel = 65535 - pixel;
 	  red_pixel = 65535 - red_pixel;

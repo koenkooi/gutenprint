@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.11.2.2 2001/03/31 16:50:04 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.11.2.3 2001/03/31 20:11:29 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1113,7 +1113,7 @@ void
 gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 			gint            num_items,   /* I - Number of items */
 			gchar    **items,       /* I - Menu items */
-			gchar     *cur_item,    /* I - Current item */
+			const gchar     *cur_item,    /* I - Current item */
 			GtkSignalFunc   callback,    /* I - Callback */
 			gint           *callback_id) /* IO - Callback ID (init to -1) */
 {
@@ -1148,7 +1148,7 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 				     callback,
 				     NULL);
 
-  gtk_entry_set_text (entry, cur_item);
+  gtk_entry_set_text (entry, strdup(cur_item));
 
   for (i = 0; i < num_items; i ++)
     if (strcmp(items[i], cur_item) == 0)
