@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.54 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print.h,v 1.55 2000/06/01 01:44:59 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -197,6 +197,16 @@ typedef struct
   unsigned dot_size;
 } dither_range_t;
 
+typedef struct
+{
+   double value_l;
+   double value_h;
+   unsigned bits_l;
+   unsigned bits_h;
+   int isdark_l;
+   int isdark_h;
+} full_dither_range_t;
+
 /*
  * Prototypes...
  */
@@ -223,6 +233,18 @@ extern void	dither_set_y_ranges(void *vd, int nlevels,
 extern void	dither_set_k_ranges(void *vd, int nlevels,
 				    const simple_dither_range_t *ranges,
 				    double density);
+extern void	dither_set_k_ranges_full(void *vd, int nlevels,
+					 const full_dither_range_t *ranges,
+					 double density);
+extern void	dither_set_c_ranges_full(void *vd, int nlevels,
+					 const full_dither_range_t *ranges,
+					 double density);
+extern void	dither_set_m_ranges_full(void *vd, int nlevels,
+					 const full_dither_range_t *ranges,
+					 double density);
+extern void	dither_set_y_ranges_full(void *vd, int nlevels,
+					 const full_dither_range_t *ranges,
+					 double density);
 extern void	dither_set_c_ranges_simple(void *vd, int nlevels,
 					   const double *levels,
 					   double density);
@@ -244,9 +266,9 @@ extern void	dither_set_y_ranges_complete(void *vd, int nlevels,
 extern void	dither_set_k_ranges_complete(void *vd, int nlevels,
 					     const dither_range_t *ranges);
 extern void	dither_set_ink_spread(void *vd, int spread);
+extern void	dither_set_max_ink(void *vd, int, double);
 extern void	dither_set_x_oversample(void *vd, int os);
 extern void	dither_set_y_oversample(void *vd, int os);
-extern void	dither_set_ink_budget(void *vd, unsigned budget);
 extern void	dither_set_adaptive_divisor(void *vd, unsigned divisor);
 
 
@@ -353,5 +375,5 @@ extern char			*dither_algo_names[];
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.54 2000/05/29 23:04:31 rlk Exp $".
+ * End of "$Id: print.h,v 1.55 2000/06/01 01:44:59 rlk Exp $".
  */
