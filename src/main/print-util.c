@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.57 2002/02/16 02:02:22 rlk Exp $"
+ * "$Id: print-util.c,v 1.58 2002/03/01 02:33:14 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -177,7 +177,7 @@ static const stp_internal_vars_t min_vars =
 	0,			/* Magenta */
 	0,			/* Yellow */
 	0,			/* Output saturation */
-	.01,			/* Density */
+	.1,			/* Density */
 	0,			/* Image type */
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
