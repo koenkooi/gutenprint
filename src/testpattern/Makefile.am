@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5.4.2 2002/05/15 23:19:36 rleigh Exp $
+## $Id: Makefile.am,v 1.5.4.3 2002/06/05 23:52:05 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ YFLAGS = -d
 
 testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
 testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
+testpattern_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
