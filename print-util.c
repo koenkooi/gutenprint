@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.100 2000/06/21 00:15:53 rlk Exp $"
+ * "$Id: print-util.c,v 1.101 2000/06/22 19:20:59 easysw Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -39,6 +39,10 @@
 
 #include "print.h"
 #include <math.h>
+
+#ifndef __GCC__
+#  define inline
+#endif /* !__GCC__ */
 
 /*
  * RGB to grayscale luminance constants...

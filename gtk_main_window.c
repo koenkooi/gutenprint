@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.34 2000/06/22 13:02:44 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.35 2000/06/22 19:20:59 easysw Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2174,6 +2174,10 @@ static void gtk_preview_update(void)
     }
   }
 
+  if (paper_width == 0)
+    paper_width = 1;
+  if (paper_height == 0)
+    paper_height = 1;
 
   preview_ppi = PREVIEW_SIZE_HORIZ * 72 / paper_width;
   if (PREVIEW_SIZE_VERT * 72 / paper_height < preview_ppi)

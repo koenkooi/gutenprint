@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.67 2000/06/22 13:02:44 rlk Exp $"
+ * "$Id: print-dither.c,v 1.68 2000/06/22 19:20:59 easysw Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -32,6 +32,10 @@
 #include "print.h"
 #include <limits.h>
 #include <math.h>
+
+#ifndef __GCC__
+#  define inline
+#endif /* __GCC__ */
 
 #define D_FLOYD_HYBRID 0
 #define D_FLOYD 1

@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.4 2000/06/22 00:36:52 rlk Exp $"
+ * "$Id: escputil.c,v 1.5 2000/06/22 19:20:59 easysw Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -20,7 +20,7 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <getopt.h>
+#include <getopt.h> /* Note: this must be GNU getopt(), not the standard one! */
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>

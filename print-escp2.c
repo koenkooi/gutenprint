@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.170 2000/06/22 13:02:44 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.171 2000/06/22 19:20:59 easysw Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -45,7 +45,11 @@
 #include <signal.h>
 #endif
 
-#include <endian.h>
+#ifndef __GCC__
+#  define inline
+#endif /* !__GCC__ */
+
+/*#include <endian.h>*/
 
 typedef enum {
   COLOR_MONOCHROME,
