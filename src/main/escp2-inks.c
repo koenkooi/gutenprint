@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.4 2003/04/05 23:32:28 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.5 2003/05/05 00:36:03 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -19,6 +19,18 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * Definition of the multi-level inks available to a given printer.
+ * Each printer may use a different kind of ink droplet for variable
+ * and single drop size for each supported horizontal resolution and
+ * type of ink (4 or 6 color).
+ *
+ * Recall that 6 color ink is treated as simply another kind of
+ * multi-level ink, but the driver offers the user a choice of 4 and
+ * 6 color ink, so we need to define appropriate inksets for both
+ * kinds of ink.
  */
 
 #ifdef HAVE_CONFIG_H

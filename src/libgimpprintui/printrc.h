@@ -1,5 +1,5 @@
 /*
- * "$Id: printrc.h,v 1.2 2003/02/09 23:20:32 rlk Exp $"
+ * "$Id: printrc.h,v 1.3 2003/05/05 00:36:03 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -34,8 +34,6 @@ typedef union yylv {
   double dval;
   char *sval;
 } YYSTYPE;
-
-extern YYSTYPE yylval;
 
 #include "printrcy.h"
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.5 2003/04/09 23:34:10 rlk Exp $"
+ * "$Id: printrcy.y,v 1.6 2003/05/05 00:36:03 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -42,7 +42,6 @@ extern int yylex(void);
 char *quotestrip(const char *i);
 char *endstrip(const char *i);
 
-extern int mylineno;
 extern char* yytext;
 
 static int yyerror( const char *s )

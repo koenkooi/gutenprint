@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.33 2003/04/15 02:24:48 rlk Exp $
+ *  $Id: gimp-print.h,v 1.34 2003/05/05 00:36:02 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -715,7 +715,7 @@ stp_string_list_is_present(stp_string_list_t list, const char *value);
 extern int stp_known_papersizes(void);
 extern const stp_papersize_t *stp_get_papersize_by_name(const char *name);
 extern const stp_papersize_t *stp_get_papersize_by_size(int l, int w);
-extern const stp_papersize_t *stp_get_papersize_by_index(int index);
+extern const stp_papersize_t *stp_get_papersize_by_index(int idx);
 
 /****************************************************************
 *                                                               *
@@ -821,5 +821,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.33 2003/04/15 02:24:48 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.34 2003/05/05 00:36:02 rlk Exp $
  */

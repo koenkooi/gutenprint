@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.3 2003/04/15 02:24:48 rlk Exp $"
+ * "$Id: curve.h,v 1.4 2003/05/05 00:36:02 rlk Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -197,7 +197,7 @@ extern stp_sequence_t stp_curve_get_sequence(stp_const_curve_t curve);
  * It is also illegal, and FALSE is returned, to set gamma on a wrap-mode
  * curve.
  */
-extern int stp_curve_set_gamma(stp_curve_t curve, double gamma);
+extern int stp_curve_set_gamma(stp_curve_t curve, double f_gamma);
 
 /*
  * Return the gamma value of the curve.  A returned value of 0 indicates
@@ -312,5 +312,5 @@ extern int stp_curve_compose(stp_curve_t *retval,
 
 #endif /* GIMP_PRINT_CURVE_H */
 /*
- * End of "$Id: curve.h,v 1.3 2003/04/15 02:24:48 rlk Exp $".
+ * End of "$Id: curve.h,v 1.4 2003/05/05 00:36:02 rlk Exp $".
  */

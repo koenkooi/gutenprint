@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.73 2003/04/15 02:24:53 rlk Exp $"
+ * "$Id: print-color.c,v 1.74 2003/05/05 00:36:03 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1092,7 +1092,6 @@ generic_rgb_to_cmyk(stp_const_vars_t vars,
     {
       if (stp_check_curve_parameter(vars, "GCRCurve", STP_PARAMETER_DEFAULTED))
 	{
-	  int i;
 	  double data;
 	  size_t count;
 	  lut->gcr_curve =
@@ -1582,13 +1581,13 @@ invert_curve(stp_curve_t curve, int in_model, int out_model)
   int i;
   size_t count;
   const double *data = stp_curve_get_data(curve, &count);
-  double gamma = stp_curve_get_gamma(curve);
+  double f_gamma = stp_curve_get_gamma(curve);
   double *tmp_data;
 
   stp_curve_get_bounds(curve, &lo, &hi);
 
-  if (gamma)
-    stp_curve_set_gamma(curve, -gamma);
+  if (f_gamma)
+    stp_curve_set_gamma(curve, -f_gamma);
   else
     {
       tmp_data = stpi_malloc(sizeof(double) * count);

@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.18 2003/04/13 03:50:28 rlk Exp $"
+ * "$Id: xml.c,v 1.19 2003/05/05 00:36:04 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with libxml2.
  *
@@ -346,8 +346,8 @@ stpi_xml_get_node(xmlNodePtr xmlroot, ...)
 static void
 stpi_xml_process_node(xmlNodePtr node, const char *file)
 {
-  stpi_list_item_t *item = stpi_list_get_item_by_name(stpi_xml_registry,
-						      (char *) node->name);
+  stpi_list_item_t *item =
+    stpi_list_get_item_by_name(stpi_xml_registry, (const char *) node->name);
   if (item)
     {
       stpi_xml_parse_registry *xmlp =

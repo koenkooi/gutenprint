@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.60 2003/04/27 22:15:55 rleigh Exp $
+dnl $Id: configure.ac,v 1.61 2003/05/05 00:36:01 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ dnl
 pushdef([GIMPPRINT_NAME],              [gimp-print])
 pushdef([GIMPPRINT_MAJOR_VERSION],     [4])
 pushdef([GIMPPRINT_MINOR_VERSION],     [3])
-pushdef([GIMPPRINT_MICRO_VERSION],     [13])
+pushdef([GIMPPRINT_MICRO_VERSION],     [14])
 pushdef([GIMPPRINT_EXTRA_VERSION],     [])
 pushdef([GIMPPRINT_CURRENT_INTERFACE], [1])
 pushdef([GIMPPRINT_INTERFACE_AGE],     [0])
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.60 $)
+AC_REVISION($Revision: 1.61 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -133,7 +133,7 @@ dnl Specify a configuration file.
 AM_CONFIG_HEADER([config.h])
 
 dnl Available languages (translations)
-ALL_LINGUAS="da de el en_GB es fr ja nl no pl pt sk sv"
+ALL_LINGUAS="cs da de el en_GB es fr ja nl no pl pt sk sv"
 AC_SUBST(ALL_LINGUAS)
 
 dnl Set up libtool scripts.
@@ -818,7 +818,6 @@ AC_CONFIG_FILES([src/main/Makefile])
 AC_CONFIG_FILES([src/main/gimpprint.pc])
 AC_CONFIG_FILES([src/libgimpprintui/Makefile])
 AC_CONFIG_FILES([src/libgimpprintui/gimpprint-ui.pc])
-AC_CONFIG_FILES([src/printdef/Makefile])
 AC_CONFIG_FILES([cups-gimpprint.list])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([scripts/Makefile])

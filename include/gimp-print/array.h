@@ -1,5 +1,5 @@
 /*
- * "$Id: array.h,v 1.2 2003/04/15 02:24:47 rlk Exp $"
+ * "$Id: array.h,v 1.3 2003/05/05 00:36:02 rlk Exp $"
  *
  *   libgimpprint array functions.
  *
@@ -58,7 +58,7 @@ extern int stp_array_set_point(stp_array_t array, int x, int y,
 extern int stp_array_get_point(stp_const_array_t array, int x, int y,
 			       double *data);
 
-extern const stp_sequence_t stp_array_get_sequence(stp_const_array_t array);
+extern stp_const_sequence_t stp_array_get_sequence(stp_const_array_t array);
 
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.23 2003/04/15 02:24:55 rlk Exp $"
+ * "$Id: print-papers.c,v 1.24 2003/05/05 00:36:04 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -167,12 +167,12 @@ stp_get_papersize_by_name(const char *name)
 }
 
 const stp_papersize_t *
-stp_get_papersize_by_index(int index)
+stp_get_papersize_by_index(int idx)
 {
   stpi_list_item_t *paper;
 
   check_paperlist();
-  paper = stpi_list_get_item_by_index(paper_list, index);
+  paper = stpi_list_get_item_by_index(paper_list, idx);
   if (!paper)
     return NULL;
   else

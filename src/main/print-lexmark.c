@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.118 2003/04/20 03:07:43 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.119 2003/05/05 00:36:04 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1796,8 +1796,8 @@ densityDivisor /= 1.2;
 			((top * ydpi) / 72)+(((caps->offset_top_border+add_top_offset)*ydpi)
 					     /caps->y_raster_res),
 			(page_height * ydpi) / 72,
-			1, /* weave_strategy */
-			(int *)lexmark_head_offset(ydpi, ink_type, caps, ink_parameter, &lineoff_buffer),
+			(const int *) lexmark_head_offset(ydpi, ink_type, caps, ink_parameter, &lineoff_buffer),
+			STPI_WEAVE_ZIGZAG, /* weave_strategy */
 			flush_pass,
 			stpi_fill_uncompressed,  /* fill_start */
 			stpi_pack_uncompressed,  /* pack */

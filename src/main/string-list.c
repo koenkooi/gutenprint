@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.10 2003/04/15 02:24:58 rlk Exp $"
+ * "$Id: string-list.c,v 1.11 2003/05/05 00:36:04 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -87,19 +87,19 @@ stp_param_string_t *
 stp_string_list_param(stp_const_string_list_t list, size_t element)
 {
   return (stp_param_string_t *) stpi_list_item_get_data
-    (stpi_list_get_item_by_index((stpi_list_t *)list, element));
+    (stpi_list_get_item_by_index((const stpi_list_t *)list, element));
 }
 
 size_t
 stp_string_list_count(stp_const_string_list_t list)
 {
-  return stpi_list_get_length((stpi_list_t *)list);
+  return stpi_list_get_length((const stpi_list_t *)list);
 }
 
 stp_string_list_t
 stp_string_list_create_copy(stp_const_string_list_t list)
 {
-  return (stp_string_list_t) stpi_list_copy((stpi_list_t *)list);
+  return (stp_string_list_t) stpi_list_copy((const stpi_list_t *)list);
 }
 
 stp_string_list_t
