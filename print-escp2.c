@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.248 2000/09/10 22:39:15 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.249 2000/09/10 22:43:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1409,7 +1409,9 @@ escp2_parameters(const printer_t *printer,	/* I - Printer model */
 	    {
 	      int nozzles = escp2_nozzles(model);
 	      int xdpi = res->hres;
-	      int horizontal_passes = xdpi / escp2_xres(model);
+	      int physical_xdpi = xdpi > 720 ? escp2_enhanced_xres(model) :
+		escp2_xres(model);
+	      int horizontal_passes = xdpi / physical_xdpi;
 	      int oversample = horizontal_passes * res->vertical_passes
 	                         * res->vertical_oversample;
 	      if (horizontal_passes < 1)
@@ -1503,9 +1505,11 @@ escp2_default_resolution(const printer_t *printer)
 	{
 	  int nozzles = escp2_nozzles(printer->model);
 	  int xdpi = res->hres;
-	  int horizontal_passes = xdpi / escp2_xres(printer->model);
+	  int physical_xdpi = xdpi > 720 ?
+	    escp2_enhanced_xres(printer->model) : escp2_xres(printer->model);
+	  int horizontal_passes = xdpi / physical_xdpi;
 	  int oversample = horizontal_passes * res->vertical_passes
-	                     * res->vertical_oversample;
+	    * res->vertical_oversample;
 	  if (horizontal_passes < 1)
 	    horizontal_passes = 1;
 	  if (oversample < 1)
