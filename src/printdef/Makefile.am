@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2002/11/19 23:03:27 rleigh Exp $
+## $Id: Makefile.am,v 1.10 2002/11/23 20:49:16 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,9 @@ INCLUDES = @INCLUDES@
 
 ## Programs
 
-noinst_PROGRAMS = printdef
-printdef_SOURCES = printdef.c printdef.h
-printdef_LDADD = @LIBXML_LIBS@
+noinst_PROGRAMS = xmldef
+xmldef_SOURCES = printdef.c printdef.h
+xmldef_LDADD = @LIBXML_LIBS@
 
 
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: papers.h,v 1.2 2002/11/22 02:16:58 rlk Exp $"
+ * "$Id: papers.h,v 1.3 2002/11/23 20:49:16 rleigh Exp $"
  *
  *   libgimpprint header.
  *
@@ -42,6 +42,20 @@ extern "C" {
 #endif
 
 
+typedef struct
+{
+  const char *name;
+  const char *text;
+  unsigned width;
+  unsigned height;
+  unsigned top;
+  unsigned left;
+  unsigned bottom;
+  unsigned right;
+  stp_papersize_unit_t paper_unit;
+} stp_internal_papersize_t;
+
+
 extern void stp_default_media_size(const stp_vars_t v,
 				   int *width, int *height);
 
@@ -52,5 +66,5 @@ extern void stp_default_media_size(const stp_vars_t v,
 
 #endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
 /*
- * End of "$Id: papers.h,v 1.2 2002/11/22 02:16:58 rlk Exp $".
+ * End of "$Id: papers.h,v 1.3 2002/11/23 20:49:16 rleigh Exp $".
  */
