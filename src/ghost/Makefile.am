@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2001/05/05 20:27:07 rleigh Exp $
+## $Id: Makefile.am,v 1.9 2001/06/01 02:48:32 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ MAINT_CHARSET = latin1
 
 # Use old compatability method for now...
 
-MAINCODE = canon.c color.c dither.c escp2.c lexmark.c pcl.c printers.c ps.c util.c weave.c
+MAINCODE = canon.c color.c dither.c escp2.c lexmark.c pcl.c printers.c ps.c util.c weave.c dither-matrices.c
 
 MAINHEADERS = print.h print-internal.h print-intl-internal.h quickmatrix257.h ran.367.179.h ran.509.131.h
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.15 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: print-ps.c,v 1.16 2001/06/01 02:48:32 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -359,6 +359,12 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
                 image_width,
                 image_bpp;
   stp_vars_t	nv = stp_allocate_copy(v);
+
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
 
  /*
   * Setup a read-only pixel region for the entire image...

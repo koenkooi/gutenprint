@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.43 2001/05/22 23:43:48 rlk Exp $"
+ * "$Id: print-canon.c,v 1.44 2001/06/01 02:48:32 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1626,7 +1626,7 @@ canon_cmd(const stp_vars_t v, /* I - the printer         */
       if (num)
 	stp_zfwrite(buffer,num,1,v);
     }
-  free(buffer);
+  stp_free(buffer);
 }
 
 #ifdef DEBUG
@@ -2046,6 +2046,12 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   colormode_t colormode = canon_printhead_colors(ink_type,caps);
   const paper_t *pt;
   const canon_variable_inkset_t *inks;
+
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
 
   /*
   PUT("top        ",top,72);

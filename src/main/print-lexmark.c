@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.37 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.38 2001/06/01 02:48:32 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1399,8 +1399,11 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
 
   const lexmark_res_t *res_para_ptr = lexmark_get_resolution_para(printer, resolution);
 
-
-
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
 
   /*
   * Setup a read-only pixel region for the entire image...

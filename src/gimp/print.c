@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.14 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: print.c,v 1.15 2001/06/01 02:48:32 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -55,8 +55,6 @@ static void	get_system_printers(void);
 static void	query (void);
 static void	run (char *, int, GimpParam *, int *, GimpParam **);
 static int	do_print_dialog (char *proc_name);
-
-extern void     gimp_create_main_window (void);
 
 #if 0
 static void	cleanupfunc(void);
@@ -1369,5 +1367,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.14 2001/05/20 22:10:20 rlk Exp $".
+ * End of "$Id: print.c,v 1.15 2001/06/01 02:48:32 rlk Exp $".
  */
