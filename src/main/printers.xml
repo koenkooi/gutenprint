@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.74 2003/07/07 00:49:41 rlk Exp $"
+   "$Id: printers.xml,v 1.75 2003/07/15 01:17:35 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -231,6 +231,38 @@
       <printer name="EPSON Stylus C42UX" driver="escp2-c42ux">
         <color value="true"/>
         <model value="43"/>
+        <magenta value="0.95"/>
+        <yellow value="0.9"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C43SX" driver="escp2-c43sx">
+        <color value="true"/>
+        <model value="59"/>
+        <magenta value="0.95"/>
+        <yellow value="0.9"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C43UX" driver="escp2-c43ux">
+        <color value="true"/>
+        <model value="59"/>
+        <magenta value="0.95"/>
+        <yellow value="0.9"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C44SX" driver="escp2-c44sx">
+        <color value="true"/>
+        <model value="59"/>
+        <magenta value="0.95"/>
+        <yellow value="0.9"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C44UX" driver="escp2-c44ux">
+        <color value="true"/>
+        <model value="59"/>
         <magenta value="0.95"/>
         <yellow value="0.9"/>
         <gamma value="0.585"/>
@@ -587,7 +619,7 @@
       </printer>
       <printer name="EPSON Stylus Photo 935" driver="escp2-935">
         <color value="true"/>
-        <model value="51"/>
+        <model value="36"/>
         <gamma value="0.585"/>
         <density value="1.0"/>
       </printer>
