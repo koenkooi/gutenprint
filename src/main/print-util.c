@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.91 2003/02/09 23:20:41 rlk Exp $"
+ * "$Id: print-util.c,v 1.92 2003/02/16 00:16:24 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -531,13 +531,14 @@ stpi_xio_free(void *ixio)
 static void
 append_xio_output(xio_t *xio, const char *data, int bytes)
 {
-  char *result2 = stpi_malloc(xio->d.s.offset + bytes + 1);
+  char *result2;
   switch (xio->xtype)
     {
     case TYPE_FILE:
       fwrite(data, bytes, 1, xio->d.f);
       break;
     case TYPE_STRING:
+      result2 = stpi_malloc(xio->d.s.offset + bytes + 1);
       if (xio->d.s.data)
 	{
 	  memcpy(result2, xio->d.s.data, xio->d.s.offset);
