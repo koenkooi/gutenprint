@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.10.2.2 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: printdefy.y,v 1.10.2.3 2002/11/17 02:02:58 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -51,18 +51,18 @@ const size_t nprintfuncs = sizeof(printfuncs) / sizeof(const char *);
 void
 initialize_the_printer(const char *name, const char *driver)
 {
-  strncpy(thePrinter.printvars.output_to, name, 63);
-  strncpy(thePrinter.printvars.driver, driver, 63);
-  thePrinter.printvars.top = -1;
+  strncpy(thePrinter.long_name, name, 63);
+  strncpy(thePrinter.short_name, driver, 63);
+  thePrinter.family = -1;
   thePrinter.model = -1;
-  thePrinter.printvars.brightness = 1.0;
-  thePrinter.printvars.gamma = 1.0;
-  thePrinter.printvars.contrast = 1.0;
-  thePrinter.printvars.cyan = 1.0;
-  thePrinter.printvars.magenta = 1.0;
-  thePrinter.printvars.yellow = 1.0;
-  thePrinter.printvars.saturation = 1.0;
-  thePrinter.printvars.density = 1.0;
+  thePrinter.brightness = 1.0;
+  thePrinter.gamma = 1.0;
+  thePrinter.contrast = 1.0;
+  thePrinter.cyan = 1.0;
+  thePrinter.magenta = 1.0;
+  thePrinter.yellow = 1.0;
+  thePrinter.saturation = 1.0;
+  thePrinter.density = 1.0;
 }
 
 void
@@ -70,13 +70,13 @@ output_the_printer(void)
 {
   printf("  {\n");
   printf("    COOKIE_PRINTER,\n");
-  printf("    %s,\n", thePrinter.printvars.output_to);
-  printf("    %s,\n", thePrinter.printvars.driver);
+  printf("    %s,\n", thePrinter.long_name);
+  printf("    %s,\n", thePrinter.short_name);
   printf("    %d,\n", thePrinter.model);
-  printf("    &stp_%s_printfuncs,\n", printfuncs[thePrinter.printvars.top]);
+  printf("    &stp_%s_printfuncs,\n", printfuncs[thePrinter.family]);
   printf("    {\n");
   printf("      COOKIE_VARS,\n");
-  printf("      %s,\n", thePrinter.printvars.driver);	/* driver */
+  printf("      %s,\n", thePrinter.short_name);	/* driver */
   printf("      \"\",\n");	/* ppd_file */
   printf("      \"\",\n");	/* resolution */
   printf("      \"\",\n");	/* media_size */
@@ -84,19 +84,19 @@ output_the_printer(void)
   printf("      \"\",\n");	/* media_source */
   printf("      \"\",\n");	/* ink_type */
   printf("      \"\",\n");	/* dither_algorithm */
-  printf("      %d,\n", thePrinter.printvars.output_type);
-  printf("      %.3f,\n", thePrinter.printvars.brightness);
+  printf("      %d,\n",   thePrinter.output_type);
+  printf("      %.3f,\n", thePrinter.brightness);
   printf("      0,\n");		/* left */
   printf("      0,\n");		/* top */
   printf("      0,\n");		/* width */
   printf("      0,\n");		/* height */
-  printf("      %.3f,\n", thePrinter.printvars.gamma);
-  printf("      %.3f,\n", thePrinter.printvars.contrast);
-  printf("      %.3f,\n", thePrinter.printvars.cyan);
-  printf("      %.3f,\n", thePrinter.printvars.magenta);
-  printf("      %.3f,\n", thePrinter.printvars.yellow);
-  printf("      %.3f,\n", thePrinter.printvars.saturation);
-  printf("      %.3f,\n", thePrinter.printvars.density);
+  printf("      %.3f,\n", thePrinter.gamma);
+  printf("      %.3f,\n", thePrinter.contrast);
+  printf("      %.3f,\n", thePrinter.cyan);
+  printf("      %.3f,\n", thePrinter.magenta);
+  printf("      %.3f,\n", thePrinter.yellow);
+  printf("      %.3f,\n", thePrinter.saturation);
+  printf("      %.3f,\n", thePrinter.density);
   printf("    }\n");
   printf("  },\n");
 }
@@ -133,10 +133,10 @@ printerend: 		tBEGIN ENDPRINTER tEND
 	{ output_the_printer(); }
 ;
 color:			tBEGIN COLOR tEND
-	{ thePrinter.printvars.output_type = OUTPUT_COLOR; }
+	{ thePrinter.output_type = OUTPUT_COLOR; }
 ;
 nocolor:		tBEGIN NOCOLOR tEND
-	{ thePrinter.printvars.output_type = OUTPUT_GRAY; }
+	{ thePrinter.output_type = OUTPUT_GRAY; }
 ;
 model:			tBEGIN MODEL VALUE ASSIGN tINT tEND
 	{ thePrinter.model = $5; }
@@ -148,35 +148,35 @@ language:		tBEGIN LANGUAGE VALUE ASSIGN tCLASS tEND
 	    {
 	      if (!strcmp($5, printfuncs[i]))
 		{
-		  thePrinter.printvars.top = i;
+		  thePrinter.family = i;
 		  break;
 		}
 	    }
 	}
 ;
 brightness:		tBEGIN BRIGHTNESS VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.brightness = $5; }
+	{ thePrinter.brightness = $5; }
 ;
 gamma:			tBEGIN GAMMA VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.gamma = $5; }
+	{ thePrinter.gamma = $5; }
 ;
 contrast:		tBEGIN CONTRAST VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.contrast = $5; }
+	{ thePrinter.contrast = $5; }
 ;
 cyan:			tBEGIN CYAN VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.cyan = $5; }
+	{ thePrinter.cyan = $5; }
 ;
 magenta:		tBEGIN MAGENTA VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.magenta = $5; }
+	{ thePrinter.magenta = $5; }
 ;
 yellow:			tBEGIN YELLOW VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.yellow = $5; }
+	{ thePrinter.yellow = $5; }
 ;
 saturation:		tBEGIN SATURATION VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.saturation = $5; }
+	{ thePrinter.saturation = $5; }
 ;
 density:		tBEGIN DENSITY VALUE ASSIGN tDOUBLE tEND
-	{ thePrinter.printvars.density = $5; }
+	{ thePrinter.density = $5; }
 ;
 
 Empty:

@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.h,v 1.6 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: printdef.h,v 1.6.2.1 2002/11/17 02:02:58 rlk Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -23,69 +23,22 @@
 
 #define OUTPUT_GRAY		0	/* Grayscale output */
 #define OUTPUT_COLOR		1	/* Color output */
-#define OUTPUT_GRAY_COLOR	2 	/* Grayscale output using color */
-
-#define ORIENT_AUTO		-1	/* Best orientation */
-#define ORIENT_PORTRAIT		0	/* Portrait orientation */
-#define ORIENT_LANDSCAPE	1	/* Landscape orientation */
-#define ORIENT_UPSIDEDOWN	2	/* Reverse portrait orientation */
-#define ORIENT_SEASCAPE		3	/* Reverse landscape orientation */
-
-#define IMAGE_LINE_ART		0
-#define IMAGE_SOLID_TONE	1
-#define IMAGE_CONTINUOUS	2
-#define IMAGE_MONOCHROME	3
-#define NIMAGE_TYPES		4
-
-#define COLOR_MODEL_RGB		0
-#define COLOR_MODEL_CMY		1
-
-typedef struct					/* Plug-in variables */
-{
-  char	output_to[256],		/* Name of file or command to print to */
-	driver[64],		/* Name of printer "driver" */
-	ppd_file[256],		/* PPD file */
-	resolution[64],		/* Resolution */
-	media_size[64],		/* Media size */
-	media_type[64],		/* Media type */
-	media_source[64],	/* Media source */
-	ink_type[64],		/* Ink or cartridge */
-	dither_algorithm[64];	/* Dithering algorithm */
-  int	output_type;		/* Color or grayscale output */
-  float	brightness;		/* Output brightness */
-  int	left,			/* Offset from left-upper corner, points */
-	top,			/* ... */
-        width,			/* Width of the image, points */
-	height;			/* ... */
-  float gamma;                  /* Gamma */
-  float contrast,		/* Output Contrast */
-	cyan,			/* Output red level */
-	magenta,		/* Output green level */
-	yellow;			/* Output blue level */
-  float	saturation;		/* Output saturation */
-  float	density;		/* Maximum output density */
-  int	image_type;		/* Image type (line art etc.) */
-  float app_gamma;		/* Application gamma */
-  int	page_width;		/* Width of page in points */
-  int	page_height;		/* Height of page in points */
-  int	input_color_model;	/* Color model for this device */
-  int	output_color_model;	/* Color model for this device */
-  void  *lut;			/* Look-up table */
-  void  *driver_data;		/* Private data of the driver */
-  unsigned char *cmap;		/* Color map */
-  void (*outfunc)(void *data, const char *buffer, size_t bytes);
-  void *outdata;
-  void (*errfunc)(void *data, const char *buffer, size_t bytes);
-  void *errdata;
-} stp_vars_t;
 
 typedef struct stp_printer
 {
-  const char	*long_name,			/* Long name for UI */
-	*driver;			/* Short name for printrc file */
-  int	model;				/* Model number */
-  const char *printfuncs;
-  stp_vars_t printvars;
+  char	long_name[256];
+  char  short_name[64];
+  int   family;
+  int	model;
+  int	output_type;		/* Color or grayscale output */
+  float	brightness;		/* Output brightness */
+  float gamma;                  /* Gamma */
+  float contrast;		/* Output Contrast */
+  float cyan;			/* Output red level */
+  float magenta;		/* Output green level */
+  float yellow;			/* Output blue level */
+  float	saturation;		/* Output saturation */
+  float	density;		/* Maximum output density */
 } stp_printer_t;
 
 typedef union yylv {
