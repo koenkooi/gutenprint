@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.105 2004/05/23 11:46:07 rleigh Exp $
+dnl $Id: configure.ac,v 1.106 2004/05/31 14:00:11 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.105 $)
+AC_REVISION($Revision: 1.106 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -940,7 +940,6 @@ AC_CONFIG_FILES([src/main/Makefile])
 AC_CONFIG_FILES([src/main/gimpprint.pc])
 AC_CONFIG_FILES([src/libgimpprintui/Makefile])
 AC_CONFIG_FILES([src/libgimpprintui/gimpprintui.pc])
-AC_CONFIG_FILES([src/libgimpprintui/gimpprintui2.pc])
 AC_CONFIG_FILES([cups-gimpprint.list])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([scripts/Makefile])
