@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.24 2003/05/10 14:50:16 rlk Exp $"
+ * "$Id: util.h,v 1.25 2003/05/31 04:07:23 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -141,12 +141,12 @@ typedef void *stpi_list_item_t;
 typedef const void *stpi_const_list_item_t;
 typedef void *stpi_list_t;
 typedef const void *stpi_const_list_t;
-typedef void (*node_freefunc)(stpi_list_item_t *);
-typedef void *(*node_copyfunc)(const stpi_list_item_t *);
-typedef const char *(*node_namefunc)(const stpi_list_item_t *);
-typedef int (*node_sortfunc)(const stpi_list_item_t *, const stpi_list_item_t *);
+typedef void (*node_freefunc)(void *);
+typedef void *(*node_copyfunc)(const void *);
+typedef const char *(*node_namefunc)(const void *);
+typedef int (*node_sortfunc)(const void *, const void *);
 
-extern void stpi_list_node_free_data(stpi_list_item_t *item);
+extern void stpi_list_node_free_data(void *item);
 extern stpi_list_t *stpi_list_create(void);
 extern stpi_list_t *stpi_list_copy(const stpi_list_t *list);
 extern int stpi_list_destroy(stpi_list_t *list);
@@ -278,5 +278,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.24 2003/05/10 14:50:16 rlk Exp $".
+ * End of "$Id: util.h,v 1.25 2003/05/31 04:07:23 rlk Exp $".
  */
