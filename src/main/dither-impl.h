@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.7 2003/05/28 11:57:29 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.8 2003/05/29 01:28:45 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -76,7 +76,6 @@ typedef struct ink_defn
 {
   unsigned range;
   unsigned value;
-  unsigned xvalue;
   unsigned bits;
   unsigned dot_size;
   int subchannel;
@@ -132,8 +131,6 @@ typedef struct dither_channel
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
-  float sqrt_density_adjustment;
-  float density_adjustment;
 
   int v;
   int o;
@@ -292,5 +289,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.7 2003/05/28 11:57:29 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.8 2003/05/29 01:28:45 rlk Exp $".
  */

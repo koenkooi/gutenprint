@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.122 2003/05/28 11:57:31 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.123 2003/05/29 01:28:45 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1972,36 +1972,36 @@ densityDivisor /= 1.2;
       }
   }
 
-  stpi_dither_set_density_adjustment(v, ECOLOR_K, 0,
-				     get_double_param(v, "BlackDensity") *
-				     get_double_param(v, "Density"));
-  stpi_dither_set_density_adjustment(v, ECOLOR_C, 0,
-				     get_double_param(v, "CyanDensity") *
-				     get_double_param(v, "Density"));
-  stpi_dither_set_density_adjustment(v, ECOLOR_M, 0,
-				     get_double_param(v, "MagentaDensity") *
-				     get_double_param(v, "Density"));
-  stpi_dither_set_density_adjustment(v, ECOLOR_Y, 0,
-				     get_double_param(v, "YellowDensity") *
-				     get_double_param(v, "Density"));
+  stpi_channel_set_density_adjustment(v, ECOLOR_K, 0,
+				      get_double_param(v, "BlackDensity") *
+				      get_double_param(v, "Density"));
+  stpi_channel_set_density_adjustment(v, ECOLOR_C, 0,
+				      get_double_param(v, "CyanDensity") *
+				      get_double_param(v, "Density"));
+  stpi_channel_set_density_adjustment(v, ECOLOR_M, 0,
+				      get_double_param(v, "MagentaDensity") *
+				      get_double_param(v, "Density"));
+  stpi_channel_set_density_adjustment(v, ECOLOR_Y, 0,
+				      get_double_param(v, "YellowDensity") *
+				      get_double_param(v, "Density"));
   if (!use_dmt) {
     if (cols.p.C)
       {
-	stpi_dither_set_density_adjustment
+	stpi_channel_set_density_adjustment
 	  (v, ECOLOR_C, 1, (get_double_param(v, "CyanDensity") *
 			    get_double_param(v, "LightCyanTransition") *
 			    get_double_param(v, "Density")));
       }
     if (cols.p.M)
       {
-	stpi_dither_set_density_adjustment
+	stpi_channel_set_density_adjustment
 	  (v, ECOLOR_M, 1, (get_double_param(v, "MagentaDensity") *
 			    get_double_param(v, "LightMagentaTransition") *
 			    get_double_param(v, "Density")));
       }
     if (cols.p.Y)
       {
-	stpi_dither_set_density_adjustment
+	stpi_channel_set_density_adjustment
 	  (v, ECOLOR_Y, 1, (get_double_param(v, "YellowDensity") *
 			    get_double_param(v, "LightYellowTransition") *
 			    get_double_param(v, "Density")));

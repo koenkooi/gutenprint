@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.261 2003/05/28 11:57:30 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.262 2003/05/29 01:28:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1254,7 +1254,7 @@ setup_inks(stp_vars_t v)
 		    channel->subchannels[j].subchannel_scale;
 		  double scale = userval * get_double_param(v, subparam);
 		  scale *= get_double_param(v, "Density");
-		  stpi_dither_set_density_adjustment(v, i, j, scale);
+		  stpi_channel_set_density_adjustment(v, i, j, scale);
 		}
 	    }
 	}
