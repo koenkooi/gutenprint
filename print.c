@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.16 1999/10/24 15:18:33 rlk Exp $"
+ * "$Id: print.c,v 1.17 1999/10/25 23:31:59 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -93,7 +93,6 @@ typedef struct		/**** Printer List ****/
   float	saturation;
   float	density;
 } plist_t;
-
 
 /*
  * Local functions...
@@ -469,8 +468,7 @@ run(char   *name,		/* I - Name of print program. */
   FILE		*prn;		/* Print file/command */
   printer_t	*printer;	/* Printer driver entry */
   int		i;		/* Looping var */
-  lut_t		lut;		/* Lookup table for brightness */
-  lut16_t	lut16;		/* 16-bit lookup table for brightness */
+  lut_t	lut;		/* 16-bit lookup table for brightness */
   guchar	*cmap;		/* Colormap (indexed images only) */
   int		ncolors;	/* Number of colors in colormap */
   GParam	*values;	/* Return values */
@@ -695,7 +693,7 @@ run(char   *name,		/* I - Name of print program. */
     if (prn != NULL)
       {
 	printer      = printers + current_printer;
-	compute_lut(&lut, &lut16, vars.contrast, vars.red, vars.green,
+	compute_lut(&lut, vars.contrast, vars.red, vars.green,
 		    vars.blue, vars.brightness, printer->gamma, gimp_gamma(),
 		    vars.gamma, vars.linear, printer->density, vars.density);
 	/*
@@ -718,8 +716,8 @@ run(char   *name,		/* I - Name of print program. */
 	(*printer->print)(printer->model, vars.ppd_file, vars.resolution,
 			  vars.media_size, vars.media_type, vars.media_source,
 			  vars.output_type, vars.orientation, vars.scaling,
-			  vars.left, vars.top, 1, prn, drawable, &lut, cmap,
-			  &lut16, vars.saturation);
+			  vars.left, vars.top, 1, prn, drawable, cmap,
+			  &lut, vars.saturation);
 
 	if (plist_current > 0)
 #ifndef __EMX__
@@ -3211,5 +3209,5 @@ get_printers(void)
 
 
 /*
- * End of "$Id: print.c,v 1.16 1999/10/24 15:18:33 rlk Exp $".
+ * End of "$Id: print.c,v 1.17 1999/10/25 23:31:59 rlk Exp $".
  */
