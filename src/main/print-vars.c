@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.35 2003/02/09 23:20:42 rlk Exp $"
+ * "$Id: print-vars.c,v 1.36 2003/02/13 03:33:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -151,7 +151,7 @@ value_copy(const stpi_list_item_t *item)
   switch (v->typ)
     {
     case STP_PARAMETER_TYPE_CURVE:
-      ret->value.cval = stp_curve_create_copy(ret->value.cval);
+      ret->value.cval = stp_curve_create_copy(v->value.cval);
       break;
     case STP_PARAMETER_TYPE_STRING_LIST:
     case STP_PARAMETER_TYPE_FILE:
