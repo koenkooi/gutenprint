@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.20 2001/09/17 00:51:14 rlk Exp $ */
+/* $Id: unprint.c,v 1.21 2001/09/17 01:48:36 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -226,9 +226,9 @@ set_bits(unsigned char *p,int index,int value)
 
 static float ink_colors[8][4] =
 {{ 0,  0,  0,  1 },		/* K */
- { 1,  0,  1,  1 },		/* M */
- { 0,  1,  1,  1 },		/* C */
- { 1,  1,  0,  1 },		/* Y */
+ { 1,  .1,  1,  1 },		/* M */
+ { .1,  1,  1,  1 },		/* C */
+ { 1,  1,  .1,  1 },		/* Y */
  { 1, .7,  1,  1 },		/* m */
  { .7, 1,  1,  1 },		/* c */
  { 1,  1,  .7, 1 },		/* y */
