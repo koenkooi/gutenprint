@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.58 2001/07/06 18:04:43 rlk Exp $"
+ * "$Id: print-canon.c,v 1.59 2001/07/16 20:54:20 easysw Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1187,7 +1187,7 @@ static const double plain_paper_lum_adjustment[49] =
 };  
 
 typedef struct {
-  const char name[65];
+  const char *name;
   int media_code;
   double base_density;
   double k_lower_scale;

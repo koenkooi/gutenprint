@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.78 2001/07/14 17:49:42 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.79 2001/07/16 20:54:20 easysw Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2026,7 +2026,7 @@ static const escp2_stp_printer_t model_capabilities[] =
 
 typedef struct
 {
-  const char name[65];
+  const char *name;
   int hres;
   int vres;
   int softweave;
@@ -2329,7 +2329,7 @@ static const double pgpp_hue_adjustment[49] =
 
 typedef struct
 {
-  const char name[65];
+  const char *name;
   int paper_feed_sequence;
   int platen_gap;
   double base_density;
