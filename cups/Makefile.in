@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.21 2000/11/26 17:53:52 rlk Exp $"
+# "$Id: Makefile.in,v 1.22 2000/12/21 02:15:30 rlk Exp $"
 #
 #   Makefile for the CUPS drivers.
 #
@@ -234,7 +234,7 @@ libdrv.a:	$(DRVOBJS)
 	$(SILENT) $(RANLIB) $@
 
 $(DRVOBJS):	$(HEADERS)
-cups-util.c:	cups-printers.c
+cups-util.o:	cups-util.c cups-printers.c
 
 
 #
@@ -249,5 +249,5 @@ rastertoprinter.o:	$(HEADERS)
 
 
 #
-# End of "$Id: Makefile.in,v 1.21 2000/11/26 17:53:52 rlk Exp $".
+# End of "$Id: Makefile.in,v 1.22 2000/12/21 02:15:30 rlk Exp $".
 #
