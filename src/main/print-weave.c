@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.40 2002/06/09 19:40:40 rlk Exp $"
+ * "$Id: print-weave.c,v 1.41 2002/07/06 22:53:32 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1948,7 +1948,7 @@ stp_destroy_weave(void *vsw)
     stp_free(sw->fold_buf);
   if (sw->comp_buf)
     stp_free(sw->comp_buf);
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < MAX_WEAVE; i++)
     if (sw->s[i])
       stp_free(sw->s[i]);
   for (i = 0; i < sw->vmod; i++)
