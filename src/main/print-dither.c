@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.105 2002/12/28 15:46:18 rlk Exp $"
+ * "$Id: print-dither.c,v 1.106 2003/01/01 16:46:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -399,14 +399,17 @@ static ditherfunc_t *
 stp_set_dither_function(dither_t *d, int image_bpp)
 {
   int i;
+  const char *algorithm = stp_get_string_parameter(d->v, "DitherAlgorithm");
   d->dither_type = D_ADAPTIVE_HYBRID;
-  for (i = 0; i < num_dither_algos; i++)
+  if (algorithm)
     {
-      if (!strcmp(stp_get_string_parameter(d->v, "DitherAlgorithm"),
-		  _(dither_algos[i].name)))
+      for (i = 0; i < num_dither_algos; i++)
 	{
-	  d->dither_type = dither_algos[i].id;
-	  break;
+	  if (!strcmp(algorithm, _(dither_algos[i].name)))
+	    {
+	      d->dither_type = dither_algos[i].id;
+	      break;
+	    }
 	}
     }
   switch (d->dither_class)

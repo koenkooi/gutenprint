@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.11 2002/12/09 21:55:21 rleigh Exp $
+## $Id: Makefile.am,v 1.12 2003/01/01 16:46:35 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,11 +36,16 @@ LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
+TESTS = run-testpattern
 
 ## Programs
 
 if BUILD_TESTPATTERN
 bin_PROGRAMS = testpattern
+endif
+
+if BUILD_TESTPATTERN
+noinst_PROGRAMS = printers
 endif
 
 AM_LFLAGS = -i
@@ -51,6 +56,8 @@ testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 
 testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
+
+printers_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 
 $(GIMPPRINT_LIBS):
 	cd ../main ; \

@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.18 2003/01/01 01:03:11 rlk Exp $"
+ * "$Id: testpattern.c,v 1.19 2003/01/01 16:46:35 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -342,10 +342,9 @@ main(int argc, char **argv)
   for (i = 0; i < count; i++)
     {
       const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->type == STP_PARAMETER_TYPE_STRING_LIST &&
-	  strlen(stp_get_string_parameter(tv, p->name)) > 0)
-	stp_set_string_parameter(v, p->name,
-				 stp_get_string_parameter (tv, p->name));
+      const char *val = stp_get_string_parameter(tv, p->name);
+      if (p->type == STP_PARAMETER_TYPE_STRING_LIST && val && strlen(val) > 0)
+	stp_set_string_parameter(v, p->name, val);
     }
   stp_parameter_list_destroy(params);
 

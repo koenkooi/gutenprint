@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.36 2003/01/01 01:03:10 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.37 2003/01/01 16:46:30 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -394,7 +394,8 @@ main(int  argc,				/* I - Number of command-line arguments */
 	      {
 	      case STP_PARAMETER_TYPE_STRING_LIST:
 		fprintf(stderr, "DEBUG: stp_get_%s(v) |%s|\n",
-			p->name, stp_get_string_parameter(v, p->name));
+			p->name, stp_get_string_parameter(v, p->name) ?
+			stp_get_string_parameter(v, p->name) : "NULL");
 		break;
 	      case STP_PARAMETER_TYPE_DOUBLE:
 		fprintf(stderr, "DEBUG: stp_get_%s(v) |%.3f|\n",
@@ -733,5 +734,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.36 2003/01/01 01:03:10 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.37 2003/01/01 16:46:30 rlk Exp $".
  */

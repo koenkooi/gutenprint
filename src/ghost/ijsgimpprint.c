@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.27 2002/12/30 16:48:01 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.28 2003/01/01 16:46:31 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -721,6 +721,16 @@ gimp_image_note_progress(stp_image_t *image, double current, double total)
 
 /**********************************************************/
 
+static const char *
+safe_get_string_parameter(const stp_vars_t v, const char *param)
+{
+  const char *val = stp_get_string_parameter(v, param);
+  if (val)
+    return val;
+  else
+    return "NULL";
+}
+
 static void
 stp_dbg(const char *msg, const stp_vars_t v)
 {
@@ -741,17 +751,17 @@ stp_dbg(const char *msg, const stp_vars_t v)
   fprintf(stderr, "Settings: output type %d  image type %d\n",
 	  stp_get_output_type(v), stp_get_image_type(v));
   fprintf(stderr, "Settings: Quality %s\n",
-	  stp_get_string_parameter(v, "Resolution"));
+	  safe_get_string_parameter(v, "Resolution"));
   fprintf(stderr, "Settings: Dither %s\n",
-	  stp_get_string_parameter(v, "DitherAlgorithm"));
+	  safe_get_string_parameter(v, "DitherAlgorithm"));
   fprintf(stderr, "Settings: MediaSource %s\n",
-	  stp_get_string_parameter(v, "InputSlot"));
+	  safe_get_string_parameter(v, "InputSlot"));
   fprintf(stderr, "Settings: MediaType %s\n",
-	  stp_get_string_parameter(v, "MediaType"));
+	  safe_get_string_parameter(v, "MediaType"));
   fprintf(stderr, "Settings: MediaSize %s\n",
-	  stp_get_string_parameter(v, "PageSize"));
+	  safe_get_string_parameter(v, "PageSize"));
   fprintf(stderr, "Settings: InkType %s\n",
-	  stp_get_string_parameter(v, "InkType"));
+	  safe_get_string_parameter(v, "InkType"));
 }
 
 int

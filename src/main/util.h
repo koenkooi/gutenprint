@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.9 2002/12/29 20:42:31 rlk Exp $"
+ * "$Id: util.h,v 1.10 2003/01/01 16:46:34 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -125,8 +125,7 @@ extern stp_convert_t stp_choose_colorfunc(const stp_vars_t v, int image_bpp,
  * hue_map, lum_map, and sat_map adjust the hue, luminosity, and saturation
  * of the print.
  */
-extern void stp_compute_lut(stp_vars_t v, size_t steps, stp_curve_t hue,
-			    stp_curve_t lum, stp_curve_t sat);
+extern void stp_compute_lut(stp_vars_t v, size_t steps);
 extern void stp_free_lut(stp_vars_t v);
 
 /* Uncomment the next line to get performance statistics:
@@ -204,5 +203,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.9 2002/12/29 20:42:31 rlk Exp $".
+ * End of "$Id: util.h,v 1.10 2003/01/01 16:46:34 rlk Exp $".
  */
