@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28.2.2 2000/08/03 01:00:42 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.3 2000/08/04 01:41:21 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -252,14 +252,18 @@ private int
 stp_get_params(gx_device *pdev, gs_param_list *plist)
 {
   int code;
-  gs_param_string pmedia;
+  gs_param_string pmediasize;
   gs_param_string pinktype;
   gs_param_string pmodel;
+  gs_param_string pmediatype;
+  gs_param_string pmediasource;
 
   stp_print_debug("stp_get_params(0)", pdev, &stp_data);
   code = gdev_prn_get_params(pdev, plist);
   stp_print_debug("stp_get_params(1)", pdev, &stp_data);
-  param_string_from_string(pmedia, stp_data.v.media_size);
+  param_string_from_string(pmediasize, stp_data.v.media_size);
+  param_string_from_string(pmediatype, stp_data.v.media_type);
+  param_string_from_string(pmediasource, stp_data.v.media_source);
   param_string_from_string(pinktype, stp_data.v.ink_type);
   param_string_from_string(pmodel, stp_data.v.driver);
 
@@ -275,7 +279,9 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
        (code = param_write_int(plist, "Dither", &stp_data.algnr)) < 0 ||
        (code = param_write_int(plist, "ImageType", &stp_data.v.image_type)) < 0 ||
        (code = param_write_string(plist, "InkType", &pinktype) < 0) ||
-       (code = param_write_string(plist, "PAPERSIZE", &pmedia)) < 0 ||
+       (code = param_write_string(plist, "PAPERSIZE", &pmediasize)) < 0 ||
+       (code = param_write_string(plist, "MediaType", &pmediatype)) < 0 ||
+       (code = param_write_string(plist, "MediaSource", &pmediasource)) < 0 ||
        (code = param_write_float(plist, "Gamma", &stp_data.v.gamma)) < 0 ||
        (code = param_write_float(plist, "Saturation", &stp_data.v.saturation)) < 0 ||
        (code = param_write_float(plist, "Density", &stp_data.v.density)) < 0
@@ -290,7 +296,9 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
 private int 
 stp_put_params(gx_device *pdev, gs_param_list *plist)
 {
-  gs_param_string pmedia;
+  gs_param_string pmediasize;
+  gs_param_string pmediatype;
+  gs_param_string pmediasource;
   gs_param_string pinktype;
   gs_param_string pmodel;
   int red    = stp_data.v.red;
@@ -311,7 +319,9 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_print_debug("stp_put_params", pdev, &stp_data);
 
   param_string_from_string(pmodel, stp_data.v.driver);
-  param_string_from_string(pmedia, stp_data.v.media_size);
+  param_string_from_string(pmediasize, stp_data.v.media_size);
+  param_string_from_string(pmediasource, stp_data.v.media_source);
+  param_string_from_string(pmediatype, stp_data.v.media_type);
   param_string_from_string(pinktype, stp_data.v.ink_type);
 
   code = stp_put_param_int(plist, "Red", &red, 0, 200, code);
@@ -327,17 +337,31 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_float(plist, "Saturation", &sat, 0.0, 9., code);
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
 
-  if( param_read_string(plist, "PAPERSIZE", &pmedia) == 0)
+  if( param_read_string(plist, "PAPERSIZE", &pmediasize) == 0)
     {
       /*
-	fprintf(stderr,"Media defined: %s\n",pmedia.data);
+	fprintf(stderr,"Paper size defined: %s\n",pmediasize.data);
+      */
+    }
+
+  if( param_read_string(plist, "MediaSource", &pmediasource) == 0)
+    {
+      /*
+	fprintf(stderr,"Media source defined: %s\n",pmediasource.data);
+      */
+    }
+
+  if( param_read_string(plist, "MediaType", &pmediatype) == 0)
+    {
+      /*
+	fprintf(stderr,"Media defined: %s\n",pmediatype.data);
       */
     }
 
   if( param_read_string(plist, "Model", &pmodel) == 0)
     {
       /*
-	fprintf(stderr,"Media defined: %s\n",pmedia.data);
+	fprintf(stderr,"Model defined: %s\n",pmodel.data);
       */
     }
 
@@ -361,7 +385,9 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_data.algnr = algo;
   stp_data.v.image_type = itype;
   strcpy(stp_data.v.driver, pmodel.data);
-  strcpy(stp_data.v.media_size, pmedia.data);
+  strcpy(stp_data.v.media_size, pmediasize.data);
+  strcpy(stp_data.v.media_type, pmediatype.data);
+  strcpy(stp_data.v.media_source, pmediasource.data);
   strcpy(stp_data.v.ink_type, pinktype.data);
   stp_data.v.gamma = gamma;
   stp_data.v.saturation = sat;

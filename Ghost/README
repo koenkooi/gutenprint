@@ -337,7 +337,7 @@ six color printers.
 Adaptive hybrid dithering usually gives the best results overall.
 
 
-Currently supported Media Selection:
+Currently supported Media Size:
 --------- --------- ----- ----------
 
 (important: always use lower case names)
@@ -381,6 +381,79 @@ For PCL (Hewlett-Packard and Lexmark) printers:
 
 'Color + Black Cartridges'
 'Color + Photo Cartridges'
+
+
+Media Types
+----- -----
+
+This is printer type specific.  The option names are case sensitive.
+
+-sMediaType='media type'
+
+
+For Epson printers:
+
+'Standard Paper'
+'Glossy Film'
+
+
+For Canon printers:
+
+'Plain Paper'
+'Transparencies'
+'Back Print Film'
+'Fabric Sheets'
+'Envelope'
+'High Resolution Paper'
+'T-Shirt Transfers'
+'High Gloss Film'
+'Glossy Photo Paper'
+'Glossy Photo Cards'
+'Photo Paper Pro'
+
+
+For PCL (Hewlett-Packard and Lexmark) printers:
+
+'Plain'
+'Bond'
+'Premium'
+'Glossy/Photo'
+'Transparency'
+'Quick-dry Photo'
+'Quick-dry Transparency'
+
+
+Media Sources
+----- -------
+
+This is printer type specific.  The option names are case sensitive.
+
+-sMediaSource='media source'
+
+No media sources are currently defined for Epson printers.
+
+
+For Canon printers:
+
+'Auto Sheet Feeder'
+'Manual with Pause'
+'Manual without Pause'
+
+
+For PCL (Hewlett-Packard and Lexmark) printers:
+
+'Manual'
+'Tray 1'
+'Tray 2'
+'Tray 3'
+'Tray 4'
+'Portable Sheet Feeder'
+'Desktop Sheet Feeder'
+'Tray'
+'Tray 2'
+'Optional Source'
+'Autoselect'
+
 
 
 Image type (to optimize the dither):
