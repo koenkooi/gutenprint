@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.91 2003/12/12 03:55:31 rlk Exp $
+dnl $Id: configure.ac,v 1.92 2003/12/18 01:25:37 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.91 $)
+AC_REVISION($Revision: 1.92 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -181,7 +181,7 @@ STP_ARG_WITH_DETAILED(
   [whether to build CUPS driver],
   [(default PREFIX=/usr)],
   [BUILD_CUPS],
-  [${BUILD_CUPS}],
+  [(automatic)],
   [
     yes) [BUILD_CUPS]="yes" ; AC_MSG_RESULT([yes]) ; cups_prefix="/usr" ;;
     no) [BUILD_CUPS]="no" ; AC_MSG_RESULT([no]) ; cups_prefix="/usr" ;;
@@ -202,7 +202,7 @@ BUILD_CUPS_PPDS="${BUILD_CUPS}"
 STP_ARG_ENABLE([cups-ppds],
                [build CUPS PPD files],
                [BUILD_CUPS_PPDS],
-               [${BUILD_CUPS_PPDS}])
+               [(automatic)])
 
 STP_ARG_ENABLE([translated-cups-ppds],
                [build translated CUPS PPD files],
@@ -223,12 +223,12 @@ fi
 STP_ARG_ENABLE([cups-ppds-at-top-level],
 	       [place CUPS PPD files at top level],
 	       [CUPS_PPDS_AT_TOP_LEVEL],
-	       [${CUPS_PPDS_AT_TOP_LEVEL}])
+	       [no])
 
 STP_ARG_ENABLE([cups-level3-ppds],
                [generate PostScript level 3 PPD files],
                [USE_LEVEL3_PS],
-               [${USE_LEVEL3_PS}])
+               [(automatic)])
 
 AC_PATH_PROG(FOOMATIC_CONFIGURE, foomatic-configure)
 if test -z "${FOOMATIC_CONFIGURE}" ; then
@@ -239,7 +239,7 @@ fi
 STP_ARG_WITH([foomatic],
              [build foomatic data files],
              [BUILD_FOOMATIC],
-             [${BUILD_FOOMATIC}])
+             [(automatic)])
 
 
 AC_PATH_PROG(FOOMATIC_PPDFILE, foomatic-ppdfile)
@@ -251,7 +251,7 @@ fi
 STP_ARG_WITH([foomatic3],
              [make use of foomatic 3 extra features],
              [BUILD_FOOMATIC_3],
-             [${BUILD_FOOMATIC_3}])
+             [(automatic)])
 
 AC_PATH_PROG(IJS_CONFIG, ijs-config)
 
@@ -263,14 +263,14 @@ fi
 STP_ARG_WITH([ghostscript],
              [build Ghostscript driver],
              [BUILD_GHOSTSCRIPT],
-             [${BUILD_GHOSTSCRIPT}])
+             [(automatic)])
 
 STP_ARG_WITH_DETAILED([modules],
                       [],
                       [enable loadable modules],
 	              [(options: ltdl, dlopen, static)],
 	              [WITH_MODULES],
-	              [${WITH_MODULES}],[
+	              [(automatic)],[
     yes) [WITH_MODULES]="yes";  AC_MSG_RESULT([yes]) ;;
     no) [WITH_MODULES]="no";  AC_MSG_RESULT([no]) ;;
     ltdl) [WITH_MODULES]="ltdl";  AC_MSG_RESULT([ltdl]) ;;
@@ -345,12 +345,12 @@ AM_PATH_GTK(1.2.0,
 STP_ARG_WITH([gimp],
              [build GIMP Print plugin],
              [BUILD_GIMP],
-             [${BUILD_GIMP}])
+             [(automatic)])
 
 STP_ARG_ENABLE([libgimpprintui],
                [build Gimp-Print user interface library],
                [BUILD_LIBGIMPPRINTUI],
-               [${BUILD_LIBGIMPPRINTUI}])
+               [(automatic)])
 
 STP_ARG_ENABLE([samples],
                [install sample images],
@@ -370,7 +370,7 @@ STP_ARG_ENABLE([escputil],
 STP_ARG_ENABLE([testpattern],
                [build testpattern generator],
                [BUILD_TESTPATTERN],
-               [${BUILD_TESTPATTERN}])
+               [(automatic)])
 
 STP_ARG_ENABLE([test],
                [build test programs],
