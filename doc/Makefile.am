@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.32 2003/01/01 21:05:58 rleigh Exp $
+## $Id: Makefile.am,v 1.33 2004/03/28 15:12:08 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,23 @@ SUBDIRS = developer users_guide
 include $(top_srcdir)/scripts/global.mk
 
 
-## Data
+## Variables
 
-docs:
+docdir = $(datadir)/doc/$(PACKAGE)
+
+## Rules
+
+if MAINTAINER_MODE
+all-local: gimpprint-stamp
+else
+all-local:
+endif
+
+gimpprint-stamp: gimpprint.dox.in
+	$(DOXYGEN) gimpprint.dox
+	touch $@
+
+docs: gimpprint-stamp
 	cd developer; $(MAKE)
 	cd users_guide; $(MAKE)
 
@@ -49,8 +63,18 @@ html:
 
 ## Clean
 
-MAINTAINERCLEANFILES = Makefile.in
+maintainer-clean-local:
+	$(RM) -r gimpprint
 
-EXTRA_DIST = FAQ.html README.maintaining
+MAINTAINERCLEANFILES = \
+	Makefile.in \
+	gimpprint-stamp
+
+EXTRA_DIST = \
+	FAQ.html \
+	README.maintaining \
+	gimpprint.dox.in \
+	gimpprint \
+	gimpprint-stamp
 
 .PHONY: html ps pdf docs

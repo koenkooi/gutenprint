@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.10 2004/02/08 23:37:16 rleigh Exp $"
+ * "$Id: array.c,v 1.11 2004/03/28 15:12:08 rleigh Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -128,7 +128,7 @@ stp_array_create_copy(stp_const_array_t array)
 }
 
 
-int
+void
 stp_array_set_size(stp_array_t array, int x_size, int y_size)
 {
   stpi_internal_array_t *ia = (stpi_internal_array_t *) array;
@@ -139,7 +139,6 @@ stp_array_set_size(stp_array_t array, int x_size, int y_size)
   ia->y_size = y_size;
   ia->data = stp_sequence_create();
   stp_sequence_set_size(ia->data, ia->x_size * ia->y_size);
-  return 1;
 }
 
 void
@@ -152,14 +151,13 @@ stp_array_get_size(stp_const_array_t array, int *x_size, int *y_size)
   return;
 }
 
-int
+void
 stp_array_set_data(stp_array_t array, const double *data)
 {
   stpi_internal_array_t *ia = (stpi_internal_array_t *) array;
   check_array(ia);
   stp_sequence_set_data(ia->data, ia->x_size * ia->y_size,
 			data);
-  return 1;
 }
 
 void

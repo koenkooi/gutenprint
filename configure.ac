@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.95 2004/01/07 13:04:45 rleigh Exp $
+dnl $Id: configure.ac,v 1.96 2004/03/28 15:12:08 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.95 $)
+AC_REVISION($Revision: 1.96 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -442,7 +442,13 @@ if test x${USE_MAINTAINER_MODE} = xyes ; then
 fi
 AC_PATH_PROG(DB2HTML, db2html)
 if test x${USE_MAINTAINER_MODE} = xyes ; then
-  if test x${DB2PS} = x ; then
+  if test x${DB2HTML} = x ; then
+    AC_MSG_WARN([HTML user's guide cannot be regenerated!])
+  fi
+fi
+AC_PATH_PROG(DOXYGEN, doxygen)
+if test x${USE_MAINTAINER_MODE} = xyes ; then
+  if test x${DOXYGEN} = x ; then
     AC_MSG_WARN([HTML user's guide cannot be regenerated!])
   fi
 fi
@@ -817,6 +823,7 @@ STP_CONFIG_PKGCONFIG_IN([gimpprint-ui],
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([debian/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([doc/gimpprint.dox])
 AC_CONFIG_FILES([doc/developer/Makefile])
 AC_CONFIG_FILES([doc/users_guide/Makefile])
 AC_CONFIG_FILES([include/Makefile])
