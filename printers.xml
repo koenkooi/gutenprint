@@ -17,14 +17,6 @@
 <language value=ps>
 </printer>
 
-<printer name="CANON BJC 30" driver="bjc-30">
-<color>
-<model value=30>
-<gamma value=1.000>
-<density value=0.800>
-<language value=canon>
-</printer>
-
 <printer name="CANON BJC 1000" driver="bjc-1000">
 <color>
 <model value=1000>
@@ -78,14 +70,6 @@
 <model value=6100>
 <gamma value=1.000>
 <density value=0.800>
-<language value=canon>
-</printer>
-
-<printer name="CANON BJC 6200" driver="bjc-6200">
-<color>
-<model value=6200>
-<gamma value=0.750>
-<density value=1.000>
 <language value=canon>
 </printer>
 
@@ -584,7 +568,7 @@
 
 <printer name="HP DeskJet 1600C" driver="pcl-1600">
 <color>
-<model value=1200>
+<model value=1600>
 <gamma value=0.818>
 <density value=0.786>
 <language value=pcl>
