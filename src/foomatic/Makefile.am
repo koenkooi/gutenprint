@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/11/10 14:42:43 rlk Exp $
+## $Id: Makefile.am,v 1.16 2001/11/19 12:40:46 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ clean-local:
 
 foomatic-data: foomatic-stamp
 
-foomatic-stamp: foomatic-generator $(EXTRA_PROGRAMS)
+foomatic-stamp: foomatic-generator foomatic-printermap $(EXTRA_PROGRAMS)
 	-$(RM) -r foomatic-db
 	./foomatic-generator
 	touch foomatic-stamp
