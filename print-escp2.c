@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155.2.2 2000/06/13 23:39:22 jmv Exp $"
+ * "$Id: print-escp2.c,v 1.155.2.3 2000/06/17 00:49:59 jmv Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -238,10 +238,10 @@ static full_dither_range_t normal_dither_ranges[] =
   { 0.67,  1.0,  0x2, 0x3, 1, 1}
 };
 
-static full_dither_range_t stp870_c_dither_ranges[] =
+static full_dither_range_t full_c_dither_ranges[] =
 {
-  { 0.0,  0.52,  0x0, 0x1, 1, 1},
-  { 0.52, 0.67,  0x1, 0x2, 1, 1},
+  { 0.0,  0.51,  0x0, 0x1, 1, 1},
+  { 0.51, 0.67,  0x1, 0x2, 1, 1},
   { 0.67, 0.96,  0x2, 0x3, 1, 1}
 };
 
@@ -249,10 +249,10 @@ static full_dither_range_t stp870_c1_dither_ranges[] =
 {
   { 0.0,  0.17, 0x0, 0x1, 0, 0},
   { 0.17, 0.23, 0x1, 0x2, 0, 0},
-  { 0.23, 0.52, 0x2, 0x1, 0, 1},
-  { 0.23, 0.35, 0x2, 0x3, 0, 0},
-  { 0.35, 0.52, 0x3, 0x1, 0, 1},
-  { 0.52, 0.67, 0x1, 0x2, 1, 1},
+  { 0.23, 0.51, 0x2, 0x1, 0, 1},
+  { 0.23, 0.36, 0x2, 0x3, 0, 0},
+  { 0.36, 0.51, 0x3, 0x1, 0, 1},
+  { 0.51, 0.67, 0x1, 0x2, 1, 1},
   { 0.67, 0.96, 0x2, 0x3, 1, 1}
 };
 
@@ -260,15 +260,15 @@ static full_dither_range_t stp870_c2_dither_ranges[] =
 {
   { 0.0,  0.17, 0x0, 0x1, 0, 0},
   { 0.17, 0.23, 0x1, 0x2, 0, 0},
-  { 0.23, 0.35, 0x2, 0x3, 0, 0},
-  { 0.35, 0.67, 0x3, 0x2, 0, 1},
+  { 0.23, 0.36, 0x2, 0x3, 0, 0},
+  { 0.36, 0.67, 0x3, 0x2, 0, 1},
   { 0.67, 0.96, 0x2, 0x3, 1, 1}
 };
 
-static full_dither_range_t stp870_m_dither_ranges[] =
+static full_dither_range_t full_m_dither_ranges[] =
 {
-  { 0.0,  0.52,  0x0, 0x1, 1, 1},
-  { 0.52, 0.67,  0x1, 0x2, 1, 1},
+  { 0.0,  0.51,  0x0, 0x1, 1, 1},
+  { 0.51, 0.67,  0x1, 0x2, 1, 1},
   { 0.67, 1.0,   0x2, 0x3, 1, 1}
 };
 
@@ -276,10 +276,10 @@ static full_dither_range_t stp870_m1_dither_ranges[] =
 {
   { 0.0,  0.17, 0x0, 0x1, 0, 0},
   { 0.17, 0.23, 0x1, 0x2, 0, 0},
-  { 0.23, 0.52, 0x2, 0x1, 0, 1},
-  { 0.23, 0.35, 0x2, 0x3, 0, 0},
-  { 0.35, 0.52, 0x3, 0x1, 0, 1},
-  { 0.52, 0.67, 0x1, 0x2, 1, 1},
+  { 0.23, 0.51, 0x2, 0x1, 0, 1},
+  { 0.23, 0.36, 0x2, 0x3, 0, 0},
+  { 0.36, 0.51, 0x3, 0x1, 0, 1},
+  { 0.51, 0.67, 0x1, 0x2, 1, 1},
   { 0.67, 1.0,  0x2, 0x3, 1, 1}
 };
 
@@ -287,8 +287,8 @@ static full_dither_range_t stp870_m2_dither_ranges[] =
 {
   { 0.0,  0.17, 0x0, 0x1, 0, 0},
   { 0.17, 0.23, 0x1, 0x2, 0, 0},
-  { 0.23, 0.35, 0x2, 0x3, 0, 0},
-  { 0.35, 0.67, 0x3, 0x2, 0, 1},
+  { 0.23, 0.36, 0x2, 0x3, 0, 0},
+  { 0.36, 0.67, 0x3, 0x2, 0, 1},
   { 0.67, 1.0,  0x2, 0x3, 1, 1}
 };
 
@@ -1160,7 +1160,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 					           dither_density);
       if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
 	{
-	  if(oversample > 1)
+	  if(vertical_subsample > 1)
 	  {
 	    dither_set_c_ranges_full(dither, 7, stp870_c1_dither_ranges,
 					             dither_density);
@@ -1177,9 +1177,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	}
       else
 	{	
-	  dither_set_c_ranges_full(dither, 3, stp870_c_dither_ranges,
+	  dither_set_c_ranges_full(dither, 3, full_c_dither_ranges,
 					           dither_density);
-	  dither_set_m_ranges_full(dither, 2, stp870_m_dither_ranges,
+	  dither_set_m_ranges_full(dither, 2, full_m_dither_ranges,
 					           dither_density);
 	}
     }

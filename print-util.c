@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.92 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print-util.c,v 1.92.2.1 2000/06/17 00:49:59 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -36,8 +36,11 @@
 
 /* #define PRINT_DEBUG */
 
-
+#if ESCP2_GHOST
+#include "gdevstp-print.h"
+#else
 #include "print.h"
+#endif
 #include <math.h>
 
 /*
@@ -726,7 +729,11 @@ default_media_size(int  model,		/* I - Printer model */
 /*
  * The list of printers has been moved to printers.c
  */
+#ifdef ESCP2_GHOST
+#include "gdevstp-printers.c"
+#else
 #include "print-printers.c"
+#endif
 
 int
 known_printers(void)
@@ -786,4 +793,129 @@ get_printer_index_by_driver(const char *driver)
       val++;
     }
   return -1;
+}
+
+convert_t
+choose_colorfunc(int output_type,
+		 int image_bpp,
+		 const unsigned char *cmap,
+		 int *out_bpp)
+{
+  if (output_type == OUTPUT_COLOR)
+    {
+      *out_bpp = 3;
+
+      if (image_bpp >= 3)
+	return rgb_to_rgb;
+      else
+	return indexed_to_rgb;
+    }
+  else if (output_type == OUTPUT_GRAY_COLOR)
+    {
+      *out_bpp = 3;
+      return gray_to_rgb;
+    }
+  else
+    {
+      *out_bpp = 1;
+
+      if (image_bpp >= 3)
+	return rgb_to_gray;
+      else if (cmap == NULL)
+	return gray_to_gray;
+      else
+	return indexed_to_gray;
+    }
+}  
+
+void
+compute_page_parameters(int page_right,	/* I */
+			int page_left, /* I */
+			int page_top, /* I */
+			int page_bottom, /* I */
+			int scaling, /* I */
+			int image_width, /* I */
+			int image_height, /* I */
+			Image image, /* IO */
+			int *orientation, /* IO */
+			int *page_width, /* O */
+			int *page_height, /* O */
+			int *out_width,	/* O */
+			int *out_height, /* O */
+			int *left, /* O */
+			int *top) /* O */
+{
+  *page_width  = page_right - page_left;
+  *page_height = page_top - page_bottom;
+
+  /* In AUTO orientation, just orient the paper the same way as the image. */
+
+  if (*orientation == ORIENT_AUTO)
+    {
+      if ((*page_width >= *page_height && image_width >= image_height)
+         || (*page_height >= *page_width && image_height >= image_width))
+        *orientation = ORIENT_PORTRAIT;
+      else
+        *orientation = ORIENT_LANDSCAPE;
+    }
+
+  if (*orientation == ORIENT_LANDSCAPE)
+    {
+      Image_rotate_ccw(image);
+
+      image_width  = Image_width(image);
+      image_height = Image_height(image);
+    }
+
+  /*
+   * Calculate width/height...
+   */
+
+  if (scaling < 0.0)
+    {
+      /*
+       * Scale to pixels per inch...
+       */
+
+      *out_width  = image_width * -72.0 / scaling;
+      *out_height = image_height * -72.0 / scaling;
+    }
+  else
+    {
+      /*
+       * Scale by percent...
+       */
+
+      *out_width  = *page_width * scaling / 100.0;
+      *out_height = *out_width * image_height / image_width;
+      if (*out_height > *page_height)
+	{
+	  *out_height = *page_height * scaling / 100.0;
+	  *out_width  = *out_height * image_width / image_height;
+	}
+    }
+
+  if (*out_width == 0)
+    *out_width = 1;
+  if (*out_height == 0)
+    *out_height = 1;
+
+  if (*orientation == ORIENT_LANDSCAPE)
+    {
+      int x;
+
+      /*
+       * Swap left/top offsets...
+       */
+
+      x     = *left;
+      *left = *top;
+      *top  = *page_height - x - *out_height;
+    }
+
+  if (*left < 0)
+    *left = (*page_width - *out_width) / 2;
+
+  if (*top < 0)
+    *top  = (*page_height - *out_height) / 2;
 }
