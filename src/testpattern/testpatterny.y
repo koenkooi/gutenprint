@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.23 2004/04/14 02:15:40 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.24 2004/05/07 22:13:27 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -303,7 +303,7 @@ parameter_float: PARAMETER_FLOAT tSTRING tDOUBLE
 
 parameter_curve: PARAMETER_CURVE tSTRING tSTRING
 	{
-	  stp_curve_t curve = stp_curve_create_from_string($3);
+	  stp_curve_t *curve = stp_curve_create_from_string($3);
 	  if (curve)
 	    {
 	      stp_set_curve_parameter(global_vars, $2, curve);
