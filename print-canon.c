@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.38 2000/04/18 12:21:52 rlk Exp $"
+ * "$Id: print-canon.c,v 1.39 2000/04/20 02:42:54 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -476,9 +476,11 @@ canon_cmd(FILE *prn, /* I - the printer         */
 {
   /* hopefully not too small: */
   #define CANON_SEND_BUFF_SIZE 10000
-  static unsigned char buffer[CANON_SEND_BUFF_SIZE];
+  static unsigned char *buffer;
   int i;
   va_list ap;
+  if (!buffer)
+    buffer = malloc(CANON_SEND_BUFF_SIZE);
   
   if (num >= CANON_SEND_BUFF_SIZE) {
     fprintf(stderr,"\ncanon: command too large for send buffer!\n");
@@ -1015,12 +1017,13 @@ canon_print(const printer_t *printer,		/* I - Model */
     {
     case IMAGE_LINE_ART:
       dither_set_ink_spread(dither, 19);
-      dither_set_black_lower(dither, .00001);
-      dither_set_randomizers(dither, 10, 10, 10, 10);
-      dither_set_black_upper(dither, .0005);
+      dither_set_black_lower(dither, .04);
+      dither_set_randomizers(dither, 0, 0, 0, 0);
+      dither_set_black_upper(dither, .1);
       break;
     case IMAGE_SOLID_TONE:
       dither_set_ink_spread(dither, 15);
+      dither_set_randomizers(dither, .1, .1, .1, .01);
       break;
     case IMAGE_CONTINUOUS:
       dither_set_ink_spread(dither, 14);
@@ -1521,6 +1524,11 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 
 /*
  *   $Log: print-canon.c,v $
+ *   Revision 1.39  2000/04/20 02:42:54  rlk
+ *   Reduce initial memory footprint.
+ *
+ *   Add random Floyd-Steinberg dither.
+ *
  *   Revision 1.38  2000/04/18 12:21:52  rlk
  *   Fix incorrect printing for variable drop sizes
  *
@@ -1673,5 +1681,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
  *   Revision 1.1  2000/02/01 09:01:40  gandy
  *   Add print-canon.c: Support for the BJC 6000 and possibly others
  *
- * End of "$Id: print-canon.c,v 1.38 2000/04/18 12:21:52 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.39 2000/04/20 02:42:54 rlk Exp $".
  */

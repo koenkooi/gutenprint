@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.22 2000/03/07 02:54:05 rlk Exp $"
+ * "$Id: print-ps.c,v 1.23 2000/04/20 02:42:54 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -788,11 +788,13 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 		lname[255],	/* Name from line */
 		loption[255],	/* Value from line */
 		*opt;		/* Current control string pointer */
-  static char	value[32768];	/* Current control string value */
+  static char	*value = NULL;	/* Current control string value */
 
 
   if (ppd_file == NULL || name == NULL || option == NULL)
     return (NULL);
+  if (!value)
+    value = malloc(32768);
 
   if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
   {
@@ -861,6 +863,11 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 /*
  *   $Log: print-ps.c,v $
+ *   Revision 1.23  2000/04/20 02:42:54  rlk
+ *   Reduce initial memory footprint.
+ *
+ *   Add random Floyd-Steinberg dither.
+ *
  *   Revision 1.22  2000/03/07 02:54:05  rlk
  *   Move CVS history logs to the end of the file
  *
@@ -1032,5 +1039,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-ps.c,v 1.22 2000/03/07 02:54:05 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.23 2000/04/20 02:42:54 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.9 2000/04/16 21:31:32 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.10 2000/04/20 02:42:54 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -41,7 +41,7 @@
 extern vars_t vars;
 extern int plist_count;	     /* Number of system printers */
 extern int plist_current;    /* Current system printer */
-extern plist_t  plist[MAX_PLIST];       /* System printers */
+extern plist_t  *plist;       /* System printers */
 extern gint32 image_ID;
 extern int image_width;
 extern int image_height;
