@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.26 2001/10/30 03:21:25 andystewart Exp $
+## $Id: Makefile.am,v 1.27 2001/10/30 23:35:08 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -166,7 +166,7 @@ install-data-local: $(STANDARD_TARGETS)
 	  fi ; \
 	  if test -d $(HTMLDIR) ; then \
 	    cd $(HTMLDIR) ; \
-	  elif test -f $(srcdir)/$(HTMLDIR) ; then \
+	  elif test -d $(srcdir)/$(HTMLDIR) ; then \
 	    cd $(srcdir)/$(HTMLDIR) ; \
 	  else \
 	    exit 1 ; \
