@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.3 2003/05/03 03:14:20 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.4 2003/05/04 04:26:05 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -83,12 +83,17 @@ typedef struct
   int nozzle_separation;	/* Nozzle separation, in dots */
   int *head_offset;		/* Head offset (for C80-type printers) */
   int max_head_offset;		/* Largest head offset */
+  int page_management_units;	/* Page management units (dpi) */
+  int vertical_units;		/* Vertical units (dpi) */
+  int horizontal_units;		/* Horizontal units (dpi) */
+  int unit_scale;		/* Scale factor for units */
 
   /* Ink parameters */
   int bitwidth;			/* Number of bits per ink drop */
   int drop_size;		/* ID of the drop size we're using */
   int ink_resid;		/* Array index for the drop set we're using */
   const escp2_inkname_t *inkname; /* Description of the ink set */
+  int rescale_density;		/* Do we want to rescale the density? */
 
   /* Ink channels */
   int logical_channels;		/* Number of logical ink channels (e.g.CMYK) */
@@ -118,10 +123,11 @@ typedef struct
   int page_true_height;		/* Physical page height (points) */
 
   /* Image parameters */	/* Indexed from top left */
-  int image_height;		/* Height of printed region (vertical dots!) */
-  int image_width;		/* Width of printed region (horizontal dots) */
-  int image_top;		/* First printed row (vertical dots) */
-  int image_left;		/* Left edge of image (horizontal dots) */
+  int image_height;		/* Height of printed region (points) */
+  int image_width;		/* Width of printed region (points) */
+  int image_top;		/* First printed row (points) */
+  int image_left;		/* Left edge of image (points) */
+  int image_scaled_width;	/* Width of printed region (dots) */
 
   /* Transitory state */
   int printed_something;	/* Have we actually printed anything? */
@@ -818,7 +824,8 @@ internal_imageable_area(stp_const_vars_t v, int use_paper_margins,
   *right =	width - right_margin;
   *top =	top_margin;
   *bottom =	height - bottom_margin;
-  if (stp_get_boolean_parameter(v, "FullBleed"))
+  if (escp2_has_cap(v, MODEL_XZEROMARGIN, MODEL_XZEROMARGIN_YES) &&
+      stp_get_boolean_parameter(v, "FullBleed"))
     {
       *left -= 80 / (360 / 72);	/* 80 per the Epson manual */
       *right += 80 / (360 / 72);	/* 80 per the Epson manual */
@@ -1090,13 +1097,13 @@ escp2_set_resolution(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
   if (escp2_use_extended_commands(v, pd->res->softweave))
-    {
-      int hres = escp2_max_hres(v);
-      stpi_send_command(v, "\033(U", "bccch", hres / pd->res->vres,
-			hres / pd->res->vres, hres / pd->res->hres, hres);
-    }
+    stpi_send_command(v, "\033(U", "bccch",
+		      pd->unit_scale / pd->page_management_units,
+		      pd->unit_scale / pd->vertical_units,
+		      pd->unit_scale / pd->horizontal_units,
+		      pd->unit_scale);
   else
-    stpi_send_command(v, "\033(U", "bc", 3600 / pd->res->vres);
+    stpi_send_command(v, "\033(U", "bc", pd->unit_scale / pd->res->vres);
 }
 
 static void
@@ -1154,7 +1161,7 @@ static void
 escp2_set_page_height(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int l = pd->res->vres * pd->page_true_height / 72;
+  int l = pd->page_management_units * pd->page_true_height / 72;
   if (escp2_use_extended_commands(v, pd->res->softweave))
     stpi_send_command(v, "\033(C", "bl", l);
   else
@@ -1165,8 +1172,15 @@ static void
 escp2_set_margins(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int bot = pd->res->vres * pd->page_bottom / 72;
-  int top = pd->res->vres * pd->page_top / 72;
+  int bot = pd->page_management_units * pd->page_bottom / 72;
+  int top = pd->page_management_units * pd->page_top / 72;
+
+  /* adjust bottom margin for a 480 like head configuration */
+  bot -= pd->max_head_offset * 72 / pd->page_management_units;
+  if ((pd->max_head_offset * 72 % pd->res->vres) != 0)
+    bot -= 1;
+  if (pd->page_bottom < 0)
+    bot = 0;
 
   top += pd->initial_vertical_offset;
   if (escp2_use_extended_commands(v, pd->res->softweave) &&
@@ -1183,14 +1197,14 @@ escp2_set_form_factor(stp_vars_t v)
   escp2_privdata_t *pd = get_privdata(v);
   if (escp2_has_advanced_command_set(v))
     {
-      int w = pd->page_width * pd->res->vres / 72;
-      int h = pd->page_true_height * pd->res->vres / 72;
+      int w = pd->page_width * pd->page_management_units / 72;
+      int h = pd->page_true_height * pd->page_management_units / 72;
 
       if (stp_get_boolean_parameter(v, "FullBleed"))
 	/* Make the page 160/360" wider for full bleed printing. */
 	/* Per the Epson manual, the margin should be expanded by 80/360" */
 	/* so we need to do this on the left and the right */
-	w += 320 * pd->res->hres / 720;
+	w += 320 * pd->page_management_units / 720;
 
       stpi_send_command(v, "\033(S", "bll", w, h);
     }
@@ -1300,13 +1314,12 @@ static void
 set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int ydpi = pd->res->vres * pd->res->vertical_undersample;
   int microoffset = vertical_subpass & (pd->horizontal_passes - 1);
 
   /* Note hard-coded 720 DPI here */
   if (!escp2_has_advanced_command_set(v) && pd->res->hres <= 720)
     {
-      int pos = (pd->image_left + microoffset);
+      int pos = ((pd->image_left * pd->horizontal_units / 72) + microoffset);
       if (pos > 0)
 	stpi_send_command(v, "\033\\", "h", pos);
     }
@@ -1314,15 +1327,14 @@ set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
 	   (escp2_has_advanced_command_set(v) &&
 	    escp2_has_cap(v, MODEL_VARIABLE_DOT, MODEL_VARIABLE_YES)))
     {
-      int pos = ((pd->image_left * pd->res->hres *
-		  pd->res->vertical_denominator / ydpi) + microoffset);
+      int pos = ((pd->image_left * pd->horizontal_units / 72) + microoffset);
       if (pos > 0)
 	stpi_send_command(v, "\033($", "bl", pos);
     }
   else
     {
-      int pos = ((pd->image_left * escp2_max_hres(v) *
-		  pd->res->vertical_denominator / ydpi) + microoffset);
+      /* 1440 is the only allowed value here */
+      int pos = ((pd->image_left * 1440 / 72) + microoffset);
       if (pos > 0)
 	stpi_send_command(v, "\033(\\", "bhh", 1440, pos);
     }
@@ -1332,7 +1344,7 @@ static void
 send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int nlines)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int lwidth = (pd->image_width + (pd->horizontal_passes - 1)) /
+  int lwidth = (pd->image_scaled_width + (pd->horizontal_passes - 1)) /
     pd->horizontal_passes;
   int ydpi = pd->res->vres * pd->res->vertical_undersample;
   if (!escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) &&
@@ -1374,7 +1386,7 @@ static void
 send_extra_data(stp_vars_t v, int extralines)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int lwidth = (pd->image_width + (pd->horizontal_passes - 1)) /
+  int lwidth = (pd->image_scaled_width + (pd->horizontal_passes - 1)) /
     pd->horizontal_passes;
 #if TEST_UNCOMPRESSED
   int i;
@@ -1483,14 +1495,13 @@ static void
 adjust_density_and_ink_type(stp_vars_t v, stp_image_t *image)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  const paper_t *pt;
+  const paper_t *pt = get_media_type(v);
   double paper_density = .8;
-  pt = get_media_type(v);
+
   if (pt)
     paper_density = pt->base_density;
 
-  if (stp_get_output_type(v) != OUTPUT_RAW_CMYK &&
-      stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
+  if (pd->rescale_density)
     stp_scale_float_parameter
       (v, "Density", paper_density * escp2_density(v, pd->res->resid));
   pd->drop_size = escp2_ink_type(v, pd->res->resid);
@@ -1745,7 +1756,7 @@ setup_head_offset(stp_vars_t v)
   if (pd->physical_channels > 1)
     for (i = 0; i < pd->channels_in_use; i++)
       {
-	pd->head_offset[i] = pd->head_offset[i] * pd->res->vres /
+	pd->head_offset[i] = pd->head_offset[i] * pd->vertical_units /
 	  escp2_base_separation(v);
 	if (pd->head_offset[i] > pd->max_head_offset)
 	  pd->max_head_offset = pd->head_offset[i];
@@ -1791,6 +1802,20 @@ setup_resolution(stp_vars_t v)
   pd->physical_xdpi = escp2_base_res(v, pd->res->resid);
   if (pd->physical_xdpi > pd->res->hres)
     pd->physical_xdpi = pd->res->hres;
+  if (escp2_use_extended_commands(v, pd->res->softweave))
+    {
+      pd->unit_scale = escp2_max_hres(v);
+      pd->horizontal_units = pd->res->hres;
+      pd->vertical_units = pd->res->vres;
+      pd->page_management_units = pd->res->vres;
+    }
+  else
+    {
+      pd->unit_scale = 3600;
+      pd->horizontal_units = pd->res->vres;
+      pd->vertical_units = pd->res->vres;
+      pd->page_management_units = pd->res->vres;
+    }
 }  
 
 static void
@@ -1881,13 +1906,13 @@ setup_head_parameters(stp_vars_t v)
 
   setup_head_offset(v);
 
-  pd->initial_vertical_offset = pd->res->vres *
-    pd->res->vertical_undersample / escp2_base_separation(v);
   if (stp_get_output_type(v) == OUTPUT_GRAY && pd->physical_channels == 1 &&
       pd->use_black_parameters)
-    pd->initial_vertical_offset *= escp2_black_initial_vertical_offset(v);
+    pd->initial_vertical_offset = escp2_black_initial_vertical_offset(v);
   else
-    pd->initial_vertical_offset *= escp2_initial_vertical_offset(v);
+    pd->initial_vertical_offset = escp2_initial_vertical_offset(v);
+  pd->initial_vertical_offset =
+    pd->initial_vertical_offset * pd->vertical_units /escp2_base_separation(v);
   pd->initial_vertical_offset += pd->head_offset[0];
   pd->bitwidth = escp2_bits(v, pd->res->resid);
 }
@@ -1898,29 +1923,21 @@ setup_page(stp_vars_t v)
   int n;
   escp2_privdata_t *pd = get_privdata(v);
   const input_slot_t *input_slot = get_input_slot(v);
-  stpi_default_media_size(v, &n, &(pd->page_true_height));
 
+  stpi_default_media_size(v, &n, &(pd->page_true_height));
   internal_imageable_area(v, 0, &pd->page_left, &pd->page_right,
 			  &pd->page_bottom, &pd->page_top);
+
   pd->page_width = pd->page_right - pd->page_left;
-
   pd->image_left = stp_get_left(v) - pd->page_left;
-  pd->image_left = pd->image_left * pd->res->vertical_undersample *
-    pd->res->vres / 72 / pd->res->vertical_denominator;
-
-  pd->image_width = stp_get_width(v) * pd->res->hres / 72;
+  pd->image_width = stp_get_width(v);
+  pd->image_scaled_width = pd->image_width * pd->res->hres / 72;
 
 
   pd->page_height = pd->page_bottom - pd->page_top;
   pd->image_top = stp_get_top(v) - pd->page_top;
-  pd->image_height = stp_get_height(v) * pd->res->vres / 72;
+  pd->image_height = stp_get_height(v);
 
-  /* adjust bottom margin for a 480 like head configuration */
-  pd->page_bottom -= pd->max_head_offset * 72 / pd->res->vres;
-  if ((pd->max_head_offset * 72 % pd->res->vres) != 0)
-    pd->page_bottom -= 1;
-  if (pd->page_bottom < 0)
-    pd->page_bottom = 0;
   if (input_slot && input_slot->roll_feed_cut_flags)
     {
       pd->page_true_height += 4; /* Empirically-determined constants */
@@ -1929,7 +1946,6 @@ setup_page(stp_vars_t v)
       pd->image_top += 2;
       pd->page_height += 2;
     }
-  pd->image_top = pd->image_top * pd->res->vres / 72;
 }
 
 static int
@@ -1990,7 +2006,7 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   escp2_privdata_t *pd = get_privdata(v);
   unsigned short *out;	/* Output pixels (16-bit) */
   int out_channels;		/* Output bytes per pixel */
-  int line_width = (pd->image_width + 7) / 8 * pd->bitwidth;
+  int line_width = (pd->image_scaled_width + 7) / 8 * pd->bitwidth;
 
   stpi_initialize_weave
     (v,
@@ -2001,9 +2017,9 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      pd->res->vertical_oversample,
      pd->channels_in_use,
      pd->bitwidth,
-     pd->image_width,
-     pd->image_height,
-     pd->image_top,
+     pd->image_width * pd->res->hres / 72,
+     pd->image_height * pd->res->vres / 72,
+     pd->image_top * pd->res->vres / 72,
      (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72,
      pd->head_offset,
      STPI_WEAVE_ZIGZAG,
@@ -2016,7 +2032,8 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   adjust_print_quality(v, image);
   out_channels = stpi_color_init(v, image, 65536);
 
-  stpi_dither_init(v, image, pd->image_width, pd->res->hres, pd->res->vres);
+  stpi_dither_init(v, image, pd->image_scaled_width, pd->res->hres,
+		   pd->res->vres);
 
   allocate_channels(v, line_width);
   setup_inks(v);
@@ -2066,6 +2083,12 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
   pd->last_color = -1;
   pd->last_pass_offset = 0;
   stpi_allocate_component_data(v, "Driver", NULL, NULL, pd);
+
+  if (stp_get_output_type(v) == OUTPUT_RAW_CMYK ||
+      stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+    pd->rescale_density = 0;
+  else
+    pd->rescale_density = 1;
 
   pd->inkname = get_inktype(v);
   pd->channels_in_use = count_channels(pd->inkname);
