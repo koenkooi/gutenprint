@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.30 2000/02/02 03:03:55 rlk Exp $"
+ * "$Id: print.h,v 1.31 2000/02/03 01:12:27 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -95,7 +95,8 @@ typedef struct					/* Plug-in variables */
   char	resolution[64],		/* Resolution */
 	media_size[64],		/* Media size */
 	media_type[64],		/* Media type */
-	media_source[64];	/* Media source */
+	media_source[64],	/* Media source */
+	ink_type[64];		/* Ink or cartridge */
   int	brightness;		/* Output brightness */
   float	scaling;		/* Scaling, percent of printable area */
   int	orientation,		/* Orientation - 0 = port., 1 = land.,
@@ -261,5 +262,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.30 2000/02/02 03:03:55 rlk Exp $".
+ * End of "$Id: print.h,v 1.31 2000/02/03 01:12:27 rlk Exp $".
  */
