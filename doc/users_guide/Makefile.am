@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.24.2.3 2002/02/03 17:56:52 sharkey Exp $
+## $Id: Makefile.am,v 1.24.2.4 2002/02/17 03:49:24 sharkey Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ $(MANUAL).ps:  $(MANUAL).sgml $(EPS_IMAGES)
 
 %.eps:
 	if test ! -d figures ; then mkdir figures ; fi
-	$(CONVERT) $(srcdir)/$(basename $@).png EPS2:$@
+	$(CONVERT) $(srcdir)/$(basename $@).png EPS:$@
 
 html: html-stamp
 
