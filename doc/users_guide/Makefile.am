@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2002/03/23 11:49:07 rleigh Exp $
+## $Id: Makefile.am,v 1.31 2002/04/06 16:47:42 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,13 @@ MAINT_CHARSET = latin1
 ## Variables
 
 MANUAL = users-guide
+MANUAL_SRC_FILES = $(srcdir)/$(MANUAL).sgml \
+	$(srcdir)/ch_0.sgml \
+	$(srcdir)/ch_1.sgml \
+	$(srcdir)/ch_2.sgml \
+	$(srcdir)/ch_3.sgml \
+	$(srcdir)/ch_4.sgml \
+	$(srcdir)/gfdl.sgml
 HTMLDIR = html
 
 OUTPUTS = \
@@ -96,7 +103,7 @@ dist-hook: $(USER_GUIDE)
 	fi ; \
 	done
 
-$(MANUAL).pdf:  $(srcdir)/$(MANUAL).sgml
+$(MANUAL).pdf:  $(MANUAL_SRC_FILES)
 	if test $(srcdir) = '.' ; then \
 	  : ; \
 	else \
@@ -123,11 +130,19 @@ pdf: $(MANUAL).pdf
 
 ps: $(MANUAL).ps
 
-$(MANUAL).ps:  $(MANUAL).sgml $(EPS_IMAGES)
-	sed -e 's/\.png"/.eps"/g' -e 's/FORMAT="PNG"/FORMAT="EPS"/g' $< > $(MANUAL)-eps.sgml
+$(MANUAL).ps:  $(MANUAL_SRC_FILES) $(EPS_IMAGES)
+	for i in $(MANUAL_SRC_FILES); do \
+		j=`basename $$i .sgml`; \
+		sed -e 's/\.png"/.eps"/g' \
+		    -e 's/FORMAT="PNG"/FORMAT="EPS"/g' $$i > $$j-eps.sgml; \
+	done
+	cat $(MANUAL).sgml | sed -e 's/\.sgml"/-eps.sgml"/g' > $(MANUAL)-eps.sgml	
 	$(DB2PS) $(MANUAL)-eps.sgml
 	mv $(MANUAL)-eps.ps $(MANUAL).ps
-	-$(RM) -f $(MANUAL)-eps.*
+	for i in $(MANUAL_SRC_FILES); do \
+		j=`basename $$i .sgml`; \
+		$(RM) -f $${j}-eps.*; \
+	done
 
 %.eps:
 	if test ! -d figures ; then mkdir figures ; fi
@@ -212,7 +227,7 @@ clean-local:
 	if test $(srcdir) = "." ; then \
 	  : ; \
 	else \
-	  $(RM) -f $(MANUAL).sgml ; \
+	  $(RM) -f $(MANUAL_SRC_FILES); \
 	  $(RM) -rf figures ; \
 	fi
 	-$(RM) -rf *.tex *.log *.aux *.dvi *.gz *.out *.junk *.out *.fot
