@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.38 2000/02/26 00:14:44 rlk Exp $"
+ * "$Id: print.h,v 1.39 2000/02/28 01:26:12 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -187,7 +187,7 @@ extern void	dither_set_y_levels(void *vd, int nlevels, double *levels);
 extern void	dither_set_ly_levels(void *vd, int nlevels, double *levels);
 extern void	dither_set_k_levels(void *vd, int nlevels, double *levels);
 
-
+extern void	scale_dither(void *vd, int scale);
 extern void	free_dither(void *);
 extern void	dither_black(unsigned short *, int, void *, unsigned char *);
 
@@ -273,5 +273,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.38 2000/02/26 00:14:44 rlk Exp $".
+ * End of "$Id: print.h,v 1.39 2000/02/28 01:26:12 rlk Exp $".
  */
