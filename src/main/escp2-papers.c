@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.46 2003/10/19 03:53:39 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.47 2003/10/24 23:07:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -424,17 +424,17 @@ DECLARE_PAPER_ADJUSTMENTS(standard);
 
 static const paper_adjustment_t photo_adjustments[] =
 {
-  { "Plain", 0.615, .5, 1, .1, .9, 1, 1, 1, 1, 1, 1,
+  { "Plain", 0.615, .25, 1, .15, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
-  { "PlainFast", 0.615, .5, 1, .1, .9, 1, 1, 1, 1, 1, 1,
+  { "PlainFast", 0.615, .25, 1, .15, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
-  { "Postcard", 0.83, .5, 1, .1, .9, 1, 1, 1, 1, 1, 1,
+  { "Postcard", 0.83, .25, 1, .15, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
   { "GlossyFilm", 1.00, 1.0, 1, .2, .999, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
   { "Transparency", 1.00, .75, 1, .2, .999, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
-  { "Envelope", 0.615, .5, 1, .1, .9, 1, 1, 1, 1, 1, 1,
+  { "Envelope", 0.615, .25, 1, .15, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
   { "BackFilm", 1.00, .75, 1, .2, .999, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
@@ -460,7 +460,7 @@ static const paper_adjustment_t photo_adjustments[] =
     standard_hue_adj, standard_lum_adj, standard_sat_adj  },
   { "ColorLife", 1.00, 1.0, 1, .35, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
-  { "Other", 0.615, .5, 1, .1, .9, 1, 1, 1, 1, 1, 1,
+  { "Other", 0.615, .25, 1, .15, .9, 1, 1, 1, 1, 1, 1,
     standard_hue_adj, standard_lum_adj, standard_sat_adj },
 };
 
