@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.16 2000/06/17 22:26:33 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.17 2000/06/18 00:30:06 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -508,7 +508,7 @@ void Image_get_row(Image image, unsigned char *data, int row)
        * If xres < yres, skip rows
        */
       int ratio = (stp_pdev->y_pixels_per_inch / stp_pdev->x_pixels_per_inch);
-      gdev_prn_copy_scan_lines(stp_pdev, (stp_data.topoffset + row) * ratio),
+      gdev_prn_copy_scan_lines(stp_pdev, (stp_data.topoffset + row) * ratio,
 			       data, stp_raster);
     }
 }
