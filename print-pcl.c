@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.78 2000/09/07 20:03:24 cpbs Exp $"
+ * "$Id: print-pcl.c,v 1.79 2000/09/07 22:19:25 cpbs Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1761,7 +1761,7 @@ pcl_print(const printer_t *printer,		/* I - Model */
     printf("pcl_print: y = %d, line = %d, val = %d, mod = %d, height = %d\n",
            y, errline, errval, errmod, out_height);
 #endif /* DEBUG */
-    if ((y & 255) == 0)
+    if ((y & 63) == 0)
       Image_note_progress(image, y, out_height);
 
     if (errline != errlast)
