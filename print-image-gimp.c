@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.8 2000/10/04 00:37:55 mitsch Exp $"
+ * "$Id: print-image-gimp.c,v 1.9 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -23,7 +23,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "print_gimp.h"
@@ -291,5 +291,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.8 2000/10/04 00:37:55 mitsch Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.9 2001/01/03 18:37:46 rleigh Exp $".
  */

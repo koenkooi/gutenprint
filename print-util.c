@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.155 2001/01/01 23:58:52 rlk Exp $"
+ * "$Id: print-util.c,v 1.156 2001/01/03 18:37:47 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -28,7 +28,9 @@
 
 /* #define PRINT_DEBUG */
 
-
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include "print.h"
 #include <math.h>
 #include <limits.h>

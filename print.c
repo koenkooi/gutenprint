@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.131 2001/01/01 23:58:52 rlk Exp $"
+ * "$Id: print.c,v 1.132 2001/01/03 18:37:47 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -22,7 +22,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "print_gimp.h"
@@ -1516,5 +1516,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.131 2001/01/01 23:58:52 rlk Exp $".
+ * End of "$Id: print.c,v 1.132 2001/01/03 18:37:47 rleigh Exp $".
  */

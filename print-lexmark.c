@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.15 2001/01/01 23:58:52 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.16 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -38,8 +38,9 @@
 
 /* #define DEBUG 1 */
 
-
-
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdarg.h>
 #include "print.h"
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.20 2000/10/04 00:37:55 mitsch Exp $"
+ * "$Id: gimp_color_window.c,v 1.21 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -23,7 +23,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "print_gimp.h"

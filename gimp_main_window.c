@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.73 2001/01/02 00:09:05 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.74 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -23,7 +23,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #define EXPANDED_PREVIEW_WINDOW

@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.16 2000/09/06 00:00:48 cpbs Exp $"
+ * "$Id: escp2-weavetest.c,v 1.17 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -57,6 +57,9 @@
  * 1) No pass starts (logically) at a later row than an earlier pass.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.59 2000/12/30 19:26:40 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.60 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -21,6 +21,9 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include "print_gimp.h"
 
 #ifndef NEW_UI_ONLY

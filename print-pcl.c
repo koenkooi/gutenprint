@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.107 2001/01/01 23:58:52 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.108 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -27,6 +27,9 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include "print.h"
 
 /* #define DEBUG */

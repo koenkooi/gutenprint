@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.17 2001/01/01 23:58:52 rlk Exp $"
+ * "$Id: pcl-unprint.c,v 1.18 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -24,12 +24,15 @@
  *   See ChangeLog
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.17 2001/01/01 23:58:52 rlk Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.18 2001/01/03 18:37:46 rleigh Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192

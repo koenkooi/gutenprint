@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.22 2000/12/23 19:38:22 rleigh Exp $"
+ * "$Id: escputil.c,v 1.23 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -20,6 +20,9 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>

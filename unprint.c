@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.43 2001/01/01 23:58:52 rlk Exp $ */
+/* $Id: unprint.c,v 1.44 2001/01/03 18:37:47 rleigh Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -21,6 +21,9 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include<stdio.h>
 #include<stdlib.h>
 #include<limits.h>

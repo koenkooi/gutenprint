@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.296 2001/01/02 00:12:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.297 2001/01/03 18:37:46 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -26,6 +26,9 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #ifndef WEAVETEST
 #include "print.h"
 #endif

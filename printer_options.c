@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.2 2000/09/09 02:03:09 rlk Exp $"
+ * "$Id: printer_options.c,v 1.3 2001/01/03 18:37:47 rleigh Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -20,6 +20,9 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include "print.h"
 
