@@ -1,5 +1,5 @@
 /*
- * "$Id: patched-print-dither.c,v 1.7 2001/01/20 14:26:29 rlk Exp $"
+ * "$Id: patched-print-dither.c,v 1.8 2001/01/22 21:44:25 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -29,7 +29,8 @@
 /* #define PRINT_DEBUG */
 
 
-#include "print.h"
+#include <gimp-print.h>
+#include <gimp-print-internal.h>
 #include <limits.h>
 
 

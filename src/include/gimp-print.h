@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.1 2001/01/22 19:52:48 rleigh Exp $"
+ * "$Id: gimp-print.h,v 1.1 2001/01/22 21:44:25 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -30,8 +30,8 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef PRINT_HEADER
-#define PRINT_HEADER
+#ifndef _GIMP_PRINT_H
+#define _GIMP_PRINT_H
 
 /*
  * Include necessary header files...
@@ -531,7 +531,7 @@ extern struct timeval quantify_prev_time;
 extern void  print_timers(void );
 #endif
 
-#endif /* PRINT_HEADER */
+#endif /* _GIMP_PRINT_H */
 /*
- * End of "$Id: print.h,v 1.1 2001/01/22 19:52:48 rleigh Exp $".
+ * End of "$Id: gimp-print.h,v 1.1 2001/01/22 21:44:25 rleigh Exp $".
  */

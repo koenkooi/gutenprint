@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.1 2001/01/22 19:46:35 rleigh Exp $"
+ * "$Id: print-weave.c,v 1.2 2001/01/22 21:44:25 rleigh Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -31,7 +31,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "print.h"
+#include <gimp-print.h>
+#include <gimp-print-internal.h>
 
 #if 0
 #define TEST_RAW
