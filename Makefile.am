@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.123 2002/01/25 17:13:20 rleigh Exp $
+## $Id: Makefile.am,v 1.124 2002/01/26 20:43:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,11 +34,7 @@ NONGIMP_DISTDIRS = debian
 SUBDIRS = include intl lib man src samples $(NONGIMP_SUBDIRS) po doc
 DISTDIRS = m4 scripts $(NONGIMP_DISTDIRS)
 
-EXTRA_DIST = configure.in.in autogen.sh HACKING
-
-if MAINTAINER_MODE
-MAINT_MODE = true
-endif
+EXTRA_DIST = configure.in.in autogen.sh
 
 
 ## Rules

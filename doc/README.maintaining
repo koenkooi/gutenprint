@@ -48,7 +48,7 @@ that you would like covering, please let me know!
 
  -- Roger Leigh <roger@whinlatter.uklinux.net>
 
- $Id: HACKING,v 1.1 2002/01/25 17:13:20 rleigh Exp $
+ $Id: README.maintaining,v 1.10 2002/01/26 20:43:04 rleigh Exp $
 
 
 1. Integration of the autotools
