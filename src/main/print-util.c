@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.12 2002/10/02 01:00:41 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.13 2002/10/11 22:14:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -564,6 +564,8 @@ static stp_internal_papersize_t paper_sizes[] =
     1440, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "w1440h2160",	N_ ("20x30"),
     1440, 2160, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 24x30 for 35 mm */
+  { "w1584h2160",	N_ ("22x30"),
+    1440, 2160, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* Common watercolor paper */
   { "w1728h2160",	N_ ("24x30"),
     1728, 2160, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "w1728h2592",	N_ ("24x36"),
