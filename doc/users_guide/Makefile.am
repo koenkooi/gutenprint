@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.28 2001/11/08 13:15:18 rlk Exp $
+## $Id: Makefile.am,v 1.29 2002/01/26 20:44:49 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ dist-hook: $(USER_GUIDE)
 	fi ; \
 	done
 
-$(MANUAL).pdf:  ./$(MANUAL).sgml
+$(MANUAL).pdf:  $(srcdir)/$(MANUAL).sgml
 	if test $(srcdir) = '.' ; then \
 	  : ; \
 	else \
@@ -136,7 +136,7 @@ html: html-stamp
 # This ugly workaround with SOURCE is because db2html doesn't seem to like
 # "./users-guide.sgml".  Note that db2ps does not have the same limitation.
 # html-stamp should *only* be called by html--it's just a timestamp!
-html-stamp: $(MANUAL).sgml $(PNG_IMAGES)
+html-stamp: $(srcdir)/$(MANUAL).sgml $(PNG_IMAGES)
 	if test $(srcdir) = '.' ; then \
 	  : ; \
 	else \
