@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.1 2003/01/06 20:57:43 rleigh Exp $"
+ * "$Id: xml.c,v 1.2 2003/01/06 23:44:23 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -484,9 +484,11 @@ stp_xml_process_paperdef(xmlNodePtr paperdef) /* The paperdef node */
 	  outpaper = stp_xml_process_paper(paper);
 	  if (outpaper)
 	    stp_paper_create((stp_papersize_t) outpaper);
-	    //	    stp_list_item_create(stp_paper_list,
-	    //		 stp_list_get_end(stp_paper_list),
-	    //		 (void *) outpaper);
+#if 0
+	  stp_list_item_create(stp_paper_list,
+			       stp_list_get_end(stp_paper_list),
+			       (void *) outpaper);
+#endif
 	}
       paper = paper->next;
     }
