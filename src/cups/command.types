@@ -1,5 +1,5 @@
 #
-# "$Id: command.types,v 1.2 2000/09/10 15:57:09 easysw Exp $"
+# "$Id: command.types,v 1.1 2001/01/22 20:22:54 rleigh Exp $"
 #
 #   MIME types file for the CUPS drivers.
 #
@@ -32,5 +32,5 @@
 application/vnd.cups-command	string(0,'#CUPS-COMMAND')
 
 #
-# End of "$Id: command.types,v 1.2 2000/09/10 15:57:09 easysw Exp $".
+# End of "$Id: command.types,v 1.1 2001/01/22 20:22:54 rleigh Exp $".
 #

@@ -1,5 +1,5 @@
 /*
- * "$Id: calibrate.c,v 1.7 2000/10/16 14:35:01 easysw Exp $"
+ * "$Id: calibrate.c,v 1.1 2001/01/22 20:22:54 rleigh Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
