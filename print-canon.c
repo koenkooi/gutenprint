@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.22 2000/02/13 03:14:26 rlk Exp $"
+ * "$Id: print-canon.c,v 1.23 2000/02/13 08:47:52 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.23  2000/02/13 08:47:52  gandy
+ *   Fixed maximum paper size for BJC-6000
+ *
  *   Revision 1.22  2000/02/13 03:14:26  rlk
  *   Bit of an oops here about printer models; also start on print-gray-using-color mode for better quality
  *
@@ -187,7 +190,7 @@ canon_cap_t canon_model_capabilities[] =
 
   { /* Canon BJC 6000 */
     6000,          
-    11*72, 17*72, 
+    618, 936,      /* 8.58" x 13 " */
     1440, 720, 
     CANON_INK_CMYK | CANON_INK_CcMmYK, 
     CANON_SLOT_ASF1 | CANON_SLOT_MAN1, 
@@ -1576,5 +1579,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-canon.c,v 1.22 2000/02/13 03:14:26 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.23 2000/02/13 08:47:52 gandy Exp $".
  */
