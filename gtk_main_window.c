@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.32 2000/06/21 00:38:45 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.33 2000/06/22 00:36:52 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1695,13 +1695,15 @@ static void gtk_media_size_callback(GtkWidget *widget, /* I -Media size menu */
 
   new_media_size
     = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(media_size_combo)->entry));
-  strcpy(vars.media_size, new_media_size);
-  strcpy(plist[plist_current].v.media_size, new_media_size);
-  vars.left       = -1;
-  vars.top        = -1;
-  plist[plist_current].v.left = vars.left;
-  plist[plist_current].v.top = vars.top;
-
+  if (strcmp(vars.media_size, new_media_size) != 0)
+    {
+      strcpy(vars.media_size, new_media_size);
+      strcpy(plist[plist_current].v.media_size, new_media_size);
+      vars.left       = -1;
+      vars.top        = -1;
+      plist[plist_current].v.left = vars.left;
+      plist[plist_current].v.top = vars.top;
+    }
   gtk_preview_update();
 }
 
@@ -1764,14 +1766,15 @@ static void gtk_resolution_callback(GtkWidget *widget, /* I-Media size menu */
 static void gtk_orientation_callback(GtkWidget *widget,
 				     gint      data)
 {
-
-  vars.orientation = data;
-  vars.left        = -1;
-  vars.top         = -1;
-  plist[plist_current].v.orientation = vars.orientation;
-  plist[plist_current].v.left = vars.left;
-  plist[plist_current].v.top = vars.top;
-
+  if (vars.orientation != (gint) data)
+    {
+      vars.orientation = data;
+      vars.left        = -1;
+      vars.top         = -1;
+      plist[plist_current].v.orientation = vars.orientation;
+      plist[plist_current].v.left = vars.left;
+      plist[plist_current].v.top = vars.top;
+    }
   gtk_preview_update();
 }
 
