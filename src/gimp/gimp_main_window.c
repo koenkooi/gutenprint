@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.54.12.4 2002/10/26 19:27:48 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.54.12.5 2002/10/26 20:29:11 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -132,8 +132,8 @@ static gint	       physical_orientation = -2; /* Actual orientation */
 static gint	       preview_thumbnail_w = 0;
 static gint	       preview_thumbnail_h = 0;
 
-static gint            printable_width;	/* Width of page */
-static gint            printable_height;	/* Height of page */
+gint            printable_width;	/* Width of page */
+gint            printable_height;	/* Height of page */
 static gint            print_width;	/* Printed width of image */
 static gint            print_height;	/* Printed height of image */
 static gint	       left, right;	        /* Imageable area */

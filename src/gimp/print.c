@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.24.2.2 2002/10/26 18:30:11 rlk Exp $"
+ * "$Id: print.c,v 1.24.2.3 2002/10/26 20:29:11 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -666,6 +666,7 @@ run (char   *name,		/* I - Name of print program. */
 
       if (prn != NULL)
 	{
+	  int orientation;
 	  stp_image_t *image = Image_GimpDrawable_new(drawable);
 	  stp_set_app_gamma(gimp_vars.v, gimp_gamma());
 	  stp_merge_printvars(gimp_vars.v,
@@ -679,6 +680,35 @@ run (char   *name,		/* I - Name of print program. */
 	    stp_set_cmap(gimp_vars.v, gimp_image_get_cmap(image_ID, &ncolors));
 	  else
 	    stp_set_cmap(gimp_vars.v, NULL);
+
+	  /*
+	   * Set up the orientation
+	   */
+	  orientation = gimp_vars.orientation;
+	  if (orientation == ORIENT_AUTO)
+	    {
+	      if ((printable_width >= printable_height &&
+		   image_true_width >= image_true_height) ||
+		  (printable_height >= printable_width &&
+		   image_true_height >= image_true_width))
+		orientation = ORIENT_PORTRAIT;
+	      else
+		orientation = ORIENT_LANDSCAPE;
+	    }
+	  switch (orientation)
+	    {
+	    case ORIENT_PORTRAIT:
+	      break;
+	    case ORIENT_LANDSCAPE:
+	      Image_rotate_cw(image);
+	      break;
+	    case ORIENT_UPSIDEDOWN:
+	      Image_rotate_180(image);
+	      break;
+	    case ORIENT_SEASCAPE:
+	      Image_rotate_ccw(image);
+	      break;
+	    }
 
 	  /*
 	   * Finally, call the print driver to send the image to the printer
@@ -1527,5 +1557,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.24.2.2 2002/10/26 18:30:11 rlk Exp $".
+ * End of "$Id: print.c,v 1.24.2.3 2002/10/26 20:29:11 rlk Exp $".
  */

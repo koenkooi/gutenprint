@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.20.12.3 2002/10/26 18:30:11 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.20.12.4 2002/10/26 20:29:11 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -95,6 +95,8 @@ extern gint             image_width;
 extern gint             image_height;
 extern gint             image_true_width;
 extern gint             image_true_height;
+extern gint		printable_width;
+extern gint		printable_height;
 extern stp_printer_t current_printer;
 extern gint             runme;
 extern gint             saveme;
