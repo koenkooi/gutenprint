@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.47 2001/10/15 18:39:12 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.48 2001/12/07 03:05:42 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1482,12 +1482,12 @@ static const char * pcl_val_to_text(int code,			/* I: Code */
 static const double dot_sizes[] = { 0.5, 0.832, 1.0 };
 static const stp_simple_dither_range_t variable_dither_ranges[] =
 {
-  { 0.152, 0x1, 0 },
-  { 0.255, 0x2, 0 },
-  { 0.38,  0x3, 0 },
-  { 0.5,   0x1, 1 },
-  { 0.67,  0x2, 1 },
-  { 1.0,   0x3, 1 }
+  { 0.152, 0x1, 1 },
+  { 0.255, 0x2, 1 },
+  { 0.38,  0x3, 1 },
+  { 0.5,   0x1, 0 },
+  { 0.67,  0x2, 0 },
+  { 1.0,   0x3, 0 }
 };
 
 /*
