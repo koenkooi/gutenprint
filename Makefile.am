@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.128 2002/04/03 17:23:21 rleigh Exp $
+## $Id: Makefile.am,v 1.129 2002/05/18 17:30:25 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,8 @@ dist-hook:
 # Create debian/control
 	DEBIAN_VERSION=`grep "(" debian/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
 	UPSTREAM_VERSION=`echo $$DEBIAN_VERSION | sed "s/-[^-]*$$//"` ; \
-	sed -e "s/#UPSTREAM_VERSION#/$${UPSTREAM_VERSION}/g" <debian/control.in >$(distdir)/debian/control
+	LIBRARY_VERSION="-$${UPSTREAM_VERSION}" ; \
+	sed -e "s/#UPSTREAM_VERSION#/$${UPSTREAM_VERSION}/g"  -e "s/#LIBRARY_VERSION#/$${LIBRARY_VERSION}/g" <debian/control.in >$(distdir)/debian/control
 
 install-cups: all
 	cd src/cups ; \
