@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.20 2003/11/14 04:01:12 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.21 2003/11/14 23:47:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -280,8 +280,8 @@ stpi_dither_set_ranges(stp_vars_t v, int color, const stpi_shade_t *shade,
   dc->darkness = darkness;
   stpi_init_debug_messages(v);
   stpi_dprintf(STPI_DBG_INK, v,
-	      "stpi_dither_set_ranges channel %d nlevels %d density %f\n",
-	      color, nlevels, density);
+	      "stpi_dither_set_ranges channel %d nlevels %d density %f darkness %f\n",
+	      color, nlevels, density, darkness);
   for (i = 0; i < nlevels; i++)
     stpi_dprintf(STPI_DBG_INK, v,
 		"  level %d value %f pattern %x\n", i,

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.37 2003/11/14 12:12:10 rlk Exp $"
+ * "$Id: dither-main.c,v 1.38 2003/11/14 23:47:13 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -224,7 +224,7 @@ stpi_set_dither_function(stp_vars_t v, int image_bpp)
 	  break;
 	}
       /* EvenTone performs poorly if the aspect ratio is greater than 2 */
-      if (d->stpi_dither_type & D_EVENTONE &&
+      if ((d->stpi_dither_type & (D_EVENTONE | D_UNITONE)) &&
 	  (d->x_aspect > 2 || d->y_aspect > 2))
 	d->stpi_dither_type = D_ADAPTIVE_HYBRID;
     }
