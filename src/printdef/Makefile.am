@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2001/06/02 23:01:55 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,16 +23,25 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+
+## Variables
+
 AM_CFLAGS = @CFLAGS@ @MAINTAINER_CFLAGS@
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 
 LFLAGS = -i
 YFLAGS = -d
 
+
+## Programs
+
 noinst_PROGRAMS = printdef
 printdef_SOURCES = printdefl.l printdefy.y printdef.h
 
 printdefl.o: printdefy.o
+
+
+## Clean
 
 DISTCLEANFILES = printdefl.c printdefy.c printdefy.h
 MAINTAINERCLEANFILES = Makefile.in
