@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.68 2000/08/06 21:00:14 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.69 2000/08/09 23:39:41 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -221,7 +221,7 @@ const static pcl_t pcl_resolutions[] =
     {"150x150 DPI", PCL_RES_150_150},
     {"300x300 DPI", PCL_RES_300_300},
     {"600x300 DPI", PCL_RES_600_300},
-    {"600x600 DPI (mono only)", PCL_RES_600_600_MONO},
+    {"600x600 DPI monochrome", PCL_RES_600_600_MONO},
     {"600x600 DPI", PCL_RES_600_600},
     {"1200x1200 DPI", PCL_RES_1200_1200},
     {"2400x1200 DPI", PCL_RES_2400_1200},
