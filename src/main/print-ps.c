@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.71.4.8 2004/03/26 02:02:53 rlk Exp $"
+ * "$Id: print-ps.c,v 1.71.4.9 2004/03/27 20:57:47 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -699,9 +699,6 @@ ps_print_internal(stp_const_vars_t v, stp_image_t *image)
     }
   }
   stpi_image_conclude(image);
-
-  if (out)
-    stpi_free(out);
 
   stpi_puts("grestore\n", v);
   stpi_puts("showpage\n", v);
