@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.24 2000/06/19 00:04:48 jmv Exp $"
+ * "$Id: gtk_main_window.c,v 1.25 2000/06/19 11:46:46 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -34,7 +34,7 @@
 #include "print-intl.h"
 #include <math.h>
 
-int vars_unit=0;	/* Units (cm or Inch) don't know where to store it */
+static int vars_unit=0;	/* Units (cm or Inch) don't know where to store it */
 /*
  * Constants for GUI...
  */
