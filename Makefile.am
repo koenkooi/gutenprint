@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.111 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.112 2001/10/02 21:39:39 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,9 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+
+## Variables
+
 NONGIMP_SUBDIRS =
 NONGIMP_DISTDIRS =
 ## @-@-@-@-@ NO-GIMP @-@-@-@-@
@@ -36,6 +39,9 @@ DISTDIRS = scripts $(NONGIMP_DISTDIRS)
 if MAINTAINER_MODE
 MAINT_MODE = true
 endif
+
+
+## Rules
 
 ## Libtool dependency
 libtool: $(LIBTOOL_DEPS)
@@ -143,6 +149,9 @@ deb: debian/changelog debian/control debian/rules
 	debuild $(DEBUILD_OPTIONS) ; \
 	cd .. ; \
 	rm -r $(PACKAGE)-$(VERSION)
+
+
+## Clean
 
 CLEANSCRIPTS = \
 	config.guess \
