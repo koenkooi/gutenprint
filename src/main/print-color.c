@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.45 2004/03/28 04:43:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.46 2004/03/28 14:27:52 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -3087,6 +3087,7 @@ convert_raw(stp_const_vars_t v, const unsigned char *in, unsigned short *out)
     case COLOR_CORRECTION_UNCORRECTED:
     case COLOR_CORRECTION_BRIGHT:
     case COLOR_CORRECTION_ACCURATE:
+    case COLOR_CORRECTION_DESATURATED:
       return raw_to_raw(v, in, out);
     case COLOR_CORRECTION_RAW:
     case COLOR_CORRECTION_DEFAULT:
