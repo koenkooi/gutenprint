@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.24 2000/01/17 22:23:32 rlk Exp $"
+ * "$Id: print.h,v 1.25 2000/01/21 00:53:39 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -63,6 +63,9 @@
 #define ORIENT_AUTO		-1	/* Best orientation */
 #define ORIENT_PORTRAIT		0	/* Portrait orientation */
 #define ORIENT_LANDSCAPE	1	/* Landscape orientation */
+
+#define MAX_CARRIAGE_WIDTH	17
+#define MAX_BPI (4 * 720)
 
 #ifndef MIN
 #  define MIN(a,b)		((a) < (b) ? (a) : (b))
@@ -238,5 +241,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.24 2000/01/17 22:23:32 rlk Exp $".
+ * End of "$Id: print.h,v 1.25 2000/01/21 00:53:39 rlk Exp $".
  */

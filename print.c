@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.41 2000/01/17 22:23:31 rlk Exp $"
+ * "$Id: print.c,v 1.42 2000/01/21 00:53:39 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -275,6 +275,8 @@ printer_t	printers[] =		/* List of supported printer types */
   { N_("EPSON Stylus Color 740"),	"escp2-740",	1,	11,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { N_("EPSON Stylus Color 800"),	"escp2-800",	1,	4,	0.585,	0.646,
+    escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
+  { N_("EPSON Stylus Color 850"),	"escp2-850",	1,	15,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { N_("EPSON Stylus Color 900"),	"escp2-900",	1,	12,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
@@ -3346,5 +3348,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.41 2000/01/17 22:23:31 rlk Exp $".
+ * End of "$Id: print.c,v 1.42 2000/01/21 00:53:39 rlk Exp $".
  */
