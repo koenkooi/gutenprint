@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.312 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.313 2004/03/29 00:23:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1415,7 +1415,6 @@ escp2_parameters(stp_const_vars_t v, const char *name,
 	  int nprinter_weaves = 0;
 	  if (use_printer_weave(v) && (!res || res->printer_weave))
 	    nprinter_weaves = printer_weaves->n_printer_weaves;
-	  description->bounds.str = stp_string_list_create();
 	  if (nprinter_weaves)
 	    {
 	      stp_string_list_add_string(description->bounds.str, "None",
