@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.2 2002/12/27 18:08:37 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.3 2002/12/30 03:33:23 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -30,7 +30,8 @@
 #include <string.h>
 
 #include "print-intl.h"
-#include "print_gimp.h"
+#include "gimp-print-ui.h"
+#include "gimp-print-ui-internal.h"
 
 /* Concrete type to represent image */
 typedef struct
@@ -144,11 +145,10 @@ Thumbnail_progress_conclude(stp_image_t *image)
 static const char *
 Thumbnail_get_appname(stp_image_t *image)
 {
-  static char pluginname[] = PLUG_IN_NAME " plug-in V" PLUG_IN_VERSION
-    " for GIMP";
+  static char pluginname[] = "Thumbnail V" VERSION " - " RELEASE_DATE;
   return pluginname;
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.2 2002/12/27 18:08:37 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.3 2002/12/30 03:33:23 rlk Exp $".
  */
