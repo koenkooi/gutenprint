@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.22 2004/03/23 02:08:25 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.23 2004/03/23 02:32:39 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1547,11 +1547,13 @@ GENERIC_COLOR_FUNC(cmyk, kcmy_threshold)
 #define KCMY_TO_KCMY_THRESHOLD_FUNC(T, name)				\
 static unsigned								\
 name##_to_kcmy_threshold(stp_const_vars_t vars,				\
-			const unsigned char *in,			\
-			unsigned short *out)				\
+			 const unsigned char *in,			\
+			 unsigned short *out)				\
 {									\
   int i;								\
-  int z = 15;								\
+  int j;								\
+  unsigned nz[4];							\
+  unsigned z = 0xf;							\
   const T *s_in = (const T *) in;					\
   unsigned desired_high_bit = 0;					\
   unsigned high_bit = 1 << ((sizeof(T) * 8) - 1);			\
@@ -1560,28 +1562,19 @@ name##_to_kcmy_threshold(stp_const_vars_t vars,				\
   memset(out, 0, width * 4 * sizeof(unsigned short));			\
   if (!lut->invert_output)						\
     desired_high_bit = high_bit;					\
+  for (i = 0; i < 4; i++)						\
+    nz[i] = z & ~(1 << i);						\
 									\
-  for (i = 0; i < width; i++, out += 4, s_in += 4)			\
+  for (i = 0; i < width; i++)						\
     {									\
-      if ((s_in[0] & high_bit) == desired_high_bit)			\
+      for (j = 0; j < 4; j++)						\
 	{								\
-	  z &= 0xe;							\
-	  out[0] = 65535;						\
-	}								\
-      if ((s_in[1] & high_bit) == desired_high_bit)			\
-	{								\
-	  z &= 0xd;							\
-	  out[1] = 65535;						\
-	}								\
-      if ((s_in[2] & high_bit) == desired_high_bit)			\
-	{								\
-	  z &= 0xb;							\
-	  out[2] = 65535;						\
-	}								\
-      if ((s_in[3] & high_bit) == desired_high_bit)			\
-	{								\
-	  z &= 0x7;							\
-	  out[3] = 65535;						\
+	  if ((*s_in++ & high_bit) == desired_high_bit)			\
+	    {								\
+	      z &= nz[j];						\
+	      *out = 65535;						\
+	    }								\
+	  out++;							\
 	}								\
     }									\
   return z;								\
@@ -2249,6 +2242,46 @@ CMYK_DISPATCH(kcmy_raw)
 CMYK_DISPATCH(kcmy_threshold)
 CMYK_DISPATCH(gray)
 CMYK_DISPATCH(gray_threshold)
+
+#define RAW_TO_RAW_THRESHOLD_FUNC(T, name)				\
+static unsigned								\
+name##_to_raw_threshold(stp_const_vars_t vars,				\
+			const unsigned char *in,			\
+			unsigned short *out)				\
+{									\
+  int i;								\
+  int j;								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  unsigned nz[STP_CHANNEL_LIMIT];					\
+  unsigned z = (1 << lut->out_channels) - 1;				\
+  const T *s_in = (const T *) in;					\
+  unsigned desired_high_bit = 0;					\
+  unsigned high_bit = 1 << ((sizeof(T) * 8) - 1);			\
+  int width = lut->image_width;						\
+  memset(out, 0, width * lut->out_channels * sizeof(unsigned short));	\
+  if (!lut->invert_output)						\
+    desired_high_bit = high_bit;					\
+  for (i = 0; i < lut->out_channels; i++)				\
+    nz[i] = z & ~(1 << i);						\
+									\
+  for (i = 0; i < width; i++)						\
+    {									\
+      for (j = 0; j < lut->out_channels; j++)				\
+	{								\
+	  if ((*s_in++ & high_bit) == desired_high_bit)			\
+	    {								\
+	      z &= nz[j];						\
+	      *out = 65535;						\
+	    }								\
+	  out++;							\
+	}								\
+    }									\
+  return z;								\
+}
+
+RAW_TO_RAW_THRESHOLD_FUNC(unsigned char, raw_8)
+RAW_TO_RAW_THRESHOLD_FUNC(unsigned short, raw_16)
+GENERIC_COLOR_FUNC(raw, raw_threshold)
 
 #define RAW_TO_RAW_FUNC(T, size)					\
 static unsigned								\
