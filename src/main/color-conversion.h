@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.3 2004/05/07 19:20:28 rleigh Exp $"
+ * "$Id: color-conversion.h,v 1.4 2004/06/04 01:03:50 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -146,6 +146,7 @@ typedef struct
   const color_description_t *input_color_description;
   const color_description_t *output_color_description;
   const color_correction_t *color_correction;
+  stp_cached_curve_t user_color_correction;
   stp_cached_curve_t channel_curves[STP_CHANNEL_LIMIT];
   double gamma_values[STP_CHANNEL_LIMIT];
   double print_gamma;
