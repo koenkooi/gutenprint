@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.61 2003/01/01 21:06:05 rleigh Exp $
+## $Id: Makefile.am,v 1.62 2003/01/11 16:57:33 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ if BUILD_CUPS
 bin_PROGRAMS = cups-calibrate cups-genppd
 endif
 if BUILD_CUPS
-bin_SCRIPTS = cups-genppdconfig
+bin_SCRIPTS = cups-genppdconfig cups-genppdupdate
 endif
 if BUILD_CUPS
 cupsexec_backend_PROGRAMS = epson canon
@@ -206,7 +206,7 @@ clean-local:
 ## Clean
 
 CLEANFILES = ppd-stamp
-DISTCLEANFILES = cups-genppdconfig
+DISTCLEANFILES = cups-genppdconfig cups-genppdupdate
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \

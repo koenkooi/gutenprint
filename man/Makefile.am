@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2003/01/01 21:06:03 rleigh Exp $
+## $Id: Makefile.am,v 1.17 2003/01/11 16:57:33 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,11 @@ include $(top_srcdir)/scripts/global.mk
 # Conditional installation of manpages is currently broken in automake...
 
 if BUILD_CUPS
-CUPS_MAN = cups-calibrate.8 cups-genppd.8 cups-genppdconfig.8
+CUPS_MAN = \
+	cups-calibrate.8 \
+	cups-genppd.8 \
+	cups-genppdconfig.8 \
+	cups-genppdupdate.8
 endif
 
 if BUILD_ESCPUTIL
@@ -61,6 +65,7 @@ EXTRA_man_MANS = \
 	cups-calibrate.8 \
 	cups-genppd.8 \
 	cups-genppdconfig.8 \
+	cups-genppdupdate.8 \
 	escputil.1 \
 	ijsgimpprint.1
 
