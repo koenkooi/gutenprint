@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.7.4.8 2003/01/01 18:42:49 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.7.4.8.2.1 2003/11/27 18:10:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -206,7 +206,7 @@ typedef struct
   int external_hres;
   int external_vres;
   int softweave;
-  int microweave;
+  int interleave;
   int vertical_passes;
   int vertical_oversample;
   int unidirectional;
@@ -326,7 +326,7 @@ typedef struct escp2_printer
   int		right_margin;	/* Right margin, points */
   int		top_margin;	/* Absolute top margin, points */
   int		bottom_margin;	/* Absolute bottom margin, points */
-				/* "Micro"weave: */
+				/* Printer interleave: */
   int		m_left_margin;	/* Left margin, points */
   int		m_right_margin;	/* Right margin, points */
   int		m_top_margin;	/* Absolute top margin, points */
@@ -337,7 +337,7 @@ typedef struct escp2_printer
   int		roll_right_margin;	/* Right margin, points */
   int		roll_top_margin;	/* Absolute top margin, points */
   int		roll_bottom_margin;	/* Absolute bottom margin, points */
-				/* "Micro"weave: */
+				/* Printer interleave: */
   int		m_roll_left_margin;	/* Left margin, points */
   int		m_roll_right_margin;	/* Right margin, points */
   int		m_roll_top_margin;	/* Absolute top margin, points */
@@ -349,7 +349,7 @@ typedef struct escp2_printer
 				/* (maximum useful value is */
 				/* nozzles * nozzle_separation) */
   int		separation_rows; /* Some printers require funky spacing */
-				/* arguments in microweave mode. */
+				/* arguments in interleave mode. */
   int		pseudo_separation_rows;/* Some printers require funky */
 				/* spacing arguments in softweave mode */
 

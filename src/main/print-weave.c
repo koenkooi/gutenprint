@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.36.4.2 2002/07/23 00:54:08 rlk Exp $"
+ * "$Id: print-weave.c,v 1.36.4.2.2.1 2003/11/27 18:10:48 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -103,8 +103,7 @@ typedef struct raw {
 /*
  * Strategy types currently defined:
  *
- *  0: microweave (intercepted at the escp2 driver level so we never
- *     see it here)
+ *  0: printer firmware weave
  *  1: zig-zag type pass block filling
  *  2: ascending pass block filling
  *  3: descending pass block filling
