@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.11 2003/06/08 14:08:13 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.12 2003/06/08 21:55:51 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -115,9 +115,7 @@ typedef struct dither_channel
 {
   unsigned randomizer;		/* With Floyd-Steinberg dithering, control */
 				/* how much randomness is applied to the */
-				/* threshold values (0-65535).  With ordered */
-				/* dithering, how much randomness is added */
-				/* to the matrix value. */
+				/* threshold values (0-65535). */
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
@@ -269,5 +267,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.11 2003/06/08 14:08:13 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.12 2003/06/08 21:55:51 rlk Exp $".
  */
