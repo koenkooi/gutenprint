@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.103.2.67 2004/03/19 02:25:20 rlk Exp $
+dnl $Id: configure.in.in,v 1.103.2.68 2004/03/31 20:15:08 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -482,6 +482,14 @@ fi
 
 dnl GNU gettext checks.
 AM_GNU_GETTEXT
+
+AC_MSG_ERROR([echo "Libintl:: x${USE_INCLUDED_LIBINTL}"])
+
+if test x${USE_INCLUDED_LIBINTL} = xyes ; then
+  :
+else
+  GIMPPRINT_DEPLIBS="${GIMPPRINT_DEPLIBS} ${INTLLIBS}"
+fi
 
 dnl Set PACKAGE_LOCALE_DIR in config.h
 if test "x${prefix}" = "xNONE"; then
