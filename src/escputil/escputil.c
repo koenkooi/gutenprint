@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.37 2001/10/18 23:00:53 rlk Exp $"
+ * "$Id: escputil.c,v 1.38 2001/10/19 01:25:52 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -112,7 +112,7 @@ Usage: escputil [-c | -n | -a | -i | -o | -s | -d | -l | -M]\n\
                 [-P printer | -r device] [-u] [-q] [-m model]\n\
 Perform maintenance on EPSON Stylus (R) printers.\n\
 Examples: escputil --clean-head --printer stpex-on-third-floor\n\
-          escputil --ink-level --raw-device --new /dev/lp0\n\
+          escputil --ink-level --new --raw-device /dev/lp0\n\
 \n\
   Commands:\n\
     -c|--clean-head    Clean the print head.\n\
@@ -151,7 +151,7 @@ Usage: escputil [-c | -n | -a | -i | -o | -s | -d | -l | -M]\n\
                 [-P printer | -r device] [-u] [-q] [-m model]\n\
 Perform maintenance on EPSON Stylus (R) printers.\n\
 Examples: escputil -c -P stpex-on-third-floor\n\
-          escputil -i -r -u /dev/lp0\n\
+          escputil -i -u -r /dev/lp0\n\
 \n\
   Commands:\n\
     -c Clean the print head.\n\
