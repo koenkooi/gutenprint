@@ -1,11 +1,11 @@
 /*
- * "$Id: path.h,v 1.2 2003/01/20 22:19:20 rlk Exp $"
+ * "$Id: path.h,v 1.3 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   libgimpprint path functions header
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
  *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
- *   Copyright 2002 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -45,5 +45,5 @@ extern void stpi_path_split(stpi_list_t *list, const char *path);
 
 #endif /* GIMP_PRINT_INTERNAL_PATH_H */
 /*
- * End of "$Id: path.h,v 1.2 2003/01/20 22:19:20 rlk Exp $".
+ * End of "$Id: path.h,v 1.3 2004/02/08 23:37:16 rleigh Exp $".
  */

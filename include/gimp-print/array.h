@@ -1,9 +1,9 @@
 /*
- * "$Id: array.h,v 1.4 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: array.h,v 1.5 2004/02/08 23:37:08 rleigh Exp $"
  *
  *   libgimpprint array functions.
  *
- *   Copyright 2003 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2003 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

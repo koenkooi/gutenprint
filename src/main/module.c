@@ -1,9 +1,9 @@
 /*
- * "$Id: module.c,v 1.20 2003/11/22 23:36:06 rlk Exp $"
+ * "$Id: module.c,v 1.21 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl/libdl.
  *
- *   Copyright 2002 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

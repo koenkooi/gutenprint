@@ -1,9 +1,9 @@
 /*
- * "$Id: color.c,v 1.3 2003/11/25 02:46:44 rlk Exp $"
+ * "$Id: color.c,v 1.4 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   Gimp-Print color module interface.
  *
- *   Copyright (C) 2003  Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright (C) 2003  Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

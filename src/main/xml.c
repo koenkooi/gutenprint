@@ -1,9 +1,9 @@
 /*
- * "$Id: xml.c,v 1.27 2003/11/22 23:36:06 rlk Exp $"
+ * "$Id: xml.c,v 1.28 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
- *   Copyright 2002-2003 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002-2003 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

@@ -1,9 +1,9 @@
 /*
- * "$Id: path.c,v 1.8 2003/07/22 12:22:54 rlk Exp $"
+ * "$Id: path.c,v 1.9 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
- *   Copyright 2002 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

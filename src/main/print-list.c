@@ -1,11 +1,11 @@
 /*
- * "$Id: print-list.c,v 1.13 2003/06/01 16:07:05 rlk Exp $"
+ * "$Id: print-list.c,v 1.14 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
  *   retrieving nodes by name or long name.
  *
- *   Copyright 2002 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free

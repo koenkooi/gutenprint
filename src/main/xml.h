@@ -1,11 +1,11 @@
 /*
- * "$Id: xml.h,v 1.9 2003/10/20 02:39:34 rlk Exp $"
+ * "$Id: xml.h,v 1.10 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   libgimpprint module loader header
  *
  *   Copyright 1997-2002 Michael Sweet (mike@easysw.com),
  *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
- *   Copyright 2002-2003 Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2002-2003 Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -64,5 +64,5 @@ extern void stpi_xml_parse_file_named(const char *name);
 
 #endif /* GIMP_PRINT_INTERNAL_XML_H */
 /*
- * End of "$Id: xml.h,v 1.9 2003/10/20 02:39:34 rlk Exp $".
+ * End of "$Id: xml.h,v 1.10 2004/02/08 23:37:16 rleigh Exp $".
  */

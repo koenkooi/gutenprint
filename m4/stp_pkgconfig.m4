@@ -61,8 +61,8 @@ dnl AC_CHECK_LIB(m,pow,
 dnl              GIMPPRINT_LIBDEPS="${GIMPPRINT_LIBDEPS} -lm")
 dnl STP_CONFIG_PKGCONFIG_IN([gimpprint], [Gimp-Print], [GIMP Print Top Quality Printer Drivers], [src/main])
 dnl
-dnl @version $Id: stp_pkgconfig.m4,v 1.4 2003/01/06 20:57:36 rleigh Exp $
-dnl @author Roger Leigh <roger@whinlatter.uklinux.net>
+dnl @version $Id: stp_pkgconfig.m4,v 1.5 2004/02/08 23:37:08 rleigh Exp $
+dnl @author Roger Leigh <rleigh@debian.org>
 dnl
 ## STP_CONFIG_PKGCONFIG_IN(LIBRARY, DESCRIPTION, DESTINATION)
 ## -----------------------

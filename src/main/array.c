@@ -1,11 +1,11 @@
 /*
- * "$Id: array.c,v 1.9 2003/11/25 02:46:44 rlk Exp $"
+ * "$Id: array.c,v 1.10 2004/02/08 23:37:16 rleigh Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
  *
  *   Copyright 2002-2003 Robert Krawitz (rlk@alum.mit.edu)
- *   Copyright 2003      Roger Leigh (roger@whinlatter.uklinux.net)
+ *   Copyright 2003      Roger Leigh (rleigh@debian.org)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
