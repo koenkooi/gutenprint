@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.97 2001/05/09 18:00:48 rleigh Exp $
+## $Id: Makefile.am,v 1.98 2001/05/27 17:34:46 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,10 @@ dist-hook:
 	    done \
 	  fi \
 	done
+# Create debian/control
+	DEBIAN_VERSION=`grep "(" debian/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
+	UPSTREAM_VERSION=`echo $$DEBIAN_VERSION | sed "s/-[^-]*//"` ; \
+	sed -e "s/#UPSTREAM_VERSION#/$${UPSTREAM_VERSION}/g" <debian/control.in >$(distdir)/debian/control
 # Do some extra magic to make a distribution for GIMP CVS
 	if test -f .gimp-dist ; then \
 	  rm -rf $(distdir)/src/cups $(distdir)/src/escputil $(distdir)/src/foomatic $(distdir)/src/ghost ; \
