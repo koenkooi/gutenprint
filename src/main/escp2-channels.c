@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.27 2003/09/21 02:37:02 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.28 2003/09/30 01:36:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -180,7 +180,7 @@ DECLARE_INK_CHANNEL(photo_black);
 
 static const physical_subchannel_t f360_photo_black_subchannels[] =
 {
-  { 0, 0, 1, "BlackDensity", NULL }
+  { 0, 0, 0, "BlackDensity", NULL }
 };
 
 DECLARE_INK_CHANNEL(f360_photo_black);
