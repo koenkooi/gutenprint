@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.21 2001/10/21 22:29:00 rlk Exp $
+## $Id: Makefile.am,v 1.22 2001/10/22 00:21:03 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -135,6 +135,12 @@ veryclean:
 maintainer-clean-local:
 	$(CLEAN_MANUALS)
 
+# We duplicate mostlyclean-aminfo here because we do not want to remove
+# the .dvi and .ps files that mostlyclean-aminfo wants to remove.  The
+# reason why is that we do not want make clean to force a rebuild of the
+# doc, since users may not have the texinfo tools required to do so.
+# Unfortunately, this generates a warning about overriding commands for
+# mostlyclean-aminfo.
 mostlyclean-aminfo:
 	-rm -f gimpprint.aux gimpprint.cp gimpprint.cps \
 	  gimpprint.fn gimpprint.fns gimpprint.ky gimpprint.kys \
