@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.26 2003/09/26 15:32:48 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.27 2003/09/26 16:24:56 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -506,13 +506,15 @@ static void updp10_printer_end_func(stp_vars_t v)
 	stpi_zfwrite("\x12\x00\x00\x00\x1b\xe1\x00\x00"
 			"\x00\xb0\x00\x00\04", 1, 13, v);
 	stpi_zfwrite((l->seq).data, 1, (l->seq).bytes, v); /*laminate pattern*/
-	stpi_zfwrite("\x00\x00\x00\x00\x07\x08\x04\xb0"
-			"\xff\xff\xff\xff\x09\x00\x00\x00"
+	stpi_zfwrite("\x00\x00\x00\x00" , 1, 4, v);
+        stpi_put16_be(privdata.ysize, v);
+        stpi_put16_be(privdata.xsize, v);
+	stpi_zfwrite("\xff\xff\xff\xff\x09\x00\x00\x00"
 			"\x1b\xee\x00\x00\x00\x02\x00\x00"
 			"\x01\x07\x00\x00\x00\x1b\x0a\x00"
 			"\x00\x00\x00\x00\xfd\xff\xff\xff"
 			"\xff\xff\xff\xff\xf8\xff\xff\xff"
-			, 1, 48, v);
+			, 1, 40, v);
 }
 
 static const laminate_t updp10_laminate[] =
