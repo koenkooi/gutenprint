@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.18 2003/01/25 22:24:37 rlk Exp $"
+ * "$Id: plist.c,v 1.18.2.1 2003/02/08 18:21:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -356,6 +356,25 @@ psearch(const void *key, const void *base, size_t nmemb, size_t size,
   return NULL;
 }
 
+stpui_plist_t *
+stpui_plist_create(const char *name, const char *driver)
+{
+  stpui_plist_t key;
+  memset(&key, 0, sizeof(key));
+  stpui_printer_initialize(&key);
+  key.invalid_mask = 0;
+  if (strcmp(name, "File") == 0)
+    stpui_plist_set_name(&key, _("File"));
+  else
+    stpui_plist_set_name(&key, name);
+  stp_set_driver(key.v, driver);
+  if (stpui_plist_add(&key, 0))
+    return psearch(&key, stpui_plist, stpui_plist_count, sizeof(stpui_plist_t),
+		   (int (*)(const void *, const void *)) compare_printers);
+  else
+    return NULL;
+}
+
 int
 stpui_plist_add(const stpui_plist_t *key, int add_only)
 {
@@ -651,6 +670,27 @@ stpui_printrc_load_v1(FILE *fp)
     }
 }  
 
+const char *stpui_printrc_current_printer = NULL;
+extern FILE *yyin;
+extern int yyparse(void);
+
+static void
+stpui_printrc_load_v2(FILE *fp)
+{
+  int retval;
+  yyin = fp;
+
+  stpui_printrc_current_printer = NULL;
+  retval = yyparse();
+  if (stpui_printrc_current_printer)
+    {
+      int i;
+      for (i = 0; i < stpui_plist_count; i ++)
+	if (strcmp(stpui_printrc_current_printer, stpui_plist[i].name) == 0)
+	  stpui_plist_current = i;
+    }
+}
+
 /*
  * 'stpui_printrc_load()' - Load the printer resource configuration file.
  */
@@ -696,6 +736,9 @@ stpui_printrc_load(void)
 	case 1:
 	  stpui_printrc_load_v1(fp);
 	  break;
+	case 2:
+	  stpui_printrc_load_v2(fp);
+	  break;
 	}
       (void) fclose(fp);
     }
@@ -723,9 +766,9 @@ stpui_printrc_save(void)
       fprintf(stderr, "Number of printers: %d\n", stpui_plist_count);
 #endif
 
-      fputs("#PRINTRCv1 written by GIMP-PRINT " PLUG_IN_VERSION "\n", fp);
+      fputs("#PRINTRCv2 written by GIMP-PRINT " PLUG_IN_VERSION "\n", fp);
 
-      fprintf(fp, "Current-Printer: %s\n", stpui_plist[stpui_plist_current].name);
+      fprintf(fp, "Current-Printer: \"%s\"\n", stpui_plist[stpui_plist_current].name);
 
       for (i = 0, p = stpui_plist; i < stpui_plist_count; i ++, p ++)
 	{
@@ -733,20 +776,18 @@ stpui_printrc_save(void)
 	  int j;
 	  stp_parameter_list_t *params = stp_get_parameter_list(p->v);
 	  count = stp_parameter_list_count(params);
-	  fprintf(fp, "\nPrinter: %s\n", p->name);
-	  fprintf(fp, "Destination: %s\n", stpui_plist_get_output_to(p));
+	  fprintf(fp, "\nPrinter: \"%s\" \"%s\"\n",
+		  p->name, stp_get_driver(p->v));
+	  fprintf(fp, "Destination: \"%s\"\n", stpui_plist_get_output_to(p));
 	  fprintf(fp, "Scaling: %.3f\n", p->scaling);
 	  fprintf(fp, "Orientation: %d\n", p->orientation);
 	  fprintf(fp, "Unit: %d\n", p->unit);
 
-	  fprintf(fp, "Driver: %s\n", stp_get_driver(p->v));
-
 	  fprintf(fp, "Left: %d\n", stp_get_left(p->v));
 	  fprintf(fp, "Top: %d\n", stp_get_top(p->v));
-	  fprintf(fp, "Custom-Page-Width: %d\n", stp_get_page_width(p->v));
-	  fprintf(fp, "Custom-Page-Height: %d\n", stp_get_page_height(p->v));
-
-	  fprintf(fp, "Output-Type: %d\n", stp_get_output_type(p->v));
+	  fprintf(fp, "Custom_Page_Width: %d\n", stp_get_page_width(p->v));
+	  fprintf(fp, "Custom_Page_Height: %d\n", stp_get_page_height(p->v));
+	  fprintf(fp, "Output_Type: %d\n", stp_get_output_type(p->v));
 
 	  for (j = 0; j < count; j++)
 	    {
@@ -757,28 +798,30 @@ stpui_printrc_save(void)
 		{
 		case STP_PARAMETER_TYPE_STRING_LIST:
 		  if (stp_check_string_parameter(p->v, param->name))
-		    fprintf(fp, "%s: %s\n", param->name,
+		    fprintf(fp, "Parameter %s String True \"%s\"\n",
+			    param->name,
 			    stp_get_string_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_FILE:
 		  if (stp_check_file_parameter(p->v, param->name))
-		    fprintf(fp, "%s: %s\n", param->name,
+		    fprintf(fp, "Parameter %s File True \"%s\"\n", param->name,
 			    stp_get_file_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_DOUBLE:
 		  if (stp_check_float_parameter(p->v, param->name))
-		    fprintf(fp, "%s: %f\n", param->name,
+		    fprintf(fp, "Parameter %s Double True %f\n", param->name,
 			    stp_get_float_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_INT:
 		  if (stp_check_int_parameter(p->v, param->name))
-		    fprintf(fp, "%s: %d\n", param->name,
+		    fprintf(fp, "Parameter %s Int True %d\n", param->name,
 			    stp_get_int_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_BOOLEAN:
 		  if (stp_check_boolean_parameter(p->v, param->name))
-		    fprintf(fp, "%s: %d\n", param->name,
-			    stp_get_boolean_parameter(p->v, param->name));
+		    fprintf(fp, "Parameter %s Boolean True %s\n", param->name,
+			    (stp_get_boolean_parameter(p->v, param->name) ?
+			     "True" : "False"));
 		  break;
 		case STP_PARAMETER_TYPE_CURVE:
 		  if (stp_check_curve_parameter(p->v, param->name))
@@ -787,9 +830,10 @@ stpui_printrc_save(void)
 			stp_get_curve_parameter(p->v, param->name);
 		      if (curve)
 			{
-			  fprintf(fp, "%s: ", param->name);
+			  fprintf(fp, "Parameter %s Curve True \"",
+				  param->name);
 			  stp_curve_print(fp, curve);
-			  fprintf(fp, "\n");
+			  fprintf(fp, "\"\n");
 			}
 		    }
 		  break;
@@ -1264,5 +1308,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.18 2003/01/25 22:24:37 rlk Exp $".
+ * End of "$Id: plist.c,v 1.18.2.1 2003/02/08 18:21:49 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.4.6.2 2003/02/02 15:48:41 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.4.6.3 2003/02/08 18:21:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -127,8 +127,10 @@ extern void stpui_plist_copy(stpui_plist_t *vd, const stpui_plist_t *vs);
 extern gint stpui_plist_count;	   /* Number of system printers */
 extern gint stpui_plist_current;     /* Current system printer */
 extern stpui_plist_t *stpui_plist;		  /* System printers */
+extern const char *stpui_printrc_current_printer;
 
 extern int stpui_plist_add(const stpui_plist_t *key, int add_only);
+extern stpui_plist_t *stpui_plist_create(const char *name, const char *driver);
 extern void stpui_printer_initialize(stpui_plist_t *printer);
 extern const char *stpui_combo_get_name(GtkWidget   *combo,
 				  const stp_string_list_t options);
@@ -205,5 +207,15 @@ extern GtkObject *stpui_scale_entry_new(GtkTable    *table,
 
 stp_image_t *stpui_image_thumbnail_new(const guchar *data, gint w, gint h,
 				       gint bpp);
+
+typedef union yylv {
+  int ival;
+  double dval;
+  char *sval;
+} YYSTYPE;
+
+extern YYSTYPE yylval;
+
+#include "printrcy.h"
 
 #endif  /* __GIMP_PRINT_UI_INTERNAL_H__ */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2003/01/01 21:06:09 rleigh Exp $
+## $Id: Makefile.am,v 1.2.8.1 2003/02/08 18:21:49 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,8 @@ pkgconfigdatadir = $(prefix)/lib/pkgconfig
 lib_LTLIBRARIES = libgimpprintui.la
 
 libgimpprintui_la_SOURCES =			\
+	printrcl.l				\
+	printrcy.y				\
 	panel.c					\
 	plist.c					\
 	ui-utils.c				\
@@ -53,6 +55,13 @@ libgimpprintui_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir)
 # -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 # -rpath $(libdir)
 
+AM_LFLAGS = -i
+AM_YFLAGS = -d
+
+printrcy.c: printrcl.l
+printrcy.o: printrcl.l
+printrcl.o: printrcy.o
+plist.o: printrcy.o
 
 ## Data
 
@@ -68,4 +77,4 @@ dist-hook:
 
 ## Clean
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in printrcl.c printrcy.c printrcy.h
