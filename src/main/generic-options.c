@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.2 2003/07/22 12:22:54 rlk Exp $"
+ * "$Id: generic-options.c,v 1.3 2003/11/09 23:06:00 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -52,12 +52,14 @@ static const stpi_image_type_t standard_image_types[] =
 static const stp_parameter_t the_parameters[] =
 {
   {
-    "Quality", N_("Print Quality"), N_("Print Quality"),
+    "Quality", N_("Print Quality"), N_("Basic Output Adjustment"),
+    N_("Print Quality"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 0
   },
   {
-    "ImageType", N_("Image Type"), N_("Type of image being printed"),
+    "ImageType", N_("Image Type"), N_("Basic Image Adjustment"),
+    N_("Type of image being printed"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 0
   },

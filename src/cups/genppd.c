@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.83 2003/11/08 16:09:59 rlk Exp $"
+ * "$Id: genppd.c,v 1.84 2003/11/09 23:06:00 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1192,7 +1192,7 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 #if 0
 		  gzprintf(fp, "*OrderDependency: %d AnySetup *Stp%s\n",
 			   (100 + l + (j * param_count) +
-			    (k * STP_PARAMETER_LEVEL_ADVANCED5 * param_count)),
+			    (k * STP_PARAMETER_LEVEL_INTERNAL * param_count)),
 			   desc.name);
 #endif
 		  if (!desc.is_mandatory)
@@ -1487,5 +1487,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.83 2003/11/08 16:09:59 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.84 2003/11/09 23:06:00 rlk Exp $".
  */

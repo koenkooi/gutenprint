@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.68 2003/11/08 16:09:59 rlk Exp $
+## $Id: Makefile.am,v 1.69 2003/11/09 23:06:00 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -110,14 +110,14 @@ endif
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)$(CUPS_VERSION); \
+	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@; \
 	  cd ppd ; \
 	  for language in * ; do \
 	    cd ..; \
-	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)$(CUPS_VERSION)/$$language; \
+	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@/$$language; \
 	    cd ppd/$$language; \
 	    for ppdfile in * ; do \
-	      (cd ../..; $(INSTALL_DATA) ppd/$$language/$$ppdfile $(DESTDIR)$(cups_modeldir)$(CUPS_VERSION)/$$language) ; \
+	      (cd ../..; $(INSTALL_DATA) ppd/$$language/$$ppdfile $(DESTDIR)$(cups_modeldir)@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@/$$language) ; \
 	    done; \
 	  cd ..; \
 	  done \

@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $"
+ * "$Id: vars.h,v 1.3 2003/11/09 23:06:00 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -101,7 +101,7 @@ typedef enum
   STP_PARAMETER_LEVEL_ADVANCED2,
   STP_PARAMETER_LEVEL_ADVANCED3,
   STP_PARAMETER_LEVEL_ADVANCED4,
-  STP_PARAMETER_LEVEL_ADVANCED5,
+  STP_PARAMETER_LEVEL_INTERNAL,
   STP_PARAMETER_LEVEL_INVALID
 } stp_parameter_level_t;
 
@@ -161,6 +161,7 @@ typedef struct
 {
   const char *name;		/* Internal name (key) */
   const char *text;		/* User-visible name */
+  const char *category;		/* User-visible category name */
   const char *help;		/* Help string */
   stp_parameter_type_t p_type;
   stp_parameter_class_t p_class;
@@ -571,5 +572,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $".
+ * End of "$Id: vars.h,v 1.3 2003/11/09 23:06:00 rlk Exp $".
  */

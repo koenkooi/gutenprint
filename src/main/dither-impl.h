@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.16 2003/11/08 03:14:34 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.17 2003/11/09 23:06:00 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -52,6 +52,7 @@ extern "C" {
 #define D_FAST (D_FAST_BASE)
 #define D_VERY_FAST (D_FAST_BASE + 1)
 #define D_EVENTONE 32
+#define D_HYBRID_EVENTONE (D_ADAPTIVE_BASE | D_EVENTONE)
 
 #define DITHER_FAST_STEPS (6)
 
@@ -249,5 +250,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.16 2003/11/08 03:14:34 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.17 2003/11/09 23:06:00 rlk Exp $".
  */
