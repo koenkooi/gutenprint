@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.28 2003/10/10 02:34:51 rlk Exp $"
+ * "$Id: dither-main.c,v 1.29 2003/10/17 02:56:25 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -333,7 +333,8 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   d->transition = 1.0;
   d->adaptive_limit = .75 * 65535;
 
-  if (d->stpi_dither_type == D_VERY_FAST || d->stpi_dither_type == D_FAST)
+  if (d->stpi_dither_type == D_VERY_FAST || d->stpi_dither_type == D_FAST ||
+      d->stpi_dither_type == D_EVENTONE)
     {
       if (stp_check_int_parameter(v, "DitherVeryFastSteps",
 				  STP_PARAMETER_ACTIVE))
