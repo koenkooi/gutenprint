@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2001/10/05 21:23:06 rleigh Exp $
+## $Id: Makefile.am,v 1.9 2001/10/06 17:32:57 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -156,7 +156,7 @@ clean-figures:
 	rm -rf figures/*.eps figures/*.pdf
 
 maintainer-clean-local:
-	rm -rf $(HTMLDIR)
+	rm -rf $(HTMLDIR) html-stamp
 
 #
 # This is my (so far failed) attempt to create an index for this documentation.
