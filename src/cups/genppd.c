@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.28 2001/10/15 12:15:22 easysw Exp $"
+ * "$Id: genppd.c,v 1.29 2001/10/15 12:34:59 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -40,6 +40,9 @@
  * Include necessary headers...
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -54,9 +57,6 @@
 #include <cups/cups.h>
 #include <cups/raster.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
@@ -222,7 +222,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  break;
     }
   }
-  
+
 
  /*
   * Set the language...
@@ -413,6 +413,10 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*FormatVersion:	\"4.3\"\n");
   gzputs(fp, "*FileVersion:	\"" VERSION "\"\n");
   /* Specify language of PPD translation */
+  /* Translators: Specify the language of the PPD translation.
+   * Use the English name of your language here, e.g. "Swedish" instead of
+   * "Svenska".
+   */
   gzprintf(fp, "*LanguageVersion: %s\n", _("English"));
   /* Specify PPD translation encoding e.g. ISOLatin1 */
   gzprintf(fp, "*LanguageEncoding: %s\n", _("ISOLatin1"));
@@ -815,5 +819,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.28 2001/10/15 12:15:22 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.29 2001/10/15 12:34:59 rlk Exp $".
  */
