@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2004/09/17 18:38:01 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2004/10/31 22:29:24 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,10 @@ pkgincludedir = $(includedir)/gutenprintui
 
 ## Data
 
+if BUILD_LIBGUTENPRINTUI
 pkginclude_HEADERS = \
 	gutenprintui.h
-
+endif
 
 ## Clean
 
