@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.1 2003/01/17 00:26:29 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.2 2003/01/18 00:20:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1038,8 +1038,7 @@ escp2_deinit_printer(const escp2_init_t *init)
 }
 
 static int
-adjust_print_quality(const escp2_init_t *init, void *dither,
-		     stp_image_t *image)
+adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
 {
   int cols;
   stp_curve_t   lum_adjustment = NULL;
@@ -1099,40 +1098,35 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   if (stp_get_float_parameter(nv, "Density") > 1.0)
     stp_set_float_parameter(nv, "Density", 1.0);
 
-  for (i = 0; i <= NCOLORS; i++)
-    stp_dither_set_black_level(dither, i, 1.0);
-  stp_dither_set_black_lower(dither, k_lower);
-  stp_dither_set_black_upper(dither, k_upper);
+  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
 
   inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
   if (inks)
     {
       for (i = 0; i < init->channel_limit; i++)
 	{
-	  const ink_channel_t *ink = (*inks)[i];
+	  const escp2_variable_ink_t *ink = (*inks)[i];
 	  if (ink)
 	    {
-	      stp_dither_set_ranges(dither, i, ink->numranges, ink->range,
+	      stp_dither_set_ranges(nv, i, ink->numranges, ink->range,
 				    ink->density * paper_k_upper *
 				    stp_get_float_parameter(nv, "Density"));
 
-	      stp_dither_set_shades(dither, i, ink->numshades, ink->shades,
+	      stp_dither_set_shades(nv, i, ink->numshades, ink->shades,
 				    ink->density * paper_k_upper *
 				    stp_get_float_parameter(nv, "Density"));
 	    }
 	}
     }
 
-  stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
+  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 
   if (!stp_check_curve_parameter(nv, "HueMap"))
     {
       hue_adjustment = stp_read_and_compose_curves
 	(init->inkname->hue_adjustment, pt ? pt->hue_adjustment : NULL,
 	 STP_CURVE_COMPOSE_ADD);
-      stp_curve_compose(&hue_adjustment, hue_adjustment,
-			stp_get_curve_parameter(nv, "HueMap"),
-			STP_CURVE_COMPOSE_ADD, -1);
       stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
       stp_curve_destroy(hue_adjustment);
     }
@@ -1140,10 +1134,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
     {
       sat_adjustment = stp_read_and_compose_curves
 	(init->inkname->sat_adjustment, pt ? pt->sat_adjustment : NULL,
-	 STP_CURVE_COMPOSE_ADD);
-      stp_curve_compose(&sat_adjustment, sat_adjustment,
-			stp_get_curve_parameter(nv, "SatMap"),
-			STP_CURVE_COMPOSE_MULTIPLY, -1);
+	 STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
       stp_curve_destroy(sat_adjustment);
     }
@@ -1151,10 +1142,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
     {
       lum_adjustment = stp_read_and_compose_curves
 	(init->inkname->lum_adjustment, pt ? pt->lum_adjustment : NULL,
-	 STP_CURVE_COMPOSE_ADD);
-      stp_curve_compose(&lum_adjustment, lum_adjustment,
-			stp_get_curve_parameter(nv, "LumMap"),
-			STP_CURVE_COMPOSE_MULTIPLY, -1);
+	 STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
       stp_curve_destroy(lum_adjustment);
     }
@@ -1229,7 +1217,7 @@ setup_ink_types(const escp2_inkname_t *ink_type,
 		escp2_privdata_t *privdata,
 		unsigned char **cols,
 		int *head_offset,
-		stp_dither_data_t *dt,
+		stp_vars_t v,
 		int channel_limit,
 		int line_length)
 {
@@ -1245,7 +1233,7 @@ setup_ink_types(const escp2_inkname_t *ink_type,
 	    {
 	      cols[channels_in_use] = stp_zalloc(line_length);
 	      privdata->channels[channels_in_use] = &(channel->channels[j]);
-	      stp_dither_add_channel(dt, cols[channels_in_use], i, j);
+	      stp_dither_add_channel(v, cols[channels_in_use], i, j);
 	      head_offset[channels_in_use] = channel->channels[j].head_offset;
 	      channels_in_use++;
 	    }
@@ -1297,7 +1285,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 
   int		bits;
   void *	weave;
-  void *	dither;
   stp_vars_t	nv = stp_allocate_copy(v);
   escp2_init_t	init;
   int		max_vres;
@@ -1585,7 +1572,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
       int out_height;		/* Height of image on page */
       int out_channels;		/* Output bytes per pixel */
       int length;		/* Length of raster data */
-      stp_dither_data_t *dt = stp_dither_data_allocate();
       unsigned char **cols =
 	stp_zalloc(sizeof(unsigned char *) * total_channels);
 
@@ -1606,7 +1592,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
       length = (out_width + 7) / 8;
 
       channels_in_use = setup_ink_types(ink_type, &privdata, cols, head_offset,
-					dt, channel_limit, length * bits);
+					nv, channel_limit, length * bits);
 
       /*
        * Allocate memory for the raster data...
@@ -1615,8 +1601,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
       weave = stp_initialize_weave(nozzles, nozzle_separation,
 				   horizontal_passes, res->vertical_passes,
 				   res->vertical_oversample, total_channels,
-				   bits,
-				   out_width, out_height,
+				   bits, out_width, out_height,
 				   top * physical_ydpi / 72,
 				   (page_height * physical_ydpi / 72 +
 				    escp2_extra_feed(model, nv) *
@@ -1626,9 +1611,9 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 				   FILLFUNC, PACKFUNC, COMPUTEFUNC);
 
       stp_set_output_color_model(nv, COLOR_MODEL_CMY);
-      dither = stp_dither_init(nv, image, out_width, xdpi, ydpi);
+      stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
-      out_channels = adjust_print_quality(&init, dither, image);
+      out_channels = adjust_print_quality(&init, image);
 
       out = stp_malloc(stp_image_width(image) * out_channels * 2);
 
@@ -1664,7 +1649,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	    }
 	  QUANT(1);
 
-	  stp_dither(out, y, dither, dt, duplicate_line, zero_mask);
+	  stp_dither(v, y, out, duplicate_line, zero_mask);
 	  QUANT(2);
 
 	  stp_write_weave(weave, length, ydpi, model, out_width, left,
@@ -1687,7 +1672,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
        * Cleanup...
        */
       stp_destroy_weave(weave);
-      stp_dither_free(dither);
+      stp_dither_free(nv);
       stp_free(out);
       if (!privdata.printed_something)
 	stp_send_command(nv, "\n", "");
@@ -1696,7 +1681,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	if (cols[i])
 	  stp_free((unsigned char *) cols[i]);
       stp_free(cols);
-      stp_dither_data_free(dt);
       stp_free(privdata.channels);
     }
   if (print_op & OP_JOB_END)
