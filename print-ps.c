@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.10 1999/11/23 02:11:37 rlk Exp $"
+ * "$Id: print-ps.c,v 1.11 2000/01/03 13:25:13 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -33,6 +33,9 @@
  * Revision History:
  *
  *   $Log: print-ps.c,v $
+ *   Revision 1.11  2000/01/03 13:25:13  rlk
+ *   Fix from Salvador Pinto Abreu <spa@khromeleque.dmat.uevora.pt>
+ *
  *   Revision 1.10  1999/11/23 02:11:37  rlk
  *   Rationalize variables, pass 3
  *
@@ -435,8 +438,8 @@ ps_parameters(int  model,	/* I - Printer model */
 
     if (strcasecmp(lname, name) == 0)
     {
-      valptrs[(*count)] = malloc(strlen(media_sizes[*count]) + 1);
-      strcpy(valptrs[(*count)], media_sizes[*count]);
+      valptrs[(*count)] = malloc(strlen(loption) + 1);
+      strcpy(valptrs[(*count)], loption);
       (*count) ++;
     }
   }
@@ -1154,5 +1157,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 
 /*
- * End of "$Id: print-ps.c,v 1.10 1999/11/23 02:11:37 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.11 2000/01/03 13:25:13 rlk Exp $".
  */
