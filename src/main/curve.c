@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.34.6.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: curve.c,v 1.34.6.2 2003/06/19 01:43:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1323,7 +1323,7 @@ xmldoc_create_from_curve(stp_const_curve_t curve)
       stpi_erprintf("xmldoc_create_from_curve: error creating XML document\n");
       return NULL;
     }
-  rootnode = mxmlWalkNext(xmldoc, xmldoc, MXML_DESCEND);
+  rootnode = xmldoc->child;
   if (rootnode == NULL)
     {
       mxmlDelete(xmldoc);
@@ -1426,7 +1426,7 @@ xml_doc_get_curve(mxml_node_t *doc)
       return NULL;
     }
 
-  cur = mxmlWalkNext(doc, doc, MXML_DESCEND);
+  cur = doc->child;
 
   if (cur == NULL)
     {

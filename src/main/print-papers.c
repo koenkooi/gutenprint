@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.25.2.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: print-papers.c,v 1.25.2.2 2003/06/19 01:43:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -297,7 +297,7 @@ stpi_xml_process_paper(mxml_node_t *paper) /* The paper node */
   if (outpaper->name)
     id = 1;
 
-  prop = mxmlWalkNext(paper, paper, MXML_DESCEND);
+  prop = paper->child;
   while(prop)
     {
       if (prop->type == MXML_ELEMENT)
@@ -373,7 +373,7 @@ stpi_xml_process_paper(mxml_node_t *paper) /* The paper node */
 		}
 	    }
 	}
-      prop = mxmlWalkNext(prop, paper, MXML_NO_DESCEND);
+      prop = prop->next;
     }
   if (id && name && width && height && unit) /* Margins are optional */
     return outpaper;
@@ -391,7 +391,7 @@ stpi_xml_process_paperdef(mxml_node_t *paperdef, const char *file) /* The paperd
   mxml_node_t *paper;                           /* paper node pointer */
   stp_papersize_t *outpaper;         /* Generated paper */
 
-  paper = mxmlWalkNext(paperdef, paperdef, MXML_DESCEND);
+  paper = paperdef->child;
   while (paper)
     {
       if (paper->type == MXML_ELEMENT)
@@ -404,7 +404,7 @@ stpi_xml_process_paperdef(mxml_node_t *paperdef, const char *file) /* The paperd
 		stpi_paper_create(outpaper);
 	    }
 	}
-      paper = mxmlWalkNext(paper, paperdef, MXML_NO_DESCEND);
+      paper = paper->next;
     }
   return 1;
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.55.2.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: printers.c,v 1.55.2.2 2003/06/19 01:43:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -834,7 +834,7 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
 
   outprinter->printfuncs = printfuncs;
 
-  prop = mxmlWalkNext(printer, printer, MXML_DESCEND);
+  prop = printer->child;
   while (prop)
     {
       if (prop->type == MXML_ELEMENT)
@@ -935,7 +935,7 @@ stpi_xml_process_family(mxml_node_t *family)     /* The family node */
 	  family_module_item = stpi_list_item_next(family_module_item);
     }
 
-  printer = mxmlWalkNext(family, family, MXML_DESCEND);
+  printer = family->child;
   while (family_valid && printer)
     {
       if (printer->type == MXML_ELEMENT)
@@ -951,7 +951,7 @@ stpi_xml_process_family(mxml_node_t *family)     /* The family node */
 				      outprinter);
 	    }
 	}
-      printer = mxmlWalkNext(printer, family, MXML_NO_DESCEND);
+      printer = printer->next;
     }
 
   stpi_list_destroy(family_module_list);
@@ -966,7 +966,7 @@ stpi_xml_process_printdef(mxml_node_t *printdef, const char *file) /* The printd
 {
   mxml_node_t *family;                          /* Family child node */
 
-  family = mxmlWalkNext(printdef, printdef, MXML_DESCEND);
+  family = printdef->child;
   while (family)
     {
       if (family->type == MXML_ELEMENT)
@@ -977,7 +977,7 @@ stpi_xml_process_printdef(mxml_node_t *printdef, const char *file) /* The printd
 	      stpi_xml_process_family(family);
 	    }
 	}
-      family = mxmlWalkNext(family, printdef, MXML_NO_DESCEND);
+      family = family->next;
     }
   return 1;
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.21.2.2 2003/06/19 01:01:07 rlk Exp $"
+ * "$Id: xml.c,v 1.21.2.3 2003/06/19 01:43:57 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -343,12 +343,12 @@ stpi_xml_process_gimpprint(mxml_node_t *cur, const char *file) /* The node to pa
 {
   mxml_node_t *child;                       /* Child node pointer */
 
-  child = mxmlWalkNext(cur, cur, MXML_DESCEND);
+  child = cur->child;
   while (child)
     {
       /* process nodes with corresponding parser */
       stpi_xml_process_node(child, file);
-      child = mxmlWalkNext(child, cur, MXML_NO_DESCEND);
+      child = child->next;
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.23.2.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.23.2.2 2003/06/19 01:43:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -598,7 +598,7 @@ xml_doc_get_dither_array(mxml_node_t *doc)
       return NULL;
     }
 
-  cur = mxmlWalkNext(doc, doc, MXML_DESCEND);
+  cur = doc->child;
 
   if (cur == NULL)
     {

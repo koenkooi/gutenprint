@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.7.2.1 2003/06/19 00:31:21 rlk Exp $"
+ * "$Id: sequence.c,v 1.7.2.2 2003/06/19 01:43:57 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -334,13 +334,7 @@ stpi_sequence_create_from_xmltree(mxml_node_t *da)
   stp_sequence_t ret = NULL;
   size_t point_count;
   double low, high;
-  char buf[100];
-  char *bufptr = &buf[0];
-  int i, j;
-  int offset = 0;
-  int maxlen;
-  int found;
-
+  int i;
 
   ret = stp_sequence_create();
 
@@ -392,44 +386,21 @@ stpi_sequence_create_from_xmltree(mxml_node_t *da)
   /* Now read in the data points */
   if (point_count)
     {
-      stmp = xmlNodeGetContent(da);
-      if (stmp)
+      mxml_node_t *child = da->child;
+      i = 0;
+      while (child && i < point_count)
 	{
-	  double tmpval;
-	  maxlen = strlen((const char *) stmp);
-	  for (i = 0; i < point_count; i++)
+	  if (child->type == MXML_TEXT)
 	    {
-	      memset(bufptr, 0, 100);
-	      *(bufptr + 99) = '\0';
-	      for (j = 0, found = 0; j < 99; j++)
+	      char *endptr;
+	      double tmpval = strtod(child->value.text.string, &endptr);
+	      if (endptr == child->value.text.string)
 		{
-		  if (offset + j > maxlen)
-		    {
-		      if (found == 0)
-			{
-			  fprintf(stderr,
-				  "stpi_xmltree_create_from_sequence: "
-				  "read aborted: too little data "
-				  "(n=%d, needed %d)\n", i, point_count);
-			  goto error;
-			}
-		      else /* Hit end, but we have some data */
-			{
-			  *(bufptr + j) = '\0';
-			  break;
-			}
-		    }
-		  if (!isspace((const char) *(stmp + offset + j)))
-		    found = 1; /* found a printing character */
-		  else if (found) /* space found, and we've seen chars */
-		    {
-		      *(bufptr + j) = '\0';
-		      break;
-		    }
-		  *(bufptr + j) = *(stmp + offset + j);
+		  stpi_erprintf
+		    ("stpi_xmltree_create_from_sequence: bad data %s\n",
+		     child->value.text.string);
+		  goto error;
 		}
-	      offset += j;
-	      tmpval = stpi_xmlstrtod(buf);
 	      if (! finite(tmpval)
 		  || ( tmpval == 0 && errno == ERANGE )
 		  || tmpval < low
@@ -443,8 +414,17 @@ stpi_sequence_create_from_xmltree(mxml_node_t *da)
 		}
 	      /* Datum was valid, so now add to the sequence */
 	      stp_sequence_set_point(ret, i, tmpval);
+	      i++;
+	      child = child->next;
 	    }
 	}
+      if (i < point_count)
+	{
+	  stpi_erprintf("stpi_xmltree_create_from_sequence: "
+			"read aborted: too little data "
+			"(n=%d, needed %d)\n", i, point_count);
+	  goto error;
+	}	
     }
 
   return ret;
@@ -491,11 +471,6 @@ stpi_xmltree_create_from_sequence(stp_sequence_t seq)   /* The sequence */
   /* Write the curve points into the node content */
   if (pointcount) /* Is there any data to write? */
     {
-      /* Calculate total size */
-      int datasize = 0;
-      char *data;
-      char *offset;
-
       for (i = 0; i < pointcount; i++)
 	{
 	  double dval;
@@ -505,42 +480,9 @@ stpi_xmltree_create_from_sequence(stp_sequence_t seq)   /* The sequence */
 	    goto error;
 
 	  stpi_asprintf(&sval, "%g", dval);
-
-	  datasize += strlen(sval) + 1; /* Add 1 for space separator and
-					   NUL termination */
+	  mxmlNewText(seqnode, 1, sval);
 	  stpi_free(sval);
       }
-      datasize += 2; /* Add leading and trailing newlines */
-      /* Allocate a big enough string */
-      data = stpi_malloc(sizeof(char) * datasize);
-      offset = data;
-      *(offset) = '\n'; /* Add leading newline */
-      offset++;
-      /* Populate the string */
-      for (i = 0; i < pointcount; i++)
-	{
-	  double dval;
-	  char *sval;
-
-	  if ((stp_sequence_get_point(seq, i, &dval)) == 0)
-	    goto error;
-
-	  stpi_asprintf(&sval, "%g", dval);
-
-	  strcpy((char *) offset, sval); /* Add value */
-	  offset += strlen (sval);
-	  if ((i + 1) % 12)
-	    *offset = ' '; /* Add space */
-	  else
-	    *offset = '\n'; /* Add newline every 12 points */
-	  offset++;
-
-	  stpi_free(sval);
-	}
-      *(offset -1) = '\n'; /* Add trailing newline */
-      *(offset) = '\0'; /* Add NUL terminator */
-      xmlNodeAddContent(seqnode, data);
-      stpi_free(data);
     }
   return seqnode;
 
