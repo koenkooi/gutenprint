@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.15.4.23 2002/12/06 02:31:23 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.15.4.24 2002/12/06 02:48:12 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3374,7 +3374,7 @@ static const input_slot_t standard_roll_feed_input_slots[] =
   {
     "Standard",
     N_("Standard"),
-    { "IR\002\000\000\001EX\006\000\000\000\000\000\005\000", 22 },
+    { "IR\002\000\000\001EX\006\000\000\000\000\000\005\000", 16 },
     { "IR\002\000\000\000", 6}
   },
   {
