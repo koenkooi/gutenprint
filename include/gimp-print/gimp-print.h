@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.23.2.1 2003/02/02 05:06:03 rlk Exp $
+ *  $Id: gimp-print.h,v 1.23.2.2 2003/02/07 23:28:35 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -633,10 +633,14 @@ extern stp_string_list_t
 stp_string_list_create_copy(const stp_string_list_t list);
 
 extern void stp_string_list_add_string(stp_string_list_t list,
-				      const char *name, const char *text);
+				       const char *name, const char *text);
 
 extern stp_string_list_t
-stp_string_list_create_from_params(const stp_param_string_t *list, size_t count);
+stp_string_list_create_from_params(const stp_param_string_t *list,
+				   size_t count);
+
+extern int
+stp_string_list_is_present(stp_string_list_t list, const char *value);
 
 
 /****************************************************************
@@ -1008,5 +1012,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.23.2.1 2003/02/02 05:06:03 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.23.2.2 2003/02/07 23:28:35 rlk Exp $
  */

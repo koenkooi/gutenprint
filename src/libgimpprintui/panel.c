@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.4 2003/02/05 01:27:27 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.5 2003/02/07 23:28:36 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -292,7 +292,8 @@ build_a_combo(option_t *option)
       if (option->info.list.params == NULL || ! option->is_active ||
 	  stp_string_list_count(option->info.list.params) == 0)
 	stp_set_string_parameter(pv->v, option->fast_desc->name, NULL);
-      else if (!val || strlen(val) == 0)
+      else if (!val || strlen(val) == 0 ||
+	       ! stp_string_list_is_present(option->info.list.params, val))
 	stp_set_string_parameter(pv->v, option->fast_desc->name,
 				 option->info.list.default_val);
       plist_build_combo(option->info.list.combo, option->info.list.label,

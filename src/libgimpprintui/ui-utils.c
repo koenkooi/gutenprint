@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.3.6.2 2003/02/02 15:48:41 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.3.6.3 2003/02/07 23:28:37 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -457,7 +457,7 @@ stpui_scale_entry_new(GtkTable    *table,
   GtkObject *return_adj;
 
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0, 0.5);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
   gtk_table_attach (GTK_TABLE (table), label,
                     column, column + 1, row, row + 1,
                     GTK_FILL, GTK_FILL, 0, 0);
@@ -474,10 +474,10 @@ stpui_scale_entry_new(GtkTable    *table,
 					    0.0);
 
       spinbutton = spin_button_new (&adjustment, value,
-					 unconstrained_lower,
-					 unconstrained_upper,
-					 step_increment, page_increment, 0.0,
-					 1.0, digits);
+				    unconstrained_lower,
+				    unconstrained_upper,
+				    step_increment, page_increment, 0.0,
+				    1.0, digits);
 
       gtk_signal_connect
 	(GTK_OBJECT (constrained_adj), "value_changed",
@@ -496,8 +496,8 @@ stpui_scale_entry_new(GtkTable    *table,
   else
     {
       spinbutton = spin_button_new (&adjustment, value, lower, upper,
-					 step_increment, page_increment, 0.0,
-					 1.0, digits);
+				    step_increment, page_increment, 0.0,
+				    1.0, digits);
 
       return_adj = adjustment;
     }
@@ -566,7 +566,7 @@ table_attach_aligned (GtkTable    *table,
 
       label = gtk_label_new (label_text);
       gtk_misc_set_alignment (GTK_MISC (label), xalign, yalign);
-      gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
+      gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
       gtk_table_attach (table, label,
 			column, column + 1,
 			row, row + 1,
@@ -588,7 +588,7 @@ table_attach_aligned (GtkTable    *table,
   gtk_table_attach (table, widget,
 		    column + 1, column + 1 + colspan,
 		    row, row + 1,
-		    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+		    GTK_FILL, GTK_FILL, 0, 0);
 
   gtk_widget_show (widget);
 }
@@ -804,10 +804,11 @@ stpui_create_new_combo(option_t *option, GtkWidget *table,
   option->info.list.combo = combo;
   gtk_container_add(GTK_CONTAINER(event_box), combo);
   gtk_widget_show(combo);
+  gtk_widget_show(event_box);
   stpui_set_help_data(event_box, _(option->fast_desc->help));
   option->info.list.label = stpui_table_attach_aligned
     (GTK_TABLE(table), hpos, vpos, _(option->fast_desc->text),
-     1.0, 0.5, event_box, 2, TRUE);
+     0.0, 0.5, event_box, 3, TRUE);
 }
 
 const char *
