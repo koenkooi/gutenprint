@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.29 2002/06/21 01:45:18 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.30 2002/06/21 01:49:37 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2016,7 +2016,7 @@ static const escp2_base_resolutions_t stp950_base_res =
 {  360,  360,  360,  360,  360,  360,  360,  360,  360,  360,  720,  720,  720 };
 
 static const escp2_base_resolutions_t stc900_base_res =
-{  360,  360,  360,  360,  360,  360,  180,  180,  180,  180,  180,  180,  180 };
+{  360,  360,  360,  360,  360,  360,  360,  360,  180,  180,  180,  180,  180 };
 
 static const escp2_base_resolutions_t pro_base_res =
 { 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880, 2880 };
