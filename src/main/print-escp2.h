@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.59 2003/07/24 00:50:17 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.60 2003/08/06 01:42:32 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -197,15 +197,20 @@ typedef enum
 typedef struct
 {
   const char *name;
+  const ink_channel_t *const *channels;
+  short channel_count;
+} channel_set_t;
+
+typedef struct
+{
+  const char *name;
   const char *text;
-  short is_color;
-  short channel_limit;
   inkset_id_t inkset;
   const paper_adjustment_list_t *papers;
   const char *lum_adjustment;
   const char *hue_adjustment;
   const char *sat_adjustment;
-  const ink_channel_t *channels[PHYSICAL_CHANNEL_LIMIT];
+  const channel_set_t *channel_set;
 } escp2_inkname_t;
 
 typedef struct
@@ -313,6 +318,10 @@ typedef enum
 #define MODEL_SEND_ZERO_ADVANCE_NO	0x000ul
 #define MODEL_SEND_ZERO_ADVANCE_YES	0x400ul
 
+#define MODEL_SUPPORTS_INK_CHANGE_MASK	0x800ul
+#define MODEL_SUPPORTS_INK_CHANGE_NO	0x000ul
+#define MODEL_SUPPORTS_INK_CHANGE_YES	0x800ul
+
 typedef enum
 {
   MODEL_COMMAND,
@@ -323,6 +332,7 @@ typedef enum
   MODEL_VACUUM,
   MODEL_FAST_360,
   MODEL_SEND_ZERO_ADVANCE,
+  MODEL_SUPPORTS_INK_CHANGE,
   MODEL_LIMIT
 } escp2_model_option_t;
 
@@ -402,7 +412,6 @@ typedef struct escp2_printer
   /* Parameters for escputil */
   short		alignment_passes;
   short		alignment_choices;
-  short		supports_ink_change;
   short		alternate_alignment_passes;
   short		alternate_alignment_choices;
 /*****************************************************************************/
@@ -474,6 +483,8 @@ extern const inkgroup_t stpi_escp2_ultrachrome_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo7_japan_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_ultrachrome_inkgroup;
+
+extern const escp2_inkname_t stpi_escp2_default_black_inkset;
 
 typedef struct
 {
@@ -581,5 +592,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.59 2003/07/24 00:50:17 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.60 2003/08/06 01:42:32 rlk Exp $".
  */
