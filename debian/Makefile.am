@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.4 2002/12/09 21:39:59 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2002/12/22 18:40:01 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,6 @@ EXTRA_DIST = \
 	escputil.install \
 	foomatic-db-gimp-print.install \
 	gimp1.2-print.docs \
-	gimp1.2-print.files \
 	gimp1.2-print.install \
 	gimp1.2-print.postrm \
 	gimp1.2-print.preinst \
