@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.32.2.3 2001/05/31 01:36:33 rlk Exp $"
+ * "$Id: print-dither.c,v 1.32.2.4 2001/06/01 01:10:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -591,13 +591,6 @@ stp_init_dither(int in_width, int out_width, int horizontal_aspect,
   stp_dither_set_ink_darkness(d, ECOLOR_Y, 1);
   stp_dither_set_density(d, 1.0);
   d->dither_class = stp_get_output_type(v);
-  for (i = 0; i < NCOLORS; i++)
-    {
-      CHANNEL(d, i).dither.boundary_positions[0][1] = -1;
-      CHANNEL(d, i).dither.boundary_positions[0][0] = -1;
-      CHANNEL(d, i).dither.boundary_positions[1][1] = -1;
-      CHANNEL(d, i).dither.boundary_positions[1][0] = -1;
-    }
   return d;
 }
 
