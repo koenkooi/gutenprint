@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.87 2005/03/22 12:29:14 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.88 2005/03/27 18:43:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -527,6 +527,7 @@ extern const escp2_drop_list_t stpi_escp2_variable_x80_6pl_drops;
 extern const paperlist_t stpi_escp2_standard_paper_list;
 extern const paperlist_t stpi_escp2_durabrite_paper_list;
 extern const paperlist_t stpi_escp2_ultrachrome_paper_list;
+extern const paperlist_t stpi_escp2_r800_paper_list;
 
 extern const paper_adjustment_list_t stpi_escp2_standard_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_durabrite_paper_adjustment_list;
@@ -536,6 +537,8 @@ extern const paper_adjustment_list_t stpi_escp2_photo3_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_sp960_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_matte_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_r800_photo_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_r800_matte_paper_adjustment_list;
 
 extern const res_t *const stpi_escp2_superfine_reslist[];
 extern const res_t *const stpi_escp2_no_printer_weave_reslist[];
@@ -688,5 +691,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.87 2005/03/22 12:29:14 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.88 2005/03/27 18:43:40 rlk Exp $".
  */
