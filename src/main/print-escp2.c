@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.309 2004/02/28 20:05:04 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.310 2004/03/16 02:56:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -170,8 +170,8 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, -1, 1
   },
   {
-    "FullBleed", N_("Full Bleed"), N_("Basic Printer Setup"),
-    N_("Full Bleed"),
+    "FullBleed", N_("Borderless"), N_("Basic Printer Setup"),
+    N_("Print without borders"),
     STP_PARAMETER_TYPE_BOOLEAN, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
