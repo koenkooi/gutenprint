@@ -48,7 +48,7 @@ that you would like covering, please let me know!
 
  -- Roger Leigh <roger@whinlatter.uklinux.net>
 
- $Id: README.maintaining,v 1.5 2001/02/24 16:37:45 rleigh Exp $
+ $Id: README.maintaining,v 1.6 2001/09/18 18:15:27 rleigh Exp $
  
 
 1. Integration of the autotools
@@ -162,6 +162,14 @@ The build is only guaranteed to work if make is run from the top level.  It
 should be possible to make individual subdirectories, but sometimes this will
 cause problems e.g. if it depends on some other directory that should have
 been built first.
+
+Other packages (including the extra development packages on some systems) must
+be installed on your system to build correctly.  These include:  autoconf,
+automake, libtool, gtk, gdk, gimp 1.2, cups, foomatic, makeinfo, readline
+texi2html.  Not all these need to be installed, depending on the configure
+options used.  It might be necessary to get the latest releases of some of
+these packages, as critical bugs present in easrlier releases have been fixed.
+The latest gettext and texi2html are strongly suggested.
 
 2.4 Extra make targets
 ----------------------
