@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.69.2.4 2000/08/05 02:23:45 rlk Exp $"
+ * "$Id: print-canon.c,v 1.69.2.5 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -381,9 +381,13 @@ canon_resolutions[] =
 };
 
 const char *
-canon_default_resolution(void)
+canon_default_resolution(const printer_t *printer)
 {
-  return canon_resolutions[0];
+  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+  if (!(caps.max_xdpi%300))
+    return "300x300 DPI";
+  else
+    return "180x180 DPI";
 }
 
 /*
@@ -561,19 +565,14 @@ canon_imageable_area(const printer_t *printer,	/* I - Printer model */
 }
 
 void
-canon_margins(const printer_t *printer,	/* I - Printer model */
-	      const vars_t *v,   /* I */
-	      int  *left,	/* O - Left position in points */
-	      int  *right,	/* O - Right position in points */
-	      int  *bottom,	/* O - Bottom position in points */
-	      int  *top)		/* O - Top position in points */
+canon_limit(const printer_t *printer,	/* I - Printer model */
+	    const vars_t *v,  		/* I */
+	    int  *width,		/* O - Left position in points */
+	    int  *length)		/* O - Top position in points */
 {
   canon_cap_t caps= canon_get_model_capabilities(printer->model);
-
-  *left   = caps.border_left;
-  *right  = caps.border_right;
-  *top    = caps.border_top;
-  *bottom = caps.border_bottom;
+  *width =	caps.max_width;
+  *length =	caps.max_height;
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.66.2.3 2000/08/05 02:23:45 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.66.2.4 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -229,7 +229,7 @@ const static pcl_t pcl_resolutions[] =
 #define NUM_RESOLUTIONS		(sizeof(pcl_resolutions) / sizeof (pcl_t))
 
 const char *
-pcl_default_resolution(void)
+pcl_default_resolution(const printer_t *printer)
 {
   return pcl_resolutions[0].pcl_name;
 }
@@ -1251,28 +1251,15 @@ pcl_imageable_area(const printer_t *printer,	/* I - Printer model */
 }
 
 void
-pcl_margins(const printer_t *printer,	/* I - Printer model */
-	    const vars_t *v,		/* I */
-	    int  *left,			/* O - Left position in points */
-	    int  *right,		/* O - Right position in points */
-	    int  *bottom,		/* O - Bottom position in points */
-	    int  *top)			/* O - Top position in points */
+pcl_limit(const printer_t *printer,	/* I - Printer model */
+	  const vars_t *v,  		/* I */
+	  int  *width,			/* O - Left position in points */
+	  int  *length)			/* O - Top position in points */
 {
-  pcl_cap_t caps;			/* Printer caps */
-
-  caps = pcl_get_model_capabilities(printer->model);
-
-  /*
-   * Note: The margins actually vary with paper size, but since you can
-   * move the image around on the page anyway, it hardly matters.
-   */
-
-  *left   = caps.left_margin;
-  *right  = caps.right_margin;
-  *top    = caps.top_margin;
-  *bottom = caps.bottom_margin;
+  pcl_cap_t caps= pcl_get_model_capabilities(printer->model);
+  *width =	caps.max_width;
+  *length =	caps.max_height;
 }
-
 
 /*
  * 'pcl_print()' - Print an image to an HP printer.

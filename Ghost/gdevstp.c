@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28.2.5 2000/08/05 02:23:46 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.6 2000/08/05 16:29:23 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -36,7 +36,6 @@
 
 /* internal debugging output ? */
 /* #define DRV_DEBUG */
-#undef DRV_DEBUG
 
 /* ------ The device descriptors ------ */
 
@@ -86,7 +85,7 @@ private privdata_t stp_data =
     "",				/* driver */
     "",				/* PPD file */
     OUTPUT_COLOR,		/* output_type */
-    "360 DPI",			/* resolution */
+    "",				/* resolution */
     "Letter",			/* Media size */
     "",				/* Media type */
     "",				/* Media source */
@@ -129,8 +128,8 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
 	  msg, stp_data->v.red, stp_data->v.green, stp_data->v.blue);
   fprintf(stderr, "Ink type %s\n", stp_data->v.ink_type);
 
-  fprintf(stderr,"Settings: model: %d  bright: %d  contrast: %d\n",
-	  stp_data->v.model, stp_data->v.brightness, stp_data->v.contrast);
+  fprintf(stderr,"Settings: bright: %d  contrast: %d\n",
+	  stp_data->v.brightness, stp_data->v.contrast);
 
   fprintf(stderr,"Settings: Gamma: %f  Saturation: %f  Density: %f\n",
 	  stp_data->v.gamma, stp_data->v.saturation, stp_data->v.density);
@@ -190,7 +189,7 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   }
 
   if (strlen(stp_data.v.resolution) == 0)
-    strcpy(stp_data.v.resolution, (*printer->default_resolution)());
+    strcpy(stp_data.v.resolution, (*printer->default_resolution)(printer));
   if (strlen(stp_data.v.dither_algorithm) == 0)
     strcpy(stp_data.v.dither_algorithm, default_dither_algorithm());
 
@@ -201,8 +200,6 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;
-  fprintf(stderr, "MediaSize[0] = %f, MediaSize[1] = %f\n",
-	  (double) pdev->MediaSize[0], (double) pdev->MediaSize[1]);
 
   stp_data.v.page_width = pdev->MediaSize[0];
   stp_data.v.page_height = pdev->MediaSize[1];
@@ -491,25 +488,25 @@ stp_open(gx_device *pdev)
   /* Change the margins if necessary. */
   float st[4];
   int left,right,bottom,top,width,length;
-  char none[5];
   const printer_t *printer = get_printer_by_driver(stp_data.v.driver);
   if (!printer)
     return (-1);
 
+  stp_data.v.page_width = pdev->MediaSize[0];
+  stp_data.v.page_height = pdev->MediaSize[1];
   stp_print_debug("stp_open", pdev, &stp_data);
-  strcpy(none,"");
 
   (*printer->media_size)(printer,
 			 &(stp_data.v),
 			 &width,
 			 &length);
 
-  (*printer->margins)(printer,	/* I - Printer model */
-		      &(stp_data.v),
-		      &left,	/* O - Left position in points */
-		      &right,	/* O - Right position in points */
-		      &bottom,	/* O - Bottom position in points */
-		      &top);	/* O - Top position in points */
+  (*printer->imageable_area)(printer,	/* I - Printer model */
+			     &(stp_data.v),
+			     &left,	/* O - Left position in points */
+			     &right,	/* O - Right position in points */
+			     &bottom,	/* O - Bottom position in points */
+			     &top);	/* O - Top position in points */
 
   st[1] = (float)bottom / 72;        /* bottom margin */
   st[3] = (float)(length-top) / 72;  /* top margin    */
@@ -535,9 +532,13 @@ stp_open(gx_device *pdev)
 void 
 Image_get_row(Image image, unsigned char *data, int row)
 {
+  int i;
+  memset(data, 0, stp_pdev->width * 3);
   if (stp_pdev->x_pixels_per_inch == stp_pdev->y_pixels_per_inch)
-    gdev_prn_copy_scan_lines(stp_pdev, stp_data.topoffset+row,
-			     data, stp_raster);
+    {
+      gdev_prn_copy_scan_lines(stp_pdev, stp_data.topoffset+row,
+			       data, stp_raster);
+    }
   else if (stp_pdev->x_pixels_per_inch > stp_pdev->y_pixels_per_inch)
     {
       /*
@@ -587,12 +588,12 @@ Image_height(Image image)
   tmp =   stp_data.v.top + stp_data.bottom; /* top margin + bottom margin */
 
   /* calculate height in 1/72 inches */
-  tmp2 = (float)stp_pdev->height / (float)stp_pdev->x_pixels_per_inch * 72.;
+  tmp2 = (float)stp_pdev->height / (float)stp_pdev->y_pixels_per_inch * 72.;
 
   tmp2 -= tmp;			/* subtract margins from sizes */
 
   /* calculate new image height */
-  tmp2 *= (float)stp_pdev->x_pixels_per_inch / 72.;
+  tmp2 *= (float)stp_pdev->y_pixels_per_inch / 72.;
 
 #ifdef DRV_DEBUG
   fprintf(stderr,"corrected page length %f\n",tmp2);

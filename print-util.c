@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.111.2.2 2000/08/05 02:23:46 rlk Exp $"
+ * "$Id: print-util.c,v 1.111.2.3 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1386,19 +1386,37 @@ verify_printer_params(const printer_t *p, const vars_t *v)
   int i;
   int answer = 1;
 
-  vptr = (*p->parameters)(p, NULL, "PageSize", &count);
-  if (count > 0)
+  if (strlen(v->media_size) > 0)
     {
+      vptr = (*p->parameters)(p, NULL, "PageSize", &count);
+      if (count > 0)
+	{
+	  for (i = 0; i < count; i++)
+	    if (!strcmp(v->media_size, vptr[i]))
+	      goto good_page_size;
+	  answer = 0;
+	  fprintf(stderr, "%s is not a valid page size\n", v->media_size);
+	}
+    good_page_size:
       for (i = 0; i < count; i++)
-	if (!strcmp(v->media_size, vptr[i]))
-	  goto good_page_size;
-      answer = 0;
-      fprintf(stderr, "%s is not a valid page size\n", v->media_size);
+	free(vptr[i]);
+      free(vptr);
     }
- good_page_size:
-  for (i = 0; i < count; i++)
-    free(vptr[i]);
-  free(vptr);
+  else
+    {
+      int height, width;
+      (*p->limit)(p, v, &width, &height);
+#if 0
+      fprintf(stderr, "limit %d %d dims %d %d\n", width, height,
+	      v->page_width, v->page_height);
+#endif
+      if (v->page_height <= 0 || v->page_height > height ||
+	  v->page_width <= 0 || v->page_width > width)
+	{
+	  answer = 0;
+	  fprintf(stderr, "Image size is not valid\n");
+	}
+    }
 
   if (strlen(v->media_type) > 0)
     {

@@ -1,4 +1,4 @@
-Type of program:
+TYPE OF PROGRAM:
 ----------------
 
  Epson Stylus Color/Photo color printer driver for
@@ -6,7 +6,7 @@ Type of program:
  CMYKcm 6 color HQ prints.
 
 
-Author:
+AUTHOR:
 -------
 
  This Ghostscript frontend is written by
@@ -19,7 +19,7 @@ Author:
  (http://gimp-print.sourceforge.net).
 
 
-License:
+LICENSE:
 --------
 
   This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@ License:
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
-Installation and Compilation:
+INSTALLATION AND COMPILATION:
 -----------------------------
 
  - If you downloaded a CVS snapshot of this software, this directory
@@ -124,7 +124,7 @@ _not_ an official package.
 
 
 
-Options:
+OPTIONS:
 --------
 
  Options for the stp driver are given in normal ghostscript
@@ -469,7 +469,7 @@ accurate, but should not be used if there are any tones other than
 pure black and white.
 
 
-Examples:
+EXAMPLES:
 ---------
 
 Example 1 (print charts to file, color, 360 dpi):
@@ -486,7 +486,7 @@ gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -sModel=escp2-660 -dDensity=0.8 -r720 \
    -sQuality='720 DPI Softweave' -dImageType=3 -sOutputFile=- foo.ps
 
 
-PDQ and CUPS
+PDQ AND CUPS
 ------------
 
 The PDQ driver declaration in file gs-stp.pdq can be used with PDQ
@@ -498,18 +498,18 @@ Printer->Add Printer.
 The PPD file com-stp.ppd can be used with CUPS.
 
 For more information, see the Printing HOWTO
-http://www.picante.com/~gtaylor/pht/
+http://www.linuxprinting.org/~gtaylor/howto/
 
 A new, experimental printer configuration method may be found at the
 following locations, depending upon the printing method that you
 currently use:
 
-LPD: http://www.picante.com/~gtaylor/pht/lpd-doc.html
-PDQ: http://www.picante.com/~gtaylor/pht/pdq-doc.html
-CUPS: http://www.picante.com/~gtaylor/pht/cups-doc.html
+LPD: http://www.linuxprinting.org/lpd-doc.html
+PDQ: http://www.linuxprinting.org/pdq-doc.html
+CUPS: http://www.linuxprinting.org/cups-doc.html
 
 
-Bugs and Limitations:
+BUGS AND LIMITATIONS:
 ---------------------
 
 - This driver is relatively slow, and memory-hungry with large paper

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.36.2.3 2000/08/05 02:23:46 rlk Exp $"
+ * "$Id: print-ps.c,v 1.36.2.4 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -38,6 +38,7 @@
 #include "print.h"
 #include <time.h>
 #include <string.h>
+#include <limits.h>
 
 /*#define DEBUG*/
 
@@ -56,7 +57,7 @@ static char	*ps_ppd_file = NULL;
 
 static void	ps_hex(FILE *, unsigned short *, int);
 static void	ps_ascii85(FILE *, unsigned short *, int, int);
-static char	*ppd_find(char *, char *, char *, int *);
+static char	*ppd_find(const char *, const char *, const char *, int *);
 
 
 /*
@@ -222,35 +223,17 @@ ps_imageable_area(const printer_t *printer,	/* I - Printer model */
 }
 
 void
-ps_margins(const printer_t *printer,	/* I - Printer model */
-		  const vars_t *v,      /* I */
-                  int  *left,		/* O - Left position in points */
-                  int  *right,		/* O - Right position in points */
-                  int  *bottom,		/* O - Bottom position in points */
-                  int  *top)		/* O - Top position in points */
+ps_limit(const printer_t *printer,	/* I - Printer model */
+	    const vars_t *v,  		/* I */
+	    int  *width,		/* O - Left position in points */
+	    int  *length)		/* O - Top position in points */
 {
-  char	*area;				/* Imageable area of media */
-  float	fleft,				/* Floating point versions */
-	fright,
-	fbottom,
-	ftop;
-
-  if ((area = ppd_find(v->ppd_file, "ImageableArea", v->media_size, NULL))
-      != NULL)
-  {
-    *left = *right = *bottom = *top = 0;
-  }
-  else
-  {
-    *left   = 18;
-    *right  = 18;
-    *top    = 36;
-    *bottom = 36;
-  }
+  *width =	INT_MAX;
+    *length =	INT_MAX;
 }
 
 const char *
-ps_default_resolution(void)
+ps_default_resolution(const printer_t *printer)
 {
   return "default";
 }
@@ -675,9 +658,9 @@ ps_ascii85(FILE   *prn,		/* I - File to print to */
  */
 
 static char *			/* O - Control string */
-ppd_find(char *ppd_file,	/* I - Name of PPD file */
-         char *name,		/* I - Name of parameter */
-         char *option,		/* I - Value of parameter */
+ppd_find(const char *ppd_file,	/* I - Name of PPD file */
+         const char *name,		/* I - Name of parameter */
+         const char *option,		/* I - Value of parameter */
          int  *order)		/* O - Order of the control string */
 {
   char		line[1024],	/* Line from file */

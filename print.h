@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.71.2.3 2000/08/05 02:23:46 rlk Exp $"
+ * "$Id: print.h,v 1.71.2.4 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -187,12 +187,12 @@ typedef struct printer
 		      int *width, int *length);
   void	(*imageable_area)(const struct printer *printer, const vars_t *v,
                           int *left, int *right, int *bottom, int *top);
-  void	(*margins)(const struct printer *printer, const vars_t *v,
-		   int *left, int *right, int *bottom, int *top);
+  void	(*limit)(const struct printer *printer, const vars_t *v,
+		 int *width, int *length);
   /* Print function */
   void	(*print)(const struct printer *printer, int copies, FILE *prn,
 		 Image image, const vars_t *v);
-  const char *(*default_resolution)(void);
+  const char *(*default_resolution)(const struct printer *printer);
   vars_t printvars;
 } printer_t;
 
@@ -323,12 +323,11 @@ extern char	**escp2_parameters(const printer_t *printer, char *ppd_file,
 extern void	escp2_imageable_area(const printer_t *printer, const vars_t *v,
 				     int *left, int *right,
 				     int *bottom, int *top);
-extern void	escp2_margins(const printer_t *printer, const vars_t *v,
-			      int *left, int *right,
-			      int *bottom, int *top);
+extern void	escp2_limit(const printer_t *printer, const vars_t *v,
+			    int *width, int *length);
 extern void	escp2_print(const printer_t *printer, int copies, FILE *prn,
 			    Image image, const vars_t *v);
-extern const char *escp2_default_resolution(void);
+extern const char *escp2_default_resolution(const printer_t *printer);
 
 
 extern char	**canon_parameters(const printer_t *printer, char *ppd_file,
@@ -336,12 +335,11 @@ extern char	**canon_parameters(const printer_t *printer, char *ppd_file,
 extern void	canon_imageable_area(const printer_t *printer, const vars_t *v,
 				     int *left, int *right,
 				     int *bottom, int *top);
-extern void	canon_margins(const printer_t *printer, const vars_t *v,
-			      int *left, int *right,
-			      int *bottom, int *top);
+extern void	canon_limit(const printer_t *printer, const vars_t *v,
+			    int *width, int *length);
 extern void	canon_print(const printer_t *printer, int copies, FILE *prn,
 			    Image image, const vars_t *v);
-extern const char *canon_default_resolution(void);
+extern const char *canon_default_resolution(const printer_t *printer);
 
 
 extern char	**pcl_parameters(const printer_t *printer, char *ppd_file,
@@ -349,12 +347,11 @@ extern char	**pcl_parameters(const printer_t *printer, char *ppd_file,
 extern void	pcl_imageable_area(const printer_t *printer, const vars_t *v,
 		                   int *left, int *right,
 				   int *bottom, int *top);
-extern void	pcl_margins(const printer_t *printer, const vars_t *v,
-			    int *left, int *right,
-			    int *bottom, int *top);
+extern void	pcl_limit(const printer_t *printer, const vars_t *v,
+			  int *width, int *length);
 extern void	pcl_print(const printer_t *printer, int copies, FILE *prn,
 			  Image image, const vars_t *v);
-extern const char *pcl_default_resolution(void);
+extern const char *pcl_default_resolution(const printer_t *printer);
 
 
 extern char	**ps_parameters(const printer_t *printer, char *ppd_file,
@@ -364,12 +361,11 @@ extern void	ps_media_size(const printer_t *printer, const vars_t *v,
 extern void	ps_imageable_area(const printer_t *printer, const vars_t *v,
 				  int *left, int *right,
 		                  int *bottom, int *top);
-extern void	ps_margins(const printer_t *printer, const vars_t *v,
-			   int *left, int *right,
-			   int *bottom, int *top);
+extern void	ps_limit(const printer_t *printer, const vars_t *v,
+			 int *width, int *length);
 extern void	ps_print(const printer_t *printer, int copies, FILE *prn,
 			 Image image, const vars_t *v);
-extern const char *ps_default_resolution(void);
+extern const char *ps_default_resolution(const printer_t *printer);
 
 extern const char *default_dither_algorithm(void);
 
@@ -401,5 +397,5 @@ verify_printer_params(const printer_t *, const vars_t *);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.71.2.3 2000/08/05 02:23:46 rlk Exp $".
+ * End of "$Id: print.h,v 1.71.2.4 2000/08/05 16:29:23 rlk Exp $".
  */

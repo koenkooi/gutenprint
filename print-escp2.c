@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.198.2.4 2000/08/05 02:23:45 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.198.2.5 2000/08/05 16:29:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -471,7 +471,7 @@ typedef struct escp_init
 static simple_dither_range_t variable_dither_ranges[] =
 {
   { 0.15,  0x1, 0, 1 },
-  { 0.227, 0x2, 0, 2 },
+/*  { 0.227, 0x2, 0, 2 }, */
 /*  { 0.333, 0x3, 0, 3 }, */
   { 0.45,  0x1, 1, 1 },
   { 0.68,  0x2, 1, 2 },
@@ -570,7 +570,7 @@ get_media_type(const char *name)
 }
 
 const char *
-escp2_default_resolution(void)
+escp2_default_resolution(const printer_t *printer)
 {
   return escp2_reslist[0].name;
 }
@@ -805,17 +805,13 @@ escp2_imageable_area(const printer_t *printer,	/* I - Printer model */
 }
 
 void
-escp2_margins(const printer_t *printer,	/* I - Printer model */
-	      const vars_t *v,  	/* I */
-	      int  *left,		/* O - Left position in points */
-	      int  *right,		/* O - Right position in points */
-	      int  *bottom,		/* O - Bottom position in points */
-	      int  *top)		/* O - Top position in points */
+escp2_limit(const printer_t *printer,	/* I - Printer model */
+	    const vars_t *v,  		/* I */
+	    int  *width,		/* O - Left position in points */
+	    int  *length)		/* O - Top position in points */
 {
-  *left =	escp2_left_margin(printer->model);
-  *right =	escp2_right_margin(printer->model);
-  *top =	escp2_top_margin(printer->model);
-  *bottom =	escp2_bottom_margin(printer->model);
+  *width =	escp2_max_paper_width(printer->model);
+  *length =	escp2_max_paper_height(printer->model);
 }
 
 static void
@@ -1397,6 +1393,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 
   for (y = 0; y < out_height; y ++)
   {
+    int i, j;
     if ((y & 255) == 0)
       Image_note_progress(image, y, out_height);
 
@@ -3046,7 +3043,9 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
 	{
 	  /* FIXME need a more general way of specifying column */
 	  /* separation */
-	  if (escp2_has_cap(model, MODEL_COMMAND_MASK, MODEL_COMMAND_1999))
+	  if (escp2_has_cap(model, MODEL_COMMAND_MASK, MODEL_COMMAND_1999) &&
+	      !(escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK,
+			      MODEL_VARIABLE_NORMAL)))
 	    {
 	      int pos = ((hoffset * xdpi / 720) + microoffset);
 	      if (pos > 0)
