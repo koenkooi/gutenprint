@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.198 2000/08/02 00:59:36 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.199 2000/08/05 13:13:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2994,7 +2994,9 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
 	{
 	  /* FIXME need a more general way of specifying column */
 	  /* separation */
-	  if (escp2_has_cap(model, MODEL_COMMAND_MASK, MODEL_COMMAND_1999))
+	  if (escp2_has_cap(model, MODEL_COMMAND_MASK, MODEL_COMMAND_1999) &&
+	      !(escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK,
+			      MODEL_VARIABLE_NORMAL)))
 	    {
 	      int pos = ((hoffset * xdpi / 720) + microoffset);
 	      if (pos > 0)
