@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.122 2003/08/31 05:01:52 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.123 2003/08/31 05:34:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -249,7 +249,7 @@ static const escp2_densities_t spro10000_densities =
 { 2.6, 1.3,  0.65, 0.431, 0.216, 0.392, 0.196, 0.098 };
 
 static const escp2_densities_t c3pl_pigment_densities =
-{ 2.6, 1.3,  0.69, 0.715, 0.441, 0.441, 0.441, 0.221 };
+{ 3.2, 1.6,  0.84, 0.865, 0.534, 0.534, 0.534, 0.267 };
 
 static const escp2_densities_t c2pl_densities =
 { 2.0, 1.0,  0.5,  0.650, 0.650, 0.650, 0.650, 0.325 };
