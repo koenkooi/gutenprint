@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.36 2004/04/10 03:37:49 rlk Exp $"
+ * "$Id: printer_options.c,v 1.37 2004/04/13 23:13:18 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -81,7 +81,8 @@ main(int argc, char **argv)
 	  stp_describe_parameter(pv, p->name, &desc);
 	  if (desc.is_active)
 	    {
-	      if (desc.p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	      if ((desc.p_type == STP_PARAMETER_TYPE_DOUBLE ||
+		   desc.p_type == STP_PARAMETER_TYPE_INT) &&
 		  !desc.is_mandatory)
 		{
 		  /*
