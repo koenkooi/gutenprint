@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.7 2003/04/15 02:24:52 rlk Exp $"
+ * "$Id: color.h,v 1.8 2003/05/10 14:50:16 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -35,10 +35,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
 #endif
 
 /*

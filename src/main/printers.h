@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.10 2003/04/15 02:24:58 rlk Exp $"
+ * "$Id: printers.h,v 1.11 2003/05/10 14:50:16 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -36,14 +36,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-
-#include "util.h"
-#include "vars.h"
 
 typedef struct
 {
@@ -88,5 +80,5 @@ stpi_printer_describe_parameter(stp_const_vars_t v, const char *name,
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.10 2003/04/15 02:24:58 rlk Exp $".
+ * End of "$Id: printers.h,v 1.11 2003/05/10 14:50:16 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.50 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: printers.c,v 1.51 2003/05/10 14:50:16 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,7 +38,6 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
-#include "printers.h"
 #include "xml.h"
 #include "module.h"
 

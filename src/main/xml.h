@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.h,v 1.5 2003/04/13 03:50:28 rlk Exp $"
+ * "$Id: xml.h,v 1.6 2003/05/10 14:50:16 rlk Exp $"
  *
  *   libgimpprint module loader header
  *
@@ -41,7 +41,6 @@ extern "C" {
 #else
 #include <stdarg.h>
 #endif
-#include "util.h"
 
 typedef int (*stpi_xml_parse_func)(xmlNodePtr node, const char *file);
 
@@ -77,5 +76,5 @@ extern stp_array_t stpi_array_create_from_xmltree(xmlNodePtr array);
 
 #endif /* GIMP_PRINT_INTERNAL_XML_H */
 /*
- * End of "$Id: xml.h,v 1.5 2003/04/13 03:50:28 rlk Exp $".
+ * End of "$Id: xml.h,v 1.6 2003/05/10 14:50:16 rlk Exp $".
  */

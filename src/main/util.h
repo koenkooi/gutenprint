@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.23 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: util.h,v 1.24 2003/05/10 14:50:16 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -35,10 +35,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
 #endif
 
 #ifndef __GNUC__
@@ -282,5 +278,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.23 2003/05/05 00:36:04 rlk Exp $".
+ * End of "$Id: util.h,v 1.24 2003/05/10 14:50:16 rlk Exp $".
  */
