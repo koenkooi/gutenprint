@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.11 2000/05/17 02:10:48 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.11.2.1 2000/06/18 02:33:16 jmv Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -165,7 +165,7 @@ main(int argc, char **argv)
   for (i = 0; i < nrows; i++)
     {
       if (i == footer(sw))
-	{	
+	{
 	  for (j = 0; j < vmod; j++)
 	    current_slot[j] = -1;
 	  set_last_pass(sw, newestpass);

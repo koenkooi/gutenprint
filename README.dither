@@ -382,9 +382,10 @@ accessible via a number of functions that can be called after
 init_dither().
 
 
-dither_set_density() takes a double between 0 and 1 representing the
-   desired ink density for printing solid colors.  This is used in a
-   number of places in the dithering routine to make decisions.
+dither_set_density() takes an int for oversampling and a double between
+   0 and 1 representing the desired ink density for printing solid colors.
+   This is used in a number of places in the dithering routine to make
+   decisions.
 
 dither_set_ink_budget() takes an unsigned number representing the most
    ink that may be deposited at a given point.  This number is

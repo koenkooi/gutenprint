@@ -1,8 +1,9 @@
-#define RASTER 0
-unsigned char *rasterp, RASTERP[16];
 #define VERBOSE
+/* RASTER, RASTERP and rasterp are for my own testing only (jmv) */
+#define RASTER 0
+unsigned char RASTERP[16], *rasterp;
 /*
- * "$Id: print-dither.c,v 1.53.2.4 2000/06/17 13:13:27 jmv Exp $"
+ * "$Id: print-dither.c,v 1.53.2.5 2000/06/18 02:33:16 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,12 +32,14 @@ unsigned char *rasterp, RASTERP[16];
 
 /* #define PRINT_DEBUG */
 
+
 #ifdef ESCP2_GHOST
 #include "gdevstp-print.h"
 #else
 #include "print.h"
 #endif
 #include <limits.h>
+#include <math.h>
 
 #define D_FLOYD_HYBRID 0
 #define D_FLOYD 1
@@ -100,7 +103,8 @@ typedef struct dither_matrix
 {
   int base;
   int exp;
-  int size;
+  int x_size;
+  int y_size;
   int last_x;
   int last_x_mod;
   int last_y;
@@ -178,6 +182,7 @@ typedef struct dither
   dither_matrix_t mat5;
 #endif
   dither_matrix_t mat6;
+  dither_matrix_t mat7;
 
   dither_matrix_t c_pick;
   dither_matrix_t c_dithermat;
@@ -225,10 +230,10 @@ static int msq0[] =
   22, 18,  5,  4, 11,
   9,   1, 12, 23, 15,
   13, 20, 19,  6,  2,
-  16,  7,  3, 10, 24 
+  16,  7,  3, 10, 24
 };
 
-static int msq1[] = 
+static int msq1[] =
 {
   03, 11, 20, 17,  9,
   22, 19,  8,  1, 10,
@@ -274,47 +279,76 @@ calc_ordered_point(unsigned x, unsigned y, int steps, int multiplier,
 }
 
 void
-init_matrix(dither_matrix_t *mat, int size, int exp, unsigned *array)
+init_iterated_matrix(dither_matrix_t *mat, int size, int exp,
+		     unsigned *array)
 {
   int i;
   int x, y;
   mat->base = size;
   mat->exp = exp;
-  mat->size = 1;
+  mat->x_size = 1;
   for (i = 0; i < exp; i++)
-    mat->size *= mat->base;
-  mat->matrix = malloc(sizeof(unsigned) * mat->size * mat->size);
-  for (x = 0; x < mat->size; x++)
-    for (y = 0; y < mat->size; y++)
+    mat->x_size *= mat->base;
+  mat->y_size = mat->x_size;
+  mat->matrix = malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  for (x = 0; x < mat->x_size; x++)
+    for (y = 0; y < mat->y_size; y++)
       {
-	mat->matrix[x + y * mat->size] =
+	mat->matrix[x + y * mat->x_size] =
 	  calc_ordered_point(x, y, mat->exp, 1, mat->base, array);
-	mat->matrix[x + y * mat->size] =
-	  (long long) mat->matrix[x + y * mat->size] * 65536ll /
-	  (long long) (mat->size * mat->size);
+	mat->matrix[x + y * mat->x_size] =
+	  (long long) mat->matrix[x + y * mat->x_size] * 65536ll /
+	  (long long) (mat->x_size * mat->y_size);
       }
   mat->last_x = mat->last_x_mod = 0;
   mat->last_y = mat->last_y_mod = 0;
   mat->index = 0;
   mat->i_own = 1;
 }
-	
+
 void
-init_matrix_short(dither_matrix_t *mat, int size, unsigned short *array)
+init_matrix(dither_matrix_t *mat, int x_size, int y_size,
+	    unsigned int *array)
 {
   int x, y;
-  mat->base = size;
+  mat->base = x_size;
   mat->exp = 1;
-  mat->size = size;
-  mat->matrix = malloc(sizeof(unsigned) * mat->size * mat->size);
-  for (x = 0; x < mat->size; x++)
-    for (y = 0; y < mat->size; y++)
+  mat->x_size = x_size;
+  mat->y_size = y_size;
+  mat->matrix = malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  for (x = 0; x < mat->x_size; x++)
+    for (y = 0; y < mat->y_size; y++)
       {
-	mat->matrix[x + y * mat->size] =
-	  array[x + y * mat->size];
-	mat->matrix[x + y * mat->size] =
-	  (long long) mat->matrix[x + y * mat->size] * 65536ll /
-	  (long long) (mat->size * mat->size);
+	mat->matrix[x + y * mat->x_size] =
+	  array[x + y * mat->x_size];
+	mat->matrix[x + y * mat->x_size] =
+	  (long long) mat->matrix[x + y * mat->x_size] * 65536ll /
+	  (long long) (mat->x_size * mat->y_size);
+      }
+  mat->last_x = mat->last_x_mod = 0;
+  mat->last_y = mat->last_y_mod = 0;
+  mat->index = 0;
+  mat->i_own = 1;
+}
+
+void
+init_matrix_short(dither_matrix_t *mat, int x_size, int y_size,
+		  unsigned short *array)
+{
+  int x, y;
+  mat->base = x_size;
+  mat->exp = 1;
+  mat->x_size = x_size;
+  mat->y_size = y_size;
+  mat->matrix = malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  for (x = 0; x < mat->x_size; x++)
+    for (y = 0; y < mat->y_size; y++)
+      {
+	mat->matrix[x + y * mat->x_size] =
+	  array[x + y * mat->x_size];
+	mat->matrix[x + y * mat->x_size] =
+	  (long long) mat->matrix[x + y * mat->x_size] * 65536ll /
+	  (long long) (mat->x_size * mat->y_size);
       }
   mat->last_x = mat->last_x_mod = 0;
   mat->last_y = mat->last_y_mod = 0;
@@ -330,7 +364,8 @@ destroy_matrix(dither_matrix_t *mat)
   mat->matrix = NULL;
   mat->base = 0;
   mat->exp = 0;
-  mat->size = 0;
+  mat->x_size = 0;
+  mat->y_size = 0;
   mat->i_own = 0;
 }
 
@@ -340,15 +375,16 @@ clone_matrix(const dither_matrix_t *src, dither_matrix_t *dest,
 {
   dest->base = src->base;
   dest->exp = src->exp;
-  dest->size = src->size;
+  dest->x_size = src->x_size;
+  dest->y_size = src->y_size;
   dest->matrix = src->matrix;
   dest->x_offset = x_offset;
   dest->y_offset = y_offset;
   dest->last_x = 0;
-  dest->last_x_mod = dest->x_offset % dest->size;
+  dest->last_x_mod = dest->x_offset % dest->x_size;
   dest->last_y = 0;
-  dest->last_y_mod = dest->y_offset % dest->size;
-  dest->index = dest->last_x_mod + dest->size * dest->last_y_mod;
+  dest->last_y_mod = dest->y_offset % dest->y_size;
+  dest->index = dest->last_x_mod + dest->x_size * dest->last_y_mod;
   dest->i_own = 0;
 }
 
@@ -370,10 +406,10 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x, int y)
       mat->last_x = x;
       mat->last_x_mod++;
       mat->index++;
-      if (mat->last_x_mod >= mat->size)
+      if (mat->last_x_mod >= mat->x_size)
 	{
-	  mat->last_x_mod -= mat->size;
-	  mat->index -= mat->size;
+	  mat->last_x_mod -= mat->x_size;
+	  mat->index -= mat->x_size;
 	}
     }
   else if (x == mat->last_x - 1)
@@ -383,14 +419,14 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x, int y)
       mat->index--;
       if (mat->last_x_mod < 0)
 	{
-	  mat->last_x_mod += mat->size;
-	  mat->index += mat->size;
+	  mat->last_x_mod += mat->x_size;
+	  mat->index += mat->x_size;
 	}
     }
   else
     {
       mat->last_x = x;
-      mat->last_x_mod = (x + mat->x_offset) % mat->size;
+      mat->last_x_mod = (x + mat->x_offset) % mat->x_size;
       recompute = 1;
     }
   if (y == mat->last_y)
@@ -400,32 +436,32 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x, int y)
     {
       mat->last_y = y;
       mat->last_y_mod++;
-      mat->index += mat->size;
-      if (mat->last_y_mod >= mat->size)
+      mat->index += mat->x_size;
+      if (mat->last_y_mod >= mat->y_size)
 	{
-	  mat->last_y_mod -= mat->size;
-	  mat->index -= (mat->size * mat->size);
+	  mat->last_y_mod -= mat->y_size;
+	  mat->index -= (mat->x_size * mat->y_size);
 	}
     }
   else if (y == mat->last_y - 1)
     {
       mat->last_y = y;
       mat->last_y_mod--;
-      mat->index -= mat->size;;
+      mat->index -= mat->x_size;
       if (mat->last_y_mod < 0)
 	{
-	  mat->last_y_mod += mat->size;
-	  mat->index += (mat->size * mat->size);
+	  mat->last_y_mod += mat->y_size;
+	  mat->index += (mat->x_size * mat->y_size);
 	}
     }
   else
     {
       mat->last_y = y;
-      mat->last_y_mod = (y + mat->y_offset) % mat->size;
+      mat->last_y_mod = (y + mat->y_offset) % mat->y_size;
       recompute = 1;
     }
   if (recompute)
-    mat->index = mat->last_x_mod + mat->size * mat->last_y_mod;
+    mat->index = mat->last_x_mod + mat->x_size * mat->last_y_mod;
   return mat->matrix[mat->index];
 }
 
@@ -433,6 +469,7 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x, int y)
 void *
 init_dither(int in_width, int out_width, vars_t *v)
 {
+  int i;
   dither_t *d = malloc(sizeof(dither_t));
   simple_dither_range_t r;
   memset(d, 0, sizeof(dither_t));
@@ -448,24 +485,31 @@ init_dither(int in_width, int out_width, vars_t *v)
   d->offset1_table = NULL;
 
 #if 0
-  init_matrix(&(d->mat0), 2, 5, sq2);
-  init_matrix(&(d->mat1), 3, 4, sq3);
-  init_matrix(&(d->mat2), 5, 3, msq0);
-  init_matrix(&(d->mat3), 5, 3, msq1);
-  init_matrix_short(&(d->mat4), 199, quic0);
-  init_matrix_short(&(d->mat5), 199, quic1);
+  init_iterated_matrix(&(d->mat0), 2, 5, sq2);
+  init_iterated_matrix(&(d->mat1), 3, 4, sq3);
+  init_iterated_matrix(&(d->mat2), 5, 3, msq0);
+  init_iterated_matrix(&(d->mat3), 5, 3, msq1);
+  init_matrix_short(&(d->mat4), 199, 199, quic0);
+  init_matrix_short(&(d->mat5), 199, 199, quic1);
 #endif
-  init_matrix(&(d->mat6), 257, 1, quic2);
+  init_matrix(&(d->mat6), 257, 257, quic2);
+  init_matrix(&(d->mat7), 257, 257, quic2);
+  for (i = 0; i < 257 * 257; i++)
+    {
+      double dd = d->mat7.matrix[i] / 65535.0;
+      dd = pow(dd, 0.6);
+      d->mat7.matrix[i] = 65535 * dd;
+    }
 
   clone_matrix(&(d->mat6), &(d->c_dithermat), 171, 85);
   clone_matrix(&(d->mat6), &(d->m_dithermat), 85, 171);
   clone_matrix(&(d->mat6), &(d->y_dithermat), 0, 85);
   clone_matrix(&(d->mat6), &(d->k_dithermat), 0, 0);
 
-  clone_matrix(&(d->mat6), &(d->c_pick), 85, 0);
-  clone_matrix(&(d->mat6), &(d->m_pick), 0, 171);
-  clone_matrix(&(d->mat6), &(d->y_pick), 171, 0);
-  clone_matrix(&(d->mat6), &(d->k_pick), 85, 171);
+  clone_matrix(&(d->mat7), &(d->c_pick), 85, 0);
+  clone_matrix(&(d->mat7), &(d->m_pick), 0, 171);
+  clone_matrix(&(d->mat7), &(d->y_pick), 171, 0);
+  clone_matrix(&(d->mat7), &(d->k_pick), 85, 171);
 
   if (!strcmp(v->dither_algorithm, "Hybrid Floyd-Steinberg"))
     d->dither_type = D_FLOYD_HYBRID;
@@ -494,7 +538,7 @@ init_dither(int in_width, int out_width, vars_t *v)
   dither_set_ink_darkness(d, .5, .25, .15);
   dither_set_density(d, 1, 1.0);
   return d;
-}  
+}
 
 void
 dither_set_aspect_ratio(void *vd, int horizontal, int vertical)
@@ -1028,6 +1072,7 @@ free_dither(void *vd)
   destroy_matrix(&(d->mat5));
 #endif
   destroy_matrix(&(d->mat6));
+  destroy_matrix(&(d->mat7));
   free(d);
 }
 
@@ -1056,7 +1101,8 @@ get_valueline(dither_t *d, int color)
     return d->vals[color];
   else
     {
-      d->vals[color] = malloc(d->dst_width * sizeof(unsigned short));
+      int size = (8 * ((d->dst_width + 7) / 8));
+      d->vals[color] = malloc(size * sizeof(unsigned short));
       return d->vals[color];
     }
 }
@@ -1072,7 +1118,7 @@ update_color(int color, int dither)
   if (dither >= 0)
     return color + (dither >> 3);
   else
-    return color + (dither / 8);
+    return color - ((-dither) >> 3);
 }
 
 static inline unsigned
@@ -1099,7 +1145,8 @@ update_dither(int r, int o, int width, int odb, int odb_mask,
       int dist1;
       int offset;
       int delta, delta1;
-      int myspread = 4;
+      int nextspread = 4;
+      int thisspread = 8 - nextspread;
       if (tmp > 65535)
 	tmp = 65535;
       if (odb >= 16 || o >= 2048)
@@ -1115,14 +1162,14 @@ update_dither(int r, int o, int width, int odb, int odb_mask,
 	}
       if (offset == 0)
 	{
-	  dist = myspread * tmp;
+	  dist = nextspread * tmp;
 	  error1[0] += dist;
-	  return error0[direction] + (8 - myspread) * tmp;
+	  return error0[direction] + thisspread * tmp;
 	}
       else
 	{
-	  dist = myspread * tmp / d->offset0_table[offset];
-	  dist1 = (8 - myspread) * tmp / d->offset1_table[offset];
+	  dist = nextspread * tmp / d->offset0_table[offset];
+	  dist1 = thisspread * tmp / d->offset1_table[offset];
 	  delta1 = dist1 * offset;
 	}
       delta = dist;
@@ -1292,7 +1339,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 	       */
 	    case D_ORDERED:
 	    default:
-	      vmatrix = ditherpoint(d, pick_matrix, x, y);
+	      vmatrix = ditherpoint(d, dither_matrix, x, y);
 	    }
 
 	  if (vmatrix == 65536 && virtual_value == 65536)
@@ -1373,7 +1420,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 			arangepoint = rangepoint;
 		else
 			arangepoint = adjusted * 65536 / dd->value_h;
-		if (arangepoint >= ditherpoint(d, dither_matrix, x, y))
+		if (arangepoint >= ditherpoint(d, pick_matrix, x, y))
 	    {
 	      isdark = dd->isdark_h;
 	      bits = dd->bits_h;
@@ -1608,28 +1655,35 @@ usmin(unsigned short a, unsigned short b)
 }
 
 static void
-generate_cmyk(dither_t *d,
-	      unsigned short *rgb,
-	      int *nonzero,
-	      int row)
+generate_cmy(dither_t *d,
+	     unsigned short *rgb,
+	     int *nonzero,
+	     int row)
 {
   int x, xerror, xstep, xmod;
+  int lnonzero = 0;
   unsigned short *c = get_valueline(d, ECOLOR_C);
   unsigned short *m = get_valueline(d, ECOLOR_M);
   unsigned short *y = get_valueline(d, ECOLOR_Y);
-  unsigned short *k = get_valueline(d, ECOLOR_K);
+  unsigned short cc, mm, yy;
   xstep  = 3 * (d->src_width / d->dst_width);
   xmod   = d->src_width % d->dst_width;
   xerror = 0;
-  *nonzero = 0;
+  memset(c, 0, d->dst_width * sizeof(unsigned short));
+  memset(m, 0, d->dst_width * sizeof(unsigned short));
+  memset(y, 0, d->dst_width * sizeof(unsigned short));
   for (x = 0; x < d->dst_width; x++)
     {
-      c[x] = 65535 - rgb[0];
-      m[x] = 65535 - rgb[1];
-      y[x] = 65535 - rgb[2];
-      k[x] = usmin(c[x], usmin(m[x], y[x]));
-      if (! *nonzero && (c[x] > 0 || m[x] > 0 || y[x] > 0))
-	*nonzero = 1;
+      cc = 65535 - rgb[0];
+      mm = 65535 - rgb[1];
+      yy = 65535 - rgb[2];
+      if (cc > 0 || mm > 0 || yy > 0)
+	{
+	  lnonzero = 1;
+	  c[x] = cc;
+	  m[x] = mm;
+	  y[x] = yy;
+	}
       rgb += xstep;
       xerror += xmod;
       if (xerror >= d->dst_width)
@@ -1638,7 +1692,8 @@ generate_cmyk(dither_t *d,
 	  rgb += 3;
 	}
     }
-}	     
+  *nonzero = lnonzero;
+}
 
 static inline void
 update_cmy(const dither_t *d, int c, int m, int y, int k,
@@ -1672,7 +1727,7 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
 
   ub = d->k_upper;    /* Upper bound */
   lb = d->k_lower;    /* Lower bound */
-	  
+ 
   /*
    * Calculate total ink amount.
    * If there is a lot of ink, black gets added sooner. Saves ink
@@ -1767,23 +1822,35 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
   unsigned short *cline = get_valueline(d, ECOLOR_C);
   unsigned short *mline = get_valueline(d, ECOLOR_M);
   unsigned short *yline = get_valueline(d, ECOLOR_Y);
-  unsigned short *kline = get_valueline(d, ECOLOR_K);
   int nonzero;
 
   int		terminate;
   int		direction = row & 1 ? 1 : -1;
   int		odb = d->spread;
   int		odb_mask = (1 << odb) - 1;
-  int		first_color = row % 3;
+  int		first_color;
   int		ink_budget = 0;
   int		PRINTED;
 
+  length = (d->dst_width + 7) / 8;
+  generate_cmy(d, rgb, &nonzero, row);
+
+  memset(cyan, 0, length * d->c_dither.signif_bits);
+  if (lcyan)
+    memset(lcyan, 0, length * d->c_dither.signif_bits);
+  memset(magenta, 0, length * d->m_dither.signif_bits);
+  if (lmagenta)
+    memset(lmagenta, 0, length * d->m_dither.signif_bits);
+  memset(yellow, 0, length * d->y_dither.signif_bits);
+  if (lyellow)
+    memset(lyellow, 0, length * d->y_dither.signif_bits);
+  if (black)
+    memset(black, 0, length * d->k_dither.signif_bits);
   /*
    * First, generate the CMYK separation.  If there's nothing in
    * this row, and we're using an ordered dither, there's no reason
    * to do anything at all.
    */
-  generate_cmyk(d, rgb, &nonzero, row);
   if (!nonzero && (d->dither_type & D_ORDERED_BASE))
     return;
 
@@ -1797,8 +1864,6 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
   terminate = (direction == 1) ? d->dst_width : -1;
-
-  length = (d->dst_width + 7) / 8;
 
   if (! (d->dither_type & D_ORDERED_BASE))
     {
@@ -1849,20 +1914,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 	lyptr = lyellow + length - 1;
       if (kptr)
 	kptr = black + length - 1;
-      first_color = (first_color + d->dst_width - 1) % 3;
     }
-
-  memset(cyan, 0, length * d->c_dither.signif_bits);
-  if (lcyan)
-    memset(lcyan, 0, length * d->c_dither.signif_bits);
-  memset(magenta, 0, length * d->m_dither.signif_bits);
-  if (lmagenta)
-    memset(lmagenta, 0, length * d->m_dither.signif_bits);
-  memset(yellow, 0, length * d->y_dither.signif_bits);
-  if (lyellow)
-    memset(lyellow, 0, length * d->y_dither.signif_bits);
-  if (black)
-    memset(black, 0, length * d->k_dither.signif_bits);
 
   if (! (d->dither_type & D_ORDERED_BASE))
     {
@@ -1889,34 +1941,47 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       c = cline[x];
       m = mline[x];
       y = yline[x];
-      k = kline[x];
+      oc = c;
+      om = m;
+      oy = y;
+
 if(RASTER) rasterp=RASTERP;
       /*
        * If we're doing ordered dither, and there's no ink, we aren't
        * going to print anything.
        */
-      if (c == 0 && m == 0 && y == 0 && (d->dither_type & D_ORDERED_BASE))
-	goto advance;
+      if (c == 0 && m == 0 && y == 0)
+	{
+	  if (d->dither_type & D_ORDERED_BASE)
+	    goto advance;
+	  else
+	    {
+	      c = update_color(c, ditherc);
+	      m = update_color(m, ditherm);
+	      y = update_color(y, dithery);
+	      goto out;
+	    }
+	}
+
+      k = usmin(c, usmin(m, y));
 
       /*
        * At this point we've computed the basic CMYK separations.
        * Now we adjust the levels of each to improve the print quality.
        */
 
-      oc = c;
-      om = m;
-      oy = y;
-	  bk = 0;
-	  if(k > 0 && !black)
+      if (k > 0 && !black)
 	    update_cmy(d, oc, om, oy, k, &c, &m, &y);
 
       /*
+       * NOTE: update_cmyk has been moved below but the following
+       * holds true, just a few lines later (jmv).
        * We've done all of the cmyk separations at this point.
        * Now to do the dithering.
        *
        * At this point:
        *
-       * bk = Amount of black printed with black ink
+       * bk = Amount of black to print with black ink
        * ak = Adjusted "raw" K value
        * k = raw K value derived from CMY
        * oc, om, oy = raw CMY values assuming no K component
@@ -1941,6 +2006,10 @@ if(RASTER) rasterp=RASTERP;
 	  y = update_color(y, dithery);
 	}
 
+      ocd = oc * d->c_darkness;
+      omd = om * d->m_darkness;
+      oyd = oy * d->y_darkness;
+
       if (black)
 	{
 		int tk;
@@ -1964,52 +2033,7 @@ if(RASTER) rasterp=RASTERP;
 	  }
 	}
 
-#if 0
-      ocd = oc * d->c_darkness;
-      omd = om * d->m_darkness;
-      oyd = oy * d->y_darkness;
-
-      /*
-       * Uh oh spaghetti-o!
-       *
-       * It has been determined experimentally that inlining print_color
-       * saves a substantial amount of time.  However, expanding this out
-       * as a switch drastically increases the code volume by about 10 KB.
-       * The solution for now (until we do this properly, via an array)
-       * is to use this ugly code.
-       */
-
-      if (first_color == ECOLOR_M)
-	goto ecm;
-      else if (first_color == ECOLOR_Y)
-	goto ecy;
-    ecc:
-      c = print_color(d, &(d->c_dither), oc, oc /* + ((omd + oyd) >> 7) */,
-		      c, x, row, cptr, lcptr, bit, length,
-		      d->c_randomizer, printed_black, &ink_budget,
-		      &(d->c_pick), &(d->c_dithermat), d->dither_type);
-      if (first_color == ECOLOR_M)
-	goto out;
-    ecm:
-      m = print_color(d, &(d->m_dither), om, om /* + ((ocd + oyd) >> 7) */,
-		      m, x, row, mptr, lmptr, bit, length,
-		      d->m_randomizer, printed_black, &ink_budget,
-		      &(d->m_pick), &(d->m_dithermat), d->dither_type);
-      if (first_color == ECOLOR_Y)
-	goto out;
-    ecy:
-      y = print_color(d, &(d->y_dither), oy, oy /* + ((ocd + omd) >> 7) */,
-		      y, x, row, yptr, lyptr, bit, length,
-		      d->y_randomizer, printed_black, &ink_budget,
-		      &(d->y_pick), &(d->y_dithermat), d->dither_type);
-      if (first_color != ECOLOR_C)
-	goto ecc;
-    out:
-#endif
-	  
-	  ocd  = oc * d->c_darkness;
-	  ocd += om * d->m_darkness;
-	  ocd += oy * d->y_darkness;
+	  ocd  = ocd + omd + oyd;
 	  omd = ocd/d->m_darkness;
 	  oyd = ocd/d->y_darkness;
 	  ocd = ocd/d->c_darkness;
@@ -2078,6 +2102,7 @@ PRINT_ECM:
 				}
 				break;
 	  }
+	out:
 
       if (!(d->dither_type & D_ORDERED_BASE))
 	{
@@ -2113,9 +2138,6 @@ PRINT_ECM:
 	    }
 	  else
 	    bit >>= 1;
-	  first_color++;
-	  if (first_color >= 3)
-	    first_color = 0;
 	}
       else
 	{
@@ -2136,9 +2158,6 @@ PRINT_ECM:
 	    }
 	  else
 	    bit <<= 1;
-	  first_color--;
-	  if (first_color <= 0)
-	    first_color = 2;
 	}
       if (!(d->dither_type & D_ORDERED_BASE))
 	{

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.92.2.1 2000/06/17 00:49:59 jmv Exp $"
+ * "$Id: print-util.c,v 1.92.2.2 2000/06/18 02:33:17 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -36,7 +36,7 @@
 
 /* #define PRINT_DEBUG */
 
-#if ESCP2_GHOST
+#ifdef ESCP2_GHOST
 #include "gdevstp-print.h"
 #else
 #include "print.h"
@@ -195,7 +195,7 @@ calc_hsv_to_rgb(unsigned short *rgb, double h, double s, double v)
   rgb[0] = h*65535;
   rgb[1] = s*65535;
   rgb[2] = v*65535;
-  
+
 }
 
 
@@ -258,7 +258,7 @@ indexed_to_gray(unsigned char *indexed,		/* I - Indexed pixels */
     gray_cmap[i] = (cmap[0] * LUM_RED +
 		    cmap[1] * LUM_GREEN +
 		    cmap[2] * LUM_BLUE) / 100;
-  
+
   while (width > 0)
     {
       if (bpp == 1)
@@ -826,7 +826,7 @@ choose_colorfunc(int output_type,
       else
 	return indexed_to_gray;
     }
-}  
+}
 
 void
 compute_page_parameters(int page_right,	/* I */

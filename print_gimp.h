@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.15.2.1 2000/06/17 13:13:27 jmv Exp $"
+ * "$Id: print_gimp.h,v 1.15.2.2 2000/06/18 02:33:17 jmv Exp $"
  *
  *   Print plug-in for the GIMP.
  *

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.2.2.1 2000/06/17 13:13:27 jmv Exp $"
+ * "$Id: print-image-gimp.c,v 1.2.2.2 2000/06/18 02:33:17 jmv Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -306,7 +306,7 @@ Image_note_progress(Image image, double current, double total)
 }
 
 const char *
-Image_get_pluginname(Image image)
+Image_get_appname(Image image)
 {
   static char pluginname[] = PLUG_IN_NAME " plug-in V" PLUG_IN_VERSION
     " for GIMP";
@@ -314,5 +314,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.2.2.1 2000/06/17 13:13:27 jmv Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.2.2.2 2000/06/18 02:33:17 jmv Exp $".
  */

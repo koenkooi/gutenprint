@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155.2.3 2000/06/17 00:49:59 jmv Exp $"
+ * "$Id: print-escp2.c,v 1.155.2.4 2000/06/18 02:33:16 jmv Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -49,6 +49,8 @@
 #include <signal.h>
 #endif
 
+#include <endian.h>
+
 typedef enum {
   COLOR_MONOCHROME,
   COLOR_CMYK,
@@ -73,7 +75,7 @@ static const int densities[6] = { 0, 0, 0, 0, 1, 1 };
  * Local functions...
  */
 
-static void 
+static void
 escp2_write_microweave(FILE *, const unsigned char *,
 		       const unsigned char *, const unsigned char *,
 		       const unsigned char *, const unsigned char *,
@@ -120,6 +122,7 @@ typedef struct escp2_printer
   int		black_nozzles;	/* Number of black nozzles (may be extra) */
   int		xres;		/* Normal distance between dots in */
 				/* softweave mode (inverse inches) */
+  int		lowres_dot_size;/* Dot size to use in softweave mode */
   int		softweave_dot_size;/* Dot size to use in softweave mode */
   int		microweave_dot_size; /* Dot size to use in microweave mode */
   int		max_paper_width; /* Maximum paper width, in points*/
@@ -209,7 +212,7 @@ static simple_dither_range_t variable_dither_ranges[] =
   { 0.074, 0x1, 0, 1 },
   { 0.111, 0x2, 0, 2 },
   { 0.222, 0x3, 0, 3 },
-  { 0.333, 0x1, 1, 1 },
+/*  { 0.333, 0x1, 1, 1 }, */
   { 0.5,   0x2, 1, 2 },
   { 1.0,   0x3, 1, 3 }
 };
@@ -318,49 +321,49 @@ static escp2_printer_t model_capabilities[] =
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_NO),
-    1, 1, 1, 720, -1, -1, INCH_8_5, INCH_14, 14, 14, 9, 49, 1, 0
+    1, 1, 1, 720, 1, -1, 1, INCH_8_5, INCH_14, 14, 14, 9, 49, 1, 0
   },
   /* 1: Stylus Color Pro/Pro XL/400/500 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_NO | MODEL_1440DPI_NO),
-    48, 6, 48, 720, -1, 1, INCH_8_5, INCH_14, 14, 14, 0, 24, 1, 0
+    48, 6, 48, 720, 1, -1, 1, INCH_8_5, INCH_14, 14, 14, 0, 24, 1, 0
   },
   /* 2: Stylus Color 1500 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_NO
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_NO | MODEL_1440DPI_NO),
-    1, 1, 1, 720, -1, 1, INCH_11, INCH_17, 14, 14, 9, 49, 1, 0
+    1, 1, 1, 720, 1, -1, 1, INCH_11, INCH_17, 14, 14, 9, 49, 1, 0
   },
   /* 3: Stylus Color 600 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_600 | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    32, 8, 32, 720, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 0
+    32, 8, 32, 720, 2, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 0
   },
   /* 4: Stylus Color 800 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    64, 4, 64, 720, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 4
+    64, 4, 64, 720, 2, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 4
   },
   /* 5: Stylus Color 850 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    64, 4, 128, 720, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 4
+    64, 4, 128, 720, 2, 0, 2, INCH_8_5, INCH_14, 8, 9, 0, 24, 1, 4
   },
   /* 6: Stylus Color 1520/3000 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    1, 1, 128, 720, -1, 2, INCH_16_5, INCH_24, 8, 9, 9, 49, 4, 0
+    1, 1, 128, 720, 2, -1, 2, INCH_16_5, INCH_24, 8, 9, 9, 49, 4, 0
   },
 
   /* SECOND GENERATION PRINTERS */
@@ -369,21 +372,21 @@ static escp2_printer_t model_capabilities[] =
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_YES | MODEL_720DPI_PHOTO | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_NO | MODEL_1440DPI_YES),
-    32, 8, 32, 720, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 24, 1, 0
+    32, 8, 32, 720, 3, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 24, 1, 0
   },
   /* 8: Stylus Photo EX */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_YES | MODEL_720DPI_PHOTO | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_NO | MODEL_1440DPI_YES),
-    32, 8, 32, 720, 0, 3, INCH_11, INCH_17, 9, 9, 0, 24, 1, 0
+    32, 8, 32, 720, 3, 0, 3, INCH_11, INCH_17, 9, 9, 0, 24, 1, 0
   },
   /* 9: Stylus Photo */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_YES | MODEL_720DPI_PHOTO | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_NO | MODEL_1440DPI_NO),
-    32, 8, 32, 720, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 24, 1, 0
+    32, 8, 32, 720, 3, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 24, 1, 0
   },
 
   /* THIRD GENERATION PRINTERS */
@@ -395,21 +398,21 @@ static escp2_printer_t model_capabilities[] =
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_600 | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_NO),
-    21, 8, 64, 720, 2, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    21, 8, 64, 720, 3, 2, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
   /* 11: Stylus Color 640 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    32, 8, 64, 720, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    32, 8, 64, 720, 3, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
   /* 12: Stylus Color 740 */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_4
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    48, 6, 144, 360, 0, 3, INCH_11, INCH_17, 9, 9, 0, 9, 1, 0
+    48, 6, 144, 360, 3, 0, 3, INCH_11, INCH_17, 9, 9, 0, 9, 1, 0
   },
   /* 13: Stylus Color 900 */
   /* Dale Pontius thinks the spacing is 3 jets??? */
@@ -418,49 +421,49 @@ static escp2_printer_t model_capabilities[] =
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_4
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    96, 2, 192, 360, 0, 1, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    96, 2, 192, 360, 1, 0, 1, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
   /* 14: Stylus Photo 750, 870 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_YES | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_4
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_1440DPI_YES),
-    48, 6, 48, 360, 0, 4, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    48, 6, 48, 360, 2, 0, 4, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
   /* 15: Stylus Photo 1200, 1270 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_YES | MODEL_720DPI_PHOTO | MODEL_VARIABLE_4
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_NO | MODEL_1440DPI_YES),
-    48, 6, 48, 360, 0, 4, INCH_13, INCH_19, 9, 9, 0, 9, 1, 0
+    48, 6, 48, 360, 2, 0, 4, INCH_13, INCH_19, 9, 9, 0, 9, 1, 0
   },
   /* 16: Stylus Color 860 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    48, 6, 144, 360, 0, 2, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    48, 6, 144, 360, 2, 0, 2, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
   /* 17: Stylus Color 1160 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    48, 6, 144, 360, 0, 2, INCH_13, INCH_19, 9, 9, 0, 9, 1, 0
+    48, 6, 144, 360, 2, 0, 2, INCH_13, INCH_19, 9, 9, 0, 9, 1, 0
   },
   /* 18: Stylus Color 660 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_GENERIC | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    32, 8, 64, 720, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 8
+    32, 8, 64, 720, 3, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 8
   },
   /* 19: Stylus Color 760 */
   {
     (MODEL_INIT_900 | MODEL_HASBLACK_YES
      | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_4
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_YES),
-    48, 6, 144, 360, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
+    48, 6, 144, 360, 3, 0, 3, INCH_8_5, INCH_14, 9, 9, 0, 9, 1, 0
   },
 
 };
@@ -558,6 +561,12 @@ static unsigned
 escp2_xres(int model)
 {
   return (model_capabilities[model].xres);
+}
+
+static int
+escp2_lowres_ink(int model)
+{
+  return (model_capabilities[model].lowres_dot_size);
 }
 
 static int
@@ -764,6 +773,7 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
     ydpi = 720;
   l = ydpi * page_length / 72;
   t = ydpi * page_top / 72;
+  top = ydpi * top / 72;
 
   /*
    * Hack that seems to be necessary for these silly things to print.
@@ -788,7 +798,7 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
     fprintf(prn, "\033(U\005%c%c%c%c\240\005", 0, 1440 / ydpi, 1440 / ydpi,
 	    1440 / (ydpi * (horizontal_passes > 2 ? 2 : 1)));
   else
-    fprintf(prn, "\033(U\001%c%c", 0, 3600 / ydpi);	    
+    fprintf(prn, "\033(U\001%c%c", 0, 3600 / ydpi);
 
   /* Gray/color */
   if (escp2_has_cap(model, MODEL_GRAYMODE_MASK, MODEL_GRAYMODE_YES))
@@ -810,7 +820,9 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
     fprintf(prn, "\033U%c", 0);
 
   /* Dot size */
-  if (!use_softweave)
+  if (ydpi < 720)
+    fprintf(prn, "\033(e\002%c%c%c", 0, 0, escp2_lowres_ink(model));
+  else if (!use_softweave)
     {
       if (escp2_micro_ink(model) > 0)
 	fprintf(prn, "\033(e\002%c%c%c", 0, 0, escp2_micro_ink(model));
@@ -855,7 +867,7 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
 
       if (!use_softweave || ydpi < 720)
 	fprintf(prn, "\033(v\004%c%c%c%c%c", 0,
-		top & 0xff, top >> 8, (top >> 16) & 0xff, (top >> 24) & 0xff);
+		top & 0xff, (top >> 8) & 0xff, (top >> 16) & 0xff, (top >> 24) & 0xff);
     }
   else
     {
@@ -1034,7 +1046,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	}
       else if (!strcmp(resolution, ""))
 	{
-	  return;	  
+	  return;
 	}
     }
   if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK, MODEL_VARIABLE_4) &&
@@ -1095,7 +1107,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
     cyan    = malloc(length * bits);
     magenta = malloc(length * bits);
     yellow  = malloc(length * bits);
-  
+
     if (escp2_has_cap(model, MODEL_HASBLACK_MASK, MODEL_HASBLACK_YES))
       black = malloc(length * bits);
     else
@@ -1117,7 +1129,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 			     top * 720 / 72, page_height * 720 / 72);
   else
     escp2_init_microweave();
-      
+
 
  /*
   * Output the page...
@@ -1153,10 +1165,10 @@ escp2_print(const printer_t *printer,		/* I - Model */
     {
       int dsize = (sizeof(variable_dither_ranges) /
 		   sizeof(simple_dither_range_t));
-	  dither_set_max_ink(dither, 3, 3.0*nv.density);
-	  dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
+      dither_set_max_ink(dither, 3, 3.0*nv.density);
+      dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
 					           dither_density);
-	  dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
+      dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
 					           dither_density);
       if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
 	{
@@ -1186,13 +1198,13 @@ escp2_print(const printer_t *printer,		/* I - Model */
   else {
 	dither_set_max_ink(dither, 1, 3.0*nv.density);
 	if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
-    	dither_set_light_inks(dither, .33, .33, 0.0, nv.density);
+    	dither_set_light_inks(dither, .33, .33, 0.0, dither_density);
   }
   if (xdpi > ydpi)
     dither_set_aspect_ratio(dither, 1, xdpi / ydpi);
   else if (ydpi > xdpi)
     dither_set_aspect_ratio(dither, ydpi / xdpi, 1);
-			  
+
 
   switch (nv.image_type)
     {
@@ -1210,7 +1222,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	ink_spread++;
       dither_set_ink_spread(dither, ink_spread);
       break;
-    }	    
+    }
   dither_set_density(dither, oversample, dither_density);
 
   in  = malloc(image_width * image_bpp);
@@ -1221,7 +1233,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
   errval  = 0;
   errlast = -1;
   errline  = 0;
-  
+
   for (y = 0; y < out_height; y ++)
   {
     if ((y & 255) == 0)
@@ -1298,26 +1310,32 @@ escp2_fold(const unsigned char *line,
 	   unsigned char *outbuf)
 {
   int i;
+  memset(outbuf, 0, single_length * 2);
   for (i = 0; i < single_length; i++)
     {
-      outbuf[0] =
-	((line[0] & (1 << 7)) >> 1) +
-	((line[0] & (1 << 6)) >> 2) +
-	((line[0] & (1 << 5)) >> 3) +
-	((line[0] & (1 << 4)) >> 4) +
-	((line[single_length] & (1 << 7)) >> 0) +
-	((line[single_length] & (1 << 6)) >> 1) +
-	((line[single_length] & (1 << 5)) >> 2) +
-	((line[single_length] & (1 << 4)) >> 3);
-      outbuf[1] =
-	((line[0] & (1 << 3)) << 3) +
-	((line[0] & (1 << 2)) << 2) +
-	((line[0] & (1 << 1)) << 1) +
-	((line[0] & (1 << 0)) << 0) +
-	((line[single_length] & (1 << 3)) << 4) +
-	((line[single_length] & (1 << 2)) << 3) +
-	((line[single_length] & (1 << 1)) << 2) +
-	((line[single_length] & (1 << 0)) << 1);
+      unsigned char l0 = line[0];
+      unsigned char l1 = line[single_length];
+      if (l0 || l1)
+	{
+	  outbuf[0] =
+	    ((l0 & (1 << 7)) >> 1) +
+	    ((l0 & (1 << 6)) >> 2) +
+	    ((l0 & (1 << 5)) >> 3) +
+	    ((l0 & (1 << 4)) >> 4) +
+	    ((l1 & (1 << 7)) >> 0) +
+	    ((l1 & (1 << 6)) >> 1) +
+	    ((l1 & (1 << 5)) >> 2) +
+	    ((l1 & (1 << 4)) >> 3);
+	  outbuf[1] =
+	    ((l0 & (1 << 3)) << 3) +
+	    ((l0 & (1 << 2)) << 2) +
+	    ((l0 & (1 << 1)) << 1) +
+	    ((l0 & (1 << 0)) << 0) +
+	    ((l1 & (1 << 3)) << 4) +
+	    ((l1 & (1 << 2)) << 3) +
+	    ((l1 & (1 << 1)) << 2) +
+	    ((l1 & (1 << 0)) << 1);
+	}
       line++;
       outbuf += 2;
     }
@@ -1329,29 +1347,59 @@ escp2_split_2_1(int length,
 		unsigned char *outhi,
 		unsigned char *outlo)
 {
-  int i, j;
+  unsigned char *outs[2];
+  int i;
   int row = 0;
   int limit = length * 2;
+  outs[0] = outhi;
+  outs[1] = outlo;
+  memset(outs[1], 0, limit);
   for (i = 0; i < limit; i++)
     {
       unsigned char inbyte = in[i];
-      outlo[i] = 0;
-      outhi[i] = 0;
-      for (j = 1; j < 256; j += j)
+      outs[0][i] = 0;
+      if (inbyte == 0)
+	continue;
+      /* For some reason gcc isn't unrolling this, even with -funroll-loops */
+      if (inbyte & 1)
 	{
-	  if (inbyte & j)
-	    {
-	      if (row == 0)
-		{
-		  outlo[i] |= j;
-		  row = 1;
-		}
-	      else
-		{
-		  outhi[i] |= j;
-		  row = 0;
-		}
-	    }
+	  outs[row][i] |= 1 & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 1))
+	{
+	  outs[row][i] |= (1 << 1) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 2))
+	{
+	  outs[row][i] |= (1 << 2) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 3))
+	{
+	  outs[row][i] |= (1 << 3) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 4))
+	{
+	  outs[row][i] |= (1 << 4) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 5))
+	{
+	  outs[row][i] |= (1 << 5) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 6))
+	{
+	  outs[row][i] |= (1 << 6) & inbyte;
+	  row = row ^ 1;
+	}
+      if (inbyte & (1 << 7))
+	{
+	  outs[row][i] |= (1 << 7) & inbyte;
+	  row = row ^ 1;
 	}
     }
 }
@@ -1362,29 +1410,39 @@ escp2_split_2_2(int length,
 		unsigned char *outhi,
 		unsigned char *outlo)
 {
-  int i, j;
-  int row = 0;
+  unsigned char *outs[2];
+  int i;
+  unsigned row = 0;
   int limit = length * 2;
+  outs[0] = outhi;
+  outs[1] = outlo;
+  memset(outs[1], 0, limit);
   for (i = 0; i < limit; i++)
     {
       unsigned char inbyte = in[i];
-      outlo[i] = 0;
-      outhi[i] = 0;
-      for (j = 3; j < 256; j *= 4)
+      outs[0][i] = 0;
+      if (inbyte == 0)
+	continue;
+      /* For some reason gcc isn't unrolling this, even with -funroll-loops */
+      if (inbyte & 3)
 	{
-	  if (inbyte & j)
-	    {
-	      if (row == 0)
-		{
-		  outlo[i] |= j & inbyte;
-		  row = 1;
-		}
-	      else
-		{
-		  outhi[i] |= j & inbyte;
-		  row = 0;
-		}
-	    }
+	  outs[row][i] |= (3 & inbyte);
+	  row = row ^ 1;
+	}
+      if (inbyte & (3 << 2))
+	{
+	  outs[row][i] |= ((3 << 2) & inbyte);
+	  row = row ^ 1;
+	}
+      if (inbyte & (3 << 4))
+	{
+	  outs[row][i] |= ((3 << 4) & inbyte);
+	  row = row ^ 1;
+	}
+      if (inbyte & (3 << 6))
+	{
+	  outs[row][i] |= ((3 << 6) & inbyte);
+	  row = row ^ 1;
 	}
     }
 }
@@ -1403,6 +1461,124 @@ escp2_split_2(int length,
 }
 
 static void
+escp2_split_4_1(int length,
+		const unsigned char *in,
+		unsigned char *out0,
+		unsigned char *out1,
+		unsigned char *out2,
+		unsigned char *out3)
+{
+  unsigned char *outs[4];
+  int i;
+  int row = 0;
+  int limit = length * 2;
+  outs[0] = out0;
+  outs[1] = out1;
+  outs[2] = out2;
+  outs[3] = out3;
+  memset(outs[1], 0, limit);
+  memset(outs[2], 0, limit);
+  memset(outs[3], 0, limit);
+  for (i = 0; i < limit; i++)
+    {
+      unsigned char inbyte = in[i];
+      outs[0][i] = 0;
+      if (inbyte == 0)
+	continue;
+      /* For some reason gcc isn't unrolling this, even with -funroll-loops */
+      if (inbyte & 1)
+	{
+	  outs[row][i] |= 1 & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 1))
+	{
+	  outs[row][i] |= (1 << 1) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 2))
+	{
+	  outs[row][i] |= (1 << 2) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 3))
+	{
+	  outs[row][i] |= (1 << 3) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 4))
+	{
+	  outs[row][i] |= (1 << 4) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 5))
+	{
+	  outs[row][i] |= (1 << 5) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 6))
+	{
+	  outs[row][i] |= (1 << 6) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (1 << 7))
+	{
+	  outs[row][i] |= (1 << 7) & inbyte;
+	  row = (row + 1) & 3;
+	}
+    }
+}
+
+static void
+escp2_split_4_2(int length,
+		const unsigned char *in,
+		unsigned char *out0,
+		unsigned char *out1,
+		unsigned char *out2,
+		unsigned char *out3)
+{
+  unsigned char *outs[4];
+  int i;
+  int row = 0;
+  int limit = length * 2;
+  outs[0] = out0;
+  outs[1] = out1;
+  outs[2] = out2;
+  outs[3] = out3;
+  memset(outs[1], 0, limit);
+  memset(outs[2], 0, limit);
+  memset(outs[3], 0, limit);
+  for (i = 0; i < limit; i++)
+    {
+      unsigned char inbyte = in[i];
+      outs[0][i] = 0;
+      if (inbyte == 0)
+	continue;
+      /* For some reason gcc isn't unrolling this, even with -funroll-loops */
+      if (inbyte & 3)
+	{
+	  outs[row][i] |= 3 & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (3 << 2))
+	{
+	  outs[row][i] |= (3 << 2) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (3 << 4))
+	{
+	  outs[row][i] |= (3 << 4) & inbyte;
+	  row = (row + 1) & 3;
+	}
+      if (inbyte & (3 << 6))
+	{
+	  outs[row][i] |= (3 << 6) & inbyte;
+	  row = (row + 1) & 3;
+	}
+    }
+}
+
+static void
 escp2_split_4(int length,
 	      int bits,
 	      const unsigned char *in,
@@ -1411,41 +1587,20 @@ escp2_split_4(int length,
 	      unsigned char *out2,
 	      unsigned char *out3)
 {
-  int i, j;
-  int row = 0;
-  int base = (1 << bits) - 1;
-  for (i = 0; i < length; i++)
-    {
-      unsigned char inbyte = in[i];
-      out0[i] = 0;
-      out1[i] = 0;
-      out2[i] = 0;
-      out3[i] = 0;
-      for (j = base; j < 256; j <<= bits)
-	{
-	  if (inbyte & j)
-	    {
-	      switch (row)
-		{
-		case 0:
-		  out0[i] |= j & inbyte;
-		  break;
-		case 1:
-		  out1[i] |= j & inbyte;
-		  break;
-		case 2:
-		  out2[i] |= j & inbyte;
-		  break;
-		case 3:
-		  out3[i] |= j & inbyte;
-		  break;
-		}
-	      row = (row + 1) & 3;
-	    }
-	}
-    }
+  if (bits == 2)
+    escp2_split_4_2(length, in, out0, out1, out2, out3);
+  else
+    escp2_split_4_1(length, in, out0, out1, out2, out3);
 }
 
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SH20 0
+#define SH21 8
+#else
+#define SH20 8
+#define SH21 0
+#endif
 
 static void
 escp2_unpack_2_1(int length,
@@ -1454,38 +1609,42 @@ escp2_unpack_2_1(int length,
 		 unsigned char *outhi)
 {
   int i;
-  for (i = 0; i < length; i++)
+  int limit = (length + 1) / 2;
+  memset(outlo, 0, limit);
+  memset(outhi, 0, limit);
+  for (i = 0; i < limit; i++)
     {
-      unsigned char inbyte = *in;
-      if (!(i & 1))
+      unsigned short inint = ((unsigned short *) in)[0];
+      if (inint > 0)
 	{
-	  *outlo =
+	  unsigned char ob0 = 0;
+	  unsigned char ob1 = 0;
+	  unsigned char inbyte = (inint >> SH20) & 0xff;
+	  ob0 =
 	    ((inbyte & (1 << 7)) << 0) +
 	    ((inbyte & (1 << 5)) << 1) +
 	    ((inbyte & (1 << 3)) << 2) +
 	    ((inbyte & (1 << 1)) << 3);
-	  *outhi =
+	  ob1 =
 	    ((inbyte & (1 << 6)) << 1) +
 	    ((inbyte & (1 << 4)) << 2) +
 	    ((inbyte & (1 << 2)) << 3) +
 	    ((inbyte & (1 << 0)) << 4);
-	}
-      else
-	{
-	  *outlo +=
+	  inbyte = (inint >> SH21) & 0xff;
+	  ob0 +=
 	    ((inbyte & (1 << 1)) >> 1) +
 	    ((inbyte & (1 << 3)) >> 2) +
 	    ((inbyte & (1 << 5)) >> 3) +
 	    ((inbyte & (1 << 7)) >> 4);
-	  *outhi +=
+	  ob1 +=
 	    ((inbyte & (1 << 0)) >> 0) +
 	    ((inbyte & (1 << 2)) >> 1) +
 	    ((inbyte & (1 << 4)) >> 2) +
 	    ((inbyte & (1 << 6)) >> 3);
-	  outlo++;
-	  outhi++;
+	  outlo[i] = ob0;
+	  outhi[i] = ob1;
 	}
-      in++;
+      in += 2;
     }
 }
 
@@ -1496,30 +1655,33 @@ escp2_unpack_2_2(int length,
 		 unsigned char *outhi)
 {
   int i;
-  for (i = 0; i < length * 2; i++)
+  memset(outlo, 0, length);
+  memset(outhi, 0, length);
+  for (i = 0; i < length; i++)
     {
-      unsigned char inbyte = *in;
-      if (!(i & 1))
+      unsigned short inint = ((unsigned short *) in)[0];
+      if (inint > 0)
 	{
-	  *outlo =
+	  unsigned char inbyte = (inint >> SH20) & 0xff;
+	  unsigned char ob0 = 0;
+	  unsigned char ob1 = 0;
+	  ob0 =
 	    ((inbyte & (3 << 6)) << 0) +
 	    ((inbyte & (3 << 2)) << 2);
-	  *outhi =
+	  ob1 =
 	    ((inbyte & (3 << 4)) << 2) +
 	    ((inbyte & (3 << 0)) << 4);
-	}
-      else
-	{
-	  *outlo +=
+	  inbyte = (inint >> SH21) & 0xff;
+	  ob0 +=
 	    ((inbyte & (3 << 6)) >> 4) +
 	    ((inbyte & (3 << 2)) >> 2);
-	  *outhi +=
+	  ob1 +=
 	    ((inbyte & (3 << 4)) >> 2) +
 	    ((inbyte & (3 << 0)) >> 0);
-	  outlo++;
-	  outhi++;
+	  outlo[i] = ob0;
+	  outhi[i] = ob1;
 	}
-      in++;
+      in += 2;
     }
 }
 
@@ -1536,6 +1698,18 @@ escp2_unpack_2(int length,
     escp2_unpack_2_2(length, in, outlo, outhi);
 }
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SH40 0
+#define SH41 8
+#define SH42 16
+#define SH43 24
+#else
+#define SH40 24
+#define SH41 16
+#define SH42 8
+#define SH43 0
+#endif
+
 static void
 escp2_unpack_4_1(int length,
 		 const unsigned char *in,
@@ -1545,73 +1719,78 @@ escp2_unpack_4_1(int length,
 		 unsigned char *out3)
 {
   int i;
-  for (i = 0; i < length; i++)
+  int limit = (length + 3) / 4;
+  memset(out0, 0, limit);
+  memset(out1, 0, limit);
+  memset(out2, 0, limit);
+  memset(out3, 0, limit);
+  for (i = 0; i < limit; i++)
     {
-      unsigned char inbyte = *in;
-      switch (i & 3)
+      unsigned inint = ((int *) in)[0];
+      if (inint > 0)
 	{
-	case 0:
-	  *out0 =
+	  unsigned char ob0 = 0;
+	  unsigned char ob1 = 0;
+	  unsigned char ob2 = 0;
+	  unsigned char ob3 = 0;
+	  unsigned char inbyte = (inint >> SH40) & 0xff;
+	  ob0 =
 	    ((inbyte & (1 << 7)) << 0) +
 	    ((inbyte & (1 << 3)) << 3);
-	  *out1 =
+	  ob1 =
 	    ((inbyte & (1 << 6)) << 1) +
 	    ((inbyte & (1 << 2)) << 4);
-	  *out2 =
+	  ob2 =
 	    ((inbyte & (1 << 5)) << 2) +
 	    ((inbyte & (1 << 1)) << 5);
-	  *out3 =
+	  ob3 =
 	    ((inbyte & (1 << 4)) << 3) +
 	    ((inbyte & (1 << 0)) << 6);
-	  break;
-	case 1:
-	  *out0 +=
+	  inbyte = (inint >> SH41) & 0xff;
+	  ob0 +=
 	    ((inbyte & (1 << 7)) >> 2) +
 	    ((inbyte & (1 << 3)) << 1);
-	  *out1 +=
+	  ob1 +=
 	    ((inbyte & (1 << 6)) >> 1) +
 	    ((inbyte & (1 << 2)) << 2);
-	  *out2 +=
+	  ob2 +=
 	    ((inbyte & (1 << 5)) >> 0) +
 	    ((inbyte & (1 << 1)) << 3);
-	  *out3 +=
+	  ob3 +=
 	    ((inbyte & (1 << 4)) << 1) +
 	    ((inbyte & (1 << 0)) << 4);
-	  break;
-	case 2:
-	  *out0 +=
+	  inbyte = (inint >> SH42) & 0xff;
+	  ob0 +=
 	    ((inbyte & (1 << 7)) >> 4) +
 	    ((inbyte & (1 << 3)) >> 1);
-	  *out1 +=
+	  ob1 +=
 	    ((inbyte & (1 << 6)) >> 3) +
 	    ((inbyte & (1 << 2)) << 0);
-	  *out2 +=
+	  ob2 +=
 	    ((inbyte & (1 << 5)) >> 2) +
 	    ((inbyte & (1 << 1)) << 1);
-	  *out3 +=
+	  ob3 +=
 	    ((inbyte & (1 << 4)) >> 1) +
 	    ((inbyte & (1 << 0)) << 2);
-	  break;
-	case 3:
-	  *out0 +=
+	  inbyte = (inint >> SH43) & 0xff;
+	  ob0 +=
 	    ((inbyte & (1 << 7)) >> 6) +
 	    ((inbyte & (1 << 3)) >> 3);
-	  *out1 +=
+	  ob1 +=
 	    ((inbyte & (1 << 6)) >> 5) +
 	    ((inbyte & (1 << 2)) >> 2);
-	  *out2 +=
+	  ob2 +=
 	    ((inbyte & (1 << 5)) >> 4) +
 	    ((inbyte & (1 << 1)) >> 1);
-	  *out3 +=
+	  ob3 +=
 	    ((inbyte & (1 << 4)) >> 3) +
 	    ((inbyte & (1 << 0)) >> 0);
-	  out0++;
-	  out1++;
-	  out2++;
-	  out3++;
-	  break;
+	  out0[i] = ob0;
+	  out1[i] = ob1;
+	  out2[i] = ob2;
+	  out3[i] = ob3;
 	}
-      in++;
+      in += 4;
     }
 }
 
@@ -1624,41 +1803,46 @@ escp2_unpack_4_2(int length,
 		 unsigned char *out3)
 {
   int i;
-  for (i = 0; i < length * 2; i++)
+  int limit = (length + 1) / 2;
+  memset(out0, 0, limit);
+  memset(out1, 0, limit);
+  memset(out2, 0, limit);
+  memset(out3, 0, limit);
+  for (i = 0; i < limit; i++)
     {
-      unsigned char inbyte = *in;
-      switch (i & 3)
+      unsigned inint = ((int *) in)[0];
+      if (inint != 0)
 	{
-	case 0:
-	  *out0 = ((inbyte & (3 << 6)) << 0);
-	  *out1 = ((inbyte & (3 << 4)) << 2);
-	  *out2 = ((inbyte & (3 << 2)) << 4);
-	  *out3 = ((inbyte & (3 << 0)) << 6);
-	  break;
-	case 1:
-	  *out0 += ((inbyte & (3 << 6)) >> 2);
-	  *out1 += ((inbyte & (3 << 4)) << 0);
-	  *out2 += ((inbyte & (3 << 2)) << 2);
-	  *out3 += ((inbyte & (3 << 0)) << 4);
-	  break;
-	case 2:
-	  *out0 += ((inbyte & (3 << 6)) >> 4);
-	  *out1 += ((inbyte & (3 << 4)) >> 2);
-	  *out2 += ((inbyte & (3 << 2)) << 0);
-	  *out3 += ((inbyte & (3 << 0)) << 2);
-	  break;
-	case 3:
-	  *out0 += ((inbyte & (3 << 6)) >> 6);
-	  *out1 += ((inbyte & (3 << 4)) >> 4);
-	  *out2 += ((inbyte & (3 << 2)) >> 2);
-	  *out3 += ((inbyte & (3 << 0)) >> 0);
-	  out0++;
-	  out1++;
-	  out2++;
-	  out3++;
-	  break;
+	  unsigned char ob0 = 0;
+	  unsigned char ob1 = 0;
+	  unsigned char ob2 = 0;
+	  unsigned char ob3 = 0;
+	  unsigned char inbyte = (inint >> SH40) & 0xff;
+	  ob0 = ((inbyte & (3 << 6)) << 0);
+	  ob1 = ((inbyte & (3 << 4)) << 2);
+	  ob2 = ((inbyte & (3 << 2)) << 4);
+	  ob3 = ((inbyte & (3 << 0)) << 6);
+	  inbyte = (inint >> SH41) & 0xff;
+	  ob0 += ((inbyte & (3 << 6)) >> 2);
+	  ob1 += ((inbyte & (3 << 4)) << 0);
+	  ob2 += ((inbyte & (3 << 2)) << 2);
+	  ob3 += ((inbyte & (3 << 0)) << 4);
+	  inbyte = (inint >> SH42) & 0xff;
+	  ob0 += ((inbyte & (3 << 6)) >> 4);
+	  ob1 += ((inbyte & (3 << 4)) >> 2);
+	  ob2 += ((inbyte & (3 << 2)) << 0);
+	  ob3 += ((inbyte & (3 << 0)) << 2);
+	  inbyte = (inint >> SH43) & 0xff;
+	  ob0 += ((inbyte & (3 << 6)) >> 6);
+	  ob1 += ((inbyte & (3 << 4)) >> 4);
+	  ob2 += ((inbyte & (3 << 2)) >> 2);
+	  ob3 += ((inbyte & (3 << 0)) >> 0);
+	  out0[i] = ob0;
+	  out1[i] = ob1;
+	  out2[i] = ob2;
+	  out3[i] = ob3;
 	}
-      in++;
+      in += 4;
     }
 }
 
@@ -2303,7 +2487,7 @@ typedef struct {
 } escp2_softweave_t;
 
 #ifndef WEAVETEST
-static int
+static inline int
 get_color_by_params(int plane, int density)
 {
   if (plane > 4 || plane < 0 || density > 1 || density < 0)
@@ -2422,7 +2606,7 @@ initialize_weave(int jets,	/* Width of print head */
       sw->ncolors = 6;
       break;
     }
-  
+
   /*
    * It's possible for the "compression" to actually expand the line by
    * one part in 128.
@@ -2495,7 +2679,7 @@ set_last_pass(void *vsw, int pass)
  */
 
 #ifdef DEBUG_SIGNAL
-static int 
+static int
 divv(int x, int y)
 {
   if (x < 0 || y < 0)
@@ -2507,7 +2691,7 @@ divv(int x, int y)
     return x / y;
 }
 
-static int 
+static int
 modd(int x, int y)
 {
   if (x < 0 || y < 0)
@@ -2553,6 +2737,19 @@ static void
 weave_parameters_by_row(const escp2_softweave_t *sw, int row,
 			int vertical_subpass, weave_t *w)
 {
+  static const escp2_softweave_t *scache = 0;
+  static weave_t wcache;
+  static int rcache = -2;
+  static int vcache = -2;
+  if (scache == sw && rcache == row && vcache == vertical_subpass)
+    {
+      memcpy(w, &wcache, sizeof(weave_t));
+      return;
+    }
+  scache = sw;
+  rcache = row;
+  vcache = vertical_subpass;
+
   w->row = row;
   if (row < sw->header)
     {
@@ -2644,6 +2841,7 @@ weave_parameters_by_row(const escp2_softweave_t *sw, int row,
       if (w->pass > sw->last_real_pass)
 	((escp2_softweave_t *) sw)->last_real_pass = w->pass;
     }
+  memcpy(&wcache, w, sizeof(weave_t));
 }
 
 #ifndef WEAVETEST
@@ -2744,7 +2942,7 @@ fillin_start_rows(const escp2_softweave_t *sw, int row, int subpass,
       int full_blocks = bytes_to_fill / (128 * 8);
       int leftover = (7 + (bytes_to_fill % (128 * 8))) / 8;
       int l = 0;
-  
+
       while (l < full_blocks)
 	{
 	  for (j = 0; j < sw->ncolors; j++)
@@ -2929,7 +3127,7 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
 	  putc(lwidth & 255, prn);	/* Width of raster line in pixels */
 	  putc(lwidth >> 8, prn);
 	}
-	  
+
       fwrite(bufs[0].v[j], lineoffs[0].v[j], 1, prn);
       putc('\r', prn);
     }
@@ -2939,14 +3137,11 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
 
 static void
 add_to_row(escp2_softweave_t *sw, int row, unsigned char *buf, size_t nbytes,
-	   int plane, int density, int subpass, int setactive)
+	   int plane, int density, int setactive,
+	   lineoff_t *lineoffs, lineactive_t *lineactive,
+	   const linebufs_t *bufs)
 {
-  weave_t w;
   int color = get_color_by_params(plane, density);
-  lineoff_t *lineoffs = get_lineoffsets(sw, row, subpass);
-  lineactive_t *lineactive = get_lineactive(sw, row, subpass);
-  const linebufs_t *bufs = get_linebases(sw, row, subpass);
-  weave_parameters_by_row(sw, row, subpass, &w);
   memcpy(bufs[0].v[color] + lineoffs[0].v[color], buf, nbytes);
   lineoffs[0].v[color] += nbytes;
   if (setactive)
@@ -3009,6 +3204,9 @@ escp2_write_weave(void *        vsw,
   static unsigned char *s[8];
   static unsigned char *fold_buf;
   static unsigned char *comp_buf;
+  lineoff_t *lineoffs[8];
+  lineactive_t *lineactives[8];
+  const linebufs_t *bufs[8];
   int xlength = (length + sw->horizontal_weave - 1) / sw->horizontal_weave;
   unsigned char *comp_ptr;
   int i, j;
@@ -3025,14 +3223,19 @@ escp2_write_weave(void *        vsw,
     fold_buf = malloc(COMPBUFWIDTH);
   if (!comp_buf)
     comp_buf = malloc(COMPBUFWIDTH);
-  for (i = 0; i < sw->horizontal_weave * sw->vertical_subpasses; i++)
-    if (!s[i])
-      s[i] = malloc(COMPBUFWIDTH);
-  
-
   if (sw->current_vertical_subpass == 0)
     initialize_row(sw, sw->lineno, xlength);
-  
+
+  for (i = 0; i < h_passes; i++)
+    {
+      int cpass = sw->current_vertical_subpass * h_passes;
+      if (!s[i])
+	s[i] = malloc(COMPBUFWIDTH);
+      lineoffs[i] = get_lineoffsets(sw, sw->lineno, cpass + i);
+      lineactives[i] = get_lineactive(sw, sw->lineno, cpass + i);
+      bufs[i] = get_linebases(sw, sw->lineno, cpass + i);
+    }
+
   for (j = 0; j < sw->ncolors; j++)
     {
       if (cols[j])
@@ -3097,20 +3300,20 @@ escp2_write_weave(void *        vsw,
 		}
 	      for (i = 0; i < h_passes; i++)
 		{
-		  int k = sw->current_vertical_subpass * h_passes;
 		  setactive = escp2_pack(s[i], sw->bitwidth * xlength,
 					 comp_buf, &comp_ptr);
 		  add_to_row(sw, sw->lineno, comp_buf, comp_ptr - comp_buf,
-			     colors[j], densities[j], k + i, setactive);
+			     colors[j], densities[j], setactive,
+			     lineoffs[i], lineactives[i], bufs[i]);
 		}
 	    }
 	  else
 	    {
-	      int k = sw->current_vertical_subpass * h_passes;
 	      setactive = escp2_pack(in, length * sw->bitwidth,
 				     comp_buf, &comp_ptr);
 	      add_to_row(sw, sw->lineno, comp_buf, comp_ptr - comp_buf,
-			 colors[j], densities[j], k, setactive);
+			 colors[j], densities[j], setactive,
+			 lineoffs[0], lineactives[0], bufs[0]);
 	    }
 	}
     }

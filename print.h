@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.55.2.2 2000/06/13 23:40:53 jmv Exp $"
+ * "$Id: print.h,v 1.55.2.3 2000/06/18 02:33:17 jmv Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -161,7 +161,7 @@ extern int  Image_height(Image image);
 extern void Image_get_col(Image image, unsigned char *data, int column);
 extern void Image_get_row(Image image, unsigned char *data, int row);
 
-extern const char *Image_get_pluginname(Image image);
+extern const char *Image_get_appname(Image image);
 extern void Image_progress_init(Image image);
 extern void Image_note_progress(Image image, double current, double total);
 
@@ -394,5 +394,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.55.2.2 2000/06/13 23:40:53 jmv Exp $".
+ * End of "$Id: print.h,v 1.55.2.3 2000/06/18 02:33:17 jmv Exp $".
  */
