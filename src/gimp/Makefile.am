@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.18 2001/10/10 23:05:16 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -66,16 +66,15 @@ install-libexecPROGRAMS: $(libexec_PROGRAMS)
 	  else :; fi; \
 	done
 
-uninstall-libexecPROGRAMS: $(libexec_PROGRAMS)
+uninstall-libexecPROGRAMS:
 	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
 	list='$(libexec_PROGRAMS)'; for p in $$list; do \
-	  if test -f "$$p"; then \
 	    echo $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
             $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
 	    echo $(GIMPTOOL) --uninstall-admin-bin "$$p"; \
 	    $(GIMPTOOL) --uninstall-admin-bin "$$p"; \
-	  else :; fi; \
-	done
+	done; \
+	exit 0
 
 $(LIBGIMPPRINT_LIBS):
 	cd ../main ; \
