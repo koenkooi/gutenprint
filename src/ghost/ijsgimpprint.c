@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.2.2.13 2002/10/07 23:47:37 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.2.2.14 2002/10/08 00:57:10 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -753,7 +753,38 @@ gimp_image_get_row(stp_image_t *image, unsigned char *data, int row)
     }
 
   if (physical_row == img->row)
-    memcpy(data, img->row_buf, img->row_width);
+    {
+      unsigned i, j, length;
+      switch (img->bps)
+	{
+	case 8:
+	  memcpy(data, img->row_buf, img->row_width);
+	  break;
+	case 1:
+	  length = img->width / 8;
+	  for (i = 0; i < length; i++)
+	    for (j = 128; j > 0; j >>= 1)
+	      {
+		if (img->row_buf[i] & j)
+		  data[0] = 255;
+		else
+		  data[0] = 0;
+		data++;
+	      }
+	  length = img->width % 8;
+	  for (j = 128; j > 1 << (7 - length); j >>= 1)
+	    {
+	      if (img->row_buf[i] & j)
+		data[0] = 255;
+	      else
+		data[0] = 0;
+	      data++;
+	    }
+	  break;
+	default:
+	  return STP_IMAGE_ABORT;
+	}
+    }
   else
     return STP_IMAGE_ABORT;
   return STP_IMAGE_OK;
