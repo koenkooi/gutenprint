@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.2 2003/02/02 15:48:41 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.3 2003/02/02 20:43:58 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -390,7 +390,7 @@ static void
 populate_option_table(GtkWidget **table, int p_class)
 {
   int i;
-  int vpos[STP_PARAMETER_LEVEL_INVALID];
+  int vpos[STP_PARAMETER_LEVEL_INVALID * 2];
   for (i = 0; i < STP_PARAMETER_LEVEL_INVALID * 2; i++)
     vpos[i] = 1;
   for (i = 0; i < current_option_count; i++)
