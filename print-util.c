@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.76 2000/02/21 20:32:37 rlk Exp $"
+ * "$Id: print-util.c,v 1.77 2000/02/25 02:22:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,6 +38,13 @@
  * Revision History:
  *
  *   $Log: print-util.c,v $
+ *   Revision 1.77  2000/02/25 02:22:37  rlk
+ *   1) Stylus Color 460 (really a variant 440, at least until I learn otherwise).
+ *
+ *   2) Major optimization for gs driver in particular: elide rows that are blank.
+ *
+ *   3) make variable dot size the default for those printers.
+ *
  *   Revision 1.76  2000/02/21 20:32:37  rlk
  *   Important dithering bug fixes:
  *
@@ -1289,6 +1296,8 @@ printer_t	printers[] =	/* List of supported printer types */
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { "EPSON Stylus Color 440",	"escp2-440",	1,	10,	0.585,	0.646,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
+  { "EPSON Stylus Color 460",	"escp2-460",	1,	10,	0.585,	0.646,
+    escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { "EPSON Stylus Color 500",	"escp2-500",	1,	1,	0.597,	0.631,
     escp2_parameters,	default_media_size,	escp2_imageable_area,	escp2_print },
   { "EPSON Stylus Color 600",	"escp2-600",	1,	3,	0.585,	0.646,
@@ -1404,5 +1413,5 @@ get_printer_index_by_driver(const char *driver)
 }
 
 /*
- * End of "$Id: print-util.c,v 1.76 2000/02/21 20:32:37 rlk Exp $".
+ * End of "$Id: print-util.c,v 1.77 2000/02/25 02:22:37 rlk Exp $".
  */
