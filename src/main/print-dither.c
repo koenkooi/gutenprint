@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.30 2001/05/12 16:12:21 rlk Exp $"
+ * "$Id: print-dither.c,v 1.31 2001/05/15 23:19:40 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -24,14 +24,6 @@
  *
  *   See ChangeLog
  */
-
-/*
- * This file must include only standard C header files.  The core code must
- * compile on generic platforms that don't support glib, gimp, gtk, etc.
- */
-
-
-/* #define PRINT_DEBUG */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -758,9 +750,7 @@ stp_dither_set_max_ink(void *vd, int levels, double max_ink)
   dither_t *d = (dither_t *) vd;
   d->ink_limit = imax(max_ink, 1)*levels;
   d->ink_limit = max_ink*levels+0.5;
-#ifdef PRINT_DEBUG
-  stp_eprintf(d->v, "Maxink: %f %d\n", max_ink, d->ink_limit);
-#endif
+  stp_dprintf(STP_DBG_INK, d->v, "Maxink: %f %d\n", max_ink, d->ink_limit);
 }
 
 void
