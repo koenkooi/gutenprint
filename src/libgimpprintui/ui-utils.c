@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.5 2003/02/13 23:34:54 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.6 2003/04/15 02:24:51 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -817,7 +817,7 @@ stpui_create_new_combo(option_t *option, GtkWidget *table,
 
 const char *
 stpui_combo_get_name(GtkWidget   *combo,
-		     const stp_string_list_t options)
+		     stp_const_string_list_t options)
 {
   if (options)
     {

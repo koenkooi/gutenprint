@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.22 2003/04/13 03:50:28 rlk Exp $"
+ * "$Id: print-papers.c,v 1.23 2003/04/15 02:24:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -215,7 +215,7 @@ stp_get_papersize_by_size(int l, int w)
 }
 
 void
-stpi_default_media_size(const stp_vars_t v,	/* I */
+stpi_default_media_size(stp_const_vars_t v,	/* I */
 			int  *width,		/* O - Width in points */
 			int  *height) 		/* O - Height in points */
 {

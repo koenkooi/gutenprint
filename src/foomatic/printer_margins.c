@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.8 2003/02/22 17:20:17 rlk Exp $"
+ * "$Id: printer_margins.c,v 1.9 2003/04/15 02:24:50 rlk Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -39,7 +39,7 @@ main(int argc, char **argv) {
 
   stp_init();
   for (i = 0; i < stp_printer_model_count(); i++) {
-    const stp_printer_t p = stp_get_printer_by_index(i);
+    stp_const_printer_t p = stp_get_printer_by_index(i);
     const char *driver = stp_printer_get_driver(p);
     const char *family = stp_printer_get_family(p);
     stp_vars_t pv = 

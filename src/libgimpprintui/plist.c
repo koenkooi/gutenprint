@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.25 2003/04/09 23:34:09 rlk Exp $"
+ * "$Id: plist.c,v 1.26 2003/04/15 02:24:51 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -870,7 +870,7 @@ stpui_printrc_save(void)
 		  if (stp_check_curve_parameter(p->v, param->name,
 						 STP_PARAMETER_INACTIVE))
 		    {
-		      const stp_curve_t curve =
+		      stp_const_curve_t curve =
 			stp_get_curve_parameter(p->v, param->name);
 		      if (curve)
 			{
@@ -1297,7 +1297,7 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
   if (prn != NULL)
     {
       stpui_plist_t *np = allocate_stpui_plist_copy(printer);
-      stp_vars_t current_vars =
+      stp_const_vars_t current_vars =
 	stp_printer_get_defaults(stp_get_printer(np->v));
       int orientation;
       stp_merge_printvars(np->v, current_vars);
@@ -1363,5 +1363,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.25 2003/04/09 23:34:09 rlk Exp $".
+ * End of "$Id: plist.c,v 1.26 2003/04/15 02:24:51 rlk Exp $".
  */

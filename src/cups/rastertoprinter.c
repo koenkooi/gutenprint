@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.61 2003/04/09 02:59:52 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.62 2003/04/15 02:24:49 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -193,7 +193,7 @@ print_debug_block(cups_image_t *cups)
 }
 
 static stp_vars_t
-initialize_page(cups_image_t *cups, const stp_vars_t default_settings)
+initialize_page(cups_image_t *cups, stp_const_vars_t default_settings)
 {
   int i;
   const stp_papersize_t	*size;		/* Paper size */
@@ -398,7 +398,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   cups_image_t		cups;		/* CUPS image */
   const char		*ppdfile;	/* PPD environment variable */
   ppd_file_t		*ppd;		/* PPD file */
-  stp_printer_t		printer;	/* Printer driver */
+  stp_const_printer_t	printer;	/* Printer driver */
   int			num_options;	/* Number of CUPS options */
   cups_option_t		*options;	/* CUPS options */
   stp_vars_t		v = NULL;
@@ -806,5 +806,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.61 2003/04/09 02:59:52 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.62 2003/04/15 02:24:49 rlk Exp $".
  */

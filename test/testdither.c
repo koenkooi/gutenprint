@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.31 2003/04/13 03:50:29 rlk Exp $"
+ * "$Id: testdither.c,v 1.32 2003/04/15 02:24:59 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -193,6 +193,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 		};
   struct timeval tv1, tv2;
   int bpp = 0;
+  int quiet = 0;
 
  /*
   * Initialise libgimpprint
@@ -214,6 +215,12 @@ main(int  argc,				/* I - Number of command-line arguments */
     if (strcmp(argv[i], "no-image") == 0)
     {
       write_image = 0;
+      continue;
+    }
+
+    if (strcmp(argv[i], "quiet") == 0)
+    {
+      quiet = 1;
       continue;
     }
 
@@ -367,7 +374,8 @@ main(int  argc,				/* I - Number of command-line arguments */
 	  dither_name ? dither_name : desc.deflt.str, dither_bits,
 	  (stpi_dither_type == DITHER_GRAY) ? "pgm" : "ppm");
 
-  printf("%s ", filename);
+  if (!quiet)
+    printf("%s ", filename);
 
   if (write_image)
     {
@@ -410,7 +418,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 
   for (i = 0; i < IMAGE_HEIGHT; i ++)
   {
-    if ((i & 63) == 0)
+    if (!quiet && (i & 63) == 0)
     {
       printf("\rProcessing row %d...", i);
       fflush(stdout);
@@ -448,9 +456,12 @@ main(int  argc,				/* I - Number of command-line arguments */
   if (fp != NULL)
     fclose(fp);
 
-  printf("\r%-40s Total dither time for %d pixels is %.3f seconds, or %.2f pixels/sec.\n",
-         filename, IMAGE_WIDTH * IMAGE_HEIGHT, compute_interval(&tv1, &tv2),
-	 (float)(IMAGE_WIDTH * IMAGE_HEIGHT) / compute_interval(&tv1, &tv2));
+  if (quiet)
+    fputc('.', stdout);
+  else
+    printf("\r%-40s Total dither time for %d pixels is %.3f seconds, or %.2f pixels/sec.\n",
+	   filename, IMAGE_WIDTH * IMAGE_HEIGHT, compute_interval(&tv1, &tv2),
+	   (float)(IMAGE_WIDTH * IMAGE_HEIGHT) / compute_interval(&tv1, &tv2));
   return 0;
 }
 
@@ -872,5 +883,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.31 2003/04/13 03:50:29 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.32 2003/04/15 02:24:59 rlk Exp $".
  */
