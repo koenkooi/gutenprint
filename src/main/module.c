@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.23 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: module.c,v 1.24 2004/04/25 15:12:06 rleigh Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl/libdl.
  *
@@ -122,7 +122,7 @@ int stp_module_load(void)
     {
       if (lt_dlinit())
 	{
-	  stpi_erprintf("Error initialising libltdl: %s\n", DLERROR());
+	  stp_erprintf("Error initialising libltdl: %s\n", DLERROR());
 	  return 1;
 	}
       ltdl_is_initialised = 1;
@@ -367,21 +367,21 @@ static void *stp_dlsym(void *handle,           /* Module */
   int len;                                     /* Length of string */
   static char *full_symbol = NULL;             /* Symbol to return */
   char *module;                                /* Real module name */
-  char *tmp = stpi_strdup(modulename);          /* Temporary string */
+  char *tmp = stp_strdup(modulename);          /* Temporary string */
 
   module = basename(tmp);
 
   if (full_symbol)
     {
-      stpi_free (full_symbol);
+      stp_free (full_symbol);
       full_symbol = NULL;
     }
 
-  full_symbol = (char *) stpi_malloc(sizeof(char) * (strlen(module) - 2));
+  full_symbol = (char *) stp_malloc(sizeof(char) * (strlen(module) - 2));
 
   /* "_LTX_" + '\0' - ".so" */
   len = strlen(symbol) + strlen(module) + 3;
-  full_symbol = (char *) stpi_malloc(sizeof(char) * len);
+  full_symbol = (char *) stp_malloc(sizeof(char) * len);
 
   len = 0;
   strncpy (full_symbol, module, strlen(module) - 3);
@@ -395,10 +395,10 @@ static void *stp_dlsym(void *handle,           /* Module */
 #if defined(__OpenBSD__)
 /* OpenBSD needs a prepended underscore to match symbols */
  {
-   char *prefix_symbol = stpi_malloc(sizeof(char) * (strlen(full_symbol) + 2));
+   char *prefix_symbol = stp_malloc(sizeof(char) * (strlen(full_symbol) + 2));
    prefix_symbol[0] = '_';
    strcpy(prefix_symbol+1, full_symbol);
-   stpi_free(full_symbol);
+   stp_free(full_symbol);
    full_symbol = prefix_symbol;
  }
 #endif
