@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.23 2003/06/20 00:54:40 rlk Exp $"
+ * "$Id: dither-main.c,v 1.24 2003/07/12 21:22:16 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -146,7 +146,7 @@ stpi_set_dither_function(stp_vars_t v, int image_bpp)
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int i;
   const char *algorithm = stp_get_string_parameter(v, "DitherAlgorithm");
-  d->stpi_dither_type = D_ADAPTIVE_HYBRID;
+  d->stpi_dither_type = D_EVENTONE;
   if (algorithm)
     {
       for (i = 0; i < num_dither_algos; i++)
