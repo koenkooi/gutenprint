@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.58 2001/01/26 01:44:40 rlk Exp $
+dnl $Id: configure.in.in,v 1.1 2001/01/26 02:16:24 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -370,7 +370,7 @@ fi
 
 dnl Definitions
 AC_DEFINE_UNQUOTED(CUPS_DATADIR, "${cups_exec_prefix}/share/cups")
-AC_DEFINE_UNQUOTED(RELEASE_DATE, "`date '+%d %b %Y'`")
+AC_DEFINE_UNQUOTED(RELEASE_DATE, XXX)
 
 dnl Substitutions
 AC_SUBST(cups_prefix)
