@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.116 2000/03/14 02:24:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.117 2000/03/20 12:20:12 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -264,7 +264,7 @@ static escp2_printer_t model_capabilities[] =
   /* No, I don't believe the nozzle separation is 7.  Probably it's 8. */
   {
     (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES
-     | MODEL_6COLOR_NO | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL
+     | MODEL_6COLOR_NO | MODEL_720DPI_600 | MODEL_VARIABLE_NORMAL
      | MODEL_COMMAND_1999 | MODEL_GRAYMODE_YES | MODEL_1440DPI_NO),
     21, 7, 64, 720, 2, 3, INCH_8_5, INCH_14, 9, 9, 9, 18
   },
@@ -2651,6 +2651,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.117  2000/03/20 12:20:12  rlk
+ *   Try to maintain dependency order of lex on yacc stuff
+ *
  *   Revision 1.116  2000/03/14 02:24:31  rlk
  *   Added 1440x1440 mode
  *
@@ -3127,5 +3130,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.116 2000/03/14 02:24:31 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.117 2000/03/20 12:20:12 rlk Exp $".
  */
