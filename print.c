@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.28 1999/11/25 03:17:04 rlk Exp $"
+ * "$Id: print.c,v 1.29 1999/11/29 12:17:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -61,7 +61,28 @@
 #endif
 
 #include <libgimp/gimpui.h>
+#if 0
 #include <libgimp/stdplugins-intl.h>
+#else
+#ifdef HAVE_LC_MESSAGES
+#define INIT_I18N() \
+  setlocale(LC_MESSAGES, ""); \
+  bindtextdomain("gimp-std-plugins", LOCALEDIR); \
+  textdomain("gimp-std-plugins")
+#define INIT_I18N_UI() \
+  gtk_set_locale(); \
+  setlocale (LC_NUMERIC, "C"); \
+  INIT_I18N();
+#else
+#define INIT_I18N() \
+  bindtextdomain("gimp-std-plugins", LOCALEDIR); \
+  textdomain("gimp-std-plugins")
+#define INIT_I18N_UI() \
+  gtk_set_locale(); \
+  setlocale (LC_NUMERIC, "C"); \
+  INIT_I18N();
+#endif
+#endif
 
 /*
  * Constants for GUI...
@@ -3258,5 +3279,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.28 1999/11/25 03:17:04 rlk Exp $".
+ * End of "$Id: print.c,v 1.29 1999/11/29 12:17:37 rlk Exp $".
  */
