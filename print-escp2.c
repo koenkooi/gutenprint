@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.284 2000/12/18 01:07:52 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.285 2000/12/18 01:48:03 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1416,6 +1416,7 @@ static const res_t escp2_reslist[] = {
   { "360 DPI High Quality",                     360,  360,  1, 0, 2, 1, 0, 3 },
   { "360 DPI High Quality Unidirectional",      360,  360,  1, 0, 2, 1, 1, 3 },
   { "720 DPI Microweave",                       720,  720,  0, 1, 1, 1, 0, 4 },
+  { "720 DPI Microweave Unidirectional",        720,  720,  0, 1, 1, 1, 1, 4 },
   { "720 DPI Softweave",                        720,  720,  1, 0, 1, 1, 0, 5 },
   { "720 DPI Softweave Unidirectional",         720,  720,  1, 0, 1, 1, 1, 5 },
   { "720 DPI High Quality",                     720,  720,  1, 0, 2, 1, 0, 5 },
