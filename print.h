@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.76 2000/08/28 03:09:58 rlk Exp $"
+ * "$Id: print.h,v 1.77 2000/08/28 03:48:08 anikin Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -77,6 +77,21 @@
 #define IMAGE_CONTINUOUS	2
 #define IMAGE_MONOCHROME	3
 
+/* Uncomment the next line to get performance statistics:
+ * look for QUANT(#) in the code. At the end of escp2-print
+ * run, it will print out how long and how many time did 
+ * certain pieces of code take. Of course, don't forget about
+ * overhead of call to update_timer - it's not zero.
+ * If you need more detailed performance stats, just put
+ * QUANT() calls in the interesting spots in the code */
+/* #define QUANTIFY */
+#ifdef QUANTIFY
+#include <assert.h>
+#include <sys/timeb.h>
+#define QUANT(n) update_timer(n);
+#else
+#define QUANT(n)
+#endif
 
 /*
  * Printer driver control structure.  See "print.c" for the actual list...
@@ -403,7 +418,14 @@ extern const vars_t *print_default_settings(void);
 extern const vars_t *print_maximum_settings(void);
 extern const vars_t *print_minimum_settings(void);
 
+#ifdef QUANTIFY
+/* Used for performance analysis - to be called before and after
+ * the interval to be quantified */
+extern void  update_timer(int number);
+extern void  print_timers(void );
+#endif
+
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.76 2000/08/28 03:09:58 rlk Exp $".
+ * End of "$Id: print.h,v 1.77 2000/08/28 03:48:08 anikin Exp $".
  */
