@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.33 2004/12/14 02:16:48 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.34 2005/03/22 03:20:20 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -71,9 +71,9 @@ static const escp2_dropsize_t escp2_4pl_dropsizes =
 static const escp2_dropsize_t escp2_3pl_dropsizes =
   { "3pl", 3, { 0.25, 0.61, 1.0 } };
 static const escp2_dropsize_t escp2_3pl_1440_dropsizes =
-  { "3pl_1440", 3, { 0.39, 1.0 } };
+  { "3pl_1440", 2, { 0.39, 1.0 } };
 static const escp2_dropsize_t escp2_3pl_2880_dropsizes =
-  { "3pl_2880", 3, { 1.0 } };
+  { "3pl_2880", 1, { 1.0 } };
 static const escp2_dropsize_t escp2_980_6pl_dropsizes =
   { "980_6pl", 3, { 0.40, 0.675, 1.0 } };
 
