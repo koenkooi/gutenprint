@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.28 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.28.2.1 2001/05/28 19:43:54 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1802,6 +1802,12 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   int		blank_lines,	/* Accumulated blank lines */
 		is_blank,	/* Current line is blank */
 		do_blank;	/* Blank line removal required */
+
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
 
   caps = pcl_get_model_capabilities(model);
 

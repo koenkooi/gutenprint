@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.31 2001/05/12 16:12:21 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.31.2.1 2001/05/28 19:43:54 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -235,6 +235,8 @@ typedef struct stp_softweave
 extern void	stp_set_driver_data (stp_vars_t vv, void * val);
 extern void * 	stp_get_driver_data (const stp_vars_t vv);
 
+extern void	stp_set_verified(stp_vars_t vv, int value);
+extern int	stp_get_verified(stp_vars_t vv);
 
 extern void	stp_default_media_size(const stp_printer_t printer,
 				       const stp_vars_t v, int *width,
@@ -486,5 +488,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.31 2001/05/12 16:12:21 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.31.2.1 2001/05/28 19:43:54 rlk Exp $".
  */

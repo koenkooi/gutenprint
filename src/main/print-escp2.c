@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68.2.7 2001/05/27 15:59:53 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68.2.8 2001/05/28 19:43:54 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3235,6 +3235,13 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   double lum_adjustment[49], sat_adjustment[49], hue_adjustment[49];
   int ncolors = 0;
   escp2_privdata_t privdata;
+
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
+
   privdata.undersample = 1;
   stp_set_driver_data(nv, &privdata);
 
