@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.9 2001/04/27 23:03:19 rleigh Exp $"
+ * "$Id: print.c,v 1.10 2001/05/01 23:39:48 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -180,7 +180,7 @@ query (void)
   gimp_install_procedure ("file_print_gimp",
 			  blurb, help, auth, copy,
 			  PLUG_IN_VERSION,
-			  N_("<Image>/File/Print (Gimp)..."),
+			  N_("<Image>/File/Print..."),
 			  types,
 			  PROC_PLUG_IN,
 			  nargs, 0,
@@ -1432,5 +1432,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.9 2001/04/27 23:03:19 rleigh Exp $".
+ * End of "$Id: print.c,v 1.10 2001/05/01 23:39:48 rlk Exp $".
  */
