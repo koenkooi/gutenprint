@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140.2.1 2004/02/16 23:47:06 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.2 2004/02/22 04:05:47 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1186,7 +1186,7 @@ typedef struct {
 
 typedef struct {
   const canon_cap_t *caps;
-  int output_type;
+  stp_output_mode_t output_mode;
   const paper_t *pt;
   int print_head;
   int colormode;
@@ -1947,7 +1947,7 @@ canon_init_setColor(stp_const_vars_t v, canon_init_t *init)
 		break;		/*	tbd */
 
   	case 1:			/* 360 dpi series - BJC-4000, BJC-210, BJC-70 and their descendants */
-		if (init->output_type==OUTPUT_GRAY)
+		if (init->output_mode==STP_OUTPUT_BW)
     			arg_63_1|= 0x01;					/* PRINT_COLOUR */
 
   		arg_63_2 = ((init->pt ? init->pt->media_code : 0) << 4)		/* PRINT_MEDIA */
@@ -1960,7 +1960,7 @@ canon_init_setColor(stp_const_vars_t v, canon_init_t *init)
 		break;
 
 	case 3:			/* 720 dpi series - BJC-3000 and descendants */
-		if (init->output_type==OUTPUT_GRAY)
+		if (init->output_mode==STP_OUTPUT_BW)
     			arg_63_1|= 0x01;					/* colour mode */
 
   		arg_63_2 = (init->pt) ? init->pt->media_code : 0;		/* print media type */
@@ -2063,7 +2063,7 @@ canon_init_setPrintMode(stp_const_vars_t v, canon_init_t *init)
     arg_6d_1= 0x02;
   else if (init->print_head<=4)
     arg_6d_1= 0x04;
-  if (init->output_type==OUTPUT_GRAY)
+  if (init->output_mode==STP_OUTPUT_BW)
     arg_6d_2= 0x02;
 
   if (init->caps->model==8200)
@@ -2243,7 +2243,7 @@ canon_printfunc(stp_vars_t v)
   canon_write_line(v);
   for (i = 0; i < 7; i++)
     canon_advance_buffer(pd->cols[i], pd->buf_length, pd->delay[i]);
-  
+
 }
 
 static double
@@ -2280,7 +2280,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   int		model = stpi_get_model_id(v);
   const char	*resolution = stp_get_string_parameter(v, "Resolution");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
-  int 		output_type = stp_get_output_type(v);
+  stp_output_mode_t output_mode = stp_get_output_mode(v);
   const char	*ink_type = stp_get_string_parameter(v, "InkType");
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -2344,13 +2344,11 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 
   if (printhead == 0 || caps->inks == CANON_INK_K)
     {
-      output_type = OUTPUT_GRAY;
-      stp_set_output_type(v, output_type);
+      output_mode = STP_OUTPUT_BW;
     }
 
-  if (output_type == OUTPUT_GRAY)
+  if (output_mode == STP_OUTPUT_BW)
     colormode = COLOR_MONOCHROME;
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
  /*
   * Figure out the output resolution...
@@ -2404,15 +2402,13 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   PUT("out_width ", out_width,xdpi);
   PUT("out_height", out_height,ydpi);
 
-  stpi_image_progress_init(image);
-
   PUT("top     ",top,72);
   PUT("left    ",left,72);
 
   pt = get_media_type(stp_get_string_parameter(v, "MediaType"));
 
   init.caps = caps;
-  init.output_type = output_type;
+  init.output_mode = output_mode;
   init.pt = pt;
   init.print_head = printhead;
   init.colormode = colormode;
@@ -2502,6 +2498,16 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
     }
   }
 
+  if (privdata.cols[0])
+    {
+      if (privdata.cols[1])
+	stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+      else
+	stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+    }
+  else
+    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+
   stpi_deprintf(STPI_DBG_CANON,
 		"canon: driver will use colors %s%s%s%s%s%s%s\n",
 		privdata.cols[0] ? "K" : "",
@@ -2525,14 +2531,11 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
       stp_set_float_parameter_active(v, "Density", STP_PARAMETER_ACTIVE);
       stp_set_float_parameter(v, "Density", 1.0);
     }
-  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-    {
-      if (pt)
-	stp_scale_float_parameter(v, "Density", pt->base_density);
-      else			/* Can't find paper type? Assume plain */
-	stp_scale_float_parameter(v, "Density", .5);
-      stp_scale_float_parameter(v, "Density", canon_density(caps, res_code));
-    }
+  if (pt)
+    stp_scale_float_parameter(v, "Density", pt->base_density);
+  else			/* Can't find paper type? Assume plain */
+    stp_scale_float_parameter(v, "Density", .5);
+  stp_scale_float_parameter(v, "Density", canon_density(caps, res_code));
   if (stp_get_float_parameter(v, "Density") > 1.0)
     stp_set_float_parameter(v, "Density", 1.0);
   if (colormode == COLOR_MONOCHROME)
@@ -2629,11 +2632,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
       stp_set_curve_parameter(v, "SatMap", sat_adjustment);
       stp_curve_free(sat_adjustment);
     }
-  if (output_type == OUTPUT_COLOR && privdata.cols[0])
-    {
-      output_type = OUTPUT_RAW_CMYK;
-      stp_set_output_type(v, OUTPUT_RAW_CMYK);
-    }
 
   out_channels = stpi_color_init(v, image, 65536);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
@@ -2642,8 +2640,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   for (y = 0; y < out_height; y ++)
   {
     int duplicate_line = 1;
-    if ((y & 63) == 0)
-      stpi_image_note_progress(image, y, out_height);
 
     if (errline != errlast)
     {
@@ -2683,7 +2679,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
     }
   }
 
-  stpi_image_progress_conclude(image);
+  stpi_image_conclude(image);
 
  /*
   * Cleanup...

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.62 2003/10/20 02:35:51 rlk Exp $"
+ * "$Id: print-vars.c,v 1.62.4.1 2004/02/22 04:05:50 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -70,10 +70,12 @@ typedef struct					/* Plug-in variables */
   int	cookie;
   char *driver;			/* Name of printer "driver" */
   char *color_conversion;       /* Color module in use */
-  int	output_type;		/* Color or grayscale output */
-  int	input_color_model;	/* Color model for this device */
-  int	output_color_model;	/* Color model for this device */
+  stp_output_mode_t output_mode;	/* Color or grayscale output */
   stp_job_mode_t job_mode;
+  stp_image_type_t image_type;
+  stp_output_type_t output_type;
+  int   image_channel_depth;
+  int   image_channels;
   int	left;			/* Offset from left-upper corner, points */
   int	top;			/* ... */
   int	width;			/* Width of the image, points */
@@ -97,10 +99,12 @@ static stpi_internal_vars_t default_vars =
 	COOKIE_VARS,
 	NULL,		       	/* Name of printer "driver" */
 	NULL,                   /* Name of color module */
-	OUTPUT_COLOR,		/* Color or grayscale output */
-	COLOR_MODEL_RGB,	/* Input color model */
-	COLOR_MODEL_RGB,	/* Output color model */
-	STP_JOB_MODE_PAGE	/* Job mode */
+	STP_OUTPUT_BW,		/* Color or grayscale output */
+	STP_JOB_MODE_PAGE,	/* Job mode */
+	STP_IMAGE_INVALID,	/* Image type */
+	STP_OUTPUT_TYPE_INVALID,	/* Image type */
+	8,			/* Channel bit depth */
+	0			/* Channel count */
 };
 
 static void
@@ -108,7 +112,7 @@ null_vars(void)
 {
   stpi_erprintf("Null stp_vars_t! Please report this bug.\n");
   stpi_abort();
-}  
+}
 
 static void
 bad_vars(void)
@@ -418,22 +422,23 @@ pre##_get_##s(stp_const_vars_t vv)		\
 
 DEF_STRING_FUNCS(driver, stp)
 DEF_STRING_FUNCS(color_conversion, stp)
-DEF_FUNCS(output_type, int, stp)
+DEF_FUNCS(output_mode, stp_output_mode_t, stp)
 DEF_FUNCS(left, int, stp)
 DEF_FUNCS(top, int, stp)
 DEF_FUNCS(width, int, stp)
 DEF_FUNCS(height, int, stp)
 DEF_FUNCS(page_width, int, stp)
 DEF_FUNCS(page_height, int, stp)
-DEF_FUNCS(input_color_model, int, stp)
 DEF_FUNCS(page_number, int, stp)
 DEF_FUNCS(job_mode, stp_job_mode_t, stp)
+DEF_FUNCS(image_type, stp_image_type_t, stp)
+DEF_FUNCS(output_type, stp_output_type_t, stpi)
+DEF_FUNCS(image_channel_depth, int, stp)
+DEF_FUNCS(image_channels, int, stp)
 DEF_FUNCS(outdata, void *, stp)
 DEF_FUNCS(errdata, void *, stp)
 DEF_FUNCS(outfunc, stp_outfunc_t, stp)
 DEF_FUNCS(errfunc, stp_outfunc_t, stp)
-
-DEF_FUNCS(output_color_model, int, stpi)
 
 void
 stpi_set_verified(stp_vars_t vv, int val)
@@ -1268,6 +1273,23 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
     return;
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_color_conversion(vd, stp_get_color_conversion(vs));
+  stp_set_output_mode(vd, stp_get_output_mode(vs));
+  stp_set_job_mode(vd, stp_get_job_mode(vs));
+  stp_set_image_type(vd, stp_get_image_type(vs));
+  stpi_set_output_type(vd, stpi_get_output_type(vs));
+  stp_set_image_channel_depth(vd, stp_get_image_channel_depth(vs));
+  stp_set_image_channels(vd, stp_get_image_channels(vs));
+  stp_set_left(vd, stp_get_left(vs));
+  stp_set_top(vd, stp_get_top(vs));
+  stp_set_width(vd, stp_get_width(vs));
+  stp_set_height(vd, stp_get_height(vs));
+  stp_set_page_width(vd, stp_get_page_width(vs));
+  stp_set_page_height(vd, stp_get_page_height(vs));
+  stp_set_page_number(vd, stp_get_page_number(vs));
+  stp_set_outdata(vd, stp_get_outdata(vs));
+  stp_set_errdata(vd, stp_get_errdata(vs));
+  stp_set_outfunc(vd, stp_get_outfunc(vs));
+  stp_set_errfunc(vd, stp_get_errfunc(vs));
   for (i = 0; i < STP_PARAMETER_TYPE_INVALID; i++)
     {
       stpi_list_destroy(vvd->params[i]);
@@ -1275,22 +1297,6 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
     }
   stpi_list_destroy(vvd->internal_data);
   vvd->internal_data = copy_compdata_list(vvs->internal_data);
-
-  stp_set_output_type(vd, stp_get_output_type(vs));
-  stp_set_left(vd, stp_get_left(vs));
-  stp_set_top(vd, stp_get_top(vs));
-  stp_set_width(vd, stp_get_width(vs));
-  stp_set_height(vd, stp_get_height(vs));
-  stp_set_page_width(vd, stp_get_page_width(vs));
-  stp_set_page_height(vd, stp_get_page_height(vs));
-  stp_set_input_color_model(vd, stp_get_input_color_model(vs));
-  stpi_set_output_color_model(vd, stpi_get_output_color_model(vs));
-  stp_set_outdata(vd, stp_get_outdata(vs));
-  stp_set_errdata(vd, stp_get_errdata(vs));
-  stp_set_outfunc(vd, stp_get_outfunc(vs));
-  stp_set_errfunc(vd, stp_get_errfunc(vs));
-  stp_set_job_mode(vd, stp_get_job_mode(vs));
-  stp_set_page_number(vd, stp_get_page_number(vs));
   stpi_set_verified(vd, stpi_get_verified(vs));
 }
 
@@ -1358,10 +1364,9 @@ stp_merge_printvars(stp_vars_t user, stp_const_vars_t print)
 	  stp_parameter_description_free(&desc);
 	}
     }
-  if (stp_get_output_type(print) == OUTPUT_GRAY &&
-      (stp_get_output_type(user) == OUTPUT_COLOR ||
-       stp_get_output_type(user) == OUTPUT_RAW_CMYK))
-    stp_set_output_type(user, OUTPUT_GRAY);
+  if (stp_get_output_mode(print) == STP_OUTPUT_BW &&
+      (stp_get_output_mode(user) == STP_OUTPUT_COLOR))
+    stp_set_output_mode(user, STP_OUTPUT_BW);
   stp_parameter_list_free(params);
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125.4.1 2004/02/16 23:47:07 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.2 2004/02/22 04:05:49 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1601,7 +1601,8 @@ pcl_parameters(stp_const_vars_t v, const char *name,
 	   strcmp(name, "BlackDensity") == 0)
     {
       if (caps->color_type != PCL_COLOR_NONE &&
-	  stp_get_output_type(v) != OUTPUT_GRAY)
+	  stp_get_output_mode(v) != STP_OUTPUT_BW &&
+	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
 	description->is_active = 1;
       else
 	description->is_active = 0;
@@ -1610,7 +1611,8 @@ pcl_parameters(stp_const_vars_t v, const char *name,
 	   strcmp(name, "LightMagentaTransition") == 0)
     {
       if (caps->color_type & PCL_COLOR_CMYKcm &&
-	  stp_get_output_type(v) != OUTPUT_GRAY)
+	  stp_get_output_mode(v) != STP_OUTPUT_BW &&
+	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
 	description->is_active = 1;
       else
 	description->is_active = 0;
@@ -1749,7 +1751,7 @@ pcl_printfunc(stp_vars_t v)
 		  (len_m == -1) && (len_lm == -1) && (len_y == -1) &&
 		  (len_k == -1));
   int height = pd->height;
-  int output_type = stp_get_output_type(v);
+  stp_output_mode_t output_mode = stp_get_output_mode(v);
 
   if (is_blank && (pd->blank_lines != 0))	/* repeated blank line */
     {
@@ -1778,7 +1780,7 @@ pcl_printfunc(stp_vars_t v)
 	  /*
 	   * 4-level (CRet) dithers...
 	   */
-	  if (output_type == OUTPUT_GRAY)
+	  if (output_mode == STP_OUTPUT_BW)
 	    {
 	      (*(pd->writefunc))(v, black + height / 2, height / 2, 0);
 	      (*(pd->writefunc))(v, black, height / 2, 1);
@@ -1818,7 +1820,7 @@ pcl_printfunc(stp_vars_t v)
 	   * Standard 2-level dithers...
 	   */
 
-	  if (output_type == OUTPUT_GRAY)
+	  if (output_mode == STP_OUTPUT_BW)
 	    {
 	      (*(pd->writefunc))(v, black, height, 1);
 	    }
@@ -1862,7 +1864,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   const char	*media_type = stp_get_string_parameter(v, "MediaType");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
   const char	*ink_type = stp_get_string_parameter(v, "InkType");
-  int 		output_type = stp_get_output_type(v);
+  stp_output_mode_t output_mode = stp_get_output_mode(v);
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
   int		y;		/* Looping vars */
@@ -1946,25 +1948,17 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   * Choose the correct color conversion function...
   */
   if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
-      output_type != OUTPUT_GRAY && xdpi == 600 && ydpi == 600)
+      output_mode != STP_OUTPUT_BW && xdpi == 600 && ydpi == 600)
     {
       stpi_eprintf(v, "600x600 resolution only available in MONO\n");
-      output_type = OUTPUT_GRAY;
-      stp_set_output_type(v, OUTPUT_GRAY);
+      output_mode = STP_OUTPUT_BW;
     }
-
-  if (caps->color_type == PCL_COLOR_NONE)
-    {
-      output_type = OUTPUT_GRAY;
-      stp_set_output_type(v, OUTPUT_GRAY);
-    }
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
   privdata.do_cret = (xdpi >= 300 &&
 	     ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4));
   privdata.do_cretb = (xdpi >= 600 && ydpi >= 600 &&
 	      ((caps->color_type & PCL_COLOR_CMYK4b) == PCL_COLOR_CMYK4b) &&
-	      output_type != OUTPUT_GRAY);
+	      output_mode != STP_OUTPUT_BW);
   if (privdata.do_cretb){
     privdata.do_cret = 1;
     dot_sizes_use=dot_sizes_cret;
@@ -1998,12 +1992,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
   image_height = stpi_image_height(image);
   image_width = stpi_image_width(image);
-
- /*
-  * Let the user know what we're doing...
-  */
-
-  stpi_image_progress_init(image);
 
  /*
   * Send PCL initialization commands...
@@ -2146,7 +2134,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     * vertical resolutions as well as a color count...
     */
 
-    if (output_type != OUTPUT_GRAY)
+    if (output_mode != STP_OUTPUT_BW)
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         planes = 3;
       else
@@ -2179,7 +2167,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   else
   {
     stpi_zprintf(v, "\033*t%dR", xdpi);		/* Simple resolution */
-    if (output_type != OUTPUT_GRAY)
+    if (output_mode != STP_OUTPUT_BW)
     {
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         stpi_puts("\033*r-3U", v);		/* Simple CMY color */
@@ -2244,7 +2232,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   if (privdata.do_cret)
     privdata.height *= 2;
 
-  if (output_type == OUTPUT_GRAY)
+  if (output_mode == STP_OUTPUT_BW)
   {
     black   = stpi_malloc(privdata.height);
     cyan    = NULL;
@@ -2274,6 +2262,16 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       lmagenta = NULL;
     }
   }
+
+  if (black)
+    {
+      if (cyan)
+	stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+      else
+	stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+    }
+  else
+    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
 
 /* Allocate buffer for pcl_mode2 tiff compression */
 
@@ -2398,11 +2396,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       lum_adjustment = stp_curve_create_from_string(standard_lum_adjustment);
       stp_curve_free(lum_adjustment);
     }
-  if (output_type == OUTPUT_COLOR && black)
-    {
-      output_type = OUTPUT_RAW_CMYK;
-      stp_set_output_type(v, OUTPUT_RAW_CMYK);
-    }
 
   out_channels = stpi_color_init(v, image, 65536);
 
@@ -2423,8 +2416,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   for (y = 0; y < out_height; y ++)
   {
     int duplicate_line = 1;
-    if ((y & 63) == 0)
-      stpi_image_note_progress(image, y, out_height);
     if (errline != errlast)
     {
       errlast = errline;
@@ -2458,7 +2449,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     privdata.blank_lines=0;
   }
 
-  stpi_image_progress_conclude(image);
+  stpi_image_conclude(image);
 
  /*
   * Cleanup...

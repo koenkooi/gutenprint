@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.30 2003/11/20 00:30:53 rleigh Exp $"
+ * "$Id: plist.c,v 1.30.4.1 2004/02/22 04:05:47 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1124,7 +1124,7 @@ stpui_errfunc(void *file, const char *buf, size_t bytes)
 }
 
 int
-stpui_print(const stpui_plist_t *printer, stp_image_t *image)
+stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 {
   int		ppid = getpid (), /* PID of plugin */
 		opid,		/* PID of output process */
@@ -1339,7 +1339,7 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
       stp_set_errfunc(np->v, stpui_get_errfunc());
       stp_set_outdata(np->v, prn);
       stp_set_errdata(np->v, stpui_get_errdata());
-      if (stp_print(np->v, image) != 1)
+      if (stp_print(np->v, &(image->im)) != 1)
 	{
 	  stpui_plist_destroy(np);
 	  g_free(np);
@@ -1367,5 +1367,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.30 2003/11/20 00:30:53 rleigh Exp $".
+ * End of "$Id: plist.c,v 1.30.4.1 2004/02/22 04:05:47 rlk Exp $".
  */

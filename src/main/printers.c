@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61 2004/02/07 18:05:32 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.1 2004/02/22 04:05:50 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -599,8 +599,8 @@ stpi_verify_printer_params(stp_vars_t v)
    * Note that in raw CMYK mode the user is responsible for not sending
    * color output to black & white printers!
    */
-  if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
-      stp_get_output_type(v) == OUTPUT_COLOR)
+  if (stp_get_output_mode(printvars) == STP_OUTPUT_BW &&
+      stp_get_output_mode(v) == STP_OUTPUT_COLOR)
     {
       answer = 0;
       stpi_eprintf(v, _("Printer does not support color output\n"));
@@ -660,11 +660,19 @@ stpi_verify_printer_params(stp_vars_t v)
       stpi_eprintf(v, _("Image is too long for the page\n"));
     }
 
-  CHECK_INT_RANGE(v, output_type, 0, OUTPUT_RAW_PRINTER);
-  CHECK_INT_RANGE(v, input_color_model, 0, NCOLOR_MODELS - 1);
-  CHECK_INT_RANGE_INTERNAL(v, output_color_model, 0, NCOLOR_MODELS - 1);
+  CHECK_INT_RANGE(v, output_mode, STP_OUTPUT_BW, STP_OUTPUT_RAW);
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
   CHECK_INT_RANGE(v, job_mode, STP_JOB_MODE_PAGE, STP_JOB_MODE_JOB);
+  CHECK_INT_RANGE(v, image_type, STP_IMAGE_GRAYSCALE, STP_IMAGE_RAW);
+  CHECK_INT_RANGE(v, image_channels, 0, STP_CHANNEL_LIMIT - 1);
+
+  if (stp_get_image_channel_depth(v) != 8 &&
+      stp_get_image_channel_depth(v) != 16)
+    {
+      answer = 0;
+      stpi_eprintf(v, _("%s out of range (value %d, must be 8 or 16)"),
+		   "image_channel_depth", stp_get_image_channel_depth(v));
+    }
 
   params = stp_get_parameter_list(v);
   nparams = stp_parameter_list_count(params);
@@ -856,9 +864,9 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
 	      if (stmp)
 		{
 		  if (!strcmp(stmp, "true"))
-		    stp_set_output_type(outprinter->printvars, OUTPUT_COLOR);
+		    stp_set_output_mode(outprinter->printvars, STP_OUTPUT_COLOR);
 		  else
-		    stp_set_output_type(outprinter->printvars, OUTPUT_GRAY);
+		    stp_set_output_mode(outprinter->printvars, STP_OUTPUT_BW);
 		  color = 1;
 		}
 	    }

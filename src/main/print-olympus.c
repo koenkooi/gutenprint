@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33 2003/11/22 23:36:06 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.1 2004/02/22 04:05:49 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -59,7 +59,7 @@ static const char *zero = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
 
 typedef struct
 {
-  int color_model;
+  stp_output_type_t output_type;
   int output_channels;
   const char *name;
 } ink_t;
@@ -158,7 +158,7 @@ static const olympus_cap_t* olympus_get_model_capabilities(int model);
 
 static const ink_t cmy_inks[] =
 {
-  { COLOR_MODEL_CMY, 3, "CMY" },
+  { STP_OUTPUT_TYPE_CMY, 3, "CMY" },
 };
 
 static const ink_list_t cmy_ink_list =
@@ -168,7 +168,7 @@ static const ink_list_t cmy_ink_list =
 
 static const ink_t rgb_inks[] =
 {
-  { COLOR_MODEL_RGB, 3, "RGB" },
+  { STP_OUTPUT_TYPE_RGB, 3, "RGB" },
 };
 
 static const ink_list_t rgb_ink_list =
@@ -1073,7 +1073,6 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
 {
   int i, j;
   int y, min_y, max_y;			/* Looping vars */
-  int max_progress, curr_progress = 0;	/* Progress info */
   int min_x, max_x;
   int out_channels, out_bytes;
   unsigned short *final_out = NULL;
@@ -1202,7 +1201,7 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
   privdata.xsize = print_px_width;
   privdata.ysize = print_px_height;
 
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
+  stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
   
   if (caps->adj_cyan &&
         !stp_check_curve_parameter(v, "CyanCurve", STP_PARAMETER_ACTIVE))
@@ -1234,7 +1233,7 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
       for (i = 0; i < caps->inks->n_items; i++)
 	if (strcmp(ink_type, caps->inks->item[i].name) == 0)
 	  {
-	    stpi_set_output_color_model(v, caps->inks->item[i].color_model);
+	    stpi_set_output_type(v, caps->inks->item[i].output_type);
 	    ink_channels = caps->inks->item[i].output_channels;
 	    break;
 	  }
@@ -1259,8 +1258,6 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
     final_out = stpi_malloc(print_px_width * ink_channels * 2);
 
   stp_set_float_parameter(v, "Density", 1.0);
-
-  stpi_image_progress_init(image);
 
   if (ink_type && strcmp(ink_type, "RGB") == 0)
     {
@@ -1309,9 +1306,6 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
       max_x = out_px_right;
     }
       
-  max_progress = (caps->interlacing == OLYMPUS_INTERLACE_PLANE ?
-		  	(max_y - min_y) * ink_channels : max_y - min_y) / 63;
-
   r_errdiv  = image_px_height / out_px_height;
   r_errmod  = image_px_height % out_px_height; 
   c_errdiv = image_px_width / out_px_width;
@@ -1355,9 +1349,6 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
                 }
             }
         
-          if ((y & 63) == 0)
-            stpi_image_note_progress(image, curr_progress++, max_progress);
-  
           if (y < out_px_top || y >= out_px_bottom)
   	    stpi_zfwrite((char *) zeros, out_bytes, print_px_width, v);
           else
@@ -1491,7 +1482,7 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
       stpi_deprintf(STPI_DBG_OLYMPUS, "olympus: caps->printer_end\n");
       (*(caps->printer_end_func))(v);
     }
-  stpi_image_progress_conclude(image);
+  stpi_image_conclude(image);
   if (final_out)
     stpi_free(final_out);
   return status;

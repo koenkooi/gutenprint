@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.3 2003/11/09 23:06:00 rlk Exp $"
+ * "$Id: vars.h,v 1.3.4.1 2004/02/22 04:05:46 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -34,21 +34,29 @@ extern "C" {
  * Constants...
  */
 
-#define OUTPUT_GRAY             0       /* Grayscale output */
-#define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_RAW_CMYK         2       /* Raw CMYK output */
-#define OUTPUT_RAW_PRINTER	3	/* Printer-specific raw output */
-
-#define COLOR_MODEL_RGB         0
-#define COLOR_MODEL_CMY         1
-#define NCOLOR_MODELS           2
-
+typedef enum
+{
+  STP_IMAGE_INVALID,
+  STP_IMAGE_GRAYSCALE,
+  STP_IMAGE_WHITESCALE,
+  STP_IMAGE_RGB,
+  STP_IMAGE_CMY,
+  STP_IMAGE_CMYK,
+  STP_IMAGE_RAW
+} stp_image_type_t;
 
 typedef enum
 {
   STP_JOB_MODE_PAGE,
   STP_JOB_MODE_JOB
 } stp_job_mode_t;
+
+typedef enum
+{
+  STP_OUTPUT_BW,
+  STP_OUTPUT_COLOR,
+  STP_OUTPUT_RAW
+} stp_output_mode_t;
 
 /*
  * Opaque representation of printer setttings.
@@ -59,7 +67,6 @@ typedef enum
  */
 typedef void *stp_vars_t;
 typedef const void *stp_const_vars_t;
-
 
 
 /*
@@ -205,19 +212,31 @@ typedef void (*stp_outfunc_t) (void *data, const char *buffer, size_t bytes);
 *                                                               *
 ****************************************************************/
 
+/*
+ * Constructors, destructors
+ */
 extern stp_vars_t stp_vars_create(void);
 extern void stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs);
 extern stp_vars_t stp_vars_create_copy(stp_const_vars_t vs);
 extern void stp_vars_free(stp_vars_t v);
 
+/* 
+ * Set/get the name of the printer driver
+ */
 extern void stp_set_driver(stp_vars_t v, const char *val);
 extern void stp_set_driver_n(stp_vars_t v, const char *val, int bytes);
 extern const char *stp_get_driver(stp_const_vars_t v);
 
+/*
+ * Set/get the name of the color conversion routine, if not default
+ */
 extern void stp_set_color_conversion(stp_vars_t v, const char *val);
 extern void stp_set_color_conversion_n(stp_vars_t v, const char *val, int bytes);
 extern const char *stp_get_color_conversion(stp_const_vars_t v);
 
+/*
+ * Set/get the position and size of the image
+ */
 extern void stp_set_left(stp_vars_t v, int val);
 extern int stp_get_left(stp_const_vars_t v);
 
@@ -230,6 +249,34 @@ extern int stp_get_width(stp_const_vars_t v);
 extern void stp_set_height(stp_vars_t v, int val);
 extern int stp_get_height(stp_const_vars_t v);
 
+/*
+ * Set output type.
+ */
+extern void stp_set_output_mode(stp_vars_t v, stp_output_mode_t val);
+extern stp_output_mode_t stp_get_output_mode(stp_const_vars_t v);
+
+/*
+ * Set/get the type of the image
+ */
+extern void stp_set_image_type(stp_vars_t v, stp_image_type_t val);
+extern stp_image_type_t stp_get_image_type(stp_const_vars_t v);
+
+/*
+ * Set/get the number of channels.  Only needed if the image type
+ * does not define the number of channels.
+ */
+extern void stp_set_image_channels(stp_vars_t v, int val);
+extern int stp_get_image_channels(stp_const_vars_t v);
+
+/*
+ * Set/get the depth in bits of each channel.  Currently must be 8 or 16.
+ */
+extern void stp_set_image_channel_depth(stp_vars_t v, int bits);
+extern int stp_get_image_channel_depth(stp_const_vars_t v);
+
+/*
+ * Set/get job properties
+ */
 extern void stp_set_job_mode(stp_vars_t, stp_job_mode_t);
 extern stp_job_mode_t stp_get_job_mode(stp_const_vars_t);
 
@@ -244,26 +291,6 @@ extern int stp_get_page_width(stp_const_vars_t v);
 
 extern void stp_set_page_height(stp_vars_t v, int val);
 extern int stp_get_page_height(stp_const_vars_t v);
-
-/*
- * Set output type.  This is likely to change further.
- */
-extern void stp_set_output_type(stp_vars_t v, int val);
-extern int stp_get_output_type(stp_const_vars_t v);
-
-/*
- * Input color model refers to how the data is being sent to the
- * driver library; the default is RGB.  Output color model refers to
- * the characteristics of the device; the default is CMYK.  The output
- * color model is set by the printer driver and cannot be overridden.
- * It is provided to permit applications to generate previews using
- * the color machinery in Gimp-Print.  If this is done, normally
- * the output color model will be RGB.
- *
- * This is subject to change.
- */
-extern void stp_set_input_color_model(stp_vars_t v, int val);
-extern int stp_get_input_color_model(stp_const_vars_t v);
 
 /*
  * These functions are used to print output and diagnostic information
@@ -572,5 +599,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3 2003/11/09 23:06:00 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.1 2004/02/22 04:05:46 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.71.4.1 2004/02/16 23:47:07 rlk Exp $"
+ * "$Id: print-ps.c,v 1.71.4.2 2004/02/22 04:05:49 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -322,7 +322,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   const char	*media_size = stp_get_string_parameter(v, "PageSize");
   const char	*media_type = stp_get_string_parameter(v, "MediaType");
   const char	*media_source = stp_get_string_parameter(v, "InputSlot");
-  int 		output_type = stp_get_output_type(v);
+  stp_output_mode_t output_mode = stp_get_output_mode(v);
   unsigned short *out = NULL;
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -387,12 +387,6 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 
   image_height = stpi_image_height(image);
   image_width = stpi_image_width(image);
-
- /*
-  * Let the user know what we're doing...
-  */
-
-  stpi_image_progress_init(image);
 
  /*
   * Output a standard PostScript header with DSC comments...
@@ -548,11 +542,14 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 
   stpi_channel_reset(nv);
   stpi_channel_add(nv, 0, 0, 1.0);
-  if (output_type == OUTPUT_COLOR)
+  if (output_mode == STP_OUTPUT_COLOR)
     {
       stpi_channel_add(nv, 1, 0, 1.0);
       stpi_channel_add(nv, 2, 0, 1.0);
+      stpi_set_output_type(nv, STP_IMAGE_RGB);
     }
+  else
+    stpi_set_output_type(nv, STP_IMAGE_WHITESCALE);
 
   out_channels = stpi_color_init(nv, image, 256);
 
@@ -564,16 +561,13 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 
     stpi_puts("[ 1 0 0 -1 0 1 ]\n", v);
 
-    if (output_type == OUTPUT_GRAY)
+    if (output_mode == STP_OUTPUT_BW)
       stpi_puts("{currentfile picture readhexstring pop} image\n", v);
     else
       stpi_puts("{currentfile picture readhexstring pop} false 3 colorimage\n", v);
 
     for (y = 0; y < image_height; y ++)
     {
-      if ((y & 15) == 0)
-	stpi_image_note_progress(image, y, image_height);
-
       if (stpi_color_get_row(nv, image, y, &zero_mask))
 	{
 	  status = 2;
@@ -586,7 +580,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   }
   else
   {
-    if (output_type == OUTPUT_GRAY)
+    if (output_mode == STP_OUTPUT_BW)
       stpi_puts("/DeviceGray setcolorspace\n", v);
     else
       stpi_puts("/DeviceRGB setcolorspace\n", v);
@@ -598,7 +592,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
     stpi_zprintf(v, "\t/Height %d\n", image_height);
     stpi_puts("\t/BitsPerComponent 8\n", v);
 
-    if (output_type == OUTPUT_GRAY)
+    if (output_mode == STP_OUTPUT_BW)
       stpi_puts("\t/Decode [ 0 1 ]\n", v);
     else
       stpi_puts("\t/Decode [ 0 1 0 1 0 1 ]\n", v);
@@ -615,9 +609,6 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 
     for (y = 0, out_offset = 0; y < image_height; y ++)
     {
-      if ((y & 15) == 0)
-	stpi_image_note_progress(image, y, image_height);
-
       /* FIXME!!! */
       if (stpi_color_get_row(nv, image, y /*, out + out_offset */ , &zero_mask))
 	{
@@ -643,7 +634,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
         memcpy(out, out + out_ps_height - out_offset, out_offset);
     }
   }
-  stpi_image_progress_conclude(image);
+  stpi_image_conclude(image);
 
   if (out)
     stpi_free(out);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.56 2003/11/20 00:30:53 rleigh Exp $"
+ * "$Id: print.c,v 1.56.4.1 2004/02/22 04:05:47 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -141,12 +141,13 @@ static guchar *gimp_thumbnail_data = NULL;
 
 static guchar *
 stpui_get_thumbnail_data_function(void *image_ID, gint *width, gint *height,
-				  gint *bpp, gint page)
+				  gint page)
 {
+  gint bpp;
   if (gimp_thumbnail_data)
     free(gimp_thumbnail_data);
   gimp_thumbnail_data =
-    gimp_image_get_thumbnail_data((gint) image_ID, width, height, bpp);
+    gimp_image_get_thumbnail_data((gint) image_ID, width, height, &bpp);
   return gimp_thumbnail_data;
 }
 

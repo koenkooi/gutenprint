@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.15 2004/02/07 17:47:43 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.15.2.1 2004/02/22 04:05:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -95,13 +95,15 @@ print_debug_params(stp_vars_t v)
   print_remote_param(v, "Version", VERSION);
   print_remote_param(v, "Release Date", RELEASE_DATE);
   print_remote_param(v, "Driver", stp_get_driver(v));
-  print_remote_int_param(v, "Output Type", stp_get_output_type(v));
+  print_remote_int_param(v, "Output Mode", stp_get_output_mode(v));
   print_remote_int_param(v, "Left", stp_get_left(v));
   print_remote_int_param(v, "Top", stp_get_top(v));
   print_remote_int_param(v, "Page Width", stp_get_page_width(v));
   print_remote_int_param(v, "Page Height", stp_get_page_height(v));
-  print_remote_int_param(v, "Input Model", stp_get_input_color_model(v));
-  print_remote_int_param(v, "Output Model", stpi_get_output_color_model(v));
+  print_remote_int_param(v, "Image Type", stp_get_image_type(v));
+  print_remote_int_param(v, "Output Type", stpi_get_output_type(v));
+  print_remote_int_param(v, "Image Channels", stp_get_image_channels(v));
+  print_remote_int_param(v, "Image Channel Depth", stp_get_image_channel_depth(v));
   print_remote_int_param(v, "Model", stpi_get_model_id(v));
   print_remote_int_param(v, "Ydpi", pd->res->vres);
   print_remote_int_param(v, "Xdpi", pd->res->hres);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.1 2004/02/16 23:47:06 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.2 2004/02/22 04:05:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -646,7 +646,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     case AUTO_MODE_QUALITY:
       if (stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) &&
 	  strcmp(stp_get_string_parameter(v, "Quality"), "None") != 0 &&
-	  stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
+	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
 	return 1;
       else
 	return 0;
@@ -654,7 +654,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     case AUTO_MODE_FULL_AUTO:
       if (stp_check_string_parameter(v, "AutoMode", STP_PARAMETER_ACTIVE) &&
 	  strcmp(stp_get_string_parameter(v, "AutoMode"), "None") != 0 &&
-	  stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
+	  stp_get_output_mode(v) != STP_OUTPUT_RAW)
 	return 1;
       else
 	return 0;
@@ -662,7 +662,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     case AUTO_MODE_MANUAL:
       if (!stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) ||
 	  strcmp(stp_get_string_parameter(v, "Quality"), "None") == 0 ||
-	  stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+	  stp_get_output_mode(v) == STP_OUTPUT_RAW)
 	return 1;
       else
 	return 0;
@@ -995,7 +995,7 @@ set_density_parameter(stp_const_vars_t v,
 		      stp_parameter_t *description,
 		      int color)
 {
-  if (stp_get_output_type(v) != OUTPUT_GRAY &&
+  if (stp_get_output_mode(v) != STP_OUTPUT_BW &&
       using_automatic_settings(v, AUTO_MODE_MANUAL))
     description->is_active = 1;
   else
@@ -1022,7 +1022,7 @@ set_color_transition_parameter(stp_const_vars_t v,
 			       int color)
 {
   description->is_active = 0;
-  if (stp_get_output_type(v) != OUTPUT_GRAY &&
+  if (stp_get_output_mode(v) != STP_OUTPUT_BW &&
       using_automatic_settings(v, AUTO_MODE_MANUAL))
     {
       const escp2_inkname_t *ink_name = get_inktype(v);
@@ -1603,7 +1603,7 @@ escp2_use_extended_commands(stp_const_vars_t v, int use_softweave)
 }
 
 static int
-set_raw_ink_type(stp_vars_t v, stp_image_t *image)
+set_raw_ink_type(stp_vars_t v)
 {
   const inklist_t *inks = escp2_inklist(v);
   int ninktypes = inks->n_inks;
@@ -1613,7 +1613,8 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
    */
   for (i = 0; i < ninktypes; i++)
     if (inks->inknames[i]->inkset == INKSET_EXTENDED &&
-	inks->inknames[i]->channel_set->channel_count == stpi_image_bpp(image))
+	(inks->inknames[i]->channel_set->channel_count ==
+	 stp_get_image_channels(v)))
       {
 	stpi_dprintf(STPI_DBG_INK, v, "Changing ink type from %s to %s\n",
 		     stp_get_string_parameter(v, "InkType") ?
@@ -1624,7 +1625,7 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
       }
   stpi_eprintf
     (v, _("This printer does not support raw printer output at depth %d\n"),
-     stpi_image_bpp(image));
+     stp_get_image_channels(v));
   return 0;
 }
 
@@ -1944,6 +1945,30 @@ allocate_channels(stp_vars_t v, int line_length)
 	    }
 	}
     }
+  if (pd->logical_channels == 1 && ink_type->inkset != INKSET_EXTENDED)
+    stpi_set_output_type(v, STP_OUTPUT_TYPE_GRAYSCALE);
+  else
+    {
+      switch (ink_type->inkset)
+	{
+	case INKSET_CMYKRB:
+	  stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYKRB);
+	  break;
+	case INKSET_EXTENDED:
+	  stpi_set_output_type(v, STP_OUTPUT_TYPE_RAW);
+	  break;
+	case INKSET_CMYK:
+	case INKSET_CcMmYK:
+	case INKSET_CcMmYyK:
+	case INKSET_CcMmYKk:
+	default:
+	  if (ink_type->channel_set->channels[0])
+	    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMYK);
+	  else
+	    stpi_set_output_type(v, STP_OUTPUT_TYPE_CMY);
+	  break;
+	}
+    }
 }
 
 static unsigned
@@ -2087,9 +2112,9 @@ setup_head_parameters(stp_vars_t v)
   /*
    * Set up the output channels
    */
-  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+  if (stp_get_output_mode(v) == STP_OUTPUT_RAW)
     pd->logical_channels = escp2_physical_channels(v);
-  else if (stp_get_output_type(v) == OUTPUT_GRAY)
+  else if (stp_get_output_mode(v) == STP_OUTPUT_BW)
     pd->logical_channels = 1;
   else
     pd->logical_channels = NCOLORS;
@@ -2135,7 +2160,7 @@ setup_head_parameters(stp_vars_t v)
 
   setup_head_offset(v);
 
-  if (stp_get_output_type(v) == OUTPUT_GRAY && pd->physical_channels == 1)
+  if (stp_get_output_mode(v) == STP_OUTPUT_BW && pd->physical_channels == 1)
     {
       if (pd->use_black_parameters)
 	pd->initial_vertical_offset =
@@ -2275,14 +2300,10 @@ escp2_print_data(stp_vars_t v, stp_image_t *image)
       inner_r_sq = (double) pd->cd_inner_radius * (double) pd->cd_inner_radius;
     }
 
-  stpi_image_progress_init(image);
-
   for (y = 0; y < pd->image_printed_height; y ++)
     {
       int duplicate_line = 1;
       unsigned zero_mask;
-      if ((y & 63) == 0)
-	stpi_image_note_progress(image, y, pd->image_printed_height);
 
       if (errline != errlast)
 	{
@@ -2377,7 +2398,7 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      PACKFUNC,
      COMPUTEFUNC);
 
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
+  allocate_channels(v, line_width);
   adjust_print_quality(v, image);
   out_channels = stpi_color_init(v, image, 65536);
 
@@ -2385,11 +2406,10 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
 		   pd->res->printed_vres);
 /*  stpi_dither_set_expansion(v, pd->res->hres / pd->res->printed_hres); */
 
-  allocate_channels(v, line_width);
   setup_inks(v);
 
   status = escp2_print_data(v, image);
-  stpi_image_progress_conclude(image);
+  stpi_image_conclude(image);
   stpi_flush_all(v);
   stpi_escp2_terminate_page(v);
 
@@ -2421,8 +2441,7 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     }
   stpi_image_init(image);
 
-  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER &&
-      !set_raw_ink_type(v, image))
+  if (stp_get_output_mode(v) == STP_OUTPUT_RAW && !set_raw_ink_type(v))
     return 0;
 
   pd = (escp2_privdata_t *) stpi_zalloc(sizeof(escp2_privdata_t));
@@ -2434,20 +2453,8 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     escp2_has_cap(v, MODEL_SEND_ZERO_ADVANCE, MODEL_SEND_ZERO_ADVANCE_YES);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, pd);
 
-  if (stp_get_output_type(v) == OUTPUT_RAW_CMYK ||
-      stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
-    pd->rescale_density = 0;
-  else
-    pd->rescale_density = 1;
-
   pd->inkname = get_inktype(v);
   pd->channels_in_use = count_channels(pd->inkname);
-  if (stp_get_output_type(v) != OUTPUT_RAW_PRINTER &&
-      pd->inkname->channel_set->channel_count == 1)
-    stp_set_output_type(v, OUTPUT_GRAY);
-  if (stp_get_output_type(v) == OUTPUT_COLOR &&
-      pd->inkname->channel_set->channels[ECOLOR_K] != NULL)
-    stp_set_output_type(v, OUTPUT_RAW_CMYK);
 
   setup_resolution(v);
   setup_head_parameters(v);
