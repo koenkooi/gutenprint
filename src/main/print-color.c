@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.9 2004/03/20 22:02:19 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.10 2004/03/21 02:32:20 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -84,6 +84,10 @@ static const channel_param_t channel_params[] =
   { CHANNEL_G, "Green",   "GreenCurve"   },
   { CHANNEL_B, "Blue",    "BlueCurve"    },
 };
+
+static const int channel_param_count =
+sizeof(channel_params) / sizeof(channel_param_t);
+
 
 #define CHANNEL_NONE   (0)
 #define CHANNEL_RGB    (CHANNEL_R | CHANNEL_G | CHANNEL_B)
@@ -2146,6 +2150,7 @@ compute_one_lut(stp_curve_t lut_curve, stp_const_curve_t curve,
 static void
 stpi_compute_lut(stp_vars_t v, size_t steps)
 {
+  const lut_t *lut = (const lut_t *)(stpi_get_component_data(v, "Color"));
   stp_const_curve_t hue = NULL;
   stp_const_curve_t lum = NULL;
   stp_const_curve_t sat = NULL;
@@ -2154,17 +2159,10 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
   stp_const_curve_t magenta_curve = NULL;
   stp_const_curve_t yellow_curve = NULL;
   stp_const_curve_t black_curve = NULL;
-  const char *input_image_type = stp_get_string_parameter(v, "InputImageType");
-  const char *output_image_type = stp_get_string_parameter(v, "OutputImageType");
   double cyan = 1.0;
   double magenta = 1.0;
   double yellow = 1.0;
-  lut_t *lut;
   lut_params_t l;
-  const color_description_t *input_description =
-    get_color_description(input_image_type);
-  const color_description_t *output_description =
-    get_color_description(output_image_type);
 
   if (stp_check_float_parameter(v, "CyanGamma", STP_PARAMETER_DEFAULTED))
     cyan = stp_get_float_parameter(v, "CyanGamma");
@@ -2173,9 +2171,10 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
   if (stp_check_float_parameter(v, "YellowGamma", STP_PARAMETER_DEFAULTED))
     yellow = stp_get_float_parameter(v, "YellowGamma");
 
-  if (input_description->color_model == COLOR_UNKNOWN ||
-      output_description->color_model == COLOR_UNKNOWN ||
-      input_description->color_model == output_description->color_model)
+  if (lut->input_description->color_model == COLOR_UNKNOWN ||
+      lut->output_description->color_model == COLOR_UNKNOWN ||
+      lut->input_description->color_model ==
+      lut->output_description->color_model)
     l.invert_output = 0;
   else
     l.invert_output = 1;
