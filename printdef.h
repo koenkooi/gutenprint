@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.h,v 1.4 2000/09/12 00:13:24 rlk Exp $"
+ * "$Id: printdef.h,v 1.5 2001/01/15 20:49:49 rlk Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -30,7 +30,7 @@ typedef union yylv {
 } YYSTYPE;
 
 extern YYSTYPE yylval;
-extern printer_t thePrinter;
+extern stp_printer_t thePrinter;
 
 #include "printdefy.h"
 
