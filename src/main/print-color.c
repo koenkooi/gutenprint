@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.89 2003/07/22 12:22:54 rlk Exp $"
+ * "$Id: print-color.c,v 1.90 2003/08/02 21:16:36 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -2097,7 +2097,7 @@ stpi_color_traditional_init(stp_vars_t v,
   lut = (lut_t *)(stpi_get_component_data(v, "Color"));
   lut->image_bpp = image_bpp;
   lut->image_width = stpi_image_width(image);
-  if (image_type)
+  if (image_type && strcmp(image_type, "None") != 0)
     {
       if (strcmp(image_type, "Text") == 0)
 	itype = 4;
