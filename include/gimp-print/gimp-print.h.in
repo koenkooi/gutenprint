@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.5 2001/09/16 20:01:42 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.6 2001/09/16 20:03:20 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -576,5 +576,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.5 2001/09/16 20:01:42 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.6 2001/09/16 20:03:20 rlk Exp $
  */
