@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.3 2001/01/31 19:31:31 rleigh Exp $"
+ * "$Id: print-color.c,v 1.4 2001/01/31 20:35:55 rleigh Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1360,12 +1360,12 @@ static lut_t *
 allocate_lut(size_t steps)
 {
   int i;
-  lut_t *ret = malloc(sizeof(lut_t));
+  lut_t *ret = xmalloc(sizeof(lut_t));
   ret->steps = steps;
-  ret->composite = malloc(sizeof(unsigned short) * steps);
-  ret->red = malloc(sizeof(unsigned short) * steps);
-  ret->green = malloc(sizeof(unsigned short) * steps);
-  ret->blue = malloc(sizeof(unsigned short) * steps);
+  ret->composite = xmalloc(sizeof(unsigned short) * steps);
+  ret->red = xmalloc(sizeof(unsigned short) * steps);
+  ret->green = xmalloc(sizeof(unsigned short) * steps);
+  ret->blue = xmalloc(sizeof(unsigned short) * steps);
   ret->shiftval = 0;
   for (i = 1; i < steps; i += i)
     ret->shiftval++;

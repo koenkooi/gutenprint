@@ -1,6 +1,6 @@
 /*
  * xmalloc.h:
- * $Id: xmalloc.h,v 1.1 2001/01/22 19:00:18 rleigh Exp $
+ * $Id: xmalloc.h,v 1.2 2001/01/31 20:35:55 rleigh Exp $
  * stcolortool memory allocation functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -24,12 +24,10 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include "../src/stcolortool.h"
-#include "../src/backend.h"
 
-#ifndef HAVE_PUBLIB_XMALLOC
+#ifndef HAVE_XMALLOC
 extern void *xmalloc (size_t);
 #endif
-#ifndef HAVE_PUBLIB_XREALLOC
+#ifndef HAVE_XREALLOC
 extern void *xrealloc (void *, size_t);
 #endif
