@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.40 2000/01/17 02:05:47 rlk Exp $"
+ * "$Id: print.c,v 1.41 2000/01/17 22:23:31 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1331,7 +1331,7 @@ do_print_dialog(void)
   gtk_widget_show(box);
 
   saturation_adjustment = scale_data =
-      gtk_adjustment_new((float)vars.saturation, 0.1, 10.0, 0.001, 0.01, 1.0);
+      gtk_adjustment_new((float)vars.saturation, 0.001, 10.0, 0.001, 0.01, 1.0);
 
   gtk_signal_connect(GTK_OBJECT(scale_data), "value_changed",
 		     (GtkSignalFunc)saturation_update, NULL);
@@ -3346,5 +3346,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.40 2000/01/17 02:05:47 rlk Exp $".
+ * End of "$Id: print.c,v 1.41 2000/01/17 22:23:31 rlk Exp $".
  */
