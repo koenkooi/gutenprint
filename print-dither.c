@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.68 2000/06/22 19:20:59 easysw Exp $"
+ * "$Id: print-dither.c,v 1.69 2000/06/25 00:29:17 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -588,11 +588,17 @@ dither_set_density(void *vd, double density)
   d->adaptive_lower_limit = d->adaptive_limit / 4;
 }
 
+static int
+imax(int a, int b)
+{
+  return ((a > b) ? a : b);
+}
+
 void
 dither_set_max_ink(void *vd, int levels, double max_ink)
 {
   dither_t *d = (dither_t *) vd;
-  d->ink_limit = MAX(max_ink, 1)*levels;
+  d->ink_limit = imax(max_ink, 1)*levels;
   d->ink_limit = max_ink*levels+0.5;
 #ifdef VERBOSE
   fprintf(stderr, "Maxink: %f %d\n", max_ink, d->ink_limit);
