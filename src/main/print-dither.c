@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.13.2.2 2001/03/06 03:09:32 rlk Exp $"
+ * "$Id: print-dither.c,v 1.13.2.3 2001/03/10 00:22:54 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -166,13 +166,11 @@ typedef struct dither
 				/* dithering, how much randomness is added */
 				/* to the matrix value. */
 
-  int k_clevel;			/* Amount of each ink (in 64ths) required */
-  int k_mlevel;			/* to create equivalent black */
-  int k_ylevel;
+  int k_levels[NCOLORS];	/* Amount of each ink (in 64ths) required */
+				/* to create equivalent black */
 
-  int c_darkness;		/* Perceived "darkness" of each ink, */
-  int m_darkness;		/* in 64ths, to calculate CMY-K transitions */
-  int y_darkness;
+  int k_darkness[NCOLORS];	/* Perceived "darkness" of each ink, */
+				/* in 64ths, to calculate CMY-K transitions */
 
   int dither_type;
 
@@ -349,7 +347,7 @@ init_iterated_matrix(dither_matrix_t *mat, size_t size, size_t exp,
     mat->x_size *= mat->base;
   mat->y_size = mat->x_size;
   mat->total_size = mat->x_size * mat->y_size;
-  mat->matrix = xmalloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  mat->matrix = stp_malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
   for (x = 0; x < mat->x_size; x++)
     for (y = 0; y < mat->y_size; y++)
       {
@@ -377,7 +375,7 @@ shear_matrix(dither_matrix_t *mat, int x_shear, int y_shear)
 {
   int i;
   int j;
-  int *tmp = xmalloc(mat->x_size * mat->y_size * sizeof(int));
+  int *tmp = stp_malloc(mat->x_size * mat->y_size * sizeof(int));
   for (i = 0; i < mat->x_size; i++)
     for (j = 0; j < mat->y_size; j++)
       DITHERPOINT(tmp, i, j, mat->x_size, mat->y_size) =
@@ -400,7 +398,7 @@ init_matrix(dither_matrix_t *mat, int x_size, int y_size,
   mat->x_size = x_size;
   mat->y_size = y_size;
   mat->total_size = mat->x_size * mat->y_size;
-  mat->matrix = xmalloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  mat->matrix = stp_malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
   for (x = 0; x < mat->x_size; x++)
     for (y = 0; y < mat->y_size; y++)
       {
@@ -433,7 +431,7 @@ init_matrix_short(dither_matrix_t *mat, int x_size, int y_size,
   mat->x_size = x_size;
   mat->y_size = y_size;
   mat->total_size = mat->x_size * mat->y_size;
-  mat->matrix = xmalloc(sizeof(unsigned) * mat->x_size * mat->y_size);
+  mat->matrix = stp_malloc(sizeof(unsigned) * mat->x_size * mat->y_size);
   for (x = 0; x < mat->x_size; x++)
     for (y = 0; y < mat->y_size; y++)
       {
@@ -500,7 +498,7 @@ copy_matrix(const dither_matrix_t *src, dither_matrix_t *dest)
   dest->x_size = src->x_size;
   dest->y_size = src->y_size;
   dest->total_size = src->total_size;
-  dest->matrix = xmalloc(sizeof(unsigned) * dest->x_size * dest->y_size);
+  dest->matrix = stp_malloc(sizeof(unsigned) * dest->x_size * dest->y_size);
   for (x = 0; x < dest->x_size * dest->y_size; x++)
     dest->matrix[x] = src->matrix[x];
   dest->x_offset = 0;
@@ -582,7 +580,7 @@ stp_init_dither(int in_width, int out_width, int horizontal_aspect,
 		int vertical_aspect, stp_vars_t v)
 {
   int i;
-  dither_t *d = xmalloc(sizeof(dither_t));
+  dither_t *d = stp_malloc(sizeof(dither_t));
   stp_simple_dither_range_t r;
   memset(d, 0, sizeof(dither_t));
   r.value = 1.0;
@@ -837,8 +835,8 @@ stp_dither_set_ink_spread(void *vd, int spread)
       int i;
       d->spread = spread;
       max_offset = (1 << (16 - spread)) + 1;
-      d->offset0_table = xmalloc(sizeof(int) * max_offset);
-      d->offset1_table = xmalloc(sizeof(int) * max_offset);
+      d->offset0_table = stp_malloc(sizeof(int) * max_offset);
+      d->offset1_table = stp_malloc(sizeof(int) * max_offset);
       for (i = 0; i < max_offset; i++)
 	{
 	  d->offset0_table[i] = (i + 1) * (i + 1);
@@ -854,9 +852,9 @@ void
 stp_dither_set_black_levels(void *vd, double c, double m, double y)
 {
   dither_t *d = (dither_t *) vd;
-  d->k_clevel = (int) (c * 64);
-  d->k_mlevel = (int) (m * 64);
-  d->k_ylevel = (int) (y * 64);
+  d->k_levels[ECOLOR_C] = (int) (c * 64);
+  d->k_levels[ECOLOR_M] = (int) (m * 64);
+  d->k_levels[ECOLOR_Y] = (int) (y * 64);
 }
 
 void
@@ -873,9 +871,9 @@ void
 stp_dither_set_ink_darkness(void *vd, double c, double m, double y)
 {
   dither_t *d = (dither_t *) vd;
-  d->c_darkness = (int) (c * 64);
-  d->m_darkness = (int) (m * 64);
-  d->y_darkness = (int) (y * 64);
+  d->k_darkness[ECOLOR_C] = (int) (c * 64);
+  d->k_darkness[ECOLOR_M] = (int) (m * 64);
+  d->k_darkness[ECOLOR_Y] = (int) (y * 64);
 }
 
 void
@@ -918,7 +916,7 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
     free(s->ranges);
   s->nlevels = nlevels > 1 ? nlevels + 1 : nlevels;
   s->ranges = (dither_segment_t *)
-    xmalloc(s->nlevels * sizeof(dither_segment_t));
+    stp_malloc(s->nlevels * sizeof(dither_segment_t));
   s->bit_max = 0;
 #ifdef VERBOSE
   fprintf(stderr, "stp_dither_set_generic_ranges nlevels %d density %f\n", nlevels, density);
@@ -1019,7 +1017,7 @@ stp_dither_set_generic_ranges_full(dither_color_t *s, int nlevels,
   s->nlevels = nlevels > 1 ? nlevels + 1 : nlevels;
   s->nlevels = nlevels+1;
   s->ranges = (dither_segment_t *)
-    xmalloc(s->nlevels * sizeof(dither_segment_t));
+    stp_malloc(s->nlevels * sizeof(dither_segment_t));
   s->bit_max = 0;
 #ifdef VERBOSE
   fprintf(stderr, "stp_dither_set_ranges nlevels %d density %f\n", nlevels, density);
@@ -1094,7 +1092,7 @@ void
 stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
 			 const double *levels, double density)
 {
-  stp_simple_dither_range_t *r = xmalloc(nlevels * sizeof(stp_simple_dither_range_t));
+  stp_simple_dither_range_t *r = stp_malloc(nlevels * sizeof(stp_simple_dither_range_t));
   int i;
   for (i = 0; i < nlevels; i++)
     {
@@ -1167,7 +1165,7 @@ get_errline(dither_t *d, int row, int color)
   else
     {
       int size = 2 * MAX_SPREAD + (16 * ((d->dst_width + 7) / 8));
-      d->errs[row & 1][color] = xmalloc(size * sizeof(int));
+      d->errs[row & 1][color] = stp_malloc(size * sizeof(int));
       memset(d->errs[row & 1][color], 0, size * sizeof(int));
       return d->errs[row & 1][color] + MAX_SPREAD;
     }
@@ -1183,7 +1181,7 @@ get_valueline(dither_t *d, int color)
   else
     {
       int size = (8 * ((d->dst_width + 7) / 8));
-      d->vals[color] = xmalloc(size * sizeof(unsigned short));
+      d->vals[color] = stp_malloc(size * sizeof(unsigned short));
       return d->vals[color];
     }
 }
@@ -2066,24 +2064,24 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
       else
 	ok = (unsigned) k * (unsigned) ak / density;
 
-      if (d->k_clevel == 64)
+      if (d->k_k_levels[ECOLOR_C] == 64)
 	c -= ok;
       else
-	c -= (ok * d->k_clevel) >> 6;
+	c -= (ok * d->k_k_levels[ECOLOR_C]) >> 6;
       if (c < 0)
 	c = 0;
 
-      if (d->k_mlevel == 64)
+      if (d->k_k_levels[ECOLOR_M] == 64)
 	m -= ok;
       else
-	m -= (ok * d->k_mlevel) >> 6;
+	m -= (ok * d->k_k_levels[ECOLOR_M]) >> 6;
       if (m < 0)
 	m = 0;
 
-      if (d->k_ylevel == 64)
+      if (d->k_k_levels[ECOLOR_Y] == 64)
 	y -= ok;
       else
-	y -= (ok * d->k_ylevel) >> 6;
+	y -= (ok * d->k_k_levels[ECOLOR_Y]) >> 6;
       if (y < 0)
 	y = 0;
     }
