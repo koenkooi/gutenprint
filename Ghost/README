@@ -393,8 +393,18 @@ This is printer type specific.  The option names are case sensitive.
 
 For Epson printers:
 
-'Standard Paper'
+'Plain Paper'
+'Plain Paper Fast Load'
+'Postcard'
 'Glossy Film'
+'Transparencies'
+'Envelopes'
+'Back Light Film'
+'Matte Paper'
+'Inkjet Paper'
+'Photo Quality Inkjet Paper'
+'Photo Paper'
+'Other'
 
 
 For Canon printers:
@@ -430,7 +440,8 @@ This is printer type specific.  The option names are case sensitive.
 
 -sMediaSource='media source'
 
-No media sources are currently defined for Epson printers.
+No media sources are currently defined for Epson printers.  At
+present, only the single sheet feeder can be used.
 
 
 For Canon printers:
