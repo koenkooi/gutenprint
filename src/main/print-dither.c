@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.96 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print-dither.c,v 1.97 2002/10/27 17:38:26 rwisi Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -786,7 +786,7 @@ stp_dither_set_light_ink(void *vd, int i, double v, double density)
   stp_simple_dither_range_t range[2];
   if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d) || v <= 0 || v > 1)
     return;
-  range[0].bit_pattern = 0;
+  range[0].bit_pattern = 1;
   range[0].subchannel = 1;
   range[0].value = v;
   range[0].dot_size = 1;
