@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.132 2003/09/21 03:17:58 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.133 2003/10/14 01:23:21 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2033,7 +2033,8 @@ densityDivisor /= 1.2;
    * Output the page...
   */
 
-  if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE))
+  if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE) &&
+      media->hue_adjustment)
     {
       hue_adjustment = stpi_read_and_compose_curves
 	(lexmark_hue_adjustment(caps, v),
@@ -2041,7 +2042,8 @@ densityDivisor /= 1.2;
       stp_set_curve_parameter(v, "HueMap", hue_adjustment);
       stp_curve_free(hue_adjustment);
     }
-  if (!stp_check_curve_parameter(v, "LumMap", STP_PARAMETER_ACTIVE))
+  if (!stp_check_curve_parameter(v, "LumMap", STP_PARAMETER_ACTIVE) &&
+      media->lum_adjustment)
     {
       lum_adjustment = stpi_read_and_compose_curves
 	(lexmark_lum_adjustment(caps, v),
@@ -2049,7 +2051,8 @@ densityDivisor /= 1.2;
       stp_set_curve_parameter(v, "LumMap", lum_adjustment);
       stp_curve_free(lum_adjustment);
     }
-  if (!stp_check_curve_parameter(v, "SatMap", STP_PARAMETER_ACTIVE))
+  if (!stp_check_curve_parameter(v, "SatMap", STP_PARAMETER_ACTIVE) &&
+      media->sat_adjustment)
     {
       sat_adjustment = stpi_read_and_compose_curves
 	(lexmark_sat_adjustment(caps, v),
