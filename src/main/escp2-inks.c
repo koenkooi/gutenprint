@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.10 2003/06/01 22:52:45 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.11 2003/06/01 23:02:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -112,8 +112,8 @@ DOTSIZE(spro10000_standard) = { 0.661, 1.0 };
 
 
 SHADES(standard) = { 1.0 };
-SHADES(photo_cyan) = { 0.27, 1.0 };
-SHADES(photo_magenta) = { 0.35, 1.0 };
+SHADES(photo_cyan) = { 0.305, 1.0 };
+SHADES(photo_magenta) = { 0.315, 1.0 };
 SHADES(photo2_yellow) = { 0.35, 1.0 };
 SHADES(photo2_black) = { 0.27, 1.0 };
 SHADES(piezo_quadtone) = { 0.25, 0.5, 0.75, 1.0 };
@@ -202,9 +202,9 @@ DECLARE_INK(photo_4pl_c, photo_c, standard_4pl, 1.0);
 DECLARE_INK(photo_4pl_m, photo_m, standard_4pl, 1.0);
 DECLARE_INK(photo_4pl_y, photo_y, standard_4pl, 1.0);
 DECLARE_INK(photo_4pl_2880, photo, standard_4pl_2880, 1.0);
-DECLARE_INK(photo_4pl_y_2880, photo_c, standard_4pl_2880, 1.0);
-DECLARE_INK(photo_4pl_y_2880, photo_m, standard_4pl_2880, 1.0);
-DECLARE_INK(photo_4pl_y_2880, photo_y, standard_4pl_2880, 1.0);
+DECLARE_INK(photo_4pl_2880_c, photo_c, standard_4pl_2880, 1.0);
+DECLARE_INK(photo_4pl_2880_m, photo_m, standard_4pl_2880, 1.0);
+DECLARE_INK(photo_4pl_2880_y, photo_y, standard_4pl_2880, 1.0);
 DECLARE_INK(piezo_4pl_quadtone, piezo_quadtone, standard_4pl, 1.0);
 DECLARE_INK(piezo_4pl_2880_quadtone, piezo_quadtone, standard_4pl_2880, 1.0);
 
