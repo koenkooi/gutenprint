@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/10/06 23:16:23 andystewart Exp $
+## $Id: Makefile.am,v 1.16 2001/10/07 12:18:16 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -95,6 +95,8 @@ dist-hook: $(STANDARD_TARGETS)
 
 docs: html-stamp ps pdf
 
+all-local: docs
+
 pdf: $(MANUAL).pdf
 
 $(MANUAL).pdf: $(MANUAL).ps
@@ -118,21 +120,25 @@ $(MANUAL).ps.gz: $(MANUAL).ps
 	$(GZIP) -9 $(MANUAL).ps
 
 html: html-stamp
+
+# This ugly workaround with SOURCE is because db2html doesn't seem to like
+# "./users-guide.sgml".  Note that db2ps does not have the same limitation.
 html-stamp: $(MANUAL).sgml $(PNG_IMAGES)
 	if test $(srcdir) = '.' ; then \
 	  SOURCE='' ; \
 	else \
 	  SOURCE='$(srcdir)/' ; \
 	fi ; \
-	$(DB2HTML) $${SOURCE}$(MANUAL).sgml ; \
+	$(DB2HTML) $${SOURCE}$(MANUAL).sgml
 	if test ! -d $(MANUAL)/figures  ; then \
 	  mkdir $(MANUAL)/figures ; \
 	  for image in $(srcdir)/figures/*.png ; do \
 	    cp -p $$image $(MANUAL)/figures ; \
 	  done ; \
-	fi ; \
-	mv $(MANUAL) $(HTMLDIR) ; \
-	chmod a+rx $(HTMLDIR); \
+	fi
+	$(RM) -rf $(HTMLDIR)
+	mv $(MANUAL) $(HTMLDIR)
+	chmod a+rx $(HTMLDIR)
 	touch html-stamp
 
 install-data-local: $(STANDARD_TARGETS)
@@ -215,6 +221,6 @@ help:
 
 CLEANFILES = $(EPS_IMAGES) $(PDF_IMAGES)
 
-MAINTAINERCLEANFILES = Makefile Makefile.in html-stamp
+MAINTAINERCLEANFILES = Makefile.in html-stamp
 
 EXTRA_DIST = README $(MANUAL).sgml
