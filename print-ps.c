@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.40 2000/09/02 21:52:18 rlk Exp $"
+ * "$Id: print-ps.c,v 1.41 2000/09/02 23:35:25 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -34,7 +34,7 @@
  */
 
 static FILE	*ps_ppd = NULL;
-static char	*ps_ppd_file = NULL;
+static const char	*ps_ppd_file = NULL;
 
 
 /*
@@ -176,7 +176,7 @@ ps_imageable_area(const printer_t *printer,	/* I - Printer model */
                   int  *top)		/* O - Top position in points */
 {
   char	*area;				/* Imageable area of media */
-  double	fleft,				/* Doubleing point versions */
+  float	fleft,				/* Floating point versions */
 	fright,
 	fbottom,
 	ftop;
