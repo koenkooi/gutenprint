@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.12 2002/08/15 01:49:03 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.13 2002/08/17 16:23:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1787,7 +1787,7 @@ static const escp2_variable_inklist_t variable_3pl_inks =
     &escp2_6pl_standard_980_inks,
     &escp2_3pl_standard_inks,
     &escp2_3pl_1440_standard_inks,
-    &escp2_3pl_1440_standard_inks,
+    &escp2_3pl_2880_standard_inks,
     &escp2_3pl_2880_standard_inks,
     &escp2_3pl_2880_standard_inks,
   },
@@ -1801,7 +1801,7 @@ static const escp2_variable_inklist_t variable_3pl_inks =
     &piezo_6pl_quadtone_980_inks,
     &piezo_3pl_quadtone_inks,
     &piezo_3pl_1440_quadtone_inks,
-    &piezo_3pl_1440_quadtone_inks,
+    &piezo_3pl_2880_quadtone_inks,
     &piezo_3pl_2880_quadtone_inks,
     &piezo_3pl_2880_quadtone_inks,
   },
@@ -1812,7 +1812,7 @@ static const escp2_variable_inklist_t variable_3pl_inks =
     &escp2_6pl_standard_980_inks,
     &escp2_3pl_standard_inks,
     &escp2_3pl_1440_standard_inks,
-    &escp2_3pl_1440_standard_inks,
+    &escp2_3pl_2880_standard_inks,
     &escp2_3pl_2880_standard_inks,
     &escp2_3pl_2880_standard_inks,
   },
@@ -1927,7 +1927,7 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_multishot_standard_inks,
     &escp2_6pl_standard_inks,
     &escp2_4pl_pigment_standard_inks,
-    &escp2_4pl_pigment_standard_inks,
+    &escp2_4pl_pigment_2880_standard_inks,
     &escp2_4pl_pigment_2880_standard_inks,
     &escp2_4pl_pigment_2880_standard_inks,
   },
@@ -1938,7 +1938,7 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_multishot_photo_inks,
     &escp2_6pl_photo_inks,
     &escp2_4pl_pigment_photo_inks,
-    &escp2_4pl_pigment_photo_inks,
+    &escp2_4pl_pigment_2880_photo_inks,
     &escp2_4pl_pigment_2880_photo_inks,
     &escp2_4pl_pigment_2880_photo_inks
   },
@@ -1950,7 +1950,7 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_multishot_photo2_inks,
     &escp2_6pl_photo2_inks,
     &escp2_4pl_pigment_photo2_inks,
-    &escp2_4pl_pigment_photo2_inks,
+    &escp2_4pl_pigment_2880_photo2_inks,
     &escp2_4pl_pigment_2880_photo2_inks,
     &escp2_4pl_pigment_2880_photo2_inks
   },
@@ -1962,7 +1962,7 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_multishot_extended_inks,
     &escp2_6pl_extended_inks,
     &escp2_4pl_pigment_extended_inks,
-    &escp2_4pl_pigment_extended_inks,
+    &escp2_4pl_pigment_2880_extended_inks,
     &escp2_4pl_pigment_2880_extended_inks,
     &escp2_4pl_pigment_2880_extended_inks,
   },
