@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.24 2003/02/13 03:33:05 rlk Exp $"
+ * "$Id: curve.c,v 1.25 2003/02/16 17:16:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -89,9 +89,14 @@ static const int wrap_mode_count =
 static void
 check_curve(const stpi_internal_curve_t *v)
 {
+  if (v == NULL)
+    {
+      stpi_erprintf("Null curve! Please report this bug.\n");
+      stpi_abort();
+    }
   if (v->cookie != COOKIE_CURVE)
     {
-      stpi_erprintf("Bad curve!\n");
+      stpi_erprintf("Bad curve! Please report this bug.\n");
       stpi_abort();
     }
 }

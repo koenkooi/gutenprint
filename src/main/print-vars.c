@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.37 2003/02/15 23:10:48 rlk Exp $"
+ * "$Id: print-vars.c,v 1.38 2003/02/16 17:16:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -230,9 +230,14 @@ do						\
 static void
 check_vars(const stpi_internal_vars_t *v)
 {
+  if (v == NULL)
+    {
+      stpi_erprintf("Null stp_vars_t! Please report this bug.\n");
+      stpi_abort();
+    }
   if (v->cookie != COOKIE_VARS)
     {
-      stpi_erprintf("Bad stp_vars_t!\n");
+      stpi_erprintf("Bad stp_vars_t! Please report this bug.\n");
       stpi_abort();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.7 2003/01/23 19:53:37 rleigh Exp $"
+ * "$Id: print-list.c,v 1.8 2003/02/16 17:16:31 rlk Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
@@ -63,9 +63,14 @@ stpi_list_node_free_data (stpi_list_item_t *item)
 static void
 check_list(const stpi_internal_list_head_t *v)
 {
+  if (v == NULL)
+    {
+      stpi_erprintf("Null stpi_list_t! Please report this bug.\n");
+      stpi_abort();
+    }
   if (v->cookie != COOKIE_LIST)
     {
-      stpi_erprintf("Bad stpi_list_t!\n");
+      stpi_erprintf("Bad stpi_list_t! Please report this bug.\n");
       stpi_abort();
     }
 }

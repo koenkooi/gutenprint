@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.39 2003/02/09 23:20:42 rlk Exp $"
+ * "$Id: printers.c,v 1.40 2003/02/16 17:16:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -80,9 +80,14 @@ stp_printer_model_count(void)
 static void
 check_printer(const stpi_internal_printer_t *p)
 {
+  if (p == NULL)
+    {
+      stpi_erprintf("Null stp_printer_t! Please report this bug.\n");
+      stpi_abort();
+    }
   if (p->cookie != COOKIE_PRINTER)
     {
-      stpi_erprintf("Bad stp_printer_t!\n");
+      stpi_erprintf("Bad stp_printer_t! Please report this bug.\n");
       stpi_abort();
     }
 }
