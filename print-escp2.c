@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.124 2000/04/18 12:29:04 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.125 2000/04/19 00:28:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1978,10 +1978,10 @@ escp2_write_microweave(FILE          *prn,	/* I - Print file or command */
 	      if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK,
 				MODEL_VARIABLE_4))
 		fprintf(prn, "\033($%c%c%c%c%c%c", 4, 0,
-			((offset * 1440 / ydpi) + i) & 255,
-			(((offset * 1440 / ydpi) + i) >> 8) & 255,
-			(((offset * 1440 / ydpi) + i) >> 16) & 255,
-			(((offset * 1440 / ydpi) + i) >> 24) & 255);
+			((offset * xdpi / 1440) + i) & 255,
+			(((offset * xdpi / 1440) + i) >> 8) & 255,
+			(((offset * xdpi / 1440) + i) >> 16) & 255,
+			(((offset * xdpi / 1440) + i) >> 24) & 255);
 	      else
 		fprintf(prn, "\033(\\%c%c%c%c%c%c", 4, 0, 160, 5,
 			((offset * 1440 / ydpi) + i) & 255,
@@ -2890,6 +2890,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.125  2000/04/19 00:28:14  rlk
+ *   Try again for 1440 uweave
+ *
  *   Revision 1.124  2000/04/18 12:29:04  rlk
  *   One more microweave bug
  *
@@ -3399,5 +3402,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.124 2000/04/18 12:29:04 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.125 2000/04/19 00:28:14 rlk Exp $".
  */
