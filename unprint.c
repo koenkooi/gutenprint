@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.25 2000/02/17 17:56:25 sharkey Exp $ */
+/* $Id: unprint.c,v 1.26 2000/02/18 14:31:02 sharkey Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -310,20 +310,20 @@ void write_output(FILE *fp_w) {
   }
 }
 
-void update_page(unsigned char *buf,int bufsize,int m,int n,int color,int density) {
+int update_page(unsigned char *buf,int bufsize,int m,int n,int color,int density) {
 
   int y,skip,oldstart,oldstop,mi;
   unsigned char *oldline;
 
   if ((n==0)||(m==0)) {
-    return;  /* shouldn't happen */
+    return(0);  /* shouldn't happen */
   }
 
   skip=pstate.relative_horizontal_units/density;
 
   if (skip==0) {
     fprintf(stderr,"Warning!  Attempting to print at %d DPI but units are set to %d DPI.\n",density,pstate.relative_horizontal_units);
-    return;
+    return(0);
   }
  
   if (!page) {
@@ -336,6 +336,10 @@ void update_page(unsigned char *buf,int bufsize,int m,int n,int color,int densit
   }
   for (mi=0,y=pstate.yposition;y<pstate.yposition+m*(pstate.microweave?1:pstate.nozzle_separation);
        y+=(pstate.microweave?1:pstate.nozzle_separation),mi++) {
+    if (y>=pstate.bottom_margin) {
+      fprintf(stderr,"Warning. Unprinter out of unpaper.\n");
+      return(1);
+    }
     if (!(page[y])) {
       page[y]=(line_type *) mycalloc(sizeof(line_type),1);
     }
@@ -359,6 +363,7 @@ void update_page(unsigned char *buf,int bufsize,int m,int n,int color,int densit
     }
   }
   pstate.xposition+=n?(n-1)*skip+1:0;
+  return(0);
 }
 
 void parse_escp2(FILE *fp_r){
