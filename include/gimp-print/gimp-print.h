@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.5 2003/01/01 16:46:29 rlk Exp $
+ *  $Id: gimp-print.h,v 1.6 2003/01/01 18:44:07 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -613,7 +613,7 @@ extern stp_curve_type_t stp_curve_get_interpolation_type(const stp_curve_t curve
  * the bounds, the operation is not performed and FALSE is returned.  Count
  * (number of points) must be at least two.
  *
- * The number of points must not exceed 65536 (65535 for a wrap-mode curve);
+ * The number of points must not exceed 1048576.
  */
 extern int stp_curve_set_data(stp_curve_t curve, size_t count,
 			      const double *data);
@@ -990,5 +990,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.5 2003/01/01 16:46:29 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.6 2003/01/01 18:44:07 rlk Exp $
  */
