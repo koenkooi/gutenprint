@@ -1,5 +1,5 @@
 /*
- * "$Id: array.h,v 1.6 2004/03/28 15:12:08 rleigh Exp $"
+ * "$Id: array.h,v 1.7 2004/04/06 22:21:17 rleigh Exp $"
  *
  *   Copyright 2003 Roger Leigh (rleigh@debian.org)
  *
@@ -49,7 +49,7 @@ extern "C" {
 
   /** The array opaque data type. */
 typedef void *stp_array_t;
-  /** The contant array opaque data type. */
+  /** The constant array opaque data type. */
 typedef const void *stp_const_array_t;
 
   /**
