@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.74 2000/07/21 00:59:53 rlk Exp $"
+ * "$Id: print-dither.c,v 1.75 2000/07/23 02:51:02 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -47,11 +47,11 @@
 
 char *dither_algo_names[] =
 {
-  "Hybrid Floyd-Steinberg",
-  "Ordered",
-  "Random Floyd-Steinberg",
   "Adaptive Hybrid",
+  "Ordered",
   "Adaptive Random",
+  "Hybrid Floyd-Steinberg",
+  "Random Floyd-Steinberg",
 };
 
 int num_dither_algos = sizeof(dither_algo_names) / sizeof(char *);
