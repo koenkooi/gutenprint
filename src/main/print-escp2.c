@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.16 2004/03/28 04:43:50 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.17 2004/03/28 14:52:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2263,12 +2263,10 @@ setup_head_parameters(stp_vars_t v)
   /*
    * Set up the output channels
    */
-  if (strcmp(stp_get_string_parameter(v, "InputImageType"), "Raw") == 0)
-    pd->logical_channels = pd->inkname->channel_set->channel_count;
-  else if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
+  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
     pd->logical_channels = 1;
   else
-    pd->logical_channels = NCOLORS;
+    pd->logical_channels = pd->inkname->channel_set->channel_count;
 
   pd->physical_channels =
     compute_channel_count(pd->inkname, pd->logical_channels);
