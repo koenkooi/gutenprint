@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.10 2003/02/16 17:34:07 rlk Exp $"
+ * "$Id: module.c,v 1.11 2003/03/19 20:49:28 rleigh Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -284,7 +284,8 @@ stpi_module_open(const char *modulename /* Module filename */)
       return 0;
     }
 
-  DLCLOSE(module);
+  if (module)
+    DLCLOSE(module);
 #endif
   return 1;
 }
