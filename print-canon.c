@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.89 2000/10/10 14:34:30 gandy Exp $"
+ * "$Id: print-canon.c,v 1.90 2000/10/20 06:46:43 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -115,6 +115,17 @@ static canon_cap_t canon_model_capabilities[] =
   {   -1, 8*72,11*72,180,180,20,20,20,20, CANON_INK_K, CANON_SLOT_ASF1, 0 },
 
   /* tested models */
+
+
+  { /* Canon BJ 30 */
+    30,
+    9.5*72, 14*72,
+    360, 360, 2,
+    11, 9, 10, 18,
+    CANON_INK_K,
+    CANON_SLOT_ASF1,
+    CANON_CAP_CMD61
+  },
 
   { /* Canon BJC 4300 */
     4300,
