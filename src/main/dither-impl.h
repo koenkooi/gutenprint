@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.19 2003/11/14 04:01:12 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.20 2003/11/14 12:12:10 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -52,9 +52,9 @@ extern "C" {
 #define D_FAST (D_FAST_BASE)
 #define D_VERY_FAST (D_FAST_BASE + 1)
 #define D_EVENTONE 32
+#define D_UNITONE 64
 #define D_HYBRID_EVENTONE (D_ORDERED_BASE | D_EVENTONE)
-#define D_SINGLE_EVENTONE (D_ADAPTIVE_BASE | D_EVENTONE)
-#define D_HYBRID_SINGLE_EVENTONE (D_ADAPTIVE_BASE | D_ORDERED_BASE | D_EVENTONE)
+#define D_HYBRID_UNITONE (D_ORDERED_BASE | D_UNITONE)
 
 #define DITHER_FAST_STEPS (6)
 
@@ -181,6 +181,7 @@ extern stpi_ditherfunc_t stpi_dither_very_fast;
 extern stpi_ditherfunc_t stpi_dither_ordered;
 extern stpi_ditherfunc_t stpi_dither_ed;
 extern stpi_ditherfunc_t stpi_dither_et;
+extern stpi_ditherfunc_t stpi_dither_ut;
 
 extern void stpi_dither_reverse_row_ends(stpi_dither_t *d);
 extern int stpi_dither_translate_channel(stp_vars_t v, unsigned channel,
@@ -253,5 +254,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.19 2003/11/14 04:01:12 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.20 2003/11/14 12:12:10 rlk Exp $".
  */
