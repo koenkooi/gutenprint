@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.10.2.2 2002/10/22 00:54:59 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.10.2.3 2002/10/24 01:01:45 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -248,7 +248,7 @@ typedef struct stp_image
  *                    int *width,
  *                    int *height)
  *
- *   returns the physical WIDTH and HEIGHT of the page using the settings
+ *   returns the physical WIDTH and HEIGHT of the media using the settings
  *   in V.  The driver will almost always look at the media_size variable
  *   in V; it may look at other data in V to determine the physical page
  *   size.  WIDTH and HEIGHT are expressed in units of 1/72".
@@ -266,7 +266,7 @@ typedef struct stp_image
  *   the printable region of the page, and if needed, exactly where to
  *   place the image to achieve a given physical placement (e. g.
  *   centering) on the page.  All returned values are in units of
- *   1/72".
+ *   1/72".  All values are relative to the top left of the media.
  *
  * void (*limit)(const stp_printer_t printer,
  *               const stp_vars_t v,
@@ -547,5 +547,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.10.2.2 2002/10/22 00:54:59 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.10.2.3 2002/10/24 01:01:45 rlk Exp $
  */

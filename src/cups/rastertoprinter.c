@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.25.2.2 2002/10/24 00:30:04 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.25.2.3 2002/10/24 01:01:46 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -473,14 +473,14 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: GIMP-PRINT %d %d %d  %d %d %d\n",
 	    cups.width, cups.left, cups.right, cups.height, cups.top, cups.bottom);
     stp_set_width(v, cups.right - cups.left);
-    stp_set_height(v, cups.top - cups.bottom);
+    stp_set_height(v, cups.bottom - cups.top);
     cups.right = cups.width - cups.right;
     cups.width = cups.width - cups.left - cups.right;
     cups.width = cups.header.HWResolution[0] * cups.width / 72;
     cups.left = cups.header.HWResolution[0] * cups.left / 72;
     cups.right = cups.header.HWResolution[0] * cups.right / 72;
 
-    cups.top = cups.height - cups.top;
+    cups.bottom = cups.height - cups.bottom;
     cups.height = cups.height - cups.top - cups.bottom;
     cups.height = cups.header.HWResolution[1] * cups.height / 72;
     cups.top = cups.header.HWResolution[1] * cups.top / 72;
@@ -767,5 +767,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.25.2.2 2002/10/24 00:30:04 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.25.2.3 2002/10/24 01:01:46 rlk Exp $".
  */

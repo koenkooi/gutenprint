@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.29.2.3 2002/10/22 00:55:00 rlk Exp $"
+ * "$Id: print-ps.c,v 1.29.2.4 2002/10/24 01:01:49 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -416,6 +416,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   ps_imageable_area(printer, nv, &page_left, &page_right, &page_bottom,
 		    &page_top);
+  left -= page_left;
+  top -= page_top;
   page_width = page_right - page_left;
   page_height = page_top - page_bottom;
 

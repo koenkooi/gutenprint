@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.11.2.1 2002/10/22 00:55:01 rlk Exp $"
+ * "$Id: testpattern.c,v 1.11.2.2 2002/10/24 01:01:49 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -368,10 +368,9 @@ main(int argc, char **argv)
     y = 300;
 
   width = right - left;
-  height = top - bottom;
-  top -= stp_papersize_get_height(pt);
-  top = top + height * xtop;
-  left = width * xleft;
+  height = bottom - top;
+  top += height * xtop;
+  left += width * xleft;
   if (levels > width)
     levels = width;
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.54.12.1 2002/10/23 23:43:47 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.54.12.2 2002/10/24 01:01:46 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2922,10 +2922,6 @@ gimp_preview_update (void)
   (stp_printer_get_printfuncs (current_printer)->imageable_area)
     (current_printer, pv->v, &left, &right, &bottom, &top);
 
-  /* Rationalise things a bit by measuring everything from the top left */
-  top = paper_height - top;
-  bottom = paper_height - bottom;
-
   printable_width  = right - left;
   printable_height = bottom - top;
 
@@ -3005,6 +3001,8 @@ gimp_preview_update (void)
       twidth = (72.0 * (gdouble) image_width / -pv->scaling);
       print_width = twidth + .5;
       print_height = (twidth * (gdouble) image_height / image_width) + .5;
+      stp_set_width(pv->v, print_width);
+      stp_set_height(pv->v, print_height);
       GTK_ADJUSTMENT (scaling_adjustment)->lower = min_ppi_scaling;
       GTK_ADJUSTMENT (scaling_adjustment)->upper = max_ppi_scaling;
       GTK_ADJUSTMENT (scaling_adjustment)->value = -pv->scaling;
@@ -3034,6 +3032,8 @@ gimp_preview_update (void)
 	  print_width = twidth;
 	  print_height = twidth * (gdouble) image_height /
 	    (gdouble) image_width;
+	  stp_set_width(pv->v, print_width);
+	  stp_set_height(pv->v, print_height);
 	}
       else
 	{
@@ -3042,6 +3042,8 @@ gimp_preview_update (void)
 	  print_height = theight;
 	  print_width = theight * (gdouble) image_width /
 	    (gdouble) image_height;
+	  stp_set_width(pv->v, print_width);
+	  stp_set_height(pv->v, print_height);
 	}
     }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.72.2.3 2002/10/24 00:30:05 rlk Exp $"
+ * "$Id: print-util.c,v 1.72.2.4 2002/10/24 01:01:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -44,45 +44,6 @@
 #include <stdlib.h>
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
-
-static size_t
-c_strlen(const char *s)
-{
-  return strlen(s);
-}
-
-static char *
-c_strndup(const char *s, int n)
-{
-  char *ret;
-  if (!s || n < 0)
-    {
-      ret = stp_malloc(1);
-      ret[0] = 0;
-      return ret;
-    }
-  else
-    {
-      ret = stp_malloc(n + 1);
-      memcpy(ret, s, n);
-      ret[n] = 0;
-      return ret;
-    }
-}
-
-static char *
-c_strdup(const char *s)
-{
-  char *ret;
-  if (!s)
-    {
-      ret = stp_malloc(1);
-      ret[0] = 0;
-      return ret;
-    }
-  else
-    return c_strndup(s, c_strlen(s));
-}
 
 void
 stp_set_printer_defaults(stp_vars_t v, const stp_printer_t p,
@@ -171,7 +132,6 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   int count;
   int i;
   int answer = 1;
-  int paper_width, paper_height;
   int left, top, bottom, right, width, height;
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
@@ -188,7 +148,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
       answer = 0;
       stp_eprintf(v, _("Printer does not support color output\n"));
     }
-  if (c_strlen(stp_get_media_size(v)) > 0)
+  if (strlen(stp_get_media_size(v)) > 0)
     {
       const char *checkval = stp_get_media_size(v);
       vptr = (*printfuncs->parameters)(p, ppd_file, "PageSize", &count);
@@ -207,10 +167,9 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 	}
     }
 
-  (*printfuncs->media_size)(p, v, &width, &height);
   (*printfuncs->imageable_area)(p, v, &left, &right, &bottom, &top);
 
-  if (stp_get_top(v) < height - top)
+  if (stp_get_top(v) < top)
     {
       answer = 0;
       stp_eprintf(v, _("Top margin must not be less than zero\n"));
@@ -234,9 +193,6 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
       stp_eprintf(v, _("Width must be greater than zero\n"));
     }
 
-  width = right - left;
-  height = top - bottom;
-
   if (stp_get_left(v) + stp_get_width(v) > right)
     {
       answer = 0;
@@ -244,12 +200,11 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 		  stp_get_left(v), stp_get_width(v), right);
     }
 
-  if (stp_get_top(v) + stp_get_height(v) > height - bottom)
+  if (stp_get_top(v) + stp_get_height(v) > bottom)
     {
       answer = 0;
       stp_eprintf(v, _("Image is too long for the page\n"));
     }
-  
 
   CHECK_FLOAT_RANGE(v, gamma);
   CHECK_FLOAT_RANGE(v, contrast);
@@ -264,28 +219,28 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   CHECK_INT_RANGE(v, input_color_model);
   CHECK_INT_RANGE(v, output_color_model);
 
-  if (c_strlen(stp_get_media_type(v)) > 0)
+  if (strlen(stp_get_media_type(v)) > 0)
     {
       const char *checkval = stp_get_media_type(v);
       vptr = (*printfuncs->parameters)(p, ppd_file, "MediaType", &count);
       answer &= verify_param(checkval, vptr, count, "media type", v);
     }
 
-  if (c_strlen(stp_get_media_source(v)) > 0)
+  if (strlen(stp_get_media_source(v)) > 0)
     {
       const char *checkval = stp_get_media_source(v);
       vptr = (*printfuncs->parameters)(p, ppd_file, "InputSlot", &count);
       answer &= verify_param(checkval, vptr, count, "media source", v);
     }
 
-  if (c_strlen(stp_get_resolution(v)) > 0)
+  if (strlen(stp_get_resolution(v)) > 0)
     {
       const char *checkval = stp_get_resolution(v);
       vptr = (*printfuncs->parameters)(p, ppd_file, "Resolution", &count);
       answer &= verify_param(checkval, vptr, count, "resolution", v);
     }
 
-  if (c_strlen(stp_get_ink_type(v)) > 0)
+  if (strlen(stp_get_ink_type(v)) > 0)
     {
       const char *checkval = stp_get_ink_type(v);
       vptr = (*printfuncs->parameters)(p, ppd_file, "InkType", &count);
@@ -360,7 +315,7 @@ stp_putc(int ch, const stp_vars_t v)
 void
 stp_puts(const char *s, const stp_vars_t v)
 {
-  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), s, c_strlen(s));
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), s, strlen(s));
 }
 
 void

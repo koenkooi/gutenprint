@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.18.2.2 2002/10/24 00:30:05 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.18.2.3 2002/10/24 01:01:46 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -381,7 +381,7 @@ gimp_get_cb (void *get_cb_data,
       int h, w;
       (*stp_printer_get_printfuncs(printer)->imageable_area)
 	(printer, v, &l, &r, &b, &t);
-      h = t - b;
+      h = b - t;
       w = r - l;
       /* Force locale to "C", because decimal numbers sent to the IJS
 	 client must have a decimal point, nver a decimal comma */
@@ -412,7 +412,6 @@ gimp_get_cb (void *get_cb_data,
 	(printer, v, &w, &h);
       (*stp_printer_get_printfuncs(printer)->imageable_area)
 	(printer, v, &l, &r, &b, &t);
-      t = h - t;
       /* Force locale to "C", because decimal numbers sent to the IJS
 	 client must have a decimal point, nver a decimal comma */
       setlocale(LC_ALL, "C");
@@ -514,8 +513,8 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
       code = gimp_parse_wxh(vbuf, strlen(vbuf), &w, &h);
       if (code == 0)
 	{
-	  int al = (w * 72) - l;
-	  int ah = (h * 72) - (ph - t);
+	  int al = (w * 72);
+	  int ah = (h * 72);
 	  STP_DEBUG(fprintf(stderr, "left top %f %f %d %d %s\n",
 			    w * 72, h * 72, al, ah, vbuf));
 	  if (al >= 0)
@@ -849,7 +848,8 @@ main (int argc, char **argv)
   stp_image_t si;
   stp_printer_t printer = NULL;
   FILE *f = NULL;
-  int l, t, r, b;
+  int l, t, r, b, w, h;
+  int width, height;
 
   memset(&img, 0, sizeof(img));
 
@@ -972,10 +972,13 @@ main (int argc, char **argv)
       stp_set_app_gamma(img.v, (float)1.7);
       stp_set_cmap(img.v, NULL);
       stp_set_output_type(img.v, img.output_type); 
+      stp_printer_get_printfuncs(printer)->media_size(printer, img.v, &w, &h);
       stp_printer_get_printfuncs(printer)->imageable_area(printer, img.v,
 							  &l, &r, &b, &t);
-      stp_set_width(img.v, r - l);
-      stp_set_height(img.v, t - b);
+      width = r - l;
+      stp_set_width(img.v, width);
+      height = b - t;
+      stp_set_height(img.v, height);
       STP_DEBUG(stp_dbg("about to print", img.v));
       if (stp_printer_get_printfuncs(printer)->verify(printer, img.v))
 	{
