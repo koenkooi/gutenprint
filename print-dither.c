@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.35 2000/05/02 11:33:57 rlk Exp $"
+ * "$Id: print-dither.c,v 1.36 2000/05/03 23:17:14 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -337,6 +337,8 @@ void
 dither_set_ink_spread(void *vd, int spread)
 {
   dither_t *d = (dither_t *) vd;
+  if (spread > 16)
+    spread = 16;
   d->spread = spread;
   d->adaptive_divisor = 128 << ((16 - d->spread) >> 1);
   d->adaptive_limit = d->density / d->adaptive_divisor;
@@ -1608,6 +1610,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.36  2000/05/03 23:17:14  rlk
+ *   Avoid out of range problems
+ *
  *   Revision 1.35  2000/05/02 11:33:57  rlk
  *   Improved dither code.  Deposits significantly less ink than previous version,
  *   and gives better saturation.
@@ -1736,5 +1741,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.35 2000/05/02 11:33:57 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.36 2000/05/03 23:17:14 rlk Exp $".
  */
