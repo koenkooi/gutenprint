@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.95 2000/09/28 00:57:53 rlk Exp $"
+ * "$Id: print-dither.c,v 1.96 2000/11/18 02:26:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -274,6 +274,10 @@ static unsigned int quic2[] = {
 
 static unsigned int rect2x1[] = {
 #include "ran.367.179.h"
+};
+
+static unsigned int rect4x1[] = {
+#include "ran.509.131.h"
 };
 
 static inline int
@@ -558,8 +562,12 @@ init_dither(int in_width, int out_width, int horizontal_aspect,
     {
       if (d->y_aspect / d->x_aspect == 2)
 	init_matrix(&(d->mat6), 367, 179, rect2x1, 0);
+      else if (d->y_aspect / d->x_aspect == 2)
+	init_matrix(&(d->mat6), 509, 131, rect4x1, 0);
       else if (d->x_aspect / d->y_aspect == 2)
 	init_matrix(&(d->mat6), 179, 367, rect2x1, 1);
+      else if (d->x_aspect / d->y_aspect == 4)
+	init_matrix(&(d->mat6), 131, 509, rect4x1, 1);
       else
 	init_matrix(&(d->mat6), 257, 257, quic2, 0);
     }
