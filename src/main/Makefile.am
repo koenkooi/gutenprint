@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.88 2004/10/26 22:04:12 rleigh Exp $
+## $Id: Makefile.am,v 1.89 2004/12/05 22:08:29 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-pkgconfigdatadir = $(prefix)/lib/pkgconfig
+pkgconfigdatadir = $(libdir)/pkgconfig
 pkgxmldatadir = $(pkgdatadir)/$(VERSION)/xml
 pkgmoduledir = $(pkglibdir)/$(VERSION)/modules
 
