@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.51 2001/07/02 11:11:06 gandy Exp $"
+ * "$Id: print-canon.c,v 1.52 2001/07/02 13:27:43 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2121,8 +2121,8 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   */
 
   switch (sscanf(resolution,"%dx%d",&xdpi,&ydpi)) {
-  case 1: ydpi= xdpi; if (ydpi>caps.max_ydpi) ydpi/= 2; break;
-  case 0: xdpi= caps.max_xdpi; ydpi= caps.max_ydpi; break;
+  case 1: ydpi= xdpi; if (ydpi>caps->max_ydpi) ydpi/= 2; break;
+  case 0: xdpi= caps->max_xdpi; ydpi= caps->max_ydpi; break;
   }
 
 #ifdef DEBUG
