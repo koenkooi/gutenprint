@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.8.2.2 2003/05/16 02:13:10 rlk Exp $"
+ * "$Id: color.h,v 1.8.2.3 2003/05/25 01:50:04 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -59,12 +59,13 @@ extern void stpi_channel_reset(stp_vars_t v);
 extern void stpi_channel_reset_channel(stp_vars_t v, int channel);
 
 extern void stpi_channel_add(stp_vars_t v, unsigned channel,
-			     unsigned subchannel, double value);
+			     unsigned subchannel, double value,
+			     double density);
 
 extern void stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
 				    int input_channel_count);
 
-extern void stpi_channel_convert(stp_const_vars_t v);
+extern void stpi_channel_convert(stp_const_vars_t v, unsigned *zero_mask);
 
 extern unsigned short * stpi_channel_get_input(stp_const_vars_t v);
 

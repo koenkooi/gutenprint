@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.120.2.2 2003/05/22 01:15:38 rlk Exp $"
+ * "$Id: print-canon.c,v 1.120.2.3 2003/05/25 01:50:05 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -256,8 +256,8 @@ static const stpi_dotsize_t single_dotsize[] =
 
 static const stpi_shade_t canon_Cc_1bit_shades[] =
 {
+  SHADE(1.0, single_dotsize),
   SHADE(0.25, single_dotsize),
-  SHADE(1.0, single_dotsize)
 };
 
 DECLARE_INK(canon_Cc_1bit, 0.75);
@@ -269,8 +269,8 @@ DECLARE_INK(canon_Cc_1bit, 0.75);
 
 static const stpi_shade_t canon_Mm_1bit_shades[] =
 {
+  SHADE(1.0, single_dotsize),
   SHADE(0.26, single_dotsize),
-  SHADE(1.0, single_dotsize)
 };
 
 DECLARE_INK(canon_Mm_1bit, 0.75);
@@ -299,8 +299,8 @@ DECLARE_INK(canon_X_2bit, 1.0);
  */
 static const stpi_shade_t canon_Xx_2bit_shades[] =
 {
+  SHADE(1.0, two_bit_dotsize),
   SHADE(0.33, two_bit_dotsize),
-  SHADE(1.0, two_bit_dotsize)
 };
 
 DECLARE_INK(canon_Xx_2bit, 1.0);
@@ -339,8 +339,8 @@ DECLARE_INK(canon_X_3bit, 1.0);
  */
 static const stpi_shade_t canon_Xx_3bit_shades[] =
 {
+  SHADE(1.0, three_bit_dotsize),
   SHADE(0.33, three_bit_dotsize),
-  SHADE(1.0, three_bit_dotsize)
 };
 
 DECLARE_INK(canon_Xx_3bit, 1.0);
@@ -2424,6 +2424,13 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
     stp_set_default_float_parameter(v, "GCRUpper", k_upper);
   stpi_dither_init(v, image, out_width, xdpi, ydpi);
 
+  for (i = 0; i < 7; i++)
+    {
+      if (privdata.cols[i])
+	stpi_dither_add_channel(v, privdata.cols[i], channel_color_map[i],
+				subchannel_color_map[i]);
+    }
+
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
       set_ink_ranges(v, inks->c, ECOLOR_C);
@@ -2469,13 +2476,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
     }
 
   out_channels = stpi_color_init(v, image, 65536);
-
-  for (i = 0; i < 7; i++)
-    {
-      if (privdata.cols[i])
-	stpi_dither_add_channel(v, privdata.cols[i], channel_color_map[i],
-				subchannel_color_map[i]);
-    }
   stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
 
   privdata.emptylines = 0;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.64.2.2 2003/05/24 23:00:26 rlk Exp $"
+ * "$Id: print-ps.c,v 1.64.2.3 2003/05/25 01:50:07 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -553,11 +553,11 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   setlocale(LC_ALL, "");
 
   stpi_channel_reset(nv);
-  stpi_channel_add(nv, 0, 0, 1.0);
+  stpi_channel_add(nv, 0, 0, 1.0, 1.0);
   if (output_type == OUTPUT_COLOR)
     {
-      stpi_channel_add(nv, 1, 0, 1.0);
-      stpi_channel_add(nv, 2, 0, 1.0);
+      stpi_channel_add(nv, 1, 0, 1.0, 1.0);
+      stpi_channel_add(nv, 2, 0, 1.0, 1.0);
     }
 
   out_channels = stpi_color_init(nv, image, 256);

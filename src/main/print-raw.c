@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.24.4.2 2003/05/24 23:00:26 rlk Exp $"
+ * "$Id: print-raw.c,v 1.24.4.3 2003/05/25 01:50:07 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -210,7 +210,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 
   stpi_channel_reset(nv);
   for (i = 0; i < ink_channels; i++)
-    stpi_channel_add(nv, i, 0, 1.0);
+    stpi_channel_add(nv, i, 0, 1.0, 1.0);
 
   if (bytes_per_channel == 1)
     out_channels = stpi_color_init(nv, image, 256);

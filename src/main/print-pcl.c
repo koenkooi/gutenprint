@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.104.2.2 2003/05/22 01:15:39 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.104.2.3 2003/05/25 01:50:06 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2557,6 +2557,19 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 #endif
   stpi_dither_init(v, image, out_width, xdpi, ydpi);
 
+  if (black)
+    stpi_dither_add_channel(v, black, ECOLOR_K, 0);
+  if (cyan)
+    stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
+  if (lcyan)
+    stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
+  if (magenta)
+    stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
+  if (lmagenta)
+    stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
+  if (yellow)
+    stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
+
 /* Ensure that density does not exceed 1.0 */
 
   stpi_deprintf(STPI_DBG_PCL, "Density: %f\n", stp_get_float_parameter(v, "Density"));
@@ -2625,19 +2638,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 #else
   privdata.do_blank = 0;
 #endif
-
-  if (black)
-    stpi_dither_add_channel(v, black, ECOLOR_K, 0);
-  if (cyan)
-    stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
-  if (lcyan)
-    stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
-  if (magenta)
-    stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
-  if (lmagenta)
-    stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
-  if (yellow)
-    stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
 
   for (y = 0; y < out_height; y ++)

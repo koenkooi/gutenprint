@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.75.2.3 2003/05/24 22:37:36 rlk Exp $"
+ * "$Id: print-color.c,v 1.75.2.4 2003/05/25 01:50:05 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1287,11 +1287,11 @@ stpi_color_get_row(stp_const_vars_t v, stp_image_t *image, int row,
 			 lut->image_width * lut->image_bpp, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
-  stpi_channel_initialize(v, image, lut->out_channels);
+  stpi_channel_initialize((stp_vars_t) v, image, lut->out_channels);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
-  stpi_channel_convert(v);
   if (zero_mask)
     *zero_mask = zero;
+  stpi_channel_convert(v, zero_mask);
   return 0;
 }
 

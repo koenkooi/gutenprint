@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.2.2.2 2003/05/24 23:00:26 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.2.2.3 2003/05/25 01:50:06 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -348,7 +348,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
 
   stpi_channel_reset(nv);
   for (i = 0; i < ink_channels; i++)
-    stpi_channel_add(nv, i, 0, 1.0);
+    stpi_channel_add(nv, i, 0, 1.0, 1.0);
 
   out_channels = stpi_color_init(nv, image, 256);
 
@@ -427,7 +427,6 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
           stpi_zfwrite((char *) zeros, 1, image_left, nv);
 /* stpi_erprintf("left %d ", image_left); */
 	  }
-        real_out = out;
         if ((y & 63) == 0)
           {
     	  stpi_image_note_progress(image, MAX_PROGRESS/3 * (l - layers) + y / 3,
@@ -440,6 +439,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   	  break;
           }
 	out = stpi_channel_get_input(nv);
+        real_out = out;
         if (out_channels != ink_channels)
   	{
   	  real_out = final_out;

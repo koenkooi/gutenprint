@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.3.4.1 2003/05/25 00:25:16 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.3.4.2 2003/05/25 01:50:05 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -182,8 +182,8 @@ DECLARE_INK_CHANNEL(extended_black);
 
 static const physical_subchannel_t photo_cyan_subchannels[] =
 {
-  { 2, 1, 0 },
-  { 2, 0, 0 }
+  { 2, 0, 0 },
+  { 2, 1, 0 }
 };
 
 DECLARE_INK_CHANNEL(photo_cyan);
@@ -197,8 +197,8 @@ DECLARE_INK_CHANNEL(extended_cyan);
 
 static const physical_subchannel_t photo_magenta_subchannels[] =
 {
-  { 1, 1, 0 },
-  { 1, 0, 0 }
+  { 1, 0, 0 },
+  { 1, 1, 0 }
 };
 
 DECLARE_INK_CHANNEL(photo_magenta);
@@ -235,28 +235,28 @@ DECLARE_INK_CHANNEL(photo2_yellow);
 
 static const physical_subchannel_t photo2_black_subchannels[] =
 {
-  { 0, 1, 0 },
-  { 0, 0, 0 }
+  { 0, 0, 0 },
+  { 0, 1, 0 }
 };
 
 DECLARE_INK_CHANNEL(photo2_black);
 
 static const physical_subchannel_t quadtone_subchannels[] =
 {
-  { 0, -1, 0 },
-  { 2, -1, 0 },
+  { 4, -1, 0 },
   { 1, -1, 0 },
-  { 4, -1, 0 }
+  { 2, -1, 0 },
+  { 0, -1, 0 }
 };
 
 DECLARE_INK_CHANNEL(quadtone);
 
 static const physical_subchannel_t c80_quadtone_subchannels[] =
 {
-  { 0, -1, 0 },
-  { 2, -1, 0 },
+  { 4, -1, 240 },
   { 1, -1, 120 },
-  { 4, -1, 240 }
+  { 2, -1, 0 },
+  { 0, -1, 0 }
 };
 
 DECLARE_INK_CHANNEL(c80_quadtone);
