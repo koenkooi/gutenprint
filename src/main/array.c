@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.14 2004/05/07 19:20:28 rleigh Exp $"
+ * "$Id: array.c,v 1.15 2004/06/12 17:57:10 rlk Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -90,7 +90,8 @@ stp_array_destroy(stp_array_t *array)
   stp_free(array);
 }
 
-void stp_array_copy(stp_array_t *dest, const stp_array_t *source)
+void
+stp_array_copy(stp_array_t *dest, const stp_array_t *source)
 {
   check_array(dest);
   check_array(source);
@@ -238,4 +239,43 @@ stp_array_create_from_xmltree(stp_mxml_node_t *array)  /* The array node */
   if (ret)
     stp_array_destroy(ret);
   return NULL;
+}
+
+stp_mxml_node_t *
+stp_xmltree_create_from_array(const stp_array_t *array)  /* The array */
+{
+  int x_size, y_size;
+  char *xs, *ys;
+
+  stp_mxml_node_t *arraynode = NULL;
+  stp_mxml_node_t *child = NULL;
+
+  stp_xml_init();
+
+  /* Get array details */
+  stp_array_get_size(array, &x_size, &y_size);
+
+  /* Construct the allocated strings required */
+  stp_asprintf(&xs, "%d", x_size);
+  stp_asprintf(&ys, "%d", y_size);
+
+  arraynode = stp_mxmlNewElement(NULL, "array");
+  stp_mxmlElementSetAttr(arraynode, "x-size", xs);
+  stp_mxmlElementSetAttr(arraynode, "y-size", ys);
+  stp_free(xs);
+  stp_free(ys);
+
+  child = stp_xmltree_create_from_sequence(stp_array_get_sequence(array));
+
+  if (child)
+    stp_mxmlAdd(arraynode, STP_MXML_ADD_AFTER, NULL, child);
+  else
+    {
+      stp_mxmlDelete(arraynode);
+      arraynode = NULL;
+    }
+
+  stp_xml_exit();
+
+  return arraynode;
 }
