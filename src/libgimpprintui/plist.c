@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.2 2003/01/01 01:03:10 rlk Exp $"
+ * "$Id: plist.c,v 1.3 2003/01/01 02:44:59 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -26,7 +26,6 @@
 #endif
 #include "../../lib/libprintut.h"
 
-#include <gimp-print/gimp-print-intl.h>
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <gimp-print/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
@@ -45,7 +44,6 @@ static int	compare_printers (stpui_plist_t *p1, stpui_plist_t *p2);
 int		stpui_plist_current = 0,	/* Current system printer */
 		stpui_plist_count = 0;	/* Number of system printers */
 stpui_plist_t	*stpui_plist;			/* System printers */
-stp_printer_t current_printer = 0;	/* Current printer index */
 static char *printrc_name = NULL;
 
 #define SAFE_FREE(x)				\
@@ -1104,5 +1102,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.2 2003/01/01 01:03:10 rlk Exp $".
+ * End of "$Id: plist.c,v 1.3 2003/01/01 02:44:59 rlk Exp $".
  */

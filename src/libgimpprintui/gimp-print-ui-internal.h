@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.1 2002/12/31 20:39:21 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.2 2003/01/01 02:44:59 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -196,6 +196,7 @@ extern GtkObject *stpui_scale_entry_new(GtkTable    *table,
 
 /* Thumbnails -- keep it simple! */
 
-stp_image_t *Image_Thumbnail_new(const guchar *data, gint w, gint h, gint bpp);
+stp_image_t *stpui_image_thumbnail_new(const guchar *data, gint w, gint h,
+				       gint bpp);
 
 #endif  /* __GIMP_PRINT_UI_INTERNAL_H__ */
