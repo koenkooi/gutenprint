@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.18 2003/01/26 02:38:14 rlk Exp $"
+ * "$Id: print-raw.c,v 1.19 2003/02/13 23:34:55 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -66,6 +66,7 @@ static const ink_t inks[] =
 {
   { COLOR_MODEL_RGB, 3, "RGB" },
   { COLOR_MODEL_CMY, 3, "CMY" },
+  { COLOR_MODEL_CMY, 4, "CMYK" },
   { COLOR_MODEL_RGB, 1, "RGBGray" },
   { COLOR_MODEL_CMY, 1, "CMYGray" },
 };
