@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125.4.6 2004/03/13 17:58:06 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.7 2004/03/20 21:38:41 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1743,6 +1743,32 @@ pcl_limit(stp_const_vars_t v,  		/* I */
   *min_height =	caps->custom_min_height;
 }
 
+static const char *
+pcl_describe_output(stp_const_vars_t v)
+{
+  int printing_color = 0;
+  int model = stpi_get_model_id(v);
+  const pcl_cap_t *caps = pcl_get_model_capabilities(model);
+  const char *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  int xdpi, ydpi;
+
+  pcl_describe_resolution(v, &xdpi, &ydpi);
+  if (strcmp(print_mode, "Color") == 0)
+    printing_color = 1;
+  if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
+      printing_color && xdpi == 600 && ydpi == 600)
+    printing_color = 0;
+  if (printing_color)
+    {
+      if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
+	return "CMY";
+      else
+	return "CMYK";
+    }
+  else
+    return "Grayscale";
+}
+
 /*
  * 'pcl_print()' - Print an image to an HP printer.
  */
@@ -2527,6 +2553,7 @@ static const stpi_printfuncs_t print_pcl_printfuncs =
   pcl_limit,
   pcl_print,
   pcl_describe_resolution,
+  pcl_describe_output,
   stpi_verify_printer_params,
   NULL,
   NULL

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.12 2003/05/28 11:57:31 rlk Exp $"
+ * "$Id: printers.h,v 1.12.8.1 2004/03/20 21:38:41 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -49,6 +49,7 @@ typedef struct
                  int *min_width, int *min_height);
   int   (*print)(stp_const_vars_t v, stp_image_t *image);
   void  (*describe_resolution)(stp_const_vars_t v, int *x, int *y);
+  const char *(*describe_output)(stp_const_vars_t v);
   int   (*verify)(stp_vars_t v);
   int   (*start_job)(stp_const_vars_t v, stp_image_t *image);
   int   (*end_job)(stp_const_vars_t v, stp_image_t *image);
@@ -73,6 +74,7 @@ extern void
 stpi_printer_describe_parameter(stp_const_vars_t v, const char *name,
 				stp_parameter_t *description);
 
+const char *stpi_describe_output(stp_const_vars_t v);
 
 #ifdef __cplusplus
   }
@@ -80,5 +82,5 @@ stpi_printer_describe_parameter(stp_const_vars_t v, const char *name,
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.12 2003/05/28 11:57:31 rlk Exp $".
+ * End of "$Id: printers.h,v 1.12.8.1 2004/03/20 21:38:41 rlk Exp $".
  */

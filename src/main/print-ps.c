@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.71.4.6 2004/03/13 17:58:06 rlk Exp $"
+ * "$Id: print-ps.c,v 1.71.4.7 2004/03/20 21:38:41 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -324,6 +324,16 @@ ps_describe_resolution(stp_const_vars_t v, int *x, int *y)
   if (resolution)
     sscanf(resolution, "%dx%d", x, y);
   return;
+}
+
+static const char *
+ps_describe_output(stp_const_vars_t v)
+{
+  const char *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  if (print_mode && strcmp(print_mode, "Color") == 0)
+    return "RGB";
+  else
+    return "Whitescale";
 }
 
 /*
@@ -883,6 +893,7 @@ static const stpi_printfuncs_t print_ps_printfuncs =
   ps_limit,
   ps_print,
   ps_describe_resolution,
+  ps_describe_output,
   stpi_verify_printer_params,
   NULL,
   NULL

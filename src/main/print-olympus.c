@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33.4.3 2004/03/13 17:58:06 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.4 2004/03/20 21:38:41 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1065,6 +1065,12 @@ olympus_describe_resolution(stp_const_vars_t v, int *x, int *y)
   return;
 }
 
+static const char *
+olympus_describe_output(stp_const_vars_t v)
+{
+  return "CMY";
+}
+
 /*
  * olympus_print()
  */
@@ -1509,6 +1515,7 @@ static const stpi_printfuncs_t print_olympus_printfuncs =
   olympus_limit,
   olympus_print,
   olympus_describe_resolution,
+  olympus_describe_output,
   stpi_verify_printer_params,
   NULL,
   NULL

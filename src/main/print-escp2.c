@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.6 2004/03/13 17:58:04 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.7 2004/03/20 21:38:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1639,6 +1639,40 @@ escp2_describe_resolution(stp_const_vars_t v, int *x, int *y)
   *y = -1;
 }
 
+static const char *
+escp2_describe_output(stp_const_vars_t v)
+{
+  const char *printing_mode = stp_get_string_parameter(v, "PrintingMode");
+  if (strcmp(printing_mode, "BW") == 0)
+    return "Grayscale";
+  else if (strcmp(printing_mode, "Raw") == 0)
+    return "Raw";
+  else
+    {
+      const escp2_inkname_t *ink_type = get_inktype(v);
+      if (ink_type)
+	{
+	  switch (ink_type->inkset)
+	    {
+	    case INKSET_CMYKRB:
+	      return "CMYKRB";
+	    case INKSET_CMYK:
+	    case INKSET_CcMmYK:
+	    case INKSET_CcMmYyK:
+	    case INKSET_CcMmYKk:
+	    default:
+	      if (ink_type->channel_set->channels[0])
+		return "CMYK";
+	      else
+		return "CMY";
+	      break;
+	    }
+	}
+      else
+	return "CMYK";
+    }
+}
+
 static int
 escp2_has_advanced_command_set(stp_const_vars_t v)
 {
@@ -1998,30 +2032,7 @@ allocate_channels(stp_vars_t v, int line_length)
 	    }
 	}
     }
-  if (pd->logical_channels == 1 && ink_type->inkset != INKSET_EXTENDED)
-    stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
-  else
-    {
-      switch (ink_type->inkset)
-	{
-	case INKSET_CMYKRB:
-	  stp_set_string_parameter(v, "STPIOutputType", "CMYKRB");
-	  break;
-	case INKSET_EXTENDED:
-	  stp_set_string_parameter(v, "STPIOutputType", "Raw");
-	  break;
-	case INKSET_CMYK:
-	case INKSET_CcMmYK:
-	case INKSET_CcMmYyK:
-	case INKSET_CcMmYKk:
-	default:
-	  if (ink_type->channel_set->channels[0])
-	    stp_set_string_parameter(v, "STPIOutputType", "CMYK");
-	  else
-	    stp_set_string_parameter(v, "STPIOutputType", "CMY");
-	  break;
-	}
-    }
+  stp_set_string_parameter(v, "STPIOutputType", escp2_describe_output(v));
 }
 
 static unsigned
@@ -2576,6 +2587,7 @@ static const stpi_printfuncs_t print_escp2_printfuncs =
   escp2_limit,
   escp2_print,
   escp2_describe_resolution,
+  escp2_describe_output,
   stpi_verify_printer_params,
   escp2_job_start,
   escp2_job_end

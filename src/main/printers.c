@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.4 2004/03/13 17:58:06 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.5 2004/03/20 21:38:41 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -379,6 +379,14 @@ stp_describe_resolution(stp_const_vars_t v, int *x, int *y)
   const stpi_printfuncs_t *printfuncs =
     stpi_get_printfuncs(stp_get_printer(v));
   (printfuncs->describe_resolution)(v, x, y);
+}
+
+const char *
+stpi_describe_output(stp_const_vars_t v)
+{
+  const stpi_printfuncs_t *printfuncs =
+    stpi_get_printfuncs(stp_get_printer(v));
+  return (printfuncs->describe_output)(v);
 }
 
 int

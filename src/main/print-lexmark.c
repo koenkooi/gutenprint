@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.137.4.5 2004/03/13 17:58:05 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.137.4.6 2004/03/20 21:38:40 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -925,7 +925,7 @@ lexmark_get_ink_type(const char *name, int printing_color, const lexmark_cap_t *
 }
 
 static const lexmark_inkparam_t *
-lexmark_get_ink_parameter(const char *name, int printing_color, const lexmark_cap_t * caps, stp_vars_t nv)
+lexmark_get_ink_parameter(const char *name, int printing_color, const lexmark_cap_t * caps, stp_const_vars_t nv)
 {
   const lexmark_inkname_t *ink_type = lexmark_get_ink_type(name, printing_color, caps);
 
@@ -1114,7 +1114,6 @@ lexmark_describe_resolution(stp_const_vars_t v, int *x, int *y)
 }
 
 
-
 static stp_param_string_t media_sources[] =
 {
   { "Auto",		N_("Auto Sheet Feeder") },
@@ -1137,6 +1136,30 @@ lexmark_list_parameters(stp_const_vars_t v)
   for (i = 0; i < float_parameter_count; i++)
     stp_parameter_list_add_param(ret, &(float_parameters[i].param));
   return ret;
+}
+
+static const char *
+lexmark_describe_output(stp_const_vars_t v)
+{
+  int printing_color = 0;
+  int model = stpi_get_model_id(v);
+  const lexmark_cap_t *caps = lexmark_get_model_capabilities(model);
+  const char *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  const char *ink_type = stp_get_string_parameter(v, "InkType");
+  const lexmark_inkparam_t *ink_parameter;
+
+  if (strcmp(print_mode, "Color") == 0)
+    printing_color = 1;
+
+  ink_parameter = lexmark_get_ink_parameter(ink_type, printing_color, caps, v);
+
+  if (ink_parameter->used_colors == COLOR_MODE_K ||
+      caps->inks == LEXMARK_INK_K || !printing_color)
+    return "Grayscale";
+  else if (!(ink_parameter->used_colors & COLOR_MODE_K))
+    return "CMY";
+  else
+    return "CMYK";
 }
 
 static void
@@ -1632,7 +1655,7 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   const lexmark_res_t *res_para_ptr =
     lexmark_get_resolution_para(model, resolution);
   const paper_t *media = get_media_type(media_type,caps);
-  const lexmark_inkparam_t *ink_parameter = lexmark_get_ink_parameter(ink_type, printing_color, caps, v);
+  const lexmark_inkparam_t *ink_parameter;
 
   stpi_prune_inactive_options(v);
 
@@ -1647,6 +1670,8 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
     }
   if (strcmp(print_mode, "Color") == 0)
     printing_color = 1;
+
+  ink_parameter = lexmark_get_ink_parameter(ink_type, printing_color, caps, v);
 
   if (ink_parameter == NULL)
     {
@@ -2169,6 +2194,7 @@ static const stpi_printfuncs_t print_lexmark_printfuncs =
   lexmark_limit,
   lexmark_print,
   lexmark_describe_resolution,
+  lexmark_describe_output,
   stpi_verify_printer_params,
   NULL,
   NULL

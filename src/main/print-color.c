@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.6 2004/03/20 18:26:38 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.7 2004/03/20 21:38:39 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -163,19 +163,6 @@ sizeof(color_corrections) / sizeof(color_correction_t);
 
 typedef struct
 {
-  stp_curve_t hue_map;
-  const double *hue_cache;
-  size_t hue_count;
-  stp_curve_t lum_map;
-  const double *lum_cache;
-  size_t lum_count;
-  stp_curve_t sat_map;
-  const double *sat_cache;
-  size_t sat_count;
-} hsl_t;  
-
-typedef struct
-{
   unsigned steps;
   unsigned char *in_data;
   int channel_depth;
@@ -190,7 +177,15 @@ typedef struct
   stp_curve_t composite;
   int channel_curve_count;
   stp_curve_t *channel_curves;
-  hsl_t *hsl_adjust;
+  stp_curve_t hue_map;
+  const double *hue_cache;
+  size_t hue_count;
+  stp_curve_t lum_map;
+  const double *lum_cache;
+  size_t lum_count;
+  stp_curve_t sat_map;
+  const double *sat_cache;
+  size_t sat_count;
   stp_curve_t gcr_curve;
   unsigned short *cmy_tmp;
 } lut_t;
@@ -1796,6 +1791,7 @@ free_channels(lut_t *lut)
 {
   if (lut->channel_curves)
     {
+      int i;
       for (i = 0; i < lut->channel_curve_count; i++)
 	if (lut->channel_curves[i])
 	  stp_curve_free(lut->channel_curves[i]);
@@ -1816,8 +1812,8 @@ allocate_channels(lut_t *lut, size_t count)
 	stpi_malloc(sizeof(stp_curve_t) * lut->channel_curve_count);
       for (i = 0; i < count; i++)
 	{
-	  ret->channel_curves[i] = stp_curve_create(STP_CURVE_WRAP_NONE);
-	  stp_curve_set_bounds(ret->channel_curves[i], 0, 65535);
+	  lut->channel_curves[i] = stp_curve_create(STP_CURVE_WRAP_NONE);
+	  stp_curve_set_bounds(lut->channel_curves[i], 0, 65535);
 	}
     }
 }
@@ -1850,19 +1846,12 @@ copy_lut(void *vlut)
       for (i = 0; i < src->channel_curve_count; i++)
 	dest->channel_curves[i] = stp_curve_create_copy(src->channel_curves[i]);
     }
-  if (src->hsl_adjust)
-    {
-      dest->hsl_adjust = stpi_zalloc(sizeof(hsl_t));
-      if (src->hsl_adjust->hue_map)
-	dest->hsl_adjust->hue_map =
-	  stp_curve_create_copy(src->hsl_adjust->hue_map);
-      if (src->hsl_adjust->lum_map)
-	dest->hsl_adjust->lum_map =
-	  stp_curve_create_copy(src->hsl_adjust->lum_map);
-      if (src->hsl_adjust->sat_map)
-	dest->hsl_adjust->sat_map =
-	  stp_curve_create_copy(src->hsl_adjust->sat_map);
-    }
+  if (src->hue_map)
+    dest->hue_map = stp_curve_create_copy(src->hue_map);
+  if (src->lum_map)
+    dest->lum_map = stp_curve_create_copy(src->lum_map);
+  if (src->sat_map)
+    dest->sat_map = stp_curve_create_copy(src->sat_map);
   if (src->gcr_curve)
     dest->gcr_curve = stp_curve_create_copy(src->gcr_curve);
   dest->steps = src->steps;
@@ -1882,25 +1871,19 @@ copy_lut(void *vlut)
 static void
 free_lut(void *vlut)
 {
-  int i;
   lut_t *lut = (lut_t *)vlut;
   if (lut->composite)
     stp_curve_free(lut->composite);
-  if (lut->hsl_adjust)
-    {
-      hsl_t *hsl = lut->hsl_adjust;
-      if (hsl->hue_map)
-	stp_curve_free(hsl->hue_map);
-      if (hsl->lum_map)
-	stp_curve_free(hsl->lum_map);
-      if (hsl->sat_map)
-	stp_curve_free(hsl->sat_map);
-    }
-  SAFE_FREE(lut->hsl_adjust);
+  free_channels(lut);
+  if (lut->hue_map)
+    stp_curve_free(lut->hue_map);
+  if (lut->lum_map)
+    stp_curve_free(lut->lum_map);
+  if (lut->sat_map)
+    stp_curve_free(lut->sat_map);
   if (lut->gcr_curve)
     stp_curve_free(lut->gcr_curve);
   SAFE_FREE(lut->in_data);
-  SAFE_FREE(lut->cmy_tmp);
   memset(lut, 0, sizeof(lut_t));
   stpi_free(lut);
 }
@@ -2244,16 +2227,6 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
   compute_one_lut(lut->yellow, yellow_curve, yellow, &l);
 }
 
-#define SET_COLORFUNC(x)						     \
-if (!x)									     \
-  stpi_erprintf("No colorfunc chosen ");				     \
-stpi_dprintf(STPI_DBG_COLORFUNC, v,					     \
-	     "at line %d stp_choose_colorfunc(type %d bpp %d) ==> %s, %d\n", \
-	     __LINE__, stp_get_output_type(v), image_bpp, #x,		     \
-	     lut->out_channels);					     \
-lut->colorfunc = x;							     \
-break
-
 static int
 stpi_color_traditional_init(stp_vars_t v,
 			    stp_image_t *image,
@@ -2264,7 +2237,7 @@ stpi_color_traditional_init(stp_vars_t v,
   const char *color_correction = stp_get_string_parameter(v, "ColorCorrection");
   const channel_depth_t *channel_depth =
     get_channel_depth(stp_get_string_parameter(v, "ChannelBitDepth"));
-  size_t total_channel_bytes;
+  size_t total_channel_bits;
 
   if (steps != 256 && steps != 65536)
     return -1;
@@ -2285,12 +2258,12 @@ stpi_color_traditional_init(stp_vars_t v,
 
   if (lut->output_color_description->channel_count < 1)
     {
-      if (stpi_verify_parameter(v, "STPIRawChannels") != PARAMETER_OK)
+      if (stpi_verify_parameter(v, "STPIRawChannels", 1) != PARAMETER_OK)
 	{
 	  free_lut(lut);
 	  return -1;
 	}
-      lut->out_channels = stp_get_integer_parameter(v, "STPIRawChannels");
+      lut->out_channels = stp_get_int_parameter(v, "STPIRawChannels");
       lut->in_channels = lut->out_channels;
     }
   else
@@ -2319,8 +2292,8 @@ stpi_color_traditional_init(stp_vars_t v,
 
   lut->image_width = stpi_image_width(image);
   total_channel_bits = lut->in_channels * lut->channel_depth;
-  lut->in_data = stpi_malloc(((lut->image_width * total_channel_bytes) + 7)/8);
-  memset(lut->in_data, 0, ((lut->image_width * total_channel_bytes) + 7) / 8);
+  lut->in_data = stpi_malloc(((lut->image_width * total_channel_bits) + 7)/8);
+  memset(lut->in_data, 0, ((lut->image_width * total_channel_bits) + 7) / 8);
   return lut->out_channels;
 }
 
@@ -2457,7 +2430,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		  for (j = 0; j < color_correction_count; j++)
 		    stp_string_list_add_string
 		      (description->bounds.str, color_corrections[j].name,
-		       _(color_corrections[j].text);
+		       _(color_corrections[j].text));
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}

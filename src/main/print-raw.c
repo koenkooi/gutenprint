@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.4 2004/03/11 03:37:56 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.5 2004/03/20 21:38:41 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -178,6 +178,20 @@ raw_describe_resolution(stp_const_vars_t v, int *x, int *y)
   *y = 72;
 }
 
+static const char *
+raw_describe_output(stp_const_vars_t v)
+{
+  const char *ink_type = stp_get_string_parameter(v, "InkType");
+  if (ink_type)
+    {
+      int i;
+      for (i = 0; i < ink_count; i++)
+	if (strcmp(ink_type, inks[i].name) == 0)
+	    return inks[i].output_type;
+    }
+  return "RGB";
+}
+
 /*
  * 'escp2_print()' - Print an image to an EPSON printer.
  */
@@ -315,6 +329,7 @@ static const stpi_printfuncs_t print_raw_printfuncs =
   raw_limit,
   raw_print,
   raw_describe_resolution,
+  raw_describe_output,
   stpi_verify_printer_params,
   NULL,
   NULL

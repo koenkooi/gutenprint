@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140.2.6 2004/03/13 17:58:04 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.7 2004/03/20 21:38:39 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1613,6 +1613,32 @@ canon_describe_resolution(stp_const_vars_t v, int *x, int *y)
   *y = -1;
 }
 
+static const char *
+canon_describe_output(stp_const_vars_t v)
+{
+  int model = stpi_get_model_id(v);
+  const canon_cap_t *caps = canon_get_model_capabilities(model);
+  const char *print_mode = stp_get_string_parameter(v, "PrintingMode");
+  const char *ink_type = stp_get_string_parameter(v, "InkType");
+  colormode_t colormode = canon_printhead_colors(ink_type,caps);
+  int printhead= canon_printhead_type(ink_type,caps);
+
+  if (strcmp(print_mode, "Color") == 0 ||
+      printhead == 0 || caps->inks == CANON_INK_K)
+    colormode = COLOR_MONOCHROME;
+
+  switch (colormode)
+    {
+    case COLOR_CMY:
+      return "CMY";
+    case COLOR_CMYK:
+      return "CMYK";
+    case COLOR_MONOCHROME:
+    default:
+      return "Grayscale";
+    }
+}
+
 static const stp_param_string_t media_sources[] =
               {
                 { "Auto",	N_ ("Auto Sheet Feeder") },
@@ -2733,6 +2759,7 @@ static const stpi_printfuncs_t print_canon_printfuncs =
   canon_limit,
   canon_print,
   canon_describe_resolution,
+  canon_describe_output,
   stpi_verify_printer_params,
   canon_start_job,
   canon_end_job
