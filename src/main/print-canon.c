@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.22 2001/03/09 21:23:35 rleigh Exp $"
+ * "$Id: print-canon.c,v 1.23 2001/03/12 09:01:49 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -507,12 +507,12 @@ static const canon_cap_t canon_model_capabilities[] =
   { /* Canon BJ 30 */
     30,
     9.5*72, 14*72,
-    180, 360, 360, 2,
+    90, 360, 360, 2,
     11, 9, 10, 18,
     CANON_INK_K,
     CANON_SLOT_ASF1,
     CANON_CAP_STD1 | CANON_CAP_a,
-    { 0,0,-1,-1,-1,-1 }, /* ??? */
+    { -1,0,0,0,-1,-1 }, /* max res of 720x360 !! */
     { 1,1,1,1,1,1 },
     CANON_INK(canon_ink_standard) 
   },
@@ -533,12 +533,12 @@ static const canon_cap_t canon_model_capabilities[] =
   { /* Canon BJC 4400 */
     4400,
     9.5*72, 14*72,
-    180, 720, 360, 2,
+    90, 720, 360, 2,
     11, 9, 10, 18,
     CANON_INK_K | CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1,
     CANON_CAP_STD1 | CANON_CAP_a | CANON_CAP_DMT,
-    {-1,0,-1,-1,-1,-1},
+    {-1,-1,0,0,-1,-1}, /* max res of 720x360 !! */
     { 1,1,1,1,1,1 },
     CANON_INK(canon_ink_standard) 
   },
