@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.55 2003/06/13 22:53:16 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.56 2003/06/14 21:36:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -236,6 +236,7 @@ typedef struct
 
 #define ROLL_FEED_CUT_ALL (1)
 #define ROLL_FEED_CUT_LAST (2)
+#define ROLL_FEED_DONT_EJECT (4)
 
 typedef struct
 {
@@ -485,7 +486,7 @@ typedef struct
   int printing_resolution;	/* Printing resolution for this resolution */
   int separation_rows;		/* Row separation scaling */
   int pseudo_separation_rows;	/* Special row separation for some printers */
-  int extra_720dpi_separation;	/* Sepcial separation needed at 720 DPI */
+  int extra_720dpi_separation;	/* Special separation needed at 720 DPI */
 
   /* weave parameters */
   int horizontal_passes;	/* Number of horizontal passes required
@@ -524,6 +525,7 @@ extern void stpi_escp2_init_printer(stp_vars_t v);
 extern void stpi_escp2_deinit_printer(stp_vars_t v);
 extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 				  int vertical_subpass);
+extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #ifdef TEST_UNCOMPRESSED
 #define COMPRESSION (0)
@@ -539,5 +541,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.55 2003/06/13 22:53:16 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.56 2003/06/14 21:36:00 rlk Exp $".
  */

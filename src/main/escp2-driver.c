@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.6 2003/05/28 11:57:29 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.7 2003/06/14 21:36:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -619,5 +619,17 @@ stpi_escp2_flush_pass(stp_vars_t v, int passno, int vertical_subpass)
 	}
       lineoffs[0].v[j] = 0;
       linecount[0].v[j] = 0;
+    }
+}
+
+void
+stpi_escp2_terminate_page(stp_vars_t v)
+{
+  escp2_privdata_t *pd = get_privdata(v);
+  if (pd->input_slot->roll_feed_cut_flags != ROLL_FEED_DONT_EJECT)
+    {
+      if (!pd->printed_something)
+	stpi_send_command(v, "\n", "");
+      stpi_send_command(v, "\f", "");	/* Eject page */
     }
 }
