@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.78 2003/11/02 00:30:11 rlk Exp $
+dnl $Id: configure.ac,v 1.79 2003/11/04 03:27:18 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.78 $)
+AC_REVISION($Revision: 1.79 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -474,7 +474,22 @@ AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
 
 dnl Compiler flags
 if test "$CC" = "gcc" ; then
-  :
+  AC_MSG_CHECKING([GCC version])
+  gccversion="`gcc -dumpversion`"
+  gccmajor="`echo $gccversion | sed 's/\..*//'`"
+  if test "$gccmajor" -ge 3 ; then
+    AC_MSG_RESULT([${gccversion} (gcc $gccmajor), enabling inline limit])
+    GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline -finline-limit=1048576"
+  else
+    AC_MSG_RESULT([${gccversion} (gcc $gccmajor), not enabling inline limit])
+    GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline"
+  fi
+  if test x${USE_MAINTAINER_MODE} = xyes ; then
+    GNUCFLAGS="${GNUCFLAGS} -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
+  fi
+  if test x$ENABLE_PROFILE = xyes ; then
+    GNUCFLAGS="${GNUCFLAGS:=} -pg"
+  fi
 else
   if test x$ENABLE_DEBUG = xyes ; then
     CFLAGS="${CFLAGS:=} -g"
@@ -483,15 +498,6 @@ else
   fi
   if test x$ENABLE_PROFILE = xyes ; then
     CFLAGS="${CFLAGS:=} -pg"
-  fi
-fi
-if test "$CC" = "gcc" ; then
-  GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline -finline-limit=1048576"
-  if test x${USE_MAINTAINER_MODE} = xyes ; then
-    GNUCFLAGS="${GNUCFLAGS} -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
-  fi
-  if test x$ENABLE_PROFILE = xyes ; then
-    GNUCFLAGS="${GNUCFLAGS:=} -pg"
   fi
 fi
 AC_SUBST(GNUCFLAGS)
