@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.7 2002/12/28 15:46:18 rlk Exp $"
+ * "$Id: util.h,v 1.8 2002/12/29 20:37:37 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -72,6 +72,10 @@ extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
 			const stp_vars_t v);
 
 extern void stp_putc(int ch, const stp_vars_t v);
+extern void stp_put16_le(unsigned short sh, const stp_vars_t v);
+extern void stp_put16_be(unsigned short sh, const stp_vars_t v);
+extern void stp_put32_le(unsigned int sh, const stp_vars_t v);
+extern void stp_put32_be(unsigned int sh, const stp_vars_t v);
 extern void stp_erputc(int ch);
 
 extern void stp_puts(const char *s, const stp_vars_t v);
@@ -197,5 +201,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.7 2002/12/28 15:46:18 rlk Exp $".
+ * End of "$Id: util.h,v 1.8 2002/12/29 20:37:37 rlk Exp $".
  */

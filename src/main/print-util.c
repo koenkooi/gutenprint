@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.81 2002/12/26 23:26:06 rlk Exp $"
+ * "$Id: print-util.c,v 1.82 2002/12/29 20:37:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -95,6 +95,40 @@ stp_putc(int ch, const stp_vars_t v)
 {
   char a = (char) ch;
   (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), &a, 1);
+}
+
+#define BYTE(expr, byteno) (((expr) >> (8 * byteno)) & 0xff)
+
+void
+stp_put16_le(unsigned short sh, const stp_vars_t v)
+{
+  stp_putc(BYTE(sh, 0), v);
+  stp_putc(BYTE(sh, 1), v);
+}
+
+void
+stp_put16_be(unsigned short sh, const stp_vars_t v)
+{
+  stp_putc(BYTE(sh, 1), v);
+  stp_putc(BYTE(sh, 0), v);
+}
+
+void
+stp_put32_le(unsigned int sh, const stp_vars_t v)
+{
+  stp_putc(BYTE(sh, 0), v);
+  stp_putc(BYTE(sh, 1), v);
+  stp_putc(BYTE(sh, 2), v);
+  stp_putc(BYTE(sh, 3), v);
+}
+
+void
+stp_put32_be(unsigned int sh, const stp_vars_t v)
+{
+  stp_putc(BYTE(sh, 3), v);
+  stp_putc(BYTE(sh, 2), v);
+  stp_putc(BYTE(sh, 1), v);
+  stp_putc(BYTE(sh, 0), v);
 }
 
 void
