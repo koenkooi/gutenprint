@@ -1,3 +1,23 @@
+gimp-print (4.2.2-pre1-1) unstable; urgency=low
+
+  * New upstream release
+  * Move escputil to section utils (RL)
+  * Add postscript-viewer virtual package as an alternative to gs Recommends
+    for cupsys-driver-gimpprint (RL)
+  * Reinitialise cupsys after installation or removal of
+    cupsys-driver-gimpprint (RL)
+  * Correctly version libgimpprint1 shlibs with -V dh_makeshlibs option
+  * Fix libgimpprint.postinst to use 'if' instead of 'case', removing a
+    lintian warning. (RL)
+  * Split out the message catalogues from the libgimpprint package into
+    a new gimpprint-locales package to avoid filename conflicts when
+    multiple libgimpprint versions are installed concurrently. (RL)
+  * Add libgimpprint-doc.doc-base (existed for six months, but was never
+    added to CVS!) (RL)
+  * New package foomatic-db-gimpprint.  Contains foomatic data (RL)
+
+ -- Eric Sharkey <sharkey@debian.org>  Sat, 25 May 2002 14:20:17 -0400
+
 gimp-print (4.2.0-4) unstable; urgency=low
 
   * Apply Roger's user's guide Makefile.am patch, Closes: #128421

@@ -1,22 +1,144 @@
                           -*- Mode: Text -*-
 
-Gimp-Print 4.2.0, released November 24, 2001, is the latest stable release
-of this package.  This release offers numerous improvements over the
-previous stable release, 4.0
+Gimp-Print 4.2.2-pre1, released May 11, 2002, is a prerelease in
+the Gimp-Print 4.2 line.
 
 This software includes the Print plug-in for the Gimp, and GhostScript
 and CUPS drivers, including Foomatic data.
 
 The Gimp Print plugin requires the Gimp 1.2.
 
-The CUPS driver requires CUPS 1.1.9 or higher (1.1.12 or above is
-highly recommended).
+The CUPS driver requires CUPS 1.1.9 or higher.  1.1.14 or above is
+highly recommended, as certain translation-related bugs are fixed and
+it is possible to print true CMYK.
 
-The Ghostscript driver requires Ghostscript 5.10, 5.50, 6.51, or any
+The Ghostscript driver requires GNU Ghostscript 5.10, 5.50, 6.51, or any
 later GNU Ghostscript release based on 6.51 (e. g. 6.52).
+
+The IJS GhostScript plugin driver requires GNU Ghostscript 6.53 or later
+or APFL GhostScript 7.04 or later.
 
 Please read the README file for full instructions on building and
 installing this package.
+
+
+Gimp-Print 4.2.2-pre1 contains the following major changes over
+Gimp-Print 4.2.1:
+
+  1) A new dither algorithm, EvenTone, has been added.  This algorithm
+     produces superior results for photographs and other
+     continuous-tone images, but in its current form it may not be as
+     well suited for solid color images and line art.  This algorithm
+     should be considered beta.
+
+  2) The default optimization level with gcc is now -O2 rather than
+     -O.  This improves performance somewhat.
+
+  3) Spanish and Portuguese translations have been added.
+
+
+Gimp-Print 4.2.1 contains the following major changes over Gimp-Print
+4.2.0:
+
+* Major Bugs Fixed:
+
+  1) Canon printers should now print with correct scaling at all
+     supported resolutions, and the CMYK printers should print with
+     optimum quality.  However, the photo printers (which use special
+     cartridges with light cyan and magenta inks) are currently unable
+     to use the photo cartridges; they are limited to ordinary CMYK
+     printing.
+
+  2) The escputil command is translated.
+
+  3) It is now possible to print at all resolutions on large format
+     PCL printers.
+
+  4) The Ghostscript driver now prints with the same quality as the
+     other drivers at all resolutions on all printers (in 4.2.0, Epson
+     printers printed with poor quality at high resolutions).
+
+  5) CUPS PPD files should operate correctly with the Adobe PostScript
+     driver (and other PostScript drivers).
+
+  6) Gimp-Print now builds successfully on Solaris, IRIX, AIX, and
+     Macintosh OS X.
+
+* New Functionality:
+
+  1) A new driver, based on the IJS architecture, is included in this
+     release.  This driver is compatible with GNU Ghostscript 6.53 and
+     above, and AFPL Ghostscript 7.04 and above.  IJS is a new
+     architecture for Ghostscript drivers; rather than having to build
+     the driver into Ghostscript, the driver runs as a separate
+     process.  Foomatic data is provided for this driver.
+
+  2) New translations for the Slovak, Greek, and Dutch languages are
+     provided.
+
+* Quality Improvements:
+
+  1) Additional tuning has been done for some Epson Stylus printers,
+     in particular the Stylus Pro 5500, 7500, and 9500.
+
+  2) Epson Stylus Pro printers can now print to letter size (and
+     smaller) paper.
+
+  3) The Very Fast dither algorithm has been sped up in certain cases.
+
+  4) Some quality improvements for the Epson 680/777 driver.
+
+* Exceptions and Workarounds:
+
+  1) If you have built and installed the foomatic-db-gimpprint package
+     from any gimp-print 4.2.1-pre* tarball, or from CVS, you will
+     need to manually remove it prior to installing the final 4.2.1
+     debs.  This is because it has been renamed to
+     foomatic-db-gimp-print to match the foomatic naming scheme.
+     There is only a guaranteed upgrade path between official releases
+     to avoid unnecessary dependency complexities.
+
+The following bugs have been fixed in 4.2.1:
+
+485156 Debian build broken in 4.2.0
+488865 escputil isn't translated
+493772 360dpi is not a valid resolution
+493838 canon print scaling broken
+496813 Z42 issues
+499200 ESP 1280/1290 need special deinit code
+499203 ESP 780/820 have different paper codes
+499299 z42 border
+502713 Restricted resolution on DesignJet
+507767 Parameters not set in CUPS driver
+507770 Unset parameters in Ghostscript driver
+507773 Old-style GS build broken
+516268 Erroneous comparison
+518224 makeinfo fails during build
+521694 CUPS build broken in 4.2.1-pre1
+525779 Buffering bug in epson cups backend
+528922 rastertoprinter doesn't log pages
+533400 Very fast dithering works incorrectly
+537248 IJS driver mis-handles -r option
+537293 IJS/foomatic driver crashes printing grayscale
+538497 IJS driver sets incorrect paper size
+538500 PCL driver crash
+539013 IJS driver mispositions image on page
+540307 Syntax error in CloseUI in PPD files
+543562 Portability issues
+548844 OS X support
+
+The following critical bug has been reported against all 4.2 releases
+to date and is unresolved in this release.  The symptoms are that
+prints to Windows-hosted printers are incomplete: the bottom of the
+last page will not be printed.  Some people have reported success when
+the host is an NT-based system rather than a Windows 95/98/ME-based
+system.  The only definitive workaround is to physically host the
+printer on a UNIX/Linux system.  It is not known at this time if the
+underlying problem is in Gimp-print or in other software.
+
+510185 Incomplete print to Windows-hosted printers
+
+
 
 Gimp-Print 4.2 contains the following major changes over Gimp-Print
 4.0:
@@ -372,7 +494,7 @@ EPSON Stylus Photo EX
 EPSON Stylus Photo 720
 EPSON Stylus Photo 750
 EPSON Stylus Photo 780/785/790          (NEW)
-EPSON Stylus Photo 810/820              (NEW, not verified, expected to work)
+EPSON Stylus Photo 810/820              (NEW)
 EPSON Stylus Photo 870/875
 EPSON Stylus Photo 890/895              (NEW)
 EPSON Stylus Photo 1200
@@ -431,3 +553,4 @@ Lexmark 4076
 Lexmark Z42                             (NEW)
 Lexmark Z43                             (NEW)
 Lexmark Z52                             (NEW)
+Lexmark Z53                             (NEW)

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13.4.7 2001/10/27 21:50:38 sharkey Exp $
+## $Id: Makefile.am,v 1.13.4.8 2002/05/25 18:30:44 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,8 @@ libgimpprint_la_SOURCES = \
 	print-canon.c \
 	print-dither.c \
 	print-escp2.c \
+	print-escp2.h \
+	print-escp2-data.c \
 	print-pcl.c \
 	print-ps.c \
 	print-util.c \
@@ -54,6 +56,7 @@ libgimpprint_la_SOURCES = \
 	print-weave.c \
 	print-version.c \
 	print-dither-matrices.c \
+	print-dither.h \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h

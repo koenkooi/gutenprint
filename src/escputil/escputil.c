@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.8.4.8 2001/11/18 15:40:36 sharkey Exp $"
+ * "$Id: escputil.c,v 1.8.4.9 2002/05/25 18:30:43 sharkey Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -201,8 +201,8 @@ stp_printer_t printer_list[] =
   { "C40sx",	N_("Stylus C40sx"),	3,	15,	0,	2,	9 },
   { "C40ux",	N_("Stylus C40ux"),	3,	15,	0,	2,	9 },
   { "C60",	N_("Stylus C60"),	3,	15,	0,	0,	0 },
-  { "C70",	N_("Stylus C70"),	3,	15,	0,	2,	9 },
-  { "C80",	N_("Stylus C80"),	3,	15,	0,	2,	9 },
+  { "C70",	N_("Stylus C70"),	4,	15,	0,	1,	7 },
+  { "C80",	N_("Stylus C80"),	4,	15,	0,	1,	7 },
   { "color",	N_("Stylus Color"),	1,	7,	0,	0,	0 },
   { "pro",	N_("Stylus Color Pro"),	1,	7,	0,	0,	0 },
   { "pro-xl",	N_("Stylus Color Pro XL"),1,	7,	0,	0,	0 },
@@ -309,6 +309,13 @@ main(int argc, char **argv)
   int quiet = 0;
   int operation = 0;
   int c;
+
+  /* Set up gettext */
+#ifdef ENABLE_NLS
+  setlocale (LC_ALL, "");
+  bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+#endif
+  
   while (1)
     {
 #ifdef __GNU_LIBRARY__
@@ -975,16 +982,19 @@ do_final_alignment(void)
 	  inbuf = do_get_input(_("> "));
 	  if (inbuf[0] == 's' || inbuf[0] == 'S')
 	    {
-	      printf(_("Please insert your alignment test page in the printer once more\n"
-		       "for the final save of your alignment settings.  When the printer\n"
-		       "feeds the page through, your settings have been saved.\n"));
+	      printf(_("About to save settings..."));
 	      fflush(stdout);
 	      initialize_print_cmd();
-	      add_newlines(2);
 	      do_remote_cmd("SV", 0);
-	      add_newlines(2);
 	      if (do_print_cmd())
-		printer_error();
+		{
+		  printf(_("failed!\n"));
+		  printf(_("Your settings were not saved successfully.  You must repeat the\n"
+			   "alignment procedure.\n"));
+		  exit(1);
+		}
+	      printf(_("succeeded!\n"));
+	      printf(_("Your alignment settings have been saved to the printer.\n"));
 	      return 1;
 	    }
 	  break;
@@ -1023,26 +1033,19 @@ do_align(void)
       do_align_help(passes, choices);
       printf(_(printer_msg), _(printer_name));
       inbuf = do_get_input(_("Press enter to continue > "));
+    top:
+      initialize_print_cmd();
+      for (curpass = 0; curpass < passes; curpass++)
+	do_remote_cmd("DT", 3, 0, curpass, 0);
+      if (do_print_cmd())
+	printer_error();
+      printf(_("Please inspect the print, and choose the best pair of lines in each pattern.\n"
+	       "Type a pair number, '?' for help, or 'r' to repeat the procedure.\n"));
       initialize_print_cmd();
       for (curpass = 1; curpass <= passes; curpass ++)
 	{
-	top:
-	  add_newlines(7 * (curpass - 1));
-	  do_remote_cmd("DT", 3, 0, curpass - 1, 0);
-	  if (do_print_cmd())
-	    printer_error();
 	reread:
-	  if (curpass == passes)
-	    printf(_("Please inspect the print, and choose the best pair of lines\n"
-		     "in pattern #%d, and then insert a fresh page in the input tray.\n"
-		     "Type a pair number, '?' for help, or 'r' to retry this pattern.\n"),
-		   curpass);
-	  else
-	    printf(_("Please inspect the print, and choose the best pair of lines\n"
-		     "in pattern #%d, and then reinsert the page in the input tray.\n"
-		     "Type a pair number, '?' for help, or 'r' to retry this pattern.\n"),
-		   curpass);
-	  fflush(stdout);
+	  printf(_("Pass #%d"), curpass);
 	  inbuf = do_get_input(_("> "));
 	  switch (inbuf[0])
 	    {
@@ -1083,19 +1086,19 @@ do_align(void)
 	      fflush(stdout);
 	      goto reread;
 	    }
-	  if (curpass == passes)
-	    {
-	      printf(_("Aligning phase %d, and performing final test.\n"
-		       "Please insert a fresh sheet of paper.\n"), curpass);
-	      (void) do_get_input(_("Press enter to continue > "));
-	    }
-	  else
-	    printf(_("Aligning phase %d, and starting phase %d.\n"), curpass,
-		   curpass + 1);
-	  fflush(stdout);
-	  initialize_print_cmd();
 	  do_remote_cmd("DA", 4, 0, curpass - 1, 0, answer);
 	}
+      printf(_("Attempting to set alignment..."));
+      if (do_print_cmd())
+	printer_error();
+      printf(_("succeeded.\n"));
+      printf(_("Please verify that the alignment is correct.  After the alignment pattern\n"
+	       "is printed again, please ensure that the best pattern for each line is\n"
+	       "pattern %d.  If it is not, you should repeat the process to get the best\n"
+	       "quality printing.\n"), (choices + 1) / 2);
+      printf(_("Please insert a fresh sheet of paper.\n"));
+      (void) do_get_input(_("Press enter to continue > "));
+      initialize_print_cmd();
       for (curpass = 0; curpass < passes; curpass++)
 	do_remote_cmd("DT", 3, 0, curpass, 0);
       if (do_print_cmd())

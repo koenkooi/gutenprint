@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.4.7 2001/10/27 21:50:39 sharkey Exp $"
+ * "$Id: print-pcl.c,v 1.8.4.8 2002/05/25 18:30:46 sharkey Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -43,8 +43,10 @@
 /*
  * Local functions...
  */
-static void	pcl_mode0(const stp_vars_t, unsigned char *, int, int);
-static void	pcl_mode2(const stp_vars_t, unsigned char *, int, int);
+static void	pcl_mode0(const stp_vars_t, unsigned char *, unsigned char *,
+			  int, int);
+static void	pcl_mode2(const stp_vars_t, unsigned char *, unsigned char *,
+			  int, int);
 
 /*
  * Generic define for a name/value set
@@ -99,40 +101,42 @@ typedef struct
 
 /*
  * This data comes from the HP documentation "Deskjet 1220C and 1120C
- * PCL reference guide 2.0, Nov 1999". NOTE: The names *must* match
+ * PCL reference guide 2.0, Nov 1999". NOTE: The first name *must* match
  * those in print-util.c for the lookups to work properly!
+ * The long names are not used so they have been removed, the ones in
+ * print-util.c are used in the interface.
  */
 
 static const pcl_t pcl_media_sizes[] =
 {
-    { "Executive", N_ ("Executive"), PCL_PAPERSIZE_EXECUTIVE},		/* US Exec (7.25 x 10.5 in) */
-    { "Letter", N_ ("Letter"), PCL_PAPERSIZE_LETTER},			/* US Letter (8.5 x 11 in) */
-    { "Legal", N_ ("Legal"), PCL_PAPERSIZE_LEGAL},			/* US Legal (8.5 x 14 in) */
-    { "Tabloid", N_ ("Tabloid"), PCL_PAPERSIZE_TABLOID},			/* US Tabloid (11 x 17 in) */
-    { "Statement", N_ ("Manual"), PCL_PAPERSIZE_STATEMENT},			/* US Manual/Statement (5.5 x 8.5 in) */
-    { "SuperB", N_ ("13x19"), PCL_PAPERSIZE_SUPER_B},			/* US 13x19/Super B (13 x 19 in) */
-    { "A5", N_ ("A5"), PCL_PAPERSIZE_A5},				/* ISO/JIS A5 (148 x 210 mm) */
-    { "A4", N_ ("A4"), PCL_PAPERSIZE_A4},				/* ISO/JIS A4 (210 x 297 mm) */
-    { "A3", N_ ("A3"), PCL_PAPERSIZE_A3},				/* ISO/JIS A3 (297 x 420 mm) */
-    { "B5", N_ ("B5 JIS"), PCL_PAPERSIZE_JIS_B5},			/* JIS B5 (182 x 257 mm). */
-    { "B4", N_ ("B4 JIS"), PCL_PAPERSIZE_JIS_B4},			/* JIS B4 (257 x 364 mm). */
-    { "w283h420", N_ ("Hagaki Card"), PCL_PAPERSIZE_HAGAKI_CARD},		/* Japanese Hagaki Card (100 x 148 mm) */
-    { "w420h567", N_ ("Oufuku Card"), PCL_PAPERSIZE_OUFUKU_CARD},		/* Japanese Oufuku Card (148 x 200 mm) */
-    { "A6", N_ ("A6"), PCL_PAPERSIZE_A6_CARD},				/* ISO/JIS A6 card */
-    { "w288h432", N_ ("4x6"), PCL_PAPERSIZE_4x6},				/* US Index card (4 x 6 in) */
-    { "w360h576", N_ ("5x8"), PCL_PAPERSIZE_5x8},				/* US Index card (5 x 8 in) */
-    { "w216h360", N_ ("3x5"), PCL_PAPERSIZE_3x5},				/* US Index card (3 x 5 in) */
-    { "Monarch", N_ ("Monarch"), PCL_PAPERSIZE_MONARCH_ENV},		/* Monarch Envelope (3 7/8 x 7 1/2 in) */
-    { "COM10", N_ ("Commercial 10"), PCL_PAPERSIZE_COMMERCIAL10_ENV},	/* US Commercial 10 Envelope (4.125 x 9.5 in) Portrait */
-    { "DL", N_ ("DL"), PCL_PAPERSIZE_DL_ENV},				/* DL envelope (110 x 220 mm) Portrait */
-    { "C5", N_ ("C5"), PCL_PAPERSIZE_C5_ENV},				/* C5 envelope (162 x 229 mm) */
-    { "C6", N_ ("C6"), PCL_PAPERSIZE_C6_ENV},				/* C6 envelope (114 x 162 mm) */
-    { "ENVA2", N_ ("A2 Invitation"), PCL_PAPERSIZE_INVITATION_ENV},	/* US A2 Invitation envelope (4 3/8 x 5 3/4 in) */
-    { "w340h666", N_ ("Long 3"), PCL_PAPERSIZE_JAPANESE_3_ENV},		/* Japanese Long Envelope #3 (120 x 235 mm) */
-    { "w255h581", N_ ("Long 4"), PCL_PAPERSIZE_JAPANESE_4_ENV},		/* Japanese Long Envelope #4 (90 x 205 mm) */
-    { "w680h941", N_ ("Kaku"), PCL_PAPERSIZE_KAKU_ENV},			/* Japanese Kaku Envelope (240 x 332.1 mm) */
+    { "Executive", "notused", PCL_PAPERSIZE_EXECUTIVE},			/* US Exec (7.25 x 10.5 in) */
+    { "Letter", "notused", PCL_PAPERSIZE_LETTER},			/* US Letter (8.5 x 11 in) */
+    { "Legal", "notused", PCL_PAPERSIZE_LEGAL},				/* US Legal (8.5 x 14 in) */
+    { "Tabloid", "notused", PCL_PAPERSIZE_TABLOID},			/* US Tabloid (11 x 17 in) */
+    { "Statement", "notused", PCL_PAPERSIZE_STATEMENT},			/* US Manual/Statement (5.5 x 8.5 in) */
+    { "SuperB", "notused", PCL_PAPERSIZE_SUPER_B},			/* US 13x19/Super B (13 x 19 in) */
+    { "A5", "notused", PCL_PAPERSIZE_A5},				/* ISO/JIS A5 (148 x 210 mm) */
+    { "A4", "notused", PCL_PAPERSIZE_A4},				/* ISO/JIS A4 (210 x 297 mm) */
+    { "A3", "notused", PCL_PAPERSIZE_A3},				/* ISO/JIS A3 (297 x 420 mm) */
+    { "B5", "notused", PCL_PAPERSIZE_JIS_B5},				/* JIS B5 (182 x 257 mm). */
+    { "B4", "notused", PCL_PAPERSIZE_JIS_B4},				/* JIS B4 (257 x 364 mm). */
+    { "w283h420", "notused", PCL_PAPERSIZE_HAGAKI_CARD},		/* Japanese Hagaki Card (100 x 148 mm) */
+    { "w420h567", "notused", PCL_PAPERSIZE_OUFUKU_CARD},		/* Japanese Oufuku Card (148 x 200 mm) */
+    { "A6", "notused", PCL_PAPERSIZE_A6_CARD},				/* ISO/JIS A6 card */
+    { "w288h432", "notused", PCL_PAPERSIZE_4x6},			/* US Index card (4 x 6 in) */
+    { "w360h576", "notused", PCL_PAPERSIZE_5x8},			/* US Index card (5 x 8 in) */
+    { "w216h360", "notused", PCL_PAPERSIZE_3x5},			/* US Index card (3 x 5 in) */
+    { "Monarch", "notused", PCL_PAPERSIZE_MONARCH_ENV},			/* Monarch Envelope (3 7/8 x 7 1/2 in) */
+    { "COM10", "notused", PCL_PAPERSIZE_COMMERCIAL10_ENV},		/* US Commercial 10 Envelope (4.125 x 9.5 in) Portrait */
+    { "DL", "notused", PCL_PAPERSIZE_DL_ENV},				/* DL envelope (110 x 220 mm) Portrait */
+    { "C5", "notused", PCL_PAPERSIZE_C5_ENV},				/* C5 envelope (162 x 229 mm) */
+    { "C6", "notused", PCL_PAPERSIZE_C6_ENV},				/* C6 envelope (114 x 162 mm) */
+    { "w315h414", "notused", PCL_PAPERSIZE_INVITATION_ENV},		/* US A2 Invitation envelope (4 3/8 x 5 3/4 in) */
+    { "w340h666", "notused", PCL_PAPERSIZE_JAPANESE_3_ENV},		/* Japanese Long Envelope #3 (120 x 235 mm) */
+    { "w255h581", "notused", PCL_PAPERSIZE_JAPANESE_4_ENV},		/* Japanese Long Envelope #4 (90 x 205 mm) */
+    { "w680h941", "notused", PCL_PAPERSIZE_KAKU_ENV},			/* Japanese Kaku Envelope (240 x 332.1 mm) */
 /**** MRS: this size not supported by print-util funcs! ****/
-    { "w612h792", N_ ("HP Greeting Card"), PCL_PAPERSIZE_HP_CARD}, 	/* Hp greeting card (size?? */
+    { "w612h792", "notused", PCL_PAPERSIZE_HP_CARD}, 			/* Hp greeting card */
 };
 #define NUM_PRINTER_PAPER_SIZES	(sizeof(pcl_media_sizes) / sizeof(pcl_t))
 
@@ -939,7 +943,7 @@ static const pcl_cap_t pcl_model_capabilities[] =
     17 * 72 / 2, 14 * 72,
     1, 1,				/* Min paper size */
     PCL_RES_150_150 | PCL_RES_300_300 | PCL_RES_600_600,
-    12, 12, 18, 18,
+    0, 35, 18, 18,			/* Michel Goraczko */
     PCL_COLOR_CMYK,
     PCL_PRINTER_DJ | PCL_PRINTER_NEW_ERG | PCL_PRINTER_TIFF | PCL_PRINTER_MEDIATYPE |
       PCL_PRINTER_CUSTOM_SIZE | PCL_PRINTER_BLANKLINE,
@@ -1482,12 +1486,12 @@ static const char * pcl_val_to_text(int code,			/* I: Code */
 static const double dot_sizes[] = { 0.5, 0.832, 1.0 };
 static const stp_simple_dither_range_t variable_dither_ranges[] =
 {
-  { 0.152, 0x1, 0 },
-  { 0.255, 0x2, 0 },
-  { 0.38,  0x3, 0 },
-  { 0.5,   0x1, 1 },
-  { 0.67,  0x2, 1 },
-  { 1.0,   0x3, 1 }
+  { 0.152, 0x1, 1 },
+  { 0.255, 0x2, 1 },
+  { 0.38,  0x3, 1 },
+  { 0.5,   0x1, 0 },
+  { 0.67,  0x2, 0 },
+  { 1.0,   0x3, 0 }
 };
 
 /*
@@ -1962,8 +1966,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		errlast;	/* Last raster line loaded */
   stp_convert_t	colorfunc;	/* Color conversion function... */
   int		zero_mask;
-  void		(*writefunc)(const stp_vars_t, unsigned char *, int, int);
-				/* PCL output function */
+  void		(*writefunc)(const stp_vars_t, unsigned char *, unsigned char *,
+		int, int);	/* PCL output function */
   int           image_height,
                 image_width,
                 image_bpp;
@@ -1988,6 +1992,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   int		blank_lines,	/* Accumulated blank lines */
 		is_blank,	/* Current line is blank */
 		do_blank;	/* Blank line removal required */
+  stp_dither_data_t *dt;
+  unsigned char *comp_buf;	/* Scratch buffer for pcl_mode2 */
 
   if (!stp_get_verified(nv))
     {
@@ -2328,13 +2334,11 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   if ((caps->stp_printer_type & PCL_PRINTER_TIFF) == PCL_PRINTER_TIFF)
   {
     stp_puts("\033*b2M", v);			/* Mode 2 (TIFF) */
-    writefunc = pcl_mode2;
   }
   else
 #endif
   {
     stp_puts("\033*b0M", v);			/* Mode 0 (no compression) */
-    writefunc = pcl_mode0;
   }
 
  /*
@@ -2400,6 +2404,21 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
       lcyan    = NULL;
       lmagenta = NULL;
     }
+  }
+
+/* Allocate buffer for pcl_mode2 tiff compression */
+
+#ifndef PCL_DEBUG_DISABLE_COMPRESSION
+  if ((caps->stp_printer_type & PCL_PRINTER_TIFF) == PCL_PRINTER_TIFF)
+  {
+    comp_buf = stp_malloc((height + 128 + 7) * 129 / 128);
+    writefunc = pcl_mode2;
+  }
+  else
+#endif
+  {
+    comp_buf = NULL;
+    writefunc = pcl_mode0;
   }
 
  /*
@@ -2482,6 +2501,14 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   do_blank = 0;
 #endif
 
+  dt = stp_create_dither_data();
+  stp_add_channel(dt, black, ECOLOR_K, 0);
+  stp_add_channel(dt, cyan, ECOLOR_C, 0);
+  stp_add_channel(dt, lcyan, ECOLOR_C, 1);
+  stp_add_channel(dt, magenta, ECOLOR_M, 0);
+  stp_add_channel(dt, lmagenta, ECOLOR_M, 1);
+  stp_add_channel(dt, yellow, ECOLOR_Y, 0);
+
   for (y = 0; y < out_height; y ++)
   {
     int duplicate_line = 1;
@@ -2500,15 +2527,14 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		   hue_adjustment, lum_adjustment, NULL);
     }
 
-    stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		yellow, NULL, black, duplicate_line, zero_mask);
+    stp_dither(out, y, dither, dt, duplicate_line, zero_mask);
 
-    len_c = stp_dither_get_last_position(dither, ECOLOR_C, 1);
-    len_lc = stp_dither_get_last_position(dither, ECOLOR_C, 0);
-    len_m = stp_dither_get_last_position(dither, ECOLOR_M, 1);
-    len_lm = stp_dither_get_last_position(dither, ECOLOR_M, 0);
-    len_y = stp_dither_get_last_position(dither, ECOLOR_Y, 1);
-    len_k = stp_dither_get_last_position(dither, ECOLOR_K, 1);
+    len_c = stp_dither_get_last_position(dither, ECOLOR_C, 0);
+    len_lc = stp_dither_get_last_position(dither, ECOLOR_C, 1);
+    len_m = stp_dither_get_last_position(dither, ECOLOR_M, 0);
+    len_lm = stp_dither_get_last_position(dither, ECOLOR_M, 1);
+    len_y = stp_dither_get_last_position(dither, ECOLOR_Y, 0);
+    len_k = stp_dither_get_last_position(dither, ECOLOR_K, 0);
 
 /*
  * Blank line removal. If multiple lines are blank then they can be replaced
@@ -2550,36 +2576,36 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
         */
         if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
         {
-          (*writefunc)(v, black + height / 2, height / 2, 0);
-          (*writefunc)(v, black, height / 2, 1);
+          (*writefunc)(v, comp_buf, black + height / 2, height / 2, 0);
+          (*writefunc)(v, comp_buf, black, height / 2, 1);
         }
         else
         {
 	  if(do_cretb)
 	  {
-/*	    (*writefunc)(v, black + height / 2, 0, 0); */
-	    (*writefunc)(v, black, height/2, 0);
+/*	    (*writefunc)(v, comp_buf, black + height / 2, 0, 0); */
+	    (*writefunc)(v, comp_buf, black, height/2, 0);
 	  }
 	  else
 	  {
-	    (*writefunc)(v, black + height / 2, height / 2, 0);
-	    (*writefunc)(v, black, height / 2, 0);
+	    (*writefunc)(v, comp_buf, black + height / 2, height / 2, 0);
+	    (*writefunc)(v, comp_buf, black, height / 2, 0);
 	  }
-          (*writefunc)(v, cyan + height / 2, height / 2, 0);
-          (*writefunc)(v, cyan, height / 2, 0);
-          (*writefunc)(v, magenta + height / 2, height / 2, 0);
-          (*writefunc)(v, magenta, height / 2, 0);
-          (*writefunc)(v, yellow + height / 2, height / 2, 0);
+          (*writefunc)(v, comp_buf, cyan + height / 2, height / 2, 0);
+          (*writefunc)(v, comp_buf, cyan, height / 2, 0);
+          (*writefunc)(v, comp_buf, magenta + height / 2, height / 2, 0);
+          (*writefunc)(v, comp_buf, magenta, height / 2, 0);
+          (*writefunc)(v, comp_buf, yellow + height / 2, height / 2, 0);
           if (do_6color)
           {
-            (*writefunc)(v, yellow, height / 2, 0);
-            (*writefunc)(v, lcyan + height / 2, height / 2, 0);
-            (*writefunc)(v, lcyan, height / 2, 0);
-            (*writefunc)(v, lmagenta + height / 2, height / 2, 0);
-            (*writefunc)(v, lmagenta, height / 2, 1);		/* Last plane set on light magenta */
+            (*writefunc)(v, comp_buf, yellow, height / 2, 0);
+            (*writefunc)(v, comp_buf, lcyan + height / 2, height / 2, 0);
+            (*writefunc)(v, comp_buf, lcyan, height / 2, 0);
+            (*writefunc)(v, comp_buf, lmagenta + height / 2, height / 2, 0);
+            (*writefunc)(v, comp_buf, lmagenta, height / 2, 1);		/* Last plane set on light magenta */
           }
           else
-            (*writefunc)(v, yellow, height / 2, 1);		/* Last plane set on yellow */
+            (*writefunc)(v, comp_buf, yellow, height / 2, 1);		/* Last plane set on yellow */
         }
       }
       else
@@ -2590,22 +2616,22 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 
         if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
         {
-          (*writefunc)(v, black, height, 1);
+          (*writefunc)(v, comp_buf, black, height, 1);
         }
         else
         {
           if (black != NULL)
-            (*writefunc)(v, black, height, 0);
-          (*writefunc)(v, cyan, height, 0);
-          (*writefunc)(v, magenta, height, 0);
+            (*writefunc)(v, comp_buf, black, height, 0);
+          (*writefunc)(v, comp_buf, cyan, height, 0);
+          (*writefunc)(v, comp_buf, magenta, height, 0);
           if (do_6color)
           {
-            (*writefunc)(v, yellow, height, 0);
-            (*writefunc)(v, lcyan, height, 0);
-            (*writefunc)(v, lmagenta, height, 1);		/* Last plane set on light magenta */
+            (*writefunc)(v, comp_buf, yellow, height, 0);
+            (*writefunc)(v, comp_buf, lcyan, height, 0);
+            (*writefunc)(v, comp_buf, lmagenta, height, 1);		/* Last plane set on light magenta */
           }
           else
-            (*writefunc)(v, yellow, height, 1);		/* Last plane set on yellow */
+            (*writefunc)(v, comp_buf, yellow, height, 1);		/* Last plane set on yellow */
         }
       }
     }
@@ -2631,6 +2657,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 
   image->progress_conclude(image);
 
+  stp_free_dither_data(dt);
   stp_free_dither(dither);
 
 
@@ -2655,6 +2682,9 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     stp_free(lcyan);
     stp_free(lmagenta);
   }
+
+  if (comp_buf != NULL)
+    stp_free(comp_buf);
 
   if ((caps->stp_printer_type & PCL_PRINTER_NEW_ERG) == PCL_PRINTER_NEW_ERG)
     stp_puts("\033*rC", v);
@@ -2689,6 +2719,7 @@ const stp_printfuncs_t stp_pcl_printfuncs =
 
 static void
 pcl_mode0(const stp_vars_t v,		/* I - Print file or command */
+          unsigned char *comp_buf,	/* I - scratch buffer (not used) */
           unsigned char *line,		/* I - Output bitmap data */
           int           height,		/* I - Height of bitmap data */
           int           last_plane)	/* I - True if this is the last plane */
@@ -2704,12 +2735,12 @@ pcl_mode0(const stp_vars_t v,		/* I - Print file or command */
 
 static void
 pcl_mode2(const stp_vars_t v,		/* I - Print file or command */
+          unsigned char *comp_buf,	/* I - Scratch Buffer */
           unsigned char *line,		/* I - Output bitmap data */
           int           height,		/* I - Height of bitmap data */
           int           last_plane)	/* I - True if this is the last plane */
 {
-  unsigned char	comp_buf[1536],		/* Compression buffer */
-		*comp_ptr;		/* Current slot in buffer */
+  unsigned char	*comp_ptr;		/* Current slot in buffer */
 
   stp_pack_tiff(line, height, comp_buf, &comp_ptr);
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7.4.5 2001/10/27 21:50:37 sharkey Exp $
+## $Id: Makefile.am,v 1.7.4.6 2002/05/25 18:30:44 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,9 +27,27 @@ MAINT_CHARSET = latin1
 
 ## Variables
 
-MAINCODE = canon.c color.c dither.c escp2.c lexmark.c pcl.c printers.c ps.c util.c weave.c dither-matrices.c
+MAINCODE = canon.c				\
+	color.c					\
+	dither.c				\
+	escp2.c					\
+	escp2-data.c				\
+	lexmark.c				\
+	pcl.c					\
+	printers.c				\
+	ps.c					\
+	util.c					\
+	weave.c					\
+	dither-matrices.c
 
-MAINHEADERS = print.h print-internal.h print-intl-internal.h quickmatrix257.h ran.367.179.h ran.509.131.h
+MAINHEADERS = print.h				\
+	print-internal.h			\
+	print-intl-internal.h			\
+	quickmatrix257.h			\
+	ran.367.179.h				\
+	ran.509.131.h				\
+	print-dither.h				\
+	print-escp2.h
 
 MAINFILES = $(MAINCODE) $(MAINHEADERS)
 
@@ -44,13 +62,17 @@ endif
 
 all-local: $(ALL_LOCAL_DEPS)
 
-GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' -e 's/^\\\#include "\(gimp\-\)*\(.*\)\.h"$$/\\\#include "gdevstp-\2.h"/' -e 's/^\\\#include <gimp-print\/gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
+GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' \
+	 -e 's/^\\\#include "\(gimp\-\)*\(.*\)\.h"$$/\\\#include "gdevstp-\2.h"/' \
+	 -e 's/^\\\#include <gimp-print\/gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
 
 $(srcdir)/gdevstp-print.h: $(top_srcdir)/include/gimp-print/gimp-print.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
 $(srcdir)/gdevstp-print-internal.h: $(top_srcdir)/src/main/gimp-print-internal.h
-	sed $(GHCODE) $< > $(srcdir)/$@
+	echo '#define VERSION "@VERSION@"' > $(srcdir)/$@
+	echo '#define RELEASE_DATE "@RELEASE_DATE@"' >> $(srcdir)/$@
+	sed $(GHCODE) $< >> $(srcdir)/$@
 
 $(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/include/gimp-print/gimp-print-intl-internal.h
 	sed $(GHCODE) $< > $(srcdir)/$@
@@ -89,8 +111,11 @@ CLEANFILES = \
  $(srcdir)/gdevstp-weave.c \
  $(srcdir)/gdevstp-canon.c \
  $(srcdir)/gdevstp-dither.c \
+ $(srcdir)/gdevstp-print-dither.h \
  $(srcdir)/gdevstp-dither-matrices.c \
  $(srcdir)/gdevstp-escp2.c \
+ $(srcdir)/gdevstp-print-escp2.h \
+ $(srcdir)/gdevstp-escp2-data.c \
  $(srcdir)/gdevstp-lexmark.c \
  $(srcdir)/gdevstp-pcl.c \
  $(srcdir)/gdevstp-ps.c
@@ -110,4 +135,26 @@ EXTRA_DIST = \
 	debian-patch \
 	debian-patch-stp \
 	devs.mak.addon-5.10 \
-	gdevstp.c \
+	gdevstp.c
+
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
+INCLUDES = @IJS_CFLAGS@ @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
+LIBS = @IJS_LIBS@ @LIBS@ $(INTLLIBS)
+
+## Programs
+
+IJS_BIN = ijsgimpprint
+
+bin_PROGRAMS = @IJS_BIN@
+
+EXTRA_PROGRAMS = ijsgimpprint
+
+ijsgimpprint_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
+ijsgimpprint_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+$(LIBGIMPPRINT_LIBS):
+	cd ../main ; \
+	$(MAKE)

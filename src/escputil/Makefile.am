@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5.4.3 2001/11/18 15:40:36 sharkey Exp $
+## $Id: Makefile.am,v 1.5.4.4 2002/05/25 18:30:43 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,8 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@
-LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
+LIBS = $(INTLLIBS) @LIBS@
 
 
 ## Programs
@@ -39,7 +40,7 @@ bin_PROGRAMS = @ESCPUTIL_BIN@
 
 EXTRA_PROGRAMS = escputil
 
-escputil_LDADD = $(LIBREADLINE_DEPS)
+escputil_LDADD = $(LIBPRINTUT) $(LIBREADLINE_DEPS)
 
 
 ## Clean

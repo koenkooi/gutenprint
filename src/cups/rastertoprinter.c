@@ -1,9 +1,9 @@
 /*
- * "$Id: rastertoprinter.c,v 1.8.2.4 2001/09/14 01:26:35 sharkey Exp $"
+ * "$Id: rastertoprinter.c,v 1.8.2.5 2002/05/25 18:30:43 sharkey Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
- *   Copyright 1993-2001 by Easy Software Products.
+ *   Copyright 1993-2002 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License,
@@ -315,6 +315,8 @@ main(int  argc,				/* I - Number of command-line arguments */
     cups.page ++;
     cups.row = 0;
 
+    fprintf(stderr, "PAGE: %d 1\n", cups.page);
+
    /*
     * Debugging info...
     */
@@ -384,6 +386,8 @@ main(int  argc,				/* I - Number of command-line arguments */
     stp_set_cmap(v, NULL);
     stp_set_page_width(v, cups.header.PageSize[0]);
     stp_set_page_height(v, cups.header.PageSize[1]);
+    stp_set_left(v, 0);
+    stp_set_top(v, 0);
     stp_set_orientation(v, ORIENT_PORTRAIT);
     stp_set_gamma(v, stp_gamma);
     stp_set_image_type(v, cups.header.cupsRowCount);
@@ -474,6 +478,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     {
       signal(SIGTERM, cancel_job);
       stp_printer_get_printfuncs(printer)->print(printer, &theImage, v);
+      fflush(stdout);
     }
     else
       fputs("ERROR: Invalid printer settings!\n", stderr);
@@ -755,5 +760,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.8.2.4 2001/09/14 01:26:35 sharkey Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.8.2.5 2002/05/25 18:30:43 sharkey Exp $".
  */

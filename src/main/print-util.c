@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.8 2001/11/18 15:40:38 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.9 2002/05/25 18:30:46 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -224,8 +224,7 @@ static const stp_internal_vars_t max_vars =
 stp_vars_t
 stp_allocate_vars(void)
 {
-  void *retval = stp_malloc(sizeof(stp_internal_vars_t));
-  memset(retval, 0, sizeof(stp_internal_vars_t));
+  void *retval = stp_zalloc(sizeof(stp_internal_vars_t));
   stp_copy_vars(retval, (stp_vars_t)&default_vars);
   return (retval);
 }
@@ -794,6 +793,8 @@ static stp_internal_papersize_t paper_sizes[] =
     297, 684, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US Commercial 10 env */
   { "w315h414",		N_ ("A2 Invitation"),
     315, 414, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US A2 invitation */
+  { "Monarch",		N_ ("Monarch Envelope"),
+    279, 540, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* Monarch envelope (3.875 * 7.5) */
   { "Custom",		N_ ("Custom"),
     0, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
@@ -900,6 +901,8 @@ stp_get_papersize_by_name(const char *name)
   int base = last_used_papersize;
   int sizes = stp_known_papersizes();
   int i;
+  if (!name)
+    return NULL;
   for (i = 0; i < sizes; i++)
     {
       int size_to_try = (i + base) % sizes;
@@ -917,6 +920,8 @@ const stp_papersize_t
 stp_get_papersize_by_name(const char *name)
 {
   const stp_internal_papersize_t *val = &(paper_sizes[0]);
+  if (!name)
+    return NULL;
   while (strlen(val->name) > 0)
     {
       if (!strcmp(val->name, name))
@@ -973,9 +978,9 @@ stp_get_papersize_by_size(int l, int w)
 void
 stp_default_media_size(const stp_printer_t printer,
 					/* I - Printer model (not used) */
-		   const stp_vars_t v,	/* I */
-        	   int  *width,		/* O - Width in points */
-        	   int  *height)	/* O - Height in points */
+		       const stp_vars_t v,	/* I */
+		       int  *width,		/* O - Width in points */
+		       int  *height)	/* O - Height in points */
 {
   if (stp_get_page_width(v) > 0 && stp_get_page_height(v) > 0)
     {
@@ -1027,6 +1032,8 @@ stp_get_printer_by_long_name(const char *long_name)
 {
   const stp_internal_printer_t *val = &(printers[0]);
   int i;
+  if (!long_name)
+    return NULL;
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->long_name, long_name))
@@ -1041,6 +1048,8 @@ stp_get_printer_by_driver(const char *driver)
 {
   const stp_internal_printer_t *val = &(printers[0]);
   int i;
+  if (!driver)
+    return NULL;
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->driver, driver))
@@ -1055,6 +1064,8 @@ stp_get_printer_index_by_driver(const char *driver)
 {
   int idx = 0;
   const stp_internal_printer_t *val = &(printers[0]);
+  if (!driver)
+    return -1;
   for (idx = 0; idx < stp_known_printers(); idx++)
     {
       if (!strcmp(val->driver, driver))
@@ -1260,7 +1271,8 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	    break;
 	  }
       if (!answer)
-	stp_eprintf(v, "%s is not a valid %s\n", checkval, what);
+	stp_eprintf(v, _("%s is not a valid parameter of type %s\n"),
+		    checkval, what);
       for (i = 0; i < count; i++)
 	{
 	  stp_free((void *)vptr[i].name);
@@ -1268,11 +1280,42 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	}
     }
   else
-    stp_eprintf(v, "%s is not a valid %s\n", checkval, what);
+    stp_eprintf(v, _("%s is not a valid parameter of type %s\n"),
+		checkval, what);
   if (vptr)
     free(vptr);
   return answer;
 }
+
+#define CHECK_FLOAT_RANGE(v, component)					\
+do									\
+{									\
+  const stp_vars_t max = stp_maximum_settings();			\
+  const stp_vars_t min = stp_minimum_settings();			\
+  if (stp_get_##component((v)) < stp_get_##component(min) ||		\
+      stp_get_##component((v)) > stp_get_##component(max))		\
+    {									\
+      answer = 0;							\
+      stp_eprintf(v, _("%s out of range (value %f, min %f, max %f)\n"),	\
+		  #component, stp_get_##component(v),			\
+		  stp_get_##component(min), stp_get_##component(max));	\
+    }									\
+} while (0)
+
+#define CHECK_INT_RANGE(v, component)					\
+do									\
+{									\
+  const stp_vars_t max = stp_maximum_settings();			\
+  const stp_vars_t min = stp_minimum_settings();			\
+  if (stp_get_##component((v)) < stp_get_##component(min) ||		\
+      stp_get_##component((v)) > stp_get_##component(max))		\
+    {									\
+      answer = 0;							\
+      stp_eprintf(v, _("%s out of range (value %d, min %d, max %d)\n"),	\
+		  #component, stp_get_##component(v),			\
+		  stp_get_##component(min), stp_get_##component(max));	\
+    }									\
+} while (0)
 
 int
 stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
@@ -1294,7 +1337,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
        stp_get_output_type(v) == OUTPUT_RAW_CMYK))
     {
       answer = 0;
-      stp_eprintf(v, "Printer does not support color output\n");
+      stp_eprintf(v, _("Printer does not support color output\n"));
     }
   if (strlen(stp_get_media_size(v)) > 0)
     {
@@ -1312,9 +1355,40 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 	  stp_get_page_width(v) <= min_width || stp_get_page_width(v) > width)
 	{
 	  answer = 0;
-	  stp_eprintf(v, "Image size is not valid\n");
+	  stp_eprintf(v, _("Image size is not valid\n"));
 	}
     }
+
+  if (stp_get_top(v) < 0)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Top margin must not be less than zero\n"));
+    }
+
+  if (stp_get_left(v) < 0)
+    {
+      answer = 0;
+      stp_eprintf(v, _("Left margin must not be less than zero\n"));
+    }
+
+  CHECK_FLOAT_RANGE(v, gamma);
+  CHECK_FLOAT_RANGE(v, contrast);
+  CHECK_FLOAT_RANGE(v, cyan);
+  CHECK_FLOAT_RANGE(v, magenta);
+  CHECK_FLOAT_RANGE(v, yellow);
+  CHECK_FLOAT_RANGE(v, brightness);
+  CHECK_FLOAT_RANGE(v, density);
+  CHECK_FLOAT_RANGE(v, saturation);
+  if (stp_get_scaling(v) > 0)
+    {
+      CHECK_FLOAT_RANGE(v, scaling);
+    }
+
+  CHECK_INT_RANGE(v, image_type);
+  CHECK_INT_RANGE(v, unit);
+  CHECK_INT_RANGE(v, output_type);
+  CHECK_INT_RANGE(v, input_color_model);
+  CHECK_INT_RANGE(v, output_color_model);
 
   if (strlen(stp_get_media_type(v)) > 0)
     {
@@ -1351,7 +1425,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 	return answer;
       }
 
-  stp_eprintf(v, "%s is not a valid dither algorithm\n",
+  stp_eprintf(v, _("%s is not a valid dither algorithm\n"),
 	      stp_get_dither_algorithm(v));
   stp_set_verified(v, 0);
   return 0;
@@ -1375,14 +1449,8 @@ stp_minimum_settings()
   return (stp_vars_t) &min_vars;
 }
 
-#if defined DISABLE_NLS || !defined HAVE_VASPRINTF
-#include <stdarg.h>
-
-static int vasprintf (char **result, const char *format, va_list args);
-static int int_vasprintf (char **result, const char *format, va_list *args);
-
 static int
-int_vasprintf (char **result, const char *format, va_list *args)
+stp_vasprintf (char **result, const char *format, va_list *args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -1458,15 +1526,6 @@ int_vasprintf (char **result, const char *format, va_list *args)
     return 0;
 }
 
-static int
-vasprintf (char **result, const char *format, va_list args)
-{
-  return int_vasprintf (result, format, &args);
-}
-#else
-extern int vasprintf (char **result, const char *format, va_list args);
-#endif
-
 void
 stp_zprintf(const stp_vars_t v, const char *format, ...)
 {
@@ -1474,7 +1533,7 @@ stp_zprintf(const stp_vars_t v, const char *format, ...)
   int bytes;
   char *result;
   va_start(args, format);
-  bytes = vasprintf(&result, format, args);
+  bytes = stp_vasprintf(&result, format, args);
   va_end(args);
   (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), result, bytes);
   free(result);
@@ -1508,7 +1567,7 @@ stp_eprintf(const stp_vars_t v, const char *format, ...)
   if (stp_get_errfunc(v))
     {
       va_start(args, format);
-      bytes = vasprintf(&result, format, args);
+      bytes = stp_vasprintf(&result, format, args);
       va_end(args);
       (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
       free(result);
@@ -1558,7 +1617,7 @@ stp_dprintf(unsigned long level, const stp_vars_t v, const char *format, ...)
   if ((level & stp_debug_level) && stp_get_errfunc(v))
     {
       va_start(args, format);
-      bytes = vasprintf(&result, format, args);
+      bytes = stp_vasprintf(&result, format, args);
       va_end(args);
       (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
       free(result);
@@ -1575,7 +1634,7 @@ stp_deprintf(unsigned long level, const char *format, ...)
   if (level & stp_debug_level)
     {
       va_start(args, format);
-      bytes = vasprintf(&result, format, args);
+      bytes = stp_vasprintf(&result, format, args);
       va_end(args);
       stp_erprintf("%s", result);
       free(result);
@@ -1588,6 +1647,27 @@ stp_malloc (size_t size)
   register void *memptr = NULL;
 
   if ((memptr = malloc (size)) == NULL)
+    {
+      fputs("Virtual memory exhausted.\n", stderr);
+      exit (EXIT_FAILURE);
+    }
+  return (memptr);
+}
+
+void *
+stp_zalloc (size_t size)
+{
+  register void *memptr = stp_malloc(size);
+  (void) memset(memptr, 0, size);
+  return (memptr);
+}
+
+void *
+stp_realloc (void *ptr, size_t size)
+{
+  register void *memptr = NULL;
+
+  if (size > 0 && ((memptr = realloc (ptr, size)) == NULL))
     {
       fputs("Virtual memory exhausted.\n", stderr);
       exit (EXIT_FAILURE);

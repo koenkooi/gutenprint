@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.4.9 2001/11/18 15:40:36 sharkey Exp $"
+ * "$Id: print-canon.c,v 1.10.4.10 2002/05/25 18:30:44 sharkey Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -216,8 +216,8 @@ typedef struct canon_variable_printmode
  */
 static const stp_simple_dither_range_t canon_dither_ranges_Cc_1bit[] =
 {
-  { 0.25, 0x1, 0, 1 },
-  { 1.0,  0x1, 1, 1 }
+  { 0.25, 0x1, 1, 1 },
+  { 1.0,  0x1, 0, 1 }
 };
 
 static const canon_variable_ink_t canon_ink_Cc_1bit =
@@ -233,8 +233,8 @@ static const canon_variable_ink_t canon_ink_Cc_1bit =
  */
 static const stp_simple_dither_range_t canon_dither_ranges_Mm_1bit[] =
 {
-  { 0.26, 0x1, 0, 1 },
-  { 1.0,  0x1, 1, 1 }
+  { 0.26, 0x1, 1, 1 },
+  { 1.0,  0x1, 0, 1 }
 };
 
 static const canon_variable_ink_t canon_ink_Mm_1bit =
@@ -251,9 +251,9 @@ static const canon_variable_ink_t canon_ink_Mm_1bit =
  */
 static const stp_simple_dither_range_t canon_dither_ranges_X_2bit[] =
 {
-  { 0.45,  0x1, 1, 1 },
-  { 0.68,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.45,  0x1, 0, 1 },
+  { 0.68,  0x2, 0, 2 },
+  { 1.0,   0x3, 0, 3 }
 };
 
 static const canon_variable_ink_t canon_ink_X_2bit =
@@ -269,12 +269,12 @@ static const canon_variable_ink_t canon_ink_X_2bit =
  */
 static const stp_simple_dither_range_t canon_dither_ranges_Xx_2bit[] =
 {
-  { 0.15,  0x1, 0, 1 },
-  { 0.227, 0x2, 0, 2 },
-/*  { 0.333, 0x3, 0, 3 }, */
-  { 0.45,  0x1, 1, 1 },
-  { 0.68,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.15,  0x1, 1, 1 },
+  { 0.227, 0x2, 1, 2 },
+/*{ 0.333, 0x3, 1, 3 }, */
+  { 0.45,  0x1, 0, 1 },
+  { 0.68,  0x2, 0, 2 },
+  { 1.0,   0x3, 0, 3 }
 };
 
 static const canon_variable_ink_t canon_ink_Xx_2bit =
@@ -297,12 +297,12 @@ static const canon_variable_ink_t canon_ink_Xx_2bit =
  */
 static const stp_simple_dither_range_t canon_dither_ranges_X_3bit[] =
 {
-  { 0.45,  0x1, 1, 1 },
-  { 0.55,  0x2, 1, 2 },
-  { 0.66,  0x3, 1, 3 },
-  { 0.77,  0x4, 1, 4 },
-  { 0.88,  0x5, 1, 5 },
-  { 1.0,   0x6, 1, 6 }
+  { 0.45,  0x1, 0, 1 },
+  { 0.55,  0x2, 0, 2 },
+  { 0.66,  0x3, 0, 3 },
+  { 0.77,  0x4, 0, 4 },
+  { 0.88,  0x5, 0, 5 },
+  { 1.0,   0x6, 0, 6 }
 };
 
 static const canon_variable_ink_t canon_ink_X_3bit =
@@ -318,16 +318,16 @@ static const canon_variable_ink_t canon_ink_X_3bit =
  */
 static const stp_simple_dither_range_t canon_dither_ranges_Xx_3bit[] =
 {
-  { 0.15,  0x1, 0, 1 },
-  { 0.227, 0x2, 0, 2 },
-  { 0.333, 0x3, 0, 3 },
-/*  { 0.333, 0x3, 0, 3 }, */
-  { 0.45,  0x1, 1, 1 },
-  { 0.55,  0x2, 1, 2 },
-  { 0.66,  0x3, 1, 3 },
-  { 0.77,  0x4, 1, 4 },
-  { 0.88,  0x5, 1, 5 },
-  { 1.0,   0x6, 1, 6 }
+  { 0.15,  0x1, 1, 1 },
+  { 0.227, 0x2, 1, 2 },
+  { 0.333, 0x3, 1, 3 },
+/*  { 0.333, 0x3, 1, 3 }, */
+  { 0.45,  0x1, 0, 1 },
+  { 0.55,  0x2, 0, 2 },
+  { 0.66,  0x3, 0, 3 },
+  { 0.77,  0x4, 0, 4 },
+  { 0.88,  0x5, 0, 5 },
+  { 1.0,   0x6, 0, 6 }
 };
 
 static const canon_variable_ink_t canon_ink_Xx_3bit =
@@ -1626,7 +1626,7 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
   {
     int height_limit, width_limit;
     int papersizes = stp_known_papersizes();
-    valptrs = stp_malloc(sizeof(stp_param_t) * papersizes);
+    valptrs = stp_zalloc(sizeof(stp_param_t) * papersizes);
     *count = 0;
 
     width_limit = caps->max_width;
@@ -1650,7 +1650,7 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
     int x,y;
     int c= 0;
     int t;
-    valptrs = stp_malloc(sizeof(stp_param_t) * 10);
+    valptrs = stp_zalloc(sizeof(stp_param_t) * 10);
 
     for (x=1; x<6; x++) {
       for (y=x-1; y<x+1; y++) {
@@ -1681,7 +1681,7 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
   else if (strcmp(name, "InkType") == 0)
   {
     int c= 0;
-    valptrs = stp_malloc(sizeof(stp_param_t) * 5);
+    valptrs = stp_zalloc(sizeof(stp_param_t) * 5);
     /* used internally: do not translate */
     if ((caps->inks & CANON_INK_K))
     {
@@ -1715,7 +1715,7 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
   {
     *count = sizeof(canon_paper_list) / sizeof(canon_paper_list[0]);
 
-    valptrs = stp_malloc(*count * sizeof(stp_param_t));
+    valptrs = stp_zalloc(*count * sizeof(stp_param_t));
 
     for (i = 0; i < *count; i ++)
     {
@@ -1728,7 +1728,7 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
     *count = 3;
     p = media_sources;
 
-    valptrs = stp_malloc(*count * sizeof(stp_param_t));
+    valptrs = stp_zalloc(*count * sizeof(stp_param_t));
     for (i = 0; i < *count; i ++)
     {
       /* translate media_sources */
@@ -1878,7 +1878,7 @@ canon_cmd(const stp_vars_t v, /* I - the printer         */
 	  ...        /* I - the args themselves */
 	  )
 {
-  unsigned char *buffer = stp_malloc(num + 1);
+  unsigned char *buffer = stp_zalloc(num + 1);
   int i;
   va_list ap;
 
@@ -1957,21 +1957,45 @@ static void
 canon_init_setColor(const stp_vars_t v, canon_init_t *init)
 {
   unsigned char
-    arg_63_1 = 0x00,
-    arg_63_2 = 0x00, /* plain paper */
-    arg_63_3 = 0x00; /* output quality, hardcoded to Normal for now */
+    arg_63_1, arg_63_2, arg_63_3;
+
 
   if (!(init->caps->features & CANON_CAP_c))
     return;
 
-  arg_63_1 = init->caps->model_id << 4;
+  arg_63_1 = init->caps->model_id << 4;						/* MODEL_ID */
 
-  if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
-    arg_63_1|= 0x01;
+  switch ( init->caps->model_id ) {
 
-  if (init->pt) arg_63_2= init->pt->media_code;
+  	case 0:			/* very old 360 dpi series: BJC-800/820 */
+		break;		/*	tbd */
 
-  canon_cmd(v,ESC28,0x63, 3, arg_63_1, arg_63_2, arg_63_3);
+  	case 1:			/* 360 dpi series - BJC-4000, BJC-210, BJC-70 and their descendants */
+		if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
+    			arg_63_1|= 0x01;					/* PRINT_COLOUR */
+
+  		arg_63_2 = ((init->pt ? init->pt->media_code : 0) << 4)		/* PRINT_MEDIA */
+			+ 1;	/* hardcode to High quality for now */		/* PRINT_QUALITY */
+
+  		canon_cmd(v,ESC28,0x63, 2, arg_63_1, arg_63_2);
+		break;
+
+	case 2:			/* are any models using this? */
+		break;
+
+	case 3:			/* 720 dpi series - BJC-3000 and descendants */
+		if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
+    			arg_63_1|= 0x01;					/* colour mode */
+
+  		arg_63_2 = (init->pt) ? init->pt->media_code : 0;		/* print media type */
+
+		arg_63_3 = 2;	/* hardcode to whatever this means for now */	/* quality, apparently */
+
+  		canon_cmd(v,ESC28,0x63, 3, arg_63_1, arg_63_2, arg_63_3);
+		break;
+  	}
+
+  return;
 }
 
 /* ESC (d -- 0x64 -- -- set raster resolution:
@@ -2202,19 +2226,6 @@ canon_deinit_printer(const stp_vars_t v, canon_init_t *init)
   canon_cmd(v,ESC40,0,0);
 }
 
-
-/*
- *  'alloc_buffer()' allocates buffer and fills it with 0
- */
-static unsigned char *
-canon_alloc_buffer(int size)
-{
-  unsigned char *buf= stp_malloc(size);
-  if (buf)
-    memset(buf,0,size);
-  return buf;
-}
-
 /*
  * 'advance_buffer()' - Move (num) lines of length (len) down one line
  *                      and sets first line to 0s
@@ -2309,6 +2320,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   colormode_t colormode = canon_printhead_colors(ink_type,caps);
   const paper_t *pt;
   const canon_variable_inkset_t *inks;
+  stp_dither_data_t *dt;
 
   if (!stp_get_verified(nv))
     {
@@ -2474,7 +2486,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   stp_deprintf(STP_DBG_CANON,"canon: buflength is %d!\n",buf_length);
 
   if (colormode==COLOR_MONOCHROME) {
-    black   = canon_alloc_buffer(buf_length*(delay_k+1));
+    black   = stp_zalloc(buf_length*(delay_k+1));
     cyan    = NULL;
     magenta = NULL;
     lcyan   = NULL;
@@ -2482,21 +2494,21 @@ canon_print(const stp_printer_t printer,		/* I - Model */
     yellow  = NULL;
     lyellow = NULL;
   } else {
-    cyan    = canon_alloc_buffer(buf_length*(delay_c+1));
-    magenta = canon_alloc_buffer(buf_length*(delay_m+1));
-    yellow  = canon_alloc_buffer(buf_length*(delay_y+1));
+    cyan    = stp_zalloc(buf_length*(delay_c+1));
+    magenta = stp_zalloc(buf_length*(delay_m+1));
+    yellow  = stp_zalloc(buf_length*(delay_y+1));
 
     if (colormode!=COLOR_CMY)
-      black = canon_alloc_buffer(buf_length*(delay_k+1));
+      black = stp_zalloc(buf_length*(delay_k+1));
     else
       black = NULL;
 
     if (colormode==COLOR_CCMMYK || colormode==COLOR_CCMMYYK) {
       use_6color= 1;
-      lcyan = canon_alloc_buffer(buf_length*(delay_lc+1));
-      lmagenta = canon_alloc_buffer(buf_length*(delay_lm+1));
+      lcyan = stp_zalloc(buf_length*(delay_lc+1));
+      lmagenta = stp_zalloc(buf_length*(delay_lm+1));
       if (colormode==CANON_INK_CcMmYyK)
-	lyellow = canon_alloc_buffer(buf_length*(delay_lc+1));
+	lyellow = stp_zalloc(buf_length*(delay_lc+1));
       else
 	lyellow = NULL;
     } else {
@@ -2557,7 +2569,6 @@ canon_print(const stp_printer_t printer,		/* I - Model */
     }
   stp_dither_set_black_lower(dither, k_lower);
   stp_dither_set_black_upper(dither, k_upper);
-  stp_dither_set_adaptive_limit(dither, .75);
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
@@ -2596,8 +2607,8 @@ canon_print(const stp_printer_t printer,		/* I - Model */
     }
   stp_dither_set_density(dither, stp_get_density(nv));
 
-  in  = stp_malloc(image_width * image_bpp);
-  out = stp_malloc(image_width * out_bpp * 2);
+  in  = stp_zalloc(image_width * image_bpp);
+  out = stp_zalloc(image_width * out_bpp * 2);
 
   errdiv  = image_height / out_length;
   errmod  = image_height % out_length;
@@ -2635,6 +2646,13 @@ canon_print(const stp_printer_t printer,		/* I - Model */
     }
   }
 
+  dt = stp_create_dither_data();
+  stp_add_channel(dt, black, ECOLOR_K, 0);
+  stp_add_channel(dt, cyan, ECOLOR_C, 0);
+  stp_add_channel(dt, lcyan, ECOLOR_C, 1);
+  stp_add_channel(dt, magenta, ECOLOR_M, 0);
+  stp_add_channel(dt, lmagenta, ECOLOR_M, 1);
+  stp_add_channel(dt, yellow, ECOLOR_Y, 0);
 
   for (y = 0; y < out_length; y ++)
   {
@@ -2654,8 +2672,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 		   have_sat_adjustment ? sat_adjustment : NULL);
     }
 
-    stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
-	       yellow, 0, black, duplicate_line, zero_mask);
+    stp_dither(out, y, dither, dt, duplicate_line, zero_mask);
 
     canon_write_line(nv, caps, ydpi,
 		     black,    delay_k,
@@ -2685,6 +2702,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   }
   image->progress_conclude(image);
 
+  stp_free_dither_data(dt);
   stp_free_dither(dither);
 
   /*

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.8 2001/11/26 03:26:24 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.9 2002/05/25 18:30:43 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,8 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
-LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
+LIBS = $(INTLLIBS) @LIBS@
 
 
 ## Programs
@@ -42,23 +43,23 @@ EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes \
 	stp_limits printers
 
 printer_options_SOURCES = printer_options.c
-printer_options_LDADD = $(LIBGIMPPRINT_LIBS)
+printer_options_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 gimp_print_version_SOURCES = gimp-print-version.c
-gimp_print_version_LDADD = $(LIBGIMPPRINT_LIBS)
+gimp_print_version_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 gimp_print_version_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 paper_sizes_SOURCES = paper_sizes.c
-paper_sizes_LDADD = $(LIBGIMPPRINT_LIBS)
+paper_sizes_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 paper_sizes_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 stp_limits_SOURCES = stp_limits.c
-stp_limits_LDADD = $(LIBGIMPPRINT_LIBS)
+stp_limits_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 stp_limits_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 printers_SOURCES = printers.c
-printers_LDADD = $(LIBGIMPPRINT_LIBS)
+printers_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 printers_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 
@@ -70,11 +71,30 @@ else
 INSTALL_DATA_LOCAL_DEPS =
 endif
 
+if BUILD_IJS
+FOOMATIC_GENERATOR_EXTRA_OPTS = -d all
+FOOMATIC_IJS = yes
+else
+FOOMATIC_GENERATOR_EXTRA_OPTS = -d noijs
+FOOMATIC_IJS =
+endif
+
 all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  foomatic-kitload -k foomatic-db ; \
+	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print ; \
+	  if test -n "$(FOOMATIC_IJS)" ; then \
+	    $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print-ijs ; \
+	  fi ; \
+	fi
+
+install-kit:
+	if test -n "$(DESTDIR)" ; then \
+	  $(mkinstalldirs) $(DESTDIR)`$(FOOMATIC_KITLOAD) -l` ; \
+	  $(FOOMATIC_KITLOAD) -d $(DESTDIR) -k $(FOOMATIC_DB) ; \
+	else \
+	  $(FOOMATIC_KITLOAD) -k $(FOOMATIC_DB) ; \
 	fi
 
 clean-local:
@@ -84,7 +104,7 @@ foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator foomatic-printermap $(EXTRA_PROGRAMS)
 	-$(RM) -r foomatic-db
-	./foomatic-generator
+	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS)
 	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):
@@ -97,5 +117,7 @@ $(LIBGIMPPRINT_LIBS):
 CLEANFILES = $(noinst_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = foomatic-printermap foomatic-templates/*.xml
+EXTRA_DIST = foomatic-printermap 		\
+	foomatic-templates-gs/*.xml		\
+	foomatic-templates-ijs/*.xml
 

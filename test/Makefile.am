@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9.2.8 2001/11/18 15:40:38 sharkey Exp $
+## $Id: Makefile.am,v 1.9.2.9 2002/05/25 18:30:46 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,31 +28,33 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
-LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
+LIBS = $(INTLLIBS) @LIBS@
 
-TESTS = testdither run-weavetest
+TESTS = run-testdither run-weavetest
 
 
 ## Programs
-TEST_BIN = testdither escp2-weavetest unprint pcl-unprint bjc-unprint
 
-noinst_PROGRAMS = @TEST_BIN@
-EXTRA_PROGRAMS = escp2-weavetest unprint pcl-unprint bjc-unprint testdither
+if BUILD_TEST
+noinst_PROGRAMS = testdither escp2-weavetest unprint pcl-unprint bjc-unprint
+endif
 
 escp2_weavetest_SOURCES = escp2-weavetest.c
-
-escp2_weavetest.o: escp2_weavetest.c
-escp2_weavetest_LDADD = $(LIBGIMPPRINT_LIBS)
+escp2_weavetest_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 escp2_weavetest_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 unprint_SOURCES = unprint.c
+unprint_LDADD = $(LIBPRINTUT)
 
 pcl_unprint_SOURCES = pcl-unprint.c
+pcl_unprint_LDADD = $(LIBPRINTUT)
 
 bjc_unprint_SOURCES = bjc-unprint.c
+bjc_unprint_LDADD = $(LIBPRINTUT)
 
 testdither_SOURCES = testdither.c
-testdither_LDADD = $(LIBGIMPPRINT_LIBS)
+testdither_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
@@ -67,7 +69,7 @@ $(LIBGIMPPRINT_LIBS):
 
 ## Clean
 
-CLEANFILES = $(EXTRA_PROGRAMS) mixed-color-1bit.ppm
+CLEANFILES = mixed-color-1bit.ppm
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
+EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest run-testdither
