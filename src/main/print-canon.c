@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101.2.2 2003/01/17 00:26:29 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.3 2003/01/18 00:20:23 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2051,7 +2051,6 @@ canon_advance_buffer(unsigned char *buf, int len, int num)
 static int
 canon_print(const stp_vars_t v, stp_image_t *image)
 {
-  int i;
   int		status = 1;
   int		model = stp_get_model(v);
   const char	*resolution = stp_get_string_parameter(v, "Resolution");
@@ -2101,7 +2100,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   int           image_height,
                 image_width,
                 image_bpp;
-  int		ink_spread;
   int           res_code;
   int           use_6color= 0;
   double        k_upper, k_lower;
@@ -2334,7 +2332,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   * Output the page...
   */
 
-  stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
   if (use_6color)
     k_lower = .4 / bits + .1;
@@ -2350,8 +2347,9 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       k_lower *= .5;
       k_upper = .5;
     }
-  stp_dither_set_black_lower(v, k_lower);
-  stp_dither_set_black_upper(v, k_upper);
+  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
+  stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
@@ -2380,36 +2378,32 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   errlast = -1;
   errline  = 0;
 
-  lum_adjustment = stp_read_and_compose_curves(canon_lum_adjustment(model),
-					       pt ? pt->lum_adjustment : NULL,
-					       STP_CURVE_COMPOSE_MULTIPLY);
-  hue_adjustment = stp_read_and_compose_curves(canon_hue_adjustment(model),
-					       pt ? pt->hue_adjustment : NULL,
-					       STP_CURVE_COMPOSE_ADD);
-  sat_adjustment = stp_read_and_compose_curves(canon_sat_adjustment(model),
-					       pt ? pt->sat_adjustment : NULL,
-					       STP_CURVE_COMPOSE_MULTIPLY);
-
-  if (stp_get_curve_parameter(nv, "HueMap"))
-    stp_curve_compose(&hue_adjustment, hue_adjustment,
-		      stp_get_curve_parameter(nv, "HueMap"),
-		      STP_CURVE_COMPOSE_ADD, -1);
-  if (stp_get_curve_parameter(nv, "LumMap"))
-    stp_curve_compose(&lum_adjustment, lum_adjustment,
-		      stp_get_curve_parameter(nv, "LumMap"),
-		      STP_CURVE_COMPOSE_MULTIPLY, -1);
-  if (stp_get_curve_parameter(nv, "SatMap"))
-    stp_curve_compose(&sat_adjustment, sat_adjustment,
-		      stp_get_curve_parameter(nv, "SatMap"),
-		      STP_CURVE_COMPOSE_MULTIPLY, -1);
-  stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
-  stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
-  stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
+  if (!stp_check_curve_parameter(nv, "HueMap"))
+    {
+      hue_adjustment = stp_read_and_compose_curves
+	(canon_hue_adjustment(model),
+	 pt ? pt->hue_adjustment : NULL, STP_CURVE_COMPOSE_ADD);
+      stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
+      stp_curve_destroy(hue_adjustment);
+    }
+  if (!stp_check_curve_parameter(nv, "LumMap"))
+    {
+      lum_adjustment = stp_read_and_compose_curves
+	(canon_lum_adjustment(model),
+	 pt ? pt->lum_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
+      stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
+      stp_curve_destroy(lum_adjustment);
+    }
+  if (!stp_check_curve_parameter(nv, "SatMap"))
+    {
+      sat_adjustment = stp_read_and_compose_curves
+	(canon_sat_adjustment(model),
+	 pt ? pt->sat_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
+      stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
+      stp_curve_destroy(sat_adjustment);
+    }
 
   out_channels = stp_color_init(nv, image, 65536);
-  stp_curve_destroy(lum_adjustment);
-  stp_curve_destroy(sat_adjustment);
-  stp_curve_destroy(hue_adjustment);
 
   out = stp_zalloc(image_width * out_channels * 2);
 
@@ -2497,7 +2491,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 
   stp_image_progress_conclude(image);
 
-  stp_dither_free(dither);
+  stp_dither_free(nv);
 
  /*
   * Cleanup...

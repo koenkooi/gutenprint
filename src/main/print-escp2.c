@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.2 2003/01/18 00:20:23 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.3 2003/01/18 00:22:32 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1591,9 +1591,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
       out_height = ydpi * out_height / 72;
       length = (out_width + 7) / 8;
 
-      channels_in_use = setup_ink_types(ink_type, &privdata, cols, head_offset,
-					nv, channel_limit, length * bits);
-
       /*
        * Allocate memory for the raster data...
        */
@@ -1611,9 +1608,12 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 				   FILLFUNC, PACKFUNC, COMPUTEFUNC);
 
       stp_set_output_color_model(nv, COLOR_MODEL_CMY);
-      stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
       out_channels = adjust_print_quality(&init, image);
+      stp_dither_init(nv, image, out_width, xdpi, ydpi);
+      channels_in_use = setup_ink_types(ink_type, &privdata, cols, head_offset,
+					nv, channel_limit, length * bits);
+
 
       out = stp_malloc(stp_image_width(image) * out_channels * 2);
 
