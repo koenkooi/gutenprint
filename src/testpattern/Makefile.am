@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.19 2004/05/09 16:06:11 rleigh Exp $
+## $Id: Makefile.am,v 1.20 2004/06/06 01:16:30 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ include $(top_srcdir)/scripts/global.mk
 INCLUDES = $(AM_CFLAGS)
 pkgdatadir = $(datadir)/$(PACKAGE)/samples
 
-TESTS = run-testpattern
+TESTS = run-testpattern run-testpattern-1
 
 
 ## Programs
@@ -62,5 +62,5 @@ pkgdata_DATA = testpattern.sample extended.sample
 
 MAINTAINERCLEANFILES = Makefile.in testpatternl.c testpatterny.c testpatterny.h
 
-EXTRA_DIST =  testpatterny.h $(pkgdata_DATA) run-testpattern
+EXTRA_DIST =  testpatterny.h $(pkgdata_DATA) run-testpattern run-testpattern-1
 

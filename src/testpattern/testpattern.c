@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.40 2004/05/09 16:06:11 rleigh Exp $"
+ * "$Id: testpattern.c,v 1.41 2004/06/06 01:16:30 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -169,9 +169,9 @@ get_next_testpattern(void)
 static void
 writefunc(void *file, const char *buf, size_t bytes)
 {
-  if (!global_suppress_output)
+  FILE *prn = (FILE *)file;
+  if (!global_suppress_output || (file == stderr))
     {
-      FILE *prn = (FILE *)file;
       fwrite(buf, 1, bytes, prn);
     }
 }
