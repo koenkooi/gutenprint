@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.84 2003/10/15 07:47:19 m0m Exp $"
+   "$Id: printers.xml,v 1.85 2003/10/16 11:56:14 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -785,6 +785,42 @@
       <printer name="EPSON Stylus CX-5200" driver="escp2-cx5200">
         <color value="true"/>
         <model value="55"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-6300" driver="escp2-cx6300">
+        <color value="true"/>
+        <model value="61"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-6400" driver="escp2-cx6400">
+        <color value="true"/>
+        <model value="61"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-8300" driver="escp2-cx8300">
+        <color value="true"/>
+        <model value="60"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-8400" driver="escp2-cx8400">
+        <color value="true"/>
+        <model value="60"/>
         <cyan value="0.96"/>
         <magenta value="1.02"/>
         <yellow value="1.02"/>
