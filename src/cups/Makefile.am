@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2001/02/17 22:42:10 rleigh Exp $
+## $Id: Makefile.am,v 1.17 2001/02/19 02:23:09 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,6 @@ MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
 	COPYING \
 	README \
-	ChangeLog \
 	cups-calibrate.c \
 	calibrate.ppm \
 	canon.c \
