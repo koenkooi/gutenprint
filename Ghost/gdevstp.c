@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.13 2000/05/24 00:24:02 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.14 2000/06/12 02:04:27 cpbs Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -535,6 +535,11 @@ int Image_height(Image image)
 
 /* get an image column */
 void Image_get_col(Image img,unsigned char *data,int column)
+{
+ /* dummy function, Landscape printing unsupported atm */
+}
+
+void Image_rotate_ccw(Image img)
 {
  /* dummy function, Landscape printing unsupported atm */
 }
