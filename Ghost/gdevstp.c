@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28.2.1 2000/08/03 00:48:12 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.2 2000/08/03 01:00:42 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -328,6 +328,13 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
 
   if( param_read_string(plist, "PAPERSIZE", &pmedia) == 0)
+    {
+      /*
+	fprintf(stderr,"Media defined: %s\n",pmedia.data);
+      */
+    }
+
+  if( param_read_string(plist, "Model", &pmodel) == 0)
     {
       /*
 	fprintf(stderr,"Media defined: %s\n",pmedia.data);
