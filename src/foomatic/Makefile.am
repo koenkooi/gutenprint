@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/03/24 02:38:50 rlk Exp $
+## $Id: Makefile.am,v 1.2 2001/03/24 03:18:11 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,9 @@ AM_CPPFLAGS =\
  -DLOCALEDIR=\""$(localedir)"\" \
  @MAINTAINER_CFLAGS@
 
-noinst_PROGRAMS = printer_options
+noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
+
+EXTRA_PROGRAMS = printer_options
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = -lm $(LIBGIMPPRINT_LIBS)
@@ -42,3 +44,17 @@ $(LIBGIMPPRINT_LIBS):
 EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
 CLEANFILES = $(noinst_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
+
+if BUILD_FOOMATIC
+install-data-local: foomatic-data
+endif
+	foomatic-kitload -k foomatic-db
+
+install: @FOOMATIC_INSTALL@
+
+clean-local:
+	-rm -rf foomatic-db
+
+foomatic-data: printer_options
+	-rm -rf foomatic-db
+	./foomatic-generator
