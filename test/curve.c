@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.8 2002/12/21 23:45:21 rlk Exp $"
+ * "$Id: curve.c,v 1.9 2002/12/22 18:29:34 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -298,5 +298,5 @@ main(int argc, char **argv)
   stp_curve_destroy(curve1);
 
   printf("%d total errors\n", global_error_count);
-  return global_error_count ? 0 : 1;
+  return global_error_count ? 1 : 0;
 }
