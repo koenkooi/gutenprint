@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.3 2002/07/22 01:23:09 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.4 2002/07/26 00:08:55 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1832,6 +1832,7 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_4pl_pigment_photo_inks,
     &escp2_4pl_pigment_2880_photo_inks
   },
+  { NULL, },
   {
     &escp2_multishot_photo2_inks,
     &escp2_multishot_photo2_inks,
@@ -1843,7 +1844,6 @@ static const escp2_variable_inklist_t variable_4pl_pigment_inks =
     &escp2_4pl_pigment_photo2_inks,
     &escp2_4pl_pigment_2880_photo2_inks
   },
-  { NULL, },
   { NULL, },
   {
     &escp2_multishot_extended_inks,
@@ -2235,6 +2235,15 @@ static const escp2_inkname_t seven_color_photo_inkset =
   }
 };
 
+static const escp2_inkname_t two_color_grayscale_inkset =
+{
+  "Gray2", N_ ("Two Level Grayscale"), 0, INKSET_CcMmYKk, 0, 0, 1,
+  NULL, NULL, NULL,
+  {
+    &photo2_black_channels, NULL, NULL, NULL
+  }
+};
+
 static const escp2_inkname_t one_color_extended_inkset =
 {
   "PhysicalBlack", N_ ("One Color Raw"), 0, INKSET_EXTENDED, 0, 0, 1,
@@ -2406,6 +2415,7 @@ static const escp2_inkname_t *const photo7_ink_types[] =
   &five_color_photo_composite_inkset,
   &four_color_standard_inkset,
   &three_color_composite_inkset,
+  &two_color_grayscale_inkset,
   &one_color_extended_inkset,
   &two_color_extended_inkset,
   &four_color_extended_inkset,
@@ -2734,7 +2744,7 @@ static const escp2_dot_size_t c2pl_dotsizes =
 {   -1, 0x12,   -1, 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x13,   -1, 0x13,  0x10 };
 
 static const escp2_dot_size_t c4pl_pigment_dotsizes =
-{ -1,   0x12,   -1, 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x10,   -1, 0x10, 0x10 };
+{ -1,   0x12,   -1, 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x11,   -1, 0x10, 0x10 };
 
 /*
  * Bits are for:
@@ -3872,14 +3882,14 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   {
     (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO),
-    96, 1, 2, 96, 1, 2, 7,
+    96, 1, 2, 192, 1, 1, 7,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(13), INCH(1200), INCH(2), INCH(4),
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 0, 0, 0,
     c4pl_pigment_dotsizes, c4pl_pigment_densities, &variable_4pl_pigment_inks,
     &standard_paper_list, standard_reslist, &photo7_inklist,
-    variable_bits, pro_base_res, &default_input_slot_list,
+    stp950_bits, stp950_base_res, &default_input_slot_list,
     &new_init_sequence, NULL
   },
   /* 48: Stylus Pro 7600 */
@@ -3893,7 +3903,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     0, 1, 0, 0, 0, 0, 0,
     c4pl_pigment_dotsizes, c4pl_pigment_densities, &variable_4pl_pigment_inks,
     &standard_paper_list, pro_reslist, &photo7_inklist,
-    variable_bits, pro_base_res, &roll_feed_input_slot_list,
+    stp950_bits, pro_base_res, &roll_feed_input_slot_list,
     &new_init_sequence, NULL
   },
   /* 49: Stylus Pro 9600 */
@@ -3907,7 +3917,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     0, 1, 0, 0, 0, 0, 0,
     c4pl_pigment_dotsizes, c4pl_pigment_densities, &variable_4pl_pigment_inks,
     &standard_paper_list, pro_reslist, &photo7_inklist,
-    variable_bits, pro_base_res, &roll_feed_input_slot_list,
+    stp950_bits, pro_base_res, &roll_feed_input_slot_list,
     &new_init_sequence, NULL
   },
 };
