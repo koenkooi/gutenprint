@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.14 2001/03/17 13:59:19 rlk Exp $"
+ * "$Id: print-util.c,v 1.14.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -70,6 +70,7 @@ typedef struct					/* Plug-in variables */
   float app_gamma;		/* Application gamma */
   int	page_width;		/* Width of page in points */
   int	page_height;		/* Height of page in points */
+  int	color_model;		/* Color model for this device */
   void  *lut;			/* Look-up table */
   void  *driver_data;		/* Private data of the driver */
   unsigned char *cmap;		/* Color map */
@@ -125,7 +126,8 @@ static const stp_internal_vars_t default_vars =
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	COLOR_MODEL_RGB		/* Color model */
 };
 
 static const stp_internal_vars_t min_vars =
@@ -157,7 +159,8 @@ static const stp_internal_vars_t min_vars =
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	0			/* Color model */
 };
 
 static const stp_internal_vars_t max_vars =
@@ -189,7 +192,8 @@ static const stp_internal_vars_t max_vars =
 	1,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	NCOLOR_MODELS - 1	/* Color model */
 };
 
 stp_vars_t
@@ -321,6 +325,7 @@ DEF_FUNCS(image_type, int);
 DEF_FUNCS(unit, int);
 DEF_FUNCS(page_width, int);
 DEF_FUNCS(page_height, int);
+DEF_FUNCS(color_model, int);
 DEF_FUNCS(brightness, float);
 DEF_FUNCS(scaling, float);
 DEF_FUNCS(gamma, float);
@@ -344,6 +349,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
     return;
   stp_set_output_to(vd, stp_get_output_to(vs));
   stp_set_driver(vd, stp_get_driver(vs));
+  stp_set_driver_data(vd, stp_get_driver_data(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));
   stp_set_resolution(vd, stp_get_resolution(vs));
   stp_set_media_size(vd, stp_get_media_size(vs));
@@ -369,6 +375,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_saturation(vd, stp_get_saturation(vs));
   stp_set_density(vd, stp_get_density(vs));
   stp_set_app_gamma(vd, stp_get_app_gamma(vs));
+  stp_set_color_model(vd, stp_get_color_model(vd));
   stp_set_lut(vd, stp_get_lut(vs));
   stp_set_outdata(vd, stp_get_outdata(vs));
   stp_set_errdata(vd, stp_get_errdata(vs));

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.21 2001/03/11 19:22:01 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.21.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1255,6 +1255,7 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   if (printhead == 0 || caps->inks == LEXMARK_INK_K) {
     output_type = OUTPUT_GRAY;
   }
+  stp_set_color_model(nv, COLOR_MODEL_CMY);
 
   /*
    * Choose the correct color conversion function...

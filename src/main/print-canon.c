@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.29 2001/03/26 13:37:57 rlk Exp $"
+ * "$Id: print-canon.c,v 1.29.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1987,6 +1987,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 
   if (output_type == OUTPUT_GRAY)
     colormode = COLOR_MONOCHROME;
+  stp_set_color_model(nv, COLOR_MODEL_CMY);
 
   /*
    * Choose the correct color conversion function...

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.16 2001/03/26 13:37:57 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.16.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1678,6 +1678,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
       output_type = OUTPUT_GRAY;
       stp_set_output_type(nv, OUTPUT_GRAY);
     }
+  stp_set_color_model(nv, COLOR_MODEL_CMY);
 
   colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.4 2001/03/02 01:38:00 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.4.6.1 2001/03/31 03:23:33 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -94,6 +94,10 @@ const char* stp_check_version (unsigned int required_major,
 #define IMAGE_CONTINUOUS	2
 #define IMAGE_MONOCHROME	3
 #define NIMAGE_TYPES		4
+
+#define COLOR_MODEL_RGB		0
+#define COLOR_MODEL_CMY		1
+#define NCOLOR_MODELS		2
 
 /*
  * Printer driver control structure.  See "print.c" for the actual list...
@@ -332,6 +336,7 @@ extern void	stp_set_image_type (stp_vars_t vv, int val);
 extern void	stp_set_unit (stp_vars_t vv, int val);
 extern void	stp_set_page_width (stp_vars_t vv, int val);
 extern void	stp_set_page_height (stp_vars_t vv, int val);
+extern void	stp_set_color_model (stp_vars_t vv, int val);
 extern void	stp_set_brightness (stp_vars_t vv, float val);
 extern void	stp_set_scaling (stp_vars_t vv, float val);
 extern void	stp_set_gamma (stp_vars_t vv, float val);
@@ -363,6 +368,7 @@ extern int 	stp_get_image_type (const stp_vars_t vv);
 extern int 	stp_get_unit (const stp_vars_t vv);
 extern int 	stp_get_page_width (const stp_vars_t vv);
 extern int 	stp_get_page_height (const stp_vars_t vv);
+extern int 	stp_get_color_model (const stp_vars_t vv);
 extern float 	stp_get_brightness (const stp_vars_t vv);
 extern float 	stp_get_scaling (const stp_vars_t vv);
 extern float 	stp_get_gamma (const stp_vars_t vv);
@@ -437,5 +443,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.4 2001/03/02 01:38:00 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.4.6.1 2001/03/31 03:23:33 rlk Exp $".
  */

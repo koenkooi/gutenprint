@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.3 2001/02/24 03:14:25 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.3.4.1 2001/03/31 03:23:33 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -157,7 +157,7 @@ gimp_create_color_adjust_window (void)
   gtk_widget_show (table);
 
   /*
-   * Drawing area for colour swatch feedback display...
+   * Drawing area for color swatch feedback display...
    */
 
   swatch = (GtkDrawingArea *) gtk_drawing_area_new ();

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.11 2001/03/24 01:42:12 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.11.2.1 2001/03/31 03:23:33 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -248,7 +248,7 @@ gimp_create_main_window (void)
 
   /*
    * thumbnail_w and thumbnail_h have now been adjusted to the actual
-   * thumbnail dimensions.  Now initialize a colour-adjusted version of
+   * thumbnail dimensions.  Now initialize a color-adjusted version of
    * the thumbnail...
    */
 
@@ -1964,7 +1964,7 @@ void
 gimp_update_adjusted_thumbnail (void)
 {
   gint      x, y;
-  stp_convert_t colourfunc;
+  stp_convert_t colorfunc;
   gushort   out[3 * THUMBNAIL_MAXW];
   guchar   *adjusted_data = adjusted_thumbnail_data;
   gfloat    old_density = stp_get_density(vars);
@@ -1975,12 +1975,12 @@ gimp_update_adjusted_thumbnail (void)
   stp_set_density(vars, 1.0);
 
   stp_compute_lut (256, vars);
-  colourfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
+  colorfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
 				 &adjusted_thumbnail_bpp, vars);
 
   for (y = 0; y < thumbnail_h; y++)
     {
-      (*colourfunc) (thumbnail_data + thumbnail_bpp * thumbnail_w * y,
+      (*colorfunc) (thumbnail_data + thumbnail_bpp * thumbnail_w * y,
 		     out, thumbnail_w, thumbnail_bpp, NULL, vars, NULL, NULL,
 		     NULL);
       for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.15 2001/03/24 01:42:12 rlk Exp $"
+ * "$Id: print-dither.c,v 1.15.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -520,7 +520,8 @@ static void
 exponential_scale_matrix(dither_matrix_t *mat, double exponent)
 {
   int i;
-  for (i = 0; i < mat->x_size * mat->y_size; i++)
+  int mat_size = mat->x_size * mat->y_size;
+  for (i = 0; i < mat_size; i++)
     {
       double dd = mat->matrix[i] / 65535.0;
       dd = pow(dd, exponent);
@@ -1663,28 +1664,26 @@ generate_black(dither_t *d,
 	       int *nonzero,
 	       int row)
 {
-  register unsigned short kk;
   register unsigned short *k = get_valueline(d, ECOLOR_K);
   register int lnonzero = 0;
-  register int x, xerror, xstep, xmod;
+  register int x;
 
   if (d->src_width == d->dst_width)
     {
-      for (x = d->dst_width; x > 0; x--)
+      for (x = d->dst_width; x; x--)
 	{
-	  kk = *k++ = 65535 - *gray++;
-	  lnonzero |= kk;
+	  lnonzero |= *k++ = ~*gray++;
 	}
     }
   else
     {
+      register int xerror, xstep, xmod;
       xstep  = d->src_width / d->dst_width;
       xmod   = d->src_width % d->dst_width;
       xerror = 0;
-      for (x = d->dst_width; x > 0; x--)
+      for (x = d->dst_width; x; x--)
 	{
-	  kk = *k++ = 65535 - gray[0];
-	  lnonzero |= kk;
+	  lnonzero |= *k++ = ~gray[0];
 	  gray += xstep;
 	  xerror += xmod;
 	  if (xerror >= d->dst_width)
@@ -1927,36 +1926,32 @@ generate_cmy(dither_t *d,
 	     int *nonzero,
 	     int row)
 {
-  register unsigned short cc, mm, yy;
+  register int x;
   register unsigned short *c = get_valueline(d, ECOLOR_C);
   register unsigned short *m = get_valueline(d, ECOLOR_M);
   register unsigned short *y = get_valueline(d, ECOLOR_Y);
   register int lnonzero = 0;
-  register int x, xerror, xstep, xmod;
 
   if (d->src_width == d->dst_width)
     {
-      for (x = d->dst_width; x > 0; x--)
+      for (x = d->dst_width; x; x--)
 	{
-	  cc = *c++ = 65535 - *rgb++;
-	  mm = *m++ = 65535 - *rgb++;
-	  yy = *y++ = 65535 - *rgb++;
-
-	  lnonzero |= cc || mm || yy;
+	  lnonzero |= *c++ = ~*rgb++;
+	  lnonzero |= *m++ = ~*rgb++;
+	  lnonzero |= *y++ = ~*rgb++;
 	}
     }
   else
     {
+      register int xerror, xstep, xmod;
       xstep  = 3 * (d->src_width / d->dst_width);
       xmod   = d->src_width % d->dst_width;
       xerror = 0;
-      for (x = d->dst_width; x > 0; x--)
+      for (x = d->dst_width; x; x--)
 	{
-	  cc = *c++ = 65535 - rgb[0];
-	  mm = *m++ = 65535 - rgb[1];
-	  yy = *y++ = 65535 - rgb[2];
-
-	  lnonzero |= cc || mm || yy;
+	  lnonzero |= *c++ = ~rgb[0];
+	  lnonzero |= *m++ = ~rgb[1];
+	  lnonzero |= *y++ = ~rgb[2];
 
 	  rgb += xstep;
 	  xerror += xmod;

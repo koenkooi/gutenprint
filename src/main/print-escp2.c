@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.42 2001/03/26 13:37:57 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.42.2.1 2001/03/31 03:23:34 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2748,6 +2748,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
     colormode = COLOR_CCMMYK;
   else
     colormode = COLOR_CMYK;
+  stp_set_color_model(nv, COLOR_MODEL_CMY);
 
  /*
   * Setup a read-only pixel region for the entire image...
