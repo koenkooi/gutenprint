@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.84 2000/09/05 21:35:53 sharkey Exp $"
+ * "$Id: print-canon.c,v 1.85 2000/09/07 20:03:23 cpbs Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -871,8 +871,6 @@ canon_print(const printer_t *printer,		/* I - Model */
 
   if (printhead == 0 || caps.inks == CANON_INK_K)
     output_type = OUTPUT_GRAY;
-  else if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
-    output_type = OUTPUT_GRAY_COLOR;
 
   /*
    * Choose the correct color conversion function...

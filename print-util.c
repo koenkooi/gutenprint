@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.134 2000/09/06 23:48:45 rlk Exp $"
+ * "$Id: print-util.c,v 1.135 2000/09/07 20:03:24 cpbs Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1672,6 +1672,13 @@ choose_colorfunc(int output_type,
 	  else
 	    return fast_rgb_to_rgb;
 	}
+      else if (cmap == NULL)
+        {
+          if (v->image_type == IMAGE_CONTINUOUS)
+	    return gray_to_rgb;
+          else
+	    return fast_gray_to_rgb;
+        }
       else
 	{
 	  if (v->image_type == IMAGE_CONTINUOUS)
@@ -1679,14 +1686,6 @@ choose_colorfunc(int output_type,
 	  else
 	    return fast_indexed_to_rgb;
 	}
-    }
-  else if (output_type == OUTPUT_GRAY_COLOR)
-    {
-      *out_bpp = 3;
-      if (v->image_type == IMAGE_CONTINUOUS)
-	return gray_to_rgb;
-      else
-	return fast_gray_to_rgb;
     }
   else
     {

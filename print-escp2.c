@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.243 2000/09/06 23:48:45 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.244 2000/09/07 20:03:23 cpbs Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1825,9 +1825,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
  /*
   * Choose the correct color conversion function...
   */
-
-  if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
-    output_type = OUTPUT_GRAY_COLOR;	/* Force grayscale output */
 
   colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
 

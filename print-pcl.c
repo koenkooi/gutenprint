@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.77 2000/09/05 10:55:12 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.78 2000/09/07 20:03:24 cpbs Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1345,8 +1345,6 @@ pcl_print(const printer_t *printer,		/* I - Model */
 
   if (caps.color_type == PCL_COLOR_NONE)
     output_type = OUTPUT_GRAY;
-  else if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
-    output_type = OUTPUT_GRAY_COLOR;		/* Force grayscale output */
 
   colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
 

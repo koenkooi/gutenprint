@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.41 2000/09/02 23:35:25 rlk Exp $"
+ * "$Id: print-ps.c,v 1.42 2000/09/07 20:03:24 cpbs Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -290,9 +290,6 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
  /*
   * Choose the correct color conversion function...
   */
-
-  if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
-    output_type = OUTPUT_GRAY_COLOR;		/* Force grayscale output */
 
   colorfunc = choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
 
