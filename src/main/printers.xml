@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.42 2001/11/22 12:39:18 rlk Exp $"
+# "$Id: printers.xml,v 1.43 2002/02/23 00:36:31 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -1093,3 +1093,12 @@
 <language value=lexmark>
 </printer>
 
+<printer name="LEXMARK Z53" driver="lexmark-z53">
+<color>
+<model value=10052>
+<gamma value=0.5>
+<density value=2.0>
+<magenta value=0.95>
+<yellow value=1.0>
+<language value=lexmark>
+</printer>
