@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.39 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: curve.c,v 1.40 2003/10/11 21:25:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -340,11 +340,8 @@ curve_dtor(stp_curve_t curve)
 void
 stp_curve_free(stp_curve_t curve)
 {
-  if (curve)
-    {
-      curve_dtor(curve);
-      stpi_free(curve);
-    }
+  curve_dtor(curve);
+  stpi_free(curve);
 }
 
 void
