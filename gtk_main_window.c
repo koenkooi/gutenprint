@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.15 2000/06/04 15:38:10 cpbs Exp $"
+ * "$Id: gtk_main_window.c,v 1.16 2000/06/04 15:39:58 cpbs Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -714,7 +714,7 @@ void gtk_create_main_window(void)
     scaling_entry = entry = gtk_entry_new();
     sprintf(s, "%.1f", fabs(vars.scaling));
     gtk_entry_set_text(GTK_ENTRY(entry), s);
-    gtk_signal_connect(GTK_OBJECT(entry), "changed",
+    gtk_signal_connect(GTK_OBJECT(entry), "activate",
 		       (GtkSignalFunc)gtk_scaling_callback, NULL);
     gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
     gtk_widget_set_usize(entry, 60, 0);
