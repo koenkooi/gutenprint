@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.4 2003/01/18 00:42:49 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.5 2003/01/18 02:50:34 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1622,10 +1622,9 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 
       out_channels = adjust_print_quality(&init, image);
       stp_dither_init(nv, image, out_width, xdpi, ydpi);
-      setup_inks(&init);
       channels_in_use = setup_ink_types(ink_type, &privdata, cols, head_offset,
 					nv, channel_limit, length * bits);
-
+      setup_inks(&init);
 
       out = stp_malloc(stp_image_width(image) * out_channels * 2);
 
@@ -1661,7 +1660,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	    }
 	  QUANT(1);
 
-	  stp_dither(v, y, out, duplicate_line, zero_mask);
+	  stp_dither(nv, y, out, duplicate_line, zero_mask);
 	  QUANT(2);
 
 	  stp_write_weave(weave, length, ydpi, model, out_width, left,

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115.2.3 2003/01/18 00:42:48 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.4 2003/01/18 02:50:34 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -503,6 +503,7 @@ stp_set_dither_function(stp_vars_t v, int image_bpp)
 	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
 	}
       break;
+    case OUTPUT_COLOR:
     case OUTPUT_RAW_CMYK:
       d->n_channels = 4;
       d->n_input_channels = 4;
@@ -557,6 +558,8 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   for (i = 0; i < d->n_channels; i++)
     {
       stp_dither_set_ranges(v, i, 1, &r, 1.0);
+      PHYSICAL_CHANNEL(d, i).shades = NULL;
+      PHYSICAL_CHANNEL(d, i).numshades = 0;
       /* stp_dither_set_shades(v, i, 1, &shade, 1.0); */
       PHYSICAL_CHANNEL(d, i).errs = stp_zalloc(d->error_rows * sizeof(int *));
     }
@@ -582,7 +585,7 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 	stp_dither_set_iterated_matrix
 	  (v, 2, stp_get_int_parameter(v, "DitherVeryFastSteps"), sq2, 0, 2,4);
       else
-	stp_dither_set_iterated_matrix(d, 2, DITHER_FAST_STEPS, sq2, 0, 2, 4);
+	stp_dither_set_iterated_matrix(v, 2, DITHER_FAST_STEPS, sq2, 0, 2, 4);
     }
   else if (stp_check_curve_parameter(v, "DitherMatrix") &&
 	   (stp_dither_matrix_validate_curve
@@ -688,7 +691,7 @@ stp_dither_set_matrix(stp_vars_t v, const stp_dither_matrix_t *matrix,
   dither_t *d = (dither_t *) stp_get_dither_data(v);
   int x = transposed ? matrix->y : matrix->x;
   int y = transposed ? matrix->x : matrix->y;
-  preinit_matrix(d);
+  preinit_matrix(v);
   if (matrix->bytes == 2)
     stp_dither_matrix_init_short(&(d->dither_matrix), x, y,
 				 (const unsigned short *) matrix->data,
@@ -907,7 +910,6 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
 			      const stp_dither_range_simple_t *ranges,
 			      double density)
 {
-  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -984,7 +986,7 @@ stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
       s->ranges[i].range_span = s->ink_list[i+1].range - s->ink_list[i].range;
       s->ranges[i].value_span = s->ink_list[i+1].value - s->ink_list[i].value;
     }
-  stp_dither_finalize_ranges(d, s);
+  stp_dither_finalize_ranges(v, s);
 }
 
 static void
@@ -993,7 +995,6 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
 				   const stp_dither_range_full_t *ranges,
 				   double density)
 {
-  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i, j, k;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -1048,7 +1049,7 @@ stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
     s->ranges[j].upper->range - s->ranges[j].lower->range;
   s->ranges[j].value_span = 0;
   s->nlevels = j+1;
-  stp_dither_finalize_ranges(d, s);
+  stp_dither_finalize_ranges(v, s);
 }
 
 void
@@ -1188,7 +1189,6 @@ stp_dither_free(stp_vars_t v)
   for (i = 0; i < dt->channel_count; i++)
     stp_free(dt->c[i].c);
   stp_free(dt->c);
-  stp_free(dt);
   stp_free(d);
 }
 

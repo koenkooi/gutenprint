@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101.2.3 2003/01/18 00:20:23 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.4 2003/01/18 02:50:34 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2354,23 +2354,23 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
       if (inks->c)
-	stp_dither_set_ranges(v, ECOLOR_C, inks->c->count, inks->c->range,
+	stp_dither_set_ranges(nv, ECOLOR_C, inks->c->count, inks->c->range,
 			      inks->c->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->m)
-	stp_dither_set_ranges(v, ECOLOR_M, inks->m->count, inks->m->range,
+	stp_dither_set_ranges(nv, ECOLOR_M, inks->m->count, inks->m->range,
 			      inks->m->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->y)
-	stp_dither_set_ranges(v, ECOLOR_Y, inks->y->count, inks->y->range,
+	stp_dither_set_ranges(nv, ECOLOR_Y, inks->y->count, inks->y->range,
 			      inks->y->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->k)
-	stp_dither_set_ranges(v, ECOLOR_K, inks->k->count, inks->k->range,
+	stp_dither_set_ranges(nv, ECOLOR_K, inks->k->count, inks->k->range,
 			      inks->k->density *
 			      stp_get_float_parameter(nv, "Density"));
     }
-  stp_dither_set_density(v, stp_get_float_parameter(nv, "Density"));
+  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;
@@ -2407,12 +2407,12 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 
   out = stp_zalloc(image_width * out_channels * 2);
 
-  stp_dither_add_channel(v, black, ECOLOR_K, 0);
-  stp_dither_add_channel(v, cyan, ECOLOR_C, 0);
-  stp_dither_add_channel(v, lcyan, ECOLOR_C, 1);
-  stp_dither_add_channel(v, magenta, ECOLOR_M, 0);
-  stp_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
-  stp_dither_add_channel(v, yellow, ECOLOR_Y, 0);
+  stp_dither_add_channel(nv, black, ECOLOR_K, 0);
+  stp_dither_add_channel(nv, cyan, ECOLOR_C, 0);
+  stp_dither_add_channel(nv, lcyan, ECOLOR_C, 1);
+  stp_dither_add_channel(nv, magenta, ECOLOR_M, 0);
+  stp_dither_add_channel(nv, lmagenta, ECOLOR_M, 1);
+  stp_dither_add_channel(nv, yellow, ECOLOR_Y, 0);
 
   for (y = 0; y < out_height; y ++)
   {
