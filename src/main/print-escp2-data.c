@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.43 2002/07/17 01:24:50 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.44 2002/07/17 01:27:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3470,7 +3470,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   {
     (MODEL_INIT_NEW | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_4 |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_YES |
-     MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
+     MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
      MODEL_VACUUM_NO | MODEL_MICROWEAVE_EXCEPTION_NORMAL |
      MODEL_DEINITIALIZE_JE_NO),
     96, 1, 2, 96, 1, 2,
