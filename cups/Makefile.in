@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.17 2000/10/12 01:54:37 easysw Exp $"
+# "$Id: Makefile.in,v 1.17.2.1 2000/11/26 17:57:42 rlk Exp $"
 #
 #   Makefile for the CUPS drivers.
 #
@@ -112,8 +112,8 @@ install:	all
 	$(SILENT) if test ! -d $(bindir); then \
 		$(MKDIR) $(bindir); \
 	fi
-	$(SILENT) $(CP) calibrate $(bindir)
-	$(SILENT) $(CHMOD) a+rx $(bindir)/calibrate
+	$(SILENT) $(CP) calibrate $(bindir)/cups-calibrate
+	$(SILENT) $(CHMOD) a+rx $(bindir)/cups-calibrate
 	$(SILENT) if test ! -d $(datadir)/cups; then \
 		$(MKDIR) $(datadir)/cups; \
 	fi
@@ -225,5 +225,5 @@ rastertoprinter.o:	cups-print.h cups-quickmatrix257.h cups-ran.367.179.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.17 2000/10/12 01:54:37 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.17.2.1 2000/11/26 17:57:42 rlk Exp $".
 #
