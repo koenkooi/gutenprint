@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.32 2002/11/28 05:37:19 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.33 2002/11/28 05:39:13 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -109,7 +109,6 @@ extern int add_printer(const gp_plist_t *key, int add_only);
 extern void initialize_printer(gp_plist_t *printer);
 extern void update_adjusted_thumbnail (void);
 extern void plist_build_combo         (GtkWidget     *combo,
-				       GtkWidget     *label,
 				       stp_string_list_t items,
 				       const gchar   *cur_item,
 				       const gchar	  *def_value,
@@ -129,10 +128,10 @@ extern void set_color_sliders_active(int active);
 extern void writefunc (void *file, const char *buf, size_t bytes);
 extern void set_adjustment_tooltip(GtkObject *adjustment, const gchar *tip);
 extern void set_help_data(GtkWidget *widget, const gchar *tooltip);
-extern GtkWidget *table_attach_aligned(GtkTable *table, gint column, gint row,
-				       const gchar *label_text, gfloat xalign,
-				       gfloat yalign, GtkWidget *widget,
-				       gint colspan, gboolean left_align);
+extern void table_attach_aligned(GtkTable *table, gint column, gint row,
+				 const gchar *label_text, gfloat xalign,
+				 gfloat yalign, GtkWidget *widget,
+				 gint colspan, gboolean left_align);
 extern gint compute_orientation(void);
 extern void set_image_dimensions(gint width, gint height);
 extern void set_image_resolution(gdouble xres, gdouble yres);
