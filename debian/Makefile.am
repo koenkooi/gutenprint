@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.1 2002/09/21 14:59:52 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2002/10/03 01:46:30 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ MAINT_CHARSET = latin1
 EXTRA_DIST = \
 	changelog \
 	compat \
-	config \
 	control \
 	control.in \
 	copyright \
