@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.1 2001/08/10 02:21:34 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.1 2001/08/12 15:40:41 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/08/12 15:40:41 rlk Exp $
+## $Id: Makefile.am,v 1.1 2001/08/12 15:40:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,24 +27,38 @@ MAINT_CHARSET = latin1
 ## Variables
 
 AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
+INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
+LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
+
+## Programs
+TESTPATTERN_BIN = testpattern
+
+bin_PROGRAMS = @TESTPATTERN_BIN@
+
+EXTRA_PROGRAMS = testpattern
 
 LFLAGS = -i
 YFLAGS = -d
 
+testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
+testpattern_LDADD = $(LIBGIMPPRINT_LIBS)
+testpattern_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
-## Programs
+testpatternl.o: testpatterny.o
+testpattern.o: testpatterny.o
 
-noinst_PROGRAMS = printdef
-printdef_SOURCES = printdefl.l printdefy.y printdef.h
+$(LIBGIMPPRINT_LIBS):
+	$(MAKE) -C ../main
 
-printdefl.o: printdefy.o
-printdef.o: printdefy.o
+SAMPLE_IMAGES = testpattern.sample
 
+pkgdatadir = $(datadir)/$(PACKAGE)/samples
+
+pkgdata_DATA = @SAMPLE_IMAGES@
 
 ## Clean
 
-DISTCLEANFILES = printdefl.c printdefy.c printdefy.h
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = printdefy.h
+DISTCLEANFILES = testpatternl.c testpatterny.c testpatterny.h
+EXTRA_DIST =  testpatterny.h testpattern.sample
