@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.24 2004/03/24 02:37:40 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.25 2004/03/24 03:07:21 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -132,6 +132,45 @@ static const channel_param_t channel_params[] =
 
 static const int channel_param_count =
 sizeof(channel_params) / sizeof(channel_param_t);
+
+static const channel_param_t raw_channel_params[] =
+{
+  { 0,  "GammaCh0",  "CurveCh0"  },
+  { 1,  "GammaCh1",  "CurveCh1"  },
+  { 2,  "GammaCh2",  "CurveCh2"  },
+  { 3,  "GammaCh3",  "CurveCh3"  },
+  { 4,  "GammaCh4",  "CurveCh4"  },
+  { 5,  "GammaCh5",  "CurveCh5"  },
+  { 6,  "GammaCh6",  "CurveCh6"  },
+  { 7,  "GammaCh7",  "CurveCh7"  },
+  { 8,  "GammaCh8",  "CurveCh8"  },
+  { 9,  "GammaCh9",  "CurveCh9"  },
+  { 10, "GammaCh10", "CurveCh10" },
+  { 11, "GammaCh11", "CurveCh11" },
+  { 12, "GammaCh12", "CurveCh12" },
+  { 13, "GammaCh13", "CurveCh13" },
+  { 14, "GammaCh14", "CurveCh14" },
+  { 15, "GammaCh15", "CurveCh15" },
+  { 16, "GammaCh16", "CurveCh16" },
+  { 17, "GammaCh17", "CurveCh17" },
+  { 18, "GammaCh18", "CurveCh18" },
+  { 19, "GammaCh19", "CurveCh19" },
+  { 20, "GammaCh20", "CurveCh20" },
+  { 21, "GammaCh21", "CurveCh21" },
+  { 22, "GammaCh22", "CurveCh22" },
+  { 23, "GammaCh23", "CurveCh23" },
+  { 24, "GammaCh24", "CurveCh24" },
+  { 25, "GammaCh25", "CurveCh25" },
+  { 26, "GammaCh26", "CurveCh26" },
+  { 27, "GammaCh27", "CurveCh27" },
+  { 28, "GammaCh28", "CurveCh28" },
+  { 29, "GammaCh29", "CurveCh29" },
+  { 30, "GammaCh30", "CurveCh30" },
+  { 31, "GammaCh31", "CurveCh31" },
+};
+
+static const int raw_channel_param_count =
+sizeof(raw_channel_params) / sizeof(channel_param_t);
 
 
 #define CMASK_NONE   (0)
@@ -1166,7 +1205,7 @@ cache_set_curve(cached_curve_t *cache, stp_curve_t curve)
 }
 
 static void
-cache_set_curve_copy(cached_curve_t *cache, stp_curve_t curve)
+cache_set_curve_copy(cached_curve_t *cache, stp_const_curve_t curve)
 {
   cache_curve_invalidate(cache);
   cache->curve = stp_curve_create_copy(curve);
@@ -3237,6 +3276,25 @@ compute_one_lut(lut_t *lut, int i)
 }
 
 static void
+setup_channel(stp_vars_t v, int i, const channel_param_t *p)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  if (stp_check_float_parameter(v, p->gamma_name, STP_PARAMETER_DEFAULTED))
+    lut->gamma_values[i] = stp_get_float_parameter(v, p->gamma_name);
+
+  if (stp_get_curve_parameter_active(v, p->curve_name)>=
+      stp_get_float_parameter_active(v, p->gamma_name))
+    cache_set_curve_copy(&(lut->channel_curves[i]),
+			 stp_get_curve_parameter(v, p->curve_name));
+  else
+    cache_set_curve_copy(&(lut->channel_curves[i]), color_curve_bounds);
+
+  stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n", p->gamma_name,lut->gamma_values[i]);
+  compute_one_lut(lut, i);
+}
+  
+
+static void
 stpi_compute_lut(stp_vars_t v)
 {
   int i;
@@ -3295,28 +3353,11 @@ stpi_compute_lut(stp_vars_t v)
 
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      if (i < channel_param_count &&
-	  lut->output_color_description->channels & (1 << i))
-	{
-	  if (stp_check_float_parameter(v, channel_params[i].gamma_name,
-					STP_PARAMETER_DEFAULTED))
-	    lut->gamma_values[i] =
-	      stp_get_float_parameter(v, channel_params[i].gamma_name);
-
-	  if (stp_get_curve_parameter_active(v, channel_params[i].curve_name)>=
-	      stp_get_float_parameter_active(v, channel_params[i].gamma_name))
-	    cache_set_curve
-	      (&(lut->channel_curves[i]),
-	       stp_curve_create_copy(stp_get_curve_parameter
-				     (v, channel_params[i].curve_name)));
-	  else
-	    cache_set_curve(&(lut->channel_curves[i]),
-			    stp_curve_create_copy(color_curve_bounds));
-
-	  stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n",
-		       channel_params[i].gamma_name, lut->gamma_values[i]);
-	  compute_one_lut(lut, i);
-	}
+      if (lut->output_color_description->channel_count < 1)
+	setup_channel(v, i, &(raw_channel_params[i]));
+      else if (i < channel_param_count &&
+	       lut->output_color_description->channels & (1 << i))
+	setup_channel(v, i, &(channel_params[i]));
     }
   if (!(lut->input_color_description->channels & CMASK_K) &&
       (lut->output_color_description->channels & CMASK_K))
