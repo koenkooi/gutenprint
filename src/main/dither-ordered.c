@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.6 2003/05/10 01:50:38 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7 2003/05/10 03:18:38 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -259,7 +259,7 @@ stpi_dither_raw_cmyk_ordered(stp_vars_t v,
       CHANNEL(d, ECOLOR_C).v = cmyk[0];
       CHANNEL(d, ECOLOR_M).v = cmyk[1];
       CHANNEL(d, ECOLOR_Y).v = cmyk[2];
-      extra_k = compute_black(d) + CHANNEL(d, ECOLOR_K).v;
+      extra_k = CHANNEL(d, ECOLOR_K).v;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
 	  CHANNEL(d, i).o = CHANNEL(d, i).v;
