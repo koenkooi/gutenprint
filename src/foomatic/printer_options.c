@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.11 2002/11/01 01:30:30 rlk Exp $"
+ * "$Id: printer_options.c,v 1.12 2002/11/01 03:18:44 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -76,12 +76,14 @@ main(int argc, char **argv)
 		      stp_set_resolution(pv, retval[j].name);
 		      stp_printer_describe_resolution(p, pv, &x, &y);
 		      if (x > 0 && y > 0)
-			printf("$stpdata{'%s'}{'%s'}{'%s'} = '%d';\n",
-			       stp_printer_get_driver(p), "x_resolution",
-			       retval[j].name, x);
-			printf("$stpdata{'%s'}{'%s'}{'%s'} = '%d';\n",
-			       stp_printer_get_driver(p), "y_resolution",
-			       retval[j].name, y);
+			{
+			  printf("$stpdata{'%s'}{'%s'}{'%s'} = '%d';\n",
+				 stp_printer_get_driver(p), "x_resolution",
+				 retval[j].name, x);
+			  printf("$stpdata{'%s'}{'%s'}{'%s'} = '%d';\n",
+				 stp_printer_get_driver(p), "y_resolution",
+				 retval[j].name, y);
+			}
 		    }
 		  free((void *)retval[j].name);
 		  free((void *)retval[j].text);
