@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/01/24 04:19:50 rlk Exp $
+## $Id: Makefile.am,v 1.6 2001/01/24 13:02:18 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ bin_PROGRAMS = @CUPS_BIN@
 
 noinst_PROGRAMS = @CUPS_NOINST_BIN@
 
-EXTRA_PROGRAMS = cups_calibrate commandtoepson epson genppd rastertoprinter commandtocanon canon
+EXTRA_PROGRAMS = cups-calibrate commandtoepson epson genppd rastertoprinter commandtocanon canon
 
 cups_calibrate_LDADD = -lm
 
@@ -113,7 +113,7 @@ EXTRA_DIST = \
 	COPYING \
 	README \
 	ChangeLog \
-	cups_calibrate.c \
+	cups-calibrate.c \
 	calibrate.ppm \
 	canon.c \
 	command.txt \
