@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.44 2001/09/08 17:13:48 rleigh Exp $"
+ * "$Id: print-pcl.c,v 1.45 2001/10/10 19:01:56 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2112,6 +2112,17 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     if (pcl_media_type == -1) {
       stp_deprintf(STP_DBG_PCL, "Unknown media type %s, set to PLAIN.\n", media_type);
       pcl_media_type = PCL_PAPERTYPE_PLAIN;
+    }
+
+/*
+ * The HP812C doesn't like glossy paper being selected when using 600x600
+ * C-RET (PhotoRET II). So we use Premium paper instead.
+ *
+ */
+
+    if (do_cretb && pcl_media_type == PCL_PAPERTYPE_GLOSSY) {
+      stp_deprintf(STP_DBG_PCL, "Media type GLOSSY, set to PREMIUM for PhotoRET II.\n");
+      pcl_media_type = PCL_PAPERTYPE_PREMIUM;
     }
   }
   else
