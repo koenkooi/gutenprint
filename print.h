@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.47 2000/03/17 03:02:01 rlk Exp $"
+ * "$Id: print.h,v 1.48 2000/03/23 03:30:53 smiller Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -35,6 +35,10 @@
  *
  * rlk 20000112
  */
+
+
+#ifndef PRINT_HEADER
+#define PRINT_HEADER
 
 /*
  * Include necessary header files...
@@ -296,6 +300,7 @@ const printer_t      *get_printer_by_long_name(const char *);
 const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
+#endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.47 2000/03/17 03:02:01 rlk Exp $".
+ * End of "$Id: print.h,v 1.48 2000/03/23 03:30:53 smiller Exp $".
  */
