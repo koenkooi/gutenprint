@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.90 2000/05/04 17:51:26 mitsch Exp $"
+ * "$Id: print.c,v 1.91 2000/05/05 14:43:29 gandy Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1031,7 +1031,8 @@ get_system_printers(void)
   {
     while (fgets(line, sizeof(line), pfile) != NULL)
     {
-      if (sscanf(line, "printer %s", name) == 1)
+      if ((sscanf(line, "printer %s", name) == 1) ||
+	  (sscanf(line, "Printer: %s", name) == 1))
       {
 	check_plist(plist_count + 1);
 	strcpy(plist[plist_count].name, name);
@@ -1148,5 +1149,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.90 2000/05/04 17:51:26 mitsch Exp $".
+ * End of "$Id: print.c,v 1.91 2000/05/05 14:43:29 gandy Exp $".
  */
