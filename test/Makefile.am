@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.28 2001/10/15 19:30:43 rleigh Exp $
+## $Id: Makefile.am,v 1.29 2001/10/19 16:34:54 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ $(LIBGIMPPRINT_LIBS):
 
 ## Rules
 
-run-weavetest: escp2-weavetest
+#run-weavetest: escp2-weavetest
 
 
 ## Clean
