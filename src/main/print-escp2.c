@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.307 2003/12/03 00:39:28 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308 2004/01/31 22:39:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -306,6 +306,30 @@ static const float_param_t float_parameters[] =
       N_("Adjust the black balance"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 0, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "RedDensity", N_("Red Balance"), N_("Output Level Adjustment"),
+      N_("Adjust the red balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 1, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "BlueDensity", N_("Blue Balance"), N_("Output Level Adjustment"),
+      N_("Adjust the blue balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 2, 1
+    }, 0.0, 2.0, 1.0, 1
+  },
+  {
+    {
+      "GlossDensity", N_("Gloss Balance"), N_("Output Level Adjustment"),
+      N_("Adjust the gloss balance"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED, 0, 1, 3, 1
     }, 0.0, 2.0, 1.0, 1
   },
   {
@@ -1355,6 +1379,12 @@ escp2_parameters(stp_const_vars_t v, const char *name,
     set_density_parameter(v, description, ECOLOR_Y);
   else if (strcmp(name, "BlackDensity") == 0)
     set_density_parameter(v, description, ECOLOR_K);
+  else if (strcmp(name, "RedDensity") == 0)
+    set_density_parameter(v, description, XCOLOR_R);
+  else if (strcmp(name, "BlueDensity") == 0)
+    set_density_parameter(v, description, XCOLOR_B);
+  else if (strcmp(name, "GlossDensity") == 0)
+    set_density_parameter(v, description, XCOLOR_GLOSS);
   else if (strcmp(name, "GrayTransition") == 0)
     set_gray_transition_parameter(v, description, 2);
   else if (strcmp(name, "Gray1Transition") == 0 ||

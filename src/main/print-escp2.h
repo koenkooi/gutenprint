@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.74 2003/12/02 01:44:14 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.75 2004/01/31 22:39:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -28,8 +28,12 @@
  * Maximum number of channels in a printer.  If Epson comes out with an
  * 8-head printer, this needs to be increased.
  */
-#define PHYSICAL_CHANNEL_LIMIT 7
+#define PHYSICAL_CHANNEL_LIMIT 8
 #define MAX_DROP_SIZES 3
+
+#define XCOLOR_R     (NCOLORS + 0)
+#define XCOLOR_B     (NCOLORS + 1)
+#define XCOLOR_GLOSS (NCOLORS + 2)
 
 /*
  * Printer capabilities.
@@ -186,7 +190,8 @@ typedef enum
   INKSET_CcMmYyK          = 2,
   INKSET_CcMmYKk          = 3,
   INKSET_QUADTONE         = 4,
-  INKSET_EXTENDED	  = 5
+  INKSET_CMYKRB		  = 5,
+  INKSET_EXTENDED	  = 6
 } inkset_id_t;
 
 typedef struct
@@ -545,6 +550,7 @@ extern const inkgroup_t stpi_escp2_ultrachrome_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo7_japan_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_ultrachrome_inkgroup;
+extern const inkgroup_t stpi_escp2_cmykrb_inkgroup;
 
 extern const escp2_inkname_t stpi_escp2_default_black_inkset;
 
@@ -668,5 +674,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.74 2003/12/02 01:44:14 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.75 2004/01/31 22:39:31 rlk Exp $".
  */
