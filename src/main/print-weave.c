@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.43 2002/10/28 00:52:17 rlk Exp $"
+ * "$Id: print-weave.c,v 1.44 2002/11/01 00:22:31 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1407,7 +1407,7 @@ find_first_and_last(const unsigned char *line, int length,
       if (line[i] == 0)
 	{
 	  if (!found_first)
-	    *first++;
+	    (*first)++;
 	}
       else
 	{
