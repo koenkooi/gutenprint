@@ -1,9 +1,9 @@
 /*
- * "$Id: pcl-unprint.c,v 1.15 2000/08/02 17:26:36 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.16 2000/09/17 18:55:18 davehill Exp $"
  *
- * pclunprint.c - convert an HP PCL file into an image file for viewing.
+ *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
- * Dave Hill <dave@minnie.demon.co.uk>
+ *   Copyright 2000 Dave Hill (dave@minnie.demon.co.uk)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -29,7 +29,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.15 2000/08/02 17:26:36 davehill Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.16 2000/09/17 18:55:18 davehill Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -800,6 +800,7 @@ int main(int argc, char *argv[])
     output_data.lmagenta_data_rows_per_row = 0;
     output_data.active_length = 0;
 
+    id = id;				/* Remove compiler warning */
     received_rows = NULL;
 
     if(argc == 1){
