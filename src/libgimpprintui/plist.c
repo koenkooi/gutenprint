@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.9 2003/01/09 03:06:23 rlk Exp $"
+ * "$Id: plist.c,v 1.10 2003/01/10 04:42:56 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -594,6 +594,9 @@ stpui_printrc_load_v1(FILE *fp)
 	    case STP_PARAMETER_TYPE_INT:
 	      stp_set_int_parameter(key.v, keyword, atoi(value));
 	      break;
+	    case STP_PARAMETER_TYPE_BOOLEAN:
+	      stp_set_int_parameter(key.v, keyword, atoi(value));
+	      break;
 	    case STP_PARAMETER_TYPE_CURVE:
 	      curve = stp_curve_allocate_read_string(value);
 	      if (curve)
@@ -743,6 +746,11 @@ stpui_printrc_save(void)
 		  if (stp_check_int_parameter(p->v, param->name))
 		    fprintf(fp, "%s: %d\n", param->name,
 			    stp_get_int_parameter(p->v, param->name));
+		  break;
+		case STP_PARAMETER_TYPE_BOOLEAN:
+		  if (stp_check_boolean_parameter(p->v, param->name))
+		    fprintf(fp, "%s: %d\n", param->name,
+			    stp_get_boolean_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_CURVE:
 		  if (stp_check_curve_parameter(p->v, param->name))
@@ -1191,5 +1199,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.9 2003/01/09 03:06:23 rlk Exp $".
+ * End of "$Id: plist.c,v 1.10 2003/01/10 04:42:56 rlk Exp $".
  */
