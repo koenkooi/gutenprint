@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.2.4 2001/02/23 02:52:08 rlk Exp $"
+ * "$Id: print-ps.c,v 1.5.2.5 2001/02/24 02:31:48 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -570,7 +570,7 @@ ps_hex(const stp_vars_t v,	/* I - File to print to */
        int    length)	/* I - Number of bytes to print */
 {
   int		col;	/* Current column */
-  static char	*hex = "0123456789ABCDEF";
+  const static char	*hex = "0123456789ABCDEF";
 
 
   col = 0;

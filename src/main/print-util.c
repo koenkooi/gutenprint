@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.6 2001/02/22 02:34:42 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.7 2001/02/24 02:31:48 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -42,16 +42,16 @@
 
 typedef struct					/* Plug-in variables */
 {
-  char	*output_to,		/* Name of file or command to print to */
+  const char	*output_to,	/* Name of file or command to print to */
 	*driver,		/* Name of printer "driver" */
-	*ppd_file;		/* PPD file */
-  int	output_type;		/* Color or grayscale output */
-  char	*resolution,		/* Resolution */
+	*ppd_file,		/* PPD file */
+        *resolution,		/* Resolution */
 	*media_size,		/* Media size */
 	*media_type,		/* Media type */
 	*media_source,		/* Media source */
 	*ink_type,		/* Ink or cartridge */
 	*dither_algorithm;	/* Dithering algorithm */
+  int	output_type;		/* Color or grayscale output */
   float	brightness;		/* Output brightness */
   float	scaling;		/* Scaling, percent of printable area */
   int	orientation,		/* Orientation - 0 = port., 1 = land.,
@@ -89,7 +89,7 @@ typedef struct stp_internal_printer
 
 typedef struct
 {
-  char *name;
+  const char *name;
   unsigned width;
   unsigned height;
   stp_papersize_unit_t paper_unit;
@@ -100,13 +100,13 @@ static stp_internal_vars_t default_vars =
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),	       	/* Name of printer "driver" */
 	"",			/* Name of PPD file */
-	OUTPUT_COLOR,		/* Color or grayscale output */
 	"",			/* Output resolution */
 	"",			/* Size of output media */
 	"",			/* Type of output media */
 	"",			/* Source of output media */
 	"",			/* Ink type */
 	"",			/* Dither algorithm */
+	OUTPUT_COLOR,		/* Color or grayscale output */
 	1.0,			/* Output brightness */
 	100.0,			/* Scaling (100% means entire printable area, */
 				/*          -XXX means scale by PPI) */
@@ -132,13 +132,13 @@ static stp_internal_vars_t min_vars =
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),			/* Name of printer "driver" */
 	"",			/* Name of PPD file */
-	OUTPUT_COLOR,		/* Color or grayscale output */
 	"",			/* Output resolution */
 	"",			/* Size of output media */
 	"",			/* Type of output media */
 	"",			/* Source of output media */
 	"",			/* Ink type */
 	"",			/* Dither algorithm */
+	0,			/* Color or grayscale output */
 	0,			/* Output brightness */
 	5.0,			/* Scaling (100% means entire printable area, */
 				/*          -XXX means scale by PPI) */
@@ -152,7 +152,7 @@ static stp_internal_vars_t min_vars =
 	0,			/* Yellow */
 	0,			/* Output saturation */
 	.1,			/* Density */
-	IMAGE_CONTINUOUS,	/* Image type */
+	0,			/* Image type */
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
@@ -164,13 +164,13 @@ static stp_internal_vars_t max_vars =
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),			/* Name of printer "driver" */
 	"",			/* Name of PPD file */
-	OUTPUT_COLOR,		/* Color or grayscale output */
 	"",			/* Output resolution */
 	"",			/* Size of output media */
 	"",			/* Type of output media */
 	"",			/* Source of output media */
 	"",			/* Ink type */
 	"",			/* Dither algorithm */
+	1,			/* Color or grayscale output */
 	2.0,			/* Output brightness */
 	100.0,			/* Scaling (100% means entire printable area, */
 				/*          -XXX means scale by PPI) */
@@ -184,8 +184,8 @@ static stp_internal_vars_t max_vars =
 	4.0,			/* Yellow */
 	9.0,			/* Output saturation */
 	2.0,			/* Density */
-	IMAGE_CONTINUOUS,	/* Image type */
-	0,			/* Unit 0=Inch */
+	NIMAGE_TYPES - 1,	/* Image type */
+	1,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0			/* Page height */
@@ -204,7 +204,7 @@ stp_allocate_vars()
 do						\
 {						\
   if ((x))					\
-    free((x));					\
+    free((char *)(x));				\
   ((x)) = NULL;					\
 } while (0)
 
@@ -238,10 +238,9 @@ c_strndup(const char *s, int n)
     }
   else
     {
-      if (n > strlen(s))
-	n = strlen(s);
       ret = xmalloc(n + 1);
       strncpy(ret, s, n);
+      ret[n] = 0;
       return ret;
     }
 }
@@ -266,11 +265,9 @@ void							\
 stp_set_##s(stp_vars_t vv, const char *val)		\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
-  if (v->s)						\
-    {							\
-      free(v->s);					\
-      v->s = NULL;					\
-    }							\
+  if (v->s == val)					\
+    return;						\
+  SAFE_FREE(v->s);					\
   v->s = c_strdup(val);					\
 }							\
 							\
@@ -278,11 +275,9 @@ void							\
 stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
-  if (v->s)						\
-    {							\
-      free(v->s);					\
-      v->s = NULL;					\
-    }							\
+  if (v->s == val)					\
+    return;						\
+  SAFE_FREE(v->s);					\
   v->s = c_strndup(val, n);				\
 }							\
 							\
@@ -766,7 +761,7 @@ stp_get_printer_by_index(int idx)
 {
   if (idx < 0 || idx >= printer_count)
     return NULL;
-  return (stp_printer_t) &(printers[idx]);
+  return (const stp_printer_t) &(printers[idx]);
 }
 
 const stp_printer_t 
@@ -777,7 +772,7 @@ stp_get_printer_by_long_name(const char *long_name)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->long_name, long_name))
-	return (stp_printer_t) val;
+	return (const stp_printer_t) val;
       val++;
     }
   return NULL;
@@ -791,7 +786,7 @@ stp_get_printer_by_driver(const char *driver)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->driver, driver))
-	return (stp_printer_t) val;
+	return (const stp_printer_t) val;
       val++;
     }
   return NULL;

@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.1.2.2 2001/02/20 04:41:32 rlk Exp $"
+ * "$Id: printdefy.y,v 1.1.2.3 2001/02/24 02:31:48 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -74,13 +74,13 @@ output_the_printer(void)
   printf("      \"\",\n");	/* output_to */
   printf("      \"\",\n");	/* driver */
   printf("      \"\",\n");	/* ppd_file */
-  printf("      %d,\n", thePrinter.printvars.output_type);
   printf("      \"\",\n");	/* resolution */
   printf("      \"\",\n");	/* media_size */
   printf("      \"\",\n");	/* media_type */
   printf("      \"\",\n");	/* media_source */
   printf("      \"\",\n");	/* ink_type */
   printf("      \"\",\n");	/* dither_algorithm */
+  printf("      %d,\n", thePrinter.printvars.output_type);
   printf("      %.3f,\n", thePrinter.printvars.brightness);
   printf("      1.0,\n");	/* scaling */
   printf("      -1,\n");	/* orientation */

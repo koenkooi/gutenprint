@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.h,v 1.3.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: printdef.h,v 1.3.2.2 2001/02/24 02:31:48 rlk Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -41,14 +41,14 @@ typedef struct					/* Plug-in variables */
 {
   char	output_to[256],		/* Name of file or command to print to */
 	driver[64],		/* Name of printer "driver" */
-	ppd_file[256];		/* PPD file */
-  int	output_type;		/* Color or grayscale output */
-  char	resolution[64],		/* Resolution */
+	ppd_file[256],		/* PPD file */
+	resolution[64],		/* Resolution */
 	media_size[64],		/* Media size */
 	media_type[64],		/* Media type */
 	media_source[64],	/* Media source */
 	ink_type[64],		/* Ink or cartridge */
 	dither_algorithm[64];	/* Dithering algorithm */
+  int	output_type;		/* Color or grayscale output */
   float	brightness;		/* Output brightness */
   float	scaling;		/* Scaling, percent of printable area */
   int	orientation,		/* Orientation - 0 = port., 1 = land.,
