@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.21 2004/05/07 19:20:30 rleigh Exp $"
+ * "$Id: escp2-driver.c,v 1.22 2004/08/19 03:24:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -167,6 +167,11 @@ print_debug_params(stp_vars_t *v)
 	  if (stp_check_int_parameter(v, p->name, STP_PARAMETER_DEFAULTED))
 	    print_remote_int_param(v, p->name,
 				   stp_get_int_parameter(v, p->name));
+	  break;
+	case STP_PARAMETER_TYPE_DIMENSION:
+	  if (stp_check_dimension_parameter(v, p->name, STP_PARAMETER_DEFAULTED))
+	    print_remote_int_param(v, p->name,
+				   stp_get_dimension_parameter(v, p->name));
 	  break;
 	case STP_PARAMETER_TYPE_BOOLEAN:
 	  if (stp_check_boolean_parameter(v, p->name, STP_PARAMETER_DEFAULTED))

@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.9 2004/06/07 01:41:06 rlk Exp $"
+ * "$Id: printrcl.l,v 1.10 2004/08/19 03:24:35 rlk Exp $"
  *
  *   printrc parser
  *
@@ -67,7 +67,7 @@ integer		[-+]?{digit}+
 float		[-+]?{digit}+(\.{digit}+)?([eE][-+]?{digit}+)?
 string         ([\"][^\"\n]*[\"])|([\'][^\']*[\'])
 ws		[ \t]+
-printrc_hdr	#PRINTRCv[23].*\n
+printrc_hdr	#PRINTRCv[234].*\n
 word		[a-zA-Z][a-zA-Z0-9_]*
 
 %%
@@ -100,6 +100,7 @@ Int			DBG(pINT); return pINT;
 String			DBG(pSTRING_LIST); return pSTRING_LIST;
 File			DBG(pFILE); return pFILE;
 Double			DBG(pDOUBLE); return pDOUBLE;
+Dimension		DBG(pDIMENSION); return pDIMENSION;
 Boolean			DBG(pBOOLEAN); return pBOOLEAN;
 Curve			DBG(pCURVE); return pCURVE;
 
