@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/04/01 19:29:20 rlk Exp $
+## $Id: Makefile.am,v 1.4 2001/08/03 22:26:17 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,9 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = include printdef main cups escputil foomatic ghost gimp
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
+NONGIMP_SUBDIRS = cups escputil foomatic ghost
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
+SUBDIRS = include printdef main gimp $(NONGIMP_SUBDIRS)
 
 MAINTAINERCLEANFILES = Makefile.in
