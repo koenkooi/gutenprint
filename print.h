@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.41 2000/03/06 01:32:05 rlk Exp $"
+ * "$Id: print.h,v 1.42 2000/03/11 17:30:15 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -67,6 +67,10 @@
 
 #define MAX_CARRIAGE_WIDTH	17
 
+#define IMAGE_LINE_ART		0
+#define IMAGE_SOLID_TONE	1
+#define IMAGE_CONTINUOUS	2
+
 #ifndef MIN
 #  define MIN(a,b)		((a) < (b) ? (a) : (b))
 #  define MAX(a,b)		((a) > (b) ? (a) : (b))
@@ -111,6 +115,7 @@ typedef struct					/* Plug-in variables */
   int	linear;			/* Linear density (mostly for testing!) */
   float	saturation;		/* Output saturation */
   float	density;		/* Maximum output density */
+  int	image_type;		/* Image type (line art etc.) */
   lut_t lut;			/* Look-up table */
 } vars_t;
 
@@ -187,6 +192,7 @@ extern void	dither_set_lm_levels(void *vd, int nlevels, double *levels);
 extern void	dither_set_y_levels(void *vd, int nlevels, double *levels);
 extern void	dither_set_ly_levels(void *vd, int nlevels, double *levels);
 extern void	dither_set_k_levels(void *vd, int nlevels, double *levels);
+extern void	dither_set_ink_spread(void *vd, int spread);
 
 extern void	scale_dither(void *vd, int scale);
 extern void	free_dither(void *);
@@ -288,5 +294,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.41 2000/03/06 01:32:05 rlk Exp $".
+ * End of "$Id: print.h,v 1.42 2000/03/11 17:30:15 rlk Exp $".
  */
