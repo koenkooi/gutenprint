@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.94 2000/09/17 17:07:38 rlk Exp $"
+ * "$Id: print-dither.c,v 1.95 2000/09/28 00:57:53 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -23,6 +23,11 @@
  * Revision History:
  *
  *   See ChangeLog
+ */
+
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.5 2000/09/27 23:19:31 rlk Exp $"
+ * "$Id: print-weave.c,v 1.6 2000/09/28 00:57:53 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -18,6 +18,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
 #include <stdio.h>

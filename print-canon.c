@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.87 2000/09/12 13:06:03 easysw Exp $"
+ * "$Id: print-canon.c,v 1.88 2000/09/28 00:57:52 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -19,6 +19,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
 

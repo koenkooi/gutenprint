@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.83 2000/09/27 20:25:25 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.84 2000/09/28 00:57:53 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -20,6 +20,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
 #include "print.h"

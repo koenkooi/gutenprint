@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.260 2000/09/23 01:53:40 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.261 2000/09/28 00:57:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -21,12 +21,13 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/*
+ * This file must include only standard C header files.  The core code must
+ * compile on generic platforms that don't support glib, gimp, gtk, etc.
+ */
+
 #ifndef WEAVETEST
 #include "print.h"
-#endif
-
-#ifdef DEBUG_SIGNAL
-#include <signal.h>
 #endif
 
 #ifndef __GNUC__
