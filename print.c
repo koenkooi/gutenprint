@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.20 1999/11/07 22:18:23 rlk Exp $"
+ * "$Id: print.c,v 1.21 1999/11/12 02:18:14 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -42,7 +42,6 @@
  *   See ChangeLog
  */
 
-#include "config.h"
 #include "print.h"
 
 #include <gtk/gtk.h>
@@ -58,8 +57,8 @@
 #include <os2.h>
 #endif
 
-#include "libgimp/gimpui.h"
-#include "libgimp/stdplugins-intl.h"
+#include <libgimp/gimpui.h>
+#include <libgimp/stdplugins-intl.h>
 
 /*
  * Constants for GUI...
@@ -3303,5 +3302,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.20 1999/11/07 22:18:23 rlk Exp $".
+ * End of "$Id: print.c,v 1.21 1999/11/12 02:18:14 rlk Exp $".
  */
