@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.102 2000/06/24 15:11:11 rlk Exp $"
+ * "$Id: print-util.c,v 1.103 2000/06/29 22:59:07 cpbs Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -830,7 +830,8 @@ get_papersize_by_name(const char *name)
 }
 
 void
-default_media_size(int  model,		/* I - Printer model */
+default_media_size(const printer_t *printer,
+					/* I - Printer model (not used) */
         	   char *ppd_file,	/* I - PPD file (not used) */
         	   char *media_size,	/* I - Media size */
         	   int  *width,		/* O - Width in points */
