@@ -157,7 +157,7 @@ typedef struct
   int upper; /*!< Upper bound. */
 } stp_int_bound_t;
 
-/** Parameter destription. */
+/** Parameter description. */
 typedef struct
 {
   const char *name;		 /*!< Internal name (key). */
@@ -1262,5 +1262,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.7 2004/04/11 17:52:44 rlk Exp $".
+ * End of "$Id: vars.h,v 1.8 2004/04/11 21:48:51 rleigh Exp $".
  */

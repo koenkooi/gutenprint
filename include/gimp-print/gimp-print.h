@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.38 2003/06/29 14:41:54 rleigh Exp $
+ *  $Id: gimp-print.h,v 1.39 2004/04/11 21:48:49 rleigh Exp $
  *
  *   Gimp-Print header file
  *
@@ -23,6 +23,12 @@
  * Revision History:
  *
  *   See ChangeLog
+ */
+
+/**
+ * @file gimp-print.h
+ * @brief Gimp-Print master header.
+ * This header includes all of the public headers.
  */
 
 /*
@@ -57,5 +63,5 @@ extern "C" {
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.38 2003/06/29 14:41:54 rleigh Exp $
+ * End of $Id: gimp-print.h,v 1.39 2004/04/11 21:48:49 rleigh Exp $
  */
