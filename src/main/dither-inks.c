@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.7 2003/05/22 01:15:38 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.8 2003/05/22 01:40:40 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -64,7 +64,7 @@ stpi_dither_get_channel(stp_vars_t v, unsigned channel, unsigned subchannel)
 }
 
 static void
-insert_channel(stpi_dither_t *d, int channel)
+insert_channel(stp_vars_t v, stpi_dither_t *d, int channel)
 {
   unsigned oc = d->channel_count;
   int i;
@@ -81,13 +81,22 @@ insert_channel(stpi_dither_t *d, int channel)
 }
 
 static void
-initialize_channel(stpi_dither_channel_t *channel)
+initialize_channel(stp_vars_t v, stpi_dither_channel_t *chan,
+		   int channel, int subchannel)
 {
-  memset(channel, 0, sizeof(stpi_dither_channel_t));
+  stpi_shade_t s;
+  stpi_dotsize_t d;
+  memset(chan, 0, sizeof(stpi_dither_channel_t));
+  s.dot_sizes = &d;
+  s.value = 65535.0;
+  s.numsizes = 1;
+  d.bit_pattern = 1;
+  d.value = 1.0;
+  stpi_dither_set_inks(v, channel, 1, &s, 1.0);
 }
 
 static void
-insert_subchannel(stpi_dither_t *d, int channel, int subchannel)
+insert_subchannel(stp_vars_t v, stpi_dither_t *d, int channel, int subchannel)
 {
   int i;
   unsigned oc = d->subchannel_count[channel];
@@ -117,7 +126,7 @@ insert_subchannel(stpi_dither_t *d, int channel, int subchannel)
     }
   d->channel = nc;
   for (i = 0; i < increment; i++)
-    initialize_channel(&(d->channel[old_place + i]));
+    initialize_channel(v, &(d->channel[old_place + i]), channel, subchannel);
   if (channel < d->channel_count - 1)
     {
       /* Now fix up the subchannel offsets */
@@ -134,9 +143,9 @@ stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   if (channel >= d->channel_count)
-    insert_channel(d, channel);
+    insert_channel(v, d, channel);
   if (subchannel > d->subchannel_count[channel])
-    insert_subchannel(d, channel, subchannel);
+    insert_subchannel(v, d, channel, subchannel);
   d->channel[d->channel_index[channel] + subchannel].base_ptr = data;
 }
 
@@ -288,7 +297,7 @@ stpi_dither_set_ranges(stp_vars_t v, stpi_dither_channel_t *s,
 
 void
 stpi_dither_set_inks_simple(stp_vars_t v, int color, int nlevels,
-			      const double *levels, double density)
+			    const double *levels, double density)
 {
   stpi_shade_t s;
   stpi_dotsize_t *d = stpi_malloc(nlevels * sizeof(stpi_dotsize_t));
