@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.130 2001/10/20 00:41:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.131 2001/10/21 21:06:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1933,6 +1933,7 @@ typedef struct escp2_printer
   int		black_nozzles;	/* Number of black nozzles (may be extra) */
   int		min_black_nozzles;	/* # of black nozzles (may be extra) */
   int		black_nozzle_separation; /* Separation between rows */
+/*****************************************************************************/
   int		xres;		/* Normal distance between dots in */
 				/* softweave mode (inverse inches) */
   int		enhanced_xres;	/* Distance between dots in highest */
