@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.49 2003/03/20 02:09:31 rlk Exp $"
+ * "$Id: print-weave.c,v 1.50 2003/04/09 02:59:55 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1506,11 +1506,11 @@ stpi_write_weave(void *        vsw,
 		unsigned char *const cols[])
 {
   stpi_softweave_t *sw = (stpi_softweave_t *) vsw;
-  stpi_lineoff_t *lineoffs[8];
-  stpi_lineactive_t *lineactives[8];
-  stpi_linecount_t *linecounts[8];
-  stpi_linebounds_t *linebounds[8];
-  const stpi_linebufs_t *bufs[8];
+  stpi_lineoff_t *lineoffs[MAX_WEAVE];
+  stpi_lineactive_t *lineactives[MAX_WEAVE];
+  stpi_linecount_t *linecounts[MAX_WEAVE];
+  stpi_linebounds_t *linebounds[MAX_WEAVE];
+  const stpi_linebufs_t *bufs[MAX_WEAVE];
   int xlength = (length + sw->horizontal_weave - 1) / sw->horizontal_weave;
   int ylength = xlength * sw->horizontal_weave;
   unsigned char *comp_ptr;

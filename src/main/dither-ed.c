@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.3 2003/01/20 22:19:10 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.4 2003/04/09 02:59:53 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -420,7 +420,7 @@ stpi_dither_raw_ed(stp_vars_t v,
 		  int duplicate_line,
 		  int zero_mask)
 {
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_dither_data(v);
+  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int		x,
     		length;
   unsigned char	bit;
@@ -478,7 +478,7 @@ stpi_dither_raw_cmyk_ed(stp_vars_t v,
 		       int duplicate_line,
 		       int zero_mask)
 {
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_dither_data(v);
+  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int		x,
     		length;
   unsigned char	bit;
@@ -543,7 +543,7 @@ stpi_dither_ed(stp_vars_t v,
 	      int duplicate_line,
 	      int zero_mask)
 {
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_dither_data(v);
+  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   if (d->dither_class != OUTPUT_RAW_CMYK ||
       d->n_ghost_channels > 0)
     stpi_dither_raw_ed(v, row, input, duplicate_line, zero_mask);

@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.13 2003/01/20 22:19:56 rlk Exp $"
+ * "$Id: vars.h,v 1.14 2003/04/09 02:59:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,40 +31,16 @@ extern "C" {
 
 #include <sys/types.h>
 
-typedef void *(*stpi_copy_data_func_t)(const stp_vars_t);
-typedef void (*stpi_destroy_data_func_t)(stp_vars_t);
+typedef void *(*stpi_copy_data_func_t)(void *);
+typedef void (*stpi_free_data_func_t)(void *);
 
-extern void *stpi_get_color_data(const stp_vars_t);
-extern void stpi_set_color_data(stp_vars_t v, void * val);
-
-extern stpi_copy_data_func_t stpi_get_copy_color_data_func(const stp_vars_t);
-extern void stpi_set_copy_color_data_func(stp_vars_t, stpi_copy_data_func_t);
-
-extern stpi_destroy_data_func_t stpi_get_destroy_color_data_func(const stp_vars_t);
-extern void stpi_set_destroy_color_data_func(stp_vars_t,
-					     stpi_destroy_data_func_t);
-
-
-extern void *stpi_get_driver_data (const stp_vars_t);
-extern void stpi_set_driver_data (stp_vars_t, void * val);
-
-extern stpi_copy_data_func_t stpi_get_copy_driver_data_func(const stp_vars_t);
-extern void stpi_set_copy_driver_data_func(stp_vars_t, stpi_copy_data_func_t);
-
-extern stpi_destroy_data_func_t stpi_get_destroy_driver_data_func(const stp_vars_t);
-extern void stpi_set_destroy_driver_data_func(stp_vars_t,
-					      stpi_destroy_data_func_t);
-
-extern void *stpi_get_dither_data (const stp_vars_t);
-extern void stpi_set_dither_data (stp_vars_t, void * val);
-
-extern stpi_copy_data_func_t stpi_get_copy_dither_data_func(const stp_vars_t);
-extern void stpi_set_copy_dither_data_func(stp_vars_t,
-					   stpi_copy_data_func_t);
-
-extern stpi_destroy_data_func_t stpi_get_destroy_dither_data_func(const stp_vars_t);
-extern void stpi_set_destroy_dither_data_func(stp_vars_t,
-					      stpi_destroy_data_func_t);
+extern void stpi_allocate_component_data(stp_vars_t v,
+					 const char *name,
+					 stpi_copy_data_func_t copyfunc,
+					 stpi_free_data_func_t freefunc,
+					 void *data);
+extern void stpi_destroy_component_data(stp_vars_t v, const char *name);
+extern void *stpi_get_component_data(stp_vars_t v, const char *name);
 
 extern int stpi_get_verified(const stp_vars_t);
 extern void stpi_set_verified(stp_vars_t, int value);
@@ -80,5 +56,5 @@ stpi_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.13 2003/01/20 22:19:56 rlk Exp $".
+ * End of "$Id: vars.h,v 1.14 2003/04/09 02:59:55 rlk Exp $".
  */
