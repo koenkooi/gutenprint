@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.2.2.12 2002/08/08 22:37:12 tillkamppeter Exp $
+ *  $Id: ijsgimpprint.c,v 1.2.2.13 2002/10/07 23:47:37 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -98,7 +98,7 @@ image_init(IMAGE *img, IjsPageHeader *ph)
   img->xres = ph->xres;
   img->yres = ph->yres;
 
-  img->row = 0;
+  img->row = -1;
   img->row_width = (ph->n_chan * ph->bps * ph->width + 7) >> 3;
   img->row_buf = (char *)malloc(img->row_width);
   STP_DEBUG(fprintf(stderr, "image_init\n"));
