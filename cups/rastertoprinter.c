@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.9 2000/11/03 04:00:01 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.10 2000/11/03 12:51:59 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -244,6 +244,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     v.contrast    = 1.0;
     v.cyan        = 1.0;
     v.magenta     = 1.0;
+    v.yellow      = 1.0;
     v.saturation  = 1.0;
     v.density     = 1.0;
     v.scaling     = 0; /* No scaling */
@@ -538,5 +539,5 @@ Image_width(Image image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.9 2000/11/03 04:00:01 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.10 2000/11/03 12:51:59 rlk Exp $".
  */
