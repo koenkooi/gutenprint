@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.9 2001/02/24 03:14:26 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.10 2001/02/24 18:59:49 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2123,14 +2123,14 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		   hue_adjustment, lum_adjustment, NULL);
     }
 
+    stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		yellow, NULL, black, duplicate_line);
+
     if (do_cret)
     {
      /*
       * 4-level (CRet) dithers...
       */
-      stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		 yellow, NULL, black, duplicate_line);
-
       if (output_type == OUTPUT_GRAY)
       {
         (*writefunc)(v, black + height / 2, height / 2, 0);
