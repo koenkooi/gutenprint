@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.103 2000/07/02 20:33:03 davehill Exp $"
+ * "$Id: print.c,v 1.104 2000/07/18 00:13:01 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -80,15 +80,6 @@ extern void     gtk_create_main_window (void);
 #if 0
 static void	cleanupfunc(void);
 #endif
-
-GtkObject* brightness_adjustment; /* Adjustment object for brightness */
-GtkObject* saturation_adjustment; /* Adjustment object for saturation */
-GtkObject* density_adjustment;    /* Adjustment object for density */
-GtkObject* contrast_adjustment;   /* Adjustment object for contrast */
-GtkObject* red_adjustment;        /* Adjustment object for red */
-GtkObject* green_adjustment;      /* Adjustment object for green */
-GtkObject* blue_adjustment;       /* Adjustment object for blue */
-GtkObject* gamma_adjustment;      /* Adjustment object for gamma */
 
 /*
  * Globals...
@@ -1176,5 +1167,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.103 2000/07/02 20:33:03 davehill Exp $".
+ * End of "$Id: print.c,v 1.104 2000/07/18 00:13:01 rlk Exp $".
  */
