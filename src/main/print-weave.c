@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.12 2001/02/18 11:43:09 wollvieh Exp $"
+ * "$Id: print-weave.c,v 1.12.2.1 2001/02/20 04:08:38 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1775,7 +1775,7 @@ stp_initialize_weave(int jets,	/* Width of print head */
   sw->flushfunc = flushfunc;
 
   if (sw->oversample > jets) {
-    stp_eprintf((const stp_vars_t *) v,
+    stp_eprintf((const stp_vars_t) v,
 		"Weave error: oversample (%d) > jets (%d)\n",
 		sw->oversample, jets);
     free(sw);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8 2001/02/11 03:47:53 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.8.2.1 2001/02/20 04:08:38 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -40,8 +40,8 @@
 /*
  * Local functions...
  */
-static void	pcl_mode0(const stp_vars_t *, unsigned char *, int, int);
-static void	pcl_mode2(const stp_vars_t *, unsigned char *, int, int);
+static void	pcl_mode0(const stp_vars_t, unsigned char *, int, int);
+static void	pcl_mode2(const stp_vars_t, unsigned char *, int, int);
 
 /*
  * Generic define for a name/value set
@@ -1531,7 +1531,7 @@ pcl_parameters(const stp_printer_t *printer,/* I - Printer model */
 
 static void
 pcl_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
-		   const stp_vars_t *v,     /* I */
+		   const stp_vars_t v,     /* I */
                    int  *left,		/* O - Left position in points */
                    int  *right,		/* O - Right position in points */
                    int  *bottom,	/* O - Bottom position in points */
@@ -1557,7 +1557,7 @@ pcl_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 
 static void
 pcl_limit(const stp_printer_t *printer,	/* I - Printer model */
-	  const stp_vars_t *v,  		/* I */
+	  const stp_vars_t v,  		/* I */
 	  int  *width,			/* O - Left position in points */
 	  int  *height)			/* O - Top position in points */
 {
@@ -1573,20 +1573,20 @@ pcl_limit(const stp_printer_t *printer,	/* I - Printer model */
 static void
 pcl_print(const stp_printer_t *printer,		/* I - Model */
           stp_image_t *image,		/* I - Image to print */
-	  const stp_vars_t    *v)
+	  const stp_vars_t v)
 {
-  unsigned char *cmap = v->cmap;
+  unsigned char *cmap = stp_get_cmap(v);
   int		model = printer->model;
-  const char	*resolution = v->resolution;
+  const char	*resolution = stp_get_resolution(v);
   const char	*media_size;
-  const char	*media_type = v->media_type;
-  const char	*media_source = v->media_source;
-  const char	*ink_type = v->ink_type;
-  int 		output_type = v->output_type;
-  int		orientation = v->orientation;
-  double 	scaling = v->scaling;
-  int		top = v->top;
-  int		left = v->left;
+  const char	*media_type = stp_get_media_type(v);
+  const char	*media_source = stp_get_media_source(v);
+  const char	*ink_type = stp_get_ink_type(v);
+  int 		output_type = stp_get_output_type(v);
+  int		orientation = stp_get_orientation(v);
+  double 	scaling = stp_get_scaling(v);
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   unsigned short *out;
@@ -1613,7 +1613,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
 		errline,	/* Current raster line */
 		errlast;	/* Last raster line loaded */
   stp_convert_t	colorfunc;	/* Color conversion function... */
-  void		(*writefunc)(const stp_vars_t *, unsigned char *, int, int);
+  void		(*writefunc)(const stp_vars_t, unsigned char *, int, int);
 				/* PCL output function */
   int           image_height,
                 image_width,
@@ -1627,10 +1627,9 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   int		pcl_media_size, /* PCL media size code */
 		pcl_media_type, /* PCL media type code */
 		pcl_media_source;	/* PCL media source code */
-  stp_vars_t	nv;
+  stp_vars_t	nv = stp_allocate_copy(v);
   const stp_papersize_t *pp;
 
-  memcpy(&nv, v, sizeof(stp_vars_t));
   caps = pcl_get_model_capabilities(model);
 
  /*
@@ -1661,7 +1660,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
       output_type = OUTPUT_GRAY;
   }
 
-  if (nv.image_type == IMAGE_MONOCHROME)
+  if (stp_get_image_type(nv) == IMAGE_MONOCHROME)
     {
       output_type = OUTPUT_GRAY;
     }
@@ -1669,12 +1668,12 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   if (caps.color_type == PCL_COLOR_NONE)
     output_type = OUTPUT_GRAY;
 
-  colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
+  colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 
   do_cret = (xdpi >= 300 && ((caps.color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4) &&
-	     nv.image_type != IMAGE_MONOCHROME);
+	     stp_get_image_type(nv) != IMAGE_MONOCHROME);
   do_cretb = (xdpi >= 600 && ydpi >= 600 && ((caps.color_type & PCL_COLOR_CMYK4b) == PCL_COLOR_CMYK4b) &&
-			nv.image_type != IMAGE_MONOCHROME && output_type != OUTPUT_GRAY);
+			stp_get_image_type(nv) != IMAGE_MONOCHROME && output_type != OUTPUT_GRAY);
   if (do_cretb)
     do_cret = 1;
 
@@ -1692,7 +1691,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   * Compute the output size...
   */
 
-  pcl_imageable_area(printer, &nv, &page_left, &page_right,
+  pcl_imageable_area(printer, nv, &page_left, &page_right,
                      &page_bottom, &page_top);
 #ifdef DEBUG
   printf("Before stp_compute_page_parameters()\n");
@@ -1746,9 +1745,10 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   * Set media size
   */
 
-  if (strlen(v->media_size) > 0)
-    media_size = v->media_size;
-  else if ((pp = stp_get_papersize_by_size(v->page_height, v->page_width)) != NULL)
+  if (strlen(stp_get_media_size(v)) > 0)
+    media_size = stp_get_media_size(v);
+  else if ((pp = stp_get_papersize_by_size(stp_get_page_height(v),
+					   stp_get_page_width(v))) != NULL)
     media_size = pp->name;
   else
     media_size = "";
@@ -2027,12 +2027,12 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   * Output the page, rotating as necessary...
   */
 
-  stp_compute_lut(256, &nv);
+  stp_compute_lut(256, nv);
 
   if (xdpi > ydpi)
-    dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, &nv);
+    dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, nv);
   else
-    dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, &nv);
+    dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, nv);
 
 /* Set up dithering for special printers. */
 
@@ -2045,13 +2045,13 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
 /* For the CRET mode of the 840 series, the density has to be corrected */
 
   if (do_cretb)
-    nv.density /= 2;
+    stp_set_density(nv, stp_get_density(nv) * .5);
 
   if (do_cret)				/* 4-level printing for 800/1120 */
     {
-      stp_dither_set_ranges_simple(dither, ECOLOR_Y, 3, dot_sizes, nv.density);
+      stp_dither_set_ranges_simple(dither, ECOLOR_Y, 3, dot_sizes, stp_get_density(nv));
       if (!do_cretb)
-        stp_dither_set_ranges_simple(dither, ECOLOR_K, 3, dot_sizes, nv.density);
+        stp_dither_set_ranges_simple(dither, ECOLOR_K, 3, dot_sizes, stp_get_density(nv));
 
 /* Note: no printer I know of does both CRet (4-level) and 6 colour, but
    what the heck. variable_dither_ranges copied from print-escp2.c */
@@ -2059,14 +2059,14 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
       if (do_6color)			/* Photo for 69x */
 	{
 	  stp_dither_set_ranges(dither, ECOLOR_C, 6, variable_dither_ranges,
-			    nv.density);
+			    stp_get_density(nv));
 	  stp_dither_set_ranges(dither, ECOLOR_M, 6, variable_dither_ranges,
-			    nv.density);
+			    stp_get_density(nv));
 	}
       else
 	{
-	  stp_dither_set_ranges_simple(dither, ECOLOR_C, 3, dot_sizes, nv.density);
-	  stp_dither_set_ranges_simple(dither, ECOLOR_M, 3, dot_sizes, nv.density);
+	  stp_dither_set_ranges_simple(dither, ECOLOR_C, 3, dot_sizes, stp_get_density(nv));
+	  stp_dither_set_ranges_simple(dither, ECOLOR_M, 3, dot_sizes, stp_get_density(nv));
 	}
     }
   else
@@ -2074,9 +2074,9 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
 /* Set light inks for 6 colour printers. Numbers copied from print-escp2.c */
 
     if (do_6color)
-      stp_dither_set_light_inks(dither, .25, .25, 0.0, nv.density);
+      stp_dither_set_light_inks(dither, .25, .25, 0.0, stp_get_density(nv));
 
-  switch (nv.image_type)
+  switch (stp_get_image_type(nv))
     {
     case IMAGE_LINE_ART:
       stp_dither_set_ink_spread(dither, 19);
@@ -2088,7 +2088,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
       stp_dither_set_ink_spread(dither, 14);
       break;
     }
-  stp_dither_set_density(dither, nv.density);
+  stp_dither_set_density(dither, stp_get_density(nv));
 
   in  = xmalloc(image_width * image_bpp);
   out = xmalloc(image_width * out_bpp * 2);
@@ -2114,7 +2114,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
       errlast = errline;
       duplicate_line = 0;
       image->get_row(image, in, errline);
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv,
+      (*colorfunc)(in, out, image_width, image_bpp, cmap, nv,
 		   hue_adjustment, lum_adjustment, NULL);
     }
 
@@ -2201,7 +2201,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
   * Cleanup...
   */
 
-  stp_free_lut(&nv);
+  stp_free_lut(nv);
   free(in);
   free(out);
 
@@ -2230,6 +2230,7 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
       stp_zprintf(v, "\033%%-12345X\n");
     }
   stp_puts("\033E", v); 				/* PCL reset */
+  stp_free_vars(nv);
 }
 
 stp_printfuncs_t stp_pcl_printfuncs =
@@ -2249,7 +2250,7 @@ stp_printfuncs_t stp_pcl_printfuncs =
  */
 
 static void
-pcl_mode0(const stp_vars_t          *v,		/* I - Print file or command */
+pcl_mode0(const stp_vars_t v,		/* I - Print file or command */
           unsigned char *line,		/* I - Output bitmap data */
           int           height,		/* I - Height of bitmap data */
           int           last_plane)	/* I - True if this is the last plane */
@@ -2264,7 +2265,7 @@ pcl_mode0(const stp_vars_t          *v,		/* I - Print file or command */
  */
 
 static void
-pcl_mode2(const stp_vars_t          *v,		/* I - Print file or command */
+pcl_mode2(const stp_vars_t v,		/* I - Print file or command */
           unsigned char *line,		/* I - Output bitmap data */
           int           height,		/* I - Height of bitmap data */
           int           last_plane)	/* I - True if this is the last plane */

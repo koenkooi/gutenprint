@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8 2001/02/18 17:57:34 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.1 2001/02/20 04:08:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -40,7 +40,54 @@
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 
-static stp_vars_t default_vars =
+typedef struct					/* Plug-in variables */
+{
+  char	*output_to,		/* Name of file or command to print to */
+	*driver,		/* Name of printer "driver" */
+	*ppd_file;		/* PPD file */
+  int	output_type;		/* Color or grayscale output */
+  char	*resolution,		/* Resolution */
+	*media_size,		/* Media size */
+	*media_type,		/* Media type */
+	*media_source,		/* Media source */
+	*ink_type,		/* Ink or cartridge */
+	*dither_algorithm;	/* Dithering algorithm */
+  float	brightness;		/* Output brightness */
+  float	scaling;		/* Scaling, percent of printable area */
+  int	orientation,		/* Orientation - 0 = port., 1 = land.,
+				   -1 = auto */
+	left,			/* Offset from lower-lefthand corner, points */
+	top;			/* ... */
+  float gamma;                  /* Gamma */
+  float contrast,		/* Output Contrast */
+	cyan,			/* Output red level */
+	magenta,		/* Output green level */
+	yellow;			/* Output blue level */
+  float	saturation;		/* Output saturation */
+  float	density;		/* Maximum output density */
+  int	image_type;		/* Image type (line art etc.) */
+  int	unit;			/* Units for preview area 0=Inch 1=Metric */
+  float app_gamma;		/* Application gamma */
+  int	page_width;		/* Width of page in points */
+  int	page_height;		/* Height of page in points */
+  void  *lut;			/* Look-up table */
+  unsigned char *cmap;		/* Color map */
+  void (*outfunc)(void *data, const char *buffer, size_t bytes);
+  void *outdata;
+  void (*errfunc)(void *data, const char *buffer, size_t bytes);
+  void *errdata;
+} stp_internal_vars_t;
+
+typedef struct stp_internal_printer
+{
+  const char	*long_name,			/* Long name for UI */
+	*driver;			/* Short name for printrc file */
+  int	model;				/* Model number */
+  const stp_printfuncs_t *printfuncs;
+  stp_internal_vars_t printvars;
+} stp_internal_printer_t;
+
+static stp_internal_vars_t default_vars =
 {
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),	       	/* Name of printer "driver" */
@@ -63,7 +110,6 @@ static stp_vars_t default_vars =
 	1.0,			/* Cyan */
 	1.0,			/* Magenta */
 	1.0,			/* Yellow */
-	0,			/* Linear */
 	1.0,			/* Output saturation */
 	1.0,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
@@ -73,7 +119,7 @@ static stp_vars_t default_vars =
 	0			/* Page height */
 };
 
-static stp_vars_t min_vars =
+static stp_internal_vars_t min_vars =
 {
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),			/* Name of printer "driver" */
@@ -96,7 +142,6 @@ static stp_vars_t min_vars =
 	0,			/* Cyan */
 	0,			/* Magenta */
 	0,			/* Yellow */
-	0,			/* Linear */
 	0,			/* Output saturation */
 	.1,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
@@ -106,7 +151,7 @@ static stp_vars_t min_vars =
 	0			/* Page height */
 };
 
-static stp_vars_t max_vars =
+static stp_internal_vars_t max_vars =
 {
 	"",			/* Name of file or command to print to */
 	N_ ("ps2"),			/* Name of printer "driver" */
@@ -129,7 +174,6 @@ static stp_vars_t max_vars =
 	4.0,			/* Cyan */
 	4.0,			/* Magenta */
 	4.0,			/* Yellow */
-	0,			/* Linear */
 	9.0,			/* Output saturation */
 	2.0,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
@@ -139,35 +183,213 @@ static stp_vars_t max_vars =
 	0			/* Page height */
 };
 
-#define ICLAMP(value)				\
+stp_vars_t
+stp_allocate_vars()
+{
+  void *retval = xmalloc(sizeof(stp_internal_vars_t));
+  memset(retval, 0, sizeof(stp_internal_vars_t));
+  return (retval);
+}
+
+#define SAFE_FREE(x)				\
 do						\
 {						\
-  if (user->value < min->value)			\
-    user->value = min->value;			\
-  else if (user->value > max->value)		\
-    user->value = max->value;			\
+  if ((x))					\
+    free((x));					\
+  ((x)) = NULL;					\
+} while (0)
+
+static char *
+c_strdup(const char *s)
+{
+  char *ret;
+  if (!s)
+    return NULL;
+  ret = xmalloc(strlen(s) + 1);
+  strcpy(ret, s);
+  return ret;
+}
+
+void
+stp_free_vars(stp_vars_t vv)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  SAFE_FREE(v->output_to);
+  SAFE_FREE(v->driver);
+  SAFE_FREE(v->ppd_file);
+  SAFE_FREE(v->resolution);
+  SAFE_FREE(v->media_size);
+  SAFE_FREE(v->media_type);
+  SAFE_FREE(v->media_source);
+  SAFE_FREE(v->ink_type);
+  SAFE_FREE(v->dither_algorithm);
+}
+
+#define DEF_STRING_FUNCS(s)				\
+void							\
+stp_set_##s(stp_vars_t vv, const char *val)		\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  v->s = c_strdup(val);					\
+}							\
+							\
+const char *						\
+stp_get_##s(const stp_vars_t vv)			\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  return v->s;						\
+}
+
+#define DEF_FUNCS(s, t)					\
+void							\
+stp_set_##s(stp_vars_t vv, t val)			\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  v->s = val;						\
+}							\
+							\
+t							\
+stp_get_##s(const stp_vars_t vv)			\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  return v->s;						\
+}
+
+DEF_STRING_FUNCS(output_to);
+DEF_STRING_FUNCS(driver);
+DEF_STRING_FUNCS(ppd_file);
+DEF_STRING_FUNCS(resolution);
+DEF_STRING_FUNCS(media_size);
+DEF_STRING_FUNCS(media_type);
+DEF_STRING_FUNCS(media_source);
+DEF_STRING_FUNCS(ink_type);
+DEF_STRING_FUNCS(dither_algorithm);
+DEF_FUNCS(output_type, int);
+DEF_FUNCS(orientation, int);
+DEF_FUNCS(left, int);
+DEF_FUNCS(top, int);
+DEF_FUNCS(image_type, int);
+DEF_FUNCS(unit, int);
+DEF_FUNCS(page_width, int);
+DEF_FUNCS(page_height, int);
+DEF_FUNCS(brightness, float);
+DEF_FUNCS(scaling, float);
+DEF_FUNCS(gamma, float);
+DEF_FUNCS(contrast, float);
+DEF_FUNCS(cyan, float);
+DEF_FUNCS(magenta, float);
+DEF_FUNCS(yellow, float);
+DEF_FUNCS(saturation, float);
+DEF_FUNCS(density, float);
+DEF_FUNCS(app_gamma, float);
+DEF_FUNCS(lut, void *);
+DEF_FUNCS(outdata, void *);
+DEF_FUNCS(errdata, void *);
+DEF_FUNCS(cmap, unsigned char *);
+
+void
+stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
+{
+  stp_set_output_to(vd, stp_get_output_to(vs));
+  stp_set_driver(vd, stp_get_driver(vs));
+  stp_set_ppd_file(vd, stp_get_ppd_file(vs));
+  stp_set_resolution(vd, stp_get_resolution(vs));
+  stp_set_media_size(vd, stp_get_media_size(vs));
+  stp_set_media_type(vd, stp_get_media_type(vs));
+  stp_set_media_source(vd, stp_get_media_source(vs));
+  stp_set_ink_type(vd, stp_get_ink_type(vs));
+  stp_set_dither_algorithm(vd, stp_get_dither_algorithm(vs));
+  stp_set_output_type(vd, stp_get_output_type(vs));
+  stp_set_orientation(vd, stp_get_orientation(vs));
+  stp_set_left(vd, stp_get_left(vs));
+  stp_set_top(vd, stp_get_top(vs));
+  stp_set_image_type(vd, stp_get_image_type(vs));
+  stp_set_unit(vd, stp_get_unit(vs));
+  stp_set_page_width(vd, stp_get_page_width(vs));
+  stp_set_page_height(vd, stp_get_page_height(vs));
+  stp_set_brightness(vd, stp_get_brightness(vs));
+  stp_set_scaling(vd, stp_get_scaling(vs));
+  stp_set_gamma(vd, stp_get_gamma(vs));
+  stp_set_contrast(vd, stp_get_contrast(vs));
+  stp_set_cyan(vd, stp_get_cyan(vs));
+  stp_set_magenta(vd, stp_get_magenta(vs));
+  stp_set_yellow(vd, stp_get_yellow(vs));
+  stp_set_saturation(vd, stp_get_saturation(vs));
+  stp_set_density(vd, stp_get_density(vs));
+  stp_set_app_gamma(vd, stp_get_app_gamma(vs));
+  stp_set_lut(vd, stp_get_lut(vs));
+  stp_set_outdata(vd, stp_get_outdata(vs));
+  stp_set_errdata(vd, stp_get_errdata(vs));
+  stp_set_cmap(vd, stp_get_cmap(vs));
+  stp_set_outfunc(vd, stp_get_outfunc(vs));
+  stp_set_errfunc(vd, stp_get_errfunc(vs));
+}
+
+stp_vars_t
+stp_allocate_copy(const stp_vars_t vs)
+{
+  stp_vars_t vd = stp_allocate_vars();
+  stp_copy_vars(vd, vs);
+  return (vd);
+}
+
+void
+stp_set_outfunc(stp_vars_t vv, stp_outfunc_t outfunc)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  v->outfunc = outfunc;
+}
+
+stp_outfunc_t 
+stp_get_outfunc(const stp_vars_t vv)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  return (v->outfunc);
+}
+
+void
+stp_set_errfunc(stp_vars_t vv, stp_outfunc_t errfunc)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  v->errfunc = errfunc;
+}
+
+stp_outfunc_t 
+stp_get_errfunc(const stp_vars_t vv)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  return (v->errfunc);
+}
+
+#define ICLAMP(value)						\
+do								\
+{								\
+  if (stp_get_##value(user) < stp_get_##value(min))		\
+    stp_set_##value(user, stp_get_##value(min));		\
+  else if (stp_get_##value(user) > stp_get_##value(max))	\
+    stp_set_##value(user, stp_get_##value(max));		\
 } while (0)
 
 void
-stp_merge_printvars(stp_vars_t *user, const stp_vars_t *print)
+stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
 {
-  const stp_vars_t *max = stp_maximum_settings();
-  const stp_vars_t *min = stp_minimum_settings();
-  user->cyan = (user->cyan * print->cyan);
+  const stp_vars_t max = stp_maximum_settings();
+  const stp_vars_t min = stp_minimum_settings();
+  stp_set_cyan(user, stp_get_cyan(user) * stp_get_cyan(print));
   ICLAMP(cyan);
-  user->magenta = (user->magenta * print->magenta);
+  stp_set_magenta(user, stp_get_magenta(user) * stp_get_magenta(print));
   ICLAMP(magenta);
-  user->yellow = (user->yellow * print->yellow);
+  stp_set_yellow(user, stp_get_yellow(user) * stp_get_yellow(print));
   ICLAMP(yellow);
-  user->contrast = (user->contrast * print->contrast);
+  stp_set_contrast(user, stp_get_contrast(user) * stp_get_contrast(print));
   ICLAMP(contrast);
-  user->brightness = (user->brightness * print->brightness);
+  stp_set_brightness(user, stp_get_brightness(user)*stp_get_brightness(print));
   ICLAMP(brightness);
-  user->gamma /= print->gamma;
+  stp_set_gamma(user, stp_get_gamma(user) / stp_get_gamma(print));
   ICLAMP(gamma);
-  user->saturation *= print->saturation;
+  stp_set_saturation(user, stp_get_saturation(user)*stp_get_saturation(print));
   ICLAMP(saturation);
-  user->density *= print->density;
+  stp_set_density(user, stp_get_density(user) * stp_get_density(print));
   ICLAMP(density);
 }
 
@@ -412,18 +634,19 @@ stp_get_papersize_by_size(int l, int w)
 void
 stp_default_media_size(const stp_printer_t *printer,
 					/* I - Printer model (not used) */
-		   const stp_vars_t *v,	/* I */
+		   const stp_vars_t v,	/* I */
         	   int  *width,		/* O - Width in points */
         	   int  *height)	/* O - Height in points */
 {
-  if (v->page_width > 0 && v->page_height > 0)
+  if (stp_get_page_width(v) > stp_get_page_height(v) > 0)
     {
-      *width = v->page_width;
-      *height = v->page_height;
+      *width = stp_get_page_width(v);
+      *height = stp_get_page_height(v);
     }
   else
     {
-      const stp_papersize_t *papersize = stp_get_papersize_by_name(v->media_size);
+      const stp_papersize_t *papersize =
+	stp_get_papersize_by_name(stp_get_media_size(v));
       if (!papersize)
 	{
 	  *width = 1;
@@ -452,27 +675,35 @@ stp_known_printers(void)
   return printer_count;
 }
 
-const stp_printer_t *
-stp_get_printers(void)
+static const stp_printer_t *
+stp_create_printer_internal(const stp_internal_printer_t *printer)
 {
-  return printers;
+  stp_printer_t *retval = xmalloc(sizeof(stp_printer_t));
+  retval->long_name = printer->long_name;
+  retval->driver = printer->driver;
+  retval->model = printer->model;
+  retval->printfuncs = printer->printfuncs;
+  retval->printvars = (stp_vars_t) &(printer->printvars);
+  return retval;
 }
 
 const stp_printer_t *
 stp_get_printer_by_index(int idx)
 {
-  return &(printers[idx]);
+  if (idx < 0 || idx >= printer_count)
+    return NULL;
+  return stp_create_printer_internal(&(printers[idx]));
 }
 
 const stp_printer_t *
 stp_get_printer_by_long_name(const char *long_name)
 {
-  const stp_printer_t *val = &(printers[0]);
+  const stp_internal_printer_t *val = &(printers[0]);
   int i;
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->long_name, long_name))
-	return val;
+	return stp_create_printer_internal(val);
       val++;
     }
   return NULL;
@@ -481,12 +712,12 @@ stp_get_printer_by_long_name(const char *long_name)
 const stp_printer_t *
 stp_get_printer_by_driver(const char *driver)
 {
-  const stp_printer_t *val = &(printers[0]);
+  const stp_internal_printer_t *val = &(printers[0]);
   int i;
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->driver, driver))
-	return val;
+	return stp_create_printer_internal(val);
       val++;
     }
   return NULL;
@@ -496,7 +727,7 @@ int
 stp_get_printer_index_by_driver(const char *driver)
 {
   int idx = 0;
-  const stp_printer_t *val = &(printers[0]);
+  const stp_internal_printer_t *val = &(printers[0]);
   for (idx = 0; idx < stp_known_printers(); idx++)
     {
       if (!strcmp(val->driver, driver))
@@ -504,6 +735,12 @@ stp_get_printer_index_by_driver(const char *driver)
       val++;
     }
   return -1;
+}
+
+void
+stp_free_printer(const stp_printer_t *printer)
+{
+  free((stp_printer_t *)printer);
 }
 
 const char *
@@ -636,23 +873,24 @@ stp_compute_page_parameters(int page_right,	/* I */
 }
 
 int
-stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
+stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
 {
   char **vptr;
   int count;
   int i;
   int answer = 1;
 
-  if (strlen(v->media_size) > 0)
+  if (strlen(stp_get_media_size(v)) > 0)
     {
       vptr = (*p->printfuncs->parameters)(p, NULL, "PageSize", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
-	    if (!strcmp(v->media_size, vptr[i]))
+	    if (!strcmp(stp_get_media_size(v), vptr[i]))
 	      goto good_page_size;
 	  answer = 0;
-	  stp_eprintf(v, "%s is not a valid page size\n", v->media_size);
+	  stp_eprintf(v, "%s is not a valid page size\n",
+		      stp_get_media_size(v));
 	good_page_size:
 	  for (i = 0; i < count; i++)
 	    free(vptr[i]);
@@ -666,26 +904,28 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
       (*p->printfuncs->limit)(p, v, &width, &height);
 #if 0
       stp_eprintf(v, "limit %d %d dims %d %d\n",
-		  width, height, v->page_width, v->page_height);
+		  width, height, stp_get_page_width(v),
+		  stp_get_page_height(v));
 #endif
-      if (v->page_height <= 0 || v->page_height > height ||
-	  v->page_width <= 0 || v->page_width > width)
+      if (stp_get_page_height(v) <= 0 || stp_get_page_height(v) > height ||
+	  stp_get_page_width(v) <= 0 || stp_get_page_width(v) > width)
 	{
 	  answer = 0;
 	  stp_eprintf(v, "Image size is not valid\n");
 	}
     }
 
-  if (strlen(v->media_type) > 0)
+  if (strlen(stp_get_media_type(v)) > 0)
     {
       vptr = (*p->printfuncs->parameters)(p, NULL, "MediaType", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
-	    if (!strcmp(v->media_type, vptr[i]))
+	    if (!strcmp(stp_get_media_type(v), vptr[i]))
 	      goto good_media_type;
 	  answer = 0;
-	  stp_eprintf(v, "%s is not a valid media type\n", v->media_type);
+	  stp_eprintf(v, "%s is not a valid media type\n",
+		      stp_get_media_type(v));
 	good_media_type:
 	  for (i = 0; i < count; i++)
 	    free(vptr[i]);
@@ -694,16 +934,17 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
 	free(vptr);
     }
 
-  if (strlen(v->media_source) > 0)
+  if (strlen(stp_get_media_source(v)) > 0)
     {
       vptr = (*p->printfuncs->parameters)(p, NULL, "InputSlot", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
-	    if (!strcmp(v->media_source, vptr[i]))
+	    if (!strcmp(stp_get_media_source(v), vptr[i]))
 	      goto good_media_source;
 	  answer = 0;
-	  stp_eprintf(v, "%s is not a valid media source\n", v->media_source);
+	  stp_eprintf(v, "%s is not a valid media source\n",
+		      stp_get_media_source(v));
 	good_media_source:
 	  for (i = 0; i < count; i++)
 	    free(vptr[i]);
@@ -712,16 +953,17 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
 	free(vptr);
     }
 
-  if (strlen(v->resolution) > 0)
+  if (strlen(stp_get_resolution(v)) > 0)
     {
       vptr = (*p->printfuncs->parameters)(p, NULL, "Resolution", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
-	    if (!strcmp(v->resolution, vptr[i]))
+	    if (!strcmp(stp_get_resolution(v), vptr[i]))
 	      goto good_resolution;
 	  answer = 0;
-	  stp_eprintf(v, "%s is not a valid resolution\n", v->resolution);
+	  stp_eprintf(v, "%s is not a valid resolution\n",
+		      stp_get_resolution(v));
 	good_resolution:
 	  for (i = 0; i < count; i++)
 	    free(vptr[i]);
@@ -730,16 +972,16 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
 	free(vptr);
     }
 
-  if (strlen(v->ink_type) > 0)
+  if (strlen(stp_get_ink_type(v)) > 0)
     {
       vptr = (*p->printfuncs->parameters)(p, NULL, "InkType", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
-	    if (!strcmp(v->ink_type, vptr[i]))
+	    if (!strcmp(stp_get_ink_type(v), vptr[i]))
 	      goto good_ink_type;
 	  answer = 0;
-	  stp_eprintf(v, "%s is not a valid ink type\n", v->ink_type);
+	  stp_eprintf(v, "%s is not a valid ink type\n", stp_get_ink_type(v));
 	good_ink_type:
 	  for (i = 0; i < count; i++)
 	    free(vptr[i]);
@@ -749,29 +991,30 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t *v)
     }
 
   for (i = 0; i < stp_dither_algorithm_count(); i++)
-    if (!strcmp(v->dither_algorithm, stp_dither_algorithm_name(i)))
+    if (!strcmp(stp_get_dither_algorithm(v), stp_dither_algorithm_name(i)))
       return answer;
 
-  stp_eprintf(v, "%s is not a valid dither algorithm\n", v->dither_algorithm);
+  stp_eprintf(v, "%s is not a valid dither algorithm\n",
+	      stp_get_dither_algorithm(v));
   return 0;
 }
 
-const stp_vars_t *
+const stp_vars_t
 stp_default_settings()
 {
-  return &default_vars;
+  return (stp_vars_t) &default_vars;
 }
 
-const stp_vars_t *
+const stp_vars_t
 stp_maximum_settings()
 {
-  return &max_vars;
+  return (stp_vars_t) &max_vars;
 }
 
-const stp_vars_t *
+const stp_vars_t
 stp_minimum_settings()
 {
-  return &min_vars;
+  return (stp_vars_t) &min_vars;
 }
 
 #ifdef DISABLE_NLS
@@ -868,7 +1111,7 @@ extern int vasprintf (char **result, const char *format, va_list args);
 #endif
 
 void
-stp_zprintf(const stp_vars_t *v, const char *format, ...)
+stp_zprintf(const stp_vars_t v, const char *format, ...)
 {
   va_list args;
   int bytes;
@@ -876,31 +1119,31 @@ stp_zprintf(const stp_vars_t *v, const char *format, ...)
   va_start(args, format);
   bytes = vasprintf(&result, format, args);
   va_end(args);
-  (v->outfunc)((void *)(v->outdata), result, bytes);
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), result, bytes);
   free(result);
 }
 
 void
-stp_zfwrite(const char *buf, size_t bytes, size_t nitems, const stp_vars_t *v)
+stp_zfwrite(const char *buf, size_t bytes, size_t nitems, const stp_vars_t v)
 {
-  (v->outfunc)((void *)(v->outdata), buf, bytes * nitems);
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), buf, bytes * nitems);
 }
 
 void
-stp_putc(int ch, const stp_vars_t *v)
+stp_putc(int ch, const stp_vars_t v)
 {
   char a = (char) ch;
-  (v->outfunc)((void *)(v->outdata), &a, 1);
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), &a, 1);
 }
 
 void
-stp_puts(const char *s, const stp_vars_t *v)
+stp_puts(const char *s, const stp_vars_t v)
 {
-  (v->outfunc)((void *)(v->outdata), s, strlen(s));
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), s, strlen(s));
 }
 
 void
-stp_eprintf(const stp_vars_t *v, const char *format, ...)
+stp_eprintf(const stp_vars_t v, const char *format, ...)
 {
   va_list args;
   int bytes;
@@ -908,7 +1151,7 @@ stp_eprintf(const stp_vars_t *v, const char *format, ...)
   va_start(args, format);
   bytes = vasprintf(&result, format, args);
   va_end(args);
-  (v->errfunc)((void *)(v->errdata), result, bytes);
+  (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
   free(result);
 }
   
@@ -922,7 +1165,7 @@ int quantify_first_time = 1;
 struct timeval quantify_cur_time;
 struct timeval quantify_prev_time;
 
-void print_timers(const stp_vars_t *v)
+void print_timers(const stp_vars_t v)
 {
   int i;
 

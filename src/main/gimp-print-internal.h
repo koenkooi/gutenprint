@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15 2001/02/18 11:43:09 wollvieh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.2.1 2001/02/20 04:08:38 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -226,7 +226,7 @@ typedef struct stp_softweave
 
 extern void *	stp_init_dither(int in_width, int out_width,
 				int horizontal_aspect,
-				int vertical_aspect, stp_vars_t *vars);
+				int vertical_aspect, stp_vars_t vars);
 extern void	stp_dither_set_matrix(void *vd, size_t x, size_t y,
 				      unsigned *data, int transpose,
 				      int prescaled, int x_shear, int y_shear);
@@ -357,16 +357,16 @@ stp_weave_parameters_by_row(const stp_softweave_t *sw, int row,
 
 extern void stp_destroy_weave(void *);
 
-extern void stp_zprintf(const stp_vars_t *v, const char *format, ...);
+extern void stp_zprintf(const stp_vars_t v, const char *format, ...);
 
 extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
-			const stp_vars_t *v);
+			const stp_vars_t v);
 
-extern void stp_putc(int ch, const stp_vars_t *v);
+extern void stp_putc(int ch, const stp_vars_t v);
 
-extern void stp_puts(const char *s, const stp_vars_t *v);
+extern void stp_puts(const char *s, const stp_vars_t v);
 
-extern void stp_eprintf(const stp_vars_t *v, const char *format, ...);
+extern void stp_eprintf(const stp_vars_t v, const char *format, ...);
 
 
 /* Uncomment the next line to get performance statistics:
@@ -432,5 +432,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15 2001/02/18 11:43:09 wollvieh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.2.1 2001/02/20 04:08:38 rlk Exp $".
  */

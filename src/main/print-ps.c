@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: print-ps.c,v 1.5.2.1 2001/02/20 04:08:38 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -51,8 +51,8 @@ static const char	*ps_ppd_file = NULL;
  * Local functions...
  */
 
-static void	ps_hex(const stp_vars_t *, unsigned short *, int);
-static void	ps_ascii85(const stp_vars_t *, unsigned short *, int, int);
+static void	ps_hex(const stp_vars_t, unsigned short *, int);
+static void	ps_ascii85(const stp_vars_t, unsigned short *, int, int);
 static char	*ppd_find(const char *, const char *, const char *, int *);
 
 
@@ -152,7 +152,7 @@ ps_parameters(const stp_printer_t *printer,	/* I - Printer model */
 
 static void
 ps_media_size(const stp_printer_t *printer,	/* I - Printer model */
-	      const stp_vars_t *v,		/* I */
+	      const stp_vars_t v,		/* I */
               int  *width,		/* O - Width in points */
               int  *height)		/* O - Height in points */
 {
@@ -164,8 +164,8 @@ ps_media_size(const stp_printer_t *printer,	/* I - Printer model */
          media_size, width, height);
 #endif /* DEBUG */
 
-  if ((dimensions = ppd_find(v->ppd_file, "PaperDimension", v->media_size,
-			     NULL))
+  if ((dimensions = ppd_find(stp_get_ppd_file(v), "PaperDimension",
+			     stp_get_media_size(v), NULL))
       != NULL)
     sscanf(dimensions, "%d%d", width, height);
   else
@@ -179,7 +179,7 @@ ps_media_size(const stp_printer_t *printer,	/* I - Printer model */
 
 static void
 ps_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
-		  const stp_vars_t *v,      /* I */
+		  const stp_vars_t v,      /* I */
                   int  *left,		/* O - Left position in points */
                   int  *right,		/* O - Right position in points */
                   int  *bottom,		/* O - Bottom position in points */
@@ -192,7 +192,8 @@ ps_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 	ftop;
 
 
-  if ((area = ppd_find(v->ppd_file, "ImageableArea", v->media_size, NULL))
+  if ((area = ppd_find(stp_get_ppd_file(v), "ImageableArea",
+		       stp_get_media_size(v), NULL))
       != NULL)
   {
 #ifdef DEBUG
@@ -220,7 +221,7 @@ ps_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 
 static void
 ps_limit(const stp_printer_t *printer,	/* I - Printer model */
-	    const stp_vars_t *v,  		/* I */
+	    const stp_vars_t v,  		/* I */
 	    int  *width,		/* O - Left position in points */
 	    int  *height)		/* O - Top position in points */
 {
@@ -254,20 +255,20 @@ ps_describe_resolution(const stp_printer_t *printer,
 static void
 ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
          stp_image_t *image,		/* I - Image to print */
-	 const stp_vars_t    *v)
+	 const stp_vars_t v)
 {
-  unsigned char *cmap = v->cmap;
+  unsigned char *cmap = stp_get_cmap(v);
   int		model = printer->model;
-  const char	*ppd_file = v->ppd_file;
-  const char	*resolution = v->resolution;
-  const char	*media_size = v->media_size;
-  const char	*media_type = v->media_type;
-  const char	*media_source = v->media_source;
-  int 		output_type = v->output_type;
-  int		orientation = v->orientation;
-  double 	scaling = v->scaling;
-  int		top = v->top;
-  int		left = v->left;
+  const char	*ppd_file = stp_get_ppd_file(v);
+  const char	*resolution = stp_get_resolution(v);
+  const char	*media_size = stp_get_media_size(v);
+  const char	*media_type = stp_get_media_type(v);
+  const char	*media_source = stp_get_media_source(v);
+  int 		output_type = stp_get_output_type(v);
+  int		orientation = stp_get_orientation(v);
+  double 	scaling = stp_get_scaling(v);
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
   int		i, j;		/* Looping vars */
   int		y;		/* Looping vars */
   unsigned char	*in;		/* Input pixels from image */
@@ -296,9 +297,8 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
   int           image_height,
                 image_width,
                 image_bpp;
-  stp_vars_t	nv;
+  stp_vars_t	nv = stp_allocate_copy(v);
 
-  memcpy(&nv, v, sizeof(stp_vars_t));
  /*
   * Setup a read-only pixel region for the entire image...
   */
@@ -318,7 +318,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
   * Compute the output size...
   */
 
-  ps_imageable_area(printer, &nv, &page_left, &page_right,
+  ps_imageable_area(printer, nv, &page_left, &page_right,
                     &page_bottom, &page_top);
   stp_compute_page_parameters(page_right, page_left, page_top, page_bottom,
 			  scaling, image_width, image_height, image,
@@ -463,7 +463,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
   in  = xmalloc(image_width * image_bpp);
   out = xmalloc((image_width * out_bpp + 3) * 2);
 
-  stp_compute_lut(256, &nv);
+  stp_compute_lut(256, nv);
 
   if (model == 0)
   {
@@ -484,7 +484,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
 	image->note_progress(image, y, image_height);
 
       image->get_row(image, in, y);
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, &nv, NULL, NULL, NULL);
+      (*colorfunc)(in, out, image_width, image_bpp, cmap, nv, NULL, NULL, NULL);
 
       ps_hex(v, out, image_width * out_bpp);
     }
@@ -524,7 +524,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
 	image->note_progress(image, y, image_height);
 
       image->get_row(image, in, y);
-      (*colorfunc)(in, out + out_offset, image_width, image_bpp, cmap, &nv,
+      (*colorfunc)(in, out + out_offset, image_width, image_bpp, cmap, nv,
 		   NULL, NULL, NULL);
 
       out_ps_height = out_offset + image_width * out_bpp;
@@ -546,7 +546,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
   }
   image->progress_conclude(image);
 
-  stp_free_lut(&nv);
+  stp_free_lut(nv);
   free(in);
   free(out);
 
@@ -554,6 +554,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
   stp_puts("showpage\n", v);
   stp_puts("%%EndPage\n", v);
   stp_puts("%%EOF\n", v);
+  stp_free_vars(nv);
 }
 
 
@@ -562,7 +563,7 @@ ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
  */
 
 static void
-ps_hex(const stp_vars_t   *v,	/* I - File to print to */
+ps_hex(const stp_vars_t v,	/* I - File to print to */
        unsigned short *data,	/* I - Data to print */
        int    length)	/* I - Number of bytes to print */
 {
@@ -600,7 +601,7 @@ ps_hex(const stp_vars_t   *v,	/* I - File to print to */
  */
 
 static void
-ps_ascii85(const stp_vars_t   *v,		/* I - File to print to */
+ps_ascii85(const stp_vars_t v,		/* I - File to print to */
 	   unsigned short *data,	/* I - Data to print */
 	   int    length,	/* I - Number of bytes to print */
 	   int    last_line)	/* I - Last line of raster data? */
