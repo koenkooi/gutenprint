@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.10 2004/03/27 00:52:01 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.11 2004/03/27 02:44:59 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1730,7 +1730,7 @@ escp2_describe_output(stp_const_vars_t v)
 	    case INKSET_CcMmYKk:
 	    default:
 	      if (ink_type->channel_set->channels[0])
-		return "CMYK";
+		return "KCMY";
 	      else
 		return "CMY";
 	      break;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.137.4.6 2004/03/20 21:38:40 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.137.4.7 2004/03/27 02:45:00 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1886,7 +1886,7 @@ densityDivisor /= 1.2;
   if (cols.p.k)
     {
       if (cols.p.c)
-	stp_set_string_parameter(v, "STPIOutputType", "CMYK");
+	stp_set_string_parameter(v, "STPIOutputType", "KCMY");
       else
 	stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
     }

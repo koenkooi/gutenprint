@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140.2.7 2004/03/20 21:38:39 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.8 2004/03/27 02:44:58 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2547,7 +2547,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   if (privdata.cols[0])
     {
       if (privdata.cols[1])
-	stp_set_string_parameter(v, "STPIOutputType", "CMYK");
+	stp_set_string_parameter(v, "STPIOutputType", "KCMY");
       else
 	stp_set_string_parameter(v, "STPIOutputType", "Grayscale");
     }

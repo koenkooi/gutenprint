@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.6 2004/03/27 00:52:01 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.7 2004/03/27 02:45:01 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -66,9 +66,9 @@ static const raw_printer_t raw_model_capabilities[] =
 static const ink_t inks[] =
 {
   { "RGB", 3, 0, "RGB" },
-  { "CMYK", 3, 0, "CMY" },
-  { "CMYK", 4, 1, "CMYK" },
-  { "CMYK", 4, 0, "KCMY" },
+  { "CMY", 3, 0, "CMY" },
+  { "KCMY", 4, 1, "CMYK" },
+  { "KCMY", 4, 0, "KCMY" },
   { "Whitescale", 1, 0, "RGBGray" },
   { "Grayscale", 1, 0, "CMYGray" },
 };

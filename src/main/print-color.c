@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.33 2004/03/27 00:52:00 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.34 2004/03/27 02:44:59 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1414,7 +1414,7 @@ color_##bits##_to_color(stp_const_vars_t vars, const unsigned char *in,	      \
 									      \
   for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				      \
     stp_curve_resample(cache_get_curve(&(lut->channel_curves[i + offset])),   \
-		       1 << bits);					      \
+		       65536);						      \
   red = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C + offset]));    \
   green = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M + offset]));  \
   blue = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y + offset]));   \
@@ -1559,7 +1559,7 @@ color_##bits##_to_color_raw(stp_const_vars_t vars, const unsigned char *in, \
       unsigned bit = 1;							    \
       for (j = 0; j < 3; j++, bit += bit)				    \
 	{								    \
-	  out[j] = s_in[j] ^ mask;					    \
+	  out[j] = (s_in[j] * (65535 / ((1 << bits) - 1))) ^ mask;	    \
 	  if (out[j])							    \
 	    nz |= bit;							    \
 	}								    \
@@ -3369,7 +3369,17 @@ compute_one_lut(lut_t *lut, int i)
   stp_curve_t curve = cache_get_curve(&(lut->channel_curves[i]));
   if (curve)
     {
-      invert_curve(curve, lut->invert_output);
+      int invert_output = lut->invert_output;
+      /*
+       * Special case CMYK or CMYKRB output: we do not want to invert
+       * the black curve in this case.
+       */
+      if (i == 0 &&
+	  lut->input_color_description->color_id == COLOR_ID_RGB &&
+	  (lut->output_color_description->color_id == COLOR_ID_KCMY ||
+	   lut->output_color_description->color_id == COLOR_ID_CMYKRB))
+	invert_output = 0;
+      invert_curve(curve, invert_output);
       stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
 			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_resample(curve, lut->steps);
