@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/04/27 23:03:19 rleigh Exp $
+## $Id: Makefile.am,v 1.13 2001/05/06 22:08:52 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,11 +26,9 @@ export DESTDIR
 
 MAINT_CHARSET = latin1
 
-CFLAGS = @CFLAGS@
+AM_CFLAGS = @MAINTAINER_CFLAGS@
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS)
-
-AM_CPPFLAGS =\
- @MAINTAINER_CFLAGS@
+LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 libexecdir = $(gimptool_prefix)/plug-ins
 
