@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.102 2000/12/10 00:35:59 rlk Exp $"
+ * "$Id: print-canon.c,v 1.103 2000/12/10 19:28:03 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -43,7 +43,7 @@
 #include <stdarg.h>
 #include "print.h"
 
-#define DEBUG
+/* #define DEBUG */
 
 /*
  * For each printer, we can select from a variety of dot sizes.
