@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2001/10/07 12:18:16 rlk Exp $
+## $Id: Makefile.am,v 1.17 2001/10/07 22:12:46 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -161,7 +161,7 @@ install-data-local: $(STANDARD_TARGETS)
 	fi
 
 uninstall-local:
-	$(RM) $(datadir)/$(PACKAGE)/doc
+	$(RM) -r $(datadir)/$(PACKAGE)/doc
 
 clean-local: clean-figures
 	if test $(srcdir) = "." ; then \
