@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.98 2003/07/23 01:57:23 rlk Exp $"
+ * "$Id: print-util.c,v 1.99 2003/07/24 23:16:52 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -57,26 +57,6 @@ typedef struct
   char *data;
   size_t bytes;
 } debug_msgbuf_t;
-
-typedef struct
-{
-  enum
-    {
-      TYPE_INVALID,
-      TYPE_STRING,
-      TYPE_FILE
-    } xtype;
-  union
-  {
-    FILE *f;
-    struct
-    {
-      char *data;
-      off_t offset;
-    } s;
-  } d;
-} xio_t;
-
 
 /*
  * We cannot avoid use of the (non-ANSI) vsnprintf here; ANSI does
