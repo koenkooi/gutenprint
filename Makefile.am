@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.84 2001/01/22 19:00:17 rleigh Exp $
+## $Id: Makefile.am,v 1.85 2001/01/29 01:10:40 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,17 @@ dist-hook:
 	    done \
 	  fi \
 	done
+
+.PHONY: install-gimp install-cups install-ghost
+
+install-gimp:
+	cd $(top_srcdir)/src/gimp ; make install
+
+install-cups:
+	cd $(top_srcdir)/src/cups ; make install
+
+install-ghost:
+	cd $(top_srcdir)/src/ghost ; make install
 
 CLEANSCRIPTS = \
 	config.guess \

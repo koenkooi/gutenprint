@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.2 2001/01/29 01:10:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -159,7 +159,7 @@ main(int argc, char **argv)
   memset(current_slot, 0, (sizeof(int) * vmod));
 
   sw = initialize_weave(physjets, physsep, hpasses, vpasses, subpasses,
-			COLOR_MONOCHROME, 1, 128, nrows, 1, first_line,
+			1, 1, 128, nrows, 1, first_line,
 			phys_lines, strategy, NULL);
   print_header();
   printf("%15s %5s %5s %5s %10s %10s %10s %10s\n", "", "row", "pass", "jet",

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/01/24 03:23:01 rlk Exp $
+## $Id: Makefile.am,v 1.3 2001/01/29 01:10:40 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,10 @@ noinst_PROGRAMS = @TEST_BIN@
 EXTRA_PROGRAMS = escp2-weavetest printer_options unprint escp2-unprint pcl-unprint testdither
 
 escp2_weavetest_SOURCES = escp2-weavetest.c
+
+escp2_weavetest.o: escp2_weavetest.c 
+escp2_weavetest_DEPENDENCIES = $(top_srcdir)/src/main/print-escp2.c \
+		   $(top_srcdir)/src/main/print-dither.c
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = -lm $(GIMPPRINT_LIBS)
