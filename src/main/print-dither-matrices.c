@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.22 2003/05/26 01:03:59 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.23 2003/06/08 14:08:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -443,16 +443,6 @@ stpi_dither_set_transition(stp_vars_t v, double exponent)
 				  x_n * i, y_n * j);
 	  color++;
 	}
-  if (exponent < .999 || exponent > 1.001)
-    for (i = 0; i < 65536; i++)
-      {
-	double dd = i / 65535.0;
-	dd = pow(dd, 1.0 / exponent);
-	d->virtual_dot_scale[i] = dd * 65535;
-      }
-  else
-    for (i = 0; i < 65536; i++)
-      d->virtual_dot_scale[i] = i;
 }
 
 static stpi_list_t *dither_matrix_cache = NULL;
