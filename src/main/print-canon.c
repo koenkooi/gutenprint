@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.47 2001/06/13 09:14:18 gandy Exp $"
+ * "$Id: print-canon.c,v 1.48 2001/07/02 07:50:46 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -717,7 +717,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1 | CANON_SLOT_MAN1,
     CANON_CAP_STD0 | CANON_CAP_DMT,
-    {0,0,-1,-1,-1,-1}, /* ??? */
+    {-1,1,0,0,-1,-1}, /* ??? */
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
@@ -749,7 +749,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1 | CANON_SLOT_MAN1,
     CANON_CAP_STD1 | CANON_CAP_DMT | CANON_CAP_ACKSHORT,
-    {-1,0,0,0,-1,-1},
+    {-1,1,0,0,-1,-1},
     {1,1.8,1,0.5,1,1},
     CANON_INK(canon_ink_standardphoto),
     standard_lum_adjustment,
@@ -851,7 +851,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1,
     CANON_CAP_STD0 | CANON_CAP_a | CANON_CAP_DMT, /*FIX? should have _r? */
-    {-1,0,0,0,-1,-1},
+    {-1,1,0,0,-1,-1},
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
@@ -865,8 +865,8 @@ static const canon_cap_t canon_model_capabilities[] =
     11, 9, 10, 18,
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1,
-    CANON_CAP_STD1 | CANON_CAP_a | CANON_CAP_r,
-    {-1,0,0,0,-1,-1},
+    CANON_CAP_STD1 | CANON_CAP_a | CANON_CAP_r | CANON_CAP_DMT,
+    {-1,1,0,0,-1,-1},
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
@@ -919,7 +919,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1,
     CANON_CAP_STD0 | CANON_CAP_DMT,
-    {-1,0,0,0,-1,-1},
+    {-1,1,0,0,-1,-1},
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
@@ -949,7 +949,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_INK_CMYK | CANON_INK_CcMmYK,
     CANON_SLOT_ASF1,
     CANON_CAP_STD1 | CANON_CAP_a | CANON_CAP_DMT,
-    {-1,0,0,0,-1,-1},
+    {-1,1,0,0,-1,-1},
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
