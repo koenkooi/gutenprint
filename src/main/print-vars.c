@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.5.4.3 2002/11/03 18:51:18 rlk Exp $"
+ * "$Id: print-vars.c,v 1.5.4.4 2002/11/03 20:01:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -379,7 +379,10 @@ stp_get_parameter(const stp_vars_t v, const char *parameter)
 void
 stp_set_parameter(stp_vars_t v, const char *parameter, const char *value)
 {
-  stp_set_parameter_n(v, parameter, value, strlen(value));
+  if (value == NULL)
+    stp_set_parameter_n(v, parameter, NULL, 0);
+  else
+    stp_set_parameter_n(v, parameter, value, strlen(value));
 }
 
 void
