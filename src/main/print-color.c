@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.40 2004/03/27 20:43:18 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.41 2004/03/27 22:07:29 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1354,22 +1354,26 @@ raw_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   return retval;
 }
 
-#define GENERIC_COLOR_FUNC(fromname, toname)				   \
-static unsigned								   \
-fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	   \
-		       unsigned short *out)				   \
-{									   \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
-  if (!lut->printed_colorfunc)						   \
-    {									   \
-      lut->printed_colorfunc = 1;					   \
-      stpi_dprintf(STPI_DBG_COLORFUNC, vars, "Colorfunc is %s_%d_to_%s\n", \
-		   #fromname, lut->channel_depth, #toname);		   \
-    }									   \
-  if (lut->channel_depth == 8)						   \
-    return fromname##_8_to_##toname(vars, in, out);			   \
-  else									   \
-    return fromname##_16_to_##toname(vars, in, out);			   \
+#define GENERIC_COLOR_FUNC(fromname, toname)				\
+static unsigned								\
+fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	\
+		       unsigned short *out)				\
+{									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  if (!lut->printed_colorfunc)						\
+    {									\
+      lut->printed_colorfunc = 1;					\
+      stpi_dprintf(STPI_DBG_COLORFUNC, vars,				\
+		   "Colorfunc is %s_%d_to_%s, %s, %s,, %d\n",		\
+		   #fromname, lut->channel_depth, #toname,		\
+		   lut->input_color_description->name,			\
+		   lut->output_color_description->name,			\
+		   lut->invert_output);					\
+    }									\
+  if (lut->channel_depth == 8)						\
+    return fromname##_8_to_##toname(vars, in, out);			\
+  else									\
+    return fromname##_16_to_##toname(vars, in, out);			\
 }
 
 #define COLOR_TO_COLOR_FUNC(T, bits)					      \
@@ -1630,7 +1634,7 @@ gray_##bits##_to_color_raw(stp_const_vars_t vars, const unsigned char *in, \
 									   \
   for (i = 0; i < lut->image_width; i++)				   \
     {									   \
-      unsigned outval = s_in[0] ^ mask;					   \
+      unsigned outval = (s_in[0] * (65535 / (1 << bits))) ^ mask;	   \
       out[0] = outval;							   \
       out[1] = outval;							   \
       out[2] = outval;							   \
@@ -1662,8 +1666,8 @@ COLOR_TO_KCMY_FUNC(gray, kcmy, color, generic, 8)
 COLOR_TO_KCMY_FUNC(gray, kcmy, color, generic, 16)
 GENERIC_COLOR_FUNC(gray, kcmy)
 
-COLOR_TO_KCMY_FUNC(gray, kcmy_raw, color, raw, 8)
-COLOR_TO_KCMY_FUNC(gray, kcmy_raw, color, raw, 16)
+COLOR_TO_KCMY_FUNC(gray, kcmy_raw, color_raw, raw, 8)
+COLOR_TO_KCMY_FUNC(gray, kcmy_raw, color_raw, raw, 16)
 GENERIC_COLOR_FUNC(gray, kcmy_raw)
 
 COLOR_TO_KCMY_FUNC(color, kcmy, color, generic, 8)
@@ -3217,12 +3221,54 @@ initialize_gcr_curve(stp_const_vars_t vars)
     }
 }
 
+/*
+ * Channels that are synthesized (e. g. the black channel in CMY -> CMYK
+ * conversion) need to be computed differently from channels that are
+ * mapped 1-1 from input to output.  Channels that are simply mapped need
+ * to be inverted if necessary, and in addition the contrast, brightness,
+ * and other gamma factors are factored in.  Channels that are synthesized
+ * are never inverted, since they're computed from the output of other
+ * channels that have already been inverted.
+ *
+ * This isn't simply a matter of comparing the input channels to the output
+ * channels, since some of the conversions (K -> CMYK) work by means
+ * of a chain of conversions (K->CMY->CMYK).  In this case, we need to
+ * fully compute the CMY channels, but the K channel in the output is
+ * not inverted.
+ *
+ * The rules that are implemented by the logic below are:
+ *
+ * 1) If the input is raw, we always perform the normal computation (without
+ *    synthesizing channels).
+ *
+ * 2) If the output is CMY or K only, we never synthesize channels.  We've
+ *    now covered raw, black, and CMY/RGB outputs, leaving CMYK and CMYKRB.
+ *
+ * 3) Output channels above CMYK are synthesized (e. g. RB in CMYKRB).
+ *
+ * 4) If the input is CMYK, we do not synthesize channels.
+ *
+ * 5) The black channel (in CMYK) is synthesized.
+ *
+ * 6) All other channels (CMY/RGB) are not synthesized.
+ */
+
 static int
 channel_is_synthesized(lut_t *lut, int channel)
 {
-  return (lut->output_color_description->channels &
-	  lut->input_color_description->channels &
-	  (1 << channel));
+  if (lut->output_color_description->color_id == COLOR_ID_RAW)
+    return 1;			/* Case 1 */
+  else if (lut->output_color_description->channels == CMASK_CMY ||
+	   lut->output_color_description->channels == CMASK_K)
+    return 0;			/* Case 2 */
+  else if (channel >= CHANNEL_W)
+    return 1;			/* Case 3 */
+  else if (lut->input_color_description->channels == CMASK_CMYK)
+    return 0;			/* Case 4 */
+  else if (channel == CHANNEL_K)
+    return 1;			/* Case 5 */
+  else
+    return 0;			/* Case 6 */
 }
 
 static void
@@ -3365,9 +3411,9 @@ static void
 compute_a_curve(lut_t *lut, int channel)
 {
   if (channel_is_synthesized(lut, channel))
-    compute_a_curve_full(lut, channel);
-  else
     compute_a_curve_fast(lut, channel);
+  else
+    compute_a_curve_full(lut, channel);
 }
 
 static void
@@ -3419,7 +3465,7 @@ compute_one_lut(lut_t *lut, int i)
       curve = stp_curve_create_copy(color_curve_bounds);
       stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
 			STP_CURVE_BOUNDS_RESCALE);
-      cache_set_curve_copy(&(lut->channel_curves[i]), curve);
+      cache_set_curve(&(lut->channel_curves[i]), curve);
       compute_a_curve(lut, i);
     }
 }
@@ -3513,8 +3559,11 @@ stpi_compute_lut(stp_vars_t v)
 	       lut->output_color_description->channels & (1 << i))
 	setup_channel(v, i, &(channel_params[i]));
     }
-  if (!(lut->input_color_description->channels & CMASK_K) &&
-      (lut->output_color_description->channels & CMASK_K))
+  if (((lut->output_color_description->channels & CMASK_CMYK) == CMASK_CMYK) &&
+      (lut->input_color_description->color_id == COLOR_ID_GRAY ||
+       lut->input_color_description->color_id == COLOR_ID_WHITE ||
+       lut->input_color_description->color_id == COLOR_ID_RGB ||
+       lut->input_color_description->color_id == COLOR_ID_CMY))
     initialize_gcr_curve(v);
 }
 
