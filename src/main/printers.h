@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.7 2003/01/20 22:19:54 rlk Exp $"
+ * "$Id: printers.h,v 1.8 2003/02/05 00:50:46 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -45,6 +45,7 @@ extern "C" {
 #include "util.h"
 #include "vars.h"
 
+#define COOKIE_PRINTER    0x0722922c
 
 typedef struct
 {
@@ -102,5 +103,5 @@ stpi_printer_describe_parameter(const stp_vars_t v, const char *name,
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.7 2003/01/20 22:19:54 rlk Exp $".
+ * End of "$Id: printers.h,v 1.8 2003/02/05 00:50:46 rlk Exp $".
  */

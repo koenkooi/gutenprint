@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.17 2003/01/26 03:38:08 rlk Exp $"
+ * "$Id: print-papers.c,v 1.18 2003/02/05 00:50:46 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,6 +38,7 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
+#include "papers.h"
 
 static stpi_list_t *paper_list = NULL;
 

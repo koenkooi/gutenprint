@@ -1,5 +1,5 @@
 /*
- * "$Id: papers.h,v 1.6 2003/01/20 22:19:19 rlk Exp $"
+ * "$Id: papers.h,v 1.7 2003/02/05 00:51:43 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -62,15 +62,11 @@ extern int stpi_paper_list_init(void);
 extern int stpi_paper_create(stp_papersize_t pt);
 extern int stpi_paper_destroy(stp_papersize_t pt);
 
-extern void stpi_default_media_size(const stp_vars_t v,
-				    int *width, int *height);
-
-
 #ifdef __cplusplus
   }
 #endif
 
 #endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
 /*
- * End of "$Id: papers.h,v 1.6 2003/01/20 22:19:19 rlk Exp $".
+ * End of "$Id: papers.h,v 1.7 2003/02/05 00:51:43 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.15 2003/01/25 22:24:58 rlk Exp $"
+ * "$Id: util.h,v 1.16 2003/02/05 00:50:46 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -173,6 +173,8 @@ extern stpi_list_item_t *stpi_list_item_next(stpi_list_item_t *item);
 extern void *stpi_list_item_get_data(const stpi_list_item_t *item);
 extern int stpi_list_item_set_data(stpi_list_item_t *item,
 				  void *data);
+extern void stpi_default_media_size(const stp_vars_t v,
+				    int *width, int *height);
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
@@ -249,5 +251,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.15 2003/01/25 22:24:58 rlk Exp $".
+ * End of "$Id: util.h,v 1.16 2003/02/05 00:50:46 rlk Exp $".
  */
