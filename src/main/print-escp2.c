@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.54 2001/05/02 00:32:12 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.55 2001/05/03 01:34:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2857,7 +2857,19 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 	    break;
 	  }
       }
-
+  if (ncolors == 0)
+    {
+      ink_type = escp2_default_parameters(printer, NULL, "InkType");
+      for (i = 0; i < escp2_ninktypes; i++)
+	{
+	  if (strcmp(ink_type, _(ink_types[i].name)) == 0)
+	    {
+	      hasblack = ink_types[i].hasblack;
+	      ncolors = ink_types[i].ncolors;
+	      break;
+	    }
+	}
+    }
   stp_set_output_color_model(nv, COLOR_MODEL_CMY);
 
  /*
