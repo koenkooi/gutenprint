@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.16 2000/06/05 01:32:03 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.17 2000/06/11 23:12:36 cpbs Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -37,6 +37,7 @@ extern gint             plist_count;	   /* Number of system printers */
 extern gint             plist_current;     /* Current system printer */
 extern plist_t          *plist;		  /* System printers */
 extern gint32           image_ID;
+extern const char       *image_filename;
 extern gint             image_width;
 extern gint             image_height;
 extern const printer_t *current_printer;
@@ -209,7 +210,8 @@ gimp_create_main_window (void)
    * Create the main dialog
    */
 
-  plug_in_name = g_strdup_printf (_("Print v%s"), PLUG_IN_VERSION);
+  plug_in_name = g_strdup_printf (_("%s -- Print v%s"),
+                                  image_filename, PLUG_IN_VERSION);
 
   print_dialog = dialog =
     gimp_dialog_new (plug_in_name, "print",

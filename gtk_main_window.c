@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.20 2000/06/04 17:00:10 cpbs Exp $"
+ * "$Id: gtk_main_window.c,v 1.21 2000/06/11 23:12:36 cpbs Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -43,6 +43,7 @@ extern int plist_count;	     /* Number of system printers */
 extern int plist_current;    /* Current system printer */
 extern plist_t  *plist;       /* System printers */
 extern gint32 image_ID;
+extern const char *image_filename;
 extern int image_width;
 extern int image_height;
 extern const printer_t *current_printer;
@@ -223,7 +224,8 @@ void gtk_create_main_window(void)
      ***/
     print_dialog = dialog = gtk_dialog_new();
 
-    plug_in_name = g_strdup_printf (_("Print v%s"), PLUG_IN_VERSION);
+    plug_in_name = g_strdup_printf (_("%s - Print v%s"),
+                                    image_filename, PLUG_IN_VERSION);
     gtk_window_set_title(GTK_WINDOW(dialog), plug_in_name);
     g_free (plug_in_name);
   
