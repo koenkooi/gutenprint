@@ -1,7 +1,7 @@
 <!-- ============================================================= -->
 <!--                    Gimp-Print DTD                             -->
 <!-- ============================================================= -->
-<!-- Version $Id: gimpprint.dtd,v 1.4 2003/02/22 17:20:20 rlk Exp $
+<!-- Version $Id: gimpprint.dtd,v 1.5 2003/11/23 03:52:47 rlk Exp $
 -->
 <!--
 Copyright (C) 2002 Roger Leigh (roger@whinlatter.uklinux.net)
@@ -220,5 +220,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
 <!-- ============================================================= -->
-<!--                    End of GIMP-Print Printers DTD             -->
+<!--                    End of Gimp-Print Printers DTD             -->
 <!-- ============================================================= -->

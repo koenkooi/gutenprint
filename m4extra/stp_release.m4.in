@@ -1,5 +1,5 @@
 # This file is part of Gimp-Print.                     -*- Autoconf -*-
-# Gimp-Print Autoconf support.
+# Release date.
 # Copyright 2001-2002 Roger Leigh
 #
 # This program is free software; you can redistribute it and/or modify
@@ -18,18 +18,12 @@
 # 02111-1307, USA.
 
 
-## Table of Contents:
-## 1. Autoconf support
-
-
-## ---------------- ##
-## Autoconf support ##
-## ---------------- ##
-
-
-# STP_INIT
-# --------
-# Initialise Gimp-Print autoconf macros.  Turn on error detection of
-# STP_* macros
-AC_DEFUN([STP_INIT],
-[m4_pattern_forbid([STP_])])
+# STP_RELEASE_DATE
+# ----------------
+# Hard-code the release date into the generated configure script and
+# Makefiles.
+AC_DEFUN([STP_RELEASE_DATE],
+[dnl Set package release date
+XXXRELEASE_DATE=XXX
+AC_DEFINE_UNQUOTED(RELEASE_DATE, "${RELEASE_DATE}", [Package release date.])
+AC_SUBST(RELEASE_DATE)])

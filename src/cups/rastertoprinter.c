@@ -1,7 +1,7 @@
 /*
- * "$Id: rastertoprinter.c,v 1.77 2003/11/23 00:19:12 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.78 2003/11/23 03:52:47 rlk Exp $"
  *
- *   GIMP-print based raster filter for the Common UNIX Printing System.
+ *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
  *   Copyright 1993-2003 by Easy Software Products.
  *
@@ -781,7 +781,7 @@ Image_get_appname(stp_image_t *image)		/* I - Image */
 {
   (void)image;
 
-  return ("CUPS 1.1.x driver based on GIMP-print");
+  return ("CUPS 1.1.x driver based on Gimp-Print");
 }
 
 
@@ -960,5 +960,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.77 2003/11/23 00:19:12 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.78 2003/11/23 03:52:47 rlk Exp $".
  */

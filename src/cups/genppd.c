@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.84 2003/11/09 23:06:00 rlk Exp $"
+ * "$Id: genppd.c,v 1.85 2003/11/23 03:52:46 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -190,6 +190,7 @@ static void
 print_group_open(FILE *fp, stp_parameter_class_t p_class,
 		 stp_parameter_level_t p_level)
 {
+  /* TRANSLATORS: "Gimp-Print" is a proper name, not a description */
   gzprintf(fp, "*OpenGroup: %s %s %s\n\n", _("Gimp-Print"),
 	   _(parameter_class_names[p_class]),
 	   _(parameter_level_names[p_level]));
@@ -1487,5 +1488,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.84 2003/11/09 23:06:00 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.85 2003/11/23 03:52:46 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: cups-calibrate.c,v 1.3 2002/09/21 09:12:07 rleigh Exp $"
+ * "$Id: cups-calibrate.c,v 1.4 2003/11/23 03:52:46 rlk Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
@@ -101,14 +101,14 @@ main(int  argc,
   puts("Copyright 1999-2000 by Easy Software Products, All Rights Reserved.");
   puts("");
   puts("This program allows you to calibrate the color output of printers");
-  puts("using the GIMP-Print CUPS or ESP Print Pro drivers.");
+  puts("using the Gimp-Print CUPS or ESP Print Pro drivers.");
   puts("");
-  puts("Please note that this program ONLY works with the GIMP-Print CUPS or");
-  puts("ESP Print Pro drivers. If you are using the GIMP-Print stp driver of");
-  puts("GhostScript or the drivers of the GIMP-Print plug-in of GIMP, this");
+  puts("Please note that this program ONLY works with the Gimp-Print CUPS or");
+  puts("ESP Print Pro drivers. If you are using the Gimp-Print stp driver of");
+  puts("GhostScript or the drivers of the Print plug-in for the GIMP, this");
   puts("calibration will not work.");
   puts("");
-  puts("These drivers by the text \"CUPS+GIMP-print\" or \"ESP Print Pro\" in");
+  puts("These drivers by the text \"CUPS+Gimp-Print\" or \"ESP Print Pro\" in");
   puts("the model description displayed by the CUPS web interface, KUPS,");
   puts("the ESP Print Pro Printer Manager, or printerdrake.");
   puts("");
