@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.5 2001/04/22 03:15:49 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.6 2001/05/12 16:12:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -30,6 +30,7 @@
 #include "print_gimp.h"
 
 #include "print-intl.h"
+#include <string.h>
 
 extern stp_vars_t   vars;
 extern gint     plist_count;       /* Number of system printers */

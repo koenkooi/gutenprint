@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.11 2001/05/12 15:17:49 rlk Exp $"
+ * "$Id: print.c,v 1.12 2001/05/12 16:12:21 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -38,6 +38,8 @@
 #endif
 
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "print-intl.h"
 
@@ -1432,5 +1434,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.11 2001/05/12 15:17:49 rlk Exp $".
+ * End of "$Id: print.c,v 1.12 2001/05/12 16:12:21 rlk Exp $".
  */

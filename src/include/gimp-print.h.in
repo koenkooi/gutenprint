@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.10 2001/05/03 18:06:29 rleigh Exp $"
+ * "$Id: gimp-print.h.in,v 1.11 2001/05/12 16:12:21 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -37,10 +37,7 @@
  * Include necessary header files...
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <stddef.h>	/* For size_t */
 
 #ifdef __cplusplus
 extern "C" {
@@ -572,5 +569,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.10 2001/05/03 18:06:29 rleigh Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.11 2001/05/12 16:12:21 rlk Exp $".
  */

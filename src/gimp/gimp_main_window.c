@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.14 2001/04/22 03:15:49 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.15 2001/05/12 16:12:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -27,13 +27,12 @@
 #endif
 #include "../../lib/libprintut.h"
 
-#define EXPANDED_PREVIEW_WINDOW
+#define MAX_PREVIEW_PPI        (30)
 
 #include "print_gimp.h"
 
-#define MAX_PREVIEW_PPI        (30)
-
 #include "print-intl.h"
+#include <string.h>
 
 /*
  * Constants for GUI...

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.12 2001/05/03 01:28:55 rlk Exp $"
+ * "$Id: genppd.c,v 1.13 2001/05/12 16:12:21 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -239,7 +239,6 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   int		width, height,		/* Page information */
 		bottom, left,
 		top, right;
-  int		printed_default_resolution = 0;
   const char *driver = stp_printer_get_driver(p);
   const char *long_name = stp_printer_get_long_name(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
@@ -683,5 +682,5 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.12 2001/05/03 01:28:55 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.13 2001/05/12 16:12:21 rlk Exp $".
  */
