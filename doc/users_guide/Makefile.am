@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/10/06 21:19:08 rlk Exp $
+## $Id: Makefile.am,v 1.13 2001/10/06 22:04:17 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -159,6 +159,7 @@ all-local: $(STANDARD_TARGETS)
 install-data-local: $(STANDARD_TARGETS)
 	if test -n '$(STANDARD_TARGETS)' ; then \
 	  $(mkinstalldirs) $(datadir)/$(PACKAGE)/doc/figures ; \
+	  $(mkinstalldirs) $(datadir)/$(PACKAGE)/doc/stylesheet-images ; \
 	  $(INSTALL_DATA) $(MANUAL).pdf $(datadir)/$(PACKAGE)/doc ; \
 	  cd users_guide ; \
 	  for file in *.html *.css ; do \
@@ -167,6 +168,10 @@ install-data-local: $(STANDARD_TARGETS)
 	  cd figures ; \
 	  for file in *.png ; do \
 	    $(INSTALL_DATA) $$file $(datadir)/$(PACKAGE)/doc/figures ; \
+	  done ; \
+	  cd ../stylesheet-images ; \
+	  for file in * ; do \
+	    $(INSTALL_DATA) $$file $(datadir)/$(PACKAGE)/doc/stylesheet-images ; \
 	  done ; \
 	fi
 
