@@ -361,6 +361,12 @@ produce sufficiently small dots (3 pl) that they can take advantage of
 such high resolution.  Even there, 1440x720 will likely produce more
 than adequate output.
 
+The Stylus Pro printers (Stylus Pro 5000, 5500, 7000, 7500, 9000, and
+9500) support additional microweave modes known as Full Overlap
+(FOL), Four Pass, and FOL2.  The Stylus Pro 5500, 7500, and 9500
+additionally have a mode called MW2.  These modes can only be used at
+certain resolutions.
+
 '180 DPI'				   (works on many printers)
 '180 DPI Unidirectional'		   (works on many printers)
 
@@ -374,6 +380,12 @@ than adequate output.
 '360 DPI Unidirectional'                   (works on all printers)
 '360 DPI Microweave'                       (works on all printers)
 '360 DPI Microweave Unidirectional'        (works on all printers)
+'360 DPI Full Overlap'			   (works on Stylus Pro printers)
+'360 DPI Full Overlap Unidirectional'	   (works on Stylus Pro printers)
+'360 DPI FOL2'	      			   (works on Stylus Pro printers)
+'360 DPI FOL2 Unidirectional'		   (works on Stylus Pro printers)
+'360 DPI MW2'				   (works on Stylus Pro printers)
+'360 DPI MW2 Unidirectional'		   (works on Stylus Pro printers)
 '360 DPI Softweave'                        (works on printers that support
 					    variable dot sizes, such as
 					    the Epson Stylus Color 740
@@ -395,13 +407,25 @@ than adequate output.
 					    for Stylus Color, Stylus
 					    Color 1500, Stylus Color
 					    1520, and Stylus Color 3000)
+'720 x 360 DPI FOL'			   (works on Stylus Pro printers)
+'720 x 360 DPI FOL Unidirectional'	   (works on Stylus Pro printers)
+'720 x 360 DPI FOL2'	      		   (works on Stylus Pro printers)
+'720 x 360 DPI FOL2 Unidirectional'	   (works on Stylus Pro printers)
+'720 x 360 DPI MW2'			   (works on Stylus Pro printers)
+'720 x 360 DPI MW2 Unidirectional'	   (works on Stylus Pro printers)
 
 '720 DPI Microweave'                       (works on most printers;
-					    not recommended on the
-					    Stylus Color 740 and newer)
+					    recommended only on
+					    printers that do not
+					    support other 720 DPI modes)
 '720 DPI Microweave Unidirectional'        (works on most printers;
-					    not recommended on the
-					    Stylus Color 740 and newer)
+					    recommended only on
+					    printers that do not
+					    support other 720 DPI modes)
+'720 DPI Full Overlap'			   (works on Stylus Pro printers)
+'720 DPI Full Overlap Unidirectional'	   (works on Stylus Pro printers)
+'720 DPI Four Pass'    			   (works on Stylus Pro printers)
+'720 DPI Four Pass Unidirectional'	   (works on Stylus Pro printers)
 '720 DPI Softweave'                        (works on all printers except
 					    for Stylus Color, Stylus
 					    Color 1500, Stylus Color
@@ -424,11 +448,13 @@ than adequate output.
 					    1520, and Stylus Color 3000)
 
 '1440 x 720 DPI Microweave'                (works on some older 1440x720 dpi
-					    printers; not normally
-					    recommended)
+					    printers; not normally recommended)
 '1440 x 720 DPI Microweave Unidirectional' (works on some older 1440x720 dpi
-					    printers; not normally
-					    recommended)
+					    printers; not normally recommended)
+'1440 x 720 DPI Full Overlap'		   (works on Stylus Pro printers)
+'1440 x 720 DPI FOL Unidirectional'	   (works on Stylus Pro printers)
+'1440 x 720 DPI Four Pass'    		   (works on Stylus Pro printers)
+'1440 x 720 DPI Four Pass Unidirectional'  (works on Stylus Pro printers)
 '1440 x 720 DPI Softweave'                 (works on all 1440x720 dpi
 					    printers except for Stylus
 					    Color 1520 and Stylus Color 3000)
