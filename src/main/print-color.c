@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.17 2004/03/21 22:50:50 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.18 2004/03/21 22:54:58 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -137,8 +137,8 @@ static const color_description_t color_descriptions[] =
   { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CMASK_W,      1 },
   { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CMASK_RGB,    3 },
   { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CMASK_CMY,    3 },
-  { "CMYK",       1, 1, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4 },
-  { "KCMY",       1, 0, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4 },
+  { "CMYK",       1, 0, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4 },
+  { "KCMY",       1, 1, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4 },
   { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6 },
   { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,             -1 },
 };
