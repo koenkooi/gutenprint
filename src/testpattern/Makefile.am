@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.20 2004/06/06 01:16:30 rlk Exp $
+## $Id: Makefile.am,v 1.21 2004/08/04 20:37:59 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,6 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-INCLUDES = $(AM_CFLAGS)
 pkgdatadir = $(datadir)/$(PACKAGE)/samples
 
 TESTS = run-testpattern run-testpattern-1

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.42 2004/05/09 16:06:08 rleigh Exp $
+## $Id: Makefile.am,v 1.43 2004/08/04 20:37:58 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ include $(top_srcdir)/scripts/global.mk
 ## Variables
 
 DISTDIRS = foomatic-templates-ijs
-INCLUDES = $(AM_CFLAGS) $(GIMPPRINT_CFLAGS)
+LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS)
 
 if BUILD_FOOMATIC_3
 BUILD_FOOMATIC = 1

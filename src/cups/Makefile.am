@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.78 2004/08/03 21:22:40 rleigh Exp $
+## $Id: Makefile.am,v 1.79 2004/08/04 20:37:58 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ else
 cups_modeldir = $(pkgdatadir)/model/gimp-print/@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@/
 endif
 
-DEFS = -I. -I$(srcdir) -I../.. $(AM_CFLAGS) @CUPS_CFLAGS@ @DEFS@ $(GIMPPRINT_CFLAGS)
+LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS) $(CUPS_CFLAGS)
 
 
 ## Programs
