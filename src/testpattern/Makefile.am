@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/08/14 00:12:58 rlk Exp $
+## $Id: Makefile.am,v 1.4 2001/09/01 19:28:20 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ $(INTLLIBS)
 
 ## Programs
+
 TESTPATTERN_BIN = testpattern
 
 bin_PROGRAMS = @TESTPATTERN_BIN@
