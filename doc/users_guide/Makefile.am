@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.37 2003/01/06 20:50:59 rleigh Exp $
+## $Id: Makefile.am,v 1.38 2004/01/21 09:19:23 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -405,29 +405,29 @@ install-data-local: $(STANDARD_TARGETS)
 	    $(INSTALL_DATA) $(srcdir)/$(MANUAL).pdf $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
 	  fi ; \
 	  if test -d $(HTMLDIR) ; then \
-	    cd $(HTMLDIR) ; \
+	  HTMLGENDIR="$(HTMLDIR)" ; \
 	  elif test -d $(srcdir)/$(HTMLDIR) ; then \
-	    cd $(srcdir)/$(HTMLDIR) ; \
+	    HTMLGENDIR="$(srcdir)/$(HTMLDIR)" ; \
 	  else \
 	    exit 1 ; \
 	  fi ; \
-	  for file in *.html *.css ; do \
+	  for file in $$HTMLGENDIR/*.html $$HTMLGENDIR/*.css ; do \
 	    if test -f $$file ; then \
 	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html ; \
 	    fi ; \
 	  done ; \
-	  cd figures ; \
-	  for file in *.png ; do \
+	  for file in $$HTMLGENDIR/figures/*.png ; do \
 	    if test -f $$file ; then \
 	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/figures ; \
 	    fi ; \
 	  done ; \
-	  cd ../stylesheet-images ; \
-	  for file in * ; do \
-	    if test -f $$file ; then \
-	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/stylesheet-images ; \
-	    fi ; \
-	  done ; \
+	  if test -d $$HTMLGENDIR/stylesheet-images ; then \
+	    for file in $$HTMLGENDIR/stylesheet-images/* ; do \
+	      if test -f $$file ; then \
+	        $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/html/stylesheet-images ; \
+	      fi ; \
+	    done ; \
+	  fi ; \
 	fi
 
 uninstall-local:
