@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.96 2000/11/19 03:34:42 rlk Exp $"
+ * "$Id: print-canon.c,v 1.97 2000/11/27 10:09:21 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -222,7 +222,7 @@ static canon_cap_t canon_model_capabilities[] =
     11, 9, 10, 18,
     CANON_INK_CMYK | CANON_INK_CcMmYyK,
     CANON_SLOT_ASF1,
-    0
+    CANON_CAP_CMD6d | CANON_CAP_CMD70
   },
   { /* Canon BJC 7100 */
     7100,
