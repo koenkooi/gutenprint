@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.79 2002/11/02 18:56:32 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.80 2002/11/02 19:01:57 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2608,8 +2608,6 @@ preview_update (void)
       twidth = (FINCH * (gdouble) image_width / -pv->scaling);
       print_width = twidth + .5;
       print_height = (twidth * (gdouble) image_height / image_width) + .5;
-      stp_set_width(pv->v, print_width);
-      stp_set_height(pv->v, print_height);
       GTK_ADJUSTMENT (scaling_adjustment)->lower = min_ppi_scaling;
       GTK_ADJUSTMENT (scaling_adjustment)->upper = max_ppi_scaling;
       GTK_ADJUSTMENT (scaling_adjustment)->value = -pv->scaling;
@@ -2639,8 +2637,6 @@ preview_update (void)
 	  print_width = twidth;
 	  print_height = twidth * (gdouble) image_height /
 	    (gdouble) image_width;
-	  stp_set_width(pv->v, print_width);
-	  stp_set_height(pv->v, print_height);
 	}
       else
 	{
@@ -2649,10 +2645,10 @@ preview_update (void)
 	  print_height = theight;
 	  print_width = theight * (gdouble) image_width /
 	    (gdouble) image_height;
-	  stp_set_width(pv->v, print_width);
-	  stp_set_height(pv->v, print_height);
 	}
     }
+  stp_set_width(pv->v, print_width);
+  stp_set_height(pv->v, print_height);
 
 
   if (!pv->left_is_valid)
