@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.14 2003/08/02 15:10:49 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.15 2003/08/03 16:40:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1163,7 +1163,7 @@ DECLARE_INKLIST("None", gen1, photo, N_("EPSON Standard Inks"),
 DECLARE_INKLIST("None", gen2, photo, N_("EPSON Standard Inks"),
 		standard, gen2);
 DECLARE_INKLIST("None", pigment, photo, N_("EPSON Standard Inks"),
-		standard, stp2200);
+		ultrachrome, stp2200);
 
 static const escp2_inkname_t *const f360_photo_ink_types[] =
 {
