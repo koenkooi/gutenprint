@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.17.2.2 2002/07/21 19:46:29 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.17.2.3 2002/08/20 00:07:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -176,6 +176,10 @@ typedef struct
 #define MODEL_VACUUM_NO		0x000ul
 #define MODEL_VACUUM_YES	0x100ul
 
+#define MODEL_FAST_360_MASK	0x200ul
+#define MODEL_FAST_360_NO	0x000ul
+#define MODEL_FAST_360_YES	0x200ul
+
 typedef enum
 {
   MODEL_COMMAND,
@@ -184,6 +188,7 @@ typedef enum
   MODEL_VARIABLE_DOT,
   MODEL_GRAYMODE,
   MODEL_VACUUM,
+  MODEL_FAST_360,
   MODEL_LIMIT
 } escp2_model_option_t;
 
