@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.18.2.7 2001/09/14 01:26:34 sharkey Exp $
+dnl $Id: configure.in.in,v 1.18.2.8 2001/09/14 03:14:12 sharkey Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -605,7 +605,7 @@ man/cups-calibrate.8 src/testpattern/Makefile
 src/cups/Makefile src/escputil/Makefile src/foomatic/Makefile test/Makefile
 src/foomatic/foomatic-generator src/ghost/Makefile src/ghost/contrib.mak.addon
 dnl @-@-@-@-@ YES-GIMP @-@-@-@-@
-include/gimp-print/Makefile include/gimp-print/gimp-print.h include/Makefile
+include/Makefile include/gimp-print/Makefile include/gimp-print/gimp-print.h
 src/main/Makefile src/main/gimpprint-config src/printdef/Makefile
 ],[
 chmod +x src/main/gimpprint-config
