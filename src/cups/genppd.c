@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.11 2001/04/27 23:03:19 rleigh Exp $"
+ * "$Id: genppd.c,v 1.12 2001/05/03 01:28:55 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -333,6 +333,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
     * Get the media size...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -362,6 +364,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
    /*
     * Get the media size...
     */
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -389,6 +393,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
     * Get the media size and margins...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -417,6 +423,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
     * Get the media size...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -675,5 +683,5 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.11 2001/04/27 23:03:19 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.12 2001/05/03 01:28:55 rlk Exp $".
  */
