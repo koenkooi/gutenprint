@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.14 2001/02/11 03:47:53 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.15 2001/02/14 02:15:28 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1557,7 +1557,7 @@ lexmark_describe_resolution(printer,
       if(use_6color)
         stp_dither_set_adaptive_divisor(dither, 8);
       else
-        stp_dither_set_adaptive_divisor(dither, 16);
+        stp_dither_set_adaptive_divisor(dither, 4);
     }  
   else
     stp_dither_set_adaptive_divisor(dither, 4);

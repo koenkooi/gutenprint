@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.6 2001/02/13 02:17:37 rlk Exp $
+ * $Id: acconfig.h,v 1.7 2001/02/14 02:15:28 rlk Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -92,6 +92,8 @@
 
 /* Define as 1 if you have the stpcpy function.  */
 #undef HAVE_STPCPY
+
+#undef HAVE_MAINTAINER_MODE
 
 /* Gnome definitions (from glade acconfig.h) */
 #undef HAVE_LIBSM

@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.10 2001/02/13 02:17:37 rlk Exp $
+dnl $Id: configure.in.in,v 1.11 2001/02/14 02:15:28 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -119,6 +119,7 @@ AM_MAINTAINER_MODE
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   MAINTAINER_MODE=true
   BUILD_TEST=yes
+  AC_DEFINE(HAVE_MAINTAINER_MODE)
 fi
 
 dnl Check canonical system/host (a kludge: replace me with something better).
