@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.26 2001/06/24 13:09:13 rleigh Exp $
+## $Id: Makefile.am,v 1.27 2001/07/20 14:07:08 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,7 @@ rastertoprinter_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 ## Data
 
-CUPS_PKG = calibrate.ppm
+CUPS_PKG = calibrate.ppm profile.jpg
 CUPS_CONF = command.types
 
 pkgdata_DATA = @CUPS_PKG@
