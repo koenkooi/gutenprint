@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.28 2001/03/23 10:19:03 gandy Exp $"
+ * "$Id: print-canon.c,v 1.29 2001/03/26 13:37:57 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2725,7 +2725,7 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
 #endif
   }
 
-  stp_pack(in_ptr, length+1, comp_data, &comp_ptr);
+  stp_pack_tiff(in_ptr, length+1, comp_data, &comp_ptr);
   newlength= comp_ptr - comp_buf;
 
   /* send packed empty lines if any */

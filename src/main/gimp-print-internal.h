@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.23 2001/03/26 13:23:51 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.24 2001/03/26 13:37:57 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -224,6 +224,8 @@ typedef struct stp_softweave
 		    int physical_xdpi, int vertical_subpass);
   void (*fill_start)(struct stp_softweave *sw, int row, int subpass,
 		     int width, int missingstartrows, int color);
+  int (*pack)(const unsigned char *in, int bytes,
+	      unsigned char *out, unsigned char **optr);
 } stp_softweave_t;
 
 /*
@@ -315,8 +317,13 @@ extern void	stp_unpack_8(int height, int bits, const unsigned char *in,
 			     unsigned char *out4, unsigned char *out5,
 			     unsigned char *out6, unsigned char *out7);
 
-extern int	stp_pack(const unsigned char *line, int height,
-			 unsigned char *comp_buf, unsigned char **comp_ptr);
+extern int	stp_pack_tiff(const unsigned char *line, int height,
+			      unsigned char *comp_buf,
+			      unsigned char **comp_ptr);
+
+extern int	stp_pack_uncompressed(const unsigned char *line, int height,
+				      unsigned char *comp_buf,
+				      unsigned char **comp_ptr);
 
 extern void *stp_initialize_weave(int jets, int separation, int oversample,
 				  int horizontal, int vertical,
@@ -336,6 +343,9 @@ extern void *stp_initialize_weave(int jets, int separation, int oversample,
 						     int subpass, int width,
 						     int missingstartrows,
 						     int vertical_subpass),
+				  int (*pack)(const unsigned char *in,
+					      int bytes, unsigned char *out,
+					      unsigned char **optr),
 				  int (*compute_linewidth)(const stp_softweave_t *sw));
 
 extern void stp_fill_tiff(stp_softweave_t *sw, int row, int subpass,
@@ -462,5 +472,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.23 2001/03/26 13:23:51 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.24 2001/03/26 13:37:57 rlk Exp $".
  */
