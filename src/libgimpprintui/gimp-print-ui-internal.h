@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.14 2004/05/07 19:20:27 rleigh Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.15 2004/05/23 23:40:24 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -53,10 +53,10 @@ typedef struct
 {
   gint callback_id;
   char *default_val;
-  stp_string_list_t params;
+  stp_string_list_t *params;
   GtkWidget *combo;
   GtkWidget *label;
-} list_option_t;  
+} list_option_t;
 
 typedef struct
 {
@@ -151,7 +151,7 @@ extern int stpui_show_all_paper_sizes;
 
 extern stpui_plist_t *stpui_plist_create(const char *name, const char *driver);
 extern const char *stpui_combo_get_name(GtkWidget   *combo,
-					stp_const_string_list_t options);
+					const stp_string_list_t *options);
 extern void stpui_table_attach_aligned(GtkTable *table, gint column,
 				       gint row, const gchar *label_text,
 				       gfloat xalign, gfloat yalign,
