@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.51 2001/01/20 23:10:58 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.1 2001/01/22 20:28:38 rleigh Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
