@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.29 2003/10/03 00:48:49 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.30 2003/10/09 00:05:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1071,9 +1071,9 @@ static const shade_set_t ultrachrome_photo_shades =	/* Ultrachrome with photo bl
 
 static const shade_set_t ultrachrome_matte_shades =	/* Ultrachrome with matte black ink */
 {
-  { 2, { 1.0, 0.33 }},
-  { 2, { 1.0, 0.32 }},
-  { 2, { 1.0, 0.35 }},
+  { 2, { 1.0, 0.25 }},
+  { 2, { 1.0, 0.25 }},
+  { 2, { 1.0, 0.25 }},
   { 1, { 1.0 }},
   { 1, { 1.0 }},
   { 1, { 1.0 }},
