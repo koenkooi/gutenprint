@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2001/10/06 22:48:09 andystewart Exp $
+## $Id: Makefile.am,v 1.15 2001/10/06 23:16:23 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -101,9 +101,6 @@ $(MANUAL).pdf: $(MANUAL).ps
 	$(PS2PDF) $(MANUAL).ps $(MANUAL).pdf
 
 %.pdf:
-	if test ! -d figures ; then \
-	  mkdir figures ; \
-	fi
 	$(CONVERT) $(srcdir)/$(basename $@).png EPDF:$@
 
 ps: $(MANUAL).ps
@@ -114,9 +111,6 @@ $(MANUAL).ps:  $(MANUAL).sgml $(EPS_IMAGES)
 	$(DB2PS) $(srcdir)/$(MANUAL).sgml
 
 %.eps:
-	if test ! -d figures ; then \
-	  mkdir figures ; \
-	fi
 	$(CONVERT) $(srcdir)/$(basename $@).png EPS2:$@
 
 $(MANUAL).ps.gz: $(MANUAL).ps
