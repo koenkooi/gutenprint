@@ -1,5 +1,5 @@
 /*
- * "$Id: image.c,v 1.1 2002/12/30 16:48:02 rlk Exp $"
+ * "$Id: image.c,v 1.2 2003/01/10 04:57:59 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
+#include "gimp-print-internal.h"
 
 void
 stp_image_init(stp_image_t *image)
