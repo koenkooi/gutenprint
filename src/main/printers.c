@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.54 2003/06/03 20:17:38 rleigh Exp $"
+ * "$Id: printers.c,v 1.55 2003/06/07 21:42:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -494,6 +494,11 @@ verify_param(stp_const_vars_t v, const char *parameter)
 {
   stp_parameter_t desc;
   stp_describe_parameter(v, parameter, &desc);
+  if (!desc.is_active)
+    {
+      stp_parameter_description_free(&desc);
+      return 1;
+    }
   switch (desc.p_type)
     {
     case STP_PARAMETER_TYPE_STRING_LIST:
