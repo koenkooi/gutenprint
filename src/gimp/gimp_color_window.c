@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.21 2002/10/28 12:02:53 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.22 2002/11/02 03:02:12 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -114,7 +114,8 @@ build_dither_combo (void)
 		     stp_get_dither_algorithm (pv->v),
 		     stp_default_dither_algorithm (),
 		     &dither_algo_callback,
-		     &dither_algo_callback_id);
+		     &dither_algo_callback_id,
+		     NULL);
 
   for (i = 0; i < stp_dither_algorithm_count (); i++)
     {
