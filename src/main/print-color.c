@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.122 2004/08/21 20:03:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.123 2004/08/21 20:05:04 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *

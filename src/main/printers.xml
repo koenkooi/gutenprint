@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.105 2004/08/21 20:03:50 rlk Exp $"
+   "$Id: printers.xml,v 1.106 2004/08/21 20:05:04 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
