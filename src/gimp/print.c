@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.19 2001/07/01 20:08:11 rlk Exp $"
+ * "$Id: print.c,v 1.20 2001/07/10 01:09:34 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -618,7 +618,7 @@ initialize_printer(gp_plist_t *printer)
 {
   printer->name[0] = '\0';
   printer->active=0;
-  printer->v = stp_allocate_copy(stp_default_settings());
+  printer->v = stp_allocate_vars();
 }
 
 #define GET_MANDATORY_INTERNAL_STRING_PARAM(param)	\
@@ -1313,5 +1313,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.19 2001/07/01 20:08:11 rlk Exp $".
+ * End of "$Id: print.c,v 1.20 2001/07/10 01:09:34 rlk Exp $".
  */
