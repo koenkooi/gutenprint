@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.23 2001/08/24 02:02:23 rlk Exp $"
+# "$Id: printers.xml,v 1.24 2001/09/14 02:12:34 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -234,6 +234,14 @@
 <density value=1.0>
 <magenta value=0.95>
 <yellow value=0.9>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C60" driver="escp2-c60">
+<color>
+<model value=33>
+<gamma value=0.585>
+<density value=1.0>
 <language value=escp2>
 </printer>
 
