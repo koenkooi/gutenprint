@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.31.2.1 2001/05/28 19:43:54 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.31.2.2 2001/05/28 22:51:40 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -40,11 +40,13 @@
 #define xmalloc malloc
 #endif
 
-
-#define ECOLOR_C 0
-#define ECOLOR_M 1
-#define ECOLOR_Y 2
-#define ECOLOR_K 3
+/*
+ * ECOLOR_K must be 0
+ */
+#define ECOLOR_K 0
+#define ECOLOR_C 1
+#define ECOLOR_M 2
+#define ECOLOR_Y 3
 #define NCOLORS (4)
 
 #define MAX_CARRIAGE_WIDTH	80 /* This really needs to go away */
@@ -278,7 +280,6 @@ extern void	stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
 extern void	stp_dither_set_ranges_complete(void *vd, int color, int nlevels,
 					       const stp_dither_range_t *ranges);
 extern void	stp_dither_set_ink_spread(void *vd, int spread);
-extern void	stp_dither_set_max_ink(void *vd, int, double);
 extern void	stp_dither_set_x_oversample(void *vd, int os);
 extern void	stp_dither_set_y_oversample(void *vd, int os);
 extern void	stp_dither_set_adaptive_limit(void *vd, double limit);
@@ -488,5 +489,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.31.2.1 2001/05/28 19:43:54 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.31.2.2 2001/05/28 22:51:40 rlk Exp $".
  */

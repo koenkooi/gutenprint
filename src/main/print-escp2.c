@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68.2.8 2001/05/28 19:43:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68.2.9 2001/05/28 22:51:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -486,9 +486,9 @@ static const escp2_variable_inkset_t standard_inks =
 
 static const escp2_variable_inkset_t photo_inks =
 {
+  NULL,
   &photo_cyan_ink,
   &photo_magenta_ink,
-  NULL,
   NULL
 };
 
@@ -510,9 +510,9 @@ static const escp2_variable_inkset_t escp2_6pl_standard_980_inks =
 
 static const escp2_variable_inkset_t escp2_6pl_photo_inks =
 {
-  &photo_6pl_ink,
-  &photo_6pl_ink,
   &standard_6pl_ink,
+  &photo_6pl_ink,
+  &photo_6pl_ink,
   &standard_6pl_ink
 };
 
@@ -526,9 +526,9 @@ static const escp2_variable_inkset_t escp2_6pl_1440_standard_inks =
 
 static const escp2_variable_inkset_t escp2_6pl_1440_photo_inks =
 {
-  &photo_6pl_1440_ink,
-  &photo_6pl_1440_ink,
   &standard_6pl_1440_ink,
+  &photo_6pl_1440_ink,
+  &photo_6pl_1440_ink,
   &standard_6pl_1440_ink
 };
 
@@ -542,9 +542,9 @@ static const escp2_variable_inkset_t escp2_pigment_standard_inks =
 
 static const escp2_variable_inkset_t escp2_pigment_photo_inks =
 {
-  &photo_pigment_ink,
-  &photo_pigment_ink,
   &standard_pigment_ink,
+  &photo_pigment_ink,
+  &photo_pigment_ink,
   &standard_pigment_ink
 };
 
@@ -558,9 +558,9 @@ static const escp2_variable_inkset_t escp2_4pl_standard_inks =
 
 static const escp2_variable_inkset_t escp2_4pl_photo_inks =
 {
-  &photo_4pl_ink,
-  &photo_4pl_ink,
   &standard_4pl_ink,
+  &photo_4pl_ink,
+  &photo_4pl_ink,
   &standard_4pl_ink
 };
 
@@ -574,9 +574,9 @@ static const escp2_variable_inkset_t escp2_4pl_1440_standard_inks =
 
 static const escp2_variable_inkset_t escp2_4pl_1440_photo_inks =
 {
-  &photo_4pl_1440_ink,
-  &photo_4pl_1440_ink,
   &standard_4pl_1440_ink,
+  &photo_4pl_1440_ink,
+  &photo_4pl_1440_ink,
   &standard_4pl_1440_ink
 };
 
@@ -614,9 +614,9 @@ static const escp2_variable_inkset_t escp2_multishot_standard_inks =
 
 static const escp2_variable_inkset_t escp2_multishot_photo_inks =
 {
-  &photo_multishot_ink,
-  &photo_multishot_ink,
   &standard_multishot_ink,
+  &photo_multishot_ink,
+  &photo_multishot_ink,
   &standard_multishot_ink
 };
 
