@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.18.2.1 2000/03/29 03:23:01 rlk Exp $"
+ * "$Id: print-dither.c,v 1.18.2.2 2000/03/29 23:17:51 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,7 +30,6 @@
 
 
 #include "print.h"
-#include "dither_matrix.c"
 
 #define IABS(a) ((a) >= 0 ? (a) : -(a))
 
@@ -156,8 +155,6 @@ init_dither(int in_width, int out_width, int horizontal_overdensity)
     for (y = 0; y < 64; y++)
       {
 	d->ordered_dither_matrix[x][y] = calc_ordered_point(x, y, 6);
-	d64y[x][y] = 4095 - (d64k[x][y]);
-	d64m[x][y] = 4095 - (d64c[x][y]);
       }
 
   d->horizontal_overdensity = horizontal_overdensity;
@@ -1409,7 +1406,6 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
    */
 }
 
-#if 0
 #define DO_PRINT_COLOR_ORDERED(r, R, color, x, y, xoff, yoff, d1, pvar)	   \
 do {									   \
   int tmp = r;								   \
@@ -1430,28 +1426,6 @@ do {									   \
 	}								   \
     }									   \
 } while (0)
-#else
-#define DO_PRINT_COLOR_ORDERED(r, R, color, x, y, xoff, yoff, d1, pvar)	\
-do {									\
-  int tmp = r;								\
-  unsigned o = d64##R[(x) & 63][(y) & 63];				\
-  unsigned me = tmp >> 4;						\
-  if (me > o)								\
-    {									\
-      DO_PRINT_COLOR(color);						\
-      pvar = 1;								\
-    }									\
-  else if (me == o)							\
-    {									\
-      unsigned rem = tmp & 15;						\
-      if (rem > (ditherbit##d1 & 15))					\
-	{								\
-	  DO_PRINT_COLOR(color);					\
-	  pvar = 1;							\
-	}								\
-    }									\
-} while (0)
-#endif
 
 #define PRINT_COLOR_ORDERED(r, color, x, y, xoff, yoff, d1, d2)		\
 do {									\
@@ -2242,6 +2216,9 @@ dither_cmyk_n(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.18.2.2  2000/03/29 23:17:51  rlk
+ *   Fuck patents
+ *
  *   Revision 1.18.2.1  2000/03/29 03:23:01  rlk
  *   Put this in for safety and for people to play with it
  *
@@ -2307,5 +2284,5 @@ dither_cmyk_n(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.18.2.1 2000/03/29 03:23:01 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.18.2.2 2000/03/29 23:17:51 rlk Exp $".
  */
