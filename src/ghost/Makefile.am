@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/01/22 20:28:38 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2001/01/22 23:15:54 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ endif
 
 GHCODE = -e 's/^\\\#include "\(.*\)\.h"$$/\\\#include "gdevstp-\1.h"/'
 
-$(srcdir)/gdevstp-print.h: $(top_srcdir)/src/include/print.h
+$(srcdir)/gdevstp-print.h: $(top_srcdir)/src/include/gimp-print.h
 	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $(srcdir)/$@
 
 gdevstp-%.h: $(srcdir)/../main/%.h Makefile
