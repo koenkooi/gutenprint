@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2003/01/06 20:57:36 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2003/04/27 22:15:56 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,8 +33,7 @@ SUBDIRS = 					\
 	cups					\
 	foomatic				\
 	ghost					\
-	testpattern				\
-	printdef
+	testpattern
 
 
 ## Clean
