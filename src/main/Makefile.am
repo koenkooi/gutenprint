@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13.4.6 2001/09/14 01:26:36 sharkey Exp $
+## $Id: Makefile.am,v 1.13.4.7 2001/10/27 21:50:38 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,6 @@ lib_LTLIBRARIES = @MAIN_BIN@
 EXTRA_LTLIBRARIES = libgimpprint.la
 
 libgimpprint_la_SOURCES = \
-	gimp-print-intl-internal.h \
 	gimp-print-internal.h \
 	print-lexmark.c \
 	print-canon.c \
@@ -85,7 +84,8 @@ print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
 printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
-	$(MAKE) -C ../printdef
+	cd ../printdef ; \
+	$(MAKE)
 
 
 ## Clean

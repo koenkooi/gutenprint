@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9.2.6 2001/09/14 01:26:37 sharkey Exp $
+## $Id: Makefile.am,v 1.9.2.7 2001/10/27 21:50:40 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,13 @@ testdither_LDADD = $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../src/main
+	cd ../src/main ; \
+	$(MAKE)
+
+
+## Rules
+
+#run-weavetest: escp2-weavetest
 
 
 ## Clean

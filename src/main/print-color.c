@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.5.4.6 2001/09/14 01:26:36 sharkey Exp $"
+ * "$Id: print-color.c,v 1.5.4.7 2001/10/27 21:50:38 sharkey Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -30,8 +30,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
 
@@ -868,6 +868,7 @@ rgb_to_rgb(const stp_vars_t vars,
 	      rgbout[0] = i0 | (i0 << 8);
 	      rgbout[1] = i1 | (i1 << 8);
 	      rgbout[2] = i2 | (i2 << 8);
+	      i0 = rgbin[0];
 	    }
 	  break;
 	case 2:
@@ -889,6 +890,8 @@ rgb_to_rgb(const stp_vars_t vars,
 	      rgbout[0] = i0 | (i0 << 8);
 	      rgbout[1] = i1 | (i1 << 8);
 	      rgbout[2] = i2 | (i2 << 8);
+	      i0 = rgbin[0];
+	      i1 = rgbin[1];
 	    }
 	  break;
 	case 3:
@@ -1128,6 +1131,7 @@ solid_rgb_to_rgb(const stp_vars_t vars,
 	      rgbout[0] = i0 | (i0 << 8);
 	      rgbout[1] = i1 | (i1 << 8);
 	      rgbout[2] = i2 | (i2 << 8);
+	      i0 = rgbin[0];
 	    }
 	  break;
 	case 2:
@@ -1149,6 +1153,8 @@ solid_rgb_to_rgb(const stp_vars_t vars,
 	      rgbout[0] = i0 | (i0 << 8);
 	      rgbout[1] = i1 | (i1 << 8);
 	      rgbout[2] = i2 | (i2 << 8);
+	      i0 = rgbin[0];
+	      i1 = rgbin[1];
 	    }
 	  break;
 	case 3:
@@ -1500,13 +1506,13 @@ fast_indexed_to_rgb(const stp_vars_t vars,
 	  for (i = 0; i < 3; i++)
 	    rgb[i] = .5 + (rgb[i] * density);
 	}
+    out:
       o0 = rgb[0];
       o1 = rgb[1];
       o2 = rgb[2];
       nz0 |= o0;
       nz1 |= o1;
       nz2 |= o2;
-    out:
       indexed += bpp;
       rgb += 3;
       width --;
@@ -1923,6 +1929,13 @@ stp_compute_lut(stp_vars_t v, size_t steps)
 	temp_pixel = 1.0 - pixel;
       else
 	temp_pixel = pixel;
+      if (contrast > 3.99999)
+	{
+	  if (temp_pixel < .5)
+	    temp_pixel = 0;
+	  else
+	    temp_pixel = 1;
+	}
       if (temp_pixel <= .000001 && contrast <= .0001)
 	temp_pixel = .5;
       else if (temp_pixel > 1)

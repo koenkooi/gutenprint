@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-intl.h,v 1.2.2.1 2001/09/14 02:33:44 sharkey Exp $"
+ * "$Id: gimp-print-intl.h,v 1.2.2.2 2001/10/27 21:50:36 sharkey Exp $"
  *
  *   I18N header file for the gimp-print.
  *
@@ -21,8 +21,8 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __PRINT_INTL_H__
-#define __PRINT_INTL_H__
+#ifndef __GIMP_PRINT_INTL_H__
+#define __GIMP_PRINT_INTL_H__
 
 #ifdef INCLUDE_LOCALE_H
 INCLUDE_LOCALE_H
@@ -57,4 +57,4 @@ INCLUDE_LOCALE_H
 
 #endif
 
-#endif /* __PRINT_INTL_H__ */
+#endif /* __GIMP_PRINT_INTL_H__ */

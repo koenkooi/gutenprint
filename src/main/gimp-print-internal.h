@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.4.7 2001/09/14 01:26:36 sharkey Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.8 2001/10/27 21:50:38 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -520,5 +520,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.4.7 2001/09/14 01:26:36 sharkey Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.8 2001/10/27 21:50:38 sharkey Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.7.2.5 2001/09/14 01:26:35 sharkey Exp $"
+ * "$Id: genppd.c,v 1.7.2.6 2001/10/27 21:50:37 sharkey Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -29,17 +29,20 @@
  *
  * Contents:
  *
- *   main()                  - Process files on the command-line...
- *  initialize_stp_options() - Initialize the min/max values for
- *                             each STP numeric option.
- *   usage()                 - Show program usage...
- *   write_ppd()             - Write a PPD file.
+ *   main()                   - Process files on the command-line...
+ *   initialize_stp_options() - Initialize the min/max values for
+ *                              each STP numeric option.
+ *   usage()                  - Show program usage...
+ *   write_ppd()              - Write a PPD file.
  */
 
 /*
  * Include necessary headers...
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -54,9 +57,6 @@
 #include <cups/cups.h>
 #include <cups/raster.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
@@ -64,6 +64,7 @@
 #endif
 #include <gimp-print/gimp-print-intl.h>
 #include "../../lib/libprintut.h"
+
 
 /*
  * File handling stuff...
@@ -146,10 +147,19 @@ main(int  argc,			/* I - Number of command-line arguments */
      char *argv[])		/* I - Command-line arguments */
 {
   int		i;		/* Looping var */
+  int		option_index;	/* Option index */
   const char	*prefix;	/* Directory prefix for output */
   const char	*language;	/* Language */
+  const char    *catalog = NULL;/* Catalog location */
   stp_printer_t	printer;	/* Pointer to printer driver */
-
+  static struct option long_options[] =
+		{		/* Command-line options */
+		  /* name,	has_arg,		flag	val */
+		  {"help",	no_argument,		0,	0},
+		  {"catalog",	required_argument,	0,	0},
+		  {"prefix",	required_argument,	0,	0},
+		  {0,		0,			0,	0}
+		};
 
  /*
   * Initialise libgimpprint
@@ -161,52 +171,96 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Parse command-line args...
   */
 
-  prefix = "ppd";
-  language = "en";
+  prefix   = "ppd";
+  language = "C";
 
   initialize_stp_options();
-  for (i = 1; i < argc; i ++)
-    if (strcmp(argv[i], "--help") == 0)
+
+  option_index = 0;
+
+  for (;;)
+  {
+    if ((i = getopt_long_only(argc, argv, "", long_options,
+                              &option_index)) == -1)
+      break;
+
+    switch (i)
     {
-     /*
-      * Show help...
-      */
+      case 0:
+	  /* option already dealt with, so skip to next argv entry */
+          if (long_options[option_index].flag != 0)
+            break;
 
-      usage();
+	  if (strncmp(long_options[option_index].name, "help", 4) == 0)
+          {
+	    usage();
+	    break;
+          }
+
+	  if (strncmp(long_options[option_index].name, "catalog", 7) == 0)
+          {
+	    catalog = optarg;
+#ifdef DEBUG
+	    fprintf (stderr, "DEBUG: catalog: %s\n", catalog);
+#endif
+	    break;
+          }
+
+	  if (strncmp(long_options[option_index].name, "prefix", 6) == 0)
+          {
+	    prefix = optarg;
+#ifdef DEBUG
+	    fprintf (stderr, "DEBUG: prefix: %s\n", prefix);
+#endif
+	    break;
+	  }
+
+      default:
+          usage();
+	  break;
     }
-    else if (strcmp(argv[i], "--language") == 0)
-    {
-     /*
-      * Set PPD language...
-      */
+  }
 
-      i ++;
-      if (i < argc)
-        language = argv[i];
-      else
-        usage();
-    }
-    else if (strcmp(argv[i], "--prefix") == 0)
-    {
-     /*
-      * Set "installation prefix"...
-      */
+/*
+ * Initialise libgimpprint
+ */
 
-      i ++;
-      if (i < argc)
-        prefix = argv[i];
-      else
-        usage();
-    }
-    else
-      usage();
-
+  stp_init();
+    
+  
  /*
   * Set the language...
   */
 
-  setlocale(LC_MESSAGES, language);
+  setlocale(LC_ALL, "");
 
+ /*
+  * Set up the catalog
+  */
+
+  if (catalog)
+  {
+    if ((bindtextdomain(PACKAGE, catalog)) == NULL)
+    {
+      fprintf(stderr, "genppd: cannot load message catalog %s: %s\n", catalog,
+              strerror(errno));
+      exit(1);
+    }
+#ifdef DEBUG
+    fprintf (stderr, "DEBUG: bound textdomain: %s\n", catalog);
+#endif
+    if ((textdomain(PACKAGE)) == NULL)
+    {
+      fprintf(stderr, "genppd: cannot select message catalog %s: %s\n",
+              catalog, strerror(errno));
+      exit(1);
+    }
+#ifdef DEBUG
+    fprintf (stderr, "DEBUG: textdomain set: %s\n", PACKAGE);
+#endif
+  }
+
+  
  /*
   * Write PPD files...
   */
@@ -285,8 +339,10 @@ initialize_stp_options(void)
 void
 usage(void)
 {
-  puts("Usage: genppd [--help] [--language locale] [--prefix dir]");
-  exit(1);
+  fputs("Usage: genppd [--help] [--catalog=domain] "
+        "[--language=locale] [--prefix=dir]\n", stderr);
+
+  exit(EXIT_FAILURE);
 }
 
 
@@ -373,17 +429,14 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*%the GNU GPL.\n");
   gzputs(fp, "*FormatVersion:	\"4.3\"\n");
   gzputs(fp, "*FileVersion:	\"" VERSION "\"\n");
-  if (strncmp(language, "de", 2) == 0)
-    gzputs(fp, "*LanguageVersion: German\n");
-  else if (strncmp(language, "es", 2) == 0)
-    gzputs(fp, "*LanguageVersion: Spanish\n");
-  else if (strncmp(language, "fr", 2) == 0)
-    gzputs(fp, "*LanguageVersion: French\n");
-  else if (strncmp(language, "it", 2) == 0)
-    gzputs(fp, "*LanguageVersion: Italian\n");
-  else
-    gzputs(fp, "*LanguageVersion: English\n");
-  gzputs(fp, "*LanguageEncoding: ISOLatin1\n");
+  /* Specify language of PPD translation */
+  /* Translators: Specify the language of the PPD translation.
+   * Use the English name of your language here, e.g. "Swedish" instead of
+   * "Svenska".
+   */
+  gzprintf(fp, "*LanguageVersion: %s\n", _("English"));
+  /* Specify PPD translation encoding e.g. ISOLatin1 */
+  gzprintf(fp, "*LanguageEncoding: %s\n", _("ISOLatin1"));
   gzprintf(fp, "*PCFileName:	\"%s.ppd\"\n", driver);
   gzprintf(fp, "*Manufacturer:	\"%s\"\n", manufacturer);
   gzputs(fp, "*Product:	\"(GIMP-print v" VERSION ")\"\n");
@@ -559,7 +612,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
   if (num_opts > 0)
   {
-    gzputs(fp, "*OpenUI *MediaType: PickOne\n");
+    gzprintf(fp, "*OpenUI *MediaType/%s: PickOne\n", _("Media Type"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *MediaType\n");
     gzprintf(fp, "*DefaultMediaType: %s\n", defopt);
 
@@ -585,7 +638,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
   if (num_opts > 0)
   {
-    gzputs(fp, "*OpenUI *InputSlot: PickOne\n");
+    gzprintf(fp, "*OpenUI *InputSlot/%s: PickOne\n", _("Media Source"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *InputSlot\n");
     gzprintf(fp, "*DefaultInputSlot: %s\n", defopt);
 
@@ -609,7 +662,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   opts   = (*(printfuncs->parameters))(p, NULL, "Resolution", &num_opts);
   defopt = (*(printfuncs->default_parameters))(p, NULL, "Resolution");
 
-  gzputs(fp, "*OpenUI *Resolution: PickOne\n");
+  gzprintf(fp, "*OpenUI *Resolution/%s: PickOne\n", _("Resolution"));
   gzputs(fp, "*OrderDependency: 20 AnySetup *Resolution\n");
   gzprintf(fp, "*DefaultResolution: %s\n", defopt);
 
@@ -649,13 +702,16 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
     * Image types...
     */
 
-    gzputs(fp, "*OpenUI *stpImageType/Image Type: PickOne\n");
+    gzprintf(fp, "*OpenUI *stpImageType/%s: PickOne\n", _("Image Type"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *stpImageType\n");
     gzputs(fp, "*DefaultstpImageType: LineArt\n");
 
-    gzprintf(fp, "*stpImageType LineArt/Line Art:\t\"<</cupsRowCount 0>>setpagedevice\"\n");
-    gzprintf(fp, "*stpImageType SolidTone/Solid Tone:\t\"<</cupsRowCount 1>>setpagedevice\"\n");
-    gzprintf(fp, "*stpImageType Continuous/Photograph:\t\"<</cupsRowCount 2>>setpagedevice\"\n");
+    gzprintf(fp, "*stpImageType LineArt/%s:\t\"<</cupsRowCount 0>>setpagedevice\"\n",
+            _("Line Art"));
+    gzprintf(fp, "*stpImageType SolidTone/%s:\t\"<</cupsRowCount 1>>setpagedevice\"\n",
+            _("Solid Colors"));
+    gzprintf(fp, "*stpImageType Continuous/%s:\t\"<</cupsRowCount 2>>setpagedevice\"\n",
+            _("Photograph"));
 
     gzputs(fp, "*CloseUI: *stpImageType\n");
 
@@ -663,7 +719,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
     * Dithering algorithms...
     */
 
-    gzputs(fp, "*OpenUI *stpDither/Dither Algorithm: PickOne\n");
+    gzprintf(fp, "*OpenUI *stpDither/%s: PickOne\n", _("Dither Algorithm"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *stpDither\n");
     gzprintf(fp, "*DefaultstpDither: %s\n", stp_default_dither_algorithm());
 
@@ -682,7 +738,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
     if (num_opts > 0)
     {
-      gzputs(fp, "*OpenUI *stpInkType/Ink Type: PickOne\n");
+      gzprintf(fp, "*OpenUI *stpInkType/%s: PickOne\n", _("Ink Type"));
       gzputs(fp, "*OrderDependency: 20 AnySetup *stpInkType\n");
       gzprintf(fp, "*DefaultstpInkType: %s\n", defopt);
 
@@ -780,5 +836,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.7.2.5 2001/09/14 01:26:35 sharkey Exp $".
+ * End of "$Id: genppd.c,v 1.7.2.6 2001/10/27 21:50:37 sharkey Exp $".
  */

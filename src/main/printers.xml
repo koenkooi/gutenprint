@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.9.4.6 2001/09/14 01:26:37 sharkey Exp $"
+# "$Id: printers.xml,v 1.9.4.7 2001/10/27 21:50:40 sharkey Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -55,6 +55,30 @@
 <color>
 <model value=85>
 <gamma value=0.5>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 210" driver="bjc-210">
+<color>
+<model value=210>
+<gamma value=1.000>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 240" driver="bjc-240">
+<color>
+<model value=240>
+<gamma value=1.000>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 250" driver="bjc-250">
+<color>
+<model value=250>
+<gamma value=1.000>
 <density value=0.800>
 <language value=canon>
 </printer>
@@ -209,7 +233,7 @@
 
 <printer name="EPSON Stylus C40SX" driver="escp2-c40sx">
 <color>
-<model value=42>
+<model value=43>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -219,7 +243,7 @@
 
 <printer name="EPSON Stylus C20UX" driver="escp2-c20ux">
 <color>
-<model value=43>
+<model value=42>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -237,6 +261,33 @@
 <language value=escp2>
 </printer>
 
+<printer name="EPSON Stylus C60" driver="escp2-c60">
+<color>
+<model value=33>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C70" driver="escp2-c70">
+<color>
+<model value=44>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus C80" driver="escp2-c80">
+<color>
+<model value=44>
+<gamma value=0.585>
+<density value=1.0>
+<cyan value=0.92>
+<magenta value=1.04>
+<yellow value=1.04>
+<language value=escp2>
+</printer>
+
 <printer name="EPSON Stylus Color" driver="escp2">
 <color>
 <model value=0>
@@ -247,7 +298,7 @@
 
 <printer name="EPSON Stylus Color Pro" driver="escp2-pro">
 <color>
-<model value=1>
+<model value=45>
 <gamma value=0.597>
 <density value=1.0>
 <language value=escp2>
@@ -531,6 +582,22 @@
 <language value=escp2>
 </printer>
 
+<printer name="EPSON Stylus Photo 810" driver="escp2-810">
+<color>
+<model value=35>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus Photo 820" driver="escp2-820">
+<color>
+<model value=35>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
 <printer name="EPSON Stylus Photo 870" driver="escp2-870">
 <color>
 <model value=22>
@@ -659,6 +726,22 @@
 <language value=escp2>
 </printer>
 
+<printer name="EPSON Stylus Scan 2000" driver="escp2-scan2000">
+<color>
+<model value=12>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
+<printer name="EPSON Stylus Scan 2500" driver="escp2-scan2500">
+<color>
+<model value=12>
+<gamma value=0.585>
+<density value=1.0>
+<language value=escp2>
+</printer>
+
 <printer name="HP DeskJet 340" driver="pcl-340">
 <color>
 <model value=340>
@@ -780,6 +863,14 @@
 </printer>
 
 <printer name="HP DeskJet 842C" driver="pcl-842">
+<color>
+<model value=840>	# Uses 840 driver
+<gamma value=0.818>
+<density value=0.786>
+<language value=pcl>
+</printer>
+
+<printer name="HP DeskJet 845C" driver="pcl-845">
 <color>
 <model value=840>	# Uses 840 driver
 <gamma value=0.818>

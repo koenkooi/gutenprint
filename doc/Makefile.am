@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1.2.5 2001/09/14 01:26:34 sharkey Exp $
+## $Id: Makefile.am,v 1.1.2.6 2001/10/27 21:50:35 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,18 +23,33 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+SUBDIRS = users_guide
+
 
 ## Variables
 
-DOCS = \
- FAQ.html \
- README.maintaining \
- docbook.css \
+MANUAL = gimpprint
+HTMLDIR = manual-html
+DOCS = $(MANUAL).pdf $(MANUAL).ps $(MANUAL).dvi html
+
+IMAGES = \
  print-color.png \
  print-main.png \
- print-setup.png \
- print.html \
- print.sgml
+ print-setup.png
+   
+EPS_IMAGES = $(addsuffix .eps,$(basename $(IMAGES)))
+
+if MAINTAINER_MODE
+MAINT_MODE = true
+else
+MAINT_MODE = false
+endif
+
+if MAINTAINER_MODE
+ALL_LOCAL_TARGETS = docs
+else
+ALL_LOCAL_TARGETS = $(STANDARD_TARGETS)
+endif
 
 
 ## Data
@@ -46,43 +61,50 @@ gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using
 
 ## Rules
 
-# Symlink to distributed html manual, if possible
-all-local: html
-	if test -d $(srcdir)/manual-html ; then \
-	  if test "$(srcdir)" = "." ; then \
-	    echo "all-local: Not removing manual-html" ; \
-	  else \
-	    rm -rf manual-html ; \
-	    ln -s $(srcdir)/manual-html manual-html ; \
-	  fi \
-	else \
-	  echo "all-local: $(srcdir)/manual-html not found" ; \
-	fi
+all-local: $(DOCS)
+
+docs: $(DOCS)
+	cd users_guide; make docs
+
+ps: $(MANUAL).ps
+	cd users_guide; make ps
+
+pdf: $(MANUAL).pdf
+	cd users_guide; make pdf
+
+gimpprint.dvi: $(EPS_IMAGES) $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS) $(info_TEXINFOS))
+
+%.eps:
+	$(CONVERT) $(srcdir)/$(basename $@).png EPS2:$@
 
 html: html-stamp
+	cd users_guide; make html
 
 ## Note the rather weird way of setting the exit status; this is because
 ## texi2html doesn't set the exit status.
-html-stamp: $(srcdir)/gimpprint.texi $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS))
-	if test x$(TEXI2HTML_PROG) = x ; then \
-	  echo "html-stamp: texi2html not found: not regenerating HTML manual" ; \
+html-stamp: $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS) $(info_TEXINFOS))
+	$(RM) -r $(HTMLDIR)-tmp
+	mkdir $(HTMLDIR)-tmp
+	for image in $(addprefix $(srcdir)/, $(IMAGES)) ; do \
+	  cp -p $$image $(HTMLDIR)-tmp ; \
+	done
+	cd $(HTMLDIR)-tmp ; \
+	if test $(srcdir) = '.' ; then \
+	  SOURCE='..' ; \
 	else \
-	  stat=1; \
-	  rm -rf manual-html-tmp ; \
-	  mkdir manual-html-tmp ; \
-	  cd manual-html-tmp ; \
-	  $(TEXI2HTML_PROG) -menu -split_node -number -expandinfo \
-	    -I ../$(srcdir) ../$(srcdir)/gimpprint.texi 2>&1 | grep . ; \
-	    stat=$$? ; stat=`expr 1 - $$stat` ; \
+	  SOURCE=$(srcdir) ; \
 	fi ; \
-	exit $$stat
-	rm -rf manual-html ; \
-	mv manual-html-tmp manual-html ; \
+	$(TEXI2HTML) -menu -split_node -number -expandinfo \
+	      -I $(srcdir) $${SOURCE}/$(MANUAL).texi 2>&1
+	$(RM) -r $(HTMLDIR)
+	mv $(HTMLDIR)-tmp $(HTMLDIR)
 	touch html-stamp
 
-ps: gimpprint.ps
-gimpprint.ps: gimpprint.dvi
-	$(DVIPS_PROG) -o gimpprint.ps gimpprint.dvi
+$(MANUAL).ps: $(MANUAL).dvi
+	$(DVIPS) $(MANUAL).dvi
+
+$(MANUAL).pdf: $(MANUAL).dvi
+	$(DVIPDF) $(MANUAL).dvi
 
 dist-hook: html
 	for dir in manual-html ; do \
@@ -96,22 +118,49 @@ dist-hook: html
 	  fi \
 	done
 
+CLEAN_MANUALS = \
+	$(RM) -r html-stamp manual-html ; \
+	$(RM) $(MANUAL).pdf $(MANUAL).ps $(MANUAL).dvi ; \
+	$(RM) $(EPS_IMAGES)
+
 clean-local:
-	if test $(srcdir) = "." ; then \
-	  echo "clean-local: Not removing manual-html" ; \
+	if test $(srcdir) = '.' -a $(MAINT_MODE) = false ; then \
+	  echo 'clean-local: Not removing manual-html' ; \
+	  echo 'clean-local: Not removing $(MANUAL).pdf' ; \
+	  echo 'clean-local: Not removing $(MANUAL).ps' ; \
+	  echo 'clean-local: Not removing $(MANUAL).dvi' ; \
+	  echo 'clean-local: Not removing EPS figures' ; \
 	else \
-	  rm -rf html-stamp manual-html ; \
+	  $(CLEAN_MANUALS) ; \
 	fi
-	rm -rf manual-html-tmp
+	$(RM) -r *.tex *.log *.aux *.gz *.out *.junk *.fot
+	$(RM) -r *.ky *.pg *.toc *.tp *.vr *.vrs
+	$(RM) -r manual-html-tmp
+
+veryclean:
+	$(MAKE) MAINT_MODE=true clean
 
 maintainer-clean-local:
-	rm -rf manual-html
+	$(CLEAN_MANUALS)
+
+# We duplicate mostlyclean-aminfo here because we do not want to remove
+# the .dvi and .ps files that mostlyclean-aminfo wants to remove.  The
+# reason why is that we do not want make clean to force a rebuild of the
+# doc, since users may not have the texinfo tools required to do so.
+# Unfortunately, this generates a warning about overriding commands for
+# mostlyclean-aminfo.
+mostlyclean-aminfo:
+	-rm -f gimpprint.aux gimpprint.cp gimpprint.cps \
+	  gimpprint.fn gimpprint.fns gimpprint.ky gimpprint.kys \
+	  gimpprint.log gimpprint.pg gimpprint.toc \
+	  gimpprint.tp gimpprint.tps gimpprint.vr gimpprint.vrs \
+	  gimpprint.op gimpprint.tr gimpprint.cv gimpprint.cn
 
 
 ## Clean
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
-EXTRA_DIST = $(DOCS) html-stamp
+EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES) html-stamp FAQ.html README.maintaining
 
-.PHONY: html
+.PHONY: html ps pdf docs clean-manuals

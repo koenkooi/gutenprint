@@ -1,10 +1,10 @@
-/* $Id: unprint.c,v 1.2.4.5 2001/09/14 01:26:37 sharkey Exp $ */
+/* $Id: unprint.c,v 1.2.4.6 2001/10/27 21:50:40 sharkey Exp $ */
 /*
- * Attempt to simulate a printer to facilitate driver testing.  Is this
- * useful?
+ * Generate PPM files from printer output
  *
- * Copyright 2000 Eric Sharkey <sharkey@superk.physics.sunysb.edu>
- *                Andy Thaller <thaller@ph.tum.de>
+ * Copyright 2000-2001 Eric Sharkey <sharkey@superk.physics.sunysb.edu>
+ *                     Andy Thaller <thaller@ph.tum.de>
+ *                     Robert Krawitz <rlk@alum.mit.edu>
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -34,8 +34,9 @@
 #define inline __inline__
 #endif
 
-#undef DEBUG_CANON
-
+/*
+ * Printer state variable.
+ */
 typedef struct {
   unsigned char unidirectional;
   unsigned char microweave;
@@ -57,6 +58,11 @@ typedef struct {
   int nozzle_separation;
   int nozzles;
   int extraskip;
+  int got_graphics;
+  int left_edge;
+  int right_edge;
+  int top_edge;
+  int bottom_edge;
 } pstate_t;
 
 /* We'd need about a gigabyte of ram to hold a ppm file of an 8.5 x 11
@@ -68,8 +74,16 @@ typedef struct {
  * color depth, KCMYcm color basis, and then write out the RGB ppm file
  * as output.  This way we never need to have the full data in RAM at any
  * time.  2 bits per color of KCMYcm is half the size of 8 bits per color
- * of RBG.
+ * of RGB.
+ *
+ * We would like to be able to print in bands, so that we don't have to
+ * read the entire page into memory in order to print it.  Unfortunately,
+ * we may not know what the left and right margins are until we've read the
+ * entire file.  If we can read it in two passes we could do it; use one
+ * pass to scan the file looking at the margins, and another pass to
+ * actually read in the data.  This optimization may be worthwhile.
  */
+
 #define MAX_INKS 7
 typedef struct {
    unsigned char *line[MAX_INKS];
@@ -79,18 +93,21 @@ typedef struct {
 
 typedef unsigned char ppmpixel[3];
 
-unsigned char buf[256*256];
+unsigned char *buf;
+unsigned valid_bufsize;
 unsigned char minibuf[256];
-unsigned short bufsize;
+unsigned bufsize;
+unsigned save_bufsize;
 unsigned char ch;
 unsigned short sh;
+int eject = 0;
+int global_counter = 0;
+int global_count = 0;
 
 pstate_t pstate;
 int unweave;
 
-
 line_type **page=NULL;
-
 
 /* Color Codes:
    color    Epson1  Epson2   Sequential
@@ -105,124 +122,134 @@ line_type **page=NULL;
 
 /* convert either Epson1 or Epson2 color encoding into a sequential encoding */
 #define seqcolor(c) (((c)&3)+(((c)&276)?3:0))  /* Intuitive, huh? */
-/* sequential to Epson1 */
-#define ep1color(c)  ({0,1,2,4,17,18}[c])
-/* sequential to Epson2 */
-#define ep2color(c)  ({0,1,2,4,257,258}[c])
 
-void merge_line (line_type *p, unsigned char *l, int startl, int stopl,
-                 int color);
-void expand_line (unsigned char *src, unsigned char *dst, int height,
-                  int skip, int left_ignore);
-void write_output (FILE *fp_w);
-void find_white (unsigned char *buf,int npix, int *left, int *right);
-int update_page (unsigned char *buf, int bufsize, int m, int n, int color,
-                 int density);
-void parse_escp2 (FILE *fp_r);
-void reverse_bit_order (unsigned char *buf, int n);
-int rle_decode (unsigned char *inbuf, int n, int max);
-void parse_canon (FILE *fp_r);
+extern void merge_line(line_type *p, unsigned char *l, int startl, int stopl,
+		       int color);
+extern void expand_line (unsigned char *src, unsigned char *dst, int height,
+			 int skip, int left_ignore);
+extern void write_output (FILE *fp_w, int dontwrite);
+extern void find_white (unsigned char *buf,int npix, int *left, int *right);
+extern int update_page (unsigned char *buf, int bufsize, int m, int n,
+			int color, int density);
+extern void parse_escp2 (FILE *fp_r);
+extern void reverse_bit_order (unsigned char *buf, int n);
+extern int rle_decode (unsigned char *inbuf, int n, int max);
+extern void parse_canon (FILE *fp_r);
 
+unsigned get_mask_1[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
+unsigned get_mask_2[] = { 6, 4, 2, 0 };
+unsigned get_mask_4[] = { 4, 0 };
 
 static inline int
-get_bits(unsigned char *p,int index)
+get_bits(unsigned char *p, int index)
 {
-
-  /* p is a pointer to a bit stream, ordered MSb first.  Extract the
+  /*
+   * p is a pointer to a bit stream, ordered MSb first.  Extract the
    * indexth bpp bit width field and return that value.  Ignore byte
-   * boundries.
+   * boundaries.
    */
-
-  int value,b;
+  int value, b;
   unsigned addr;
   switch (pstate.bpp)
     {
     case 1:
       return (p[index >> 3] >> (7 - (index & 7))) & 1;
     case 2:
-      return (p[index >> 2] >> ((3 - (index & 3)) << 1)) & 3;
+      b = get_mask_2[index & 3];
+      return (p[index >> 2] >> b) & 3;
     case 4:
-      return (p[index >> 1] >> ((1 - (index & 1)) << 2)) & 0xf;
+      b = get_mask_4[index & 1];
+      return (p[index >> 1] >> b) & 0xf;
     case 8:
       return p[index];
     default:
-      addr = (index*pstate.bpp);
-      value=0;
-      for (b=0;b<pstate.bpp;b++) {
-	value*=2;
-	value|=(p[(addr + b) >> 3] >> (7-((addr + b) & 7)))&1;
-      }
+      addr = (index * pstate.bpp);
+      value = 0;
+      for (b = 0; b < pstate.bpp; b++)
+	{
+	  value += value;
+	  value |= (p[(addr + b) >> 3] >> (7 - ((addr + b) & 7))) & 1;
+	}
       return(value);
     }
 }
+
+static unsigned clr_mask_1[] = { 0xfe, 0xfd, 0xfb, 0xf7,
+				 0xef, 0xdf, 0xbf, 0x7f };
+static unsigned clr_mask_2[] = { 0xfc, 0, 0xf3, 0, 0xcf, 0, 0x3f, 0 };
+static unsigned clr_mask_4[] = { 0xf0, 0, 0, 0, 0xf, 0, 0, 0 };
 
 static inline void
 set_bits(unsigned char *p,int index,int value)
 {
 
-  /* p is a pointer to a bit stream, ordered MSb first.  Set the
+  /*
+   * p is a pointer to a bit stream, ordered MSb first.  Set the
    * indexth bpp bit width field to value value.  Ignore byte
-   * boundries.
+   * boundaries.
    */
 
   int b;
-
   switch (pstate.bpp)
     {
     case 1:
-      p[index >> 3] &= ~(1 << (7 - (index & 7)));
-      p[index >> 3] |= value << (7 - (index & 7));
+      b = (7 - (index & 7));
+      p[index >> 3] &= clr_mask_1[b];
+      p[index >> 3] |= value << b;
       break;
     case 2:
-      p[index >> 2] &= ~(3 << ((3 - (index & 3)) << 1));
-      p[index >> 2] |= value << ((3 - (index & 3)) << 1);
+      b = get_mask_2[index & 3];
+      p[index >> 2] &= clr_mask_2[b];
+      p[index >> 2] |= value << b;
       break;
     case 4:
-      p[index >> 1] &= ~(0xf << ((1 - (index & 1)) << 2));
-      p[index >> 1] |= value << ((1 - (index & 1)) << 2);
+      b = get_mask_4[index & 1];
+      p[index >> 1] &= clr_mask_4[b];
+      p[index >> 1] |= value << b;
       break;
     case 8:
       p[index] = value;
       break;
     default:
-      for (b=pstate.bpp-1;b>=0;b--) {
-	if (value&1) {
-	  p[(index*pstate.bpp+b)/8]|=1<<(7-((index*pstate.bpp+b)%8));
-	} else {
-	  p[(index*pstate.bpp+b)/8]&=~(1<<(7-((index*pstate.bpp+b)%8)));
+      for (b = pstate.bpp - 1; b >= 0; b--)
+	{
+	  if (value & 1)
+	    p[(index * pstate.bpp + b) / 8] |=
+	      1 << (7 - ((index * pstate.bpp + b) % 8));
+	  else
+	    p[(index * pstate.bpp + b) / 8] &=
+	      ~(1 << (7 - ((index * pstate.bpp + b) % 8)));
+	  value/=2;
 	}
-	value/=2;
-      }
     }
 }
 
-static inline void
-mix_ink(ppmpixel p, int c, unsigned int a)
-{
+static float ink_colors[8][4] =
+{{ 0,   0,  0,  1 },		/* K */
+ { 1,  .1,  1,  1 },		/* M */
+ { .1,  1,  1,  1 },		/* C */
+ { 1,   1, .1,  1 },		/* Y */
+ { 1,  .7,  1,  1 },		/* m */
+ { .7,  1,  1,  1 },		/* c */
+ { 1,   1, .7,  1 },		/* y */
+ { 1,   1,  1,  1 }};
 
+static float bpp_shift[] = { 0, 1, 3, 7, 15, 31, 63, 127, 255 };
+
+static inline void
+mix_ink(ppmpixel p, int color, unsigned int amount, float *ink)
+{
   /* this is pretty crude */
 
-  int i;
-  float ink[3];
-  float size;
+  if (amount)
+    {
+      int i;
+      float size;
 
-  size=(float)a/((float)((1<<pstate.bpp)-1));
-  if (a) {
-    switch (c) {
-      case 0: ink[0]=ink[1]=ink[2]=0;break; /* black */
-      case 1: ink[0]=1; ink[1]=0; ink[2]=1;break; /* magenta */
-      case 2: ink[0]=0; ink[1]=ink[2]=1;break; /* cyan */
-      case 3: ink[0]=ink[1]=1; ink[2]=0;break; /* yellow */
-      case 4: ink[0]=1; ink[1]=0.7; ink[2]=1;break; /* lmagenta */
-      case 5: ink[0]=0.7; ink[1]=ink[2]=1;break; /* lcyan */
-      case 6: ink[0]=ink[1]=1; ink[2]=0.7;break; /* lyellow */
-      default:fprintf(stderr,"unknown ink %d\n",c);return;
+      size = (float) amount / bpp_shift[pstate.bpp];
+      for (i = 0; i < 3; i++)
+	p[i] *= (1 - size) + size * ink[i];
     }
-    for (i=0;i<3;i++) {
-      ink[i]=(1-size)+size*ink[i];
-      p[i]*=ink[i];
-    }
-  }
 }
 
 void
@@ -230,50 +257,72 @@ merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color)
 {
 
   int i;
-  int temp,shift,height,lvalue,pvalue,oldstop;
+  int temp, shift, height, lvalue, pvalue, oldstop;
+  int width, owidth;
   unsigned char *tempp;
+  int reversed = 0;
+  int need_realloc = 0;
 
-  if (startl<p->startx[color]) { /* l should be to the right of p */
-    temp=p->startx[color];
-    p->startx[color]=startl;
-    startl=temp;
-    temp=p->stopx[color];
-    p->stopx[color]=stopl;
-    stopl=temp;
-    tempp=p->line[color];
-    p->line[color]=l;
-    l=tempp;
-  }
-  shift=startl-p->startx[color];
-  height=stopl-startl+1;
+  /*
+   * If we have a pixel to the left of anything previously printed,
+   * we need to expand our margins to the left.  This is a bit tricky...
+   */
+  if (startl < p->startx[color])
+    {
+      temp = p->startx[color];
+      p->startx[color] = startl;
+      startl = temp;
 
-  oldstop=p->stopx[color];
-  p->stopx[color]=(stopl>p->stopx[color])?stopl:p->stopx[color];
-  p->line[color]=xrealloc(p->line[color],((p->stopx[color]-p->startx[color]+1)*pstate.bpp+7)/8);
-  memset(p->line[color]+((oldstop-p->startx[color]+1)*pstate.bpp+7)/8,0,
-          ((p->stopx[color]-p->startx[color]+1)*pstate.bpp+7)/8-
-          ((oldstop-p->startx[color]+1)*pstate.bpp+7)/8);
-  for (i=0;i<height;i++) {
-    lvalue=get_bits(l,i);
-    pvalue=get_bits(p->line[color],i+shift);
-    if (0&&pvalue&&lvalue) {
-      fprintf(stderr,"Warning!  Double printing detected at x,y=%d!\n",p->startx[color]+i);
-    } else {
-    pvalue+=lvalue;
-    if (pvalue>(1<<pstate.bpp)-1) {
-/*      fprintf(stderr,"Warning!  Clipping at x=%d!\n",p->startx[color]+i); */
-      pvalue=(1<<pstate.bpp)-1;
+      temp = p->stopx[color];
+      p->stopx[color] = stopl;
+      stopl = temp;
+
+      tempp = p->line[color];
+      p->line[color] = l;
+      l = tempp;
+      reversed = 1;
     }
-    set_bits(p->line[color],i+shift,pvalue);
+  shift = startl - p->startx[color];
+  height = stopl - startl + 1;
+
+  oldstop = p->stopx[color];
+  if (stopl > p->stopx[color])
+    {
+      p->stopx[color] = stopl;
+      need_realloc = 1;
     }
-  }
+  if (need_realloc || reversed)
+    {
+      width = ((p->stopx[color] - p->startx[color] + 1) * pstate.bpp + 7) / 8;
+      owidth = ((oldstop - p->startx[color] + 1) * pstate.bpp + 7) / 8;
+      p->line[color] = xrealloc(p->line[color], width);
+      memset((p->line[color] + owidth), 0, (width - owidth));
+    }
+  /*
+   * Can we do an empty line optimization?
+   */
+  for (i = 0; i < height; i++)
+    {
+      lvalue = get_bits(l, i);
+      if (lvalue)
+	{
+	  pvalue = get_bits(p->line[color], i + shift);
+	  pvalue += lvalue;
+	  if (pvalue > (1 << pstate.bpp) - 1)
+	    pvalue = (1 << pstate.bpp) - 1;
+	  set_bits(p->line[color], i + shift, pvalue);
+	}
+    }
+  free(l);
 }
 
-void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
-                  int left_ignore)
+void
+expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
+	     int left_ignore)
 {
 
-  /* src is a pointer to a bit stream which is composed of fields of height
+  /*
+   * src is a pointer to a bit stream which is composed of fields of height
    * bpp starting with the most significant bit of the first byte and
    * proceding from there with no regard to byte boundaries.  For the
    * existing Epson printers, bpp is 1 or 2, which means fields will never
@@ -289,20 +338,25 @@ void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
 
   int i;
 
-  if ((skip==1)&&!(left_ignore*pstate.bpp%8)) {
-    /* the trivial case, this should be faster */
-    memcpy(dst,src+left_ignore*pstate.bpp/8,(height*pstate.bpp+7)/8);
-    return;
-  }
-
-  for (i=0;i<height;i++) {
-    set_bits(dst,i*skip,get_bits(src,i+left_ignore));
-  }
+  if ((skip == 1) && !(left_ignore * pstate.bpp % 8))
+    {
+      /* the trivial case, this should be faster */
+      memcpy(dst, src + left_ignore * pstate.bpp / 8,
+	     (height * pstate.bpp + 7) / 8);
+    }
+  else
+    {
+      for (i = 0; i < height; i++)
+	set_bits(dst, i * skip, get_bits(src, i + left_ignore));
+    }
 }
 
-void write_output(FILE *fp_w)
+int donothing;
+
+void
+write_output(FILE *fp_w, int dontwrite)
 {
-  int c,l,p,left,right,first,last,width,height,i;
+  int c, l, p, left, right, first, last, width, height, i;
   unsigned int amount;
   ppmpixel *out_row;
   int oversample = pstate.absolute_horizontal_units /
@@ -310,765 +364,829 @@ void write_output(FILE *fp_w)
   if (oversample == 0)
     oversample = 1;
 
-  fprintf(stderr,"Margins: top: %d bottom: top+%d\n",pstate.top_margin,
+  fprintf(stderr, "Margins: top: %d bottom: top+%d\n", pstate.top_margin,
           pstate.bottom_margin);
-  for (first=0;(first<pstate.bottom_margin)&&(!page[first]);
-       first++);
-  for (last=pstate.bottom_margin-1;(last>first)&&
-       (!page[last]);last--);
-  if ((first<pstate.bottom_margin)&&(page[first])) {
-    height = oversample * (last-first+1);
-  } else {
-    height = 0;
-  }
-  left=INT_MAX;
-  right=0;
-  for (l=first;l<=last;l++) {
-    if (page[l]) {
-      for (c=0;c<MAX_INKS;c++) {
-        if (page[l]->line[c]) {
-          left=(page[l]->startx[c]<left)?page[l]->startx[c]:left;
-          right=(page[l]->stopx[c]>right)?page[l]->stopx[c]:right;
-        }
-      }
-    }
-  }
-  fprintf(stderr,"Image from (%d,%d) to (%d,%d).\n",left,first,right,last);
-  width=right-left+1;
-  if (width<0) {
+
+  first = pstate.top_edge;
+  last = pstate.bottom_edge;
+  left = pstate.left_edge;
+  right = pstate.right_edge;
+  height = oversample * (last - first + 1);
+
+  fprintf(stderr, "Image from (%d,%d) to (%d,%d).\n",
+	  left, first, right, last);
+
+  width = right - left + 1;
+  if (width < 0)
     width=0;
-  }
+
   out_row = malloc(sizeof(ppmpixel) * width);
-  /* start with white, add inks */
-  fprintf(stderr,"Writing output...\n");
+  fprintf(stderr, "Writing output...\n");
+
   /* write out the PPM header */
-  fprintf(fp_w,"P6\n");
-  fprintf(fp_w,"%d %d\n",width,height);
-  fprintf(fp_w,"255\n");
-  for (l=first;l<=last;l++) {
-    memset(out_row, 255, (sizeof(ppmpixel) * width));
-    for (p=left;p<=right;p++) {
-      for (c=0;c<MAX_INKS;c++) {
-	if ((page[l])&&(page[l]->line[c])&&
-	    (page[l]->startx[c]<=p)&&
-	    (page[l]->stopx[c]>=p)) {
-	  amount=get_bits(page[l]->line[c],p-page[l]->startx[c]);
-	  mix_ink(out_row[p - left],c,amount);
+  fprintf(fp_w, "P6\n");
+  fprintf(fp_w, "%d %d\n", width, height);
+  fprintf(fp_w, "255\n");
+  for (l = first; l <= last; l++)
+    {
+      line_type *lt = page[l];
+      memset(out_row, ~0, (sizeof(ppmpixel) * width));
+      if (lt)
+	{
+	  for (c = 0; c < MAX_INKS; c++)
+	    {
+	      float *ink = ink_colors[c];
+	      if (lt->line[c])
+		{
+		  if (dontwrite)
+		    donothing += lt->line[c][0] ^
+		      lt->line[c][lt->stopx[c] - lt->startx[c] + 1];
+		  else
+		    {
+		      for (p = lt->startx[c]; p <= lt->stopx[c]; p++)
+			{
+			  amount = get_bits(lt->line[c], p - lt->startx[c]);
+			  mix_ink(out_row[p - left], c, amount, ink);
+			}
+		    }
+		}
+	    }
 	}
-      }
+      if (!dontwrite)
+	for (i = 0; i < oversample; i++)
+	  fwrite(out_row, sizeof(ppmpixel), width, fp_w);
     }
-    for (i = 0; i < oversample; i++)
-      fwrite(out_row, sizeof(ppmpixel), width, fp_w);
-  }
   free(out_row);
 }
 
-#if 0
-int num_bits_zero_lsb(int i,int max)
+void
+find_white(unsigned char *buf,int npix, int *left, int *right)
 {
 
-  int n;
+  /*
+   * If a line has white borders on either side, count the number of
+   * pixels and fill that info into left and right.
+   */
 
-  for (n=0;(n<max)&&!(i&1);n++,i>>1);
-  return n;
+  int i, j, max;
+  int words, bytes, bits, extra;
 
-}
+  *left = *right = 0;
+  bits = npix * pstate.bpp;
+  bytes = bits / 8;
+  extra = bits % 8;
+  words = bytes / sizeof(long);
 
-int num_bits_zero_msb(int i, int max)
-{
+  /*
+   * First, find the leftmost pixel.  We first identify the word
+   * containing the byte, then the byte, and finally the pixel within
+   * the byte.  It does seem like this is unnecessarily complex, perhaps?
+   */
+  max = words;
+  for (i = 0; (i < max) && (((long *)buf)[i] == 0); i++)
+    ;
+  max = (i < words) ? (i + 1) * sizeof(long) : bytes;
 
-  int n;
-
-  for (n=0;(n<max)&&i;n++,i>>1);
-  return(max-n);
-
-}
-#endif
-
-void find_white(unsigned char *buf,int npix, int *left, int *right)
-{
-
-/* If a line has white borders on either side, count the number of
- * pixels and fill that info into left and right.
- */
-
- int i,j,max;
- int words,bytes,bits;
-
- *left=*right=0;
- bits=npix*pstate.bpp;
- bytes=bits/8;
- words=bytes/sizeof(long);
-
-  /* left side */
-  max=words;
-  for(i=0;(i<max)&&(((long *)buf)[i]==0);i++);
-  max=(i<words)?(i+1)*sizeof(long):bytes;
-  for(i*=sizeof(long);(i<max)&&(buf[i]==0);i++);
-  max=(i<bytes)?8:bits%8;
-  for(j=0;(j<max)&&!(buf[i]&(1<<(7-j)));j++);
-  *left=(i*8+j)/pstate.bpp;
-  *right=0;
+  i *= sizeof(long);		/* Convert from longs to bytes */
+  for (; (i < max) && (buf[i] == 0); i++)
+    ;
+  max = (i < bytes) ? 8 : extra;
+  for (j = 0; (j < max) && !(buf[i] & (1 << (7 - j))); j++)
+    ;
+  *left = (i * 8 + j) / pstate.bpp;
+  *right = 0;
 
   /* if left is everything, then right is nothing */
-  if (*left==npix) {
+  if (*left == npix)
     return;
-  }
 
   /* right side, this is a little trickier */
-  for (i=0;(i<bits%8)&&!(buf[bytes]&(1<<(i+8-bits%8)));i++);
-  if (i<bits%8) {
-    *right=i/pstate.bpp;
-    return;
-  }
-  *right=bits%8; /*temporarily store right in bits to avoid rounding error*/
-
-  for (i=0;(i<bytes%sizeof(long))&&!(buf[bytes-1-i]);i++);
-  if (i<bytes%sizeof(long)) {
-    for (j=0;(j<8)&&!(buf[bytes-1-i]&(1<<j));j++);
-    *right=(*right+i*8+j)/pstate.bpp;
-    return;
-  }
-  *right+=i*8;
-
-  for (i=0;(i<words)&&!(((int *)buf)[words-1-i]);i++);
-
-  if (i<words) {
-    *right+=i*sizeof(long)*8;
-    for(j=0;(j<sizeof(long))&&!(buf[(words-i)*sizeof(long)-1-j]);j++);
-    if (j<sizeof(long)) {
-      *right+=j*8;
-      max=(words-i)*sizeof(long)-1-j;
-      for (j=0;(j<8)&&!(buf[max]&(1<<j));j++);
-      if (j<8) {
-        *right=(*right+j)/pstate.bpp;
-        return;
-      }
+  for (i = 0; (i < extra) && !(buf[bytes] & (1 << (i + 8 - extra))); i++)
+    ;
+  if (i < extra)
+    {
+      *right = i / pstate.bpp;
+      return;
     }
-  }
+  *right = extra;  /*temporarily store right in bits to avoid rounding error*/
 
-  fprintf(stderr,"Warning: Reality failure.  The impossible happened.\n");
+  for (i = 0; (i < bytes % sizeof(long)) && !(buf[bytes - 1 - i]); i++)
+    ;
+  if (i < bytes % sizeof(long))
+    {
+      for (j = 0; (j < 8) && !(buf[bytes - 1 - i] & (1 << j)); j++)
+	;
+      *right = (*right + i * 8 + j) / pstate.bpp;
+      return;
+    }
+  *right += i * 8;
 
+  for (i = 0; (i < words) && !(((int *)buf)[words - 1 - i]); i++)
+    ;
+
+  if (i < words)
+    {
+      *right += i * sizeof(long) * 8;
+      for (j = 0;
+	   (j < sizeof(long)) && !(buf[(words - i) * sizeof(long) - 1 - j]);
+	   j++)
+	;
+      if (j < sizeof(long))
+	{
+	  *right += j * 8;
+	  max = (words - i) * sizeof(long) - 1 - j;
+	  for (j = 0; (j < 8) && !(buf[max] & (1 << j)); j++)
+	    ;
+	  if (j < 8)
+	    {
+	      *right = (*right + j) / pstate.bpp;
+	      return;
+	    }
+	}
+    }
+  fprintf(stderr, "Warning: Reality failure.  The impossible happened.\n");
 }
 
-/* 'update_page'
- *
- *
- *
- *
- */
-int update_page(unsigned char *buf, /* I - pixel data               */
-		int bufsize,        /* I - size of buf in bytes     */
-		int m,              /* I - height of area in pixels */
-		int n,              /* I - width of area in pixels  */
-		int color,          /* I - color of pixel data      */
-		int density         /* I - horizontal density in dpi  */
-		)
+int
+update_page(unsigned char *buf, /* I - pixel data               */
+	    int bufsize,        /* I - size of buf in bytes     */
+	    int m,              /* I - height of area in pixels */
+	    int n,              /* I - width of area in pixels  */
+	    int color,          /* I - color of pixel data      */
+	    int density         /* I - horizontal density in dpi  */
+	    )
 {
-
-  int y,skip,oldstart,oldstop,mi;
-  int left_white,right_white;
+  int y, skip, oldstart, oldstop, mi = 0;
+  int left_white, right_white, width;
   unsigned char *oldline;
+  int sep;
 
-  if ((n==0)||(m==0)) {
+  if ((n == 0) || (m == 0))
     return(0);  /* shouldn't happen */
-  }
 
-  skip=pstate.relative_horizontal_units/density;
-  skip*=pstate.extraskip;
+  skip = pstate.relative_horizontal_units / density;
+  skip *= pstate.extraskip;
 
-  if (skip==0) {
-    fprintf(stderr,"Warning!  Attempting to print at %d DPI but units are set "
-	    "to %d DPI.\n",density,pstate.relative_horizontal_units);
-    return(0);
-  }
+  if (skip == 0)
+    {
+      fprintf(stderr, "Warning!  Attempting to print at %d DPI but units are "
+	      "set to %d DPI.\n", density, pstate.relative_horizontal_units);
+      return(0);
+    }
 
-  if (!page) {
-    fprintf(stderr,"Warning!  Attempting to print before setting up page!\n");
-    /* Let's hope that we've at least initialized the printer with
-     * with an ESC @ and allocate the default page.  Otherwise, we'll
-     * have unpredictable results.  But, that's a pretty acurate statement
-     * for a real printer, too!  */
-    page=(line_type **)xcalloc(pstate.bottom_margin, sizeof(line_type *));
-  }
-  for (mi=0,y=pstate.yposition;
-       y<pstate.yposition+m*(pstate.microweave?1:pstate.nozzle_separation);
-       y+=(pstate.microweave?1:pstate.nozzle_separation),mi++) {
-    if (y>=pstate.bottom_margin) {
+  if (!page)
+    {
       fprintf(stderr,
-	      "Warning. Unprinter out of unpaper (limit %d, position %d).\n",
-	      pstate.bottom_margin, y);
-      return(1);
+	      "Warning! Attempting to print before setting up page!\n");
+      /*
+       * Let's hope that we've at least initialized the printer with
+       * with an ESC @ and allocate the default page.  Otherwise, we'll
+       * have unpredictable results.  But, that's a pretty acurate statement
+       * for a real printer, too!
+       */
+      page = (line_type **) xcalloc(pstate.bottom_margin - pstate.top_margin,
+				    sizeof(line_type *));
     }
-    find_white(buf+mi*((n*pstate.bpp+7)/8),n,&left_white,&right_white);
-    if (left_white==n)
-      continue; /* ignore blank lines */
-    if (!(page[y])) {
-      page[y]=(line_type *) xcalloc(sizeof(line_type),1);
+  if (pstate.microweave)
+    sep = 1;
+  else
+    sep = pstate.nozzle_separation;
+  for (y=pstate.yposition; y < pstate.yposition + m * sep; y += sep, mi++)
+    {
+      if (y >= pstate.bottom_margin - pstate.top_margin)
+	{
+	  fprintf(stderr,
+		  "Warning: Unprinter out of unpaper (limit %d, pos %d).\n",
+		  pstate.bottom_margin, y);
+	  return(1);
+	}
+      find_white(buf + mi * ((n * pstate.bpp + 7) / 8), n,
+		 &left_white, &right_white);
+      if (left_white == n)
+	continue; /* ignore blank lines */
+      if (!(page[y]))
+	{
+	  page[y] = (line_type *) xcalloc(sizeof(line_type), 1);
+	  if (y < pstate.top_edge)
+	    pstate.top_edge = y;
+	  if (y > pstate.bottom_edge)
+	    pstate.bottom_edge = y;
+	}
+      if ((left_white * pstate.bpp < 8) && (skip == 1))
+	{
+	  left_white=0; /* if it's just a few bits, don't bother cropping */
+	}               /* unless we need to expand the line anyway       */
+      if (page[y]->line[color])
+	{
+	  oldline = page[y]->line[color];
+	  oldstart = page[y]->startx[color];
+	  oldstop = page[y]->stopx[color];
+	}
+      else
+	{
+	  oldline = NULL;
+	  oldstart = -1;
+	  oldstop = -1;
+	}
+      page[y]->startx[color] = pstate.xposition + left_white * skip;
+      page[y]->stopx[color] =pstate.xposition + ((n - 1 - right_white) * skip);
+      if (page[y]->startx[color] < pstate.left_edge)
+	pstate.left_edge = page[y]->startx[color];
+      if (page[y]->stopx[color] > pstate.right_edge)
+	pstate.right_edge = page[y]->stopx[color];
+      width = page[y]->stopx[color] - page[y]->startx[color];
+      page[y]->line[color] =
+	xcalloc(((width * skip + 1) * pstate.bpp + 7) / 8, 1);
+      expand_line(buf + mi * ((n * pstate.bpp + 7) / 8), page[y]->line[color],
+		  width+1, skip, left_white);
+      if (oldline)
+	merge_line(page[y], oldline, oldstart, oldstop, color);
     }
-    if ((left_white*pstate.bpp<8)&&(skip==1)) {
-      left_white=0; /* if it's just a few bits, don't bother cropping */
-    }               /* unless we need to expand the line anyway       */
-    if (page[y]->line[color]) {
-       oldline=page[y]->line[color];
-       oldstart=page[y]->startx[color];
-       oldstop=page[y]->stopx[color];
-    } else {
-      oldline=NULL;
-      oldstart = -1;
-      oldstop = -1;
-    }
-    page[y]->startx[color]=pstate.xposition+left_white*skip;
-    page[y]->stopx[color]=pstate.xposition+((n-1-right_white)*skip);
-    page[y]->line[color]=(unsigned char *) xcalloc(sizeof(unsigned char),
-     (((page[y]->stopx[color]-page[y]->startx[color])*skip+1)*pstate.bpp+7)/8);
-    expand_line(buf+mi*((n*pstate.bpp+7)/8),page[y]->line[color],
-                page[y]->stopx[color]-page[y]->startx[color]+1,skip,left_white);
-    if (oldline) {
-      merge_line(page[y],oldline,oldstart,oldstop,color);
-    }
-  }
-  pstate.xposition+=n?(n-1)*skip+1:0;
+  if (n)
+    pstate.xposition += (n - 1) * skip + 1;
   return(0);
 }
 
-#define get1(error)				\
-do						\
-{						\
-  if (!(count=fread(&ch,1,1,fp_r)))		\
-    {						\
-      fprintf(stderr, "%s at %d (%x), read %d",	\
-	      error, counter, counter, count);	\
-      eject=1;					\
-      continue;					\
-    }						\
-  else						\
-    counter+=count;				\
+#define get1(error)							\
+do									\
+{									\
+  if (!(global_count = fread(&ch, 1, 1, fp_r)))				\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    global_counter += global_count;					\
 } while (0)
 
-#define get2(error)				\
-do						\
-{						\
-  if (!(count=fread(minibuf,1,2,fp_r)))		\
-    {						\
-      fprintf(stderr, "%s at %d (%x), read %d",	\
-	      error, counter, counter, count);	\
-      eject=1;					\
-      continue;					\
-    }						\
-  else						\
-    {						\
-      counter+=count;				\
-      sh=minibuf[0]+minibuf[1]*256;		\
-    }						\
+#define get2(error)							\
+do									\
+{									\
+  if (!(global_count = fread(minibuf, 1, 2, fp_r)))			\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    {									\
+      global_counter += global_count;					\
+      sh = minibuf[0] + minibuf[1] * 256;				\
+    }									\
 } while (0)
 
-#define getn(n,error) 				\
-do						\
-{						\
-  if (!(count=fread(buf,1,n,fp_r)))		\
-    {						\
-      fprintf(stderr, "%s at %d (%x), read %d",	\
-	      error, counter, counter, count);	\
-      eject=1;					\
-      continue;					\
-    }						\
-  else						\
-    counter+=count;				\
+#define getn(n,error)							\
+do									\
+{									\
+  if (!(global_count = fread(buf, 1, n, fp_r)))				\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    global_counter += global_count;					\
 } while (0)
 
-#define getnoff(n,offset,error)			\
-do						\
-{						\
-  if (!(count=fread(buf+offset,1,n,fp_r)))	\
-    {						\
-      fprintf(stderr, "%s at %d (%x), read %d",	\
-	      error, counter, counter, count);	\
-      eject=1;					\
-      continue;					\
-    }						\
-  else						\
-    counter+=count;				\
+#define getnoff(n,offset,error)						\
+do									\
+{									\
+  if (!(global_count = fread(buf + offset, 1, n, fp_r)))		\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    global_counter += global_count;					\
 } while (0)
 
-void parse_escp2(FILE *fp_r)
+static void
+parse_escp2_data(FILE *fp_r)
 {
+  int i, m = 0, n = 0, c = 0;
+  int currentcolor = 0;
+  int density = 0;
+  int bandsize;
+  switch (ch)
+    {
+    case 'i':
+      get1("Error reading color.\n");
+      currentcolor = seqcolor(ch);
+      get1("Error reading compression mode!\n");
+      c = ch;
+      get1("Error reading bpp!\n");
+      if (ch != pstate.bpp)
+	{
+	  fprintf(stderr, "Warning! Color depth altered by ESC i.\n");
+	  pstate.bpp=ch;
+	}
+      if (pstate.bpp > 2)
+	fprintf(stderr, "Warning! Excessively deep color detected.\n");
+      if (pstate.bpp == 0)
+	fprintf(stderr, "Warning! Zero bit pixel depth detected.\n");
+      get2("Error reading number of horizontal dots!\n");
+      n = (unsigned) sh * 8 / pstate.bpp;
+      get2("Error reading number of vertical dots!\n");
+      m = (unsigned) sh;
+      density = pstate.horizontal_spacing;
+      break;
+    case '.':
+      get1("Error reading compression mode!\n");
+      c=ch;
+      if (c > 2)
+	{
+	  fprintf(stderr,"Warning!  Unknown compression mode.\n");
+	  break;
+	}
+      get1("Error reading vertical density!\n");
+      /* What should we do with the vertical density here??? */
+      get1("Error reading horizontal density!\n");
+      density=3600/ch;
+      get1("Error reading number of vertical dots!\n");
+      m=ch;
+      get2("Error reading number of horizontal dots!\n");
+      n=sh;
+      currentcolor=pstate.current_color;
+      break;
+    }
+  bandsize = m * ((n * pstate.bpp + 7) / 8);
+  if (valid_bufsize < bandsize)
+    {
+      buf = realloc(buf, bandsize);
+      valid_bufsize = bandsize;
+    }
+  switch (c)
+    {
+    case 0:  /* uncompressed */
+      bufsize = bandsize;
+      getn(bufsize,"Error reading raster data!\n");
+      update_page(buf, bufsize, m, n, currentcolor, density);
+      break;
+    case 1:  /* run length encoding */
+      i = 0;
+      while (!eject && (i < bandsize))
+	{
+	  get1("Error reading global_counter!\n");
+	  if (ch < 128)
+	    {
+	      bufsize = ch + 1;
+	      getnoff(bufsize, i, "Error reading RLE raster data!\n");
+	    }
+	  else
+	    {
+	      bufsize = 257 - (unsigned int) ch;
+	      get1("Error reading compressed RLE raster data!\n");
+	      memset(buf + i, ch, bufsize);
+	    }
+	  i += bufsize;
+	}
+      if (i != bandsize)
+	{
+	  fprintf(stderr, "Error decoding RLE data.\n");
+	  fprintf(stderr, "Total bufsize %d, expected %d\n",
+		  i, bandsize);
+	  eject = 1;
+	}
+      else
+	update_page(buf, i, m, n, currentcolor, density);
+      break;
+    case 2: /* TIFF compression */
+      fprintf(stderr, "TIFF mode not yet supported!\n");
+      /* FIXME: write TIFF stuff */
+      break;
+    default: /* unknown */
+      fprintf(stderr, "Unknown compression mode %d.\n", c);
+      break;
+    }
+}
 
-  int i,m=0,n=0,c=0;
-  int currentcolor,currentbpp,density,eject,got_graphics;
-  int count,counter;
+static void
+parse_escp2_extended(FILE *fp_r)
+{
+  int unit_base;
+  int i;
 
-  counter=0;
-  eject=got_graphics=currentbpp=currentcolor=density=0;
+  get1("Corrupt file.  Incomplete extended command.\n");
+  if (eject)
+    return;
+  get2("Corrupt file.  Error reading buffer size.\n");
+  bufsize = sh;
+  getn(bufsize, "Corrupt file.  Error reading command payload.\n");
+  /* fprintf(stderr,"Command %X bufsize %d.\n",ch,bufsize); */
+  switch (ch)
+    {
+    case 'R':
+      if (bufsize == 8 && memcmp(buf, "\0REMOTE1", 8) == 0)
+	{
+	  int rc1 = 0, rc2 = 0;
+	  /* Remote mode 1 */
+	  do
+	    {
+	      get1("Corrupt file.  Error in remote mode.\n");
+	      rc1 = ch;
+	      get1("Corrupt file.  Error reading remote mode command.\n");
+	      rc2 = ch;
+	      get2("Corrupt file.  Error reading remote mode command size.\n");
+	      bufsize = sh;
+	      if (bufsize)
+		getn(bufsize, "Corrupt file.  Error reading remote mode command parameters.\n");
+	      if (rc1 == 0x1b && rc2 == 0) /* ignore quietly */
+		;
+	      else
+		fprintf(stderr,
+			"Remote mode command `%c%c' ignored.\n",
+			rc1,rc2);
+	    }
+	  while (!eject && !(rc1 == 0x1b && rc2 == 0));
+	}
+      else
+	{
+	  fprintf(stderr,"Warning!  Commands in unrecognised remote mode %s ignored.\n", buf);
+	  do
+	    {
+	      while((!eject) && (ch!=0x1b))
+		get1("Error in remote mode.\n");
+	      get1("Error reading remote mode terminator\n");
+	    }
+	  while ((!eject) && (ch != 0));
+	}
+      break;
+    case 'G': /* select graphics mode */
+      /* FIXME: this is supposed to have more side effects */
+      pstate.microweave = 0;
+      pstate.dotsize = 0;
+      pstate.bpp = 1;
+      break;
+    case 'U': /* set page units */
+      switch (bufsize)
+	{
+	case 1:
+	  pstate.page_management_units =
+	    pstate.absolute_horizontal_units =
+	    pstate.relative_horizontal_units =
+	    pstate.relative_vertical_units =
+	    pstate.horizontal_spacing =
+	    pstate.absolute_vertical_units = 3600 / buf[0];
+	  if (pstate.page_management_units < 720)
+	    pstate.extraskip = 1;
+	  fprintf(stderr, "Setting units to 1/%d\n",
+		  pstate.absolute_horizontal_units);
+	  break;
+	case 5:
+	  unit_base = buf[4] * 256 + buf[3];
+	  pstate.extraskip=1;
+	  pstate.page_management_units= unit_base / buf[0];
+	  pstate.relative_vertical_units =
+	    pstate.absolute_vertical_units = unit_base/buf[1];
+	  pstate.relative_horizontal_units =
+	    pstate.horizontal_spacing =
+	    pstate.absolute_horizontal_units = unit_base / buf[2];
+	  fprintf(stderr, "Setting page management units to 1/%d\n",
+		  pstate.page_management_units);
+	  fprintf(stderr, "Setting vertical units to 1/%d\n",
+		  pstate.relative_vertical_units);
+	  fprintf(stderr, "Setting horizontal units to 1/%d\n",
+		  pstate.relative_horizontal_units);
+	  break;
+	}
+      break;
+    case 'i': /* set MicroWeave mode */
+      if (bufsize != 1)
+	fprintf(stderr,"Malformed microweave setting command.\n");
+      else
+	pstate.microweave = buf[0] % 0x30;
+      break;
+    case 'e': /* set dot size */
+      if ((bufsize != 2) || (buf[0] != 0))
+	fprintf(stderr,"Malformed dotsize setting command.\n");
+      else if (pstate.got_graphics)
+	fprintf(stderr,"Changing dotsize while printing not supported.\n");
+      else
+	{
+	  pstate.dotsize = buf[1];
+	  if (pstate.dotsize & 0x10)
+	    pstate.bpp = 2;
+	  else
+	    pstate.bpp = 1;
+	}
+      fprintf(stderr, "Setting dot size to 0x%x (bits %d)\n",
+	      pstate.dotsize, pstate.bpp);
+      break;
+    case 'c': /* set page format */
+      if (page)
+	{
+	  fprintf(stderr,"Setting the page format in the middle of printing a page is not supported.\n");
+	  break;
+	}
+      switch (bufsize)
+	{
+	case 4:
+	  pstate.top_margin = buf[1] * 256 + buf[0];
+	  pstate.bottom_margin = buf[3] * 256 + buf[2];
+	  break;
+	case 8:
+	  pstate.top_margin = (buf[3] << 24) +
+	    (buf[2] << 16) + (buf[1] << 8) + buf[0];
+	  pstate.bottom_margin = (buf[7] << 24) +
+	    (buf[6] << 16) + (buf[5] << 8) + buf[4];
+	  break;
+	default:
+	  fprintf(stderr,"Malformed page format.  Ignored.\n");
+	}
+      pstate.yposition = 0;
+      if (pstate.top_margin + pstate.bottom_margin > pstate.page_height)
+	pstate.page_height = pstate.top_margin + pstate.bottom_margin;
+      page = (line_type **) xcalloc(pstate.bottom_margin - pstate.top_margin,
+				    sizeof(line_type *));
+      fprintf(stderr, "Setting top margin to %d (%.3f)\n",
+	      pstate.top_margin,
+	      (double) pstate.top_margin / pstate.page_management_units);
+      fprintf(stderr, "Setting bottom margin to %d (%.3f)\n",
+	      pstate.bottom_margin,
+	      (double) pstate.bottom_margin / pstate.page_management_units);
+      break;
+    case 'V': /* set absolute vertical position */
+      i = 0;
+      switch (bufsize)
+	{
+	case 4:
+	  i = (buf[2] << 16) + (buf[3]<<24);
+	  /* FALLTHROUGH */
+	case 2:
+	  i += (buf[0]) + (256 * buf[1]);
+	  if (pstate.top_margin + i * (pstate.relative_vertical_units /
+				       pstate.absolute_vertical_units) >=
+	      pstate.yposition)
+	    pstate.yposition = i * (pstate.relative_vertical_units /
+				    pstate.absolute_vertical_units) +
+	      pstate.top_margin;
+	  else
+	    fprintf(stderr, "Warning: Setting Y position in negative direction ignored\n");
+	  break;
+	default:
+	  fprintf(stderr, "Malformed absolute vertical position set.\n");
+	}
+      if (pstate.yposition > pstate.bottom_margin - pstate.top_margin)
+	{
+	  fprintf(stderr,
+		  "Warning! Printer head moved past bottom margin.  Dumping output and exiting.\n");
+	  eject = 1;
+	}
+      break;
+    case 'v': /* set relative vertical position */
+      i = 0;
+      switch (bufsize)
+	{
+	case 4:
+	  i = (buf[2] << 16) + (buf[3] << 24);
+	  /* FALLTHROUGH */
+	case 2:
+	  i += (buf[0]) + (256 * buf[1]);
+	  if (unweave)
+	    i = pstate.nozzles;
+	  pstate.yposition+=i;
+	  break;
+	default:
+	  fprintf(stderr,"Malformed relative vertical position set.\n");
+	}
+      if (pstate.yposition > pstate.bottom_margin - pstate.top_margin)
+	{
+	  fprintf(stderr,"Warning! Printer head moved past bottom margin.  Dumping output and exiting.\n");
+	  eject = 1;
+	}
+      break;
+    case 'K':
+      if (bufsize!=2)
+	fprintf(stderr,"Malformed monochrome/color mode selection.\n");
+      else if (buf[0])
+	fprintf(stderr,"Non-zero first byte in monochrome selection command. Ignored.\n");
+      else if (buf[0] > 0x02)
+	fprintf(stderr,"Unknown color mode 0x%X.\n",buf[1]);
+      else
+	pstate.monomode = buf[1];
 
-    while ((!eject)&&(fread(&ch,1,1,fp_r))){
-      counter++;
-      if (ch==0xd) { /* carriage return */
-        pstate.xposition=0;
-        continue;
-      }
-      if (ch==0xc) { /* form feed */
-        eject=1;
-        continue;
-      }
-      if (ch==0x0) { /* NUL */
-	fprintf(stderr, "Ignoring NUL character at 0x%08X\n", counter-1);
-	continue;
-      }
-      if (ch!=0x1b) {
-        fprintf(stderr,"Corrupt file?  No ESC found.  Found: %02X at 0x%08X\n",ch,counter-1);
-        continue;
-      }
-    nextcommand:
-      get1("Corrupt file.  No command found.\n");
-      /* fprintf(stderr,"Got a %X.\n",ch); */
-      switch (ch) {
-	case 1: /* Magic EJL stuff to get USB port working */
-	    fprintf(stderr,"Ignoring EJL commands.\n");
-	    do {
-	      get1("Error reading EJL commands.\n");
-	    } while (!eject && ch != 0x1b);
-	    if (ch==0x1b)
-	      goto nextcommand;
-	    break;
-        case '@': /* initialize printer */
-            if (page) {
-              eject=1;
-              continue;
-            } else {
-              pstate.unidirectional=0;
-              pstate.microweave=0;
-              pstate.dotsize=0;
-              pstate.bpp=1;
-              pstate.page_management_units=360;
-              pstate.relative_horizontal_units=180;
-              pstate.absolute_horizontal_units=60;
-              pstate.relative_vertical_units=360;
-              pstate.absolute_vertical_units=360;
-              pstate.top_margin=120;
-              pstate.bottom_margin=
-                pstate.page_height=22*360; /* 22 inches is default ??? */
-              pstate.monomode=0;
-            }
-            break;
-        case 'U': /* turn unidirectional mode on/off */
-            get1("Error reading unidirectionality.\n");
-            if ((ch<=2)||((ch>=0x30)&&(ch<=0x32))) {
-              pstate.unidirectional=ch;
-            }
-            break;
-        case 'i': /* transfer raster image */
-            get1("Error reading color.\n");
-            currentcolor=seqcolor(ch);
-            get1("Error reading compression mode!\n");
-            c=ch;
-            get1("Error reading bpp!\n");
-            if (ch!=pstate.bpp) {
-              fprintf(stderr,"Warning!  Color depth altered by ESC i.  This could be very very bad.\n");
-              pstate.bpp=ch;
-            }
-            if (pstate.bpp>2) {
-              fprintf(stderr,"Warning! Excessively deep color detected.\n");
-            }
-            if (pstate.bpp==0) {
-              fprintf(stderr,"Warning! 0 bit pixels are far too Zen for this software.\n");
-            }
-            get2("Error reading number of horizontal dots!\n");
-            n=sh * 8 / pstate.bpp;
-            get2("Error reading number of vertical dots!\n");
-            m=sh;
-            density=pstate.horizontal_spacing;
-            ch=0; /* make sure ch!='.' and fall through */
-        case '.': /* transfer raster image */
-            got_graphics=1;
-            if (ch=='.') {
-              get1("Error reading compression mode!\n");
-              c=ch;
-              if (c>2) {
-                fprintf(stderr,"Warning!  Unknown compression mode.\n");
-                break;
-              }
-              get1("Error reading vertical density!\n");
-              get1("Error reading horizontal density!\n");
-              density=3600/ch;
-              get1("Error reading number of vertical dots!\n");
-              m=ch;
-              get2("Error reading number of horizontal dots!\n");
-              n=sh;
-              currentcolor=pstate.current_color;
-            }
-            switch (c) {
-              case 0:  /* uncompressed */
-                bufsize=m*((n*pstate.bpp+7)/8);
-                getn(bufsize,"Error reading raster data!\n");
-                update_page(buf,bufsize,m,n,currentcolor,density);
-                break;
-              case 1:  /* run length encoding */
-                for (i=0;(!eject)&&(i<(m*((n*pstate.bpp+7)/8)));) {
-                  get1("Error reading counter!\n");
-                  if (ch<128) {
-                    bufsize=ch+1;
-                    getnoff(bufsize,i,"Error reading RLE raster data!\n");
-                  } else {
-                    bufsize=257-(unsigned int)ch;
-                    get1("Error reading compressed RLE raster data!\n");
-                    memset(buf+i,ch,bufsize);
-                  }
-                  i+=bufsize;
-                }
-                if (i!=(m*((n*pstate.bpp+7)/8))) {
-                  fprintf(stderr,"Error decoding RLE data.\n");
-                  fprintf(stderr,"Total bufsize %d, expected %d\n",i,
-                        (m*((n*pstate.bpp+7)/8)));
-                  eject=1;
-                  continue;
-                }
-                update_page(buf,i,m,n,currentcolor,density);
-                break;
-              case 2: /* TIFF compression */
-                fprintf(stderr,"TIFF mode not yet supported!\n");
-                /* FIXME: write TIFF stuff */
-                break;
-              default: /* unknown */
-                fprintf(stderr,"Unknown compression mode.\n");
-                break;
-            }
-            break;
-        case '\\': /* set relative horizontal position */
-            get2("Error reading relative horizontal position.\n");
-            if (pstate.xposition+(signed short)sh<0) {
-              fprintf(stderr,"Warning! Attempt to move to -X region ignored.\n");
-              fprintf(stderr,"   Command:  ESC %c %X %X   Original Position: %d\n",ch,minibuf[0],minibuf[1],pstate.xposition);
-            } else  /* FIXME: Where is the right margin??? */
-              pstate.xposition+=(signed short)sh;
-            break;
-        case '$': /* set absolute horizontal position */
-            get2("Error reading absolute horizontal position.\n");
-            pstate.xposition=sh*(pstate.relative_horizontal_units/
-                                pstate.absolute_horizontal_units);
-            break;
-        case 0x6: /* flush buffers */
-            /* Woosh.  Consider them flushed. */
-            break;
-        case 0x19: /* control paper loading */
-            get1("Error reading paper control byte.\n");
-            /* paper? */
-            break;
-        case 'r': /* select printing color */
-            get1("Error reading color.\n");
-            if ((ch<=4)&&(ch!=3)) {
-              pstate.current_color=seqcolor(ch);
-            } else {
-              fprintf(stderr,"Invalid color %d.\n",ch);
-            }
-            break;
-        case '(': /* commands with a payload */
-            get1("Corrupt file.  Incomplete extended command.\n");
-            if (ch=='R') { /* "remote mode" */
-              get2("Corrupt file.  Error reading buffer size.\n");
-	      bufsize=sh;
-	      getn(bufsize,"Corrupt file.  Error reading remote mode name.\n");
-	      if (bufsize==8 && memcmp(buf, "\0REMOTE1", 8)==0) {
-		int rc1=0, rc2=0;
-		/* Remote mode 1 */
-		do {
-		  get1("Corrupt file.  Error in remote mode.\n");
-		  rc1=ch;
-		  get1("Corrupt file.  Error reading remote mode command.\n");
-		  rc2=ch;
-		  get2("Corrupt file.  Error reading remote mode command size.\n");
-		  bufsize=sh;
-		  if (bufsize) {
-		    getn(bufsize, "Corrupt file.  Error reading remote mode command parameters.\n");
-		  }
-		  if (rc1==0x1b && rc2==0) {
-		    /* ignore quietly */
-		  } else if (rc1=='L' && rc2=='D') {
-		    fprintf(stderr, "Load settings from NVRAM command ignored.\n");
-		  } else if (rc1=='N' && rc2=='C') {
-		    fprintf(stderr, "Nozzle check command ignored.\n");
-		  } else if (rc1=='V' && rc2=='I') {
-		    fprintf(stderr, "Print version information command ignored.\n");
-		  } else if (rc1=='A' && rc2=='I') {
-		    fprintf(stderr, "Print printer ID command ignored.\n");
-		  } else if (rc1=='C' && rc2=='H') {
-		    fprintf(stderr, "Remote head cleaning command ignored.\n");
-		  } else if (rc1=='D' && rc2=='T') {
-		    fprintf(stderr, "Print alignment pattern command ignored.\n");
-		  } else if (rc1=='D' && rc2=='A') {
-		    fprintf(stderr, "Alignment results command ignored.\n");
-		  } else if (rc1=='S' && rc2=='V') {
-		    fprintf(stderr, "Alignment save command ignored.\n");
-		  } else if (rc1=='R' && rc2=='S') {
-		    fprintf(stderr, "Remote mode reset command ignored.\n");
-		  } else if (rc1=='I' && rc2=='Q') {
-		    fprintf(stderr, "Fetch ink quantity command ignored.\n");
-		  } else {
-		    fprintf(stderr, "Remote mode command `%c%c' ignored.\n",
-			    rc1,rc2);
-		  }
-		} while (!eject && !(rc1==0x1b && rc2==0));
-	      } else {
-                fprintf(stderr,"Warning!  Commands in unrecognised remote mode ignored.\n");
-                do {
-                  while((!eject)&&(ch!=0x1b)) {
-                    get1("Error in remote mode.\n");
-                  }
-                  get1("Error reading remote mode terminator\n");
-                } while ((!eject)&&(ch!=0));
-	      }
-	      break;
-            }
-            get2("Corrupt file.  Error reading buffer size.\n");
-            bufsize=sh;
-            /* fprintf(stderr,"Command %X bufsize %d.\n",ch,bufsize); */
-            getn(bufsize,"Corrupt file.  Error reading data buffer.\n");
-            switch (ch) {
-              case 'G': /* select graphics mode */
-                /* FIXME: this is supposed to have more side effects */
-                pstate.microweave=0;
-                pstate.dotsize=0;
-                pstate.bpp=1;
-                break;
-              case 'U': /* set page units */
-                switch (bufsize) {
-                  case 1:
-                    pstate.page_management_units=
-                    pstate.absolute_horizontal_units=
-                    pstate.relative_horizontal_units=
-                    pstate.relative_vertical_units=
-		    pstate.horizontal_spacing=
-                    pstate.absolute_vertical_units=3600/buf[0];
-		    if (pstate.page_management_units < 720)
-		      pstate.extraskip = 1;
-		    fprintf(stderr, "Setting units to 1/%d\n",
-			    pstate.absolute_horizontal_units);
-                    break;
-                  case 5:
-		    pstate.extraskip=1;
-                    pstate.page_management_units=(buf[4]*256+buf[3])/buf[0];
-                    pstate.relative_vertical_units=
-                    pstate.absolute_vertical_units=(buf[4]*256+buf[3])/buf[1];
-                    pstate.relative_horizontal_units=
-		    pstate.horizontal_spacing=
-                    pstate.absolute_horizontal_units=(buf[4]*256+buf[3])/buf[2];
-		    fprintf(stderr, "Setting page management units to 1/%d\n",
-			    pstate.page_management_units);
-		    fprintf(stderr, "Setting vertical units to 1/%d\n",
-			    pstate.relative_vertical_units);
-		    fprintf(stderr, "Setting horizontal units to 1/%d\n",
-			    pstate.relative_horizontal_units);
-                    break;
-                }
-                break;
-              case 'i': /* set MicroWeave mode */
-                if (bufsize!=1) {
-                  fprintf(stderr,"Malformed microweave setting command.\n");
-                } else {
-                  switch (buf[0]) {
-                    case 0x00:
-                    case 0x30:pstate.microweave=0;
-                        break;
-		    default:pstate.microweave=1;
-                        break;
-                  }
-                }
-                break;
-              case 'e': /* set dot size */
-                if ((bufsize!=2)||(buf[0]!=0)) {
-                  fprintf(stderr,"Malformed dotsize setting command.\n");
-                } else {
-                  if (got_graphics) {
-                    fprintf(stderr,"Changing dotsize while printing not supported.\n");
-                  } else {
-                    pstate.dotsize=buf[1];
-                    if (pstate.dotsize&0x10) {
-                      pstate.bpp=2;
-                    } else {
-                      pstate.bpp=1;
-                    }
-		    fprintf(stderr, "Setting dot size to 0x%x (bits %d)\n",
-			    pstate.dotsize, pstate.bpp);
-                  }
-                }
-                break;
-              case 'c': /* set page format */
-                if (page) {
-                  fprintf(stderr,"Setting the page format in the middle of printing a page is not supported.\n");
-                  exit(-1);
-                }
-                switch (bufsize) {
-                  case 4:
-                    pstate.top_margin=buf[1]*256+buf[0];
-                    pstate.bottom_margin=buf[3]*256+buf[2];
-                    break;
-                  case 8:
-                    pstate.top_margin=buf[3]<<24|buf[2]<<16|buf[1]<<8|buf[0];
-                    pstate.bottom_margin=buf[7]<<24|buf[6]<<16|buf[5]<<8|buf[4];
-                    break;
-                  default:
-                    fprintf(stderr,"Malformed page format.  Ignored.\n");
-                }
-                if ((bufsize==4)||(bufsize==8)) {
-                  pstate.yposition=0;
-                  if (pstate.top_margin+pstate.bottom_margin>
-                       pstate.page_height) {
-                    pstate.page_height=pstate.top_margin+pstate.bottom_margin;
-                  }
-                  page=(line_type **)xcalloc(pstate.bottom_margin,
-                                  sizeof(line_type *));
-		  fprintf(stderr, "Setting top margin to %d (%.3f)\n",
-			  pstate.top_margin,
-			  (double) pstate.top_margin / pstate.page_management_units);
-		  fprintf(stderr, "Setting bottom margin to %d (%.3f)\n",
-			  pstate.bottom_margin,
-			  (double) pstate.bottom_margin / pstate.page_management_units);
-                  /* FIXME: what is cut sheet paper??? */
-                }
-                break;
-              case 'V': /* set absolute vertical position */
-                i=0;
-                switch (bufsize) {
-                    case 4:i=(buf[2]<<16)+(buf[3]<<24);
-                    case 2:i+=(buf[0])+(256*buf[1]);
-                    if (i*(pstate.relative_vertical_units/
-                            pstate.absolute_vertical_units)>=pstate.yposition) {
-                      pstate.yposition=i*(pstate.relative_vertical_units/
-                            pstate.absolute_vertical_units);
-                    } else {
-                       fprintf(stderr,"Warning: Setting Y position in negative direction ignored\n");
-                    }
-                    break;
-                  default:
-                    fprintf(stderr,"Malformed absolute vertical position set.\n");
-                }
-                if (pstate.yposition>pstate.bottom_margin) {
-                  fprintf(stderr,"Warning! Printer head moved past bottom margin.  Dumping output and exiting.\n");
-                  eject=1;
-                }
-                break;
-              case 'v': /* set relative vertical position */
-                i=0;
-                switch (bufsize) {
-                    case 4:i=(buf[2]<<16)+(buf[3]<<24);
-                    case 2:i+=(buf[0])+(256*buf[1]);
-                      if (unweave) {
-                        i=pstate.nozzles;
-                      }
-                      pstate.yposition+=i;
-                    break;
-                  default:
-                    fprintf(stderr,"Malformed relative vertical position set.\n");
-                }
-                if (pstate.yposition>pstate.bottom_margin) {
-                  fprintf(stderr,"Warning! Printer head moved past bottom margin.  Dumping output and exiting.\n");
-                  eject=1;
-                }
-                break;
-              case 'K':
-                if (bufsize!=2) {
-                  fprintf(stderr,"Malformed monochrome/color mode selection.\n");
-                } else {
-                  if (buf[0]) {
-                    fprintf(stderr,"Non-zero first byte in monochrome selection command. Ignored.\n");
-                  } else if (buf[0]>0x02) {
-                    fprintf(stderr,"Unknown color mode 0x%X.\n",buf[1]);
-                  } else
-                    pstate.monomode=buf[1];
-                }
-                break;
-	      case 's':		/* Set print speed */
-		break;
-              case 'S': /* set paper dimensions */
-		switch (bufsize) {
-		case 4:
-		  i = (buf[1] << 16) | buf[0];
-		  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  i = (buf[3] << 16) | buf[2];
-		  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  break;
-		case 8:
-		  i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
-		  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  break;
-		default:
-		  fprintf(stderr, "Invalid set paper dimensions command.\n");
-		}
-                break;
-	      case 'D':
-		if (bufsize != 4)
-		  {
-		    fprintf(stderr, "Malformed set resolution request.\n");
-		  }
-		else
-		  {
-		    int res_base = (256 * buf[1]) + buf[0];
-		    pstate.nozzle_separation =
-		      pstate.absolute_vertical_units / (res_base / buf[2]);
-		    pstate.horizontal_spacing = res_base / buf[3];
-		    fprintf(stderr, "Setting nozzle separation to %d\n",
-			    pstate.nozzle_separation);
-		    fprintf(stderr, "Setting vertical spacing to 1/%d\n",
-			    res_base / buf[2]);
-		    fprintf(stderr, "Setting horizontal spacing to 1/%d\n",
-			    pstate.horizontal_spacing);
-		  }
-		break;
-              case 'r': /* select color */
-                if (bufsize!=2) {
-                  fprintf(stderr,"Malformed color selection request.\n");
-                } else {
-                  sh=256*buf[0]+buf[1];
-                  if ((buf[1]>4)||(buf[1]==3)||(buf[0]>1)||
-                      (buf[0]&&((buf[1]==0)||(buf[1]==4)))) {
-                    fprintf(stderr,"Invalid color 0x%X.\n",sh);
-                  } else {
-                    pstate.current_color=seqcolor(sh);
-                  }
-                }
-                break;
-              case '\\': /* set relative horizontal position 700/EX */
-              case '/': /* set relative horizontal position  740/750/1200 */
-                i=(buf[3]<<8)|buf[2];
-                if (pstate.xposition+i<0) {
-                  fprintf(stderr,"Warning! Attempt to move to -X region ignored.\n");
-                  fprintf(stderr,"   Command:  ESC ( %c %X %X %X %X  Original position: %d\n",ch,buf[0],buf[1],buf[2],buf[3],pstate.xposition);
-                } else  /* FIXME: Where is the right margin??? */
-                  pstate.xposition+=i;
-                break;
-              case '$': /* set absolute horizontal position */
-                i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
-                pstate.xposition=i*(pstate.relative_horizontal_units/
-                                     pstate.absolute_horizontal_units);
-                break;
-              case 'C': /* set page height */
-		switch (bufsize) {
-		case 2:
-		  i = (buf[1] << 8) | buf[0];
-		  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  break;
-		case 4:
-		  i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
-		  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
-			  (double) i / pstate.page_management_units);
-		  break;
-		default:
-		  fprintf(stderr, "Invalid set page height command.\n");
-		}
-                break;
-              default:
-                fprintf(stderr,"Warning: Unknown command ESC ( 0x%X at 0x%08X.\n",ch,counter-5-bufsize);
-            }
-            break;
-          default:
-            fprintf(stderr,"Warning: Unknown command ESC 0x%X at 0x%08X.\n",ch,counter-2);
-      }
+      break;
+    case 's':		/* Set print speed */
+      break;
+    case 'S': /* set paper dimensions */
+      switch (bufsize)
+	{
+	case 4:
+	  i = (buf[1] << 16) + buf[0];
+	  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  i = (buf[3] << 16) + buf[2];
+	  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  break;
+	case 8:
+	  i = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
+	  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  i = (buf[7] << 24) + (buf[6] << 16) + (buf[5] << 8) + buf[4];
+	  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  break;
+	default:
+	  fprintf(stderr, "Invalid set paper dimensions command.\n");
+	}
+      break;
+    case 'D':
+      if (bufsize != 4)
+	fprintf(stderr, "Malformed set resolution request.\n");
+      else
+	{
+	  int res_base = (256 * buf[1]) + buf[0];
+	  pstate.nozzle_separation =
+	    pstate.absolute_vertical_units / (res_base / buf[2]);
+	  pstate.horizontal_spacing = res_base / buf[3];
+	  fprintf(stderr, "Setting nozzle separation to %d\n",
+		  pstate.nozzle_separation);
+	  fprintf(stderr, "Setting vertical spacing to 1/%d\n",
+		  res_base / buf[2]);
+	  fprintf(stderr, "Setting horizontal spacing to 1/%d\n",
+		  pstate.horizontal_spacing);
+	}
+      break;
+    case 'r': /* select color */
+      if (bufsize!=2)
+	fprintf(stderr,"Malformed color selection request.\n");
+      else
+	{
+	  sh = 256 * buf[0] + buf[1];
+	  if ((buf[1] > 4) || (buf[1] == 3) || (buf[0] > 1) ||
+	      (buf[0] && (buf[1]==0)))
+	    fprintf(stderr,"Invalid color 0x%X.\n",sh);
+	  else
+	    pstate.current_color = seqcolor(sh);
+	}
+      break;
+    case '\\': /* set relative horizontal position */
+    case '/':
+      i = (buf[3] << 8) + buf[2];
+      if (pstate.xposition + i < 0)
+	{
+	  fprintf(stderr,"Warning! Attempt to move to -X region ignored.\n");
+	  fprintf(stderr,"   Command:  ESC ( %c %X %X %X %X  Original "
+		  "position: %d\n",
+		  ch, buf[0], buf[1], buf[2], buf[3], pstate.xposition);
+	}
+      else  /* FIXME: Where is the right margin??? */
+	pstate.xposition+=i;
+      break;
+    case '$': /* set absolute horizontal position */
+      i = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
+      pstate.xposition = i * (pstate.relative_horizontal_units /
+			      pstate.absolute_horizontal_units);
+      break;
+    case 'C': /* set page height */
+      switch (bufsize)
+	{
+	case 2:
+	  i = (buf[1] << 8) | buf[0];
+	  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  break;
+	case 4:
+	  i = (buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0];
+	  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
+		  (double) i / pstate.page_management_units);
+	  break;
+	default:
+	  fprintf(stderr, "Invalid set page height command.\n");
+	}
+      break;
+    default:
+      fprintf(stderr,"Warning: Unknown command ESC ( 0x%X at 0x%08X.\n",
+	      ch, global_counter - 5 - bufsize);
+    }
+}
+
+static void
+parse_escp2_command(FILE *fp_r)
+{
+  get1("Corrupt file.  No command found.\n");
+  switch (ch)
+    {
+    case 1: /* Magic EJL stuff to get USB port working */
+      fprintf(stderr,"Ignoring EJL commands.\n");
+      do
+	{
+	  get1("Error reading EJL commands.\n");
+	}
+      while (!eject && ch != 0x1b);
+      if (eject)
+	break;
+      get1("Expect esc-NULL to close EJL command.\n");
+      if (ch != 0x40)
+	fprintf(stderr, "Expect esc-NULL to close EJL command.\n");
+      break;
+    case '@': /* initialize printer */
+      if (page)
+	eject = 1;
+      else
+	{
+	  pstate.unidirectional = 0;
+	  pstate.microweave = 0;
+	  pstate.dotsize = 0;
+	  pstate.bpp = 1;
+	  pstate.page_management_units = 360;
+	  pstate.relative_horizontal_units = 180;
+	  pstate.absolute_horizontal_units = 60;
+	  pstate.relative_vertical_units = 360;
+	  pstate.absolute_vertical_units = 360;
+	  pstate.top_margin = 120;
+	  pstate.bottom_margin =
+	    pstate.page_height = 22 * 360; /* 22 inches is default ??? */
+	  pstate.monomode = 0;
+	  pstate.left_edge = INT_MAX;
+	  pstate.right_edge = 0;
+	  pstate.top_edge = INT_MAX;
+	  pstate.bottom_edge = 0;
+	}
+      break;
+    case 'U': /* turn unidirectional mode on/off */
+      get1("Error reading unidirectionality.\n");
+      if ((ch <= 2) || ((ch >= 0x30) && (ch <= 0x32)))
+	pstate.unidirectional=ch;
+      break;
+    case 'i': /* transfer raster image */
+    case '.':
+      pstate.got_graphics = 1;
+      parse_escp2_data(fp_r);
+      break;
+    case '\\': /* set relative horizontal position */
+      get2("Error reading relative horizontal position.\n");
+      if (pstate.xposition + (signed short)sh < 0)
+	{
+	  fprintf(stderr, "Warning! Move off left of region ignored.\n");
+	  fprintf(stderr, "   Command:  ESC %c %X %X   "
+		  "Original Position: %d\n",
+		  ch, minibuf[0], minibuf[1], pstate.xposition);
+	}
+      else  /* FIXME: Where is the right margin??? */
+	pstate.xposition += (signed short)sh;
+      break;
+    case '$': /* set absolute horizontal position */
+      get2("Error reading absolute horizontal position.\n");
+      pstate.xposition = sh * (pstate.relative_horizontal_units /
+			       pstate.absolute_horizontal_units);
+      break;
+    case 0x6: /* flush buffers */
+      /* Woosh.  Consider them flushed. */
+      break;
+    case 0x19: /* control paper loading */
+      get1("Error reading paper control byte.\n");
+      /* paper? */
+      break;
+    case 'r': /* select printing color */
+      get1("Error reading color.\n");
+      if ((ch <= 4) && (ch != 3))
+	pstate.current_color = seqcolor(ch);
+      else
+	fprintf(stderr, "Invalid color %d.\n", ch);
+      break;
+    case '(': /* commands with a payload */
+      parse_escp2_extended(fp_r);
+      break;
+    default:
+      fprintf(stderr,"Warning: Unknown command ESC 0x%X at 0x%08X.\n",ch,global_counter-2);
+    }
+}
+
+void
+parse_escp2(FILE *fp_r)
+{
+  global_counter = 0;
+
+  while ((!eject) && (fread(&ch, 1, 1, fp_r)))
+    {
+      global_counter++;
+      switch (ch)
+	{
+	case 0xd:		/* carriage return */
+	  pstate.xposition = 0;
+	  break;
+	case 0xc:		/* form feed */
+	  eject = 1;
+	  break;
+	case 0x0:
+	  break;
+	case 0x1b:		/* Command! */
+	  parse_escp2_command(fp_r);
+	  break;
+	default:
+	  fprintf(stderr,
+		  "Corrupt file?  No ESC found.  Found: %02X at 0x%08X\n",
+		  ch, global_counter-1);
+	  break;
+	}
     }
 }
 
@@ -1077,7 +1195,8 @@ void parse_escp2(FILE *fp_r)
  *
  * reverse the bit order in an array of bytes - does not reverse byte order!
  */
-void reverse_bit_order(unsigned char *buf, int n)
+void
+reverse_bit_order(unsigned char *buf, int n)
 {
   int i;
   unsigned char a;
@@ -1099,11 +1218,12 @@ void reverse_bit_order(unsigned char *buf, int n)
 
 /* 'rle_decode'
  *
- * run-height-decodes a given buffer of height "n"
+ * run-length-decodes a given buffer of height "n"
  * and stores the result in the same buffer
  * not exceeding a size of "max" bytes.
  */
-int rle_decode(unsigned char *inbuf, int n, int max)
+int
+rle_decode(unsigned char *inbuf, int n, int max)
 {
   unsigned char outbuf[1440*3];
   signed char *ib= (signed char *)inbuf;
@@ -1151,21 +1271,22 @@ int rle_decode(unsigned char *inbuf, int n, int max)
   return o;
 }
 
-void parse_canon(FILE *fp_r)
+void
+parse_canon(FILE *fp_r)
 {
 
   int m=0;
-  int currentcolor,currentbpp,density,eject,got_graphics;
-  int count,counter,cmdcounter;
+  int currentcolor,currentbpp,density,eject;
+  int cmdcounter;
   int delay_c=0, delay_m=0, delay_y=0, delay_C=0,
     delay_M=0, delay_Y=0, delay_K=0, currentdelay=0;
 
-  counter=0;
+  global_counter=0;
 
   page= 0;
-  eject=got_graphics=currentbpp=currentcolor=density=0;
+  eject=pstate.got_graphics=currentbpp=currentcolor=density=0;
   while ((!eject)&&(fread(&ch,1,1,fp_r))){
-    counter++;
+    global_counter++;
    if (ch==0xd) { /* carriage return */
      pstate.xposition=0;
 #ifdef DEBUG_CANON
@@ -1179,22 +1300,22 @@ void parse_canon(FILE *fp_r)
    }
    if (ch=='B') {
      fgets((char *)buf,sizeof(buf),fp_r);
-     counter+= strlen((char *)buf);
+     global_counter+= strlen((char *)buf);
      if (!strncmp((char *)buf,"JLSTART",7)) {
        while (strncmp((char *)buf,"BJLEND",6)) {
 	 fgets((char *)buf,sizeof(buf),fp_r);
-	 counter+= strlen((char *)buf);
+	 global_counter+= strlen((char *)buf);
 	 fprintf(stderr,"got BJL-plaintext-command %s",buf);
        }
      } else {
        fprintf(stderr,"Error: expected BJLSTART but got B%s",buf);
      }
-     counter= ftell(fp_r);
+     global_counter= ftell(fp_r);
      continue;
    }
    if (ch!=0x1b) {
      fprintf(stderr,"Corrupt file?  No ESC found.  Found: %02X at 0x%08X\n",
-	     ch,counter-1);
+	     ch,global_counter-1);
      continue;
    }
    get1("Corrupt file.  No command found.\n");
@@ -1202,7 +1323,7 @@ void parse_canon(FILE *fp_r)
    switch (ch) {
    case '[': /* 0x5b initialize printer */
      get1("Error reading CEM-code.\n");
-     cmdcounter= counter;
+     cmdcounter= global_counter;
      get2("Error reading CEM-data size.\n");
      getn(sh,"Error reading CEM-data.\n");
 
@@ -1231,11 +1352,15 @@ void parse_canon(FILE *fp_r)
 	 pstate.monomode=0;
 	 pstate.xposition= 0;
 	 pstate.yposition= 0;
+	 pstate.left_edge = INT_MAX;
+	 pstate.right_edge = 0;
+	 pstate.top_edge = INT_MAX;
+	 pstate.bottom_edge = 0;
 	 fprintf(stderr,"canon: init printer\n");
        }
      } else {
        fprintf(stderr,"Warning: Unknown command ESC %c 0x%X at 0x%08X.\n",
-	       0x5b,ch,cmdcounter);
+	       0x5b,ch,global_counter);
      }
      break;
 
@@ -1245,7 +1370,7 @@ void parse_canon(FILE *fp_r)
 
    case '(': /* 0x28 */
      get1("Corrupt file.  Incomplete extended command.\n");
-     cmdcounter= counter;
+     cmdcounter= global_counter;
      get2("Corrupt file.  Error reading buffer size.\n");
      bufsize=sh;
      getn(bufsize,"Corrupt file.  Error reading data buffer.\n");
@@ -1342,116 +1467,148 @@ void parse_canon(FILE *fp_r)
 
      default:
        fprintf(stderr,"Warning: Unknown command ESC ( 0x%X at 0x%08X.\n",
-	       ch,cmdcounter);
+	       ch,global_counter);
      }
      break;
 
    default:
      fprintf(stderr,"Warning: Unknown command ESC 0x%X at 0x%08X.\n",
-	     ch,counter-2);
+	     ch,global_counter-2);
    }
  }
 }
 
-int main(int argc,char *argv[])
+int
+main(int argc,char *argv[])
 {
 
   int arg;
   char *s;
   char *UNPRINT;
-  FILE *fp_r,*fp_w;
+  FILE *fp_r, *fp_w;
   int force_extraskip = -1;
+  int no_output = 0;
 
-  unweave=0;
-  pstate.nozzle_separation=6;
+  unweave = 0;
+  pstate.nozzle_separation = 6;
   fp_r = fp_w = NULL;
-  for (arg=1;arg<argc;arg++) {
-    if (argv[arg][0]=='-')
-      {
-	switch (argv[arg][1])
-	  {
-	  case 0:
-	    if (fp_r)
-	      fp_w=stdout;
-	    else
-	      fp_r=stdin;
-	    break;
-	  case 'n':
-	    if (argv[arg][2]) {
-	      s=argv[arg]+2;
-	    } else {
-	      if (argc<=arg+1) {
-		fprintf(stderr,"Missing nozzle separation\n");
-		exit(-1);
-	      } else {
-		s=argv[++arg];
-	      }
+  for (arg = 1; arg < argc; arg++)
+    {
+      if (argv[arg][0] == '-')
+	{
+	  switch (argv[arg][1])
+	    {
+	    case 0:
+	      if (fp_r)
+		fp_w = stdout;
+	      else
+		fp_r = stdin;
+	      break;
+	    case 'n':
+	      if (argv[arg][2])
+		{
+		  s = argv[arg] + 2;
+		}
+	      else
+		{
+		  if (argc <= arg + 1)
+		    {
+		      fprintf(stderr, "Missing nozzle separation\n");
+		      exit(-1);
+		    }
+		  else
+		    {
+		      s = argv[++arg];
+		    }
+		}
+	      if (!sscanf(s, "%d", &pstate.nozzle_separation))
+		{
+		  fprintf(stderr,"Error parsing nozzle separation\n");
+		  exit(-1);
+		}
+	      break;
+	    case 's':
+	      if (argv[arg][2])
+		{
+		  s = argv[arg] + 2;
+		}
+	      else
+		{
+		  if (argc <= arg + 1)
+		    {
+		      fprintf(stderr,"Missing extra skip\n");
+		      exit(-1);
+		    }
+		  else
+		    {
+		      s = argv[++arg];
+		    }
+		}
+	      if (!sscanf(s, "%d", &force_extraskip))
+		{
+		  fprintf(stderr, "Error parsing extra skip\n");
+		  exit(-1);
+		}
+	      break;
+	    case 'q':
+	      no_output = 1;
+	      break;
+	    case 'u':
+	      unweave = 1;
+	      break;
 	    }
-	    if (!sscanf(s,"%d",&pstate.nozzle_separation)) {
-	      fprintf(stderr,"Error parsing nozzle separation\n");
-	      exit(-1);
-	    }
-	    break;
-	  case 's':
-	    if (argv[arg][2]) {
-	      s=argv[arg]+2;
-	    } else {
-	      if (argc<=arg+1) {
-		fprintf(stderr,"Missing extra skip\n");
-		exit(-1);
-	      } else {
-		s=argv[++arg];
-	      }
-	    }
-	    if (!sscanf(s,"%d",&force_extraskip)) {
-	      fprintf(stderr,"Error parsing extra skip\n");
-	      exit(-1);
-	    }
-	    break;
-	  case 'u':
-	    unweave=1;
-	    break;
-	  }
-      } else {
-      if (fp_r) {
-	if (!(fp_w = fopen(argv[arg],"w"))) {
-	  perror("Error opening ouput file");
-	  exit(-1);
 	}
-      } else {
-	if (!(fp_r = fopen(argv[arg],"r"))) {
-	  perror("Error opening input file");
-	  exit(-1);
+      else
+	{
+	  if (fp_r)
+	    {
+	      if (!(fp_w = fopen(argv[arg],"w")))
+		{
+		  perror("Error opening ouput file");
+		  exit(-1);
+		}
+	    }
+	  else
+	    {
+	      if (!(fp_r = fopen(argv[arg],"r")))
+		{
+		  perror("Error opening input file");
+		  exit(-1);
+		}
+	    }
 	}
-      }
     }
-  }
   if (!fp_r)
-    fp_r=stdin;
+    fp_r = stdin;
   if (!fp_w)
-    fp_w=stdout;
+    fp_w = stdout;
 
   if (unweave) {
-    pstate.nozzle_separation=1;
+    pstate.nozzle_separation = 1;
   }
-  pstate.nozzles=96;
+  pstate.nozzles = 96;
+  buf = malloc(256 * 256);
+  valid_bufsize = 256 * 256;
 
-  UNPRINT= getenv("UNPRINT");
-  if ((UNPRINT)&&(!strcmp(UNPRINT,"canon"))) {
-    if (force_extraskip > 0)
-      pstate.extraskip = force_extraskip;
-    else
-      pstate.extraskip=1;
-    parse_canon(fp_r);
-  } else {
-    if (force_extraskip > 0)
-      pstate.extraskip = force_extraskip;
-    else
-      pstate.extraskip=2;
-    parse_escp2(fp_r);
-  }
+  UNPRINT = getenv("UNPRINT");
+  if ((UNPRINT)&&(!strcmp(UNPRINT,"canon")))
+    {
+      if (force_extraskip > 0)
+	pstate.extraskip = force_extraskip;
+      else
+	pstate.extraskip = 1;
+      parse_canon(fp_r);
+    }
+  else
+    {
+      if (force_extraskip > 0)
+	pstate.extraskip = force_extraskip;
+      else
+	pstate.extraskip = 2;
+      parse_escp2(fp_r);
+    }
   fprintf(stderr,"Done reading.\n");
-  write_output(fp_w);
+  write_output(fp_w, no_output);
   fclose(fp_w);
   fprintf(stderr,"Image dump complete.\n");
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.8 2001/09/14 02:39:52 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.9 2001/10/27 21:50:37 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -109,6 +109,39 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	  done \
 	fi
 
+uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
+	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
+	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
+	  cd ppd ; \
+	  for language in * ; do \
+	    cd ..; \
+	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
+	    cd ppd/$$language; \
+	    for ppdfile in * ; do \
+	      $(RM) $(DESTDIR)$(cups_modeldir)/$$language/$$ppdfile ; \
+	    done; \
+	    cd ..; \
+	  done \
+	fi
+
+refresh-data-local: ppd
+	cd ppd ; \
+	files=`find . -name '*.ppd*' -exec basename '{}' \; | sort | uniq` ; \
+	for language in . de en es fr it ; do \
+	  for f in $$files ; do \
+	    ff="$(DESTDIR)/$(cups_modeldir)/$$language/$$f" ; \
+	    if [ -f "$$ff" ] ; then \
+	      echo "Removing $$ff" ; \
+	      $(RM) "$$ff" ; \
+	    fi ; \
+	    if [ -f "$$ff" ] ; then \
+	      echo "Unable to remove $$ff" 1>&2 ; \
+	      exit 1 ; \
+	    fi ; \
+	  done; \
+	done
+
+
 install-data-hook:
 # Remove unused directories in install tree
 	-rmdir $(DESTDIR)$(cups_modeldir)
@@ -131,22 +164,22 @@ all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 ppd: ppd-stamp
 ppd-stamp: genppd
-	-rm -rf ppd
+	wdir=`pwd` ; \
+	cd $(top_builddir)/po ; \
+	$(MAKE) ; \
+	$(MAKE) prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
+	-$(RM) -r ppd
 	-mkdir ppd
-	-mkdir ppd/de
-	env LD_PRELOAD="" ./genppd --prefix ppd/de --language de
-	-mkdir ppd/en
-	env LD_PRELOAD="" ./genppd --prefix ppd/en --language en
-	-mkdir ppd/es
-	env LD_PRELOAD="" ./genppd --prefix ppd/es --language es
-	-mkdir ppd/fr
-	env LD_PRELOAD="" ./genppd --prefix ppd/fr --language fr
-	-mkdir ppd/it
-	env LD_PRELOAD="" ./genppd --prefix ppd/it --language it
+	for language in C $(ALL_LINGUAS) ; do \
+	  mkdir ppd/$$language ; \
+	  env LD_PRELOAD="" LC_ALL=$$language ./genppd --prefix=ppd/$$language --catalog=`pwd`/catalog/share/locale ; \
+	done
+	$(RM) -r catalog
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../main
+	cd ../main ; \
+	$(MAKE)
 
 dist-hook:
 	for dir in commands ; do \
@@ -161,7 +194,7 @@ dist-hook:
 	done
 
 clean-local:
-	-rm -rf ppd
+	-$(RM) -r ppd
 
 
 ## Clean

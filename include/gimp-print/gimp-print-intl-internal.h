@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-intl-internal.h,v 1.1.4.1 2001/09/14 01:26:36 sharkey Exp $"
+ * "$Id: gimp-print-intl-internal.h,v 1.1.4.1 2001/10/27 21:50:36 sharkey Exp $"
  *
  *   I18N header file for the gimp-print.
  *
@@ -49,7 +49,6 @@ INCLUDE_LOCALE_H
 #    define bindtextdomain(Domain,Directory) (Domain)
 #    define _(String) (String)
 #    define N_(String) (String)
-
 #endif
 
 #endif /* __GIMP_PRINT_INTL_INTERNAL_H__ */

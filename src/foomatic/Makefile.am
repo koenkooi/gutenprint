@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.5 2001/09/14 01:26:35 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.6 2001/10/27 21:50:37 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -78,17 +78,18 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	fi
 
 clean-local:
-	-rm -rf foomatic-db
+	-$(RM) -r foomatic-db
 
 foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator $(EXTRA_PROGRAMS)
-	-rm -rf foomatic-db
+	-$(RM) -r foomatic-db
 	./foomatic-generator
 	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../../src/main
+	cd ../main ; \
+	$(MAKE)
 
 
 ## Clean

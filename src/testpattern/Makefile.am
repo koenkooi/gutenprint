@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.1 2001/09/14 02:15:51 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.2 2001/10/27 21:50:40 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,8 @@ testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
 
 $(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../main
+	cd ../main ; \
+	$(MAKE)
 
 SAMPLE_IMAGES = testpattern.sample
 

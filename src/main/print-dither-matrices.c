@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.2.2.2 2001/09/14 01:26:36 sharkey Exp $"
+ * "$Id: print-dither-matrices.c,v 1.2.2.3 2001/10/27 21:50:38 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -28,7 +28,7 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
+#include "gimp-print-internal.h"
 
 static const unsigned short mat_1_1[] =
 {

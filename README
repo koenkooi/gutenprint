@@ -1,4 +1,4 @@
-This is Gimp-Print version 4.1.99b1, the first beta release leading
+This is Gimp-Print version 4.1.99b4, the fourth beta release leading
 up to the 4.2 stable release.  Gimp-print is the print facility for
 the Gimp, and in addition a suite of drivers that may be used with
 common UNIX spooling systems using GhostScript or CUPS.  These drivers
@@ -8,6 +8,10 @@ many of the most demanding printing tasks.
 
 Please read this README, and the NEWS file carefully!  Many things
 have changed from previous releases.
+
+A user's manual exists in doc/users_guide; it is normally installed in
+PDF and HTML form in /usr/local/share/gimp-print/doc.  This manual
+covers setup and use of the GIMP Print plug-in and the CUPS driver.
 
 
 BASIC INSTALLATION
@@ -48,25 +52,7 @@ If you have installed the Gimp from source on Linux: after running
 make install, you must run ldconfig as root before attempting to build
 this plugin.
 
-Gimp-print 4.2 alpha requires the Gimp 1.2.
-
-
-GHOSTSCRIPT
-
-This package includes a Ghostscript driver that may be built, allowing
-use of this software for general printing purposes.  Please read
-src/ghost/README for more information, including how to build and
-install it, and available options; the build procedure here merely
-creates the necessary source files that you must add to your
-Ghostscript source.  The directions vary for different versions of
-Ghostscript.  Only Ghostscript 5.10, 5.50, and 6.51 are currently
-supported.  In particular, versions of Ghostscript that are not
-licensed under the GNU General Public License (GPL) are not supported,
-and this driver may not be distributed with such a version.
-
-Note that as of 4.1.99-a3, many of the options to the Ghostscript
-driver have changed incompatibly.  Please read the README for more
-information!
+Gimp-print 4.2 beta requires the Gimp 1.2.
 
 
 CUPS
@@ -88,12 +74,12 @@ Gimp-Print PPD's with.  Such printers may be identified in any CUPS
 front end (e. g. KUPS, or via the web interface) because they look
 something like this:
 
-                EPSON Stylus Photo EX, CUPS+GIMP-print v4.1.99-b1(en)
+                EPSON Stylus Photo EX, CUPS+GIMP-print v4.1.99-b4(en)
 
-If the version number (in this case, 4.1.8) does not match the version
+If the version number (in this case, 4.1.99-b4) does not match the version
 of Gimp-Print that you are installing, you must use Modify Printer to
 force the new PPD file to get installed.  Failure to do so may lead to
-incorrect output and/or other errors.
+incorrect output and/or other errors!
 
 You may also have problems if you have a .lpoptions file that has old
 options set.  If you have problems printing, please remove any
@@ -104,16 +90,24 @@ If you do not wish to build the Gimp Print plugin, you must run
 
 ./configure --with-cups --without-gimp
 
-You may also use CUPS with Foomatic.
+We recommend that all users who wish to use this package for general
+purpose printing install CUPS and use that as their printing system,
+rather than the traditional lpd or lp systems.  It is much simpler to
+manage than lpd, and provides an excellent web-based interface for
+both administration and use.  Please visit http://www.cups.org for
+information on downloading and installing CUPS.
 
 
 FOOMATIC
 
 This package includes support for the Foomatic meta-driver package.
 This requires the foomatic-xml distribution.  Foomatic is available
-from http://www.linuxprinting.org/foomatic.html.  It also will soon
-(as of April 2001) be available in Debian unstable.  For best results,
-use the version in cvs.
+from http://www.linuxprinting.org/foomatic.html.  It is also available
+in Debian unstable.  For best results, use the version in cvs.  The
+first version of Foomatic (the one used with Gimp-Print 4.0) is not
+compatible with Gimp-Print 4.2.  Note that the Foomatic driver is
+named `stp' in Gimp-Print 4.0; in Gimp-Print 4.2 it is named
+`gimp-print'.
 
 To build the Foomatic data, you must run:
 
@@ -138,16 +132,47 @@ do that, you must follow this procedure:
        spooler from the website to install the data file and filter.
 
 Note that it almost never makes sense to build the Foomatic driver
-without also building the Ghostscript driver.  Please read the
-instructions above in the GHOSTSCRIPT section.
+without also building the Ghostscript driver, even if Foomatic is to
+be used with CUPS (CUPS-o-matic).  Please read the instructions below
+in the GHOSTSCRIPT section.
 
 If you do not wish to build the Gimp Print plugin, you must run
 
 ./configure --with-foomatic --without-gimp
 
 Please visit http://www.linuxprinting.org/foomatic.html for more
-information on Foomatic.  The current Foomatic data was generated for
-"Phase 2".
+information on Foomatic.
+
+Foomatic provides an alternate interface to CUPS, in addition to an
+interface to lpd and LPRng.
+
+
+GHOSTSCRIPT
+
+This package includes a Ghostscript driver that may be built, allowing
+use of this software for general printing purposes.
+
+We *strongly* recommend that end users not attempt to use this driver
+directly.  The available options are very complex, and the standard
+printer configuration tools (such as apsfilter and magicfilter) are
+not designed for drivers such as Gimp-print, and do not provide a
+convenient interface to the driver's capabilities.  We recommend that
+end users either install CUPS, as described above, or use Foomatic to
+configure printer queues.  CUPS is very easy to install, configure,
+and use, and is the recommended solution.
+
+Please read src/ghost/README for more information, including how to
+build and install it, and available options; the build procedure here
+merely creates the necessary source files that you must add to your
+Ghostscript source.  The directions vary for different versions of
+Ghostscript.  Only Ghostscript 5.10, 5.50, and 6.51 are currently
+supported.  In particular, versions of Ghostscript that are not
+licensed under the GNU General Public License (GPL) are not supported,
+and this driver may not be distributed with such a version.
+
+Note that many of the options to the Ghostscript driver are
+incompatible with the options used prior to release 4.1.99-a3.  Please
+read src/ghost/README for information on the current options.
 
 
 RECOMMENDED SETTINGS
@@ -160,8 +185,8 @@ subject material.
 We recommend use of the Adaptive Hybrid dithering algorithm in most
 cases.  Ordered dithering also works very well in many cases, and is
 somewhat faster, but it does not work very well with text and very
-fine details (certain kinds of line art).  Fast dithering is also
-quite usable in many cases.
+fine details (certain kinds of line art), particularly at high
+resolutions.  Fast dithering is also quite usable in many cases.
 
 On most inkjet printers, 600 or 720 dpi will produce very high
 quality; 1200x1200 or 1440x720 dpi will produce extremely high
@@ -170,37 +195,37 @@ quality.
 
 SUPPORT
 
-There are four principal ways of requesting support for this package:
-
 1) Read the FAQ, in doc/FAQ.html.  Your question may be answered
    there.
 
-2) There are public forums on Sourceforge dedicated to this package.
+2) Read the user's manual, in doc/users_guide.
+
+3) There are public forums on Sourceforge dedicated to this package.
    Please see http://sourceforge.net/forum/?group_id=1537 for more
    information.  The Help forum is a good source of information.
 
-3) If you have a technical support issue that does not appear to be a
+4) If you have a technical support issue that does not appear to be a
    bug in the software, you can use the Tech Support Manager.  Please
    see http://sourceforge.net/support/?group_id=1537.
 
-4) If you have found a clear bug in the package, you may file a bug
+5) If you have found a clear bug in the package, you may file a bug
    report at http://sourceforge.net/bugs/?group_id=1537.
 
-5) You may send mail to the gimp-print-devel@sourceforge.net mailing
+6) You may send mail to the gimp-print-devel@sourceforge.net mailing
    list.  This is recommended as a last resort only.
 
 
 DEBIAN
 
-The Debian packaging has been rewritten from scratch as of 4.1.4. It
-is compliant with Standards-Version 3.1.1, and is lintian-clean. It
-should build from source on potato, woody and sid (the packages should
-also work).  There are five separate packages:
+The Debian packaging has been rewritten from scratch as of 4.1.4.  It
+is compliant with Standards-Version 3.1.1, and is lintian-clean.  It
+should build from source on woody and sid, but will not build on potato.
+There are six separate packages:
 
 gimp1.2-print		The GIMP Print plugin. Also contains HTML and SGML
 			documentation that is registered with doc-base.
 cupsys-driver-gimpprint The CUPS driver and PPD files.
-libgimpprint		The libgimpprint library (GIMP-Print core).
+libgimpprint1		The libgimpprint library (GIMP-Print core).
 libgimpprint-dev	Headers, symlinks, m4 macro (AM_PATH_GIMPPRINT)
 			and gimpprint-config needed to develop programs
 			that link with libgimpprint.
@@ -209,22 +234,9 @@ escputil		The escputil printer tool.
 
 The library symlinks will get packaged without any modification needed
 to the debian packaging whatever library versioning scheme is
-used. Most packages depend on libgimpprint as this will provide
+used.  Most packages depend on libgimpprint as this will provide
 translations for i18n in the future that they will use, or they
 require libgimpprint anyway.
-
-
-INTERNATIONALIZATION
-
-All translatable strings are marked in the source for libgimpprint.
-Two translations are available: en_GB and en_TEST (the latter for
-testing only).
-
-TODO: make sure that the tagged strings are actually translated. This
-will involve some modifications to the source such as dynamically
-allocating memory to hold translated structures, instead of passing
-back pointers to static data. Most things are now actually translated,
-but there are a few bits left to do (some of which might be obscure).
 
 
 USE OF THE CVS REPOSITORY

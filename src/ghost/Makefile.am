@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7.4.4 2001/09/14 01:26:35 sharkey Exp $
+## $Id: Makefile.am,v 1.7.4.5 2001/10/27 21:50:37 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ endif
 
 all-local: $(ALL_LOCAL_DEPS)
 
-GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' -e 's/^\\\#include "\(.*\)\.h"$$/\\\#include "gdevstp-\1.h"/' -e 's/^\\\#include <gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
+GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' -e 's/^\\\#include "\(gimp\-\)*\(.*\)\.h"$$/\\\#include "gdevstp-\2.h"/' -e 's/^\\\#include <gimp-print\/gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
 
 $(srcdir)/gdevstp-print.h: $(top_srcdir)/include/gimp-print/gimp-print.h
 	sed $(GHCODE) $< > $(srcdir)/$@
@@ -52,7 +52,7 @@ $(srcdir)/gdevstp-print.h: $(top_srcdir)/include/gimp-print/gimp-print.h
 $(srcdir)/gdevstp-print-internal.h: $(top_srcdir)/src/main/gimp-print-internal.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
-$(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/src/main/gimp-print-intl-internal.h
+$(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/include/gimp-print/gimp-print-intl-internal.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
 gdevstp-%.h: $(srcdir)/../main/%.h Makefile
@@ -70,7 +70,8 @@ gdevstp-%: $(srcdir)/../main/print-% Makefile
 printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
-	        $(MAKE) -C ../printdef
+	cd ../printdef ; \
+	$(MAKE)
 
 
 ## Clean

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-intl.h,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
+ * "$Id: print-intl.h,v 1.1.4.1 2001/10/27 21:50:38 sharkey Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -24,38 +24,12 @@
 #define __PRINT_INTL_H__
 
 #include <glib.h>
-#include <locale.h>
-
-#ifndef LOCALEDIR
-#define LOCALEDIR g_strconcat (gimp_data_directory (), \
-			       G_DIR_SEPARATOR_S, \
-			       "locale", \
-			       NULL)
-#endif
-
-#ifdef ENABLE_NLS
-#    include <libintl.h>
-#    define _(String) gettext (String)
-#    ifdef gettext_noop
-#        define N_(String) gettext_noop (String)
-#    else
-#        define N_(String) (String)
-#    endif
-#else
-/* Stubs that do something close enough.  */
-#    define textdomain(String) (String)
-#    define gettext(String) (String)
-#    define dgettext(Domain,Message) (Message)
-#    define dcgettext(Domain,Message,Type) (Message)
-#    define bindtextdomain(Domain,Directory) (Domain)
-#    define _(String) (String)
-#    define N_(String) (String)
-#endif
+#include <gimp-print/gimp-print-intl.h>
 
 #define INIT_LOCALE(domain)   G_STMT_START{ \
         gtk_set_locale ();                  \
         setlocale (LC_NUMERIC, "C");        \
-        bindtextdomain (domain, LOCALEDIR); \
+        bindtextdomain (domain, PACKAGE_LOCALE_DIR); \
         textdomain (domain);                \
                                 }G_STMT_END
 

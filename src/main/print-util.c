@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.6 2001/09/14 01:26:37 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.7 2001/10/27 21:50:40 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,8 +30,8 @@
 #include <config.h>
 #endif
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
-#include <gimp-print-intl-internal.h>
+#include "gimp-print-internal.h"
+#include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
 #if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
@@ -757,9 +757,9 @@ static stp_internal_papersize_t paper_sizes[] =
   /*
    * Foolscap
    */
-  { "w612h936",		N_ ("flsa"),
+  { "w612h936",		N_ ("American foolscap"),
     612,  936, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* American foolscap */
-  { "w648h936",		N_ ("flse"),
+  { "w648h936",		N_ ("European foolscap"),
     648,  936, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* European foolscap */
 
   /*
@@ -801,11 +801,11 @@ static stp_internal_papersize_t paper_sizes[] =
     283, 420, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 100 x 148 mm */
   { "w420h567",		N_ ("Oufuku Card"),
     420, 567, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 148 x 200 mm */
-  { "w340h666",		N_ ("Long 3"),
+  { "w340h666",		N_ ("Japanese long envelope #3"),
     340, 666, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese long envelope #3 */
-  { "w255h581",		N_ ("Long 4"),
+  { "w255h581",		N_ ("Japanese long envelope #4"),
     255, 581, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese long envelope #4 */
-  { "w680h941",		N_ ("Kaku"),
+  { "w680h941",		N_ ("Japanese Kaku envelope #4"),
     680, 941, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese Kaku envelope #4 */
   { "COM10",		N_ ("Commercial 10"),
     297, 684, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US Commercial 10 env */
@@ -853,7 +853,7 @@ const char *
 stp_papersize_get_text(const stp_papersize_t pt)
 {
   const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
-  return p->text;
+  return _(p->text);
 }
 
 unsigned
@@ -921,7 +921,7 @@ stp_get_papersize_by_name(const char *name)
     {
       int size_to_try = (i + base) % sizes;
       const stp_internal_papersize_t *val = &(paper_sizes[size_to_try]);
-      if (!strcmp(_(val->name), name))
+      if (!strcmp(val->name, name))
 	{
 	  last_used_papersize = size_to_try;
 	  return (const stp_papersize_t) val;
@@ -936,7 +936,7 @@ stp_get_papersize_by_name(const char *name)
   const stp_internal_papersize_t *val = &(paper_sizes[0]);
   while (strlen(val->name) > 0)
     {
-      if (!strcmp(_(val->name), name))
+      if (!strcmp(val->name, name))
 	return (stp_papersize_t) val;
       val++;
     }
@@ -1284,6 +1284,8 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	  stp_free((void *)vptr[i].text);
 	}
     }
+  else
+    stp_eprintf(v, "%s is not a valid %s\n", checkval, what);
   if (vptr)
     free(vptr);
   return answer;
@@ -1298,13 +1300,15 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   int answer = 1;
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
+  const char *ppd_file = stp_get_ppd_file(v);
 
   /*
    * Note that in raw CMYK mode the user is responsible for not sending
    * color output to black & white printers!
    */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
-      stp_get_output_type(v) == OUTPUT_COLOR)
+      (stp_get_output_type(v) == OUTPUT_COLOR ||
+       stp_get_output_type(v) == OUTPUT_RAW_CMYK))
     {
       answer = 0;
       stp_eprintf(v, "Printer does not support color output\n");
@@ -1312,7 +1316,7 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   if (strlen(stp_get_media_size(v)) > 0)
     {
       const char *checkval = stp_get_media_size(v);
-      vptr = (*printfuncs->parameters)(p, NULL, "PageSize", &count);
+      vptr = (*printfuncs->parameters)(p, ppd_file, "PageSize", &count);
       answer &= verify_param(checkval, vptr, count, "page size", v);
     }
   else
@@ -1332,28 +1336,28 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   if (strlen(stp_get_media_type(v)) > 0)
     {
       const char *checkval = stp_get_media_type(v);
-      vptr = (*printfuncs->parameters)(p, NULL, "MediaType", &count);
+      vptr = (*printfuncs->parameters)(p, ppd_file, "MediaType", &count);
       answer &= verify_param(checkval, vptr, count, "media type", v);
     }
 
   if (strlen(stp_get_media_source(v)) > 0)
     {
       const char *checkval = stp_get_media_source(v);
-      vptr = (*printfuncs->parameters)(p, NULL, "InputSlot", &count);
+      vptr = (*printfuncs->parameters)(p, ppd_file, "InputSlot", &count);
       answer &= verify_param(checkval, vptr, count, "media source", v);
     }
 
   if (strlen(stp_get_resolution(v)) > 0)
     {
       const char *checkval = stp_get_resolution(v);
-      vptr = (*printfuncs->parameters)(p, NULL, "Resolution", &count);
+      vptr = (*printfuncs->parameters)(p, ppd_file, "Resolution", &count);
       answer &= verify_param(checkval, vptr, count, "resolution", v);
     }
 
   if (strlen(stp_get_ink_type(v)) > 0)
     {
       const char *checkval = stp_get_ink_type(v);
-      vptr = (*printfuncs->parameters)(p, NULL, "InkType", &count);
+      vptr = (*printfuncs->parameters)(p, ppd_file, "InkType", &count);
       answer &= verify_param(checkval, vptr, count, "ink type", v);
     }
 

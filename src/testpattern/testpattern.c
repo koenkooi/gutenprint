@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.4.2.1 2001/09/14 02:15:51 sharkey Exp $"
+ * "$Id: testpattern.c,v 1.4.2.2 2001/10/27 21:50:40 sharkey Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -321,6 +321,10 @@ main(int argc, char **argv)
   if (dither_algorithm)
     stp_set_dither_algorithm(v, dither_algorithm);
 
+  /*
+   * Most programs will not use OUTPUT_RAW_CMYK; OUTPUT_COLOR or
+   * OUTPUT_GRAYSCALE are more useful for most purposes.
+   */
   stp_set_output_type(v, OUTPUT_RAW_CMYK);
 
   pt = stp_get_papersize_by_name(stp_get_media_size(v));
@@ -332,6 +336,10 @@ main(int argc, char **argv)
 
   (printfuncs->imageable_area)(the_printer, v, &left, &right, &bottom, &top);
   (printfuncs->describe_resolution)(the_printer, stp_get_resolution(v),&x, &y);
+  if (x < 0)
+    x = 300;
+  if (y < 0)
+    y = 300;
 
   width = right - left;
   height = top - bottom;
