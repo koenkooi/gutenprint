@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.3 2001/06/30 03:19:59 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.4 2001/07/10 20:06:36 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -124,7 +124,7 @@ install-data-hook:
 ppd: ppd-stamp
 ppd-stamp: genppd
 	-rm -rf ppd
-	./genppd
+	env LD_PRELOAD="" ./genppd
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
