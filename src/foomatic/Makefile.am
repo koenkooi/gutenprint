@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.13 2003/01/05 22:40:39 tillkamppeter Exp $
+## $Id: Makefile.am,v 1.16.2.14 2003/04/01 00:39:13 tillkamppeter Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -81,6 +81,12 @@ else
 FOOMATIC_GENERATOR_FOOMATIC_3_OPTS =
 endif
 
+if BUILD_FOOMATIC_OLDIDS
+FOOMATIC_GENERATOR_OLDIDS_OPTS = -o
+else
+FOOMATIC_GENERATOR_OLDIDS_OPTS =
+endif
+
 if BUILD_IJS
 FOOMATIC_GENERATOR_EXTRA_OPTS = -d all
 FOOMATIC_IJS = yes
@@ -114,7 +120,7 @@ foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator foomatic-printermap $(EXTRA_PROGRAMS)
 	-$(RM) -r foomatic-db
-	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS)
+	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS) $(FOOMATIC_GENERATOR_OLDIDS_OPTS)
 	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):
