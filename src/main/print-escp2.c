@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.91 2001/08/01 12:21:59 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.92 2001/08/04 13:56:15 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1322,10 +1322,10 @@ static const double spro10000_densities[] =
  */
 
 static const int default_head_offset[] =
-{0, 0, 0, 0, 0, 0, 0, 0};
+{0, 0, 0, 0, 0, 0, 0};
 
 static const int x80_head_offset[] =
-{48, 48, 96 ,0, 0, 0, 0, 0};
+{48, 48, 96 ,0, 0, 0, 0};
 
 
 typedef struct escp2_printer
@@ -3505,12 +3505,14 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 
   offset_ptr = escp2_head_offset(model, nv);
   max_head_offset = 0;
-  for (i = 0; i < 8; i++)
-    {
-      head_offset[i] = offset_ptr[i] * ydpi / escp2_base_separation(model, nv);
-      if (head_offset[i] > max_head_offset)
-	max_head_offset = head_offset[i];
-    }
+  if (ncolors > 1)
+    for (i = 0; i < NCHANNELS; i++)
+      {
+	head_offset[i] = offset_ptr[i] * ydpi /
+	  escp2_base_separation(model, nv);
+	if (head_offset[i] > max_head_offset)
+	  max_head_offset = head_offset[i];
+      }
 
   /*
    * Factor of 2 divisor determined by Jason Pearce.  Need to understand
