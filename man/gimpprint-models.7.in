@@ -1,5 +1,5 @@
 .\" t
-.\" $Id: gimpprint-models.7.in,v 1.1.6.1 2002/11/11 21:20:10 rleigh Exp $
+.\" $Id: gimpprint-models.7.in,v 1.1.6.2 2002/11/15 23:56:38 rlk Exp $
 .\" Copyright (C) 2000 Roger Leigh <roger@whinlatter.uklinux.net>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -140,6 +140,7 @@ escp2-mc7000	EPSON MC-7000
 escp2-mc9000	EPSON MC-9000
 escp2-mj5100c	EPSON MJ-5100C
 escp2-mj520c	EPSON MJ-520C
+escp2-mj930c	EPSON MJ-930C
 escp2-mj6000c	EPSON MJ-6000C
 escp2-mj8000c	EPSON MJ-8000C
 escp2-pm10000	EPSON PM-10000
