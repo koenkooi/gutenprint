@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.5.2.1 2003/05/17 22:14:10 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.5.2.2 2003/05/18 15:29:43 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -98,15 +98,6 @@ typedef struct dither_segment
 
 typedef struct
 {
-  unsigned channel_count;
-  unsigned total_channel_count;
-  unsigned *channel_index;
-  unsigned *subchannel_count;
-  unsigned char **cdata;
-} stpi_dither_data_t;
-
-typedef struct
-{
   int dx;
   int dy;
   int r_sq;
@@ -166,6 +157,7 @@ typedef struct dither_channel
   dither_matrix_t dithermat;
   int row_ends[2];
   unsigned char *ptr;
+  unsigned char *base_ptr;
 } stpi_dither_channel_t;
 
 typedef struct dither
@@ -209,7 +201,10 @@ typedef struct dither
   dither_matrix_t dither_matrix;
   dither_matrix_t transition_matrix;
   stpi_dither_channel_t *channel;
-  stpi_dither_data_t dt;
+  unsigned channel_count;
+  unsigned total_channel_count;
+  unsigned *channel_index;
+  unsigned *subchannel_count;
 
   unsigned short virtual_dot_scale[65536];
   stpi_ditherfunc_t *ditherfunc;
@@ -297,5 +292,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.5.2.1 2003/05/17 22:14:10 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.5.2.2 2003/05/18 15:29:43 rlk Exp $".
  */

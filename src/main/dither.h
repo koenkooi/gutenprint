@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.17.4.2 2003/05/15 00:07:24 rlk Exp $"
+ * "$Id: dither.h,v 1.17.4.3 2003/05/18 15:29:43 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -128,7 +128,6 @@ typedef struct
 {
   double value;
   unsigned bit_pattern;
-  int subchannel;
   unsigned dot_size;
 } stpi_dither_range_simple_t;
 
@@ -138,7 +137,6 @@ typedef struct
   double lower;
   double upper;
   unsigned bit_pattern;
-  int subchannel;
   unsigned dot_size;
 } stpi_dither_range_t;
 
@@ -146,7 +144,6 @@ typedef struct
 {
    double value[2];
    unsigned bits[2];
-   int subchannel[2];
 } stpi_dither_range_full_t;
 
 typedef struct stpi_dotsize
@@ -158,7 +155,6 @@ typedef struct stpi_dotsize
 typedef struct stpi_shade
 {
   double value;
-  int subchannel;
   int numsizes;
   const stpi_dotsize_t *dot_sizes;
 } stpi_shade_t;
@@ -220,5 +216,5 @@ extern void stpi_dither_internal(stp_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.17.4.2 2003/05/15 00:07:24 rlk Exp $".
+ * End of "$Id: dither.h,v 1.17.4.3 2003/05/18 15:29:43 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.17.2.4 2003/05/17 22:14:10 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17.2.5 2003/05/18 15:29:43 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -247,7 +247,6 @@ stpi_dither_free(void *vd)
 {
   stpi_dither_t *d = (stpi_dither_t *) vd;
   int j;
-  stpi_dither_data_t *dt = &(d->dt);
   for (j = 0; j < CHANNEL_COUNT(d); j++)
     dither_channel_destroy(&(CHANNEL(d, j)));
   SAFE_FREE(d->offset0_table);
@@ -257,9 +256,8 @@ stpi_dither_free(void *vd)
   if (d->aux_freefunc)
     (d->aux_freefunc)(d);
   stpi_free(d->channel);
-  stpi_free(dt->channel_index);
-  stpi_free(dt->subchannel_count);
-  stpi_free(dt->cdata);
+  stpi_free(d->channel_index);
+  stpi_free(d->subchannel_count);
   stpi_free(d);
 }
 
@@ -308,11 +306,9 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   d->channel = stpi_zalloc(d->n_channels * sizeof(stpi_dither_channel_t));
   r.value = 1.0;
   r.bit_pattern = 1;
-  r.subchannel = 0;
   r.dot_size = 1;
 
   shade.value = 1.0;
-  shade.subchannel = 0;
   shade.dot_sizes = &ds;
   shade.numsizes = 1;
   if (stp_check_float_parameter(v, "Density", STP_PARAMETER_ACTIVE))
@@ -400,14 +396,13 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
     {
       stpi_dither_set_randomizer(v, i, 1.0);
     }
-  d->dt.channel_count = 0;
-  d->dt.cdata = NULL;
+  d->channel_count = 0;
 }
 
 void
 stpi_dither_reverse_row_ends(stpi_dither_t *d)
 {
-  int i, j;
+  int i;
   for (i = 0; i < CHANNEL_COUNT(d); i++)
     {
       int tmp = CHANNEL(d, i).row_ends[0];
@@ -441,11 +436,10 @@ static void
 stpi_dither_finalize(stp_vars_t v)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  int i;
   if (d->finalized)
     return;
   d->channel =
-    stpi_zalloc(d->dt.total_channel_count * sizeof(stpi_dither_channel_t));
+    stpi_zalloc(d->total_channel_count * sizeof(stpi_dither_channel_t));
 }
 
 void
@@ -456,7 +450,6 @@ stpi_dither_internal(stp_vars_t v, int row, const unsigned short *input,
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   for (i = 0; i < CHANNEL_COUNT(d); i++)
     {
-      CHANNEL(d, i).ptr = d->dt.cdata[i];
       if (CHANNEL(d, i).ptr)
 	memset(CHANNEL(d, i).ptr, 0,
 	       (d->dst_width + 7) / 8 * CHANNEL(d, i).signif_bits);

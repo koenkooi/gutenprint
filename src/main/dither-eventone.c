@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.11.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.11.2.2 2003/05/18 15:29:43 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -46,7 +46,8 @@ typedef struct
 
 
 static inline void
-print_subc(stpi_dither_t *d, unsigned char *tptr, stpi_ink_defn_t *ink, int subchannel, unsigned char bit, int length)
+print_ink(stpi_dither_t *d, unsigned char *tptr, stpi_ink_defn_t *ink,
+	  unsigned char bit, int length)
 {
   int bits;
   int j;
@@ -437,15 +438,14 @@ stpi_dither_et(stp_vars_t v,
 
       /* Adjust the error to reflect the dot choice */
       if (inkp->bits) {
-        int subc = sp->subchannel;
 
         sp->value -= 2 * inkp->range;
         sp->dis = et->d_sq;
 
-        set_row_ends(dc, x, subc);
+        set_row_ends(dc, x);
 
         /* Do the printing */
-        print_subc(d, dc->ptrs[subc], inkp, subc, bit, length);
+        print_ink(d, dc->ptr, inkp, bit, length);
       }
 
       /* Spread the error around to the adjacent dots */

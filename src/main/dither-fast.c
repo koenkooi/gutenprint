@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-fast.c,v 1.7.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: dither-fast.c,v 1.7.2.2 2003/05/18 15:29:43 rlk Exp $"
  *
  *   Fast dither algorithm
  *
@@ -83,12 +83,11 @@ print_color_fast(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, int y
        * After all that, printing is almost an afterthought.
        * Pick the actual dot size (using a matrix here) and print it.
        */
-      if (adjusted >= vmatrix && dc->ptrs[subc->subchannel])
+      if (adjusted >= vmatrix && dc->ptr)
 	{
-	  int subchannel = subc->subchannel;
 	  bits = subc->bits;
-	  tptr = dc->ptrs[subchannel] + d->ptr_offset;
-	  set_row_ends(dc, x, subchannel);
+	  tptr = dc->ptr;
+	  set_row_ends(dc, x);
 
 	  /*
 	   * Lay down all of the bits in the pixel.
@@ -111,8 +110,7 @@ stpi_dither_fast(stp_vars_t v,
 		 int zero_mask)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  int		x,
-		length;
+  int x, length;
   unsigned char	bit;
   int i;
 
@@ -136,7 +134,7 @@ stpi_dither_fast(stp_vars_t v,
 	{
 	  CHANNEL(d, i).v = raw[i];
 	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  if (CHANNEL(d, i).ptrs[0])
+	  if (CHANNEL(d, i).ptr)
 	    print_color_fast(d, &(CHANNEL(d, i)), x, row, bit, length);
 	}
       QUANT(16);
