@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.26 1999/11/13 02:31:29 rlk Exp $"
+ * "$Id: print-util.c,v 1.27 1999/11/14 00:57:11 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,6 +38,9 @@
  * Revision History:
  *
  *   $Log: print-util.c,v $
+ *   Revision 1.27  1999/11/14 00:57:11  rlk
+ *   Mix black in sooner gives better density.
+ *
  *   Revision 1.26  1999/11/13 02:31:29  rlk
  *   Finally!  Good settings!
  *
@@ -355,7 +358,7 @@ dither_black(unsigned short     *gray,		/* I - Grayscale pixels */
 #define RATIO_Y DE_Y / NU_Y
 #define RATIO_Y1 (DE_Y + NU_Y) / NU_Y
 
-#define KDARKNESS_LOWER (96 * 256)
+#define KDARKNESS_LOWER (32 * 256)
 #define KDARKNESS_UPPER (224 * 256)
 
 #define C_RANDOMIZER 1
@@ -2505,5 +2508,5 @@ indexed_to_gray(unsigned char 	*indexed,	/* I - Indexed pixels */
 #endif
 
 /*
- * End of "$Id: print-util.c,v 1.26 1999/11/13 02:31:29 rlk Exp $".
+ * End of "$Id: print-util.c,v 1.27 1999/11/14 00:57:11 rlk Exp $".
  */
