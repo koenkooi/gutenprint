@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.26 2002/11/02 16:17:04 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.27 2002/11/02 16:22:15 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -99,16 +99,6 @@ static GtkDrawingArea *swatch = NULL;
 #define SWATCH_W (128)
 #define SWATCH_H (128)
 
-static char *
-c_strdup(const char *s)
-{
-  char *ret = malloc(strlen(s) + 1);
-  if (!s)
-    exit(1);
-  strcpy(ret, s);
-  return ret;
-}
-
 static void
 dither_algo_callback (GtkWidget *widget, gpointer data)
 {
@@ -132,8 +122,8 @@ build_dither_combo (void)
 
   for (i = 0; i < stp_dither_algorithm_count(); i++)
     {
-      vec[i].name = c_strdup (stp_dither_algorithm_name (i));
-      vec[i].text = c_strdup (stp_dither_algorithm_text (i));
+      vec[i].name = g_strdup (stp_dither_algorithm_name (i));
+      vec[i].text = g_strdup (stp_dither_algorithm_text (i));
     }
 
   plist_build_combo (dither_algo_combo,
