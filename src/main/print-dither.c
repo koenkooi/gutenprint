@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.32.2.4 2001/06/01 01:10:57 rlk Exp $"
+ * "$Id: print-dither.c,v 1.32.2.5 2001/06/01 02:27:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -86,7 +86,7 @@ typedef struct dither_color
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
-  int boundary_positions[2][2];
+  int row_ends[2][2];
   dither_segment_t *ranges;
 } dither_color_t;
 
@@ -494,16 +494,16 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x)
 }
 
 static void
-reverse_boundary_positions(dither_t *d)
+reverse_row_ends(dither_t *d)
 {
   int i, j;
   for (i = 0; i < NCOLORS; i++)
     for (j = 0; j < 2; j++)
       {
-	int tmp = CHANNEL(d, i).dither.boundary_positions[0][j];
-	CHANNEL(d, i).dither.boundary_positions[0][j] =
-	  CHANNEL(d, i).dither.boundary_positions[1][j];
-	CHANNEL(d, i).dither.boundary_positions[1][j] = tmp;
+	int tmp = CHANNEL(d, i).dither.row_ends[0][j];
+	CHANNEL(d, i).dither.row_ends[0][j] =
+	  CHANNEL(d, i).dither.row_ends[1][j];
+	CHANNEL(d, i).dither.row_ends[1][j] = tmp;
       }
 }
 
@@ -1092,9 +1092,9 @@ stp_dither_get_first_position(void *vd, int color, int is_dark)
   if (color < 0 || color >= NCOLORS)
     return -1;
   if (is_dark)
-    return CHANNEL(d, color).dither.boundary_positions[0][0];
+    return CHANNEL(d, color).dither.row_ends[0][0];
   else
-    return CHANNEL(d, color).dither.boundary_positions[0][1];
+    return CHANNEL(d, color).dither.row_ends[0][1];
 }
 
 int
@@ -1104,9 +1104,9 @@ stp_dither_get_last_position(void *vd, int color, int is_dark)
   if (color < 0 || color >= NCOLORS)
     return -1;
   if (is_dark)
-    return CHANNEL(d, color).dither.boundary_positions[1][0];
+    return CHANNEL(d, color).dither.row_ends[1][0];
   else
-    return CHANNEL(d, color).dither.boundary_positions[1][1];
+    return CHANNEL(d, color).dither.row_ends[1][1];
 }
 
 static int *
@@ -1417,9 +1417,9 @@ print_color(const dither_t *d, dither_channel_t *dc, int x, int y,
 	   */
 	  if (dontprint < v)
 	    {
-	      if (rv->boundary_positions[0][1 - isdark] == -1)
-		rv->boundary_positions[0][1 - isdark] = x;
-	      rv->boundary_positions[1][1 - isdark] = x;
+	      if (rv->row_ends[0][1 - isdark] == -1)
+		rv->row_ends[0][1 - isdark] = x;
+	      rv->row_ends[1][1 - isdark] = x;
 	      for (j = 1; j <= bits; j += j, tptr += length)
 		{
 		  if (j & bits)
@@ -1562,9 +1562,9 @@ print_color_ordered(const dither_t *d, dither_channel_t *dc, int x, int y,
 	   */
 	  if (dontprint < v)
 	    {
-	      if (rv->boundary_positions[0][1 - isdark] == -1)
-		rv->boundary_positions[0][1 - isdark] = x;
-	      rv->boundary_positions[1][1 - isdark] = x;
+	      if (rv->row_ends[0][1 - isdark] == -1)
+		rv->row_ends[0][1 - isdark] = x;
+	      rv->row_ends[1][1 - isdark] = x;
 	      for (j = 1; j <= bits; j += j, tptr += length)
 		{
 		  if (j & bits)
@@ -1596,9 +1596,9 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
     {
       if (dc->v >= ditherpoint(d, dither_matrix, x))
 	{
-	  if (rv->boundary_positions[0][0] == -1)
-	    rv->boundary_positions[0][0] = x;
-	  rv->boundary_positions[1][0] = x;
+	  if (rv->row_ends[0][0] == -1)
+	    rv->row_ends[0][0] = x;
+	  rv->row_ends[1][0] = x;
 	  dc->ptrs[0][0] |= bit;
 	}
       return;
@@ -1629,9 +1629,9 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
 	  int isdark = dd->isdark[1];
 	  bits = dd->bits[1];
 	  tptr = dc->ptrs[1 - isdark];
-	  if (rv->boundary_positions[0][1 - isdark] == -1)
-	    rv->boundary_positions[0][1 - isdark] = x;
-	  rv->boundary_positions[1][1 - isdark] = x;
+	  if (rv->row_ends[0][1 - isdark] == -1)
+	    rv->row_ends[0][1 - isdark] = x;
+	  rv->row_ends[1][1 - isdark] = x;
 
 	  /*
 	   * Lay down all of the bits in the pixel.
@@ -1817,9 +1817,9 @@ stp_dither_monochrome(const unsigned short  *gray,
       if (gray[0] && (d->density >= ditherpoint(d, kdither, x)))
 	{
 	  tptr = kptr;
-	  if (rv->boundary_positions[0][0] == -1)
-	    rv->boundary_positions[0][0] = x;
-	  rv->boundary_positions[1][0] = x;
+	  if (rv->row_ends[0][0] == -1)
+	    rv->row_ends[0][0] = x;
+	  rv->row_ends[1][0] = x;
 	  for (j = 0; j < bits; j++, tptr += length)
 	    tptr[0] |= bit;
 	}
@@ -2079,7 +2079,7 @@ stp_dither_black_ed(const unsigned short   *gray,
 	}
     }
   if (direction == -1)
-    reverse_boundary_positions(d);
+    reverse_row_ends(d);
 }
 
 static void
@@ -2376,7 +2376,7 @@ stp_dither_cmy_ed(const unsigned short  *cmy,
       QUANT(13);
     }
   if (direction == -1)
-    reverse_boundary_positions(d);
+    reverse_row_ends(d);
 }
 
 static void
@@ -2809,7 +2809,7 @@ stp_dither_cmyk_ed(const unsigned short  *cmy,
       QUANT(13);
     }
   if (direction == -1)
-    reverse_boundary_positions(d);
+    reverse_row_ends(d);
 }
 
 static void
@@ -3117,7 +3117,7 @@ stp_dither_raw_cmyk_ed(const unsigned short  *cmyk,
       QUANT(13);
     }
   if (direction == -1)
-    reverse_boundary_positions(d);
+    reverse_row_ends(d);
 }
 
 void
@@ -3150,10 +3150,10 @@ stp_dither(const unsigned short  *input,
 	if (CHANNEL(d, i).ptrs[j])
 	  memset(CHANNEL(d, i).ptrs[j], 0,
 		 (d->dst_width + 7) / 8 * CHANNEL(d, i).dither.signif_bits);
-      CHANNEL(d, i).dither.boundary_positions[0][1] = -1;
-      CHANNEL(d, i).dither.boundary_positions[0][0] = -1;
-      CHANNEL(d, i).dither.boundary_positions[1][1] = -1;
-      CHANNEL(d, i).dither.boundary_positions[1][0] = -1;
+      CHANNEL(d, i).dither.row_ends[0][1] = -1;
+      CHANNEL(d, i).dither.row_ends[0][0] = -1;
+      CHANNEL(d, i).dither.row_ends[1][1] = -1;
+      CHANNEL(d, i).dither.row_ends[1][0] = -1;
       if (CHANNEL(d, i).dither.nlevels == 1 &&
 	  CHANNEL(d, i).dither.ranges[0].bits[1] == 1 &&
 	  CHANNEL(d, i).dither.ranges[0].isdark[1])
