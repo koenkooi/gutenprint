@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.1 2002/11/13 22:42:26 rleigh Exp $"
+ * "$Id: print-list.c,v 1.2 2002/12/05 01:37:17 rlk Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "list.h"
+#include <string.h>
 
 /*
  * Uncomment to enable debugging and strict list integrity checking.
