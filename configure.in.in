@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.11 2001/02/14 02:15:28 rlk Exp $
+dnl $Id: configure.in.in,v 1.12 2001/02/16 02:31:00 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -503,6 +503,7 @@ Makefile
 intl/Makefile
 lib/Makefile
 man/Makefile
+man/cups-calibrate.8
 man/escputil.1
 man/gimpprint-config.1
 po/Makefile.in
