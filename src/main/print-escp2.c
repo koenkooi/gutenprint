@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.277 2003/07/12 21:27:30 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.278 2003/07/13 02:16:57 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1173,9 +1173,8 @@ escp2_parameters(stp_const_vars_t v, const char *name,
     }
   else if (strcmp(name, "AdjustDotsize") == 0)
     {
-      if (using_automatic_settings(v, AUTO_MODE_MANUAL))
-	description->deflt.boolean = 1;
-      else
+      description->deflt.boolean = 0;
+      if (!using_automatic_settings(v, AUTO_MODE_MANUAL))
 	description->is_active = 0;
     }
   else if (strcmp(name, "CyanDensity") == 0)
