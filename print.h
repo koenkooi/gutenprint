@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.51 2000/04/20 02:42:55 rlk Exp $"
+ * "$Id: print.h,v 1.52 2000/05/13 03:22:46 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -184,6 +184,7 @@ typedef struct
   double value;
   unsigned bit_pattern;
   int is_dark;
+  unsigned dot_size;
 } simple_dither_range_t;
 
 typedef struct
@@ -193,6 +194,7 @@ typedef struct
   double upper;
   unsigned bit_pattern;
   int is_dark;
+  unsigned dot_size;
 } dither_range_t;
 
 /*
@@ -244,6 +246,7 @@ extern void	dither_set_k_ranges_complete(void *vd, int nlevels,
 extern void	dither_set_ink_spread(void *vd, int spread);
 extern void	dither_set_x_oversample(void *vd, int os);
 extern void	dither_set_y_oversample(void *vd, int os);
+extern void	dither_set_ink_budget(void *vd, unsigned budget);
 
 
 extern void	free_dither(void *);
@@ -345,5 +348,5 @@ extern char			*dither_algo_names[];
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.51 2000/04/20 02:42:55 rlk Exp $".
+ * End of "$Id: print.h,v 1.52 2000/05/13 03:22:46 rlk Exp $".
  */
