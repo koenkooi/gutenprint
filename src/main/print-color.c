@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.15 2004/03/21 22:30:37 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.16 2004/03/21 22:34:11 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -587,8 +587,6 @@ static curve_param_t curve_parameters[] =
 static const int curve_parameter_count =
 sizeof(curve_parameters) / sizeof(curve_param_t);
 
-static stp_curve_t compute_gcr_curve(stp_const_vars_t vars);
-
 /*
  * RGB to grayscale luminance constants...
  */
@@ -758,35 +756,6 @@ get_color_correction(const char *name)
 	  return &(color_corrections[i]);
       }
   return NULL;
-}
-
-static void
-initialize_gcr_curve(stp_const_vars_t vars)
-{
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  if (!cache_get_curve(&(lut->gcr_curve)))
-    {
-      if (stp_check_curve_parameter(vars, "GCRCurve", STP_PARAMETER_DEFAULTED))
-	{
-	  double data;
-	  size_t count;
-	  int i;
-	  stp_curve_t curve =
-	    stp_curve_create_copy(stp_get_curve_parameter(vars, "GCRCurve"));
-	  stp_curve_resample(curve, lut->steps);
-	  count = stp_curve_count_points(curve);
-	  stp_curve_set_bounds(curve, 0.0, 65535.0);
-	  for (i = 0; i < count; i++)
-	    {
-	      stp_curve_get_point(curve, i, &data);
-	      data = 65535.0 * data * (double) i / (count - 1);
-	      stp_curve_set_point(curve, i, data);
-	    }
-	  cache_set_curve(&(lut->gcr_curve), curve);
-	}
-      else
-	cache_set_curve(&(lut->gcr_curve), compute_gcr_curve(vars));
-    }
 }
 
 static inline void
@@ -1115,7 +1084,6 @@ generic_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   const unsigned short *input_cache = NULL;
   const unsigned short *output_cache = NULL;
 
-  initialize_gcr_curve(vars);
   gcr_lookup = cache_get_ushort_data(&(lut->gcr_curve));
   stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])),
 		     lut->steps);
@@ -2103,6 +2071,35 @@ compute_gcr_curve(stp_const_vars_t vars)
 }
 
 static void
+initialize_gcr_curve(stp_const_vars_t vars)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
+  if (!cache_get_curve(&(lut->gcr_curve)))
+    {
+      if (stp_check_curve_parameter(vars, "GCRCurve", STP_PARAMETER_DEFAULTED))
+	{
+	  double data;
+	  size_t count;
+	  int i;
+	  stp_curve_t curve =
+	    stp_curve_create_copy(stp_get_curve_parameter(vars, "GCRCurve"));
+	  stp_curve_resample(curve, lut->steps);
+	  count = stp_curve_count_points(curve);
+	  stp_curve_set_bounds(curve, 0.0, 65535.0);
+	  for (i = 0; i < count; i++)
+	    {
+	      stp_curve_get_point(curve, i, &data);
+	      data = 65535.0 * data * (double) i / (count - 1);
+	      stp_curve_set_point(curve, i, data);
+	    }
+	  cache_set_curve(&(lut->gcr_curve), curve);
+	}
+      else
+	cache_set_curve(&(lut->gcr_curve), compute_gcr_curve(vars));
+    }
+}
+
+static void
 compute_a_curve(lut_t *lut, int channel)
 {
   double *tmp = stpi_malloc(sizeof(double) * lut->steps);
@@ -2340,6 +2337,9 @@ stpi_compute_lut(stp_vars_t v)
 	  compute_one_lut(lut, i);
 	}
     }
+  if (!(lut->input_color_description->channels & CMASK_K) &&
+      (lut->output_color_description->channels & CMASK_K))
+    initialize_gcr_curve(v);
 }
 
 static int
