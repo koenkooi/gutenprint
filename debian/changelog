@@ -1,6 +1,7 @@
 gimp-print (4.2.0-2) unstable; urgency=low
 
   * Fix build dependencies, Closes: #121597
+  * Fix broken gimpprint-doc.doc-base pointing to old index filename
   * Fix libgimpprint.postinst to use 'if' instead of 'case', removing a
     lintian warning. (Roger Leigh)
   * Split out the message catalogues from the libgimpprint package into
@@ -9,7 +10,7 @@ gimp-print (4.2.0-2) unstable; urgency=low
   * Add libgimpprint-doc.doc-base (existed for six months, but was never
     added to CVS!) (RL)
 
- -- Eric Sharkey <sharkey@debian.org>  Sun,  2 Dec 2001 21:50:47 -0500
+ -- Eric Sharkey <sharkey@debian.org>  Sun,  9 Dec 2001 09:47:05 -0500
 
 gimp-print (4.2.0-1) unstable; urgency=low
 
