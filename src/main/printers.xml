@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.71 2003/04/10 01:41:44 rlk Exp $"
+   "$Id: printers.xml,v 1.72 2003/05/22 15:51:26 m0m Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1343,6 +1343,12 @@
         <yellow value="1.0"/>
         <gamma value="0.5"/>
         <density value="2.0"/>
+      </printer>
+    </family>
+    <family name="olympus">
+      <printer name="Olympus P300" driver="olympus-p300">
+        <color value="true"/>
+        <model value="0"/>
       </printer>
     </family>
     <family name="raw">

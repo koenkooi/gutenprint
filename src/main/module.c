@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.11 2003/03/19 20:49:28 rleigh Exp $"
+ * "$Id: module.c,v 1.12 2003/05/22 15:51:26 m0m Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -63,6 +63,7 @@ extern stpi_module_t escp2_LTX_stpi_module_data;
 extern stpi_module_t lexmark_LTX_stpi_module_data;
 extern stpi_module_t pcl_LTX_stpi_module_data;
 extern stpi_module_t ps_LTX_stpi_module_data;
+extern stpi_module_t olympus_LTX_stpi_module_data;
 extern stpi_module_t raw_LTX_stpi_module_data;
 
 /*
