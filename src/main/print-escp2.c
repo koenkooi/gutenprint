@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.5 2003/01/18 02:50:34 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.6 2003/01/18 14:10:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1353,7 +1353,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	}
     }
 
-
   privdata.undersample = 1;
   privdata.denominator = 1;
   privdata.initial_vertical_offset = 0;
@@ -1368,6 +1367,11 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
     {
       output_type = OUTPUT_GRAY;
       stp_set_output_type(nv, OUTPUT_GRAY);
+    }
+  if (output_type == OUTPUT_COLOR && ink_type->channels[0] != NULL)
+    {
+      output_type = OUTPUT_RAW_CMYK;
+      stp_set_output_type(nv, OUTPUT_RAW_CMYK);
     }
 
  /*

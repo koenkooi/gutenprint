@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.99.2.3 2003/01/18 00:22:33 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.99.2.4 2003/01/18 14:10:52 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1839,6 +1839,11 @@ densityDivisor /= 1.2;
 	 media ? media->sat_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
       stp_curve_destroy(sat_adjustment);
+    }
+  if (output_type == OUTPUT_COLOR && cols.p.k)
+    {
+      output_type = OUTPUT_RAW_CMYK;
+      stp_set_output_type(nv, OUTPUT_RAW_CMYK);
     }
 
   out_channels = stp_color_init(nv, image, 65536);

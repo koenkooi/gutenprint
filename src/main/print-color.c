@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.48.2.2 2003/01/15 02:29:37 rlk Exp $"
+ * "$Id: print-color.c,v 1.48.2.3 2003/01/18 14:10:51 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1049,7 +1049,7 @@ fast_gray_to_rgb(const stp_vars_t vars,
     }
 }
 
-static stp_curve_t
+static void
 compute_gcr_curve(const stp_vars_t vars)
 {
   stp_curve_t curve;
@@ -1064,25 +1064,33 @@ compute_gcr_curve(const stp_vars_t vars)
     k_upper = stp_get_float_parameter(vars, "GCRUpper");
   if (stp_check_float_parameter(vars, "GCRLower"))
     k_lower = stp_get_float_parameter(vars, "GCRLower");
-  if (k_lower > 65535)
-    k_lower = 65535;
+  k_upper *= 65535;
+  k_lower *= 65535;
+
+  if (k_lower > 65536)
+    k_lower = 65536;
   if (k_upper < k_lower)
     k_upper = k_lower + 1;
+
   for (i = 0; i < k_lower; i += step)
     tmp_data[i] = 0;
   if (k_upper < 65535)
     {
-      for (i = k_lower; i < k_upper; i += step)
+      for (i = ceil(k_lower); i < k_upper; i += step)
 	tmp_data[i] = k_upper * (i - k_lower) / (k_upper - k_lower);
-      for (i = k_upper; i < 65536; i += step)
+      for (i = ceil(k_upper); i < 65536; i += step)
 	tmp_data[i] = i;
     }
-  else
-    for (i = k_lower; i < 65536; i += step)
+  else if (k_lower < 65535)
+    for (i = ceil(k_lower); i < 65536; i += step)
       tmp_data[i] = k_upper * (i - k_lower) / (k_upper - k_lower);
   curve = stp_curve_allocate(STP_CURVE_WRAP_NONE);
   stp_curve_set_bounds(curve, 0.0, 65535.0);
-  stp_curve_set_data(curve, lut->steps, tmp_data);
+  if (! stp_curve_set_data(curve, lut->steps, tmp_data))
+    {
+      stp_eprintf(vars, "set curve data failed!\n");
+      stp_abort();
+    }
   stp_set_curve_parameter(vars, "GCRCurve", curve);
   stp_free(tmp_data);
 }
@@ -1103,12 +1111,11 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
   size_t points;
   int i;
 
-  if (stp_check_curve_parameter(vars, "GCRCurve"))
-    gcr_curve = stp_get_curve_parameter(vars, "GCRCurve");
-  else
-    gcr_curve = compute_gcr_curve(vars);
+  if (!stp_check_curve_parameter(vars, "GCRCurve"))
+    compute_gcr_curve(vars);
+  gcr_curve = stp_get_curve_parameter(vars, "GCRCurve");
 
-  stp_curve_resample(gcr_curve, lut->steps);
+  stp_curve_resample(gcr_curve, 65536);
   gcr_lookup = stp_curve_get_ushort_data(gcr_curve, &points);
 
   for (i = 0; i < width; i++, out += 4, in += 3)
@@ -1119,9 +1126,9 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
       int y = in[2];
       int k = FMIN(c, FMIN(m, y));
       for (j = 0; j < 3; j++)
-	out[j + 1] = in[j];
+	out[j] = in[j];
       if (k == 0)
-	out[0] = 0;
+	out[3] = 0;
       else
 	{
 	  int kk;
@@ -1135,13 +1142,14 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
 		kk = gcr_lookup[where];
 	      else
 		kk = gcr_lookup[where] +
-		  (gcr_lookup[where + 1] - gcr_lookup[where]) * resid / 257;
-	      out[0] = kk;
-	      if (kk > k)
-		kk = k;
-	      for (j = 0; j < 3; j++)
-		out[j] -= kk;
+		  (gcr_lookup[where + 1] - gcr_lookup[where]) * resid / step;
 	    }
+	  if (kk > k)
+	    kk = k;
+	  out[3] = kk;
+	  for (j = 0; j < 3; j++)
+	    out[j] -= kk;
+/*	  fprintf(stderr, "k %d kk %d\n", k, kk); */
 	}
     }
 }
@@ -1462,7 +1470,7 @@ compute_a_curve(stp_curve_t curve, size_t steps, double c_gamma,
   for (i = 0; i < isteps; i ++)
     {
       double temp_pixel, pixel;
-      pixel = (double) i / (double) (steps - 1);
+      pixel = (double) i / (double) (isteps - 1);
 
       if (input_color_model == COLOR_MODEL_CMY)
 	pixel = 1.0 - pixel;

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101.2.4 2003/01/18 02:50:34 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.5 2003/01/18 14:10:51 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2401,6 +2401,11 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 	 pt ? pt->sat_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
       stp_curve_destroy(sat_adjustment);
+    }
+  if (output_type == OUTPUT_COLOR && black)
+    {
+      output_type = OUTPUT_RAW_CMYK;
+      stp_set_output_type(nv, OUTPUT_RAW_CMYK);
     }
 
   out_channels = stp_color_init(nv, image, 65536);
