@@ -25,11 +25,12 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.10 2001/07/28 01:42:25 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.10.2.1 2001/08/04 22:00:28 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
 #include "gsparam.h"
+#include <stdio.h>
 
 #ifdef DISABLE_NLS
 #include "gdevstp-print.h"
@@ -80,12 +81,13 @@ typedef struct
 {
   int topoffset;   /* top offset in pixels */
   int bottom;
+  char *custom_lut_file;
   stp_vars_t v;
 } privdata_t;
 
 /* global variables, RO for subfunctions */
 private privdata_t stp_data =
-{ 0, 0, NULL };
+{ 0, 0, "", NULL };
 
 typedef struct
 {
@@ -165,6 +167,8 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
 	  stp_get_media_type(stp_data->v));
   fprintf(gs_stderr, "Settings: MediaSize %s\n",
 	  stp_get_media_size(stp_data->v));
+  fprintf(gs_stderr, "Settings: Custom LUT file %s\n",
+	  stp_data->custom_lut_file);
   fprintf(gs_stderr, "Settings: Model %s\n", stp_get_driver(stp_data->v));
   fprintf(gs_stderr, "Settings: InkType %s\n", stp_get_ink_type(stp_data->v));
 }
@@ -274,6 +278,22 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   stp_set_errfunc(stp_data.v, stp_writefunc);
   stp_set_outdata(stp_data.v, file);
   stp_set_errdata(stp_data.v, gs_stderr);
+  if (stp_data.custom_lut_file && (strcmp(stp_data.custom_lut_file, "") != 0))
+    {
+      FILE *f = fopen(stp_data.custom_lut_file, "r");
+      if (!f)
+	{
+	  fprintf(gs_stderr, "Cannot open custom LUT %s\n",
+		  stp_data.custom_lut_file);
+	  return_error(gs_error_rangecheck);
+	}
+      if (! stp_read_custom_lut(stp_data.v, f))
+	{
+	  fprintf(gs_stderr, "Cannot parse custom LUT %s\n",
+		  stp_data.custom_lut_file);
+	  return_error(gs_error_rangecheck);
+	}
+    }
   if (stp_printer_get_printfuncs(printer)->verify(printer, stp_data.v))
     (stp_printer_get_printfuncs(printer)->print)
       (printer, &theImage, stp_data.v);
@@ -340,6 +360,7 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
   gs_param_string pInputSlot;
   gs_param_string palgorithm;
   gs_param_string pquality;
+  gs_param_string pcustomlut;
   stp_init_vars();
 
   stp_print_debug("stp_get_params(0)", pdev, &stp_data);
@@ -351,6 +372,7 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
   param_string_from_string(pmodel, stp_get_driver(stp_data.v));
   param_string_from_string(palgorithm, stp_get_dither_algorithm(stp_data.v));
   param_string_from_string(pquality, stp_get_resolution(stp_data.v));
+  param_string_from_string(pcustomlut, stp_data.custom_lut_file);
 
   if (code < 0 ||
       (code = stp_write_float(plist, "Cyan", stp_get_cyan(stp_data.v))) < 0 ||
@@ -369,7 +391,8 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
       (code = param_write_string(plist, "InkType", &pinktype) < 0) ||
       (code = param_write_string(plist, "MediaType", &pmediatype)) < 0 ||
       (code = param_write_string(plist, "stpMediaType", &pmediatype)) < 0 ||
-      (code = param_write_string(plist, "InputSlot", &pInputSlot)) < 0
+      (code = param_write_string(plist, "InputSlot", &pInputSlot)) < 0 ||
+      (code = param_write_string(plist, "CustomLUTFile", &pcustomlut)) < 0
       )
     return code;
 
@@ -415,6 +438,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   gs_param_string pmodel;
   gs_param_string palgorithm;
   gs_param_string pquality;
+  gs_param_string pcustomlut;
   int code   = 0;
   stp_init_vars();
 
@@ -426,6 +450,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   param_string_from_string(pinktype, stp_get_ink_type(stp_data.v));
   param_string_from_string(palgorithm, stp_get_dither_algorithm(stp_data.v));
   param_string_from_string(pquality, stp_get_resolution(stp_data.v));
+  param_string_from_string(pcustomlut, stp_data.custom_lut_file);
 
   STP_PUT_PARAM(plist, float, stp_data.v, "Cyan", cyan, code);
   STP_PUT_PARAM(plist, float, stp_data.v, "Magenta", magenta, code);
@@ -445,6 +470,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
     param_read_string(plist, "MediaType", &pmediatype);
   param_read_string(plist, "Model", &pmodel);
   param_read_string(plist, "InkType", &pinktype);
+  param_read_string(plist, "CustomLUTFile", &pcustomlut);
 
   if (stp_get_output_type(stp_data.v) == OUTPUT_RAW_CMYK)
     {
@@ -461,12 +487,17 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
 		    pinktype.size, pinktype.data));
   STP_DEBUG(fprintf(gs_stderr, "pquality.size %d pquality.data %s\n",
 		    pquality.size, pquality.data));
+  STP_DEBUG(fprintf(gs_stderr, "pcustomlut.size %d pcustomlut.data %s\n",
+		    pcustomlut.size, pcustomlut.data));
   stp_set_driver_n(stp_data.v, pmodel.data, pmodel.size);
   stp_set_media_type_n(stp_data.v, pmediatype.data, pmediatype.size);
   stp_set_media_source_n(stp_data.v, pInputSlot.data, pInputSlot.size);
   stp_set_ink_type_n(stp_data.v, pinktype.data, pinktype.size);
   stp_set_dither_algorithm_n(stp_data.v, palgorithm.data, palgorithm.size);
   stp_set_resolution_n(stp_data.v, pquality.data, pquality.size);
+  stp_data.custom_lut_file = malloc(pquality.size + 1);
+  memcpy(stp_data.custom_lut_file, pquality.data, pquality.size);
+  stp_data.custom_lut_file[pquality.size] = '\0';
   stp_print_debug("stp_put_params(1)", pdev, &stp_data);
 
   code = gdev_prn_put_params(pdev, plist);

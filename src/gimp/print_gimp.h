@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.15 2001/07/01 20:08:11 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.15.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -62,6 +62,8 @@ typedef struct		/**** Printer List ****/
 {
   int	active;			/* Do we know about this printer? */
   char	name[128];		/* Name of printer */
+  int   custom_lut_active;
+  char  *custom_lut_filename;
   stp_vars_t v;
 } gp_plist_t;
 
@@ -87,9 +89,12 @@ extern gint             image_height;
 extern stp_printer_t current_printer;
 extern gint             runme;
 extern gint             saveme;
+extern gboolean		using_custom_lut;
 
 extern GtkWidget *gimp_color_adjust_dialog;
 extern GtkWidget *dither_algo_combo;
+extern GtkWidget *use_custom_lut;
+extern GtkWidget *custom_lut_file;
 extern stp_vars_t *pv;
 
 /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.36 2001/08/04 16:47:57 rlk Exp $"
+ * "$Id: print-util.c,v 1.36.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -473,7 +473,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_app_gamma(vd, stp_get_app_gamma(vs));
   stp_set_input_color_model(vd, stp_get_input_color_model(vd));
   stp_set_output_color_model(vd, stp_get_output_color_model(vd));
-  stp_set_lut(vd, stp_get_lut(vs));
+  stp_set_lut(vd, stp_copy_lut(vs));
   stp_set_outdata(vd, stp_get_outdata(vs));
   stp_set_errdata(vd, stp_get_errdata(vs));
   stp_set_cmap(vd, stp_get_cmap(vs));

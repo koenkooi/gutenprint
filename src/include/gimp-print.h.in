@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.15 2001/07/28 01:42:25 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.15.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -37,7 +37,8 @@
  * Include necessary header files...
  */
 
-#include <stddef.h>	/* For size_t */
+#include <stddef.h>		/* For size_t */
+#include <stdio.h>		/* For FILE */
 
 #ifdef __cplusplus
 extern "C" {
@@ -415,6 +416,13 @@ extern void stp_merge_printvars (stp_vars_t user, const stp_vars_t print);
 extern void stp_allocate_lut (stp_vars_t v, size_t steps);
 extern void stp_free_lut (stp_vars_t v);
 extern void stp_compute_lut (stp_vars_t v, size_t steps);
+extern int stp_set_custom_lut(stp_vars_t v, size_t steps,
+			      unsigned short *cyan,
+			      unsigned short *magenta,
+			      unsigned short *yellow,
+			      unsigned short *composite);
+extern int stp_read_custom_lut(stp_vars_t v, FILE *s);
+extern void *stp_copy_lut(stp_vars_t v);
 
 extern size_t stp_dither_algorithm_count (void);
 extern const char * stp_dither_algorithm_name (int id);
@@ -464,5 +472,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.15 2001/07/28 01:42:25 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.15.2.1 2001/08/04 22:00:28 rlk Exp $".
  */

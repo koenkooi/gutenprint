@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.13 2001/07/01 20:08:11 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.13.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -47,6 +47,15 @@ static GtkObject *cyan_adjustment;
 static GtkObject *magenta_adjustment;
 static GtkObject *yellow_adjustment;
 static GtkObject *gamma_adjustment;
+GtkWidget *use_custom_lut;
+GtkWidget *custom_lut_file;
+static GtkWidget *custom_lut_button;
+static GtkWidget *custom_lut_browser;
+static GtkWidget *bad_lut_filename_dialog;
+gboolean using_custom_lut = FALSE;
+static gboolean bad_lut_active = FALSE;
+static gboolean lut_dialog_active = FALSE;
+gboolean suppress_bad_lut_dialog = FALSE;
 
 GtkWidget   *dither_algo_combo       = NULL;
 static gint  dither_algo_callback_id = -1;
@@ -63,9 +72,13 @@ static void gimp_set_color_defaults (void);
 
 static void gimp_dither_algo_callback (GtkWidget *widget,
 				       gpointer   data);
+static void gimp_use_custom_lut_callback (GtkWidget *widget,
+					  gpointer   data);
 
 
 void gimp_build_dither_combo               (void);
+
+static const char *bad_lut_text = "Invalid LUT File";
 
 static GtkDrawingArea *swatch = NULL;
 
@@ -140,6 +153,201 @@ gimp_redraw_color_swatch (void)
 			  adjusted_thumbnail_bpp * thumbnail_w);
 }
 
+static void
+gimp_set_adjustment_active(GtkObject *adj, int active)
+{
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_LABEL(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON(adj)), active);
+}
+
+void
+gimp_set_color_sliders_active(int active)
+{
+  gimp_set_adjustment_active(cyan_adjustment, active);
+  gimp_set_adjustment_active(magenta_adjustment, active);
+  gimp_set_adjustment_active(yellow_adjustment, active);
+  gimp_set_adjustment_active(saturation_adjustment, active);
+}
+
+static void
+gimp_set_all_sliders_active(int active)
+{
+  gimp_set_adjustment_active(cyan_adjustment, active);
+  gimp_set_adjustment_active(magenta_adjustment, active);
+  gimp_set_adjustment_active(yellow_adjustment, active);
+  gimp_set_adjustment_active(saturation_adjustment, active);
+  gimp_set_adjustment_active(brightness_adjustment, active);
+  gimp_set_adjustment_active(gamma_adjustment, active);
+  gimp_set_adjustment_active(contrast_adjustment, active);
+}
+
+static void
+gimp_use_custom_lut_callback(GtkWidget *widget, void *data)
+{
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(use_custom_lut)))
+    {
+      FILE *f;
+      gimp_set_all_sliders_active(FALSE);
+      gtk_file_selection_set_filename (GTK_FILE_SELECTION (custom_lut_browser),
+				       gtk_entry_get_text
+				       (GTK_ENTRY (custom_lut_file)));
+      f = fopen(gtk_entry_get_text (GTK_ENTRY (custom_lut_file)), "r");
+      if (f)
+	{
+	  if (!stp_read_custom_lut(*pv, f))
+	    {
+	      lut_dialog_active = TRUE;
+	      gtk_widget_show (custom_lut_browser);
+	    }
+	  else
+	    {
+	      using_custom_lut = TRUE;
+	      plist[plist_current].custom_lut_active = 1;
+	      if (plist[plist_current].custom_lut_filename)
+		free(plist[plist_current].custom_lut_filename);
+	      plist[plist_current].custom_lut_filename =
+		malloc(strlen(gtk_entry_get_text(GTK_ENTRY(custom_lut_file))) +
+		       1);
+	      strcpy(plist[plist_current].custom_lut_filename,
+		      gtk_entry_get_text (GTK_ENTRY (custom_lut_file)));
+	      gimp_update_adjusted_thumbnail();
+	    }
+	  (void) fclose(f);
+	}
+      else
+	{
+	  lut_dialog_active = TRUE;
+	  gtk_widget_show (custom_lut_browser);
+	}
+      gtk_widget_set_sensitive(custom_lut_file, TRUE);
+      gtk_widget_set_sensitive(custom_lut_button, TRUE);
+    }
+  else
+    {
+      using_custom_lut = FALSE;
+      plist[plist_current].custom_lut_active = 0;
+      stp_free_lut(*pv);
+      gtk_widget_hide(custom_lut_browser);
+      lut_dialog_active = FALSE;
+      gimp_set_all_sliders_active(TRUE);
+      gtk_widget_set_sensitive(custom_lut_file, FALSE);
+      gtk_widget_set_sensitive(custom_lut_button, FALSE);
+      gimp_update_adjusted_thumbnail();
+    }
+}
+
+static void
+do_bad_lut(void)
+{
+  bad_lut_active = TRUE;
+  gtk_signal_handler_block_by_data (GTK_OBJECT (use_custom_lut), NULL);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), FALSE);
+  gtk_signal_handler_unblock_by_data (GTK_OBJECT (use_custom_lut), NULL);
+  gtk_widget_set_sensitive(custom_lut_file, FALSE);
+  gtk_widget_set_sensitive(custom_lut_button, FALSE);
+  if (suppress_bad_lut_dialog)
+    {
+      gimp_set_all_sliders_active(TRUE);
+      using_custom_lut = FALSE;
+      plist[plist_current].custom_lut_active = 0;
+    }
+  else
+    {
+      gimp_set_all_sliders_active(FALSE);
+      gtk_widget_show(bad_lut_filename_dialog);
+    }
+}
+
+static void
+bad_lut_callback(void)
+{
+  gtk_widget_hide(GTK_WIDGET(bad_lut_filename_dialog));
+  bad_lut_active = FALSE;
+  if (using_custom_lut)
+    {
+      gimp_set_all_sliders_active(FALSE);
+      gtk_widget_set_sensitive(custom_lut_file, TRUE);
+      gtk_widget_set_sensitive(custom_lut_button, TRUE);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), TRUE);
+    }
+  else
+    {
+      gimp_set_all_sliders_active(TRUE);
+      gtk_widget_set_sensitive(custom_lut_file, FALSE);
+      gtk_widget_set_sensitive(custom_lut_button, FALSE);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), FALSE);
+    }
+}
+
+static void
+gimp_custom_lut_ok_callback(void)
+{
+  FILE *f;
+  gtk_widget_hide(custom_lut_browser);
+  gtk_widget_set_sensitive(custom_lut_button, TRUE);
+  gtk_widget_set_sensitive(custom_lut_file, TRUE);
+  f = fopen(gtk_file_selection_get_filename
+	    (GTK_FILE_SELECTION(custom_lut_browser)), "r");
+  if (f)
+    {
+      if (!stp_read_custom_lut(*pv, f))
+	do_bad_lut();
+      else
+	{
+	  using_custom_lut = TRUE;
+	  gimp_update_adjusted_thumbnail();
+	  if (plist[plist_current].custom_lut_filename)
+	    free(plist[plist_current].custom_lut_filename);
+	  plist[plist_current].custom_lut_filename =
+	    malloc(strlen(gtk_file_selection_get_filename
+			  (GTK_FILE_SELECTION(custom_lut_browser))) + 1);
+	  plist[plist_current].custom_lut_active = 1;
+	  strcpy(plist[plist_current].custom_lut_filename,
+		 (gtk_file_selection_get_filename
+		  (GTK_FILE_SELECTION(custom_lut_browser))));
+	  gtk_entry_set_text(GTK_ENTRY(custom_lut_file),
+			     gtk_file_selection_get_filename
+			     (GTK_FILE_SELECTION(custom_lut_browser)));
+	}
+      (void) fclose(f);
+    }
+  else
+    do_bad_lut();
+}
+
+static void
+gimp_custom_lut_browse_callback(void)
+{
+  lut_dialog_active = TRUE;
+  gtk_widget_show(custom_lut_browser);
+}
+
+static void
+gimp_custom_lut_cancel_callback(void)
+{
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), FALSE);
+}
+
+static void
+gimp_color_popdown(void)
+{
+  if (bad_lut_active || lut_dialog_active)
+    {
+      using_custom_lut = FALSE;
+      stp_free_lut(*pv);
+      gimp_set_all_sliders_active(TRUE);
+      gtk_widget_set_sensitive(custom_lut_file, FALSE);
+      gtk_widget_set_sensitive(custom_lut_button, FALSE);
+      gtk_widget_hide(bad_lut_filename_dialog);
+      gtk_widget_hide(custom_lut_browser);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), FALSE);
+      lut_dialog_active = FALSE;
+      bad_lut_active = FALSE;
+    }
+  gtk_widget_hide(gimp_color_adjust_dialog);
+}  
+
 /*
  * gimp_create_color_adjust_window (void)
  *
@@ -151,6 +359,8 @@ void
 gimp_create_color_adjust_window (void)
 {
   GtkWidget *table;
+  GtkWidget *bad_text;
+  GtkWidget *bad_button;
   const stp_vars_t lower   = stp_minimum_settings ();
   const stp_vars_t upper   = stp_maximum_settings ();
   const stp_vars_t defvars = stp_default_settings ();
@@ -180,7 +390,7 @@ gimp_create_color_adjust_window (void)
 		     FALSE, TRUE, FALSE,
 		     _("Set Defaults"), gimp_set_color_defaults,
 		     NULL, NULL, NULL, FALSE, FALSE,
-		     _("Close"), gtk_widget_hide,
+		     _("Close"), gimp_color_popdown,
 		     NULL, 1, NULL, TRUE, TRUE,
 		     NULL);
 
@@ -346,6 +556,58 @@ gimp_create_color_adjust_window (void)
                              dither_algo_combo, 1, TRUE);
 
   gimp_build_dither_combo ();
+
+  use_custom_lut = gtk_toggle_button_new();
+  gtk_widget_show(use_custom_lut);
+  gimp_table_attach_aligned(GTK_TABLE(table), 0, 10,
+			    _("Use Custom Lookup Table"),
+			    1.0, 0.5, use_custom_lut, 1, TRUE);
+  gtk_signal_connect (GTK_OBJECT (use_custom_lut), "toggled",
+                      GTK_SIGNAL_FUNC (gimp_use_custom_lut_callback), NULL);
+
+  custom_lut_file = gtk_entry_new();
+  gimp_table_attach_aligned(GTK_TABLE(table), 0, 11, _("Custom LUT File:"),
+			    1.0, 0.5, custom_lut_file, 1, TRUE);
+  gtk_entry_set_text(GTK_ENTRY(custom_lut_file), "");
+  gtk_widget_show(custom_lut_file);
+  gtk_entry_set_editable(GTK_ENTRY(custom_lut_file), FALSE);
+  gtk_widget_set_sensitive(custom_lut_file, FALSE);
+
+  custom_lut_browser = gtk_file_selection_new (_("Custom LUT File?"));
+  gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION
+					  (custom_lut_browser));
+  gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION
+				  (custom_lut_browser)->ok_button),
+                      "clicked",
+		      GTK_SIGNAL_FUNC (gimp_custom_lut_ok_callback), NULL);
+  gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION
+				  (custom_lut_browser)->cancel_button),
+                      "clicked",
+		      GTK_SIGNAL_FUNC (gimp_custom_lut_cancel_callback), NULL);
+
+  custom_lut_button = gtk_button_new_with_label(_("Browse"));
+  gtk_table_attach_defaults(GTK_TABLE(table), custom_lut_button, 2, 3, 11, 12);
+  gtk_signal_connect (GTK_OBJECT (custom_lut_button), "clicked",
+                      GTK_SIGNAL_FUNC (gimp_custom_lut_browse_callback), NULL);
+  gtk_widget_show(custom_lut_button);
+  gtk_widget_set_sensitive(custom_lut_button, FALSE);
+
+  bad_lut_filename_dialog = gtk_dialog_new();
+  bad_button = gtk_button_new_with_label(_("OK"));
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(bad_lut_filename_dialog)->action_area),
+		     bad_button, TRUE, TRUE, 0);
+  gtk_signal_connect (GTK_OBJECT (bad_button), "clicked",
+                      GTK_SIGNAL_FUNC (bad_lut_callback), NULL);
+  gtk_widget_show(bad_button);
+
+  bad_text = gtk_label_new(bad_lut_text);
+  
+  gtk_container_set_border_width (GTK_CONTAINER
+				  (GTK_DIALOG(bad_lut_filename_dialog)->vbox),
+				  20);
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(bad_lut_filename_dialog)->vbox),
+		     bad_text, TRUE, TRUE, 0);
+  gtk_widget_show(bad_text);
 }
 
 static void
@@ -425,23 +687,6 @@ gimp_gamma_update (GtkAdjustment *adjustment)
       stp_set_gamma(*pv, adjustment->value);
       gimp_update_adjusted_thumbnail ();
     }
-}
-
-static void
-gimp_set_adjustment_active(GtkObject *adj, int active)
-{
-  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_LABEL(adj)), active);
-  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE(adj)), active);
-  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON(adj)), active);
-}
-
-void
-gimp_set_color_sliders_active(int active)
-{
-  gimp_set_adjustment_active(cyan_adjustment, active);
-  gimp_set_adjustment_active(magenta_adjustment, active);
-  gimp_set_adjustment_active(yellow_adjustment, active);
-  gimp_set_adjustment_active(saturation_adjustment, active);
 }
 
 void

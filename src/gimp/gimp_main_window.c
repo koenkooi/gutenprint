@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.35 2001/07/15 17:01:05 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.35.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1427,6 +1427,15 @@ gimp_plist_callback (GtkWidget *widget,
   suppress_preview_update++;
   gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (dither_algo_combo)->entry),
                       stp_get_dither_algorithm(*pv));
+  if (plist[plist_current].custom_lut_filename)
+    gtk_entry_set_text(GTK_ENTRY(custom_lut_file),
+		       plist[plist_current].custom_lut_filename);
+  else
+    gtk_entry_set_text(GTK_ENTRY(custom_lut_file), "");
+  if (plist[plist_current].custom_lut_active)
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), TRUE);
+  else
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(use_custom_lut), FALSE);
 
   gimp_setup_update ();
 
@@ -2079,7 +2088,8 @@ gimp_update_adjusted_thumbnail (void)
 
   stp_set_density(*pv, 1.0);
 
-  stp_compute_lut (*pv, 256);
+  if (!using_custom_lut)
+    stp_compute_lut (*pv, 256);
   colorfunc = stp_choose_colorfunc (stp_get_output_type(*pv), thumbnail_bpp,
 				    NULL, &adjusted_thumbnail_bpp, *pv);
 
@@ -2088,13 +2098,17 @@ gimp_update_adjusted_thumbnail (void)
       (*colorfunc) (*pv, thumbnail_data + thumbnail_bpp * thumbnail_w * y,
 		     out, NULL, thumbnail_w, thumbnail_bpp, NULL, NULL, NULL,
 		     NULL);
-      for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
-	{
+
+      if (using_custom_lut)
+	for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
+	  *adjusted_data++ = 255 - (out[x] / 0x0101U);
+      else
+	for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
 	  *adjusted_data++ = out[x] / 0x0101U;
-	}
     }
 
-  stp_free_lut (*pv);
+  if (!using_custom_lut)
+    stp_free_lut (*pv);
 
   stp_set_density(*pv, old_density);
 

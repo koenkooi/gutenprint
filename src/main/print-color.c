@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.21 2001/07/20 14:07:08 easysw Exp $"
+ * "$Id: print-color.c,v 1.21.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -34,6 +34,7 @@
 #include <gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
+#include <stdio.h>
 
 #ifdef __GNUC__
 #define inline __inline__
@@ -1850,29 +1851,126 @@ allocate_lut(size_t steps)
   return ret;
 }
 
+static void
+deallocate_lut(lut_t *lut)
+{
+  if (lut->composite)
+    stp_free(lut->composite);
+  if (lut->red)
+    stp_free(lut->red);
+  if (lut->green)
+    stp_free(lut->green);
+  if (lut->blue)
+    stp_free(lut->blue);
+  lut->steps = 0;
+  lut->composite = NULL;
+  lut->red = NULL;
+  lut->green = NULL;
+  lut->blue = NULL;
+  stp_free(lut);
+}
+
 void
 stp_free_lut(stp_vars_t v)
 {
   if (stp_get_lut(v))
     {
       lut_t *lut = (lut_t *)(stp_get_lut(v));
-      if (lut->composite)
-	stp_free(lut->composite);
-      if (lut->red)
-	stp_free(lut->red);
-      if (lut->green)
-	stp_free(lut->green);
-      if (lut->blue)
-	stp_free(lut->blue);
-      lut->steps = 0;
-      lut->composite = NULL;
-      lut->red = NULL;
-      lut->green = NULL;
-      lut->blue = NULL;
-      stp_free(stp_get_lut(v));
       stp_set_lut(v, NULL);
+      deallocate_lut(lut);
     }
 }
+
+void *
+stp_copy_lut(stp_vars_t v)
+{
+  if (stp_get_lut(v) == NULL)
+    return NULL;
+  else
+    {
+      lut_t *src = (lut_t *)(stp_get_lut(v));
+      lut_t *ret = allocate_lut(src->steps);
+      int i;
+      for (i = 0; i < src->steps; i++)
+	{
+	  ret->red[i] = src->red[i];
+	  ret->green[i] = src->green[i];
+	  ret->blue[i] = src->blue[i];
+	  ret->composite[i] = src->composite[i];
+	}
+      return ret;
+    }
+}
+
+static int
+stp_validate_lut_size(size_t steps)
+{
+  switch (steps)
+    {
+    case 256:
+    case 65536:
+      return 1;
+    default:
+      return 0;
+    }
+}
+
+int
+stp_set_custom_lut(stp_vars_t v, size_t steps, unsigned short *cyan,
+		   unsigned short *magenta, unsigned short *yellow,
+		   unsigned short *composite)
+{
+  lut_t *lut;
+  int i;
+  if (!cyan || !magenta || !yellow || !composite)
+    return 0;
+  if (!stp_validate_lut_size((size_t) steps))
+    return 0;
+  lut = allocate_lut(steps);
+  if (stp_get_lut(v))
+    stp_free_lut(v);
+  stp_set_lut(v, lut);
+  for (i = 0; i < steps; i++)
+    {
+      lut->red[i] = 65535 - cyan[i];
+      lut->green[i] = 65535 - magenta[i];
+      lut->blue[i] = 65535 - yellow[i];
+      lut->composite[i] = 65535 - composite[i];
+    }
+  return 1;
+}
+
+int
+stp_read_custom_lut(stp_vars_t v, FILE *s)
+{
+  int i;
+  unsigned steps;
+  lut_t *lut;
+  if (fscanf(s, " %u", &steps) != 1)
+    return 0;
+  if (!stp_validate_lut_size((size_t) steps))
+    return 0;
+  lut = allocate_lut((size_t) steps);
+  for (i = 0; i < steps; i++)
+    {
+      if (fscanf(s, " %hu %hu %hu %hu",
+		 &(lut->red[i]), &(lut->green[i]), &(lut->blue[i]),
+		 &(lut->composite[i])) != 4)
+	{
+	  deallocate_lut(lut);
+	  return 0;
+	}
+      lut->red[i] = 65535 - lut->red[i];
+      lut->green[i] = 65535 - lut->green[i];
+      lut->blue[i] = 65535 - lut->blue[i];
+      lut->composite[i] = 65535 - lut->composite[i];
+    }
+  if (stp_get_lut(v))
+    stp_free_lut(v);
+  stp_set_lut(v, lut);
+  return 1;
+}
+
 
 void
 stp_compute_lut(stp_vars_t v, size_t steps)
@@ -1897,6 +1995,10 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   double pivot = .25;
   double ipivot = 1.0 - pivot;
   lut_t *lut;
+  if (!stp_validate_lut_size((size_t) steps))
+    return;
+  if (stp_get_lut(v))
+    return;
 
   /*
    * Monochrome mode simply thresholds the input

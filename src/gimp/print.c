@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.20 2001/07/10 01:09:34 rlk Exp $"
+ * "$Id: print.c,v 1.20.2.1 2001/08/04 22:00:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -88,12 +88,14 @@ static void
 check_plist(int count)
 {
   static int current_plist_size = 0;
+  int old_plist_size = current_plist_size;
   if (count <= current_plist_size)
     return;
   else if (current_plist_size == 0)
     {
       current_plist_size = count;
       plist = xmalloc(current_plist_size * sizeof(gp_plist_t));
+      memset(plist, 0, current_plist_size * sizeof(gp_plist_t));
     }
   else
     {
@@ -101,6 +103,8 @@ check_plist(int count)
       if (current_plist_size < count)
 	current_plist_size = count;
       plist = realloc(plist, current_plist_size * sizeof(gp_plist_t));
+      memset(plist + old_plist_size, 0,
+	     (current_plist_size - old_plist_size) * sizeof(gp_plist_t));
     }
 }
 
@@ -740,8 +744,17 @@ add_printer(const gp_plist_t *key, int add_only)
 	  printf("Updated File printer directly\n");
 #endif
 	  p = &plist[0];
+	  if (p->custom_lut_filename)
+	    free(p->custom_lut_filename);
 	  memcpy(p, key, sizeof(gp_plist_t));
 	  p->v = stp_allocate_copy(key->v);
+	  p->custom_lut_active = key->custom_lut_active;
+	  if (key->custom_lut_filename)
+	    {
+	      p->custom_lut_filename =
+		malloc(strlen(key->custom_lut_filename) + 1);
+	      strcpy(p->custom_lut_filename, key->custom_lut_filename);
+	    }
 	  p->active = 1;
 	}
       return 1;
@@ -762,6 +775,13 @@ add_printer(const gp_plist_t *key, int add_only)
 	  plist_count++;
 	  memcpy(p, key, sizeof(gp_plist_t));
 	  p->v = stp_allocate_copy(key->v);
+	  p->custom_lut_active = key->custom_lut_active;
+	  if (key->custom_lut_filename)
+	    {
+	      p->custom_lut_filename =
+		malloc(strlen(key->custom_lut_filename) + 1);
+	      strcpy(p->custom_lut_filename, key->custom_lut_filename);
+	    }
 	  p->active = 0;
 	}
       else
@@ -771,8 +791,17 @@ add_printer(const gp_plist_t *key, int add_only)
 #ifdef DEBUG
 	  printf("Updating printer %s.\n", key->name);
 #endif
+	  if (p->custom_lut_filename)
+	    free(p->custom_lut_filename);
 	  memcpy(p, key, sizeof(gp_plist_t));
 	  stp_copy_vars(p->v, key->v);
+	  p->custom_lut_active = key->custom_lut_active;
+	  if (key->custom_lut_filename)
+	    {
+	      p->custom_lut_filename =
+		malloc(strlen(key->custom_lut_filename) + 1);
+	      strcpy(p->custom_lut_filename, key->custom_lut_filename);
+	    }
 	  p->active = 1;
 	}
     }
@@ -999,6 +1028,11 @@ printrc_load(void)
 	  stp_set_page_width(key.v, atoi(value));
 	} else if (strcasecmp("custom-page-height", keyword) == 0) {
 	  stp_set_page_height(key.v, atoi(value));
+	} else if (strcasecmp("use-custom-lut", keyword) == 0) {
+	  key.custom_lut_active = atoi(value);
+	} else if (strcasecmp("custom-lut-filename", keyword) == 0) {
+	  key.custom_lut_filename = malloc(strlen(value) + 1);
+	  strcpy(key.custom_lut_filename, value);
 	} else {
 	  /* Unrecognised keyword; ignore it... */
           printf("Unrecognized keyword `%s' in printrc; value `%s'\n", keyword, value);
@@ -1113,6 +1147,9 @@ printrc_save(void)
 	fprintf(fp, "Unit: %d\n", stp_get_unit(p->v));
 	fprintf(fp, "Custom-Page-Width: %d\n", stp_get_page_width(p->v));
 	fprintf(fp, "Custom-Page-Height: %d\n", stp_get_page_height(p->v));
+	fprintf(fp, "Use-Custom-Lut: %d\n", p->custom_lut_active);
+	if (p->custom_lut_filename)
+	  fprintf(fp, "Custom-Lut-Filename: %s\n", p->custom_lut_filename);
 
 #ifdef DEBUG
         fprintf(stderr, "Wrote printer %d: %s\n", i, p->name);
@@ -1313,5 +1350,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.20 2001/07/10 01:09:34 rlk Exp $".
+ * End of "$Id: print.c,v 1.20.2.1 2001/08/04 22:00:28 rlk Exp $".
  */
