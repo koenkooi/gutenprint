@@ -5,7 +5,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.65 2002/12/27 18:02:55 rlk Exp $"
+   "$Id: printers.xml,v 1.66 2003/01/28 12:15:41 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -232,6 +232,14 @@
       <printer name="EPSON Stylus C42UX" driver="escp2-c42ux">
         <color value="true"/>
         <model value="43"/>
+        <magenta value="0.95"/>
+        <yellow value="0.9"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C50" driver="escp2-c50">
+        <color value="true"/>
+        <model value="56"/>
         <magenta value="0.95"/>
         <yellow value="0.9"/>
         <gamma value="0.585"/>
