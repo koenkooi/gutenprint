@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.77 2002/12/07 05:57:36 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.78 2002/12/07 16:27:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -4879,7 +4879,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   },
   /* 47: Stylus Photo 2100/2200 */
   {
-    (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO |
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_NO |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO |
      MODEL_FAST_360_YES),
     96, 1, 2, 96, 1, 2, 192, 1, 1, 7,
