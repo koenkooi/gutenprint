@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.116 2003/07/22 12:22:55 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.117 2003/08/03 16:40:47 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2299,6 +2299,12 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
 
 /* Ensure that density does not exceed 1.0 */
+
+  if (!stp_check_float_parameter(v, "Density", STP_PARAMETER_DEFAULTED))
+    {
+      stp_set_float_parameter_active(v, "Density", STP_PARAMETER_ACTIVE);
+      stp_set_float_parameter(v, "Density", 1.0);
+    }
 
   stpi_deprintf(STPI_DBG_PCL, "Density: %f\n", stp_get_float_parameter(v, "Density"));
   if (stp_get_float_parameter(v, "Density") > 1.0)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.282 2003/07/24 00:50:17 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.283 2003/08/03 16:40:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1465,6 +1465,12 @@ adjust_density_and_ink_type(stp_vars_t v, stp_image_t *image)
 
   if (pt)
     paper_density = pt->base_density;
+
+  if (!stp_check_float_parameter(v, "Density", STP_PARAMETER_DEFAULTED))
+    {
+      stp_set_float_parameter_active(v, "Density", STP_PARAMETER_ACTIVE);
+      stp_set_float_parameter(v, "Density", 1.0);
+    }
 
   if (pd->rescale_density)
     stp_scale_float_parameter

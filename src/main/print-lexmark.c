@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.127 2003/07/22 12:22:54 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.128 2003/08/03 16:40:46 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1887,6 +1887,11 @@ densityDivisor /= 1.2;
   privdata.horizontal_weave = horizontal_passes;
 
 
+  if (!stp_check_float_parameter(v, "Density", STP_PARAMETER_DEFAULTED))
+    {
+      stp_set_float_parameter_active(v, "Density", STP_PARAMETER_ACTIVE);
+      stp_set_float_parameter(v, "Density", 1.0);
+    }
 
 #ifdef DEBUG
   stpi_erprintf("density is %f\n",stp_get_parameter(v, "Density"));
