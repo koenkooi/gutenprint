@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.58 2001/10/15 18:31:01 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.59 2001/10/15 18:35:58 rwisi Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -249,21 +249,6 @@ static const double standard_lum_adjustment[49] =
 static const double standard_hue_adjustment[49] =
 {
   0.00,				/* C */
-  /*  0.00,
-  0.00,
-  0.00,
-  0.00,
-  0.00,
-  -0.60,
-  -0.70,
-  -0.80,			/ * B * /
-  -0.70,
-  -0.60,
-  0.00,
-  0.00,
-  0.00,
-  0.00,
-  0.00,*/
   0.05,
   0.04,
   0.01,
