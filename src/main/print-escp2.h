@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.42 2003/04/13 03:16:24 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.43 2003/04/20 22:56:05 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -295,8 +295,6 @@ typedef struct escp2_printer
   int		base_separation; /* Basic unit of row separation */
   int		base_resolution; /* Base hardware line spacing (above this */
 				/* always requires multiple passes) */
-  int		enhanced_resolution;/* Above this we use the */
-				    /* enhanced_xres rather than xres */
   int		resolution_scale;   /* Scaling factor for ESC(D command */
   int		max_black_resolution; /* Above this resolution, we */
 				      /* must use color parameters */
@@ -414,5 +412,5 @@ extern const res_t stpi_escp2_sc660_reslist[];
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.42 2003/04/13 03:16:24 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.43 2003/04/20 22:56:05 rlk Exp $".
  */
