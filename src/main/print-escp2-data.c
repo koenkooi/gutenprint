@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.9 2002/08/14 02:36:04 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.10 2002/08/14 12:32:42 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3838,7 +3838,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     variable_bits, variable_base_res, &default_input_slot_list,
     &new_init_sequence, &je_deinit_sequence
   },
-  /* 43: Stylus C40SX/C40UX/C42UX */
+  /* 43: Stylus C40SX/C40UX/C41SX/C41UX/C42SX/C42UX */
   {
     (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
      MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO),
