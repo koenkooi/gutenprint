@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.54 2000/02/12 03:38:25 rlk Exp $"
+ * "$Id: print.c,v 1.55 2000/02/14 03:34:26 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -61,6 +61,11 @@
 #endif
 
 #include <libgimp/gimpui.h>
+
+#if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0)
+#define GIMP_1_0
+#endif
+
 #ifdef GIMP_1_0
 #define N_(x) x
 #define _(x) x
@@ -3506,5 +3511,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.54 2000/02/12 03:38:25 rlk Exp $".
+ * End of "$Id: print.c,v 1.55 2000/02/14 03:34:26 rlk Exp $".
  */
