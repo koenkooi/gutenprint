@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.132 2001/10/22 23:20:01 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.133 2001/10/23 23:19:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1159,7 +1159,7 @@ static const escp2_variable_inklist_t variable_3pl_pigment_4color_inks =
     {
       &escp2_multishot_pigment_standard_inks,
       &escp2_multishot_pigment_standard_inks,
-      &escp2_6pl_pigment_standard_inks,
+      &escp2_multishot_pigment_standard_inks,
       &escp2_6pl_pigment_standard_inks,
       &escp2_3pl_pigment_standard_inks,
       &escp2_3pl_pigment_1440_standard_inks,
