@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.30 2001/07/05 23:52:55 rlk Exp $"
+ * "$Id: print-weave.c,v 1.31 2001/07/07 15:37:57 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -2392,7 +2392,7 @@ stp_write_weave(void *        vsw,
 	      setactive = (sw->pack)(in, length * sw->bitwidth,
 				   sw->comp_buf, &comp_ptr);
 	      add_to_row(sw, sw->lineno, sw->comp_buf, comp_ptr - sw->comp_buf,
-			 j, setactive, lineoffs[0], lineactives[0], linecounts[i], bufs[0]);
+			 j, setactive, lineoffs[0], lineactives[0], linecounts[0], bufs[0]);
 	    }
 	}
     }
