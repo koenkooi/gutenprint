@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.124 2003/06/03 20:17:36 rleigh Exp $"
+ * "$Id: print-lexmark.c,v 1.125 2003/06/06 23:18:53 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -84,8 +84,8 @@ static const stpi_dotsize_t single_dotsize[] =
 
 static const stpi_shade_t photo_dither_shades[] =
 {
-  { 0.3333, 1, single_dotsize },
   { 1.0000, 1, single_dotsize },
+  { 0.3333, 1, single_dotsize },
 };
 
 
