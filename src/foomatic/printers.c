@@ -1,9 +1,9 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.2.2.2 2001/09/14 01:26:36 sharkey Exp $"
+ * "$Id: printers.c,v 1.2.2.1 2001/09/14 01:26:35 sharkey Exp $"
  *
- *   Print plug-in driver utility functions for the GIMP.
+ *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
- *   Copyright 2001 Robert Krawitz (rlk@alum.mit.edu)
+ *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -18,44 +18,28 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * Revision History:
- *
- *   See ChangeLog
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <stdio.h>
+#ifdef INCLUDE_GIMP_PRINT_H
+#include INCLUDE_GIMP_PRINT_H
+#else
 #include <gimp-print/gimp-print.h>
-#include <gimp-print-internal.h>
+#endif
+#include "../../lib/libprintut.h"
 
-static const unsigned short mat_1_1[] =
+int
+main(int argc, char **argv)
 {
-#include "quickmatrix257.h"
-};
-
-const stp_dither_matrix_short_t stp_1_1_matrix =
-{
-  257, 257, 2, 1, mat_1_1
-};
-
-static const unsigned short mat_2_1[] =
-{
-#include "ran.367.179.h"
-};
-
-const stp_dither_matrix_short_t stp_2_1_matrix =
-{
-  367, 179, 2, 1, mat_2_1
-};
-
-static const unsigned short mat_4_1[] =
-{
-#include "ran.509.131.h"
-};
-
-const stp_dither_matrix_short_t stp_4_1_matrix =
-{
-  509, 131, 2, 1, mat_4_1
-};
+  int i;
+  for (i = 0; i < stp_known_printers(); i++)
+    {
+      const stp_papersize_t p = stp_get_printer_by_index(i);
+      printf("$printer_name{'%s'} = '%s';\n", stp_printer_get_driver(p),
+	     stp_printer_get_long_name(p));
+    }
+  return 0;
+}

@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.8.2.3 2001/07/23 15:07:50 sharkey Exp $"
+ * "$Id: rastertoprinter.c,v 1.8.2.4 2001/09/14 01:26:35 sharkey Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -60,7 +60,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 #include "../../lib/libprintut.h"
 
@@ -81,9 +81,10 @@ static void	cancel_job(int sig);
 static const char *Image_get_appname(stp_image_t *image);
 static void	 Image_progress_conclude(stp_image_t *image);
 static void	Image_note_progress(stp_image_t *image,
-				double current, double total);
+				    double current, double total);
 static void	Image_progress_init(stp_image_t *image);
-static void	Image_get_row(stp_image_t *image, unsigned char *data, int row);
+static stp_image_status_t Image_get_row(stp_image_t *image,
+					unsigned char *data, int row);
 static int	Image_height(stp_image_t *image);
 static int	Image_width(stp_image_t *image);
 static int	Image_bpp(stp_image_t *image);
@@ -114,6 +115,7 @@ static stp_image_t theImage =
   NULL
 };
 
+static volatile stp_image_status_t Image_status;
 
 /*
  * 'main()' - Main entry and processing of driver.
@@ -136,7 +138,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   cups_option_t		*options;	/* CUPS options */
   const char		*val;		/* CUPS option value */
   int			num_res;	/* Number of printer resolutions */
-  char			**res;		/* Printer resolutions */
+  stp_param_t		*res;		/* Printer resolutions */
   float			stp_gamma,	/* STP options */
 			stp_brightness,
 			stp_cyan,
@@ -145,7 +147,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 			stp_contrast,
 			stp_saturation,
 			stp_density;
-  
+
 
  /*
   * Initialise libgimpprint
@@ -169,6 +171,8 @@ main(int  argc,				/* I - Number of command-line arguments */
     fputs("ERROR: rastertoprinter job-id user title copies options [file]\n", stderr);
     return (1);
   }
+
+  Image_status = STP_IMAGE_OK;
 
  /*
   * Get the PPD file...
@@ -402,6 +406,10 @@ main(int  argc,				/* I - Number of command-line arguments */
       case CUPS_CSPACE_CMYK :
           stp_set_output_type(v, OUTPUT_RAW_CMYK);
 	  break;
+      default :
+          fprintf(stderr, "ERROR: Bad colorspace %d!",
+	          cups.header.cupsColorSpace);
+	  break;
     }
 
     if (cups.header.cupsRowStep >= stp_dither_algorithm_count())
@@ -426,7 +434,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     if (cups.header.cupsCompression >= num_res)
       fprintf(stderr, "ERROR: Unable to set printer resolution!\n");
     else
-      stp_set_resolution(v, res[cups.header.cupsCompression]);
+      stp_set_resolution(v, res[cups.header.cupsCompression].name);
 
    /*
     * Print the page...
@@ -530,46 +538,9 @@ cups_writefunc(void *file, const char *buf, size_t bytes)
 void
 cancel_job(int sig)			/* I - Signal */
 {
-  int	i;				/* Looping var */
-
-
   (void)sig;
 
- /*
-  * WARNING:
-  *
-  * The code you are about to see is a hack.  In the event a real
-  * cancel method is provided with each printer driver, this code
-  * will be replaced with the appropriate printer driver call to
-  * eject the current page and reset the printer to a known state.
-  *
-  * This is only a hack.
-  *
-  * This code will likely only work for HP and EPSON printers.
-  * It *may* work with Canon printers.  It almost certainly will
-  * not work with Lexmark printers.
-  */
-
- /*
-  * Send out lots of NUL bytes to clear out any pending raster data...
-  */
-
-  for (i = 0; i < 2000; i ++)
-    putchar(0);
-
- /*
-  * Send both the PCL and EPSON reset sequences...
-  */
-
-  printf("\033@\033E");
-
- /*
-  * Flush buffers and exit...
-  */
-
-  fflush(stdout);
-
-  exit(0);
+  Image_status = STP_IMAGE_ABORT;
 }
 
 
@@ -620,7 +591,7 @@ Image_get_appname(stp_image_t *image)		/* I - Image */
  * 'Image_get_row()' - Get one row of the image.
  */
 
-void
+stp_image_status_t
 Image_get_row(stp_image_t   *image,	/* I - Image */
 	      unsigned char *data,	/* O - Row */
 	      int           row)	/* I - Row number (unused) */
@@ -630,7 +601,7 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
 
 
   if ((cups = (cups_image_t *)(image->rep)) == NULL)
-    return;
+    return STP_IMAGE_ABORT;
 
   if (cups->row < cups->header.cupsHeight)
   {
@@ -647,6 +618,7 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
   }
   else
     memset(data, 255, cups->header.cupsBytesPerLine);
+  return Image_status;
 }
 
 
@@ -783,5 +755,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.8.2.3 2001/07/23 15:07:50 sharkey Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.8.2.4 2001/09/14 01:26:35 sharkey Exp $".
  */

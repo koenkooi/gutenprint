@@ -1,3 +1,14 @@
+gimp-print (4.1.99-b1-1) unstable; urgency=low
+
+  * New upstream release, Closes: #110066
+  * Remove README.dither from libgimpprint-dev.docs (Roger Leigh)
+  * Add image samples to gimp1.2-print and cupsys-driver-gimpprint (RL)
+  * Change rules and control to use ABI library versioning (RL)
+  * Changed library version names to reflect upstream library
+    versioning change to ABI versioning. (RL)
+
+ -- Eric Sharkey <sharkey@debian.org>  Mon, 23 Jul 2001 10:49:04 -0400
+
 gimp-print (4.1.99-a2-1) unstable; urgency=low
 
   * New upstream release

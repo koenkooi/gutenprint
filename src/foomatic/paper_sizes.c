@@ -1,5 +1,5 @@
 /*
- * "$Id: paper_sizes.c,v 1.2.2.2 2001/06/30 03:19:59 sharkey Exp $"
+ * "$Id: paper_sizes.c,v 1.2.2.3 2001/09/14 01:26:35 sharkey Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -27,7 +27,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 #include "../../lib/libprintut.h"
 

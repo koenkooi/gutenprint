@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.12.4.5 2001/07/23 15:07:52 sharkey Exp $"
+ * "$Id: print-weave.c,v 1.12.4.6 2001/09/14 01:26:37 sharkey Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 
@@ -53,9 +53,18 @@
 #endif
 
 #ifdef ASSERTIONS
-#define assert(x,v) if (!(x)) { stp_eprintf(v, "ASSERTION FAILURE!  \"%s\", line %d.\n", __FILE__, __LINE__); exit(1); }
+#define assert(x,v)							\
+do									\
+{									\
+  if (!(x))								\
+    {									\
+      stp_eprintf(v, "Assertion %s failed! file %s, line %d.\n",	\
+		  #x, __FILE__, __LINE__);				\
+      exit(1);								\
+    }									\
+} while (0)
 #else
-#define assert(x,v) /* nothing */
+#define assert(x,v) do {} while (0)
 #endif
 
 #ifdef TEST
@@ -1794,14 +1803,14 @@ stp_initialize_weave(int jets,	/* Width of print head */
    * for monochrome (bw) printing, the offsets are 0.
    */
   if(ncolors > 1)
-    for(i=0; i<8; i++)
+    for(i=0; i<NCHANNELS; i++)
       sw->head_offset[i] = head_offset[i];
   else
-    for(i=0; i<8; i++)
+    for(i=0; i<NCHANNELS; i++)
       sw->head_offset[i] = 0;
 
   maxHeadOffset = 0;
-  for(i=0; i<8; i++)
+  for(i=0; i<NCHANNELS; i++)
     if(sw->head_offset[i] > maxHeadOffset)
       maxHeadOffset = sw->head_offset[i];
 

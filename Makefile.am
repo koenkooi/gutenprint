@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.7 2001/07/23 15:07:49 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.8 2001/09/14 01:26:34 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,12 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = doc intl lib man src test po samples
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
+NONGIMP_SUBDIRS = test
+NONGIMP_DISTDIRS = debian
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
+SUBDIRS = doc intl lib man src po samples include $(NONGIMP_SUBDIRS)
+DISTDIRS = scripts $(NONGIMP_DISTDIRS)
 
 if MAINTAINER_MODE
 MAINT_MODE = true
@@ -34,6 +39,7 @@ endif
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status --recheck
 
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
 ChangeLog:
 	@cd $(top_srcdir) ; \
 	echo `pwd`
@@ -58,8 +64,10 @@ ChangeLog:
 	  exit 1 ; \
 	fi
 
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
+
 dist-hook:
-	for dir in debian scripts ; do \
+	for dir in $(DISTDIRS) ; do \
 	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
 	    for dirfile in $(srcdir)/$$dir/*; do \
@@ -69,31 +77,39 @@ dist-hook:
 	    done \
 	  fi \
 	done
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
 # Create debian/control
 	DEBIAN_VERSION=`grep "(" debian/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
 	UPSTREAM_VERSION=`echo $$DEBIAN_VERSION | sed "s/-[^-]*$$//"` ; \
 	sed -e "s/#UPSTREAM_VERSION#/$${UPSTREAM_VERSION}/g" <debian/control.in >$(distdir)/debian/control
 # Do some extra magic to make a distribution for GIMP CVS
+	status=0 ; \
 	if test -f .gimp-dist ; then \
 	  rm -rf $(distdir)/src/cups $(distdir)/src/escputil $(distdir)/src/foomatic $(distdir)/src/ghost ; \
 	  rm -rf $(distdir)/debian $(distdir)/scripts $(distdir)/test ; \
 	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/configure $(distdir)/stamp-h.in ; \
 	  find $(distdir) -name Makefile.in -print | xargs --no-run-if-empty rm ; \
+	  cd $(distdir) ; \
+	  perl ../scripts/patch-gimp configure.in Makefile.am src/Makefile.am ; \
+	  status=$$? ; \
+	  cd .. ; \
 	  rm -f .gimp-dist ; \
-	fi
+	fi ; \
+	exit $$status
 
 gimp-dist:
 	touch .gimp-dist
-	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-GIMP-CVS-DIST
-
-install-gimp: all
-	$(MAKE) -C src/gimp install
+	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-GIMP-DIST
 
 install-cups: all
 	$(MAKE) -C src/cups install
 
 install-ghost: all
 	$(MAKE) -C src/ghost install
+
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
+install-gimp: all
+	$(MAKE) -C src/gimp install
 
 html:
 	$(MAKE) -C doc html
@@ -116,4 +132,8 @@ CLEANSCRIPTS = \
 CLEANFILES = .gimp-dist .noupdate
 MAINTAINERCLEANFILES = ABOUT-NLS INSTALL aclocal.m4 config.h.in configure Makefile.in stamp-h.in $(addprefix scripts/, $(CLEANSCRIPTS))
 
-.PHONY: gimp-dist install-gimp install-cups install-ghost html snapshot ChangeLog
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
+.PHONY: gimp-dist install-cups install-ghost snapshot ChangeLog
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
+
+.PHONY: install-gimp html

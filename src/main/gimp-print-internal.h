@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.4.6 2001/07/23 15:07:51 sharkey Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.7 2001/09/14 01:26:36 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -33,9 +33,18 @@
 #ifndef _GIMP_PRINT_INTERNAL_H_
 #define _GIMP_PRINT_INTERNAL_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#ifndef DISABLE_NLS
-#include "../../lib/libprintut.h"
+#ifndef HAVE_ASPRINTF
+#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
+#include <varargs.h>
+#else
+#include <stdarg.h>
+#endif
+extern int vasprintf (char **result, const char *format, va_list args);
+extern int asprintf (char **result, const char *format, ...);
 #endif
 
 /*
@@ -46,6 +55,8 @@
 #define ECOLOR_M 2
 #define ECOLOR_Y 3
 #define NCOLORS (4)
+#define NCHANNELS (7)
+#define MAX_WEAVE (8)
 
 typedef struct
 {
@@ -104,7 +115,7 @@ typedef struct			/* Weave parameters for a specific pass */
 } stp_pass_t;
 
 typedef union {			/* Offsets from the start of each line */
-  unsigned long v[7];		/* (really pass) */
+  unsigned long v[NCHANNELS];		/* (really pass) */
   struct {
     unsigned long k;
     unsigned long m;
@@ -117,7 +128,7 @@ typedef union {			/* Offsets from the start of each line */
 } stp_lineoff_t;
 
 typedef union {			/* Is this line active? */
-  char v[7];			/* (really pass) */
+  char v[NCHANNELS];			/* (really pass) */
   struct {
     char k;
     char m;
@@ -130,7 +141,7 @@ typedef union {			/* Is this line active? */
 } stp_lineactive_t;
 
 typedef union {		/* number of rows for a pass */
-  int v[7];		/* (really pass) */
+  int v[NCHANNELS];		/* (really pass) */
   struct {
     int k;
     int m;
@@ -144,7 +155,7 @@ typedef union {		/* number of rows for a pass */
 
 
 typedef union {			/* Base pointers for each pass */
-  unsigned char *v[7];
+  unsigned char *v[NCHANNELS];
   struct {
     unsigned char *k;
     unsigned char *m;
@@ -198,8 +209,8 @@ typedef struct stp_softweave
 				/* in the vertical direction". */
   int horizontal_width;		/* Horizontal width, in bits */
   int last_color;
-  int head_offset[8];		/* offset of printheads */
-  unsigned char *s[8];
+  int head_offset[NCHANNELS];		/* offset of printheads */
+  unsigned char *s[MAX_WEAVE];
   unsigned char *fold_buf;
   unsigned char *comp_buf;
   stp_weave_t wcache;
@@ -441,6 +452,7 @@ extern void stp_erprintf(const char *format, ...);
 #define STP_DBG_ROWS		0x200
 extern void stp_dprintf(unsigned long level, const stp_vars_t v,
 			const char *format, ...);
+extern void stp_deprintf(unsigned long level, const char *format, ...);
 
 extern void *stp_malloc (size_t);
 extern void stp_free(void *ptr);
@@ -508,5 +520,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.4.6 2001/07/23 15:07:51 sharkey Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.7 2001/09/14 01:26:36 sharkey Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1.2.4 2001/07/23 15:07:49 sharkey Exp $
+## $Id: Makefile.am,v 1.1.2.5 2001/09/14 01:26:34 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ DOCS = \
 
 info_TEXINFOS = gimpprint.texi
 
-gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi new-printer.texi indices.texi integrating.texi
+gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi new-printer.texi indices.texi integrating.texi version.texi
 
 
 ## Rules
@@ -58,7 +58,7 @@ all-local: html
 	else \
 	  echo "all-local: $(srcdir)/manual-html not found" ; \
 	fi
-	
+
 html: html-stamp
 
 ## Note the rather weird way of setting the exit status; this is because

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.6 2001/07/23 15:07:50 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.7 2001/09/14 01:26:35 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -98,8 +98,14 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
 	  cd ppd ; \
-	  for ppdfile in * ; do \
-	    $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir) ; \
+	  for language in * ; do \
+	    cd ..; \
+	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
+	    cd ppd/$$language; \
+	    for ppdfile in * ; do \
+	      $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir)/$$language ; \
+	    done; \
+	    cd ..; \
 	  done \
 	fi
 
@@ -121,10 +127,22 @@ install-data-hook:
 
 .PHONY: ppd
 
+all-local: $(INSTALL_DATA_LOCAL_DEPS)
+
 ppd: ppd-stamp
 ppd-stamp: genppd
 	-rm -rf ppd
-	env LD_PRELOAD="" ./genppd
+	-mkdir ppd
+	-mkdir ppd/de
+	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/de --language de
+	-mkdir ppd/en
+	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/en --language en
+	-mkdir ppd/es
+	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/es --language es
+	-mkdir ppd/fr
+	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/fr --language fr
+	-mkdir ppd/it
+	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/it --language it
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):

@@ -25,11 +25,12 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.3.4.4 2001/07/23 15:07:51 sharkey Exp $ */
+/*$Id: gdevstp.c,v 1.3.4.5 2001/09/14 01:26:35 sharkey Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
 #include "gsparam.h"
+#include <stdlib.h>
 
 #ifdef DISABLE_NLS
 #include "gdevstp-print.h"
@@ -41,8 +42,7 @@
 
 private int stp_debug = 0;
 
-#define STP_DEBUG(x)				\
-if (stp_debug) x
+#define STP_DEBUG(x) do { if (stp_debug || getenv("STP_DEBUG")) x; } while (0)
 
 /* ------ The device descriptors ------ */
 
@@ -99,7 +99,8 @@ static void Image_progress_conclude(stp_image_t *image);
 static void Image_note_progress(stp_image_t *image,
 				double current, double total);
 static void Image_progress_init(stp_image_t *image);
-static void Image_get_row(stp_image_t *image, unsigned char *data, int row);
+static stp_image_status_t Image_get_row(stp_image_t *image,
+					unsigned char *data, int row);
 static int Image_height(stp_image_t *image);
 static int Image_width(stp_image_t *image);
 static int Image_bpp(stp_image_t *image);
@@ -415,6 +416,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   gs_param_string palgorithm;
   gs_param_string pquality;
   int code   = 0;
+  stp_printer_t printer;
   stp_init_vars();
 
   stp_print_debug("stp_put_params(0)", pdev, &stp_data);
@@ -461,6 +463,19 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   STP_DEBUG(fprintf(gs_stderr, "pquality.size %d pquality.data %s\n",
 		    pquality.size, pquality.data));
   stp_set_driver_n(stp_data.v, pmodel.data, pmodel.size);
+  printer = stp_get_printer_by_driver(stp_get_driver(stp_data.v));
+  if (!printer)
+    {
+      if (strlen(stp_get_driver(stp_data.v)) == 0)
+	fprintf(gs_stderr, "Printer must be specified with -sModel\n");
+      else
+	fprintf(gs_stderr, "Printer %s is not a known model\n",
+		stp_get_driver(stp_data.v));
+      param_signal_error(plist, "Model", gs_error_rangecheck);
+      code = 100;
+    }
+  else
+    stp_set_printer_defaults(stp_data.v, printer, NULL);
   stp_set_media_type_n(stp_data.v, pmediatype.data, pmediatype.size);
   stp_set_media_source_n(stp_data.v, pInputSlot.data, pInputSlot.size);
   stp_set_ink_type_n(stp_data.v, pinktype.data, pinktype.size);
@@ -522,7 +537,7 @@ stp_open(gx_device *pdev)
 ***********************************************************************/
 
 /* get one row of the image */
-private void
+private stp_image_status_t
 Image_get_row(stp_image_t *image, unsigned char *data, int row)
 {
   stp_priv_image_t *im = (stp_priv_image_t *) (image->rep);
@@ -550,6 +565,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, int row)
       gdev_prn_copy_scan_lines(im->dev, (im->data->topoffset + row) * ratio,
 			       data, im->raster);
     }
+  return STP_IMAGE_OK;
 }
 
 /* return bpp of picture (24 here) */

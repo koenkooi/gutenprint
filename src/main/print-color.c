@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.5.4.5 2001/07/23 15:07:51 sharkey Exp $"
+ * "$Id: print-color.c,v 1.5.4.6 2001/09/14 01:26:36 sharkey Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -29,7 +29,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 #include <math.h>
@@ -1802,26 +1802,16 @@ cmyk_to_cmyk(const stp_vars_t vars,
   int j;
   int nz[4];
   const unsigned short *scmykin = (const unsigned short *) cmykin;
-  double density = stp_get_density(vars) * 65535.0;
-  double print_gamma = stp_get_gamma(vars);
 
   for (i = 0; i < width; i++)
     {
-      j = *scmykin++;
-      nz[0] |= j;
-      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
-
-      j = *scmykin++;
-      nz[1] |= j;
-      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
-
-      j = *scmykin++;
-      nz[2] |= j;
-      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
-
-      j = *scmykin++;
-      nz[3] |= j;
-      *cmykout++ = density * pow((double)j / 65535.0, print_gamma) + 0.5;
+      for (j = 0; j < 4; j++)
+	{
+	  nz[j] |= scmykin[j];
+	  cmykout[j] = scmykin[j];
+	}
+      scmykin += 4;
+      cmykout += 4;
     }
   if (zero_mask)
     {

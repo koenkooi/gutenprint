@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.2.4.4 2001/07/23 15:07:52 sharkey Exp $ */
+/* $Id: unprint.c,v 1.2.4.5 2001/09/14 01:26:37 sharkey Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -110,7 +110,7 @@ line_type **page=NULL;
 /* sequential to Epson2 */
 #define ep2color(c)  ({0,1,2,4,257,258}[c])
 
-void merge_line (line_type *p, unsigned char *l, int startl, int stopl, 
+void merge_line (line_type *p, unsigned char *l, int startl, int stopl,
                  int color);
 void expand_line (unsigned char *src, unsigned char *dst, int height,
                   int skip, int left_ignore);
@@ -122,10 +122,10 @@ void parse_escp2 (FILE *fp_r);
 void reverse_bit_order (unsigned char *buf, int n);
 int rle_decode (unsigned char *inbuf, int n, int max);
 void parse_canon (FILE *fp_r);
-     
 
-static inline int 
-get_bits(unsigned char *p,int index) 
+
+static inline int
+get_bits(unsigned char *p,int index)
 {
 
   /* p is a pointer to a bit stream, ordered MSb first.  Extract the
@@ -156,8 +156,8 @@ get_bits(unsigned char *p,int index)
     }
 }
 
-static inline void 
-set_bits(unsigned char *p,int index,int value) 
+static inline void
+set_bits(unsigned char *p,int index,int value)
 {
 
   /* p is a pointer to a bit stream, ordered MSb first.  Set the
@@ -196,8 +196,8 @@ set_bits(unsigned char *p,int index,int value)
     }
 }
 
-static inline void 
-mix_ink(ppmpixel p, int c, unsigned int a) 
+static inline void
+mix_ink(ppmpixel p, int c, unsigned int a)
 {
 
   /* this is pretty crude */
@@ -213,9 +213,9 @@ mix_ink(ppmpixel p, int c, unsigned int a)
       case 1: ink[0]=1; ink[1]=0; ink[2]=1;break; /* magenta */
       case 2: ink[0]=0; ink[1]=ink[2]=1;break; /* cyan */
       case 3: ink[0]=ink[1]=1; ink[2]=0;break; /* yellow */
-      case 4: ink[0]=1; ink[1]=0.5; ink[2]=1;break; /* lmagenta */
-      case 5: ink[0]=0.5; ink[1]=ink[2]=1;break; /* lcyan */
-      case 6: ink[0]=ink[1]=1; ink[2]=0.5;break; /* lyellow */
+      case 4: ink[0]=1; ink[1]=0.7; ink[2]=1;break; /* lmagenta */
+      case 5: ink[0]=0.7; ink[1]=ink[2]=1;break; /* lcyan */
+      case 6: ink[0]=ink[1]=1; ink[2]=0.7;break; /* lyellow */
       default:fprintf(stderr,"unknown ink %d\n",c);return;
     }
     for (i=0;i<3;i++) {
@@ -225,7 +225,7 @@ mix_ink(ppmpixel p, int c, unsigned int a)
   }
 }
 
-void 
+void
 merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color)
 {
 
@@ -270,7 +270,7 @@ merge_line(line_type *p, unsigned char *l, int startl, int stopl, int color)
 }
 
 void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
-                  int left_ignore) 
+                  int left_ignore)
 {
 
   /* src is a pointer to a bit stream which is composed of fields of height
@@ -300,7 +300,7 @@ void expand_line (unsigned char *src, unsigned char *dst, int height, int skip,
   }
 }
 
-void write_output(FILE *fp_w) 
+void write_output(FILE *fp_w)
 {
   int c,l,p,left,right,first,last,width,height,i;
   unsigned int amount;
@@ -364,7 +364,7 @@ void write_output(FILE *fp_w)
 }
 
 #if 0
-int num_bits_zero_lsb(int i,int max) 
+int num_bits_zero_lsb(int i,int max)
 {
 
   int n;
@@ -374,7 +374,7 @@ int num_bits_zero_lsb(int i,int max)
 
 }
 
-int num_bits_zero_msb(int i, int max) 
+int num_bits_zero_msb(int i, int max)
 {
 
   int n;
@@ -385,7 +385,7 @@ int num_bits_zero_msb(int i, int max)
 }
 #endif
 
-void find_white(unsigned char *buf,int npix, int *left, int *right) 
+void find_white(unsigned char *buf,int npix, int *left, int *right)
 {
 
 /* If a line has white borders on either side, count the number of
@@ -463,7 +463,7 @@ int update_page(unsigned char *buf, /* I - pixel data               */
 		int n,              /* I - width of area in pixels  */
 		int color,          /* I - color of pixel data      */
 		int density         /* I - horizontal density in dpi  */
-		) 
+		)
 {
 
   int y,skip,oldstart,oldstop,mi;
@@ -495,7 +495,9 @@ int update_page(unsigned char *buf, /* I - pixel data               */
        y<pstate.yposition+m*(pstate.microweave?1:pstate.nozzle_separation);
        y+=(pstate.microweave?1:pstate.nozzle_separation),mi++) {
     if (y>=pstate.bottom_margin) {
-      fprintf(stderr,"Warning. Unprinter out of unpaper.\n");
+      fprintf(stderr,
+	      "Warning. Unprinter out of unpaper (limit %d, position %d).\n",
+	      pstate.bottom_margin, y);
       return(1);
     }
     find_white(buf+mi*((n*pstate.bpp+7)/8),n,&left_white,&right_white);
@@ -530,20 +532,64 @@ int update_page(unsigned char *buf, /* I - pixel data               */
   return(0);
 }
 
+#define get1(error)				\
+do						\
+{						\
+  if (!(count=fread(&ch,1,1,fp_r)))		\
+    {						\
+      fprintf(stderr, "%s at %d (%x), read %d",	\
+	      error, counter, counter, count);	\
+      eject=1;					\
+      continue;					\
+    }						\
+  else						\
+    counter+=count;				\
+} while (0)
 
+#define get2(error)				\
+do						\
+{						\
+  if (!(count=fread(minibuf,1,2,fp_r)))		\
+    {						\
+      fprintf(stderr, "%s at %d (%x), read %d",	\
+	      error, counter, counter, count);	\
+      eject=1;					\
+      continue;					\
+    }						\
+  else						\
+    {						\
+      counter+=count;				\
+      sh=minibuf[0]+minibuf[1]*256;		\
+    }						\
+} while (0)
 
-#define get1(error) if (!(count=fread(&ch,1,1,fp_r)))\
-{fprintf(stderr,error);eject=1;continue;} else counter+=count;
+#define getn(n,error) 				\
+do						\
+{						\
+  if (!(count=fread(buf,1,n,fp_r)))		\
+    {						\
+      fprintf(stderr, "%s at %d (%x), read %d",	\
+	      error, counter, counter, count);	\
+      eject=1;					\
+      continue;					\
+    }						\
+  else						\
+    counter+=count;				\
+} while (0)
 
-#define get2(error) {if(!(count=fread(minibuf,1,2,fp_r))){\
-fprintf(stderr,error);eject=1;continue;} else counter+=count;\
-sh=minibuf[0]+minibuf[1]*256;}
-
-#define getn(n,error) if (!(count=fread(buf,1,n,fp_r)))\
-{fprintf(stderr,error);eject=1;continue;} else counter+=count;
-
-#define getnoff(n,offset,error) if (!(count=fread(buf+offset,1,n,fp_r))){\
-fprintf(stderr,error);eject=1;continue;} else counter+=count;
+#define getnoff(n,offset,error)			\
+do						\
+{						\
+  if (!(count=fread(buf+offset,1,n,fp_r)))	\
+    {						\
+      fprintf(stderr, "%s at %d (%x), read %d",	\
+	      error, counter, counter, count);	\
+      eject=1;					\
+      continue;					\
+    }						\
+  else						\
+    counter+=count;				\
+} while (0)
 
 void parse_escp2(FILE *fp_r)
 {
@@ -657,7 +703,7 @@ void parse_escp2(FILE *fp_r)
                 getn(bufsize,"Error reading raster data!\n");
                 update_page(buf,bufsize,m,n,currentcolor,density);
                 break;
-              case 1:  /* run height encoding */
+              case 1:  /* run length encoding */
                 for (i=0;(!eject)&&(i<(m*((n*pstate.bpp+7)/8)));) {
                   get1("Error reading counter!\n");
                   if (ch<128) {
@@ -793,6 +839,8 @@ void parse_escp2(FILE *fp_r)
                     pstate.relative_vertical_units=
 		    pstate.horizontal_spacing=
                     pstate.absolute_vertical_units=3600/buf[0];
+		    if (pstate.page_management_units < 720)
+		      pstate.extraskip = 1;
 		    fprintf(stderr, "Setting units to 1/%d\n",
 			    pstate.absolute_horizontal_units);
                     break;
@@ -804,11 +852,11 @@ void parse_escp2(FILE *fp_r)
                     pstate.relative_horizontal_units=
 		    pstate.horizontal_spacing=
                     pstate.absolute_horizontal_units=(buf[4]*256+buf[3])/buf[2];
-		    fprintf(stderr, "Setting page management to 1/%d\n",
+		    fprintf(stderr, "Setting page management units to 1/%d\n",
 			    pstate.page_management_units);
-		    fprintf(stderr, "Setting vertical to 1/%d\n",
+		    fprintf(stderr, "Setting vertical units to 1/%d\n",
 			    pstate.relative_vertical_units);
-		    fprintf(stderr, "Setting horizontal to 1/%d\n",
+		    fprintf(stderr, "Setting horizontal units to 1/%d\n",
 			    pstate.relative_horizontal_units);
                     break;
                 }
@@ -821,12 +869,8 @@ void parse_escp2(FILE *fp_r)
                     case 0x00:
                     case 0x30:pstate.microweave=0;
                         break;
-                    case 0x01:
-                    case 0x31:pstate.microweave=1;
-                         break;
-                    default:fprintf(stderr,"Unknown Microweave mode 0x%X.\n",
-                                    buf[0]);
-
+		    default:pstate.microweave=1;
+                        break;
                   }
                 }
                 break;
@@ -843,6 +887,8 @@ void parse_escp2(FILE *fp_r)
                     } else {
                       pstate.bpp=1;
                     }
+		    fprintf(stderr, "Setting dot size to 0x%x (bits %d)\n",
+			    pstate.dotsize, pstate.bpp);
                   }
                 }
                 break;
@@ -857,7 +903,6 @@ void parse_escp2(FILE *fp_r)
                     pstate.bottom_margin=buf[3]*256+buf[2];
                     break;
                   case 8:
-                    fprintf(stderr,"Warning!  Using undocumented 8 byte page format command.\n");
                     pstate.top_margin=buf[3]<<24|buf[2]<<16|buf[1]<<8|buf[0];
                     pstate.bottom_margin=buf[7]<<24|buf[6]<<16|buf[5]<<8|buf[4];
                     break;
@@ -872,6 +917,12 @@ void parse_escp2(FILE *fp_r)
                   }
                   page=(line_type **)xcalloc(pstate.bottom_margin,
                                   sizeof(line_type *));
+		  fprintf(stderr, "Setting top margin to %d (%.3f)\n",
+			  pstate.top_margin,
+			  (double) pstate.top_margin / pstate.page_management_units);
+		  fprintf(stderr, "Setting bottom margin to %d (%.3f)\n",
+			  pstate.bottom_margin,
+			  (double) pstate.bottom_margin / pstate.page_management_units);
                   /* FIXME: what is cut sheet paper??? */
                 }
                 break;
@@ -929,6 +980,25 @@ void parse_escp2(FILE *fp_r)
 	      case 's':		/* Set print speed */
 		break;
               case 'S': /* set paper dimensions */
+		switch (bufsize) {
+		case 4:
+		  i = (buf[1] << 16) | buf[0];
+		  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  i = (buf[3] << 16) | buf[2];
+		  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  break;
+		case 8:
+		  i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
+		  fprintf(stderr, "Setting paper width to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  fprintf(stderr, "Setting paper height to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  break;
+		default:
+		  fprintf(stderr, "Invalid set paper dimensions command.\n");
+		}
                 break;
 	      case 'D':
 		if (bufsize != 4)
@@ -941,9 +1011,11 @@ void parse_escp2(FILE *fp_r)
 		    pstate.nozzle_separation =
 		      pstate.absolute_vertical_units / (res_base / buf[2]);
 		    pstate.horizontal_spacing = res_base / buf[3];
-		    fprintf(stderr, "Setting vertical spacing to %d\n",
+		    fprintf(stderr, "Setting nozzle separation to %d\n",
 			    pstate.nozzle_separation);
-		    fprintf(stderr, "Setting horizontal spacing to %d\n",
+		    fprintf(stderr, "Setting vertical spacing to 1/%d\n",
+			    res_base / buf[2]);
+		    fprintf(stderr, "Setting horizontal spacing to 1/%d\n",
 			    pstate.horizontal_spacing);
 		  }
 		break;
@@ -975,6 +1047,20 @@ void parse_escp2(FILE *fp_r)
                                      pstate.absolute_horizontal_units);
                 break;
               case 'C': /* set page height */
+		switch (bufsize) {
+		case 2:
+		  i = (buf[1] << 8) | buf[0];
+		  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  break;
+		case 4:
+		  i=(buf[3]<<24)|(buf[2]<<16)|(buf[1]<<8)|buf[0];
+		  fprintf(stderr, "Setting page height to %d (%.3f)\n", i,
+			  (double) i / pstate.page_management_units);
+		  break;
+		default:
+		  fprintf(stderr, "Invalid set page height command.\n");
+		}
                 break;
               default:
                 fprintf(stderr,"Warning: Unknown command ESC ( 0x%X at 0x%08X.\n",ch,counter-5-bufsize);
@@ -1274,72 +1360,100 @@ int main(int argc,char *argv[])
   char *s;
   char *UNPRINT;
   FILE *fp_r,*fp_w;
+  int force_extraskip = -1;
 
-    unweave=0;
-    pstate.nozzle_separation=6;
-    fp_r = fp_w = NULL;
-    for (arg=1;arg<argc;arg++) {
-      if (argv[arg][0]=='-') {
-        switch (argv[arg][1]) {
-          case 0:if (fp_r)
-                   fp_w=stdout;
-                 else
-                   fp_r=stdin;
-                 break;
-          case 'n':if (argv[arg][2]) {
-                     s=argv[arg]+2;
-                   } else {
-                     if (argc<=arg+1) {
-                       fprintf(stderr,"Missing nozzle separation\n");
-                       exit(-1);
-                     } else {
-                       s=argv[++arg];
-                     }
-                   }
-                   if (!sscanf(s,"%d",&pstate.nozzle_separation)) {
-                     fprintf(stderr,"Error parsing nozzle separation\n");
-                     exit(-1);
-                   }
-                  break;
-          case 'u':unweave=1;
-                 break;
-        }
+  unweave=0;
+  pstate.nozzle_separation=6;
+  fp_r = fp_w = NULL;
+  for (arg=1;arg<argc;arg++) {
+    if (argv[arg][0]=='-')
+      {
+	switch (argv[arg][1])
+	  {
+	  case 0:
+	    if (fp_r)
+	      fp_w=stdout;
+	    else
+	      fp_r=stdin;
+	    break;
+	  case 'n':
+	    if (argv[arg][2]) {
+	      s=argv[arg]+2;
+	    } else {
+	      if (argc<=arg+1) {
+		fprintf(stderr,"Missing nozzle separation\n");
+		exit(-1);
+	      } else {
+		s=argv[++arg];
+	      }
+	    }
+	    if (!sscanf(s,"%d",&pstate.nozzle_separation)) {
+	      fprintf(stderr,"Error parsing nozzle separation\n");
+	      exit(-1);
+	    }
+	    break;
+	  case 's':
+	    if (argv[arg][2]) {
+	      s=argv[arg]+2;
+	    } else {
+	      if (argc<=arg+1) {
+		fprintf(stderr,"Missing extra skip\n");
+		exit(-1);
+	      } else {
+		s=argv[++arg];
+	      }
+	    }
+	    if (!sscanf(s,"%d",&force_extraskip)) {
+	      fprintf(stderr,"Error parsing extra skip\n");
+	      exit(-1);
+	    }
+	    break;
+	  case 'u':
+	    unweave=1;
+	    break;
+	  }
       } else {
-        if (fp_r) {
-          if (!(fp_w = fopen(argv[arg],"w"))) {
-            perror("Error opening ouput file");
-            exit(-1);
-          }
-        } else {
-          if (!(fp_r = fopen(argv[arg],"r"))) {
-            perror("Error opening input file");
-            exit(-1);
-          }
-        }
+      if (fp_r) {
+	if (!(fp_w = fopen(argv[arg],"w"))) {
+	  perror("Error opening ouput file");
+	  exit(-1);
+	}
+      } else {
+	if (!(fp_r = fopen(argv[arg],"r"))) {
+	  perror("Error opening input file");
+	  exit(-1);
+	}
       }
     }
-    if (!fp_r)
-      fp_r=stdin;
-    if (!fp_w)
-      fp_w=stdout;
+  }
+  if (!fp_r)
+    fp_r=stdin;
+  if (!fp_w)
+    fp_w=stdout;
 
-    if (unweave) {
-      pstate.nozzle_separation=1;
-    }
-    pstate.nozzles=96;
+  if (unweave) {
+    pstate.nozzle_separation=1;
+  }
+  pstate.nozzles=96;
 
-    UNPRINT= getenv("UNPRINT");
-    if ((UNPRINT)&&(!strcmp(UNPRINT,"canon"))) {
+  UNPRINT= getenv("UNPRINT");
+  if ((UNPRINT)&&(!strcmp(UNPRINT,"canon"))) {
+    if (force_extraskip > 0)
+      pstate.extraskip = force_extraskip;
+    else
       pstate.extraskip=1;
-      parse_canon(fp_r);
-    } else {
-      pstate.extraskip=2; 
-      parse_escp2(fp_r);
-    }
-    fprintf(stderr,"Done reading.\n");
-    write_output(fp_w);
-    fclose(fp_w);
-    fprintf(stderr,"Image dump complete.\n");
+    parse_canon(fp_r);
+  } else {
+    if (force_extraskip > 0)
+      pstate.extraskip = force_extraskip;
+    else
+      pstate.extraskip=2;
+    parse_escp2(fp_r);
+  }
+  fprintf(stderr,"Done reading.\n");
+  write_output(fp_w);
+  fclose(fp_w);
+  fprintf(stderr,"Image dump complete.\n");
 
-    return(0);
+  return(0);
 }

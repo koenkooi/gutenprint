@@ -1,5 +1,5 @@
 /*
- * "$Id: print-version.c,v 1.2.4.2 2001/07/10 20:22:48 sharkey Exp $"
+ * "$Id: print-version.c,v 1.2.4.3 2001/09/14 01:26:37 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,7 +30,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 

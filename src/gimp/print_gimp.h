@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.3.2.4 2001/07/10 20:22:47 sharkey Exp $"
+ * "$Id: print_gimp.h,v 1.3.2.5 2001/09/14 01:26:36 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -48,7 +48,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 
 /*
@@ -67,9 +67,6 @@ typedef struct		/**** Printer List ****/
 
 #define THUMBNAIL_MAXW	(128)
 #define THUMBNAIL_MAXH	(128)
-#define MIN_CUSTOM_WIDTH (1 * 72)
-#define MIN_CUSTOM_HEIGHT (2 * 72)
-
 
 extern gint    thumbnail_w, thumbnail_h, thumbnail_bpp;
 extern guchar *thumbnail_data;
@@ -90,6 +87,7 @@ extern gint             saveme;
 
 extern GtkWidget *gimp_color_adjust_dialog;
 extern GtkWidget *dither_algo_combo;
+extern GtkTooltips *tooltips;
 extern stp_vars_t *pv;
 
 /*
@@ -103,14 +101,16 @@ extern stp_image_t *Image_GimpDrawable_new(GimpDrawable *drawable);
 extern int add_printer(const gp_plist_t *key, int add_only);
 extern void initialize_printer(gp_plist_t *printer);
 extern void gimp_update_adjusted_thumbnail (void);
-extern void gimp_plist_build_combo         (GtkWidget      *combo,
-					    gint            num_items,
-					    gchar         **items,
-					    const gchar          *cur_item,
-					    const gchar		*def_value,
-					    GtkSignalFunc   callback,
-					    gint           *callback_id);
+extern void gimp_plist_build_combo         (GtkWidget     *combo,
+					    gint          num_items,
+					    stp_param_t   *items,
+					    const gchar   *cur_item,
+					    const gchar	  *def_value,
+					    GtkSignalFunc callback,
+					    gint          *callback_id);
 
+extern void gimp_invalidate_frame(void);
+extern void gimp_invalidate_preview_thumbnail(void);
 extern void gimp_do_color_updates    (void);
 extern void gimp_redraw_color_swatch (void);
 extern void gimp_build_dither_combo  (void);
@@ -119,5 +119,8 @@ extern void gimp_update_adjusted_thumbnail   (void);
 extern void gimp_create_main_window (void);
 extern void gimp_set_color_sliders_active(int active);
 extern void gimp_writefunc (void *file, const char *buf, size_t bytes);
+extern void set_adjustment_tooltip(GtkTooltips *tooltips,
+				   GtkObject *adjustment,
+				   const gchar *tip, const gchar *private);
 
 #endif  /* __PRINT_GIMP_H__ */

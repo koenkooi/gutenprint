@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.4.2.3 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: testdither.c,v 1.4.2.4 2001/09/14 01:26:37 sharkey Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -26,7 +26,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 #include "../lib/libprintut.h"
 #include "../src/main/gimp-print-internal.h"
@@ -736,5 +736,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.4.2.3 2001/06/30 03:20:00 sharkey Exp $".
+ * End of "$Id: testdither.c,v 1.4.2.4 2001/09/14 01:26:37 sharkey Exp $".
  */

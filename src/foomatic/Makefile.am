@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.4 2001/07/23 15:07:50 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.5 2001/09/14 01:26:35 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,13 @@ LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 ## Programs
 
-FOOMATIC_NOINST_BIN = printer_options paper_sizes gimp-print-version stp_limits
+FOOMATIC_NOINST_BIN = printer_options paper_sizes gimp-print-version \
+	stp_limits printers
 
 noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
 
-EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes stp_limits
+EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes \
+	stp_limits printers
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = $(LIBGIMPPRINT_LIBS)
@@ -55,6 +57,10 @@ stp_limits_SOURCES = stp_limits.c
 stp_limits_LDADD = $(LIBGIMPPRINT_LIBS)
 stp_limits_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
+printers_SOURCES = printers.c
+printers_LDADD = $(LIBGIMPPRINT_LIBS)
+printers_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
 
 ## Rules
 
@@ -64,6 +70,8 @@ else
 INSTALL_DATA_LOCAL_DEPS =
 endif
 
+all-local: $(INSTALL_DATA_LOCAL_DEPS)
+
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  foomatic-kitload -k foomatic-db ; \
@@ -72,9 +80,12 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 clean-local:
 	-rm -rf foomatic-db
 
-foomatic-data: stp_limits foomatic-generator
+foomatic-data: foomatic-stamp
+
+foomatic-stamp: foomatic-generator $(EXTRA_PROGRAMS)
 	-rm -rf foomatic-db
 	./foomatic-generator
+	touch foomatic-stamp
 
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../../src/main

@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.2.2.4 2001/07/23 15:07:50 sharkey Exp $"
+ * "$Id: printer_options.c,v 1.2.2.5 2001/09/14 01:26:35 sharkey Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -27,7 +27,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 #include "../../lib/libprintut.h"
 
@@ -50,7 +50,7 @@ main(int argc, char **argv)
     {
       const stp_printer_t p = stp_get_printer_by_index(i);
       const stp_vars_t pv = stp_printer_get_printvars(p);
-      char **retval;
+      stp_param_t *retval;
       const char *retval1;
       int count;
       int tcount = 0;
@@ -68,9 +68,11 @@ main(int argc, char **argv)
 	    {
 	      for (j = 0; j < count; j++)
 		{
-		  printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-			 stp_printer_get_driver(p), params[k], retval[j]);
-		  free(retval[j]);
+		  printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+			 stp_printer_get_driver(p), params[k], retval[j].name,
+			 retval[j].text);
+		  free((void *)retval[j].name);
+		  free((void *)retval[j].text);
 		}
 	      free(retval);
 	    }
@@ -82,28 +84,34 @@ main(int argc, char **argv)
 		 stp_printer_get_driver(p), "Dither",
 		 stp_dither_algorithm_name(0));
 	  for (k = 0; k < stp_dither_algorithm_count(); k++)
-	    printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
+	    printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
 		   stp_printer_get_driver(p), "Dither",
-		   stp_dither_algorithm_name(k));
+		   stp_dither_algorithm_name(k),
+		   stp_dither_algorithm_text(k));
 	  if (stp_get_output_type(pv) == OUTPUT_COLOR)
 	    {
 	      printf("$defaults{'%s'}{'%s'} = '%s';\n",
 		     stp_printer_get_driver(p), "Color", "Color");
-	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Color", "Color");
-	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Color", "Grayscale");
-	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Color", "BlackAndWhite");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "Color",
+		     "Color");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "Grayscale",
+		     "Gray Scale");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "BlackAndWhite",
+		     "Black and White");
 	    }
 	  else
 	    {
 	      printf("$defaults{'%s'}{'%s'} = '%s';\n",
 		     stp_printer_get_driver(p), "Color", "Grayscale");
-	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Color", "Grayscale");
-	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Color", "BlackAndWhite");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "Grayscale",
+		     "Grayscale");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = '%s';\n",
+		     stp_printer_get_driver(p), "Color", "BlackAndWhite",
+		     "Black and White");
 	    }
 	}
     }

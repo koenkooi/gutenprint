@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.1.4.2 2001/06/30 03:20:00 sharkey Exp $"
+ * "$Id: printdefy.y,v 1.1.4.3 2001/09/14 01:26:37 sharkey Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -75,7 +75,7 @@ output_the_printer(void)
   printf("    &stp_%s_printfuncs,\n", printfuncs[thePrinter.printvars.top]);
   printf("    {\n");
   printf("      \"\",\n");	/* output_to */
-  printf("      \"\",\n");	/* driver */
+  printf("      %s,\n", thePrinter.printvars.driver);	/* driver */
   printf("      \"\",\n");	/* ppd_file */
   printf("      \"\",\n");	/* resolution */
   printf("      \"\",\n");	/* media_size */

@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.8.4.5 2001/07/23 15:07:50 sharkey Exp $"
+ * "$Id: escputil.c,v 1.8.4.6 2001/09/14 01:26:35 sharkey Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -55,7 +55,6 @@ void do_head_clean(void);
 void do_help(int code);
 void do_identify(void);
 void do_ink_level(void);
-void do_ink_change(void);
 void do_nozzle_check(void);
 void do_status(void);
 int do_print_cmd(void);
@@ -90,11 +89,8 @@ struct option optlist[] =
   { "nozzle-check",	0,	NULL,	(int) 'n' },
   { "align-head",	0,	NULL,	(int) 'a' },
   { "align-color",	0,	NULL,	(int) 'o' },
-#if 0
-  { "change-ink",       0,      NULL,   (int) 'x' },
-#endif
   { "status",           0,      NULL,   (int) 's' },
-  { "usb",		0,	NULL,	(int) 'u' },
+  { "new",		0,	NULL,	(int) 'u' },
   { "help",		0,	NULL,	(int) 'h' },
   { "identify",		0,	NULL,	(int) 'd' },
   { "model",		1,	NULL,	(int) 'm' },
@@ -119,19 +115,15 @@ Usage: escputil [-c | -n | -a | -i | -o | -s | -d]\n\
                        damage to the printer.\n\
     -o|--align-color   Align the color print head (Stylus Color 480 and 580\n\
                        only).  CAUTION: Misuse of this utility may result in\n\
-                       poor print quality and/or damage to the printer.\n"
-#if 0
-"\
-    -x|--change-ink    Change the ink cartridge on the Stylus Color 480/580.\n"
-#endif
-"\
+                       poor print quality and/or damage to the printer.\n\
     -s|--status        Retrieve printer status.\n\
     -i|--ink-level     Obtain the ink level from the printer.  This requires\n\
                        read/write access to the raw printer device.\n\
     -d|--identify      Query the printer for make and model information.\n\
                        This requires read/write access to the raw printer\n\
                        device.\n\
-    -u|--usb           The printer is connected via USB.\n\
+    -u|--new           The printer is a new printer (Stylus Color 740 or\n\
+                       newer).\n\
     -h|--help          Print this help message.\n\
     -q|--quiet         Suppress the banner.\n\
     -m|--model         Specify the precise printer model for head alignment.\n";
@@ -153,17 +145,13 @@ Usage: escputil [-c | -n | -a | -i | -o | -s | -d]\n\
           damage to the printer.\n\
     -o Align the color print head (Stylus Color 480 and 580\n\
           only).  CAUTION: Misuse of this utility may result in\n\
-          poor print quality and/or damage to the printer.\n"
-#if 0
-    -x Change the ink cartridge on the Stylus Color 480/580.\n
-#endif
-"\
+          poor print quality and/or damage to the printer.\n\
     -s Retrieve printer status.\n\
     -i Obtain the ink level from the printer.  This requires\n\
           read/write access to the raw printer device.\n\
     -d Query the printer for make and model information.  This\n\
           requires read/write access to the raw printer device.\n\
-    -u The printer is connected via USB.\n\
+    -u The printer is a new printer (Stylus Color 740 or newer).\n\
     -h Print this help message.\n\
     -q Suppress the banner.\n\
     -m Specify the precise printer model for head alignment.\n";
@@ -182,8 +170,10 @@ typedef struct
 
 stp_printer_t printer_list[] =
 {
-  { "C20",	"Stylus C20",		3,	15,	0,	2,	9 },
-  { "C40",	"Stylus C40",		3,	15,	0,	2,	9 },
+  { "C20sx",	"Stylus C20sx",		3,	15,	0,	2,	9 },
+  { "C20ux",	"Stylus C20ux",		3,	15,	0,	2,	9 },
+  { "C40sx",	"Stylus C40sx",		3,	15,	0,	2,	9 },
+  { "C40ux",	"Stylus C40ux",		3,	15,	0,	2,	9 },
   { "color",	"Stylus Color",		1,	7,	0,	0,	0 },
   { "pro",	"Stylus Color Pro",	1,	7,	0,	0,	0 },
   { "pro-xl",	"Stylus Color Pro XL",	1,	7,	0,	0,	0 },
@@ -244,7 +234,7 @@ char *raw_device = NULL;
 char *printer_model = NULL;
 char printer_cmd[1025];
 int bufpos = 0;
-int isUSB = 0;
+int isnew = 0;
 
 void
 do_help(int code)
@@ -261,15 +251,19 @@ do_help(int code)
 }
 
 static void
+exit_packet_mode(void)
+{
+  static char hdr[] = "\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
+  memcpy(printer_cmd + bufpos, hdr, sizeof(hdr) - 1); /* DON'T include null! */
+  bufpos += sizeof(hdr) - 1;
+}
+
+static void
 initialize_print_cmd(void)
 {
   bufpos = 0;
-  if (isUSB)
-    {
-      static char hdr[] = "\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
-      memcpy(printer_cmd, hdr, sizeof(hdr) - 1); /* Do NOT include the null! */
-      bufpos = sizeof(hdr) - 1;
-    }
+  if (isnew)
+    exit_packet_mode();
 }
 
 int
@@ -282,9 +276,9 @@ main(int argc, char **argv)
     {
 #ifdef __GNU_LIBRARY__
       int option_index = 0;
-      c = getopt_long(argc, argv, "P:r:icnaoxsduqm:", optlist, &option_index);
+      c = getopt_long(argc, argv, "P:r:icnaosduqm:", optlist, &option_index);
 #else
-      c = getopt(argc, argv, "P:r:icnaoxsduqm:");
+      c = getopt(argc, argv, "P:r:icnaosduqm:");
 #endif
       if (c == -1)
 	break;
@@ -297,7 +291,6 @@ main(int argc, char **argv)
 	case 'i':
 	case 'n':
 	case 'a':
-	case 'x':
 	case 'd':
 	case 's':
 	case 'o':
@@ -333,7 +326,7 @@ main(int argc, char **argv)
 	  strcpy(printer_model, optarg);
 	  break;
 	case 'u':
-	  isUSB = 1;
+	  isnew = 1;
 	  break;
 	case 'h':
 	  do_help(0);
@@ -368,9 +361,6 @@ main(int argc, char **argv)
       break;
     case 'd':
       do_identify();
-      break;
-    case 'x':
-      do_ink_change();
       break;
     case 's':
       do_status();
@@ -479,38 +469,10 @@ read_from_printer(int fd, char *buf, int bufsize)
       (void) poll(&ufds, 1, 1000);
 #endif
       status = read(fd, buf, bufsize - 1);
-#ifndef HAVE_POLL
       if (status <= 0)
 	sleep(1);
-#endif
     }
   while ((status == 0) && (--retry != 0));
-  return status;
-}
-
-static int
-read_from_printer_forever(int fd, char *buf, int bufsize)
-{
-#ifdef HAVE_POLL
-  struct pollfd ufds;
-#endif
-  int status;
-  memset(buf, 0, bufsize);
-  do
-    {
-#ifdef HAVE_POLL
-      ufds.fd = fd;
-      ufds.events = POLLIN;
-      ufds.revents = 0;
-      (void) poll(&ufds, 1, 1000);
-#endif
-      status = read(fd, buf, bufsize - 1);
-#ifndef HAVE_POLL
-      if (status <= 0)
-	sleep(1);
-#endif
-    }
-  while (status == 0);
   return status;
 }
 
@@ -559,7 +521,7 @@ add_resets(int count)
     }
 }
 
-const char *colors[] = 
+const char *colors[] =
 {
   "Black", "Cyan", "Magenta", "Yellow", "Light Cyan", "Light Magenta", 0
 };
@@ -584,7 +546,8 @@ do_ink_level(void)
 	      strerror(errno));
       exit(1);
     }
-  do_remote_cmd("IQ", 1, 1);
+  initialize_print_cmd();
+  do_remote_cmd("ST", 2, 0, 1);
   add_resets(2);
   if (write(fd, printer_cmd, bufpos) < bufpos)
     {
@@ -597,7 +560,10 @@ do_ink_level(void)
       fprintf(stderr, "Cannot read from %s: %s\n", raw_device,strerror(errno));
       exit(1);
     }
-  ind = strchr(buf, 'I');
+  ind = buf;
+  do
+    ind = strchr(ind, 'I');
+  while (ind && ind[1] != 'Q' && (ind[1] != '\0' && ind[2] != ':'));
   if (!ind || ind[1] != 'Q' || ind[2] != ':')
     {
       fprintf(stderr, "Cannot parse output from printer\n");
@@ -625,6 +591,11 @@ do_ink_level(void)
       printf("%20s    %3d\n", colors[i], val);
       ind += 2;
     }
+  initialize_print_cmd();
+  do_remote_cmd("ST", 2, 0, 0);
+  add_resets(2);
+  (void) write(fd, printer_cmd, bufpos);
+  (void) read(fd, buf, 1024);
   (void) close(fd);
   exit(0);
 }
@@ -647,6 +618,9 @@ do_identify(void)
 	      strerror(errno));
       exit(1);
     }
+  initialize_print_cmd();
+  add_resets(2);
+  (void) write(fd, printer_cmd, bufpos);
   bufpos = 0;
   sprintf(printer_cmd, "\033\001@EJL ID\r\n");
   if (write(fd, printer_cmd, strlen(printer_cmd)) < strlen(printer_cmd))
@@ -699,6 +673,11 @@ do_status(void)
       fprintf(stderr, "Cannot read from %s: %s\n", raw_device,strerror(errno));
       exit(1);
     }
+  initialize_print_cmd();
+  do_remote_cmd("ST", 2, 0, 0);
+  add_resets(2);
+  (void) write(fd, printer_cmd, bufpos);
+  (void) read(fd, buf, 1024);
   while ((where = strchr(buf, ';')) != NULL)
     *where = '\n';
   printf("%s\n", buf);
@@ -879,8 +858,8 @@ do_align(void)
     }
   while (printer->short_name && notfound)
     {
-      if (!strcmp(printer_model, printer->short_name) ||
-	  !strcmp(printer_model, printer->long_name))
+      if (!strcasecmp(printer_model, printer->short_name) ||
+	  !strcasecmp(printer_model, printer->long_name))
 	{
 	  passes = printer->passes;
 	  choices = printer->choices;
@@ -912,7 +891,6 @@ do_align(void)
     top:
       add_newlines(7 * (curpass - 1));
       do_remote_cmd("DT", 3, 0, curpass - 1, 0);
-/*      do_remote_cmd("DU", 6, 0, curpass, 0, 9, 0, curpass - 1); */
       if (do_print_cmd())
 	printer_error();
     reread:
@@ -1157,8 +1135,8 @@ do_align_color(void)
     }
   while (printer->short_name && notfound)
     {
-      if (!strcmp(printer_model, printer->short_name) ||
-	  !strcmp(printer_model, printer->long_name))
+      if (!strcasecmp(printer_model, printer->short_name) ||
+	  !strcasecmp(printer_model, printer->long_name))
 	{
 	  passes = printer->color_passes;
 	  choices = printer->color_choices;
@@ -1190,10 +1168,9 @@ do_align_color(void)
   printf("Please place a fresh sheet of paper in your printer to begin the head\n");
   printf("alignment procedure.\n");
   inbuf = do_get_input("Press enter to continue > ");
-  initialize_print_cmd();
   for (curpass = 1; curpass <= passes; curpass ++)
     {
-      add_newlines(7 * (curpass - 1));
+      initialize_print_cmd();
       do_remote_cmd("DU", 6, 0, curpass, 0, 9, 0, curpass - 1);
       if (do_print_cmd())
 	printer_error();
@@ -1212,6 +1189,8 @@ do_align_color(void)
   printf("Type a pattern number, or '?' for help.\n");
   fflush(stdout);
   inbuf = do_get_input("> ");
+  if (!inbuf)
+    exit(1);
   switch (inbuf[0])
     {
     case 'h':
@@ -1315,292 +1294,6 @@ do_align_color(void)
     }
   printf("Final command was not confirmed.\n");
   goto read_final;
-}
-
-const char *ink_change_help = "\
-Please read these instructions very carefully before proceeding.\n\
-\n\
-This utility lets you change either or both of the ink cartridges of your\n\
-Epson Stylus Color 480 or Stylus Color 580 printer.  The printer must be\n\
-left on at all stages of the procedure.\n\
-\n\
-The utility will first ask you whether you wish to change the black ink\n\
-cartridge, and then whether you wish to change the color ink cartridge.\n\
-You must start the procedure with your printer connected to the computer\n\
-and turned on.  The printer cover should be left in the normal (down)\n\
-position until you are asked to open it.\n\
-\n\
-WARNING: THIS FUNCTION IS NOT YET TESTED!  It may not work, and it may\n\
-damage your printer!\n";
-
-const char *cartridge_change_instructions = "\
-Please open the printer cover.\n\
-\n\
-Lift the clamp over the %s ink cartridge as far as it will go.\n\
-The cartridge will be partially ejected from the cartridge holder.\n\
-Remove the cartridge from the printer.\n\
-\n\
-Now insert a new %s cartridge into the holder.  You must remove\n\
-the YELLOW tape seal from the cartridge for it to work correctly.\n\
-Do not attempt to remove the clear tape seal.\n\
-When you insert the cartridge, the blue label must face up.\n\
-Push the ink cartridge clamp down until it locks into place.\n\
-\n\
-";
-
-static void
-cartridge_change_prompt(const char *cartridge)
-{
-  printf(cartridge_change_instructions, cartridge, cartridge);
-  do_get_input("Please type <enter> to continue.\n");
-}
-
-static int
-retrieve_status(const char *s, const char *tag)
-{
-  int i;
-  int len = strlen(s);
-  int tlen = strlen(tag);
-  if (len < tlen)
-    return -2;
-  for (i = 1; i < len - tlen; i++)
-    {
-      if (strcmp(s + i, tag) == 0 &&
-	  (s[i - 1] == ';' || s[i - 1] == '\n') &&
-	  (s[i + tlen] == ':'))
-	return atoi(s + i + tlen + 1);
-    }
-  return -1;
-}
-
-void
-do_ink_change(void)
-{
-  char *inbuf;
-  int change_black = -1;
-  int change_color = -1;
-  int notfound = 1;
-  char buf[1024];
-  int fd;
-  int status;
-  stp_printer_t *printer = &printer_list[0];
-  int prstatus;
-  int prerror;
-
-  if (!raw_device)
-    {
-      printf("Ink cartridge change must be done with a raw device.\n");
-      do_help(1);
-    }
-  if (!printer_model)
-    {
-      char *pos = NULL;
-      char *spos = NULL;
-      printf("Attempting to detect printer model...");
-      fflush(stdout);
-      fd = open(raw_device, O_RDWR, 0666);
-      if (fd == -1)
-	{
-	  fprintf(stderr, "\nCannot open %s read/write: %s\n", raw_device,
-		  strerror(errno));
-	  exit(1);
-	}
-      bufpos = 0;
-      sprintf(printer_cmd, "\033\001@EJL ID\r\n");
-      if (write(fd, printer_cmd, strlen(printer_cmd)) < strlen(printer_cmd))
-	{
-	  fprintf(stderr, "\nCannot write to %s: %s\n", raw_device,
-		  strerror(errno));
-	  exit(1);
-	}
-      status = read_from_printer(fd, buf, 1024);
-      if (status < 0)
-	{
-	  fprintf(stderr, "\nCannot read from %s: %s\n", raw_device,
-		  strerror(errno));
-	  exit(1);
-	}
-      (void) close(fd);
-      pos = strchr(buf, (int) ';');
-      if (pos)
-	pos = strchr(pos + 1, (int) ';');
-      if (pos)
-	pos = strchr(pos, (int) ':');
-      if (pos)
-	spos = strchr(pos, (int) ';');
-      if (!pos)
-	{
-	  fprintf(stderr, "\nCannot detect printer type.  Please use -m to specify your printer model.\n");
-	  do_help(1);
-	}
-      if (spos)
-	*spos = '\000';
-      printer_model = pos + 1;
-      printf("%s\n\n", printer_model);
-    }
-  while (printer->short_name && notfound)
-    {
-      if (!strcmp(printer_model, printer->short_name) ||
-	  !strcmp(printer_model, printer->long_name))
-	{
-	  if (!printer->ink_change)
-	    {
-	      fprintf(stderr, "The %s printer requires ink cartridge change\n",
-		      printer->long_name);
-	      fprintf(stderr, "from the front panel.\n");
-	      exit(1);
-	    }
-	  notfound = 0;
-	}
-      else
-	printer++;
-    }
-  if (notfound)
-    {
-      printf("Printer model %s is not known.\n", printer_model);
-      do_help(1);
-    }
-  printf("%s", ink_change_help);
-  inbuf = do_get_input("Press enter to continue > ");
-  do
-    {
-      inbuf = do_get_input("Do you wish to change the black ink cartridge (Y/N)? ");
-      switch (inbuf[0])
-	{
-	case 'y':
-	case 'Y':
-	  change_black = 1;
-	  break;
-	case 'n':
-	case 'N':
-	  change_black = 0;
-	  break;
-	default:
-	  printf("Invalid response; you must answer 'Y' or 'N'\n");
-	}
-    } while (change_black < 0);
-  do
-    {
-      inbuf = do_get_input("Do you wish to change the color ink cartridge (Y/N)? ");
-      switch (inbuf[0])
-	{
-	case 'y':
-	case 'Y':
-	  change_color = 1;
-	  break;
-	case 'n':
-	case 'N':
-	  change_color = 0;
-	  break;
-	default:
-	  printf("Invalid response; you must answer 'Y' or 'N'\n");
-	}
-    } while (change_color < 0);
-  if (change_black == 0 && change_color == 0)
-    {
-      printf("Not changing either black or color cartridge.\n");
-      exit(0);
-    }
-
-  initialize_print_cmd();
-  isUSB = 0;
-
-  if (change_black)
-    {
-      do_remote_cmd("XI", 1, 3);
-      if (do_print_cmd())
-	printer_error();
-      cartridge_change_prompt("black");
-      if (change_color)
-	{
-	  printf("Preparing to change color cartridge, please wait.\n");
-	  fflush(stdout);
-	  initialize_print_cmd();
-	  do_remote_cmd("XI", 1, 0x80);
-	  if (do_print_cmd())
-	    printer_error();
-	  sleep(5);
-	}
-    }
-  if (change_color)
-    {
-      do_remote_cmd("XI", 1, 4);
-      if (do_print_cmd())
-	printer_error();
-      cartridge_change_prompt("color");
-    }
-  printf("Preparing to charge print heads, please wait.\n");
-  fflush(stdout);
-  initialize_print_cmd();
-  do_remote_cmd("XI", 1, 0x80);
-  if (do_print_cmd())
-    printer_error();
-  fd = open(raw_device, O_RDWR, 0666);
-  if (fd == -1)
-    {
-      fprintf(stderr, "\nCannot open %s read/write: %s\n", raw_device,
-	      strerror(errno));
-      exit(1);
-    }
-  do
-    {
-      initialize_print_cmd();
-      do_remote_cmd("CX", 1, 1);
-      if (write(fd, printer_cmd, bufpos) < bufpos)
-	{
-	  fprintf(stderr, "Cannot write to %s: %s\n", raw_device,
-		  strerror(errno));
-	  exit(1);
-	}
-
-      status = read_from_printer_forever(fd, buf, sizeof(buf));
-      if (status < 0)
-	{
-	  perror("Unable to read from printer");
-	  exit(1);
-	}
-      prstatus = 7;
-      if (strncmp(buf, "cx:00", 5) == 0)
-	{
-	  initialize_print_cmd();
-	  do_remote_cmd("ST", 2, 0, 1);
-	  if (write(fd, printer_cmd, bufpos) < bufpos)
-	    {
-	      fprintf(stderr, "Cannot write to %s: %s\n", raw_device,
-		      strerror(errno));
-	      exit(1);
-	    }
-	  status = read_from_printer_forever(fd, buf, 1024);
-	  if (status < 0)
-	    {
-	      fprintf(stderr, "Cannot read from %s: %s\n", raw_device,
-		      strerror(errno));
-	      exit(1);
-	    }
-	  prstatus = retrieve_status(buf, "ST");
-	  prerror = retrieve_status(buf, "ER");
-	  if (prstatus == 0 && prerror == 5)
-	    {
-	      if (change_color && change_black)
-		fprintf(stderr, "Black and/or color cartridge");
-	      else if (change_color)
-		fprintf(stderr, "Color");
-	      else
-		fprintf(stderr, "Black");
-	      fprintf(stderr, " is not correctly installed, or is empty.\n");
-	      fprintf(stderr, "Exiting...\n");
-	      exit(1);
-	    }
-	}
-      if (prstatus == 7)
-	sleep(1);
-    } while (prstatus == 7);
-  (void) close(fd);
-  initialize_print_cmd();
-  do_remote_cmd("EI", 1, 0);
-  if (do_print_cmd())
-    printer_error();
-  printf("Ink cartridge change complete.\n");
 }
 
 char *

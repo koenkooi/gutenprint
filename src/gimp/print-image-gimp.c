@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.2.4.1 2001/06/30 03:19:59 sharkey Exp $"
+ * "$Id: print-image-gimp.c,v 1.2.4.2 2001/09/14 01:26:36 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -89,7 +89,8 @@ static void Image_progress_conclude(stp_image_t *image);
 static void Image_note_progress(stp_image_t *image,
 				double current, double total);
 static void Image_progress_init(stp_image_t *image);
-static void Image_get_row(stp_image_t *image, unsigned char *data, int row);
+static stp_image_status_t Image_get_row(stp_image_t *image,
+					unsigned char *data, int row);
 static int Image_height(stp_image_t *image);
 static int Image_width(stp_image_t *image);
 static int Image_bpp(stp_image_t *image);
@@ -282,7 +283,7 @@ Image_height(stp_image_t *image)
   return i->h;
 }
 
-static void
+static stp_image_status_t
 Image_get_row(stp_image_t *image, unsigned char *data, int row)
 {
   Gimp_Image_t *i = (Gimp_Image_t *) (image->rep);
@@ -308,6 +309,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, int row)
 	    }
 	}
     }
+  return STP_IMAGE_OK;
 }
 
 static void
@@ -337,5 +339,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.2.4.1 2001/06/30 03:19:59 sharkey Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.2.4.2 2001/09/14 01:26:36 sharkey Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.4.6 2001/07/23 15:07:51 sharkey Exp $"
+ * "$Id: print.c,v 1.4.4.7 2001/09/14 01:26:36 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -346,7 +346,7 @@ run (char   *name,		/* I - Name of print program. */
 	  stp_set_media_source(vars, param[10].data.d_string);
 
           if (nparams > 11)
-	    stp_set_brightness(vars, param[11].data.d_int32);
+	    stp_set_brightness(vars, param[11].data.d_float);
 
           if (nparams > 12)
             stp_set_scaling(vars, param[12].data.d_float);
@@ -364,16 +364,16 @@ run (char   *name,		/* I - Name of print program. */
             stp_set_gamma(vars, param[16].data.d_float);
 
           if (nparams > 17)
-	    stp_set_contrast(vars, param[17].data.d_int32);
+	    stp_set_contrast(vars, param[17].data.d_float);
 
           if (nparams > 18)
-	    stp_set_cyan(vars, param[18].data.d_int32);
+	    stp_set_cyan(vars, param[18].data.d_float);
 
           if (nparams > 19)
-	    stp_set_magenta(vars, param[19].data.d_int32);
+	    stp_set_magenta(vars, param[19].data.d_float);
 
           if (nparams > 20)
-	    stp_set_yellow(vars, param[20].data.d_int32);
+	    stp_set_yellow(vars, param[20].data.d_float);
 
           if (nparams > 21)
             stp_set_image_type(vars, param[22].data.d_int32);
@@ -1313,5 +1313,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.4.6 2001/07/23 15:07:51 sharkey Exp $".
+ * End of "$Id: print.c,v 1.4.4.7 2001/09/14 01:26:36 sharkey Exp $".
  */

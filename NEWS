@@ -1,4 +1,4 @@
-This is gimp-print version 4.1.99a2, the second alpha release leading
+This is gimp-print version 4.1.99b1, the first beta release leading
 up to the 4.2 stable release.  This release is not 4.2.
 
 This software includes the Print plug-in for the Gimp, and GhostScript
@@ -11,6 +11,166 @@ These release notes primarily describe changes visible to the end
 user.  Detailed descriptions of changes may be found in the ChangeLog.
 
 The Gimp Print plugin requires the Gimp 1.2.
+
+Gimp-Print 4.1.99b1 contains the following changes over 4.1.99a3:
+
+1) Fixes for the Lexmark driver.
+
+2) The print plugin now stores the current printer name correctly in
+   all cases (broke in 4.1.99-a3).
+
+3) The PCL driver prints correctly in all resolutions (broke in
+   4.1.99-a3).
+
+4) The driver supports minimum, as well as maximum, paper sizes for
+   printers.
+
+5) Fix margins for some Epson printers.  On many printers, it's
+   possible to print closer to the top and bottom of the page when
+   using softweave than otherwise; the driver now changes the margins
+   dynamically depending upon the settings.  See bug 231885.
+
+6) The Foomatic driver now displays human-readable names (broke in
+   4.1.99-a3).
+
+7) The print plugin has tooltips for most functionality.
+
+8) The printer driver list in the print plugin should be displayed in
+   the correct position (with the currently active printer visible).
+
+9) The default resolution for Epson printers supporting variable drop
+   size printing (essentially the Stylus Color 740 and newer) has been
+   changed from 360 DPI to 360 DPI Softweave.  This will produce much
+   better output.
+
+10) The preview in the Gimp plugin is much smoother (does not flash to
+   nearly as great a degree) when moving, resizing, or changing the
+   color settings of the image.
+
+11) Fix a few more corner cases for the Epson Stylus Color 480/580,
+   C20, and C40 series printers.
+
+Known limitations of this release:
+
+1) The Epson Stylus C40UX (and very likely other printers in the C20
+   and C40 lines) do not identify themselves.  Therefore,
+
+   escputil -u -d
+
+   will not return anything useful.
+
+2) The "align color" (-o) command to escputil does not currently work
+   on the printers that should support it (Epson Stylus Color 480 and
+   580, and C20SX, C20UX, C40SX, and C40UX).
+
+3) Changing ink cartridges on the Epson Stylus Color 480/580 is not
+   supported.
+
+4) The drivers for the Epson Stylus Pro printers (5000, 5500, 7000,
+   7500, 9000, 9500, and 10000) are not tested or tuned.  They may not
+   work correctly in all cases, and their outputs are not properly
+   tuned.
+
+5) The Canon BJC-8200 and S800 do not produce optimum quality.
+
+6) The Gimp Print plugin tooltips may not work properly on all
+   systems.
+
+
+
+Gimp-Print 4.1.99a3 contains the following changes over 4.1.99a2:
+
+1) The arguments to the Ghostscript `stp' driver have changed
+   incompatibly.  Please read src/ghost/README for updates.
+
+2) The CUPS driver cleanly aborts printing if an active job is removed
+   from the queue.  It may take up to 30 seconds or so for the printer
+   to stop printing, but the job will terminate cleanly, leaving the
+   printer in a sane state.
+
+3) The Epson Stylus Color, Stylus Color 400, Stylus Color 500, Stylus
+   Color Pro XL, and Stylus Color 1500 print correctly again.
+
+4) A crash or other errors involving Lexmark printers in some
+   circumstances is fixed.  See bug 447865.
+
+5) The CUPS driver generates PPD files in all of the supported
+   languages (English, French, German, Italian, and Spanish).  These
+   PPD files have not been fully translated at the present time.  The
+   new PPD files are not compatible with any previous release of the
+   CUPS driver, and vice versa.
+
+6) Major quality and positioning improvements on the Epson Stylus
+   Color 480, 580, C20, and C40 printers.  The Stylus Color 480 does
+   not print at 720 DPI in black and white and grayscale (it feeds
+   paper), although the C40UX does.  It is not currently known whether
+   this is a flaw with the printer model, the sample printer under
+   test, or the library.  See bugs 440253 and 450205.
+
+7) The escputil command now returns ink levels and status more
+   reliably, particularly for USB-connected printers.
+
+8) LaserJet printers now have a sensible default for InputSlot (media
+   source).
+
+9) LaserJet printers support additional media sizes.
+
+10) Initial support for the HP DesignJet 750 (wide carriage printer).
+
+11) The Epson driver will now allow page lengths greater than 44" for
+   certain printers (primarily the Stylus Color 760 and newer).
+
+12) Improvements for 6 pl Epson Stylus printers (Stylus Color 670 and
+   740, and Stylus Photo 720, 750, and 1200).  The improvements will
+   take the form of better color accuracy and less ink use.  The
+   improvements should be noticeable at 720 DPI and substantial at
+   1440x720 (which is now smoother).  4 pl printers will exhibit
+   better color accuracy and less ink use at 720 DPI.
+
+13) The Stylus Photo 780/785/790/895, 890, and 1280/1290 should now
+   print to very close to the margins on all sides.  The bottom of the
+   page may have a very small margin left (less than 1 mm).  See bug
+   441501.
+
+14) A new 360 DPI unidirectional mode was added for modern Epson
+   Stylus printers.
+
+15) The Epson Stylus Color 980 should print with better density.
+
+16) A new test program, testpattern, is available in the test
+   directory.  This program uses the 16-bit raw CMYK input.  In
+   addition to demonstrating use of 16-bit raw CMYK, this program is
+   also an example of how to use the libgimpprint API.
+
+The following known limitations exist in Gimp-Print 4.1.99-a3:
+
+1) The Epson Stylus C40UX (and very likely other printers in the C20
+   and C40 lines) do not identify themselves.  Therefore,
+
+   escputil -u -d
+
+   will not return anything useful.
+
+2) The "align color" (-o) command to escputil does not currently work
+   on the printers that should support it (Epson Stylus Color 480 and
+   580, and C20SX, C20UX, C40SX, and C40UX).  We hope to fix this
+   before release of 4.2.
+
+3) Changing ink cartridges on the Epson Stylus Color 480/580 will not
+   be supported in at least initial 4.2 releases.  This project
+   appears to be somewhat more complicated and riskier than previously
+   believed.  The cartridge can be changed by hand by unplugging and
+   plugging in the printer.  During the initial cleaning cycle, the
+   heads will move to the left.  When the head is in position, quickly
+   unplug the printer.  The head will slide easily into positions that
+   allow changing the cartridge.  WARNING: this may damage the printer
+   over the long term; be careful!
+
+4) The drivers for the Epson Stylus Pro printers (5000, 5500, 7000,
+   7500, 9000, 9500, and 10000) are not tested or tuned.  It is quite
+   possible that they work, but it is unlikely that they produce
+   optimum output.
+
 
 Gimp-Print 4.1.99a2 contains the following changes over 4.1.99a1:
 

@@ -1,4 +1,4 @@
-This is Gimp-Print version 4.1.99a2, the second alpha release leading
+This is Gimp-Print version 4.1.99b1, the first beta release leading
 up to the 4.2 stable release.  Gimp-print is the print facility for
 the Gimp, and in addition a suite of drivers that may be used with
 common UNIX spooling systems using GhostScript or CUPS.  These drivers
@@ -11,6 +11,10 @@ have changed from previous releases.
 
 
 BASIC INSTALLATION
+
+By default, Gimp-Print builds the Print plugin for the GIMP, and
+nothing else.  If this isn't what you want, skip down to find the
+installation option that you do want.
 
 If you have downloaded a .tar.gz file (tarball), you should follow
 these directions.
@@ -36,7 +40,9 @@ If you have installed the Gimp as a precompiled package (e. g. from an
 RPM), you will need to install the gimp-devel package as well as the
 gimp package.  The gimp package as supplied in most distributions only
 contains what's needed to run the Gimp.  The gimp-devel package
-contains additional files required to actually build new plugins.
+contains additional files required to actually build new plugins.  On
+some systems, you will also need to install gtk-devel and glib-devel
+packages as well.
 
 If you have installed the Gimp from source on Linux: after running
 make install, you must run ldconfig as root before attempting to build
@@ -58,6 +64,10 @@ supported.  In particular, versions of Ghostscript that are not
 licensed under the GNU General Public License (GPL) are not supported,
 and this driver may not be distributed with such a version.
 
+Note that as of 4.1.99-a3, many of the options to the Ghostscript
+driver have changed incompatibly.  Please read the README for more
+information!
+
 
 CUPS
 
@@ -78,7 +88,7 @@ Gimp-Print PPD's with.  Such printers may be identified in any CUPS
 front end (e. g. KUPS, or via the web interface) because they look
 something like this:
 
-                EPSON Stylus Photo EX, CUPS+GIMP-print v4.1.8
+                EPSON Stylus Photo EX, CUPS+GIMP-print v4.1.99-b1(en)
 
 If the version number (in this case, 4.1.8) does not match the version
 of Gimp-Print that you are installing, you must use Modify Printer to
@@ -162,18 +172,21 @@ SUPPORT
 
 There are four principal ways of requesting support for this package:
 
-1) There are public forums on Sourceforge dedicated to this package.
+1) Read the FAQ, in doc/FAQ.html.  Your question may be answered
+   there.
+
+2) There are public forums on Sourceforge dedicated to this package.
    Please see http://sourceforge.net/forum/?group_id=1537 for more
    information.  The Help forum is a good source of information.
 
-2) If you have a technical support issue that does not appear to be a
+3) If you have a technical support issue that does not appear to be a
    bug in the software, you can use the Tech Support Manager.  Please
    see http://sourceforge.net/support/?group_id=1537.
 
-3) If you have found a clear bug in the package, you may file a bug
+4) If you have found a clear bug in the package, you may file a bug
    report at http://sourceforge.net/bugs/?group_id=1537.
 
-4) You may send mail to the gimp-print-devel@sourceforge.net mailing
+5) You may send mail to the gimp-print-devel@sourceforge.net mailing
    list.  This is recommended as a last resort only.
 
 

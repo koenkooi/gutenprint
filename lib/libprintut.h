@@ -1,5 +1,5 @@
 /*
- * $Id: libprintut.h,v 1.2.4.2 2001/07/23 15:07:49 sharkey Exp $
+ * $Id: libprintut.h,v 1.2.4.3 2001/09/14 01:26:34 sharkey Exp $
  * Header for utility library functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -7,7 +7,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
- ******************************************************************************/
+ *
+ *****************************************************************************/
 
 
 #ifndef __LIBPRINTUT_H__
@@ -47,6 +47,8 @@ extern char *xgetcwd (void);
 
 #ifndef HAVE_GETOPT_LONG
 #include "getopt.h"
+#else
+#include <getopt.h>
 #endif
 
 #endif /* __LIBPRINTUT_H__ */
