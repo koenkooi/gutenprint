@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.10 2004/03/21 02:32:20 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.11 2004/03/21 04:27:49 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -200,8 +200,14 @@ typedef struct
   const color_correction_t *color_correction;
   stp_convert_t colorfunc;
   stp_curve_t composite;
-  int channel_curve_count;
-  stp_curve_t *channel_curves;
+  stp_curve_t channel_curves[STP_CHANNEL_LIMIT];
+  double gamma_values[STP_CHANNEL_LIMIT];
+  double print_gamma;
+  double app_gamma;
+  double screen_gamma;
+  double contrast;
+  double brightness;
+  int linear_contrast_adjustment;
   stp_curve_t hue_map;
   const double *hue_cache;
   size_t hue_count;
@@ -1827,42 +1833,29 @@ stpi_color_traditional_get_row(stp_vars_t v,
 static void
 free_channels(lut_t *lut)
 {
-  if (lut->channel_curves)
-    {
-      int i;
-      for (i = 0; i < lut->channel_curve_count; i++)
-	if (lut->channel_curves[i])
-	  stp_curve_free(lut->channel_curves[i]);
-      SAFE_FREE(lut->channel_curves);
-    }
-  lut->channel_curve_count = 0;
+  int i;
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
+    if (lut->channel_curves[i])
+      stp_curve_free(lut->channel_curves[i]);
 }
-
-static void
-allocate_channels(lut_t *lut, size_t count)
-{
-  free_channels(lut);
-  lut->channel_curve_count = count;
-  if (count > 0)
-    {
-      int i;
-      lut->channel_curves =
-	stpi_malloc(sizeof(stp_curve_t) * lut->channel_curve_count);
-      for (i = 0; i < count; i++)
-	{
-	  lut->channel_curves[i] = stp_curve_create(STP_CURVE_WRAP_NONE);
-	  stp_curve_set_bounds(lut->channel_curves[i], 0, 65535);
-	}
-    }
-}
-      
 
 static lut_t *
 allocate_lut(void)
 {
+  int i;
   lut_t *ret = stpi_zalloc(sizeof(lut_t));
   ret->composite = stp_curve_create(STP_CURVE_WRAP_NONE);
   stp_curve_set_bounds(ret->composite, 0, 65535);
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
+    {
+      ret->channel_curves[i] = stp_curve_create(STP_CURVE_WRAP_NONE);
+      stp_curve_set_bounds(ret->channel_curves[i], 0, 65535);
+      ret->gamma_values[i] = 1.0;
+    }
+  ret->print_gamma = 1.0;
+  ret->app_gamma = 1.0;
+  ret->contrast = 1.0;
+  ret->brightness = 1.0;
   return ret;
 }
 
@@ -1876,14 +1869,13 @@ copy_lut(void *vlut)
     return NULL;
   dest = allocate_lut();
   dest->composite = stp_curve_create_copy(src->composite);
-  if (src->channel_curve_count)
+  free_channels(dest);
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      dest->channel_curve_count = src->channel_curve_count;
-      dest->channel_curves =
-	stpi_malloc(sizeof(stp_curve_t) * src->channel_curve_count);
-      for (i = 0; i < src->channel_curve_count; i++)
-	dest->channel_curves[i] = stp_curve_create_copy(src->channel_curves[i]);
+      dest->channel_curves[i] = stp_curve_create_copy(src->channel_curves[i]);
+      dest->gamma_values[i] = src->gamma_values[i];
     }
+  dest->composite = stp_curve_create_copy(src->composite);
   if (src->hue_map)
     dest->hue_map = stp_curve_create_copy(src->hue_map);
   if (src->lum_map)
@@ -1898,6 +1890,15 @@ copy_lut(void *vlut)
   dest->out_channels = src->out_channels;
   dest->channel_depth = src->channel_depth;
   dest->image_width = src->image_width;
+  dest->print_gamma = src->print_gamma;
+  dest->app_gamma = src->app_gamma;
+  dest->screen_gamma = src->screen_gamma;
+  dest->contrast = src->contrast;
+  dest->brightness = src->brightness;
+  dest->input_color_description = src->input_color_description;
+  dest->output_color_description = src->output_color_description;
+  dest->color_correction = src->color_correction;
+  dest->invert_output = src->invert_output;
   if (src->in_data)
     {
       dest->in_data = stpi_malloc(src->image_width * src->in_channels);
@@ -1910,9 +1911,9 @@ static void
 free_lut(void *vlut)
 {
   lut_t *lut = (lut_t *)vlut;
+  free_channels(lut);
   if (lut->composite)
     stp_curve_free(lut->composite);
-  free_channels(lut);
   if (lut->hue_map)
     stp_curve_free(lut->hue_map);
   if (lut->lum_map)
@@ -2150,54 +2151,64 @@ compute_one_lut(stp_curve_t lut_curve, stp_const_curve_t curve,
 static void
 stpi_compute_lut(stp_vars_t v, size_t steps)
 {
-  const lut_t *lut = (const lut_t *)(stpi_get_component_data(v, "Color"));
-  stp_const_curve_t hue = NULL;
-  stp_const_curve_t lum = NULL;
-  stp_const_curve_t sat = NULL;
-  stp_const_curve_t composite_curve = NULL;
-  stp_const_curve_t cyan_curve = NULL;
-  stp_const_curve_t magenta_curve = NULL;
-  stp_const_curve_t yellow_curve = NULL;
-  stp_const_curve_t black_curve = NULL;
-  double cyan = 1.0;
-  double magenta = 1.0;
-  double yellow = 1.0;
-  lut_params_t l;
+  int i;
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  stpi_dprintf(STPI_DBG_LUT, v, "stpi_compute_lut\n");
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
+    {
+      if (i < channel_param_count &&
+	  lut->output_color_description->channels & (1 << i))
+	{
+	  if (stp_check_float_parameter(v, channel_params[i].gamma_name,
+					STP_PARAMETER_DEFAULTED))
+	    lut->gamma_values[i] =
+	      stp_get_float_parameter(v, channel_params[i].gamma_name);
+	  else
+	    lut->gamma_values[i] = 1.0;
 
-  if (stp_check_float_parameter(v, "CyanGamma", STP_PARAMETER_DEFAULTED))
-    cyan = stp_get_float_parameter(v, "CyanGamma");
-  if (stp_check_float_parameter(v, "MagentaGamma", STP_PARAMETER_DEFAULTED))
-    magenta = stp_get_float_parameter(v, "MagentaGamma");
-  if (stp_check_float_parameter(v, "YellowGamma", STP_PARAMETER_DEFAULTED))
-    yellow = stp_get_float_parameter(v, "YellowGamma");
+	  if (stp_get_curve_parameter_active(v, channel_params[i].curve_name)>=
+	      stp_get_float_parameter_active(v, channel_params[i].gamma_name))
+	    lut->channel_curves[i] =
+	      stp_curve_create_copy(stp_get_curve_parameter
+				    (v, channel_params[i].curve_name));
+	  else
+	    lut->channel_curves[i] = stp_curve_create_copy(color_curve_bounds);
 
-  if (lut->input_description->color_model == COLOR_UNKNOWN ||
-      lut->output_description->color_model == COLOR_UNKNOWN ||
-      lut->input_description->color_model ==
-      lut->output_description->color_model)
-    l.invert_output = 0;
+	  stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n",
+		       channel_params[i].gamma_name, lut->gamma_values[i]);
+	}
+      else
+	lut->gamma_values[i] = 1.0;
+    }
+
+  if (lut->input_color_description->color_model == COLOR_UNKNOWN ||
+      lut->output_color_description->color_model == COLOR_UNKNOWN ||
+      lut->input_color_description->color_model ==
+      lut->output_color_description->color_model)
+    lut->invert_output = 0;
   else
-    l.invert_output = 1;
-  l.steps = steps;
-  l.linear_contrast_adjustment = 0;
-  l.print_gamma = 1.0;
-  l.app_gamma = 1.0;
-  l.contrast = 1.0;
-  l.brightness = 1.0;
+    lut->invert_output = 1;
+
+  lut->steps = steps;
+  lut->linear_contrast_adjustment = 0;
+  lut->print_gamma = 1.0;
+  lut->app_gamma = 1.0;
+  lut->contrast = 1.0;
+  lut->brightness = 1.0;
 
   if (stp_check_boolean_parameter(v, "LinearContrast", STP_PARAMETER_DEFAULTED))
-    l.linear_contrast_adjustment =
+    lut->linear_contrast_adjustment =
       stp_get_boolean_parameter(v, "LinearContrast");
   if (stp_check_float_parameter(v, "Gamma", STP_PARAMETER_DEFAULTED))
-    l.print_gamma = stp_get_float_parameter(v, "Gamma");
+    lut->print_gamma = stp_get_float_parameter(v, "Gamma");
   if (stp_check_float_parameter(v, "Contrast", STP_PARAMETER_DEFAULTED))
-    l.contrast = stp_get_float_parameter(v, "Contrast");
+    lut->contrast = stp_get_float_parameter(v, "Contrast");
   if (stp_check_float_parameter(v, "Brightness", STP_PARAMETER_DEFAULTED))
-    l.brightness = stp_get_float_parameter(v, "Brightness");
+    lut->brightness = stp_get_float_parameter(v, "Brightness");
 
   if (stp_check_float_parameter(v, "AppGamma", STP_PARAMETER_ACTIVE))
-    l.app_gamma = stp_get_float_parameter(v, "AppGamma");
-  l.screen_gamma = l.app_gamma / 4.0; /* "Empirical" */
+    lut->app_gamma = stp_get_float_parameter(v, "AppGamma");
+  lut->screen_gamma = lut->app_gamma / 4.0; /* "Empirical" */
   lut = allocate_lut();
 
   if (stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_DEFAULTED))
@@ -2209,17 +2220,6 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
   if (stp_get_curve_parameter_active(v, "CompositeCurve") >=
       stp_get_float_parameter_active(v, "Gamma"))
     composite_curve = stp_get_curve_parameter(v, "CompositeCurve");
-  if (stp_get_curve_parameter_active(v, "CyanCurve") >=
-      stp_get_float_parameter_active(v, "Cyan"))
-    cyan_curve = stp_get_curve_parameter(v, "CyanCurve");
-  if (stp_get_curve_parameter_active(v, "MagentaCurve") >=
-      stp_get_float_parameter_active(v, "Magenta"))
-    magenta_curve = stp_get_curve_parameter(v, "MagentaCurve");
-  if (stp_get_curve_parameter_active(v, "YellowCurve") >=
-      stp_get_float_parameter_active(v, "Yellow"))
-    yellow_curve = stp_get_curve_parameter(v, "YellowCurve");
-  if (stp_check_curve_parameter(v, "BlackCurve", STP_PARAMETER_DEFAULTED))
-    black_curve = stp_get_curve_parameter(v, "BlackCurve");
 
   /*
    * TODO check that these are wraparound curves and all that
@@ -2232,26 +2232,14 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
     lut->sat_map = stp_curve_create_copy(sat);
 
   lut->steps = steps;
-  lut->invert_output = l.invert_output;
+  lut->invert_output = lut->invert_output;
 
-  stpi_dprintf(STPI_DBG_LUT, v, "stpi_compute_lut\n");
-  stpi_dprintf(STPI_DBG_LUT, v, " cyan %.3f\n", cyan);
-  stpi_dprintf(STPI_DBG_LUT, v, " magenta %.3f\n", magenta);
-  stpi_dprintf(STPI_DBG_LUT, v, " yellow %.3f\n", yellow);
-  stpi_dprintf(STPI_DBG_LUT, v, " print_gamma %.3f\n", l.print_gamma);
-  stpi_dprintf(STPI_DBG_LUT, v, " contrast %.3f\n", l.contrast);
-  stpi_dprintf(STPI_DBG_LUT, v, " brightness %.3f\n", l.brightness);
-  stpi_dprintf(STPI_DBG_LUT, v, " screen_gamma %.3f\n", l.screen_gamma);
+  stpi_dprintf(STPI_DBG_LUT, v, " print_gamma %.3f\n", lut->print_gamma);
+  stpi_dprintf(STPI_DBG_LUT, v, " contrast %.3f\n", lut->contrast);
+  stpi_dprintf(STPI_DBG_LUT, v, " brightness %.3f\n", lut->brightness);
+  stpi_dprintf(STPI_DBG_LUT, v, " screen_gamma %.3f\n", lut->screen_gamma);
 
   compute_one_lut(lut->composite, composite_curve, 1.0, &l);
-
-  if (black_curve)
-    stp_curve_copy(lut->black, black_curve);
-  else
-    stp_curve_copy(lut->black, color_curve_bounds);
-  stp_curve_rescale(lut->black, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
-		    STP_CURVE_BOUNDS_RESCALE);
-  stp_curve_resample(lut->black, steps);
 
   compute_one_lut(lut->cyan, cyan_curve, cyan, &l);
 
