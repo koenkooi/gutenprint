@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.55 2002/10/28 00:52:17 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.56 2002/11/01 01:31:11 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -229,6 +229,29 @@ typedef struct stp_dither_matrix
   const void *data;
 } stp_dither_matrix_t;
 
+typedef struct
+{
+  stp_param_t *(*parameters)(const stp_printer_t printer,
+			     const stp_vars_t v,
+                             const char *name, int *count);
+  void  (*media_size)(const stp_printer_t printer, const stp_vars_t v,
+                      int *width, int *height);
+  void  (*imageable_area)(const stp_printer_t printer,
+                          const stp_vars_t v,
+                          int *left, int *right, int *bottom, int *top);
+  void  (*limit)(const stp_printer_t printer, const stp_vars_t v,
+                 int *max_width, int *max_height,
+                 int *min_width, int *min_height);
+  int   (*print)(const stp_printer_t printer,
+		 const stp_vars_t v, stp_image_t *image);
+  const char *(*default_parameters)(const stp_printer_t printer,
+				    const stp_vars_t v,
+                                    const char *name);
+  void  (*describe_resolution)(const stp_printer_t printer, const stp_vars_t v,
+                               int *x, int *y);
+  int   (*verify)(const stp_printer_t p, const stp_vars_t v);
+} stp_printfuncs_t;
+
 /*
  * Prototypes...
  */
@@ -244,6 +267,7 @@ extern void     stp_copy_options(stp_vars_t vd, const stp_vars_t vs);
 extern void	stp_default_media_size(const stp_printer_t printer,
 				       const stp_vars_t v, int *width,
 				       int *height);
+extern const stp_printfuncs_t *stp_printer_get_printfuncs(const stp_printer_t p);
 
 extern void *	stp_init_dither(int in_width, int out_width, int bpp,
 				int xdpi, int ydpi, stp_vars_t vars);
@@ -512,5 +536,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.55 2002/10/28 00:52:17 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.56 2002/11/01 01:31:11 rlk Exp $".
  */
