@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.44 2000/05/13 14:26:49 rlk Exp $"
+ * "$Id: print-canon.c,v 1.45 2000/05/18 12:01:12 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -30,7 +30,7 @@
  *
  * Revision History:
  *
- * See bottom
+ * See ChangeLog
  */
 
 
@@ -380,6 +380,8 @@ canon_parameters(int  model,		/* I - Printer model */
 	valptrs[c++]= c_strdup("600x600 DPI");
       if (1200<=x && 600<=y)
 	valptrs[c++]= c_strdup("1200x600 DPI");
+      if (1200<=x && 1200<=y)
+	valptrs[c++]= c_strdup("1200x1200 DPI");
     } else if (!(caps.max_xdpi%180)) {
       if ( 180<=x && 180<=y)
 	valptrs[c++]= c_strdup("180x180 DPI");
