@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.90 2003/08/02 21:16:36 rlk Exp $"
+ * "$Id: print-color.c,v 1.91 2003/08/08 01:38:29 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -620,7 +620,7 @@ adjust_lum(lut_t *lut, size_t l_points, double l, double s, double h)
 	  (tmp < .9999 || tmp > 1.0001))
 	{
 	  double el = tmp;
-	  el = 1.0 + (s * (el - 1.0));
+	  el = 1.0 + (sqrt(s) * (el - 1.0));
 	  if (l > .5)
 	    el = 1.0 + ((2.0 * (1.0 - l)) * (el - 1.0));
 	  l = 1.0 - pow(1.0 - l, el);
