@@ -22,7 +22,7 @@
  */
 
 /**
- * @file vars.h
+ * @file include/gimp-print/vars.h
  * @brief Print job functions.
  */
 
@@ -1262,5 +1262,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.6 2004/04/10 23:12:06 rleigh Exp $".
+ * End of "$Id: vars.h,v 1.7 2004/04/11 17:52:44 rlk Exp $".
  */

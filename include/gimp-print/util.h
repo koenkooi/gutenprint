@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.2 2004/04/10 23:12:06 rleigh Exp $"
+ * "$Id: util.h,v 1.3 2004/04/11 17:52:15 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -22,7 +22,7 @@
  */
 
 /**
- * @file util.h
+ * @file include/gimp-print/util.h
  * @brief Utility functions.
  */
 
@@ -72,5 +72,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_UTIL_H__ */
 /*
- * End of "$Id: util.h,v 1.2 2004/04/10 23:12:06 rleigh Exp $".
+ * End of "$Id: util.h,v 1.3 2004/04/11 17:52:15 rlk Exp $".
  */
