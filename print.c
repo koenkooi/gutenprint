@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.86 2000/04/15 11:53:53 mitsch Exp $"
+ * "$Id: print.c,v 1.87 2000/04/16 05:42:46 smiller Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -152,6 +152,10 @@ gint32          image_ID;	        /* image ID */
 
 int image_width;
 int image_height;
+
+int num_dither_algos = 0;
+char** dither_algo_names = 0;
+char* cur_dither_name = 0;
 
 /*
  * 'main()' - Main entry - just call gimp_main()...
@@ -1253,5 +1257,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.86 2000/04/15 11:53:53 mitsch Exp $".
+ * End of "$Id: print.c,v 1.87 2000/04/16 05:42:46 smiller Exp $".
  */
