@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.35 2004/03/27 03:57:02 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.36 2004/03/27 04:13:55 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -3382,7 +3382,7 @@ compute_one_lut(lut_t *lut, int i)
        * the black curve in this case.
        */
       if (i == 0 &&
-	  lut->input_color_description->color_id == COLOR_ID_RGB &&
+	  lut->input_color_description->color_model == COLOR_WHITE &&
 	  (lut->output_color_description->color_id == COLOR_ID_KCMY ||
 	   lut->output_color_description->color_id == COLOR_ID_CMYKRB))
 	invert_output = 0;
