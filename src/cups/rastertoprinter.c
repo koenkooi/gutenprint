@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.9.2.1 2001/02/20 04:41:32 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.9.2.2 2001/02/21 02:24:07 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -128,7 +128,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   cups_image_t		cups;		/* CUPS image */
   const char		*ppdfile;	/* PPD environment variable */
   ppd_file_t		*ppd;		/* PPD file */
-  const stp_printer_t	*printer;	/* Printer driver */  
+  stp_printer_t	printer;	/* Printer driver */  
   stp_vars_t		v;		/* Printer driver variables */
   const stp_papersize_t	*size;		/* Paper size */
   char			*buffer;	/* Overflow buffer */
@@ -274,7 +274,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     * Setup printer driver variables...
     */
 
-    v = stp_allocate_copy(printer->printvars);
+    v = stp_allocate_copy(stp_printer_get_printvars(printer));
 
     stp_set_app_gamma(v, 1.0);
     stp_set_brightness(v, 1.0);
@@ -314,7 +314,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     else
       fprintf(stderr, "ERROR: Unable to get media size!\n");
 
-    opts = (*(printer->printfuncs->parameters))(printer, NULL, "Resolution",
+    opts = (*(stp_printer_get_printfuncs(printer)->parameters))(printer, NULL, "Resolution",
 						&num_opts);
     if (cups.header.cupsCompression < 0 ||
 	cups.header.cupsCompression >= num_opts)
@@ -326,7 +326,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     * Print the page...
     */
 
-    stp_merge_printvars(v, printer->printvars);
+    stp_merge_printvars(v, stp_printer_get_printvars(printer));
     fprintf(stderr, "DEBUG: stp_get_output_to(v) |%s|\n", stp_get_output_to(v));
     fprintf(stderr, "DEBUG: stp_get_driver(v) |%s|\n", stp_get_driver(v));
     fprintf(stderr, "DEBUG: stp_get_ppd_file(v) |%s|\n", stp_get_ppd_file(v));
@@ -337,7 +337,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: stp_get_ink_type(v) |%s|\n", stp_get_ink_type(v));
     fprintf(stderr, "DEBUG: stp_get_dither_algorithm(v) |%s|\n", stp_get_dither_algorithm(v));
     if (stp_verify_printer_params(printer, v))
-      (*printer->printfuncs->print)(printer, &theImage, v);
+      (*stp_printer_get_printfuncs(printer)->print)(printer, &theImage, v);
     else
       fputs("ERROR: Invalid printer settings!\n", stderr);
 
@@ -576,5 +576,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 }
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.9.2.1 2001/02/20 04:41:32 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.9.2.2 2001/02/21 02:24:07 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.8.2.2 2001/02/21 02:24:08 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -225,13 +225,13 @@ const static pcl_t pcl_resolutions[] =
 #define NUM_RESOLUTIONS		(sizeof(pcl_resolutions) / sizeof (pcl_t))
 
 static const char *
-pcl_default_resolution(const stp_printer_t *printer)
+pcl_default_resolution(const stp_printer_t printer)
 {
   return _(pcl_resolutions[0].pcl_name);
 }
 
 static void
-pcl_describe_resolution(const stp_printer_t *printer,
+pcl_describe_resolution(const stp_printer_t printer,
 			const char *resolution, int *x, int *y)
 {
   int i;
@@ -1393,11 +1393,12 @@ static int pcl_convert_media_size(const char *media_size,	/* I: Media size strin
  */
 
 static char **				/* O - Parameter values */
-pcl_parameters(const stp_printer_t *printer,/* I - Printer model */
+pcl_parameters(const stp_printer_t printer,/* I - Printer model */
                const char *ppd_file,		/* I - PPD file (not used) */
                const char *name,		/* I - Name of parameter */
                int  *count)		/* O - Number of values */
 {
+  int		model = stp_printer_get_model(printer);
   int		i;
   char		**valptrs;
   pcl_cap_t caps;
@@ -1416,10 +1417,10 @@ pcl_parameters(const stp_printer_t *printer,/* I - Printer model */
   if (name == NULL)
     return (NULL);
 
-  caps = pcl_get_model_capabilities(printer->model);
+  caps = pcl_get_model_capabilities(model);
 
 #ifdef DEBUG
-  fprintf(stderr, "Printer model = %d\n", printer->model);
+  fprintf(stderr, "Printer model = %d\n", model);
   fprintf(stderr, "PageWidth = %d, PageHeight = %d\n", caps.max_width, caps.max_height);
   fprintf(stderr, "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
     caps.top_margin, caps.bottom_margin, caps.left_margin, caps.right_margin);
@@ -1444,7 +1445,7 @@ pcl_parameters(const stp_printer_t *printer,/* I - Printer model */
 	      papersizes[i].width <= caps.max_width &&
 	      papersizes[i].height <= caps.max_height &&
               ((use_custom == 1) || ((use_custom == 0) &&
-              (pcl_convert_media_size(papersizes[i].name, printer->model) != -1)))
+              (pcl_convert_media_size(papersizes[i].name, model) != -1)))
              )
 	    {
 	      valptrs[*count] = xmalloc(strlen(papersizes[i].name) + 1);
@@ -1530,7 +1531,7 @@ pcl_parameters(const stp_printer_t *printer,/* I - Printer model */
  */
 
 static void
-pcl_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
+pcl_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 		   const stp_vars_t v,     /* I */
                    int  *left,		/* O - Left position in points */
                    int  *right,		/* O - Right position in points */
@@ -1540,7 +1541,7 @@ pcl_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
   int	width, height;			/* Size of page */
   pcl_cap_t caps;			/* Printer caps */
 
-  caps = pcl_get_model_capabilities(printer->model);
+  caps = pcl_get_model_capabilities(stp_printer_get_model(printer));
 
   stp_default_media_size(printer, v, &width, &height);
 
@@ -1556,12 +1557,12 @@ pcl_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 }
 
 static void
-pcl_limit(const stp_printer_t *printer,	/* I - Printer model */
+pcl_limit(const stp_printer_t printer,	/* I - Printer model */
 	  const stp_vars_t v,  		/* I */
 	  int  *width,			/* O - Left position in points */
 	  int  *height)			/* O - Top position in points */
 {
-  pcl_cap_t caps= pcl_get_model_capabilities(printer->model);
+  pcl_cap_t caps= pcl_get_model_capabilities(stp_printer_get_model(printer));
   *width =	caps.max_width;
   *height =	caps.max_height;
 }
@@ -1571,12 +1572,12 @@ pcl_limit(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-pcl_print(const stp_printer_t *printer,		/* I - Model */
+pcl_print(const stp_printer_t printer,		/* I - Model */
           stp_image_t *image,		/* I - Image to print */
 	  const stp_vars_t v)
 {
   unsigned char *cmap = stp_get_cmap(v);
-  int		model = printer->model;
+  int		model = stp_printer_get_model(printer);
   const char	*resolution = stp_get_resolution(v);
   const char	*media_size;
   const char	*media_type = stp_get_media_type(v);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.2 2001/02/20 04:41:32 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.3 2001/02/21 02:24:08 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -637,7 +637,7 @@ stp_get_papersize_by_size(int l, int w)
 }
 
 void
-stp_default_media_size(const stp_printer_t *printer,
+stp_default_media_size(const stp_printer_t printer,
 					/* I - Printer model (not used) */
 		   const stp_vars_t v,	/* I */
         	   int  *width,		/* O - Width in points */
@@ -680,27 +680,15 @@ stp_known_printers(void)
   return printer_count;
 }
 
-static const stp_printer_t *
-stp_create_printer_internal(const stp_internal_printer_t *printer)
-{
-  stp_printer_t *retval = xmalloc(sizeof(stp_printer_t));
-  retval->long_name = printer->long_name;
-  retval->driver = printer->driver;
-  retval->model = printer->model;
-  retval->printfuncs = printer->printfuncs;
-  retval->printvars = (stp_vars_t) &(printer->printvars);
-  return retval;
-}
-
-const stp_printer_t *
+const stp_printer_t 
 stp_get_printer_by_index(int idx)
 {
   if (idx < 0 || idx >= printer_count)
     return NULL;
-  return stp_create_printer_internal(&(printers[idx]));
+  return (stp_printer_t) &(printers[idx]);
 }
 
-const stp_printer_t *
+const stp_printer_t 
 stp_get_printer_by_long_name(const char *long_name)
 {
   const stp_internal_printer_t *val = &(printers[0]);
@@ -708,13 +696,13 @@ stp_get_printer_by_long_name(const char *long_name)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->long_name, long_name))
-	return stp_create_printer_internal(val);
+	return (stp_printer_t) val;
       val++;
     }
   return NULL;
 }
 
-const stp_printer_t *
+const stp_printer_t 
 stp_get_printer_by_driver(const char *driver)
 {
   const stp_internal_printer_t *val = &(printers[0]);
@@ -722,7 +710,7 @@ stp_get_printer_by_driver(const char *driver)
   for (i = 0; i < stp_known_printers(); i++)
     {
       if (!strcmp(val->driver, driver))
-	return stp_create_printer_internal(val);
+	return (stp_printer_t) val;
       val++;
     }
   return NULL;
@@ -742,10 +730,39 @@ stp_get_printer_index_by_driver(const char *driver)
   return -1;
 }
 
-void
-stp_free_printer(const stp_printer_t *printer)
+const char *
+stp_printer_get_long_name(const stp_printer_t p)
 {
-  free((stp_printer_t *)printer);
+  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
+  return val->long_name;
+}
+
+const char *
+stp_printer_get_driver(const stp_printer_t p)
+{
+  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
+  return val->driver;
+}
+
+int
+stp_printer_get_model(const stp_printer_t p)
+{
+  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
+  return val->model;
+}
+
+const stp_printfuncs_t *
+stp_printer_get_printfuncs(const stp_printer_t p)
+{
+  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
+  return val->printfuncs;
+}
+
+const stp_vars_t
+stp_printer_get_printvars(const stp_printer_t p)
+{
+  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
+  return (const stp_vars_t) &(val->printvars);
 }
 
 const char *
@@ -878,16 +895,17 @@ stp_compute_page_parameters(int page_right,	/* I */
 }
 
 int
-stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
+stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 {
   char **vptr;
   int count;
   int i;
   int answer = 1;
+  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
 
   if (strlen(stp_get_media_size(v)) > 0)
     {
-      vptr = (*p->printfuncs->parameters)(p, NULL, "PageSize", &count);
+      vptr = (*printfuncs->parameters)(p, NULL, "PageSize", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
@@ -906,7 +924,7 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
   else
     {
       int height, width;
-      (*p->printfuncs->limit)(p, v, &width, &height);
+      (*printfuncs->limit)(p, v, &width, &height);
 #if 0
       stp_eprintf(v, "limit %d %d dims %d %d\n",
 		  width, height, stp_get_page_width(v),
@@ -922,7 +940,7 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
 
   if (strlen(stp_get_media_type(v)) > 0)
     {
-      vptr = (*p->printfuncs->parameters)(p, NULL, "MediaType", &count);
+      vptr = (*printfuncs->parameters)(p, NULL, "MediaType", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
@@ -941,7 +959,7 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
 
   if (strlen(stp_get_media_source(v)) > 0)
     {
-      vptr = (*p->printfuncs->parameters)(p, NULL, "InputSlot", &count);
+      vptr = (*printfuncs->parameters)(p, NULL, "InputSlot", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
@@ -960,7 +978,7 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
 
   if (strlen(stp_get_resolution(v)) > 0)
     {
-      vptr = (*p->printfuncs->parameters)(p, NULL, "Resolution", &count);
+      vptr = (*printfuncs->parameters)(p, NULL, "Resolution", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
@@ -979,7 +997,7 @@ stp_verify_printer_params(const stp_printer_t *p, const stp_vars_t v)
 
   if (strlen(stp_get_ink_type(v)) > 0)
     {
-      vptr = (*p->printfuncs->parameters)(p, NULL, "InkType", &count);
+      vptr = (*printfuncs->parameters)(p, NULL, "InkType", &count);
       if (count > 0)
 	{
 	  for (i = 0; i < count; i++)

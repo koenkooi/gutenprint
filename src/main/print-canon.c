@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-canon.c,v 1.10.2.2 2001/02/21 02:24:07 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1365,9 +1365,9 @@ canon_inks(canon_cap_t caps, int res_code, int colors, int bits)
 
 
 static const char *
-canon_default_resolution(const stp_printer_t *printer)
+canon_default_resolution(const stp_printer_t printer)
 {
-  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+  canon_cap_t caps= canon_get_model_capabilities(stp_printer_get_model(printer));
   if (!(caps.max_xdpi%150))
     return _("150x150 DPI");
   else
@@ -1375,7 +1375,7 @@ canon_default_resolution(const stp_printer_t *printer)
 }
 
 static void
-canon_describe_resolution(const stp_printer_t *printer,
+canon_describe_resolution(const stp_printer_t printer,
 			const char *resolution, int *x, int *y)
 {
   *x = -1;
@@ -1389,7 +1389,7 @@ canon_describe_resolution(const stp_printer_t *printer,
  */
 
 static char **					/* O - Parameter values */
-canon_parameters(const stp_printer_t *printer,	/* I - Printer model */
+canon_parameters(const stp_printer_t printer,	/* I - Printer model */
                  const char *ppd_file,	/* I - PPD file (not used) */
                  const char *name,		/* I - Name of parameter */
                  int  *count)		/* O - Number of values */
@@ -1419,7 +1419,7 @@ canon_parameters(const stp_printer_t *printer,	/* I - Printer model */
                   (N_ ("Manual without Pause")),
                 };
 
-  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+  canon_cap_t caps= canon_get_model_capabilities(stp_printer_get_model(printer));
 
   if (count == NULL)
     return (NULL);
@@ -1526,7 +1526,7 @@ canon_parameters(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-canon_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
+canon_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 		     const stp_vars_t v,   /* I */
                      int  *left,	/* O - Left position in points */
                      int  *right,	/* O - Right position in points */
@@ -1535,7 +1535,7 @@ canon_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 {
   int	width, length;			/* Size of page */
 
-  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+  canon_cap_t caps= canon_get_model_capabilities(stp_printer_get_model(printer));
 
   stp_default_media_size(printer, v, &width, &length);
 
@@ -1546,12 +1546,12 @@ canon_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 }
 
 static void
-canon_limit(const stp_printer_t *printer,	/* I - Printer model */
+canon_limit(const stp_printer_t printer,	/* I - Printer model */
 	    const stp_vars_t v,  		/* I */
 	    int  *width,		/* O - Left position in points */
 	    int  *length)		/* O - Top position in points */
 {
-  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+  canon_cap_t caps= canon_get_model_capabilities(stp_printer_get_model(printer));
   *width =	caps.max_width;
   *length =	caps.max_height;
 }
@@ -1776,12 +1776,12 @@ canon_advance_buffer(unsigned char *buf, int len, int num)
  * 'canon_print()' - Print an image to a CANON printer.
  */
 static void
-canon_print(const stp_printer_t *printer,		/* I - Model */
+canon_print(const stp_printer_t printer,		/* I - Model */
 	    stp_image_t *image,		/* I - Image to print */
 	    const stp_vars_t v)
 {
   const unsigned char *cmap = stp_get_cmap(v);
-  int		model = printer->model;
+  int		model = stp_printer_get_model(printer);
   const char	*resolution = stp_get_resolution(v);
   const char	*media_source = stp_get_media_source(v);
   int 		output_type = stp_get_output_type(v);

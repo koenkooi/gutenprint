@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.15.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.15.2.2 2001/02/21 02:24:07 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -614,18 +614,18 @@ lexmark_size_type(const stp_vars_t v, lexmark_cap_t caps)
 }
 
 
-static int lexmark_get_color_nozzles(const stp_printer_t *printer) 
+static int lexmark_get_color_nozzles(const stp_printer_t printer) 
 {
   return 192;
 }
 
-static int lexmark_get_black_nozzles(const stp_printer_t *printer) 
+static int lexmark_get_black_nozzles(const stp_printer_t printer) 
 {
   return 208;
 }
 
 /*
-static int lexmark_get_nozzle_resolution(const stp_printer_t *printer) 
+static int lexmark_get_nozzle_resolution(const stp_printer_t printer) 
 {
   return 1200;
 }
@@ -640,9 +640,9 @@ c_strdup(const char *s)
 }
 
 static const char *
-lexmark_default_resolution(const stp_printer_t *printer)
+lexmark_default_resolution(const stp_printer_t printer)
 {
-  lexmark_cap_t caps= lexmark_get_model_capabilities(printer->model);
+  lexmark_cap_t caps= lexmark_get_model_capabilities(stp_printer_get_model(printer));
   if (!(caps.max_xdpi%300))
     return _("300x300 DPI");
   else
@@ -674,10 +674,10 @@ static const lexmark_res_t lexmark_reslist[] = {
 
 
 static const lexmark_res_t 
-*lexmark_get_resolution_para(const stp_printer_t *printer,
+*lexmark_get_resolution_para(const stp_printer_t printer,
 			    const char *resolution)
 {
-  lexmark_cap_t caps= lexmark_get_model_capabilities(printer->model);
+  lexmark_cap_t caps= lexmark_get_model_capabilities(stp_printer_get_model(printer));
 
   const lexmark_res_t *res = &(lexmark_reslist[0]);
   while (res->hres)
@@ -694,7 +694,7 @@ static const lexmark_res_t
 }	  
 
 static int
-lexmark_print_bidirectional(const stp_printer_t *printer,
+lexmark_print_bidirectional(const stp_printer_t printer,
 			    const char *resolution)
 {
   const lexmark_res_t *res_para = lexmark_get_resolution_para(printer, resolution);
@@ -702,7 +702,7 @@ lexmark_print_bidirectional(const stp_printer_t *printer,
 }
 
 static void
-lexmark_describe_resolution(const stp_printer_t *printer,
+lexmark_describe_resolution(const stp_printer_t printer,
 			    const char *resolution, int *x, int *y)
 {
   const lexmark_res_t *res = lexmark_get_resolution_para(printer, resolution);
@@ -725,7 +725,7 @@ lexmark_describe_resolution(const stp_printer_t *printer,
  */
 
 static char **				/* O - Parameter values */
-lexmark_parameters(const stp_printer_t *printer,	/* I - Printer model */
+lexmark_parameters(const stp_printer_t printer,	/* I - Printer model */
 		   const char *ppd_file,	/* I - PPD file (not used) */
 		   const char *name,		/* I - Name of parameter */
 		   int  *count)		/* O - Number of values */
@@ -755,7 +755,7 @@ lexmark_parameters(const stp_printer_t *printer,	/* I - Printer model */
     (N_ ("Manual without Pause")),
   };
 
-  lexmark_cap_t caps= lexmark_get_model_capabilities(printer->model);
+  lexmark_cap_t caps= lexmark_get_model_capabilities(stp_printer_get_model(printer));
 
   if (count == NULL)
     return (NULL);
@@ -850,7 +850,7 @@ lexmark_parameters(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-lexmark_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
+lexmark_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 		       const stp_vars_t v,   /* I */
 		       int  *left,	/* O - Left position in points */
 		       int  *right,	/* O - Right position in points */
@@ -859,7 +859,7 @@ lexmark_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 {
   int	width, length;			/* Size of page */
 
-  lexmark_cap_t caps= lexmark_get_model_capabilities(printer->model);
+  lexmark_cap_t caps= lexmark_get_model_capabilities(stp_printer_get_model(printer));
 
   stp_default_media_size(printer, v, &width, &length);
 
@@ -872,12 +872,12 @@ lexmark_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 }
 
 static void
-lexmark_limit(const stp_printer_t *printer,	/* I - Printer model */
+lexmark_limit(const stp_printer_t printer,	/* I - Printer model */
 	    const stp_vars_t v,  		/* I */
 	    int  *width,		/* O - Left position in points */
 	    int  *length)		/* O - Top position in points */
 {
-  lexmark_cap_t caps= lexmark_get_model_capabilities(printer->model);
+  lexmark_cap_t caps= lexmark_get_model_capabilities(stp_printer_get_model(printer));
   *width =	caps.max_width;
   *length =	caps.max_length;
 }
@@ -1139,13 +1139,13 @@ static void setcol2(char *a, int al)
    printing every second pixel, which is not so simpe to handle in this method).
 */
 static void
-lexmark_print(const stp_printer_t *printer,		/* I - Model */
+lexmark_print(const stp_printer_t printer,		/* I - Model */
 	      stp_image_t *image,		/* I - Image to print */
 	      const stp_vars_t    v)
 {
   /*const int VERTSIZE=192;*/
   const unsigned char *cmap = stp_get_cmap(v);
-  int		model = printer->model;
+  int		model = stp_printer_get_model(printer);
   const char	*resolution = stp_get_resolution(v);
   const char	*media_type = stp_get_media_type(v);
   const char	*media_source = stp_get_media_source(v);

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.8.2.1 2001/02/20 04:41:32 rlk Exp $"
+ * "$Id: genppd.c,v 1.8.2.2 2001/02/21 02:24:07 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -148,7 +148,7 @@ msize_t	sizes[] =
  */
 
 void	usage(void);
-int	write_ppd(const stp_printer_t *p, const char *prefix);
+int	write_ppd(const stp_printer_t p, const char *prefix);
 
 
 /*
@@ -190,10 +190,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   for (i = 0; i < stp_known_printers(); i++)
     {
-      const stp_printer_t *printer = stp_get_printer_by_index(i);
+      const stp_printer_t printer = stp_get_printer_by_index(i);
       if (printer && write_ppd(printer, prefix))
 	return (1);
-      stp_free_printer(printer);
     }
 
   return (0);
@@ -217,7 +216,7 @@ usage(void)
  */
 
 int					/* O - Exit status */
-write_ppd(const stp_printer_t *p,		/* I - Printer driver */
+write_ppd(const stp_printer_t p,		/* I - Printer driver */
 	  const char      *prefix)	/* I - Prefix (directory) for PPD files */
 {
   int		i, j;			/* Looping vars */
@@ -234,14 +233,18 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 		bottom, left,
 		top, right;
   int		printed_default_resolution = 0;
-
+  const char *driver = stp_printer_get_driver(p);
+  const char *long_name = stp_printer_get_long_name(p);
+  const stp_vars_t printvars = stp_printer_get_printvars(p);
+  int model = stp_printer_get_model(p);
+  const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
 
  /*
   * Skip the PostScript drivers...
   */
 
-  if (strcmp(p->driver, "ps") == 0 ||
-      strcmp(p->driver, "ps2") == 0)
+  if (strcmp(driver, "ps") == 0 ||
+      strcmp(driver, "ps2") == 0)
     return (0);
 
  /* 
@@ -249,7 +252,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   */
 
   mkdir(prefix, 0777);
-  sprintf(filename, "%s/%s" PPDEXT, prefix, p->driver);
+  sprintf(filename, "%s/%s" PPDEXT, prefix, driver);
 
  /*
   * Open the PPD file...
@@ -266,7 +269,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   * Write a standard header...
   */
 
-  sscanf(p->long_name, "%63s", manufacturer);
+  sscanf(long_name, "%63s", manufacturer);
 
   fprintf(stderr, _("Writing %s...\n"), filename);
 
@@ -279,24 +282,24 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*FileVersion:	\"" VERSION "\"\n");
   gzputs(fp, "*LanguageVersion: English\n");
   gzputs(fp, "*LanguageEncoding: ISOLatin1\n");
-  gzprintf(fp, "*PCFileName:	\"%s.ppd\"\n", p->driver);
+  gzprintf(fp, "*PCFileName:	\"%s.ppd\"\n", driver);
   gzprintf(fp, "*Manufacturer:	\"%s\"\n", _(manufacturer));
   gzputs(fp, "*Product:	\"(GIMP-print v" VERSION ")\"\n");
-  gzprintf(fp, "*ModelName:     \"%s\"\n", _(p->driver));
-  gzprintf(fp, "*ShortNickName: \"%s\"\n", _(p->long_name));
-  gzprintf(fp, "*NickName:      \"%s, CUPS+GIMP-print v" VERSION "\"\n", _(p->long_name));
+  gzprintf(fp, "*ModelName:     \"%s\"\n", _(driver));
+  gzprintf(fp, "*ShortNickName: \"%s\"\n", _(long_name));
+  gzprintf(fp, "*NickName:      \"%s, CUPS+GIMP-print v" VERSION "\"\n", _(long_name));
   gzputs(fp, "*PSVersion:	\"(3010.000) 550\"\n");
   gzputs(fp, "*LanguageLevel:	\"3\"\n");
   gzprintf(fp, "*ColorDevice:	%s\n",
-           stp_get_output_type(p->printvars) == OUTPUT_COLOR ? "True" : "False");
+           stp_get_output_type(printvars) == OUTPUT_COLOR ? "True" : "False");
   gzprintf(fp, "*DefaultColorSpace: %s\n", 
-           stp_get_output_type(p->printvars) == OUTPUT_COLOR ? "RGB" : "Gray");
+           stp_get_output_type(printvars) == OUTPUT_COLOR ? "RGB" : "Gray");
   gzputs(fp, "*FileSystem:	False\n");
   gzputs(fp, "*LandscapeOrientation: Plus90\n");
   gzputs(fp, "*TTRasterizer:	Type42\n");
 
   gzputs(fp, "*cupsVersion:	1.1\n");
-  gzprintf(fp, "*cupsModelNumber: \"%d\"\n", p->model);
+  gzprintf(fp, "*cupsModelNumber: \"%d\"\n", model);
   gzputs(fp, "*cupsManualCopies: True\n");
   gzputs(fp, "*cupsFilter:	\"application/vnd.cups-raster 100 rastertoprinter\"\n");
   if (strcasecmp(manufacturer, "EPSON") == 0)
@@ -306,13 +309,13 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   * Get the page sizes from the driver...
   */
 
-  opts = (*(p->printfuncs->parameters))(p, NULL, "PageSize", &num_opts);
+  opts = (*(printfuncs->parameters))(p, NULL, "PageSize", &num_opts);
 
   gzputs(fp, "*OpenUI *PageSize: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageSize\n");
   gzputs(fp, "*DefaultPageSize: " DEFAULT_SIZE "\n");
 
-  v = stp_allocate_copy(p->printvars);
+  v = stp_allocate_copy(printvars);
 
   for (i = 0; i < num_opts; i ++)
   {
@@ -322,7 +325,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 
     stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, v, &width, &height);
+    (*(printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -349,7 +352,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
     */
     stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, v, &width, &height);
+    (*(printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -374,8 +377,8 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 
     stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, v, &width, &height);
-    (*(p->printfuncs->imageable_area))(p, v, &left, &right, &bottom, &top);
+    (*(printfuncs->media_size))(p, v, &width, &height);
+    (*(printfuncs->imageable_area))(p, v, &left, &right, &bottom, &top);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -400,7 +403,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 
     stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, v, &width, &height);
+    (*(printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -424,7 +427,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*OpenUI *ColorModel: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *ColorModel\n");
 
-  if (stp_get_output_type(p->printvars) == OUTPUT_COLOR)
+  if (stp_get_output_type(printvars) == OUTPUT_COLOR)
     gzputs(fp, "*DefaultColorModel: RGB\n");
   else
     gzputs(fp, "*DefaultColorModel: Gray\n");
@@ -435,7 +438,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 	       "/cupsBitsPerColor 8>>setpagedevice\"\n",
            CUPS_CSPACE_W, CUPS_ORDER_CHUNKED);
 
-  if (stp_get_output_type(p->printvars) == OUTPUT_COLOR)
+  if (stp_get_output_type(printvars) == OUTPUT_COLOR)
     gzprintf(fp, "*ColorModel RGB/Color:\t\"<<"
                  "/cupsColorSpace %d"
 		 "/cupsColorOrder %d"
@@ -463,7 +466,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   * Media types...
   */
 
-  opts = (*(p->printfuncs->parameters))(p, NULL, "MediaType", &num_opts);
+  opts = (*(printfuncs->parameters))(p, NULL, "MediaType", &num_opts);
 
   if (num_opts > 0)
   {
@@ -496,7 +499,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   * Input slots...
   */
 
-  opts = (*(p->printfuncs->parameters))(p, NULL, "InputSlot", &num_opts);
+  opts = (*(printfuncs->parameters))(p, NULL, "InputSlot", &num_opts);
 
   if (num_opts > 0)
   {
@@ -557,7 +560,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   * Resolutions...
   */
 
-  opts = (*(p->printfuncs->parameters))(p, NULL, "Resolution", &num_opts);
+  opts = (*(printfuncs->parameters))(p, NULL, "Resolution", &num_opts);
 
   gzputs(fp, "*OpenUI *Resolution: PickOne\n");
   gzputs(fp, "*OrderDependency: 20 AnySetup *Resolution\n");
@@ -570,7 +573,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
    /* 
     * Strip resolution name to its essentials...
     */
-    (p->printfuncs->describe_resolution)(p, opts[i], &xdpi, &ydpi);
+    (printfuncs->describe_resolution)(p, opts[i], &xdpi, &ydpi);
 
     /* This should not happen! */
     if (xdpi == -1 || ydpi == -1)
@@ -638,7 +641,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*Font ZapfChancery-MediumItalic: Standard \"(001.007S)\" Standard ROM\n");
   gzputs(fp, "*Font ZapfDingbats: Special \"(001.004S)\" Standard ROM\n");
 
-  gzprintf(fp, "*%%End of %s.ppd\n", p->driver);
+  gzprintf(fp, "*%%End of %s.ppd\n", driver);
 
   gzclose(fp);
 
@@ -647,5 +650,5 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.8.2.1 2001/02/20 04:41:32 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.8.2.2 2001/02/21 02:24:07 rlk Exp $".
  */

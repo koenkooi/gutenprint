@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4 2001/02/17 22:25:20 rlk Exp $"
+ * "$Id: print.c,v 1.4.2.1 2001/02/21 02:24:07 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -81,38 +81,7 @@ GPlugInInfo	PLUG_IN_INFO =		/* Plug-in information */
   run,   /* run_proc   */
 };
 
-stp_vars_t vars =
-{
-	"",			/* Name of file or command to print to */
-	"ps2",			/* Name of printer "driver" */
-	"",			/* Name of PPD file */
-	OUTPUT_COLOR,		/* Color or grayscale output */
-	"",			/* Output resolution */
-	"",			/* Size of output media */
-	"",			/* Type of output media */
-	"",			/* Source of output media */
-	"",			/* Ink type */
-	"",			/* Dither algorithm */
-	1.0,			/* Output brightness */
-	100.0,			/* Scaling (100% means entire printable area, */
-				/*          -XXX means scale by PPI) */
-	-1,			/* Orientation (-1 = automatic) */
-	-1,			/* X offset (-1 = center) */
-	-1,			/* Y offset (-1 = center) */
-	1.0,			/* Screen gamma */
-	1.0,			/* Contrast */
-	1.0,			/* Cyan */
-	1.0,			/* Magenta */
-	1.0,			/* Yellow */
-	0,			/* Linear */
-	1.0,			/* Output saturation */
-	1.0,			/* Density */
-	IMAGE_CONTINUOUS,	/* Image type */
-	0,			/* Unit 0=Inch */
-	1.0,			/* Application gamma placeholder */
-	0,			/* Page width */
-	0			/* Page height */
-};
+stp_vars_t vars = NULL;
 
 int		plist_current = 0,	/* Current system printer */
 		plist_count = 0;	/* Number of system printers */
@@ -156,7 +125,9 @@ int
 main(int  argc,		/* I - Number of command-line args */
      char *argv[])	/* I - Command-line args */
 {
+  vars = stp_allocate_copy(stp_default_vars());
   return (gimp_main(argc, argv));
+  stp_free_vars(vars);
 }
 #else
 MAIN()
@@ -1505,5 +1476,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4 2001/02/17 22:25:20 rlk Exp $".
+ * End of "$Id: print.c,v 1.4.2.1 2001/02/21 02:24:07 rlk Exp $".
  */

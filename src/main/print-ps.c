@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-ps.c,v 1.5.2.2 2001/02/21 02:24:08 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -61,7 +61,7 @@ static char	*ppd_find(const char *, const char *, const char *, int *);
  */
 
 static char **					/* O - Parameter values */
-ps_parameters(const stp_printer_t *printer,	/* I - Printer model */
+ps_parameters(const stp_printer_t printer,	/* I - Printer model */
               const char *ppd_file,		/* I - PPD file (not used) */
               const char *name,		/* I - Name of parameter */
               int  *count)		/* O - Number of values */
@@ -151,7 +151,7 @@ ps_parameters(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-ps_media_size(const stp_printer_t *printer,	/* I - Printer model */
+ps_media_size(const stp_printer_t printer,	/* I - Printer model */
 	      const stp_vars_t v,		/* I */
               int  *width,		/* O - Width in points */
               int  *height)		/* O - Height in points */
@@ -178,7 +178,7 @@ ps_media_size(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-ps_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
+ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 		  const stp_vars_t v,      /* I */
                   int  *left,		/* O - Left position in points */
                   int  *right,		/* O - Right position in points */
@@ -220,7 +220,7 @@ ps_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
 }
 
 static void
-ps_limit(const stp_printer_t *printer,	/* I - Printer model */
+ps_limit(const stp_printer_t printer,	/* I - Printer model */
 	    const stp_vars_t v,  		/* I */
 	    int  *width,		/* O - Left position in points */
 	    int  *height)		/* O - Top position in points */
@@ -230,7 +230,7 @@ ps_limit(const stp_printer_t *printer,	/* I - Printer model */
 }
 
 static const char *
-ps_default_resolution(const stp_printer_t *printer)
+ps_default_resolution(const stp_printer_t printer)
 {
   return "default";
 }
@@ -239,7 +239,7 @@ ps_default_resolution(const stp_printer_t *printer)
  * This is really bogus...
  */
 static void
-ps_describe_resolution(const stp_printer_t *printer,
+ps_describe_resolution(const stp_printer_t printer,
 			const char *resolution, int *x, int *y)
 {
   *x = -1;
@@ -253,12 +253,12 @@ ps_describe_resolution(const stp_printer_t *printer,
  */
 
 static void
-ps_print(const stp_printer_t *printer,		/* I - Model (Level 1 or 2) */
+ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
          stp_image_t *image,		/* I - Image to print */
 	 const stp_vars_t v)
 {
   unsigned char *cmap = stp_get_cmap(v);
-  int		model = printer->model;
+  int		model = stp_printer_get_model(printer);
   const char	*ppd_file = stp_get_ppd_file(v);
   const char	*resolution = stp_get_resolution(v);
   const char	*media_size = stp_get_media_size(v);

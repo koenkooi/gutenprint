@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.25.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.25.2.2 2001/02/21 02:24:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2070,14 +2070,15 @@ xzmalloc(size_t bytes)
  */
 
 static char **					/* O - Parameter values */
-escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
+escp2_parameters(const stp_printer_t printer,	/* I - Printer model */
                  const char *ppd_file,	/* I - PPD file (not used) */
                  const char *name,	/* I - Name of parameter */
                  int  *count)		/* O - Number of values */
 {
   int		i;
-  int		model = printer->model;
   char		**valptrs;
+  int		model = stp_printer_get_model(printer);
+  const stp_vars_t v = stp_printer_get_printvars(printer);
 
   static const char *ink_types[] =
   {
@@ -2099,8 +2100,8 @@ escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
       const stp_papersize_t *papersizes = stp_get_papersizes();
       valptrs = xmalloc(sizeof(char *) * stp_known_papersizes());
       *count = 0;
-      width_limit = escp2_max_paper_width(model, printer->printvars);
-      height_limit = escp2_max_paper_height(model, printer->printvars);
+      width_limit = escp2_max_paper_width(model, v);
+      height_limit = escp2_max_paper_height(model, v);
       for (i = 0; i < stp_known_papersizes(); i++)
 	{
 	  if (strlen(papersizes[i].name) > 0 &&
@@ -2117,23 +2118,24 @@ escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
   else if (strcmp(name, "Resolution") == 0)
     {
       const res_t *res = &(escp2_reslist[0]);
-      int nozzle_width = (escp2_base_separation /
-			  escp2_nozzle_separation(model, printer->printvars));
-      valptrs = xmalloc(sizeof(char *) * sizeof(escp2_reslist) / sizeof(res_t));
+      int nozzle_width =
+	(escp2_base_separation / escp2_nozzle_separation(model, v));
+      valptrs =
+	xmalloc(sizeof(char *) * sizeof(escp2_reslist) / sizeof(res_t));
       *count = 0;
       while(res->hres)
 	{
-	  if (escp2_ink_type(model, res->resid, printer->printvars) != -1 &&
-	      res->vres <= escp2_max_vres(model, printer->printvars) &&
-	      res->hres <= escp2_max_hres(model, printer->printvars) &&
+	  if (escp2_ink_type(model, res->resid, v) != -1 &&
+	      res->vres <= escp2_max_vres(model, v) &&
+	      res->hres <= escp2_max_hres(model, v) &&
 	      ((res->vres / nozzle_width) * nozzle_width) == res->vres)
 	    {
-	      int nozzles = escp2_nozzles(model, printer->printvars);
+	      int nozzles = escp2_nozzles(model, v);
 	      int xdpi = res->hres;
 	      int physical_xdpi =
 		xdpi > escp2_enhanced_resolution ?
-		escp2_enhanced_xres(model, printer->printvars) :
-		escp2_xres(model, printer->printvars);
+		escp2_enhanced_xres(model, v) :
+		escp2_xres(model, v);
 	      int horizontal_passes = xdpi / physical_xdpi;
 	      int oversample = horizontal_passes * res->vertical_passes
 	                         * res->vertical_oversample;
@@ -2155,7 +2157,7 @@ escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
     }
   else if (strcmp(name, "InkType") == 0)
     {
-      if (escp2_has_cap(model, MODEL_COLOR, MODEL_COLOR_4, printer->printvars))
+      if (escp2_has_cap(model, MODEL_COLOR, MODEL_COLOR_4, v))
 	return NULL;
       else
 	{
@@ -2185,7 +2187,7 @@ escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
   else if (strcmp(name, "InputSlot") == 0)
     {
       if (escp2_has_cap(model, MODEL_ROLLFEED, MODEL_ROLLFEED_NO,
-			printer->printvars))
+			v))
 	return NULL;
       else
 	{      /* Roll Feed capable printers */
@@ -2206,7 +2208,7 @@ escp2_parameters(const stp_printer_t *printer,	/* I - Printer model */
  */
 
 static void
-escp2_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
+escp2_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 		     const stp_vars_t v,   /* I */
                      int  *left,	/* O - Left position in points */
                      int  *right,	/* O - Right position in points */
@@ -2219,8 +2221,10 @@ escp2_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
   rollfeed = (strcmp(stp_get_media_source(v), _("Roll Feed")) == 0);
 
   stp_default_media_size(printer, v, &width, &height);
-  *left =	escp2_left_margin(printer->model, printer->printvars);
-  *right =	width - escp2_right_margin(printer->model, printer->printvars);
+  *left =	escp2_left_margin(stp_printer_get_model(printer),
+				  stp_printer_get_printvars(printer));
+  *right =	width - escp2_right_margin(stp_printer_get_model(printer),
+					   stp_printer_get_printvars(printer));
 
  /* 
   * All printers should have 0 vertical margin capability in Roll Feed
@@ -2232,33 +2236,38 @@ escp2_imageable_area(const stp_printer_t *printer,	/* I - Printer model */
      *top =      height - 0;
      *bottom =   0;
   } else {
-    *top =	height - escp2_top_margin(printer->model, printer->printvars);
-    *bottom =	escp2_bottom_margin(printer->model, printer->printvars);
+    *top =	height - escp2_top_margin(stp_printer_get_model(printer),
+					  stp_printer_get_printvars(printer));
+    *bottom =	escp2_bottom_margin(stp_printer_get_model(printer),
+				    stp_printer_get_printvars(printer));
   }
 }
 
 static void
-escp2_limit(const stp_printer_t *printer,	/* I - Printer model */
+escp2_limit(const stp_printer_t printer,	/* I - Printer model */
 	    const stp_vars_t v,  		/* I */
 	    int  *width,		/* O - Left position in points */
 	    int  *height)		/* O - Top position in points */
 {
-  *width =	escp2_max_paper_width(printer->model, printer->printvars);
-  *height =	escp2_max_paper_height(printer->model, printer->printvars);
+  *width =	escp2_max_paper_width(stp_printer_get_model(printer),
+				      stp_printer_get_printvars(printer));
+  *height =	escp2_max_paper_height(stp_printer_get_model(printer),
+				       stp_printer_get_printvars(printer));
 }
 
 static const char *
-escp2_default_resolution(const stp_printer_t *printer)
+escp2_default_resolution(const stp_printer_t printer)
 {
+  int model = stp_printer_get_model(printer);
+  stp_vars_t v = stp_printer_get_printvars(printer);
   const res_t *res = &(escp2_reslist[0]);
   int nozzle_width = (escp2_base_separation /
-		      escp2_nozzle_separation(printer->model,
-					      printer->printvars));
+		      escp2_nozzle_separation(model, v));
   while (res->hres)
     {
-      if (escp2_ink_type(printer->model, res->resid, printer->printvars) != -1 &&
-	  res->vres <= escp2_max_vres(printer->model, printer->printvars) &&
-	  res->hres <= escp2_max_hres(printer->model, printer->printvars) &&
+      if (escp2_ink_type(model, res->resid, v) != -1 &&
+	  res->vres <= escp2_max_vres(model, v) &&
+	  res->hres <= escp2_max_hres(model, v) &&
 	  ((res->vres / nozzle_width) * nozzle_width) == res->vres)
 	{
 	  if (res->vres == 360 && res->hres == 360)
@@ -2270,18 +2279,18 @@ escp2_default_resolution(const stp_printer_t *printer)
 }
 
 static void
-escp2_describe_resolution(const stp_printer_t *printer,
+escp2_describe_resolution(const stp_printer_t printer,
 			  const char *resolution, int *x, int *y)
 {
+  int model = stp_printer_get_model(printer);
+  stp_vars_t v = stp_printer_get_printvars(printer);
   const res_t *res = &(escp2_reslist[0]);
-  int nozzle_width = (escp2_base_separation /
-		      escp2_nozzle_separation(printer->model,
-					      printer->printvars));
+  int nozzle_width = escp2_base_separation / escp2_nozzle_separation(model, v);
   while (res->hres)
     {
-      if (escp2_ink_type(printer->model, res->resid, printer->printvars) != -1 &&
-	  res->vres <= escp2_max_vres(printer->model, printer->printvars) &&
-	  res->hres <= escp2_max_hres(printer->model, printer->printvars) &&
+      if (escp2_ink_type(model, res->resid, v) != -1 &&
+	  res->vres <= escp2_max_vres(model, v) &&
+	  res->hres <= escp2_max_hres(model, v) &&
 	  ((res->vres / nozzle_width) * nozzle_width) == res->vres &&
 	  !strcmp(resolution, _(res->name)))
 	{
@@ -2553,12 +2562,12 @@ escp2_deinit_printer(const stp_vars_t v, escp2_init_t *init)
  * 'escp2_print()' - Print an image to an EPSON printer.
  */
 static void
-escp2_print(const stp_printer_t *printer,		/* I - Model */
+escp2_print(const stp_printer_t printer,		/* I - Model */
 	    stp_image_t     *image,		/* I - Image to print */
 	    const stp_vars_t    v)
 {
   unsigned char *cmap = stp_get_cmap(v);
-  int		model = printer->model;
+  int		model = stp_printer_get_model(printer);
   const char	*resolution = stp_get_resolution(v);
   const char	*media_type = stp_get_media_type(v);
   int 		output_type = stp_get_output_type(v);
