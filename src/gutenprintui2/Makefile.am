@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2004/12/05 22:08:28 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2005/02/06 20:48:38 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -77,9 +77,9 @@ pkgconfigdata_DATA = gutenprintui2.pc
 # Copied from include/gutenprintui2/Makefile.am
 # This duplication needs fixing somehow
 stpui_public_h_sources = \
-	$(top_srcdir)/include/gutenprintui2/gutenprintui.h	\
-	$(top_srcdir)/include/gutenprintui2/curve.h		\
-	$(top_srcdir)/include/gutenprintui2/gammacurve.h
+	../../include/gutenprintui2/gutenprintui.h	\
+	../../include/gutenprintui2/curve.h		\
+	../../include/gutenprintui2/gammacurve.h
 
 if MAINTAINER_MODE
 typebuiltins_extra_deps = Makefile
