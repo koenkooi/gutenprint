@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.7 2003/01/06 00:14:43 rlk Exp $"
+ * "$Id: plist.c,v 1.8 2003/01/06 00:19:17 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -685,7 +685,6 @@ stpui_printrc_save(void)
       {
 	int count;
 	int j;
-	const stp_curve_t curve;
 	stp_parameter_list_t *params = stp_list_parameters(p->v);
 	count = stp_parameter_list_count(params);
 	fprintf(fp, "\nPrinter: %s\n", p->name);
@@ -713,25 +712,31 @@ stpui_printrc_save(void)
 	      {
 	      case STP_PARAMETER_TYPE_STRING_LIST:
 	      case STP_PARAMETER_TYPE_FILE:
-		if (stp_get_string_parameter(p->v, param->name))
+		if (stp_check_string_parameter(p->v, param->name))
 		  fprintf(fp, "%s: %s\n", param->name,
 			  stp_get_string_parameter(p->v, param->name));
 		break;
 	      case STP_PARAMETER_TYPE_DOUBLE:
-		fprintf(fp, "%s: %f\n", param->name,
-			stp_get_float_parameter(p->v, param->name));
+		if (stp_check_float_parameter(p->v, param->name))
+		  fprintf(fp, "%s: %f\n", param->name,
+			  stp_get_float_parameter(p->v, param->name));
 		break;
 	      case STP_PARAMETER_TYPE_INT:
-		fprintf(fp, "%s: %d\n", param->name,
-			stp_get_int_parameter(p->v, param->name));
+		if (stp_check_int_parameter(p->v, param->name))
+		  fprintf(fp, "%s: %d\n", param->name,
+			  stp_get_int_parameter(p->v, param->name));
 		break;
 	      case STP_PARAMETER_TYPE_CURVE:
-		curve = stp_get_curve_parameter(p->v, param->name);
-		if (curve)
+		if (stp_check_curve_parameter(p->v, param->name))
 		  {
-		    fprintf(fp, "%s: ", param->name);
-		    stp_curve_print(fp, curve);
-		    fprintf(fp, "\n");
+		    const stp_curve_t curve =
+		      stp_get_curve_parameter(p->v, param->name);
+		    if (curve)
+		      {
+			fprintf(fp, "%s: ", param->name);
+			stp_curve_print(fp, curve);
+			fprintf(fp, "\n");
+		      }
 		  }
 		break;
 	      default:
@@ -1168,5 +1173,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.7 2003/01/06 00:14:43 rlk Exp $".
+ * End of "$Id: plist.c,v 1.8 2003/01/06 00:19:17 rlk Exp $".
  */
