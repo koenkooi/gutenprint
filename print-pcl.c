@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.28 2000/02/15 22:04:08 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.29 2000/02/16 00:59:19 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,13 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.29  2000/02/16 00:59:19  rlk
+ *   1) Use correct convert functions (canon, escp2, pcl, ps).
+ *
+ *   2) Fix gray_to_rgb increment (print-util)
+ *
+ *   3) Fix dither update (print-dither)
+ *
  *   Revision 1.28  2000/02/15 22:04:08  davehill
  *   Added fix when (left < 0)
  *
@@ -495,11 +502,7 @@ pcl_print(int       model,		/* I - Model */
   else if (output_type == OUTPUT_GRAY_COLOR)
   {
     out_bpp = 3;
-
-    if (image_bpp >= 3)
-      colorfunc = gray_to_rgb;
-    else
-      colorfunc = indexed_to_rgb;
+    colorfunc = gray_to_rgb;
   }
   else
   {
@@ -1206,5 +1209,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.28 2000/02/15 22:04:08 davehill Exp $".
+ * End of "$Id: print-pcl.c,v 1.29 2000/02/16 00:59:19 rlk Exp $".
  */

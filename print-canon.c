@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.24 2000/02/15 03:51:40 rlk Exp $"
+ * "$Id: print-canon.c,v 1.25 2000/02/16 00:59:19 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,13 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.25  2000/02/16 00:59:19  rlk
+ *   1) Use correct convert functions (canon, escp2, pcl, ps).
+ *
+ *   2) Fix gray_to_rgb increment (print-util)
+ *
+ *   3) Fix dither update (print-dither)
+ *
  *   Revision 1.24  2000/02/15 03:51:40  rlk
  *
  *   1) It wasn't possible to print to the edge of the page (as defined by
@@ -863,11 +870,7 @@ canon_print(int       model,		/* I - Model */
   else if (output_type == OUTPUT_GRAY_COLOR)
   {
     out_bpp = 3;
-
-    if (image_bpp >= 3)
-      colorfunc = gray_to_rgb;
-    else
-      colorfunc = indexed_to_rgb;
+    colorfunc = gray_to_rgb;
   } else {
     out_bpp = 1;
 
@@ -1608,5 +1611,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-canon.c,v 1.24 2000/02/15 03:51:40 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.25 2000/02/16 00:59:19 rlk Exp $".
  */
