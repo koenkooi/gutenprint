@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.20 2002/02/14 12:50:28 rlk Exp $
+## $Id: Makefile.am,v 1.21 2002/02/14 12:59:45 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ EXTRA_DIST = \
 	contrib.mak.addon.in \
 	debian-patch \
 	debian-patch-stp \
-	gdevstp.c \
+	gdevstp.c
 
 ## Variables
 
