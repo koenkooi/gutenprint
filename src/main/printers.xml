@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.29 2001/10/02 00:36:38 rlk Exp $"
+# "$Id: printers.xml,v 1.30 2001/10/06 18:54:13 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -55,6 +55,30 @@
 <color>
 <model value=85>
 <gamma value=0.5>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 210" driver="bjc-210">
+<color>
+<model value=210>
+<gamma value=1.000>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 240" driver="bjc-240">
+<color>
+<model value=240>
+<gamma value=1.000>
+<density value=0.800>
+<language value=canon>
+</printer>
+
+<printer name="CANON BJC 250" driver="bjc-250">
+<color>
+<model value=250>
+<gamma value=1.000>
 <density value=0.800>
 <language value=canon>
 </printer>
