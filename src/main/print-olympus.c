@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.2.2.3 2003/05/25 01:50:06 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.2.2.4 2003/05/25 02:08:57 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -195,14 +195,14 @@ olympus_imageable_area(stp_const_vars_t v,
 		   int  *bottom,
 		   int  *top)
 {
+  int width, height;
   int model = stpi_get_model_id(v);
+  stpi_default_media_size(v, &width, &height);
   
   *left = olympus_model_capabilities[model].border_left;
   *top = olympus_model_capabilities[model].border_top;
-  *right = stp_get_page_width(v)
-             - olympus_model_capabilities[model].border_right;
-  *bottom = stp_get_page_height(v)
-             - olympus_model_capabilities[model].border_bottom;
+  *right = width - olympus_model_capabilities[model].border_right;
+  *bottom = height - olympus_model_capabilities[model].border_bottom;
 }
 
 static void
