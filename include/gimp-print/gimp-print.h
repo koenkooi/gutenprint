@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.17 2003/01/18 22:29:39 rlk Exp $
+ *  $Id: gimp-print.h,v 1.18 2003/01/20 01:43:15 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -394,10 +394,6 @@ extern void stp_vars_free(stp_vars_t v);
 extern void stp_set_driver(stp_vars_t v, const char *val);
 extern void stp_set_driver_n(stp_vars_t v, const char *val, int bytes);
 extern const char * stp_get_driver(const stp_vars_t v);
-
-extern void stp_set_ppd_file(stp_vars_t v, const char *val);
-extern void stp_set_ppd_file_n(stp_vars_t v, const char *val, int bytes);
-extern const char * stp_get_ppd_file(const stp_vars_t v);
 
 extern void stp_set_left(stp_vars_t v, int val);
 extern void stp_set_top(stp_vars_t v, int val);
@@ -1036,5 +1032,5 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.17 2003/01/18 22:29:39 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.18 2003/01/20 01:43:15 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.32 2003/01/14 00:23:40 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.33 2003/01/20 01:43:15 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -472,8 +472,6 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
       else
 	code = IJS_ERANGE;
     }
-  else if (strcmp(key, "PPDFile") == 0)
-    stp_set_ppd_file(img->v, vbuf);
   else if (strcmp(key, "Quality") == 0)
     stp_set_string_parameter(img->v, "Resolution", vbuf);
   else if (strcmp(key, "TopLeft") == 0)
@@ -542,6 +540,9 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
 	case STP_PARAMETER_TYPE_STRING_LIST:
 	  stp_set_string_parameter(img->v, key, vbuf);
 	  stp_string_list_free(desc.bounds.str);
+	  break;
+	case STP_PARAMETER_TYPE_FILE:
+	  stp_set_file_parameter(img->v, key, vbuf);
 	  break;
 	case STP_PARAMETER_TYPE_CURVE:
 	  curve = stp_curve_allocate_read_string(vbuf);
