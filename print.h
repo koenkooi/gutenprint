@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.26 2000/01/25 19:51:27 rlk Exp $"
+ * "$Id: print.h,v 1.27 2000/01/28 03:59:53 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -240,17 +240,13 @@ int		      known_papersizes(void);
 const papersize_t    *get_papersizes(void);
 const papersize_t    *get_papersize_by_name(const char *);
 
-#ifdef LEFTOVER_8_BIT
-extern void	dither_cmyk4(unsigned char *, int, int, int, unsigned char *,
-		             unsigned char *, unsigned char *,
-			     unsigned char *);
-extern void	dither_black4(unsigned char *, int, int, int, unsigned char *);
-extern void	gray_to_gray(unsigned char *, unsigned char *, int, int,
-			     lut_t *, unsigned char *, float);
-extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
-				lut_t *, unsigned char *, float);
-#endif
+int		      known_printers(void);
+const printer_t      *get_printers(void);
+const printer_t	     *get_printer_by_index(int);
+const printer_t      *get_printer_by_long_name(const char *);
+const printer_t      *get_printer_by_driver(const char *);
+int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.26 2000/01/25 19:51:27 rlk Exp $".
+ * End of "$Id: print.h,v 1.27 2000/01/28 03:59:53 rlk Exp $".
  */
