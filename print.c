@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.105 2000/08/05 16:50:35 rlk Exp $"
+ * "$Id: print.c,v 1.106 2000/08/13 16:12:25 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -295,7 +295,12 @@ usr1_handler (int signal)
  * 'run()' - Run the plug-in...
  */
 
-#define PRINT_LUT
+/* #define DEBUG_STARTUP */
+
+
+#ifdef DEBUG_STARTUP
+volatile int SDEBUG = 1;
+#endif
 
 static void
 run (char   *name,		/* I - Name of print program. */
@@ -321,6 +326,10 @@ run (char   *name,		/* I - Name of print program. */
 		cpid = 0,	/* PID of control/monitor process */
 		pipefd[2];	/* Fds of the pipe connecting all the above */
   int		dummy;
+#ifdef DEBUG_STARTUP
+  while (SDEBUG)
+    ;
+#endif
 
   INIT_LOCALE ("gimp-print");
 
@@ -1176,5 +1185,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.105 2000/08/05 16:50:35 rlk Exp $".
+ * End of "$Id: print.c,v 1.106 2000/08/13 16:12:25 rlk Exp $".
  */
