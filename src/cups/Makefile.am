@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.39 2001/10/24 00:55:00 rlk Exp $
+## $Id: Makefile.am,v 1.40 2001/10/28 14:49:01 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,9 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PR
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
+if USE_NLS
+EXTRA_GENPPD_LIBS = ../../intl/gettext.o ../../intl/libintl.a
+endif
 
 ## Programs
 
@@ -74,12 +77,12 @@ epson_SOURCES = epson.c
 epson_LDADD = $(CUPS_LIBS)
 
 genppd_SOURCES = genppd.c
-genppd_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
-genppd_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+genppd_LDADD = $(EXTRA_GENPPD_LIBS) $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
+genppd_DEPENDENCIES = $(LIBGIMPPRINT_LIBS) $(EXTRA_GENPPD_LIBS)
 
 rastertoprinter_SOURCES = rastertoprinter.c
-rastertoprinter_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
-rastertoprinter_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+rastertoprinter_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS) $(EXTRA_GENPPD_LIBS)
+rastertoprinter_DEPENDENCIES = $(LIBGIMPPRINT_LIBS) $(EXTRA_GENPPD_LIBS)
 
 
 ## Data
@@ -172,7 +175,7 @@ ppd-stamp: genppd
 	-mkdir ppd
 	for language in C $(ALL_LINGUAS) ; do \
 	  mkdir ppd/$$language ; \
-	  LC_ALL=$$language ./genppd --prefix=ppd/$$language --catalog=`pwd`/catalog/share/locale ; \
+	  LANGUAGE=$$language ./genppd --prefix=ppd/$$language --catalog=`pwd`/catalog/share/locale ; \
 	done
 	$(RM) -r catalog
 	touch ppd-stamp
@@ -195,6 +198,9 @@ dist-hook:
 
 clean-local:
 	-$(RM) -r ppd
+
+../../intl/libintl.a ../../intl/gettext.o:
+	cd $(top_builddir)/intl; $(MAKE) libintl.a
 
 
 ## Clean

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.31 2001/10/27 17:16:38 rlk Exp $"
+ * "$Id: genppd.c,v 1.32 2001/10/28 14:49:01 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -62,6 +62,17 @@
 #else
 #include <gimp-print/gimp-print.h>
 #endif
+#ifdef ENABLE_NLS
+
+#ifdef INCLUDE_LOCALE_H
+INCLUDE_LOCALE_H
+#else
+#include <locale.h>
+#endif
+
+#include "libgnuintl.h"
+#endif
+
 #include <gimp-print/gimp-print-intl.h>
 #include "../../lib/libprintut.h"
 
@@ -830,5 +841,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.31 2001/10/27 17:16:38 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.32 2001/10/28 14:49:01 rlk Exp $".
  */
