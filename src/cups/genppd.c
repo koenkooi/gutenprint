@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.40 2002/08/27 21:12:43 rleigh Exp $"
+ * "$Id: genppd.c,v 1.41 2002/08/27 22:32:47 rleigh Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -687,10 +687,8 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   */
 
 
-  
   if (stat(prefix, &dir) && !S_ISDIR(dir.st_mode))
     {
-      printf ("***B***\n");
       if (mkdir(prefix, 0777))
 	{
 	  printf("cups-genppd: Cannot create directory %s: %s\n",
@@ -1137,5 +1135,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.40 2002/08/27 21:12:43 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.41 2002/08/27 22:32:47 rleigh Exp $".
  */
