@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.101.2.1 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-dither.c,v 1.101.2.2 2002/11/16 20:03:52 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -268,20 +268,12 @@ static const unsigned sq2[] =
 };
 
 void
-stp_dither_algorithms(stp_param_string_list_t valptrs)
+stp_dither_algorithms(stp_string_list_t valptrs)
 {
   int i;
   for (i = 0; i < num_dither_algos; i++)
-    stp_param_list_add_param(valptrs, dither_algos[i].name,
+    stp_string_list_add_param(valptrs, dither_algos[i].name,
 			     _(dither_algos[i].text));
-}
-
-stp_parameter_value_t
-stp_get_default_dither_algorithm(void)
-{
-  stp_parameter_value_t r;
-  r.str = dither_algos[0].name;
-  return r;
 }
 
 /*
@@ -411,7 +403,7 @@ stp_set_dither_function(dither_t *d, int image_bpp)
   d->dither_type = D_ADAPTIVE_HYBRID;
   for (i = 0; i < num_dither_algos; i++)
     {
-      if (!strcmp(stp_get_parameter(d->v, "DitherAlgorithm").str,
+      if (!strcmp(stp_get_string_parameter(d->v, "DitherAlgorithm"),
 		  _(dither_algos[i].name)))
 	{
 	  d->dither_type = dither_algos[i].id;

@@ -1,5 +1,5 @@
 /*
-* "$Id: print.c,v 1.33.2.1 2002/11/15 01:34:45 rlk Exp $"
+* "$Id: print.c,v 1.33.2.2 2002/11/16 20:03:52 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -461,13 +461,13 @@ run (char   *name,		/* I - Name of print program. */
 	  stp_set_driver(gimp_vars.v, param[4].data.d_string);
 	  stp_set_ppd_file(gimp_vars.v, param[5].data.d_string);
 	  stp_set_output_type(gimp_vars.v, param[6].data.d_int32);
-	  stp_set_parameter(gimp_vars.v, "Resolution", param[7].data.d_string);
-	  stp_set_parameter(gimp_vars.v, "PageSize", param[8].data.d_string);
-	  stp_set_parameter(gimp_vars.v, "MediaType", param[9].data.d_string);
-	  stp_set_parameter(gimp_vars.v, "InputSlot", param[10].data.d_string);
+	  stp_set_string_parameter(gimp_vars.v, "Resolution", param[7].data.d_string);
+	  stp_set_string_parameter(gimp_vars.v, "PageSize", param[8].data.d_string);
+	  stp_set_string_parameter(gimp_vars.v, "MediaType", param[9].data.d_string);
+	  stp_set_string_parameter(gimp_vars.v, "InputSlot", param[10].data.d_string);
 
           if (nparams > 11)
-	    stp_set_parameter(gimp_vars.v, "Brightness", param[11].data.d_float);
+	    stp_set_float_parameter(gimp_vars.v, "Brightness", param[11].data.d_float);
 
           if (nparams > 12)
 	    gimp_vars.scaling = param[12].data.d_float;
@@ -482,34 +482,34 @@ run (char   *name,		/* I - Name of print program. */
             stp_set_top(gimp_vars.v, param[15].data.d_int32);
 
           if (nparams > 16)
-            stp_set_parameter(gimp_vars.v, "Gamma", param[16].data.d_float);
+            stp_set_float_parameter(gimp_vars.v, "Gamma", param[16].data.d_float);
 
           if (nparams > 17)
-	    stp_set_parameter(gimp_vars.v, "Contrast", param[17].data.d_float);
+	    stp_set_float_parameter(gimp_vars.v, "Contrast", param[17].data.d_float);
 
           if (nparams > 18)
-	    stp_set_parameter(gimp_vars.v, "Cyan", param[18].data.d_float);
+	    stp_set_float_parameter(gimp_vars.v, "Cyan", param[18].data.d_float);
 
           if (nparams > 19)
-	    stp_set_parameter(gimp_vars.v, "Magenta", param[19].data.d_float);
+	    stp_set_float_parameter(gimp_vars.v, "Magenta", param[19].data.d_float);
 
           if (nparams > 20)
-	    stp_set_parameter(gimp_vars.v, "Yellow", param[20].data.d_float);
+	    stp_set_float_parameter(gimp_vars.v, "Yellow", param[20].data.d_float);
 
           if (nparams > 21)
             stp_set_image_type(gimp_vars.v, param[22].data.d_int32);
 
           if (nparams > 22)
-            stp_set_parameter(gimp_vars.v, "Saturation", param[23].data.d_float);
+            stp_set_float_parameter(gimp_vars.v, "Saturation", param[23].data.d_float);
 
           if (nparams > 23)
-            stp_set_parameter(gimp_vars.v, "Density", param[24].data.d_float);
+            stp_set_float_parameter(gimp_vars.v, "Density", param[24].data.d_float);
 
 	  if (nparams > 24)
-	    stp_set_parameter(gimp_vars.v, "InkType", param[25].data.d_string);
+	    stp_set_string_parameter(gimp_vars.v, "InkType", param[25].data.d_string);
 
 	  if (nparams > 25)
-	    stp_set_parameter(gimp_vars.v, "DitherAlgorithm",
+	    stp_set_string_parameter(gimp_vars.v, "DitherAlgorithm",
 			      param[26].data.d_string);
 
           if (nparams > 26)
@@ -631,7 +631,7 @@ run (char   *name,		/* I - Name of print program. */
 	{
 	  int orientation;
 	  stp_image_t *image = Image_GimpDrawable_new(drawable);
-	  stp_set_parameter(gimp_vars.v, "AppGamma", gimp_gamma());
+	  stp_set_float_parameter(gimp_vars.v, "AppGamma", gimp_gamma());
 	  stp_merge_printvars(gimp_vars.v,
 			      stp_printer_get_printvars(current_printer));
 
@@ -810,7 +810,7 @@ get_optional_string_param(stp_vars_t v, const char *param,
       char *commaptr = strchr(*lineptr, ',');
       if (commaptr == NULL)
 	{
-	  stp_set_parameter(v, param, *lineptr);
+	  stp_set_string_parameter(v, param, *lineptr);
 	  *keepgoing = 0;
 	}
       else
@@ -868,12 +868,12 @@ get_optional_float_param(stp_vars_t v, const char *param,
       char *commaptr = strchr(*lineptr, ',');
       if (commaptr == NULL)
 	{
-	  stp_set_parameter(v, param, *lineptr);
+	  stp_set_float_parameter(v, param, atof(*lineptr));
 	  *keepgoing = 0;
 	}
       else
 	{
-	  stp_set_parameter(v, param, atof(*lineptr));
+	  stp_set_float_parameter(v, param, atof(*lineptr));
 	  *lineptr = commaptr + 1;
 	}
     }
@@ -1143,15 +1143,15 @@ printrc_load(void)
 	} else if (strcasecmp("output-type", keyword) == 0) {
 	  stp_set_output_type(key.v, atoi(value));
 	} else if (strcasecmp("resolution", keyword) == 0) {
-	  stp_set_parameter(key.v, "Resolution", value);
+	  stp_set_string_parameter(key.v, "Resolution", value);
 	} else if (strcasecmp("media-size", keyword) == 0) {
-	  stp_set_parameter(key.v, "PageSize", value);
+	  stp_set_string_parameter(key.v, "PageSize", value);
 	} else if (strcasecmp("media-type", keyword) == 0) {
-	  stp_set_parameter(key.v, "MediaType", value);
+	  stp_set_string_parameter(key.v, "MediaType", value);
 	} else if (strcasecmp("media-source", keyword) == 0) {
-	  stp_set_parameter(key.v, "InputSlot", value);
+	  stp_set_string_parameter(key.v, "InputSlot", value);
 	} else if (strcasecmp("brightness", keyword) == 0) {
-	  stp_set_parameter(key.v, "Brightness", atof(value));
+	  stp_set_float_parameter(key.v, "Brightness", atof(value));
 	} else if (strcasecmp("scaling", keyword) == 0) {
 	  key.scaling = atof(value);
 	} else if (strcasecmp("orientation", keyword) == 0) {
@@ -1161,27 +1161,27 @@ printrc_load(void)
 	} else if (strcasecmp("top", keyword) == 0) {
 	  stp_set_top(key.v, atoi(value));
 	} else if (strcasecmp("gamma", keyword) == 0) {
-	  stp_set_parameter(key.v, "Gamma", atof(value));
+	  stp_set_float_parameter(key.v, "Gamma", atof(value));
 	} else if (strcasecmp("contrast", keyword) == 0) {
-	  stp_set_parameter(key.v, "Contrast", atof(value));
+	  stp_set_float_parameter(key.v, "Contrast", atof(value));
 	} else if (strcasecmp("cyan", keyword) == 0) {
-	  stp_set_parameter(key.v, "Cyan", atof(value));
+	  stp_set_float_parameter(key.v, "Cyan", atof(value));
 	} else if (strcasecmp("magenta", keyword) == 0) {
-	  stp_set_parameter(key.v, "Magenta", atof(value));
+	  stp_set_float_parameter(key.v, "Magenta", atof(value));
 	} else if (strcasecmp("yellow", keyword) == 0) {
-	  stp_set_parameter(key.v, "Yellow", atof(value));
+	  stp_set_float_parameter(key.v, "Yellow", atof(value));
 	} else if (strcasecmp("linear", keyword) == 0) {
 	  /* Ignore linear */
 	} else if (strcasecmp("image-type", keyword) == 0) {
 	  stp_set_image_type(key.v, atoi(value));
 	} else if (strcasecmp("saturation", keyword) == 0) {
-	  stp_set_parameter(key.v, "Saturation", atof(value));
+	  stp_set_float_parameter(key.v, "Saturation", atof(value));
 	} else if (strcasecmp("density", keyword) == 0) {
-	  stp_set_parameter(key.v, "Density", atof(value));
+	  stp_set_float_parameter(key.v, "Density", atof(value));
 	} else if (strcasecmp("ink-type", keyword) == 0) {
-	  stp_set_parameter(key.v, "InkType", value);
+	  stp_set_string_parameter(key.v, "InkType", value);
 	} else if (strcasecmp("dither-algorithm", keyword) == 0) {
-	  stp_set_parameter(key.v, "DitherAlgorithm", value);
+	  stp_set_string_parameter(key.v, "DitherAlgorithm", value);
 	} else if (strcasecmp("unit", keyword) == 0) {
 	  key.unit = atoi(value);
 	} else if (strcasecmp("custom-page-width", keyword) == 0) {
@@ -1189,11 +1189,21 @@ printrc_load(void)
 	} else if (strcasecmp("custom-page-height", keyword) == 0) {
 	  stp_set_page_height(key.v, atoi(value));
 	} else {
-	  /* Unrecognised keyword; ignore it... */
-	  stp_set_parameter(key.v, keyword, value);
-#if 0
-          printf("Unrecognized keyword `%s' in printrc; value `%s'\n", keyword, value);
-#endif
+	  stp_parameter_t desc;
+	  stp_describe_parameter(key.v, keyword, &desc);
+	  switch (desc.type)
+	    {
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	    case STP_PARAMETER_TYPE_FILE:
+	      stp_set_string_parameter(key.v, keyword, value);
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      stp_set_float_parameter(key.v, keyword, atof(value));
+	      break;
+	    default:
+	      printf("Unrecognized keyword `%s' in printrc; value `%s'\n",
+		     keyword, value);
+	    }
 	}
       }
       else
@@ -1281,7 +1291,7 @@ printrc_save(void)
       {
 	int count;
 	int j, k;
-	stp_param_curve_t *curve;
+	const stp_curve_t *curve;
 	const stp_parameter_t *params = stp_list_parameters(p->v, &count);
 	fprintf(fp, "\nPrinter: %s\n", p->name);
 	fprintf(fp, "Destination: %s\n", plist_get_output_to(p));
@@ -1306,14 +1316,14 @@ printrc_save(void)
 	    case STP_PARAMETER_TYPE_STRING_LIST:
 	    case STP_PARAMETER_TYPE_FILE:
 	      fprintf(fp, "%s: %s\n", params[j].name,
-		      stp_get_parameter(p->v, params[j].name).str);
+		      stp_get_string_parameter(p->v, params[j].name));
 	      break;
 	    case STP_PARAMETER_TYPE_DOUBLE:
 	      fprintf(fp, "%s: %f\n", params[j].name,
-		      stp_get_parameter(p->v, params[j].name).dbl);
+		      stp_get_float_parameter(p->v, params[j].name));
 	      break;
 	    case STP_PARAMETER_TYPE_CURVE:
-	      curve = stp_get_parameter(p->v, params[j].name).curve;
+	      curve = stp_get_curve_parameter(p->v, params[j].name);
 	      fprintf(fp, "%s: %d", params[j].name, curve->count);
 	      for (k = 0; k < curve->count; k++)
 		fprintf(fp, ";%f", curve->value[k]);
@@ -1544,5 +1554,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.33.2.1 2002/11/15 01:34:45 rlk Exp $".
+ * End of "$Id: print.c,v 1.33.2.2 2002/11/16 20:03:52 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.61.2.1 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.61.2.2 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -239,7 +239,7 @@ static void
 pcl_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
   int i;
-  const char *resolution = stp_get_parameter(v, "Resolution").str;
+  const char *resolution = stp_get_string_parameter(v, "Resolution");
   for (i = 0; i < NUM_RESOLUTIONS; i++)
     {
       if (!strcmp(resolution, pcl_resolutions[i].pcl_name))
@@ -1632,7 +1632,7 @@ pcl_papersize_valid(const stp_papersize_t pt,
 
 static void
 pcl_parameters(const stp_vars_t v, const char *name,
-	       stp_parameter_description_t *description)
+	       stp_parameter_t *description)
 {
   int		model = stp_get_model(v);
   int		i;
@@ -1654,166 +1654,92 @@ pcl_parameters(const stp_vars_t v, const char *name,
   stp_deprintf(STP_DBG_PCL, "Resolutions: %d\n", caps->resolutions);
   stp_deprintf(STP_DBG_PCL, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
 
-  description->type = STP_PARAMETER_TYPE_STRING_LIST;
-  description->class = STP_PARAMETER_CLASS_FEATURE;
-  description->level = STP_PARAMETER_LEVEL_BASIC;
+  stp_fill_parameter_settings(description, name);
+  description->deflt.str = NULL;
 
   if (strcmp(name, "PageSize") == 0)
     {
       int papersizes = stp_known_papersizes();
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       for (i = 0; i < papersizes; i++)
 	{
 	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	  if (strlen(stp_papersize_get_name(pt)) > 0 &&
 	      pcl_papersize_valid(pt, model))
-	    stp_param_list_add_param(description->restrictions.string_list,
-				     stp_papersize_get_name(pt),
-				     stp_papersize_get_text(pt));
+	    stp_string_list_add_param(description->bounds.str,
+				      stp_papersize_get_name(pt),
+				      stp_papersize_get_text(pt));
 	}
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
   else if (strcmp(name, "MediaType") == 0)
   {
-    description->restrictions.string_list = stp_param_list_allocate();
+    description->bounds.str = stp_string_list_allocate();
     if (caps->paper_types[0] != -1)
-      for (i=0; (i < NUM_PRINTER_PAPER_TYPES) && (caps->paper_types[i] != -1); i++)
-	stp_param_list_add_param(description->restrictions.string_list,
-				 pcl_val_to_string(caps->paper_types[i],
-						   pcl_media_types,
-						   NUM_PRINTER_PAPER_TYPES),
-				 pcl_val_to_text(caps->paper_types[i],
-						 pcl_media_types,
-						 NUM_PRINTER_PAPER_TYPES));
+      {
+	for (i=0; (i < NUM_PRINTER_PAPER_TYPES) && (caps->paper_types[i] != -1); i++)
+	  stp_string_list_add_param(description->bounds.str,
+				    pcl_val_to_string(caps->paper_types[i],
+						      pcl_media_types,
+						      NUM_PRINTER_PAPER_TYPES),
+				    pcl_val_to_text(caps->paper_types[i],
+						    pcl_media_types,
+						    NUM_PRINTER_PAPER_TYPES));
+	description->deflt.str =
+	  stp_string_list_param(description->bounds.str, 0)->name;
+      }
   }
   else if (strcmp(name, "InputSlot") == 0)
   {
-    description->restrictions.string_list = stp_param_list_allocate();
+    description->bounds.str = stp_string_list_allocate();
     if (caps->paper_sources[0] != -1)
-      for (i=0; (i < NUM_PRINTER_PAPER_SOURCES) && (caps->paper_sources[i] != -1); i++)
-	stp_param_list_add_param(description->restrictions.string_list,
-				 pcl_val_to_string(caps->paper_sources[i],
-						   pcl_media_sources,
-						   NUM_PRINTER_PAPER_SOURCES),
-				 pcl_val_to_text(caps->paper_sources[i],
-						 pcl_media_sources,
-						 NUM_PRINTER_PAPER_SOURCES));
+      {
+	for (i=0; (i < NUM_PRINTER_PAPER_SOURCES) && (caps->paper_sources[i] != -1); i++)
+	  stp_string_list_add_param(description->bounds.str,
+				    pcl_val_to_string(caps->paper_sources[i],
+						      pcl_media_sources,
+						      NUM_PRINTER_PAPER_SOURCES),
+				    pcl_val_to_text(caps->paper_sources[i],
+						    pcl_media_sources,
+						    NUM_PRINTER_PAPER_SOURCES));
+	description->deflt.str =
+	  stp_string_list_param(description->bounds.str, 0)->name;
+      }
   }
   else if (strcmp(name, "Resolution") == 0)
   {
-    description->restrictions.string_list = stp_param_list_allocate();
+    description->bounds.str = stp_string_list_allocate();
     for (i = 0; i < NUM_RESOLUTIONS; i++)
       if (caps->resolutions & pcl_resolutions[i].pcl_code)
-	stp_param_list_add_param
-	  (description->restrictions.string_list,
-	   pcl_val_to_string(pcl_resolutions[i].pcl_code,
-			     pcl_resolutions, NUM_RESOLUTIONS),
-	   pcl_val_to_text(pcl_resolutions[i].pcl_code,
-			   pcl_resolutions, NUM_RESOLUTIONS));
+	{
+	  if (pcl_resolutions[i].pcl_code >= PCL_RES_300_300 &&
+	      description->bounds.str == NULL)
+	    description->deflt.str = 
+	      pcl_val_to_string(pcl_resolutions[i].pcl_code,
+				pcl_resolutions, NUM_RESOLUTIONS);
+	  stp_string_list_add_param
+	    (description->bounds.str,
+	     pcl_val_to_string(pcl_resolutions[i].pcl_code,
+			       pcl_resolutions, NUM_RESOLUTIONS),
+	     pcl_val_to_text(pcl_resolutions[i].pcl_code,
+			     pcl_resolutions, NUM_RESOLUTIONS));
+	}
   }
   else if (strcmp(name, "InkType") == 0)
   {
-    description->restrictions.string_list = stp_param_list_allocate();
+    description->bounds.str = stp_string_list_allocate();
     if (caps->color_type & PCL_COLOR_CMYKcm)
     {
-      stp_param_list_add_param(description->restrictions.string_list,
+      description->deflt.str = ink_types[0].name;
+      stp_string_list_add_param(description->bounds.str,
 			       ink_types[0].name,_(ink_types[0].text));
-      stp_param_list_add_param(description->restrictions.string_list,
+      stp_string_list_add_param(description->bounds.str,
 			       ink_types[1].name,_(ink_types[1].text));
     }
   }
   else
     stp_describe_internal_parameter(v, name, description);
-}
-
-static const stp_parameter_value_t
-pcl_default_parameters(const stp_vars_t v, const char *name)
-{
-  stp_parameter_value_t r;
-  int		model = stp_get_model(v);
-  int		i;
-  const pcl_cap_t *caps;
-
-  r.str = NULL;
-
-  if (name == NULL)
-    return r;
-
-  stp_deprintf(STP_DBG_PCL, "pcl_default_parameters(): Name = %s\n", name);
-
-  caps = pcl_get_model_capabilities(model);
-
-  stp_deprintf(STP_DBG_PCL, "Printer model = %d\n", model);
-  stp_deprintf(STP_DBG_PCL, "PageWidth = %d, PageHeight = %d\n", caps->custom_max_width, caps->custom_max_height);
-  stp_deprintf(STP_DBG_PCL, "MinPageWidth = %d, MinPageHeight = %d\n", caps->custom_min_width, caps->custom_min_height);
-  stp_deprintf(STP_DBG_PCL, "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
-	  caps->top_margin, caps->bottom_margin, caps->left_margin, caps->right_margin);
-  stp_deprintf(STP_DBG_PCL, "Resolutions: %d\n", caps->resolutions);
-  stp_deprintf(STP_DBG_PCL, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
-
-  if (strcmp(name, "PageSize") == 0)
-    {
-      int papersizes = stp_known_papersizes();
-      for (i = 0; i < papersizes; i++)
-	{
-	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
-	  if (strlen(stp_papersize_get_name(pt)) > 0 &&
-	      pcl_papersize_valid(pt, model))
-	    {
-	      r.str = (stp_papersize_get_name(pt));
-	      return r;
-	    }
-	}
-    }
-  else if (strcmp(name, "MediaType") == 0)
-    {
-      if (caps->paper_types[0] != -1)
-	{
-	  r.str = (pcl_val_to_string(caps->paper_types[0], pcl_media_types,
-				     NUM_PRINTER_PAPER_TYPES));
-	}
-    }
-  else if (strcmp(name, "InputSlot") == 0)
-    {
-      if (caps->paper_sources[0] != -1)
-	{
-	  r.str = (pcl_val_to_string(caps->paper_sources[0], pcl_media_sources,
-				     NUM_PRINTER_PAPER_SOURCES));
-	}
-    }
-  else if (strcmp(name, "Resolution") == 0)
-    {
-      for (i = 0; i < NUM_RESOLUTIONS; i++)
-	{
-	  if ((caps->resolutions & pcl_resolutions[i].pcl_code) &&
-	      (pcl_resolutions[i].pcl_code >= PCL_RES_300_300))
-	    {
-	      r.str = (pcl_val_to_string(pcl_resolutions[i].pcl_code,
-					 pcl_resolutions, NUM_RESOLUTIONS));
-	      return r;
-	    }
-	}
-      /* If printer can't handle at least 300x300, look for anything that */
-      /* works */
-      for (i = 0; i < NUM_RESOLUTIONS; i++)
-	{
-	  if ((caps->resolutions & pcl_resolutions[i].pcl_code))
-	    {
-	      r.str = (pcl_val_to_string(pcl_resolutions[i].pcl_code,
-					 pcl_resolutions, NUM_RESOLUTIONS));
-	      return r;
-	    }
-	}
-    }
-  else if (strcmp(name, "InkType") == 0)
-    {
-      if (caps->color_type & PCL_COLOR_CMYKcm)
-	{
-	  r.str = (ink_types[0].name);
-	}
-    }
-  else
-    return stp_default_internal_parameter(v, name);
-  return r;
 }
 
 
@@ -1871,11 +1797,11 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
   int		status = 1;
   unsigned char *cmap = stp_get_cmap(v);
   int		model = stp_get_model(v);
-  const char	*resolution = stp_get_parameter(v, "Resolution").str;
+  const char	*resolution = stp_get_string_parameter(v, "Resolution");
   const char	*media_size;
-  const char	*media_type = stp_get_parameter(v, "MediaType").str;
-  const char	*media_source = stp_get_parameter(v, "InputSlot").str;
-  const char	*ink_type = stp_get_parameter(v, "InkType").str;
+  const char	*media_type = stp_get_string_parameter(v, "MediaType");
+  const char	*media_source = stp_get_string_parameter(v, "InputSlot");
+  const char	*ink_type = stp_get_string_parameter(v, "InkType");
   int 		output_type = stp_get_output_type(v);
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -2053,8 +1979,8 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
   * Set media size
   */
 
-  if (strlen(stp_get_parameter(v, "MediaSize").str) > 0)
-    media_size = stp_get_parameter(v, "MediaSize").str;
+  if (strlen(stp_get_string_parameter(v, "MediaSize")) > 0)
+    media_size = stp_get_string_parameter(v, "MediaSize");
   else if ((pp = stp_get_papersize_by_size(stp_get_page_height(v),
 					   stp_get_page_width(v))) != NULL)
     media_size = stp_papersize_get_name(pp);
@@ -2366,9 +2292,9 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
 
   if (do_cret)				/* 4-level printing for 800/1120 */
     {
-      stp_dither_set_ranges_simple(dither, ECOLOR_Y, 3, dot_sizes_use, stp_get_parameter(nv, "Density").dbl);
+      stp_dither_set_ranges_simple(dither, ECOLOR_Y, 3, dot_sizes_use, stp_get_float_parameter(nv, "Density"));
       if (!do_cretb)
-        stp_dither_set_ranges_simple(dither, ECOLOR_K, 3, dot_sizes_use, stp_get_parameter(nv, "Density").dbl);
+        stp_dither_set_ranges_simple(dither, ECOLOR_K, 3, dot_sizes_use, stp_get_float_parameter(nv, "Density"));
 
 /* Note: no printer I know of does both CRet (4-level) and 6 colour, but
    what the heck. variable_dither_ranges copied from print-escp2.c */
@@ -2376,21 +2302,21 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
       if (do_6color)			/* Photo for 69x */
 	{
 	  stp_dither_set_ranges(dither, ECOLOR_C, 6, variable_dither_ranges,
-			    stp_get_parameter(nv, "Density").dbl);
+			    stp_get_float_parameter(nv, "Density"));
 	  stp_dither_set_ranges(dither, ECOLOR_M, 6, variable_dither_ranges,
-			    stp_get_parameter(nv, "Density").dbl);
+			    stp_get_float_parameter(nv, "Density"));
 	}
       else
 	{
-	  stp_dither_set_ranges_simple(dither, ECOLOR_C, 3, dot_sizes_use, stp_get_parameter(nv, "Density").dbl);
-	  stp_dither_set_ranges_simple(dither, ECOLOR_M, 3, dot_sizes_use, stp_get_parameter(nv, "Density").dbl);
+	  stp_dither_set_ranges_simple(dither, ECOLOR_C, 3, dot_sizes_use, stp_get_float_parameter(nv, "Density"));
+	  stp_dither_set_ranges_simple(dither, ECOLOR_M, 3, dot_sizes_use, stp_get_float_parameter(nv, "Density"));
 	}
     }
   else if (do_6color)
     {
 /* Set light inks for 6 colour printers. Numbers copied from print-escp2.c */
-      stp_dither_set_light_ink(dither, ECOLOR_C, .25, stp_get_parameter(nv, "Density").dbl);
-      stp_dither_set_light_ink(dither, ECOLOR_M, .25, stp_get_parameter(nv, "Density").dbl);
+      stp_dither_set_light_ink(dither, ECOLOR_C, .25, stp_get_float_parameter(nv, "Density"));
+      stp_dither_set_light_ink(dither, ECOLOR_M, .25, stp_get_float_parameter(nv, "Density"));
     }
 
   switch (stp_get_image_type(nv))
@@ -2406,7 +2332,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
       break;
     }
   if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-    stp_dither_set_density(dither, stp_get_parameter(nv, "Density").dbl);
+    stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 
   in  = stp_malloc(image_width * image_bpp);
   out = stp_malloc(image_width * out_bpp * 2);
@@ -2635,7 +2561,6 @@ const stp_printfuncs_t stp_pcl_printfuncs =
   pcl_imageable_area,
   pcl_limit,
   pcl_print,
-  pcl_default_parameters,
   pcl_describe_resolution,
   stp_verify_printer_params
 };

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.20 2002/11/05 02:45:46 rlk Exp $"
+ * "$Id: testdither.c,v 1.20.2.1 2002/11/16 20:03:54 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -145,11 +145,9 @@ main(int  argc,				/* I - Number of command-line arguments */
   int		write_image;		/* Write the image to disk? */
   FILE		*fp = NULL;		/* PPM/PGM output file */
   char		filename[1024];		/* Name of file */
-  stp_vars_t	v = stp_allocate_vars();		/* Dither variables */
+  stp_vars_t	v = stp_allocate_copy(stp_default_settings());
   /* Arbitrary printer, so we can get dither algorithms */
-  stp_printer_t p = stp_get_printer_by_driver("escp2-ex");
-  stp_param_list_t params = stp_printer_get_parameters(p, v,"DitherAlgorithm");
-  int		count = stp_param_list_count(params);
+  stp_parameter_t desc;
   static const char	*dither_types[] =	/* Different dithering modes */
 		{
 		  "gray",
@@ -170,6 +168,8 @@ main(int  argc,				/* I - Number of command-line arguments */
   struct timeval tv1, tv2;
   stp_dither_data_t *dt;
   int bpp = 0;
+
+  stp_describe_parameter(v, "DitherAlgorithm", &desc);
 
  /*
   * Initialise libgimpprint
@@ -224,11 +224,12 @@ main(int  argc,				/* I - Number of command-line arguments */
       continue;
     }
 
-    for (j = 0; j < count; j ++)
-      if (strcmp(argv[i], stp_param_list_param(params, j)->name) == 0)
-	dither_name = stp_param_list_param(params, j)->name;
+    for (j = 0; j < stp_string_list_count(desc.bounds.str); j ++)
+      if (strcmp(argv[i], stp_string_list_param(desc.bounds.str,j)->name) == 0)
+	dither_name = stp_string_list_param(desc.bounds.str, j)->name;
 
-    printf("Unknown option \"%s\" ignored!\n", argv[i]);
+    if (!dither_name)
+      printf("Unknown option \"%s\" ignored!\n", argv[i]);
   }
 
  /*
@@ -246,7 +247,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   */
 
   if (dither_name)
-    stp_set_parameter(v, "DitherAlgorithm", dither_name);
+    stp_set_string_parameter(v, "DitherAlgorithm", dither_name);
 
   switch (dither_type)
     {
@@ -347,9 +348,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 
   sprintf(filename, "%s-%s-%s-%dbit.%s", image_types[image_type],
 	  dither_types[dither_type],
-	  dither_name ? dither_name :
-	  stp_printer_get_default_parameter(p, v, "DitherAlgorithm"),	  
-	  dither_bits,
+	  dither_name ? dither_name : desc.deflt.str, dither_bits,
 	  (dither_type == DITHER_GRAY || dither_type == DITHER_MONOCHROME) ?
 	  "pgm" : "ppm");
 
@@ -865,5 +864,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.20 2002/11/05 02:45:46 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.20.2.1 2002/11/16 20:03:54 rlk Exp $".
  */

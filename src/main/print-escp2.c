@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.193.2.2 2002/11/15 01:34:45 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.193.2.3 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -150,7 +150,7 @@ static t								     \
 escp2_##f(int model, const stp_vars_t v)				     \
 {									     \
   const res_t *res =							     \
-    escp2_find_resolution(model, v, stp_get_parameter(v, "Resolution").str); \
+    escp2_find_resolution(model, v, stp_get_string_parameter(v, "Resolution")); \
   if (res && !(res->softweave))						     \
     return (stp_escp2_model_capabilities[model].m_##f);			     \
   else									     \
@@ -337,7 +337,7 @@ verify_inktype(const escp2_inkname_t *inks, int model, const stp_vars_t v)
 
 static void
 escp2_parameters(const stp_vars_t v, const char *name,
-		 stp_parameter_description_t *description)
+		 stp_parameter_t *description)
 {
   int		i;
   int model = stp_get_model(v);
@@ -351,31 +351,37 @@ escp2_parameters(const stp_vars_t v, const char *name,
   if (name == NULL)
     return;
 
-  description->type = STP_PARAMETER_TYPE_STRING_LIST;
-  description->class = STP_PARAMETER_CLASS_FEATURE;
-  description->level = STP_PARAMETER_LEVEL_BASIC;
+  stp_fill_parameter_settings(description, name);
+  description->deflt.str = NULL;
   if (strcmp(name, "PageSize") == 0)
     {
       int papersizes = stp_known_papersizes();
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       for (i = 0; i < papersizes; i++)
 	{
 	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	  if (verify_papersize(pt, model, v))
-	    stp_param_list_add_param(description->restrictions.string_list,
-				     stp_papersize_get_name(pt),
-				     stp_papersize_get_text(pt));
+	    stp_string_list_add_param(description->bounds.str,
+				      stp_papersize_get_name(pt),
+				      stp_papersize_get_text(pt));
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
 	}
     }
   else if (strcmp(name, "Resolution") == 0)
     {
       const res_t *res = escp2_reslist(model, v);
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       while (res->hres)
 	{
 	  if (verify_resolution(res, model, v))
-	    stp_param_list_add_param(description->restrictions.string_list,
-				     res->name, _(res->text));
+	    {
+	      stp_string_list_add_param(description->bounds.str,
+					res->name, _(res->text));
+	      if (res->vres >= 360 && res->hres >= 360 &&
+		  description->deflt.str == NULL)
+		description->deflt.str = res->name;
+	    }
 	  res++;
 	}
     }
@@ -383,109 +389,50 @@ escp2_parameters(const stp_vars_t v, const char *name,
     {
       const inklist_t *inks = escp2_inklist(model, v);
       int ninktypes = inks->n_inks;
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       if (ninktypes)
-	for (i = 0; i < ninktypes; i++)
-	  if (verify_inktype(inks->inknames[i], model, v))
-	    stp_param_list_add_param(description->restrictions.string_list,
-				     inks->inknames[i]->name,
-				     _(inks->inknames[i]->text));
+	{
+	  for (i = 0; i < ninktypes; i++)
+	    if (verify_inktype(inks->inknames[i], model, v))
+	      stp_string_list_add_param(description->bounds.str,
+					inks->inknames[i]->name,
+					_(inks->inknames[i]->text));
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
+	}
     }
   else if (strcmp(name, "MediaType") == 0)
     {
       const paperlist_t *p = escp2_paperlist(model, v);
       int nmediatypes = p->paper_count;
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       if (nmediatypes)
-	for (i = 0; i < nmediatypes; i++)
-	  stp_param_list_add_param(description->restrictions.string_list,
-				   p->papers[i].name,
-				   _(p->papers[i].text));
+	{
+	  for (i = 0; i < nmediatypes; i++)
+	    stp_string_list_add_param(description->bounds.str,
+				      p->papers[i].name,
+				      _(p->papers[i].text));
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
+	}
     }
   else if (strcmp(name, "InputSlot") == 0)
     {
       const input_slot_list_t *slots = escp2_input_slots(model, v);
       int ninputslots = slots->n_input_slots;
-      description->restrictions.string_list = stp_param_list_allocate();
+      description->bounds.str = stp_string_list_allocate();
       if (ninputslots)
-	for (i = 0; i < ninputslots; i++)
-	  stp_param_list_add_param(description->restrictions.string_list,
-				   slots->slots[i].name,
-				   _(slots->slots[i].text));
+	{
+	  for (i = 0; i < ninputslots; i++)
+	    stp_string_list_add_param(description->bounds.str,
+				      slots->slots[i].name,
+				      _(slots->slots[i].text));
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
+	}
     }
   else
     stp_describe_internal_parameter(v, name, description);
-}
-
-static const stp_parameter_value_t
-escp2_default_parameters(const stp_vars_t v, const char *name)
-{
-  int i;
-  int model = stp_get_model(v);
-  stp_parameter_value_t r;
-  r.str = NULL;
-
-  if (name == NULL)
-    return r;
-  if (model < 0 || model >= stp_escp2_model_limit)
-    {
-      stp_eprintf(v, _("Model %d out of range.\n"), model);
-      return r;
-    }
-  if (strcmp(name, "PageSize") == 0)
-    {
-      int papersizes = stp_known_papersizes();
-      for (i = 0; i < papersizes; i++)
-	{
-	  const stp_papersize_t pt = stp_get_papersize_by_index(i);
-	  if (verify_papersize(pt, model, v))
-	    {
-	      r.str = (stp_papersize_get_name(pt));
-	      return r;
-	    }
-	}
-    }
-  else if (strcmp(name, "Resolution") == 0)
-    {
-      const res_t *res = escp2_reslist(model, v);
-      while (res->hres)
-	{
-	  if (res->vres >= 360 && res->hres >= 360 &&
-	      verify_resolution(res, model, v))
-	    {
-	      r.str = (res->name);
-	      return r;
-	    }
-	  res++;
-	}
-    }
-  else if (strcmp(name, "InkType") == 0)
-    {
-      const inklist_t *inks = escp2_inklist(model, v);
-      int ninktypes = inks->n_inks;
-      for (i = 0; i < ninktypes; i++)
-	{
-	  if (verify_inktype(inks->inknames[i], model, v))
-	    {
-	      r.str = (inks->inknames[i]->name);
-	      return r;
-	    }
-	}
-    }
-  else if (strcmp(name, "MediaType") == 0)
-    {
-      const paperlist_t *p = escp2_paperlist(model, v);
-      r.str = (p->papers[0].name);
-    }
-  else if (strcmp(name, "InputSlot") == 0)
-    {
-      const input_slot_list_t *slots = escp2_input_slots(model, v);
-      if (slots->n_input_slots)
-	r.str = slots->slots[0].name;
-    }
-  else
-    return stp_default_internal_parameter(v, name);
-  return r;
 }
 
 static const res_t *
@@ -523,7 +470,7 @@ escp2_imageable_area(const stp_vars_t v,   /* I */
       return;
     }
 
-  rollfeed = (strcmp(stp_get_parameter(v, "InputSlot").str, "Roll") == 0);
+  rollfeed = (strcmp(stp_get_string_parameter(v, "InputSlot"), "Roll") == 0);
   rollfeed &= escp2_has_cap(model, MODEL_ROLLFEED, MODEL_ROLLFEED_YES, v);
 
   stp_default_media_size(v, &width, &height);
@@ -565,7 +512,7 @@ static void
 escp2_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
   int model = stp_get_model(v);
-  const char *resolution = stp_get_parameter(v, "Resolution").str;
+  const char *resolution = stp_get_string_parameter(v, "Resolution");
   const res_t *res;
   if (model < 0 || model >= stp_escp2_model_limit)
     {
@@ -638,12 +585,12 @@ escp2_set_remote_sequence(const escp2_init_t *init)
       print_remote_param(init->v, "Version", VERSION);
       print_remote_param(init->v, "Release Date", RELEASE_DATE);
       print_remote_param(init->v, "Driver", stp_get_driver(init->v));
-      print_remote_param(init->v, "Resolution", stp_get_parameter(init->v, "Resolution").str);
-      print_remote_param(init->v, "Media Size", stp_get_parameter(init->v, "PageSize").str);
-      print_remote_param(init->v, "Media Type", stp_get_parameter(init->v, "MediaType").str);
-      print_remote_param(init->v, "Media Source", stp_get_parameter(init->v, "InputSlot").str);
-      print_remote_param(init->v, "Ink Type", stp_get_parameter(init->v, "InkType").str);
-      print_remote_param(init->v, "Dither", stp_get_parameter(init->v, "DitherAlgorithm").str);
+      print_remote_param(init->v, "Resolution", stp_get_string_parameter(init->v, "Resolution"));
+      print_remote_param(init->v, "Media Size", stp_get_string_parameter(init->v, "PageSize"));
+      print_remote_param(init->v, "Media Type", stp_get_string_parameter(init->v, "MediaType"));
+      print_remote_param(init->v, "Media Source", stp_get_string_parameter(init->v, "InputSlot"));
+      print_remote_param(init->v, "Ink Type", stp_get_string_parameter(init->v, "InkType"));
+      print_remote_param(init->v, "Dither", stp_get_string_parameter(init->v, "DitherAlgorithm"));
       print_remote_int_param(init->v, "Output Type", stp_get_output_type(init->v));
       print_remote_int_param(init->v, "Left", stp_get_left(init->v));
       print_remote_int_param(init->v, "Top", stp_get_top(init->v));
@@ -652,15 +599,15 @@ escp2_set_remote_sequence(const escp2_init_t *init)
       print_remote_int_param(init->v, "Page Height", stp_get_page_height(init->v));
       print_remote_int_param(init->v, "Input Model", stp_get_input_color_model(init->v));
       print_remote_int_param(init->v, "Output Model", stp_get_output_color_model(init->v));
-      print_remote_float_param(init->v, "Brightness", stp_get_parameter(init->v, "Brightness").dbl);
-      print_remote_float_param(init->v, "Gamma", stp_get_parameter(init->v, "Gamma").dbl);
-      print_remote_float_param(init->v, "App Gamma", stp_get_parameter(init->v, "AppGamma").dbl);
-      print_remote_float_param(init->v, "Contrast", stp_get_parameter(init->v, "Contrast").dbl);
-      print_remote_float_param(init->v, "Cyan", stp_get_parameter(init->v, "Cyan").dbl);
-      print_remote_float_param(init->v, "Magenta", stp_get_parameter(init->v, "Magenta").dbl);
-      print_remote_float_param(init->v, "Yellow", stp_get_parameter(init->v, "Yellow").dbl);
-      print_remote_float_param(init->v, "Saturation", stp_get_parameter(init->v, "Saturation").dbl);
-      print_remote_float_param(init->v, "Density", stp_get_parameter(init->v, "Density").dbl);
+      print_remote_float_param(init->v, "Brightness", stp_get_float_parameter(init->v, "Brightness"));
+      print_remote_float_param(init->v, "Gamma", stp_get_float_parameter(init->v, "Gamma"));
+      print_remote_float_param(init->v, "App Gamma", stp_get_float_parameter(init->v, "AppGamma"));
+      print_remote_float_param(init->v, "Contrast", stp_get_float_parameter(init->v, "Contrast"));
+      print_remote_float_param(init->v, "Cyan", stp_get_float_parameter(init->v, "Cyan"));
+      print_remote_float_param(init->v, "Magenta", stp_get_float_parameter(init->v, "Magenta"));
+      print_remote_float_param(init->v, "Yellow", stp_get_float_parameter(init->v, "Yellow"));
+      print_remote_float_param(init->v, "Saturation", stp_get_float_parameter(init->v, "Saturation"));
+      print_remote_float_param(init->v, "Density", stp_get_float_parameter(init->v, "Density"));
       print_remote_int_param(init->v, "Model", init->model);
       print_remote_int_param(init->v, "Output_type", init->output_type);
       print_remote_int_param(init->v, "Ydpi", init->ydpi);
@@ -695,7 +642,8 @@ escp2_set_remote_sequence(const escp2_init_t *init)
     {
       int feed_sequence = 0;
       const paper_t *p =
-	get_media_type(init->model, stp_get_parameter(init->v, "MediaType").str,
+	get_media_type(init->model,
+		       stp_get_string_parameter(init->v, "MediaType"),
 		       init->v);
       /* Enter remote mode */
       stp_zprintf(init->v, "\033(R%c%c%cREMOTE1", 8, 0, 0);
@@ -703,7 +651,7 @@ escp2_set_remote_sequence(const escp2_init_t *init)
 			MODEL_COMMAND_PRO, init->v))
 	{
 	  /* Set Roll Feed mode */
-	  if (strcmp(stp_get_parameter(init->v, "InputSlot").str, "Roll") == 0)
+	  if (strcmp(stp_get_string_parameter(init->v, "InputSlot"), "Roll") == 0)
 	    stp_zprintf(init->v, "PP%c%c%c%c%c", 3, 0, 0, 3, 0);
 	  else
 	    stp_zprintf(init->v, "PP%c%c%c%c%c", 3, 0, 0, 2, 0);
@@ -735,7 +683,7 @@ escp2_set_remote_sequence(const escp2_init_t *init)
 	  if (escp2_has_cap(init->model, MODEL_ROLLFEED,
 			    MODEL_ROLLFEED_YES, init->v))
 	    {
-	      if (strcmp(stp_get_parameter(init->v, "InputSlot").str, "Roll") == 0)
+	      if (strcmp(stp_get_string_parameter(init->v, "InputSlot"), "Roll") == 0)
 		stp_zprintf(init->v, /* Set Roll Feed mode */
 			    "IR%c%c%c%c"
 			    "EX%c%c%c%c%c%c%c%c",
@@ -928,7 +876,7 @@ escp2_deinit_printer(const escp2_init_t *init, int printed_something)
 			MODEL_ROLLFEED_YES, init->v))
 	{
 	  /* End Roll Feed mode */
-	  if (strcmp(stp_get_parameter(init->v, "InputSlot").str, "Roll") == 0)
+	  if (strcmp(stp_get_string_parameter(init->v, "InputSlot"), "Roll") == 0)
 	    stp_zprintf(init->v, "IR\002%c%c%c", 0, 0, 0);
 	  else
 	    stp_zprintf(init->v, "IR\002%c%c%c", 0, 0, 2);
@@ -964,37 +912,37 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   k_lower = init->inkname->k_lower;
   k_upper = init->inkname->k_upper;
 
-  pt = get_media_type(init->model, stp_get_parameter(nv, "MediaType").str, nv);
+  pt = get_media_type(init->model, stp_get_string_parameter(nv, "MediaType"), nv);
   if (pt)
     {
       if (init->output_type != OUTPUT_RAW_PRINTER &&
 	  init->output_type != OUTPUT_RAW_CMYK)
-	stp_set_parameter(nv, "Density",
-			  stp_get_parameter(nv, "Density").dbl *
+	stp_set_float_parameter(nv, "Density",
+			  stp_get_float_parameter(nv, "Density") *
 			  pt->base_density *
 			  escp2_density(init->model, init->res->resid, nv));
       if (init->total_channels >= 5)
 	{
-	  stp_set_parameter(nv, "Cyan",
-			    stp_get_parameter(nv, "Cyan").dbl * pt->p_cyan);
-	  stp_set_parameter(nv, "Magenta",
-			    stp_get_parameter(nv,"Magenta").dbl*pt->p_magenta);
-	  stp_set_parameter(nv, "Yellow",
-			    stp_get_parameter(nv,"Yellow").dbl * pt->p_yellow);
+	  stp_set_float_parameter(nv, "Cyan",
+			    stp_get_float_parameter(nv, "Cyan") * pt->p_cyan);
+	  stp_set_float_parameter(nv, "Magenta",
+			    stp_get_float_parameter(nv,"Magenta")*pt->p_magenta);
+	  stp_set_float_parameter(nv, "Yellow",
+			    stp_get_float_parameter(nv,"Yellow") * pt->p_yellow);
 	}
       else
 	{
-	  stp_set_parameter(nv, "Cyan",
-			    stp_get_parameter(nv, "Cyan").dbl * pt->cyan);
-	  stp_set_parameter(nv, "Magenta",
-			    stp_get_parameter(nv,"Magenta").dbl * pt->magenta);
-	  stp_set_parameter(nv, "Yellow",
-			    stp_get_parameter(nv, "Yellow").dbl * pt->yellow);
+	  stp_set_float_parameter(nv, "Cyan",
+			    stp_get_float_parameter(nv, "Cyan") * pt->cyan);
+	  stp_set_float_parameter(nv, "Magenta",
+			    stp_get_float_parameter(nv,"Magenta") * pt->magenta);
+	  stp_set_float_parameter(nv, "Yellow",
+			    stp_get_float_parameter(nv, "Yellow") * pt->yellow);
 	}
-      stp_set_parameter(nv, "Saturation",
-			stp_get_parameter(nv,"Saturation").dbl*pt->saturation);
-      stp_set_parameter(nv, "Gamma",
-			stp_get_parameter(nv, "Gamma").dbl * pt->gamma);
+      stp_set_float_parameter(nv, "Saturation",
+			stp_get_float_parameter(nv,"Saturation")*pt->saturation);
+      stp_set_float_parameter(nv, "Gamma",
+			stp_get_float_parameter(nv, "Gamma") * pt->gamma);
       k_lower *= pt->k_lower_scale;
       paper_k_upper = pt->k_upper;
       k_upper *= pt->k_upper;
@@ -1003,17 +951,17 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
     {
       if (init->output_type != OUTPUT_RAW_PRINTER &&
 	  init->output_type != OUTPUT_RAW_CMYK)
-	stp_set_parameter(nv, "Density",
-			  stp_get_parameter(nv, "Density").dbl * .8 *
+	stp_set_float_parameter(nv, "Density",
+			  stp_get_float_parameter(nv, "Density") * .8 *
 			escp2_density(init->model, init->res->resid, nv));
       k_lower *= .1;
       paper_k_upper = .5;
       k_upper *= .5;
     }
-  if (stp_get_parameter(nv, "Density").dbl > 1.0)
-    stp_set_parameter(nv, "Density", 1.0);
+  if (stp_get_float_parameter(nv, "Density") > 1.0)
+    stp_set_float_parameter(nv, "Density", 1.0);
   if (init->output_type == OUTPUT_GRAY)
-    stp_set_parameter(nv, "Gamma", stp_get_parameter(nv, "Gamma").dbl / .8);
+    stp_set_float_parameter(nv, "Gamma", stp_get_float_parameter(nv, "Gamma") / .8);
   stp_compute_lut(nv, 256);
 
   for (i = 0; i <= NCOLORS; i++)
@@ -1027,7 +975,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
       if ((*inks)[i])
 	stp_dither_set_ranges(dither, i, (*inks)[i]->count, (*inks)[i]->range,
 			      (*inks)[i]->density * paper_k_upper *
-			      stp_get_parameter(nv, "Density").dbl);
+			      stp_get_float_parameter(nv, "Density"));
 
   switch (stp_get_image_type(nv))
     {
@@ -1046,7 +994,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
       stp_dither_set_ink_spread(dither, ink_spread);
       break;
     }
-  stp_dither_set_density(dither, stp_get_parameter(nv, "Density").dbl);
+  stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
   if (init->inkname->lum_adjustment)
     {
       *lum_adjustment = stp_malloc(sizeof(double) * 49);
@@ -1093,16 +1041,10 @@ count_channels(const escp2_inkname_t *inks)
 static const escp2_inkname_t *
 get_inktype(const stp_vars_t v, int model)
 {
-  const char	*ink_type = stp_get_parameter(v, "InkType").str;
+  const char	*ink_type = stp_get_string_parameter(v, "InkType");
   const inklist_t *ink_list = escp2_inklist(model, v);
   int i;
 
-  for (i = 0; i < ink_list->n_inks; i++)
-    {
-      if (strcmp(ink_type, ink_list->inknames[i]->name) == 0)
-	return ink_list->inknames[i];
-    }
-  ink_type = escp2_default_parameters(NULL, "InkType").str;
   for (i = 0; i < ink_list->n_inks; i++)
     {
       if (strcmp(ink_type, ink_list->inknames[i]->name) == 0)
@@ -1252,9 +1194,9 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
 	    inks->inknames[i]->channel_limit * 2 == image->bpp(image))
 	  {
 	    stp_dprintf(STP_DBG_INK, nv, "Changing ink type from %s to %s\n",
-			stp_get_parameter(nv, "InkType").str,
+			stp_get_string_parameter(nv, "InkType"),
 			inks->inknames[i]->name);
-	    stp_set_parameter(nv, "InkType", inks->inknames[i]->name);
+	    stp_set_string_parameter(nv, "InkType", inks->inknames[i]->name);
 	    found = 1;
 	    break;
 	  }
@@ -1286,7 +1228,8 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
  /*
   * Figure out the output resolution...
   */
-  res = escp2_find_resolution(model, nv, stp_get_parameter(nv, "Resolution").str);
+  res = escp2_find_resolution(model, nv,
+			      stp_get_string_parameter(nv, "Resolution"));
   if (res->softweave)
     max_vres = escp2_max_vres(model, nv);
   else
@@ -1612,7 +1555,6 @@ const stp_printfuncs_t stp_escp2_printfuncs =
   escp2_imageable_area,
   escp2_limit,
   escp2_print,
-  escp2_default_parameters,
   escp2_describe_resolution,
   stp_verify_printer_params
 };

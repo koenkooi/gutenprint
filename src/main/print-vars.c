@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.6.2.3 2002/11/15 01:34:45 rlk Exp $"
+ * "$Id: print-vars.c,v 1.6.2.4 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,11 +38,6 @@
 #endif
 #include "vars.h"
 #include <string.h>
-#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
-#include <varargs.h>
-#else
-#include <stdarg.h>
-#endif
 
 static const stp_internal_vars_t default_vars =
 {
@@ -238,6 +233,24 @@ static const stp_parameter_t global_parameters[] =
       STP_PARAMETER_LEVEL_INVALID
     }
   };
+
+const stp_vars_t
+stp_default_settings(void)
+{
+  return (stp_vars_t) &default_vars;
+}
+
+const stp_vars_t
+stp_maximum_settings(void)
+{
+  return (stp_vars_t) &max_vars;
+}
+
+const stp_vars_t
+stp_minimum_settings(void)
+{
+  return (stp_vars_t) &min_vars;
+}
 
 stp_vars_t
 stp_allocate_vars(void)
@@ -483,107 +496,124 @@ stp_set_string_parameter_n(stp_vars_t v, const char *parameter,
 }
 
 void
-stp_set_parameter(stp_vars_t v, const char *parameter, ...)
+stp_set_string_parameter(stp_vars_t v, const char *parameter,
+			 const char *value)
 {
-  va_list args;
-  va_start(args, parameter);
-  if      (strcmp(parameter, "Resolution") == 0)
-    stp_set_resolution(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "PageSize") == 0)
-    stp_set_media_size_name(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "MediaType") == 0)
-    stp_set_media_type(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "InputSlot") == 0)
-    stp_set_media_source(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "InkType") == 0)
-    stp_set_ink_type(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "DitherAlgorithm") == 0)
-    stp_set_dither_algorithm(v, va_arg(args, const char *));
-  else if (strcmp(parameter, "Brightness") == 0)
-    stp_set_brightness(v, va_arg(args, double));
-  else if (strcmp(parameter, "Contrast") == 0)
-    stp_set_contrast(v, va_arg(args, double));
-  else if (strcmp(parameter, "Density") == 0)
-    stp_set_density(v, va_arg(args, double));
-  else if (strcmp(parameter, "Gamma") == 0)
-    stp_set_gamma(v, va_arg(args, double));
-  else if (strcmp(parameter, "AppGamma") == 0)
-    stp_set_app_gamma(v, va_arg(args, double));
-  else if (strcmp(parameter, "Cyan") == 0)
-    stp_set_cyan(v, va_arg(args, double));
-  else if (strcmp(parameter, "Magenta") == 0)
-    stp_set_magenta(v, va_arg(args, double));
-  else if (strcmp(parameter, "Yellow") == 0)
-    stp_set_yellow(v, va_arg(args, double));
-  else if (strcmp(parameter, "Saturation") == 0)
-    stp_set_saturation(v, va_arg(args, double));
-  else
-    {
-      stp_parameter_type_t t = stp_parameter_type(v, parameter);
-      switch (t)
-	{
-	case STP_PARAMETER_TYPE_STRING_LIST:
-	case STP_PARAMETER_TYPE_FILE:
-	  stp_eprintf(v,
-		      "WARNING: Attempt to set unknown parameter %s to %s\n",
-		      parameter, va_arg(args, const char *));
-	  break;
-	case STP_PARAMETER_TYPE_DOUBLE:
-	  stp_eprintf(v,
-		      "WARNING: Attempt to set unknown parameter %s to %s\n",
-		      parameter, va_arg(args, double));
-	  break;
-	default:
-	  stp_eprintf(v,
-		      "WARNING: Attempt to set unknown parameter %s\n",
-		      parameter);
-	  break;
-	}
-    }
-  va_end(args);
+  int byte_count = 0;
+  if (value)
+    byte_count = strlen(value);
+  stp_set_string_parameter_n(v, parameter, value, byte_count);
 }
 
-stp_parameter_value_t
-stp_get_parameter(stp_vars_t v, const char *parameter)
+void
+stp_set_curve_parameter(stp_vars_t v, const char *parameter,
+			const stp_curve_t *curve)
 {
-  stp_parameter_value_t r;
-  if      (strcmp(parameter, "Resolution") == 0)
-    r.str = stp_get_resolution(v);
-  else if (strcmp(parameter, "PageSize") == 0)
-    r.str = stp_get_media_size_name(v);
-  else if (strcmp(parameter, "MediaType") == 0)
-    r.str = stp_get_media_type(v);
-  else if (strcmp(parameter, "InputSlot") == 0)
-    r.str = stp_get_media_source(v);
-  else if (strcmp(parameter, "InkType") == 0)
-    r.str = stp_get_ink_type(v);
-  else if (strcmp(parameter, "DitherAlgorithm") == 0)
-    r.str = stp_get_dither_algorithm(v);
-  else if (strcmp(parameter, "Brightness") == 0)
-    r.dbl = stp_get_brightness(v);
+  stp_eprintf(v, "WARNING: Attempt to retrieve unknown parameter %s\n",
+	      parameter);
+}
+
+void
+stp_set_float_parameter(stp_vars_t v, const char *parameter, double value)
+{
+  if (strcmp(parameter, "Brightness") == 0)
+    stp_set_brightness(v, value);
   else if (strcmp(parameter, "Contrast") == 0)
-    r.dbl = stp_get_contrast(v);
+    stp_set_contrast(v, value);
   else if (strcmp(parameter, "Density") == 0)
-    r.dbl = stp_get_density(v);
-  else if (strcmp(parameter, "AppGamma") == 0)
-    r.dbl = stp_get_app_gamma(v);
+    stp_set_density(v, value);
   else if (strcmp(parameter, "Gamma") == 0)
-    r.dbl = stp_get_gamma(v);
+    stp_set_gamma(v, value);
+  else if (strcmp(parameter, "AppGamma") == 0)
+    stp_set_app_gamma(v, value);
   else if (strcmp(parameter, "Cyan") == 0)
-    r.dbl = stp_get_cyan(v);
+    stp_set_cyan(v, value);
   else if (strcmp(parameter, "Magenta") == 0)
-    r.dbl = stp_get_magenta(v);
+    stp_set_magenta(v, value);
   else if (strcmp(parameter, "Yellow") == 0)
-    r.dbl = stp_get_yellow(v);
+    stp_set_yellow(v, value);
   else if (strcmp(parameter, "Saturation") == 0)
-    r.dbl = stp_get_saturation(v);
+    stp_set_saturation(v, value);
+}
+
+const double
+stp_get_float_parameter(stp_vars_t v, const char *parameter)
+{
+  if (strcmp(parameter, "Brightness") == 0)
+    return stp_get_brightness(v);
+  else if (strcmp(parameter, "Contrast") == 0)
+    return stp_get_contrast(v);
+  else if (strcmp(parameter, "Density") == 0)
+    return stp_get_density(v);
+  else if (strcmp(parameter, "AppGamma") == 0)
+    return stp_get_app_gamma(v);
+  else if (strcmp(parameter, "Gamma") == 0)
+    return stp_get_gamma(v);
+  else if (strcmp(parameter, "Cyan") == 0)
+    return stp_get_cyan(v);
+  else if (strcmp(parameter, "Magenta") == 0)
+    return stp_get_magenta(v);
+  else if (strcmp(parameter, "Yellow") == 0)
+    return stp_get_yellow(v);
+  else if (strcmp(parameter, "Saturation") == 0)
+    return stp_get_saturation(v);
   else
     {
       stp_eprintf(v, "WARNING: Attempt to retrieve unknown parameter %s\n",
 		  parameter);
-      r.str = NULL;
+      return 0;
     }
-  return r;
+}
+
+const stp_curve_t *
+stp_get_curve_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_eprintf(v, "WARNING: Attempt to retrieve unknown parameter %s\n",
+	      parameter);
+  return NULL;
+}
+
+const char *
+stp_get_string_parameter(stp_vars_t v, const char *parameter)
+{
+  if      (strcmp(parameter, "Resolution") == 0)
+    return stp_get_resolution(v);
+  else if (strcmp(parameter, "PageSize") == 0)
+    return stp_get_media_size_name(v);
+  else if (strcmp(parameter, "MediaType") == 0)
+    return stp_get_media_type(v);
+  else if (strcmp(parameter, "InputSlot") == 0)
+    return stp_get_media_source(v);
+  else if (strcmp(parameter, "InkType") == 0)
+    return stp_get_ink_type(v);
+  else if (strcmp(parameter, "DitherAlgorithm") == 0)
+    return stp_get_dither_algorithm(v);
+  else
+    {
+      stp_eprintf(v, "WARNING: Attempt to retrieve unknown parameter %s\n",
+		  parameter);
+      return NULL;
+    }
+}
+
+void
+stp_fill_parameter_settings(stp_parameter_t *desc, const char *name)
+{
+  const stp_parameter_t *param = global_parameters;
+  while (param->name)
+    {
+      if (strcmp(name, param->name) == 0)
+	{
+	  desc->type = param->type;
+	  desc->level = param->level;
+	  desc->class = param->class;
+	  desc->name = c_strdup(param->name);
+	  desc->text = c_strdup(param->text);
+	  desc->help = c_strdup(param->help);
+	  return;
+	}
+      param++;
+    }
 }
 
 void
@@ -676,74 +706,61 @@ stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
 void
 stp_set_printer_defaults(stp_vars_t v, const stp_printer_t p)
 {
+  const stp_parameter_t *params;
+  int count;
+  int i;
+  stp_parameter_t desc;
   stp_set_driver(v, stp_printer_get_driver(p));
-  stp_set_parameter
-    (v, "Resolution", stp_get_default_parameter(v, "Resolution").str);
-  stp_set_parameter
-    (v, "InkType", stp_get_default_parameter(v, "InkType").str);
-  stp_set_parameter
-    (v, "MediaType", stp_get_default_parameter(v, "MediaType").str);
-  stp_set_parameter
-    (v, "InputSlot", stp_get_default_parameter(v,"InputSlot").str);
-  stp_set_parameter
-    (v, "PageSize", stp_get_default_parameter(v, "PageSize").str);
-  stp_set_parameter
-    (v, "DitherAlgorithm", stp_get_default_parameter(v,"DitherAlgorithm").str);
+  params = stp_list_parameters(v, &count);
+  for (i = 0; i < count; i++)
+    {
+      if (params[i].type == STP_PARAMETER_TYPE_STRING_LIST)
+	{
+	  stp_describe_parameter(v, params[i].name, &desc);
+	  stp_set_string_parameter(v, params[i].name, desc.deflt.str);
+	  stp_string_list_free(desc.bounds.str);
+	}
+    }
 }
 
 void
 stp_describe_internal_parameter(const stp_vars_t v, const char *name,
-				stp_parameter_description_t *description)
+				stp_parameter_t *description)
 {
+  const stp_parameter_t *param = global_parameters;
   description->class = STP_PARAMETER_CLASS_OUTPUT;
   description->level = STP_PARAMETER_LEVEL_BASIC;
   if (strcmp(name, "DitherAlgorithm") == 0)
     {
       description->type = STP_PARAMETER_TYPE_STRING_LIST;
-      description->restrictions.string_list = stp_param_list_allocate();
-      stp_dither_algorithms(description->restrictions.string_list);
+      description->bounds.str = stp_string_list_allocate();
+      stp_dither_algorithms(description->bounds.str);
+      description->deflt.str = 
+	stp_string_list_param(description->bounds.str, 0)->name;
       return;
     }
-  description->type = stp_parameter_type(stp_default_settings(), name);
-  description->class = stp_parameter_class(stp_default_settings(), name);
-  description->level = stp_parameter_level(stp_default_settings(), name);
-  if (description->type != STP_PARAMETER_TYPE_INVALID &&
-      description->type == STP_PARAMETER_TYPE_DOUBLE)
+  while (param->type)
     {
-      description->restrictions.double_bounds.lower =
-	stp_get_parameter(stp_minimum_settings(), name).dbl;
-      description->restrictions.double_bounds.upper =
-	stp_get_parameter(stp_maximum_settings(), name).dbl;
+      if (param->type == STP_PARAMETER_TYPE_DOUBLE &&
+	  strcmp(name, param->name) == 0)
+	{
+	  description->type = param->type;
+	  description->class = param->class;
+	  description->level = param->level;
+	  if (description->type == STP_PARAMETER_TYPE_DOUBLE)
+	    {
+	      description->bounds.dbl.lower =
+		stp_get_float_parameter(stp_minimum_settings(), name);
+	      description->bounds.dbl.upper =
+		stp_get_float_parameter(stp_maximum_settings(), name);
+	      description->deflt.dbl =
+		stp_get_float_parameter(stp_default_settings(), name);
+	    }
+	  return;
+	}
+      param++;
     }
-  else
-    description->type = STP_PARAMETER_TYPE_INVALID;
-}
-
-stp_parameter_value_t
-stp_default_internal_parameter(const stp_vars_t v, const char *name)
-{
-  if (strcmp(name, "DitherAlgorithm") == 0)
-    return stp_get_default_dither_algorithm();
-  else
-    return stp_get_parameter(stp_default_settings(), name);
-}
-
-const stp_vars_t
-stp_default_settings()
-{
-  return (stp_vars_t) &default_vars;
-}
-
-const stp_vars_t
-stp_maximum_settings()
-{
-  return (stp_vars_t) &max_vars;
-}
-
-const stp_vars_t
-stp_minimum_settings()
-{
-  return (stp_vars_t) &min_vars;
+  description->type = STP_PARAMETER_TYPE_INVALID;
 }
 
 const stp_parameter_t *
@@ -752,43 +769,3 @@ stp_list_parameters(const stp_vars_t v, int *count)
   *count = (sizeof(global_parameters) / sizeof(const stp_parameter_t)) - 1;
   return global_parameters;
 }
-
-stp_parameter_type_t
-stp_parameter_type(const stp_vars_t v, const char *parameter)
-{
-  const stp_parameter_t *param = global_parameters;
-  while (param->name)
-    {
-      if (strcmp(parameter, param->name) == 0)
-	return param->type;
-      param++;
-    }
-  return STP_PARAMETER_TYPE_INVALID;
-}
-
-stp_parameter_class_t
-stp_parameter_class(const stp_vars_t v, const char *parameter)
-{
-  const stp_parameter_t *param = global_parameters;
-  while (param->name)
-    {
-      if (strcmp(parameter, param->name) == 0)
-	return param->class;
-      param++;
-    }
-  return STP_PARAMETER_CLASS_INVALID;
-}
-
-stp_parameter_level_t
-stp_parameter_level(const stp_vars_t v, const char *parameter)
-{
-  const stp_parameter_t *param = global_parameters;
-  while (param->name)
-    {
-      if (strcmp(parameter, param->name) == 0)
-	return param->level;
-      param++;
-    }
-  return STP_PARAMETER_LEVEL_INVALID;
-}
-

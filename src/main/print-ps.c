@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.34.2.2 2002/11/15 01:34:45 rlk Exp $"
+ * "$Id: print-ps.c,v 1.34.2.3 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -75,7 +75,7 @@ c_strdup(const char *s)
 
 static void
 ps_parameters(const stp_vars_t v, const char *name,
-	      stp_parameter_description_t *description)
+	      stp_parameter_t *description)
 {
   int		i;
   char		line[1024],
@@ -84,6 +84,7 @@ ps_parameters(const stp_vars_t v, const char *name,
 		*ltext;
   const char *ppd_file = stp_get_ppd_file(v);
   description->type = STP_PARAMETER_TYPE_INVALID;
+  description->deflt.str = 0;
 
   if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
     {
@@ -109,18 +110,18 @@ ps_parameters(const stp_vars_t v, const char *name,
       if (strcmp(name, "PageSize") == 0)
 	{
 	  int papersizes = stp_known_papersizes();
-	  description->type = STP_PARAMETER_TYPE_STRING_LIST;
-	  description->class = STP_PARAMETER_CLASS_FEATURE;
-	  description->level = STP_PARAMETER_LEVEL_BASIC;
-	  description->restrictions.string_list = stp_param_list_allocate();
+	  stp_fill_parameter_settings(description, name);
+	  description->bounds.str = stp_string_list_allocate();
 	  for (i = 0; i < papersizes; i++)
 	    {
 	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
 	      if (strlen(stp_papersize_get_name(pt)) > 0)
-		stp_param_list_add_param
-		  (description->restrictions.string_list,
+		stp_string_list_add_param
+		  (description->bounds.str,
 		   stp_papersize_get_name(pt), stp_papersize_get_text(pt));
 	    }
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
 	}
       else
 	stp_describe_internal_parameter(v, name, description);
@@ -128,10 +129,11 @@ ps_parameters(const stp_vars_t v, const char *name,
     }
 
   rewind(ps_ppd);
+  stp_fill_parameter_settings(description, name);
 
   while (fgets(line, sizeof(line), ps_ppd) != NULL)
   {
-    description->restrictions.string_list = stp_param_list_allocate();
+    description->bounds.str = stp_string_list_allocate();
     if (line[0] != '*')
       continue;
 
@@ -145,84 +147,14 @@ ps_parameters(const stp_vars_t v, const char *name,
       else
         ltext = loption;
 
-      stp_param_list_add_param(description->restrictions.string_list,
+      stp_string_list_add_param(description->bounds.str,
 			       loption, ltext);
     }
+    description->deflt.str =
+      stp_string_list_param(description->bounds.str, 0)->name;
   }
   return;
 }
-
-static const stp_parameter_value_t
-ps_default_parameters(const stp_vars_t v, const char *name)
-{
-  int		i;
-  char		line[1024],
-		lname[255],
-		loption[255],
-		defname[255];
-  const char *ppd_file = stp_get_ppd_file(v);
-  stp_parameter_value_t r;
-  r.str = NULL;
-
-  if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
-    return stp_default_internal_parameter(v, name);
-
-  sprintf(defname, "Default%s", name);
-
-  if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
-  {
-    if (ps_ppd != NULL)
-      fclose(ps_ppd);
-
-    ps_ppd = fopen(ppd_file, "r");
-
-    if (ps_ppd == NULL)
-      ps_ppd_file = NULL;
-    else
-      ps_ppd_file = ppd_file;
-  }
-
-  if (ps_ppd == NULL)
-    {
-      if (strcmp(name, "PageSize") == 0)
-	{
-	  int papersizes = stp_known_papersizes();
-	  for (i = 0; i < papersizes; i++)
-	    {
-	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
-	      if (strlen(stp_papersize_get_name(pt)) > 0)
-		{
-		  r.str = stp_papersize_get_name(pt);
-		  return r;
-		}
-	    }
-	}
-    }
-
-  rewind(ps_ppd);
-
-  while (fgets(line, sizeof(line), ps_ppd) != NULL)
-  {
-    if (line[0] != '*')
-      continue;
-
-    if (sscanf(line, "*%[^:]:%s", lname, loption) != 2)
-      continue;
-
-    if (strcasecmp(lname, defname) == 0)
-    {
-      r.str = c_strdup(loption);
-    }
-  }
-
-  if (strcmp(name, "Resolution") == 0)
-    {
-      r.str = "default";
-    }
-
-  return r;
-}
-
 
 /*
  * 'ps_media_size()' - Return the size of the page.
@@ -238,11 +170,11 @@ ps_media_size(const stp_vars_t v,		/* I */
   stp_dprintf(STP_DBG_PS, v,
 	      "ps_media_size(%d, \'%s\', \'%s\', %08x, %08x)\n",
 	      stp_get_model(v), stp_get_ppd_file(v),
-	      stp_get_parameter(v, "PageSize"),
+	      stp_get_string_parameter(v, "PageSize"),
 	      width, height);
 
   if ((dimensions = ppd_find(stp_get_ppd_file(v), "PaperDimension",
-			     stp_get_parameter(v, "PageSize").str, NULL))
+			     stp_get_string_parameter(v, "PageSize"), NULL))
       != NULL)
     sscanf(dimensions, "%d%d", width, height);
   else
@@ -270,7 +202,7 @@ ps_imageable_area(const stp_vars_t v,      /* I */
   ps_media_size(v, &width, &height);
 
   if ((area = ppd_find(stp_get_ppd_file(v), "ImageableArea",
-		       stp_get_parameter(v, "PageSize").str, NULL))
+		       stp_get_string_parameter(v, "PageSize"), NULL))
       != NULL)
     {
       stp_dprintf(STP_DBG_PS, v, "area = \'%s\'\n", area);
@@ -312,7 +244,7 @@ ps_limit(const stp_vars_t v,  		/* I */
 static void
 ps_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
-  const char *resolution = stp_get_parameter(v, "Resolution").str;
+  const char *resolution = stp_get_string_parameter(v, "Resolution");
   *x = -1;
   *y = -1;
   sscanf(resolution, "%dx%d", x, y);
@@ -330,10 +262,10 @@ ps_print(const stp_vars_t v, stp_image_t *image)
   unsigned char *cmap = stp_get_cmap(v);
   int		model = stp_get_model(v);
   const char	*ppd_file = stp_get_ppd_file(v);
-  const char	*resolution = stp_get_parameter(v, "Resolution").str;
-  const char	*media_size = stp_get_parameter(v, "PageSize").str;
-  const char	*media_type = stp_get_parameter(v, "MediaType").str;
-  const char	*media_source = stp_get_parameter(v, "InputSlot").str;
+  const char	*resolution = stp_get_string_parameter(v, "Resolution");
+  const char	*media_size = stp_get_string_parameter(v, "PageSize");
+  const char	*media_type = stp_get_string_parameter(v, "MediaType");
+  const char	*media_source = stp_get_string_parameter(v, "InputSlot");
   int 		output_type = stp_get_output_type(v);
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
@@ -879,7 +811,6 @@ const stp_printfuncs_t stp_ps_printfuncs =
   ps_imageable_area,
   ps_limit,
   ps_print,
-  ps_default_parameters,
   ps_describe_resolution,
   stp_verify_printer_params
 };

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.32.2.1 2002/11/15 01:34:44 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.32.2.2 2002/11/16 20:03:52 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -106,31 +106,29 @@ dither_algo_callback (GtkWidget *widget, gpointer data)
 {
   const gchar *new_algo =
     gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (dither_algo_combo)->entry));
-  stp_set_parameter(pv->v, "DitherAlgorithm", new_algo);
+  stp_set_string_parameter(pv->v, "DitherAlgorithm", new_algo);
 }
 
 void
 build_dither_combo (void)
 {
-  stp_param_string_list_t vec;
-  stp_parameter_description_t desc;
-  const char *default_parameter =
-    stp_get_default_parameter(pv->v, "DitherAlgorithm").str;
+  stp_string_list_t vec;
+  stp_parameter_t desc;
   stp_describe_parameter(pv->v, "DitherAlgorithm", &desc);
-  vec = desc.restrictions.string_list;
-  if (stp_get_parameter(pv->v, "DitherAlgorithm").str[0] == '\0')
-    stp_set_parameter(pv->v, "DitherAlgorithm", default_parameter);
-  else if (stp_param_list_count(vec) == 0)
-    stp_set_parameter(pv->v, "DitherAlgorithm", NULL);
+  vec = desc.bounds.str;
+  if (stp_get_string_parameter(pv->v, "DitherAlgorithm")[0] == '\0')
+    stp_set_string_parameter(pv->v, "DitherAlgorithm", desc.deflt.str);
+  else if (stp_string_list_count(vec) == 0)
+    stp_set_string_parameter(pv->v, "DitherAlgorithm", NULL);
 
   plist_build_combo (dither_algo_combo,
 		     vec,
-		     stp_get_parameter (pv->v, "DitherAlgorithm").str,
-		     default_parameter,
+		     stp_get_string_parameter (pv->v, "DitherAlgorithm"),
+		     desc.deflt.str,
 		     &dither_algo_callback,
 		     &dither_algo_callback_id,
 		     NULL);
-  stp_param_list_free(vec);
+  stp_string_list_free(vec);
 }
 
 void
@@ -240,21 +238,19 @@ create_color_adjust_window (void)
   for (i = 0; i < color_option_count; i++)
     {
       color_option_t *opt = &(color_options[i]);
-      stp_parameter_description_t desc;
+      stp_parameter_t desc;
       stp_describe_parameter(stp_default_settings(), opt->name, &desc);
       if (desc.type == STP_PARAMETER_TYPE_DOUBLE &&
 	  desc.class == STP_PARAMETER_CLASS_OUTPUT &&
 	  desc.level == STP_PARAMETER_LEVEL_BASIC)
 	{
-	  gdouble defval = stp_get_default_parameter(stp_default_settings(),
-						      opt->name).dbl;
 	  opt->adjustment =
 	    gimp_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(opt->name),
-				 200, 0, defval,
-				 desc.restrictions.double_bounds.lower,
-				 desc.restrictions.double_bounds.upper,
-				 defval / (opt->scale * 10),
-				 defval / opt->scale,
+				 200, 0, desc.deflt.dbl,
+				 desc.bounds.dbl.lower,
+				 desc.bounds.dbl.upper,
+				 desc.deflt.dbl / (opt->scale * 10),
+				 desc.deflt.dbl / opt->scale,
 				 3, TRUE, 0, 0, NULL, NULL);
 	  set_adjustment_tooltip(opt->adjustment, _(opt->help));
 	  gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
@@ -299,9 +295,9 @@ color_update (GtkAdjustment *adjustment)
 	{
 	  if (opt->update_thumbnail)
 	    invalidate_preview_thumbnail ();
-	  if (stp_get_parameter(pv->v, opt->name).dbl != adjustment->value)
+	  if (stp_get_float_parameter(pv->v, opt->name) != adjustment->value)
 	    {
-	      stp_set_parameter(pv->v, opt->name, adjustment->value);
+	      stp_set_float_parameter(pv->v, opt->name, adjustment->value);
 	      if (opt->update_thumbnail)
 		update_adjusted_thumbnail();
 	    }
@@ -339,7 +335,7 @@ do_color_updates (void)
     {
       color_option_t *opt = &(color_options[i]);
       gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->adjustment),
-			       stp_get_parameter(pv->v, opt->name).dbl);
+			       stp_get_float_parameter(pv->v, opt->name));
     }
   update_adjusted_thumbnail ();
 }
@@ -352,8 +348,8 @@ set_color_defaults (void)
   for (i = 0; i < color_option_count; i++)
     {
       color_option_t *opt = &(color_options[i]);
-      stp_set_parameter(pv->v, opt->name,
-			stp_get_parameter(defvars, opt->name).dbl);
+      stp_set_float_parameter(pv->v, opt->name,
+			      stp_get_float_parameter(defvars, opt->name));
     }
 
   do_color_updates ();

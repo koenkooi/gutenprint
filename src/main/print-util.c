@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.77.2.3 2002/11/15 01:34:45 rlk Exp $"
+ * "$Id: print-util.c,v 1.77.2.4 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -234,7 +234,7 @@ check_param_list(const stp_internal_param_list_t *v)
 {
   if (v->cookie != COOKIE_PARAM_LIST)
     {
-      stp_erprintf("Bad stp_vars_t!\n");
+      stp_erprintf("Bad string list!\n");
       exit(2);
     }
 }
@@ -246,17 +246,17 @@ c_strdup(const char *s)
   return ret;
 }
 
-stp_param_string_list_t
-stp_param_list_allocate(void)
+stp_string_list_t
+stp_string_list_allocate(void)
 {
   stp_internal_param_list_t *ret =
     stp_zalloc(sizeof(stp_internal_param_list_t));
   ret->cookie = COOKIE_PARAM_LIST;
-  return (stp_param_string_list_t) ret;
+  return (stp_string_list_t) ret;
 }
 
 void
-stp_param_list_free(stp_param_string_list_t list)
+stp_string_list_free(stp_string_list_t list)
 {
   stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
   size_t i = 0;
@@ -273,7 +273,7 @@ stp_param_list_free(stp_param_string_list_t list)
 }
 
 stp_param_string_t *
-stp_param_list_param(const stp_param_string_list_t list, size_t element)
+stp_string_list_param(const stp_string_list_t list, size_t element)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
   check_param_list(ilist);
@@ -284,42 +284,42 @@ stp_param_list_param(const stp_param_string_list_t list, size_t element)
 }
 
 size_t
-stp_param_list_count(const stp_param_string_list_t list)
+stp_string_list_count(const stp_string_list_t list)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
   check_param_list(ilist);
   return ilist->active_count;
 }
 
-stp_param_string_list_t
-stp_param_list_duplicate(const stp_param_string_list_t list)
+stp_string_list_t
+stp_string_list_duplicate(const stp_string_list_t list)
 {
   size_t i = 0;
-  stp_param_string_list_t retval = stp_param_list_allocate();
-  while (i < stp_param_list_count(list))
+  stp_string_list_t retval = stp_string_list_allocate();
+  while (i < stp_string_list_count(list))
     {
-      const stp_param_string_t *param = stp_param_list_param(list, i);
-      stp_param_list_add_param(retval, param->name, param->text);
+      const stp_param_string_t *param = stp_string_list_param(list, i);
+      stp_string_list_add_param(retval, param->name, param->text);
       i++;
     }
   return retval;
 }
 
-stp_param_string_list_t
-stp_param_list_duplicate_params(const stp_param_string_t *list, size_t count)
+stp_string_list_t
+stp_string_list_duplicate_params(const stp_param_string_t *list, size_t count)
 {
   size_t i = 0;
-  stp_param_string_list_t retval = stp_param_list_allocate();
+  stp_string_list_t retval = stp_string_list_allocate();
   while (i < count)
     {
-      stp_param_list_add_param(retval, list[i].name, list[i].text);
+      stp_string_list_add_param(retval, list[i].name, list[i].text);
       i++;
     }
   return retval;
 }
 
 void
-stp_param_list_add_param(stp_param_string_list_t list,
+stp_string_list_add_param(stp_string_list_t list,
 			 const char *name, const char *text)
 {
   stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;

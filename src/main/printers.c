@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.7.2.3 2002/11/15 01:34:45 rlk Exp $"
+ * "$Id: printers.c,v 1.7.2.4 2002/11/16 20:03:53 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -100,19 +100,11 @@ stp_get_model(const stp_vars_t v)
 
 void
 stp_describe_parameter(const stp_vars_t v, const char *name,
-		       stp_parameter_description_t *description)
+		       stp_parameter_t *description)
 {
   const stp_printfuncs_t *printfuncs =
     stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
   (printfuncs->parameters)(v, name, description);
-}
-
-extern const stp_parameter_value_t
-stp_get_default_parameter(const stp_vars_t v, const char *name)
-{
-  const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
-  return (printfuncs->default_parameters)(v, name);
 }
 
 void
@@ -167,10 +159,11 @@ stp_print(const stp_vars_t v, stp_image_t *image)
 
 static int
 verify_string_param(const stp_vars_t v, const char *parameter,
-		    stp_param_string_list_t vptr)
+		    stp_parameter_t *desc)
 {
-  const char *checkval = stp_get_parameter(v, parameter).str;
-  size_t count = stp_param_list_count(vptr);
+  const char *checkval = stp_get_string_parameter(v, parameter);
+  stp_string_list_t vptr = desc->bounds.str;
+  size_t count = stp_string_list_count(vptr);
   int answer = 0;
   int i;
   if (checkval == NULL)
@@ -186,7 +179,7 @@ verify_string_param(const stp_vars_t v, const char *parameter,
   if (count > 0)
     {
       for (i = 0; i < count; i++)
-	if (!strcmp(checkval, stp_param_list_param(vptr, i)->name))
+	if (!strcmp(checkval, stp_string_list_param(vptr, i)->name))
 	  {
 	    answer = 1;
 	    break;
@@ -198,19 +191,19 @@ verify_string_param(const stp_vars_t v, const char *parameter,
     answer = 1;
   else
     stp_eprintf(v, _("`%s' is not a valid %s\n"), checkval, parameter);
-  stp_param_list_free(vptr);
+  stp_string_list_free(vptr);
   return answer;
 }
 
 static int
 verify_double_param(const stp_vars_t v, const char *parameter,
-			stp_param_double_bound_t *bounds)
+		    stp_parameter_t *desc)
 {
-  double checkval = stp_get_parameter(v, parameter).dbl;
-  if (checkval < bounds->lower || checkval > bounds->upper)
+  double checkval = stp_get_float_parameter(v, parameter);
+  if (checkval < desc->bounds.dbl.lower || checkval > desc->bounds.dbl.upper)
     {
       stp_eprintf(v, _("%s must be between %f and %f\n"),
-		  parameter, bounds->lower, bounds->upper);
+		  parameter, desc->bounds.dbl.lower, desc->bounds.dbl.upper);
       return 0;
     }
   return 1;
@@ -218,9 +211,9 @@ verify_double_param(const stp_vars_t v, const char *parameter,
 
 static int
 verify_curve_param(const stp_vars_t v, const char *parameter,
-		       stp_param_double_bound_t *bounds)
+		    stp_parameter_t *desc)
 {
-  const stp_param_curve_t *curve = stp_get_parameter(v, parameter).curve;
+  const stp_curve_t *curve = stp_get_curve_parameter(v, parameter);
   size_t i;
   if (curve->count == 0)
     {
@@ -228,10 +221,11 @@ verify_curve_param(const stp_vars_t v, const char *parameter,
       return 0;
     }
   for (i = 0; i < curve->count; i++)
-    if (curve->value[i] < bounds->lower || curve->value[i] > bounds->upper)
+    if (curve->value[i] < desc->bounds.dbl.lower ||
+	curve->value[i] > desc->bounds.dbl.upper)
       {
 	stp_eprintf(v, _("%s must be between %f and %f\n"),
-		    parameter, bounds->lower, bounds->upper);
+		    parameter, desc->bounds.dbl.lower, desc->bounds.dbl.upper);
 	return 0;
       }
   return 1;
@@ -240,17 +234,16 @@ verify_curve_param(const stp_vars_t v, const char *parameter,
 static int
 verify_param(const stp_vars_t v, const char *parameter)
 {
-  stp_parameter_description_t desc;
+  stp_parameter_t desc;
   stp_describe_parameter(v, parameter, &desc);
   switch (desc.type)
     {
     case STP_PARAMETER_TYPE_STRING_LIST:
-      return verify_string_param(v, parameter, desc.restrictions.string_list);
+      return verify_string_param(v, parameter, &desc);
     case STP_PARAMETER_TYPE_DOUBLE:
-      return verify_double_param(v, parameter,
-				 &(desc.restrictions.double_bounds));
+      return verify_double_param(v, parameter, &desc);
     case STP_PARAMETER_TYPE_CURVE:
-      return verify_curve_param(v,parameter,&(desc.restrictions.curve_bounds));
+      return verify_curve_param(v, parameter, &desc);
     case STP_PARAMETER_TYPE_RAW:
     case STP_PARAMETER_TYPE_FILE:
       return 1;			/* No way to verify this here */
@@ -297,7 +290,7 @@ stp_verify_printer_params(const stp_vars_t v)
       answer = 0;
       stp_eprintf(v, _("Printer does not support color output\n"));
     }
-  if (strlen(stp_get_parameter(v, "PageSize").str) > 0)
+  if (strlen(stp_get_string_parameter(v, "PageSize")) > 0)
     {
       answer &= verify_param(v, "PageSize");
     }
@@ -360,9 +353,8 @@ stp_verify_printer_params(const stp_vars_t v)
   params = stp_list_parameters(v, &nparams);
   for (i = 0; i < nparams; i++)
     {
-      if (params[i].class == STP_PARAMETER_CLASS_PAGE_SIZE)
-	continue;
-      answer &= verify_param(v, params[i].name);
+      if (params[i].class != STP_PARAMETER_CLASS_PAGE_SIZE)
+	answer &= verify_param(v, params[i].name);
     }
   stp_set_verified(v, answer);
   return answer;
