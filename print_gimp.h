@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.15 2000/05/31 02:44:57 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.16 2000/06/04 15:38:10 cpbs Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -46,6 +46,7 @@
 /*
  * Constants for GUI...
  */
+#define PREVIEW_PPI        10  /* Pixels in preview per inch on paper */
 #define PREVIEW_SIZE_VERT  240 /* Assuming max media size of 24" A2 */
 #define PREVIEW_SIZE_HORIZ 240 /* Assuming max media size of 24" A2 */
 
