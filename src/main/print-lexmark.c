@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.54 2001/09/24 15:49:10 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.55 2001/09/30 23:43:32 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1574,6 +1574,7 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
       output_type != OUTPUT_MONOCHROME)
     {
       output_type = OUTPUT_GRAY;
+      stp_set_output_type(nv, OUTPUT_GRAY);
     }
   stp_set_output_color_model(nv, COLOR_MODEL_CMY);
 
@@ -2025,7 +2026,7 @@ densityDivisor /= 1.2;
   lex_show_deinit(dbgfile);
 #endif
 
-  lexmark_deinit_printer(v, caps);
+  lexmark_deinit_printer(nv, caps);
   stp_free_vars(nv);
 }
 
