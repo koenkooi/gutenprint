@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.29 2004/03/14 05:29:46 tillkamppeter Exp $"
+ * "$Id: printer_options.c,v 1.30 2004/03/15 01:45:23 tillkamppeter Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -67,6 +67,8 @@ main(int argc, char **argv)
 	    continue;
 	  count = 0;
 	  stp_describe_parameter(pv, p->name, &desc);
+	  printf("$longnames{'%s'} = '%s';\n",
+		 p->name, p->text);
 	  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
 	    {
 	      count = stp_string_list_count(desc.bounds.str);
@@ -74,8 +76,6 @@ main(int argc, char **argv)
 		{
 		  printf("$defaults{'%s'}{'%s'} = '%s';\n",
 			 driver, p->name, desc.deflt.str);
-		  printf("$longnames{'%s'} = '%s';\n",
-			 p->name, p->text);
 		  for (j = 0; j < count; j++)
 		    {
 		      const stp_param_string_t *param =
