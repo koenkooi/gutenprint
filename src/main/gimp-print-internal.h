@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.37 2001/07/06 18:04:43 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.38 2001/07/14 02:01:18 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -170,6 +170,8 @@ typedef struct stp_softweave
   int last_pass;		/* Number of the most recently printed pass */
 
   int jets;			/* Number of jets per color */
+  int virtual_jets;		/* Number of jets per color, taking into */
+				/* account the head offset */
   int separation;		/* Offset from one jet to the next in rows */
   void *weaveparm;		/* Weave calculation parameter block */
 
@@ -506,5 +508,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.37 2001/07/06 18:04:43 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.38 2001/07/14 02:01:18 rlk Exp $".
  */
