@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.95 2003/03/12 01:30:19 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.96 2003/03/12 01:34:18 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1994,11 +1994,11 @@ pcl_printfunc(const stp_vars_t v)
   pcl_privdata_t *pd = (pcl_privdata_t *) stpi_get_driver_data(v);
   int do_blank = pd->do_blank;
   unsigned char *black = stpi_dither_get_channel(v, ECOLOR_K, 0);
-  unsigned char *cyan = stpi_dither_get_channel(v, ECOLOR_K, 0);
-  unsigned char *lcyan = stpi_dither_get_channel(v, ECOLOR_K, 0);
-  unsigned char *magenta = stpi_dither_get_channel(v, ECOLOR_K, 0);
-  unsigned char *lmagenta = stpi_dither_get_channel(v, ECOLOR_K, 0);
-  unsigned char *yellow = stpi_dither_get_channel(v, ECOLOR_K, 0);
+  unsigned char *cyan = stpi_dither_get_channel(v, ECOLOR_C, 0);
+  unsigned char *lcyan = stpi_dither_get_channel(v, ECOLOR_C, 1);
+  unsigned char *magenta = stpi_dither_get_channel(v, ECOLOR_M, 0);
+  unsigned char *lmagenta = stpi_dither_get_channel(v, ECOLOR_M, 1);
+  unsigned char *yellow = stpi_dither_get_channel(v, ECOLOR_Y, 0);
   int len_c = stpi_dither_get_last_position(v, ECOLOR_C, 0);
   int len_lc = stpi_dither_get_last_position(v, ECOLOR_C, 1);
   int len_m = stpi_dither_get_last_position(v, ECOLOR_M, 0);
