@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.20 2001/02/19 20:16:13 rlk Exp $
+dnl $Id: configure.in.in,v 1.21 2001/02/19 23:00:19 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -97,9 +97,6 @@ AM_INIT_AUTOMAKE(gimp-print, $GIMPPRINT_VERSION)
 
 dnl Specify a configuration file.
 AM_CONFIG_HEADER(config.h)
-
-dnl Notice that "dnl AM_ACLOCAL_INCLUDE" is active here!
-dnl AM_ACLOCAL_INCLUDE(src/main)
 
 dnl Available languages (translations)
 ALL_LINGUAS="en_GB en_TEST"
