@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.8 2003/01/23 01:29:11 rlk Exp $"
+ * "$Id: module.c,v 1.9 2003/01/23 01:30:58 rlk Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -54,7 +54,6 @@ static stpi_internal_module_class_t module_classes[] =
     {STPI_MODULE_CLASS_MISC, N_("Miscellaneous (unclassified)")},
     {STPI_MODULE_CLASS_FAMILY, N_("Family driver")},
     {STPI_MODULE_CLASS_DITHER, N_("Dither algorithm")},
-    {STPI_MODULE_CLASS_COLOR, N_("Color conversion")},
     {STPI_MODULE_CLASS_INVALID, NULL} /* Must be last */
   };
 
