@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.40 2003/10/09 00:05:10 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.41 2003/10/09 00:32:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -576,7 +576,7 @@ static const paper_adjustment_t ultrachrome_photo_adjustments[] =
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
   { "Inkjet", 0.85, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
-  { "Coated", 1.10, 1.0, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
+  { "Coated", 0.85, 1.0, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
   { "Photo", 0.85, 1.0, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
@@ -624,7 +624,7 @@ static const paper_adjustment_t ultrachrome_matte_adjustments[] =
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
   { "Inkjet", 0.85, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1.2,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
-  { "Coated", 1.10, .7, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
+  { "Coated", 0.85, .7, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
   { "Photo", 1.00, 1.0, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
