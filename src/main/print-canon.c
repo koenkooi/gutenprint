@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.77.2.5 2002/10/26 01:28:48 rlk Exp $"
+ * "$Id: print-canon.c,v 1.77.2.6 2002/10/26 14:14:21 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2516,11 +2516,14 @@ canon_print(const stp_printer_t printer,		/* I - Model */
    * Compute the LUT.  For now, it's 8 bit, but that may eventually
    * sometimes change.
    */
-  if (pt)
-    stp_set_density(nv, stp_get_density(nv) * pt->base_density);
-  else				/* Can't find paper type? Assume plain */
-    stp_set_density(nv, stp_get_density(nv) * .5);
-  stp_set_density(nv, stp_get_density(nv) * canon_density(caps, res_code));
+  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+    {
+      if (pt)
+	stp_set_density(nv, stp_get_density(nv) * pt->base_density);
+      else			/* Can't find paper type? Assume plain */
+	stp_set_density(nv, stp_get_density(nv) * .5);
+      stp_set_density(nv, stp_get_density(nv) * canon_density(caps, res_code));
+    }
   if (stp_get_density(nv) > 1.0)
     stp_set_density(nv, 1.0);
   if (colormode == COLOR_MONOCHROME)

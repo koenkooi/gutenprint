@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.77.2.5 2002/10/26 01:28:49 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.77.2.6 2002/10/26 14:14:22 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1978,13 +1978,15 @@ densityDivisor /= 1.2;
   stp_erprintf("density is %f\n",stp_get_density(nv));
 #endif
 
+  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+    {
 #ifdef DEBUG
-  stp_erprintf("density is %f and will be changed to %f  (%f)\n",stp_get_density(nv), stp_get_density(nv)/densityDivisor, densityDivisor);
+      stp_erprintf("density is %f and will be changed to %f  (%f)\n",stp_get_density(nv), stp_get_density(nv)/densityDivisor, densityDivisor);
 #endif
 
-  /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
-  stp_set_density(nv, stp_get_density(nv) / densityDivisor);
-
+      /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
+      stp_set_density(nv, stp_get_density(nv) / densityDivisor);
+    }
 
 
   /*
@@ -2003,7 +2005,8 @@ densityDivisor /= 1.2;
 
   if (media)
     {
-      stp_set_density(nv, stp_get_density(nv) * media->base_density);
+      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+	stp_set_density(nv, stp_get_density(nv) * media->base_density);
       stp_set_cyan(nv, stp_get_cyan(nv) * media->p_cyan);
       stp_set_magenta(nv, stp_get_magenta(nv) * media->p_magenta);
       stp_set_yellow(nv, stp_get_yellow(nv) * media->p_yellow);
@@ -2012,7 +2015,8 @@ densityDivisor /= 1.2;
     }
   else
     {
-      stp_set_density(nv, stp_get_density(nv) * .8);
+      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+	stp_set_density(nv, stp_get_density(nv) * .8);
       k_lower *= .1;
       k_upper = .5;
     }

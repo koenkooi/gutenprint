@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.188.2.5 2002/10/26 01:28:48 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.188.2.6 2002/10/26 14:14:21 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1000,7 +1000,10 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   pt = get_media_type(init->model, stp_get_media_type(nv), nv);
   if (pt)
     {
-      stp_set_density(nv, stp_get_density(nv) * pt->base_density);
+      if (init->output_type != OUTPUT_RAW_PRINTER &&
+	  init->output_type != OUTPUT_RAW_CMYK)
+	stp_set_density(nv, stp_get_density(nv) * pt->base_density *
+			escp2_density(init->model, init->res->resid, nv));
       if (init->total_channels >= 5)
 	{
 	  stp_set_cyan(nv, stp_get_cyan(nv) * pt->p_cyan);
@@ -1021,13 +1024,14 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
     }
   else				/* Can't find paper type? Assume plain */
     {
-      stp_set_density(nv, stp_get_density(nv) * .8);
+      if (init->output_type != OUTPUT_RAW_PRINTER &&
+	  init->output_type != OUTPUT_RAW_CMYK)
+	stp_set_density(nv, stp_get_density(nv) * .8 *
+			escp2_density(init->model, init->res->resid, nv));
       k_lower *= .1;
       paper_k_upper = .5;
       k_upper *= .5;
     }
-  stp_set_density(nv, stp_get_density(nv) *
-		  escp2_density(init->model, init->res->resid, nv));
   if (stp_get_density(nv) > 1.0)
     stp_set_density(nv, 1.0);
   if (init->output_type == OUTPUT_GRAY)
