@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.13 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: dither-main.c,v 1.14 2003/04/13 03:50:26 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -36,8 +36,6 @@
 #endif
 #include <math.h>
 #include <string.h>
-#include "array.h"
-#include "sequence.h"
 #include "dither-impl.h"
 #include "vars.h"
 

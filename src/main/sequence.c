@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.4 2003/04/12 21:19:48 rlk Exp $"
+ * "$Id: sequence.c,v 1.5 2003/04/13 03:50:28 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -35,8 +35,28 @@
 #include <limits.h>
 #include <errno.h>
 #include <ctype.h>
-#include "sequence.h"
 #include "xml.h"
+
+#define COOKIE_SEQUENCE 0xbf6a28d2
+
+typedef struct
+{
+  int cookie;
+  int recompute_range; /* Do we need to recompute the min and max? */
+  double blo;          /* Lower bound */
+  double bhi;          /* Upper bound */
+  double rlo;          /* Lower range limit */
+  double rhi;          /* Upper range limit */
+  size_t size;         /* Number of points */
+  double *data;        /* Array of doubles */
+  float *float_data;   /* Data converted to other form */
+  long *long_data;
+  unsigned long *ulong_data;
+  int *int_data;
+  unsigned *uint_data;
+  short *short_data;
+  unsigned short *ushort_data;
+} stpi_internal_sequence_t;
 
 /*
  * We could do more sanity checks here if we want.
@@ -56,8 +76,8 @@ check_sequence(const stpi_internal_sequence_t *v)
     }
 }
 
-
-static void sequence_ctor(stpi_internal_sequence_t *iseq)
+static void
+sequence_ctor(stpi_internal_sequence_t *iseq)
 {
   iseq->cookie = COOKIE_SEQUENCE;
   iseq->rlo = iseq->blo = 0.0;

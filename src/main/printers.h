@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.8 2003/02/05 00:50:46 rlk Exp $"
+ * "$Id: printers.h,v 1.9 2003/04/13 03:50:28 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -45,8 +45,6 @@ extern "C" {
 #include "util.h"
 #include "vars.h"
 
-#define COOKIE_PRINTER    0x0722922c
-
 typedef struct
 {
   stp_parameter_list_t (*list_parameters)(const stp_vars_t v);
@@ -64,18 +62,6 @@ typedef struct
   int   (*end_job)(const stp_vars_t v, stp_image_t *image);
 } stpi_printfuncs_t;
 
-
-typedef struct stpi_internal_printer
-{
-  int        cookie;            /* Magic number */
-  char       *long_name;        /* Long name for UI */
-  char       *family;           /* Printer family */
-  int        model;             /* Model number */
-  const stpi_printfuncs_t *printfuncs;
-  stp_vars_t printvars;
-} stpi_internal_printer_t;
-
-
 typedef struct stpi_internal_family
 {
   const stpi_printfuncs_t *printfuncs;   /* printfuncs for the printer */
@@ -85,7 +71,6 @@ typedef struct stpi_internal_family
 extern int stpi_get_model_id(const stp_vars_t v);
 
 extern int stpi_verify_printer_params(const stp_vars_t);
-extern int stpi_init_printer_list(void);
 
 extern int stpi_family_register(stpi_list_t *family);
 extern int stpi_family_unregister(stpi_list_t *family);
@@ -103,5 +88,5 @@ stpi_printer_describe_parameter(const stp_vars_t v, const char *name,
 
 #endif /* GIMP_PRINT_INTERNAL_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.8 2003/02/05 00:50:46 rlk Exp $".
+ * End of "$Id: printers.h,v 1.9 2003/04/13 03:50:28 rlk Exp $".
  */

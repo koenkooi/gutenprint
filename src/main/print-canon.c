@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.115 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: print-canon.c,v 1.116 2003/04/13 03:50:27 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -56,6 +56,7 @@
 #include <limits.h>
 #endif
 #include "module.h"
+#include "weave.h"
 
 /* Solaris with gcc has problems because gcc's limits.h doesn't #define */
 /* this */

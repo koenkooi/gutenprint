@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.47 2003/04/12 21:19:48 rlk Exp $"
+ * "$Id: printers.c,v 1.48 2003/04/13 03:50:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -49,11 +49,21 @@ static void stpi_printer_freefunc(stpi_list_item_t *item);
 static const char* stpi_printer_namefunc(const stpi_list_item_t *item);
 static const char* stpi_printer_long_namefunc(const stpi_list_item_t *item);
 
-
 static stpi_list_t *printer_list = NULL;
 
+#define COOKIE_PRINTER    0x0722922c
 
-int
+typedef struct stpi_internal_printer
+{
+  int        cookie;            /* Magic number */
+  char       *long_name;        /* Long name for UI */
+  char       *family;           /* Printer family */
+  int        model;             /* Model number */
+  const stpi_printfuncs_t *printfuncs;
+  stp_vars_t printvars;
+} stpi_internal_printer_t;
+
+static int
 stpi_init_printer_list(void)
 {
   if(printer_list)

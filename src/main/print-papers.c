@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.21 2003/04/12 21:19:48 rlk Exp $"
+ * "$Id: print-papers.c,v 1.22 2003/04/13 03:50:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,7 +38,6 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
-#include "papers.h"
 #include "xml.h"
 
 static stpi_list_t *paper_list = NULL;
@@ -70,7 +69,7 @@ stpi_paper_long_namefunc(const stpi_list_item_t *item)
   return paper->text;
 }
 
-int
+static int
 stpi_paper_list_init(void)
 {
   if (paper_list)
@@ -94,7 +93,7 @@ check_paperlist(void)
     }
 }
 
-int
+static int
 stpi_paper_create(stp_papersize_t *p)
 {
   stpi_list_item_t *paper_item;
@@ -123,7 +122,7 @@ stpi_paper_create(stp_papersize_t *p)
   return 0;
 }
 
-int
+static int
 stpi_paper_destroy(stp_papersize_t *p)
 {
   stpi_list_item_t *paper_item;

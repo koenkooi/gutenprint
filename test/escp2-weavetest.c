@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.25 2003/03/20 02:09:31 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.26 2003/04/13 03:50:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -74,6 +74,7 @@
 #include <gimp-print/gimp-print.h>
 #endif
 #include <gimp-print-internal.h>
+#include "../src/main/weave.h"
 
 const char header[] = "Legend:\n"
 "A  Negative pass number.\n"

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.14 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: dither.h,v 1.15 2003/04/13 03:50:27 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -43,6 +43,14 @@ extern "C" {
 
 #include "array.h"
 
+/*
+ * ECOLOR_K must be 0
+ */
+#define ECOLOR_K  0
+#define ECOLOR_C  1
+#define ECOLOR_M  2
+#define ECOLOR_Y  3
+#define NCOLORS (4)
 
 typedef struct stpi_dither_matrix_short
 {
@@ -211,5 +219,5 @@ extern void stpi_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.14 2003/04/09 02:59:53 rlk Exp $".
+ * End of "$Id: dither.h,v 1.15 2003/04/13 03:50:27 rlk Exp $".
  */

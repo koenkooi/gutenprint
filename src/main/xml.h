@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.h,v 1.4 2003/04/12 21:19:48 rlk Exp $"
+ * "$Id: xml.h,v 1.5 2003/04/13 03:50:28 rlk Exp $"
  *
  *   libgimpprint module loader header
  *
@@ -73,7 +73,9 @@ extern void stpi_xml_preinit(void);
 extern stp_sequence_t stpi_sequence_create_from_xmltree(xmlNodePtr da);
 extern xmlNodePtr stpi_xmltree_create_from_sequence(stp_sequence_t seq);
 
+extern stp_array_t stpi_array_create_from_xmltree(xmlNodePtr array);
+
 #endif /* GIMP_PRINT_INTERNAL_XML_H */
 /*
- * End of "$Id: xml.h,v 1.4 2003/04/12 21:19:48 rlk Exp $".
+ * End of "$Id: xml.h,v 1.5 2003/04/13 03:50:28 rlk Exp $".
  */

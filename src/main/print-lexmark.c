@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.115 2003/04/09 02:59:54 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.116 2003/04/13 03:50:28 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -61,11 +61,15 @@
 #include <gimp-print/gimp-print-intl-internal.h>
 #include "gimp-print-internal.h"
 #include "module.h"
+#include "weave.h"
 #include <string.h>
 #ifdef DEBUG
 #include <stdio.h>
 #endif
 
+#define ECOLOR_LC 4
+#define ECOLOR_LM 5
+#define ECOLOR_LY 6
 
 #define false 0
 #define true  1

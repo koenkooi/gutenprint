@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.17 2003/04/12 21:19:48 rlk Exp $"
+ * "$Id: xml.c,v 1.18 2003/04/13 03:50:28 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with libxml2.
  *
@@ -39,7 +39,6 @@
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
-#include "list.h"
 #include "module.h"
 #include "path.h"
 #include "xml.h"

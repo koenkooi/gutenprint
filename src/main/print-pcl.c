@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.100 2003/04/11 11:06:25 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.101 2003/04/13 03:50:28 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -37,6 +37,7 @@
 #include "module.h"
 #include <stdio.h>
 #include <string.h>
+#include "weave.h"
 
 /* #define DEBUG */
 /* #define PCL_DEBUG_DISABLE_COMPRESSION */

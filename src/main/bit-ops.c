@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.c,v 1.2 2003/01/20 22:19:08 rlk Exp $"
+ * "$Id: bit-ops.c,v 1.3 2003/04/13 03:50:26 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -35,6 +35,7 @@
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
+#include "weave.h"
 
 void
 stpi_fold(const unsigned char *line,
