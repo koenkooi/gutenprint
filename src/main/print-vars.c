@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.60 2003/10/17 02:49:49 rlk Exp $"
+ * "$Id: print-vars.c,v 1.61 2003/10/18 23:29:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -98,7 +98,6 @@ static stpi_internal_vars_t default_vars =
 	NULL,		       	/* Name of printer "driver" */
 	NULL,                   /* Name of color module */
 	OUTPUT_COLOR,		/* Color or grayscale output */
-	1.0,			/* Application gamma placeholder */
 	COLOR_MODEL_RGB,	/* Input color model */
 	COLOR_MODEL_RGB,	/* Output color model */
 	STP_JOB_MODE_PAGE	/* Job mode */
