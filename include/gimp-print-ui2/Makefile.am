@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2004/07/24 14:36:11 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2004/09/12 15:33:02 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,11 @@ pkginclude_HEADERS = \
 
 ## Rules
 
-typebuiltins.h: $(stpui_public_h_sources) Makefile
+if MAINTAINER_MODE
+typebuiltins_extra_deps = Makefile
+endif
+
+typebuiltins.h: $(stpui_public_h_sources) $(typebuiltins_extra_deps)
 	( cd $(srcdir) && $(GLIB_MKENUMS) \
 			--fhead "#ifndef STPUI_TYPE_BUILTINS_H\n#define STPUI_TYPE_BUILTINS_H\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 			--fprod "/* enumerations from \"@filename@\" */\n" \

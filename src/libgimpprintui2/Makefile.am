@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2004/07/24 14:36:11 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2004/09/12 15:33:02 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -80,8 +80,12 @@ stpui_public_h_sources = \
 	$(top_srcdir)/include/gimp-print-ui2/curve.h		\
 	$(top_srcdir)/include/gimp-print-ui2/gammacurve.h
 
+if MAINTAINER_MODE
+typebuiltins_extra_deps = Makefile
+endif
+
 # Really need to depend upon $(stpui_public_h_sources) here...
-typebuiltins.c: Makefile
+typebuiltins.c: $(typebuiltins_extra_deps)
 	( cd $(srcdir) && $(GLIB_MKENUMS) \
 			--fhead "#include <gimp-print-ui2/gimp-print-ui.h>" \
 			--fprod "\n/* enumerations from \"@filename@\" */" \
