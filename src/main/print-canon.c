@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.133 2003/09/22 22:38:22 rlk Exp $"
+ * "$Id: print-canon.c,v 1.134 2003/09/23 23:27:32 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2193,7 +2193,6 @@ canon_deinit_printer(stp_const_vars_t v, canon_init_t *init)
   canon_cmd(v,ESC28,0x62,1,0);
   if (init->caps->features & CANON_CAP_a)
     canon_cmd(v,ESC28,0x61, 1, 0);
-  canon_cmd(v,ESC40,0,0);
 }
 
 static int
