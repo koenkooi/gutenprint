@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.29 2001/04/15 09:31:43 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.30 2001/04/15 09:34:19 rwisi Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1568,7 +1568,7 @@ lexmark_describe_resolution(printer,
   fprintf(stderr,"density is %f\n",stp_get_density(nv));
 #endif
 
-#ifndef DEBUG
+#ifdef DEBUG
   fprintf(stderr,"density is %f and will be changed to %f  (%f)\n",stp_get_density(nv), stp_get_density(nv)/densityDivisor, densityDivisor);
 #endif
   /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
