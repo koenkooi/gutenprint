@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.10 2002/06/08 13:18:56 rleigh Exp $
+## $Id: Makefile.am,v 1.16.2.11 2002/08/22 01:21:39 tillkamppeter Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -92,9 +92,9 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 install-kit:
 	if test -n "$(DESTDIR)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)`$(FOOMATIC_KITLOAD) -l` ; \
-	  $(FOOMATIC_KITLOAD) -d $(DESTDIR) -k $(FOOMATIC_DB) ; \
+	  $(FOOMATIC_KITLOAD) -f -d $(DESTDIR) -k $(FOOMATIC_DB) ; \
 	else \
-	  $(FOOMATIC_KITLOAD) -k $(FOOMATIC_DB) ; \
+	  $(FOOMATIC_KITLOAD) -f -k $(FOOMATIC_DB) ; \
 	fi
 
 clean-local:
