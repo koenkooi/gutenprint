@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220 2003/01/14 00:23:43 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.1 2003/01/17 00:26:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1051,6 +1051,7 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   const escp2_variable_inkset_t *inks;
   double k_upper, k_lower;
   double paper_k_upper;
+  double paper_density;
   /*
    * Compute the LUT.  For now, it's 8 bit, but that may eventually
    * sometimes change.
@@ -1058,56 +1059,45 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   k_lower = init->inkname->k_lower;
   k_upper = init->inkname->k_upper;
 
-  pt = get_media_type(init->model, stp_get_string_parameter(nv, "MediaType"), nv);
+  pt = get_media_type(init->model,
+		      stp_get_string_parameter(nv, "MediaType"), nv);
   if (pt)
     {
-      if (init->output_type != OUTPUT_RAW_PRINTER &&
-	  init->output_type != OUTPUT_RAW_CMYK)
-	stp_set_float_parameter(nv, "Density",
-			  stp_get_float_parameter(nv, "Density") *
-			  pt->base_density *
-			  escp2_density(init->model, init->res->resid, nv));
-      if (init->total_channels >= 5)
-	{
-	  stp_set_float_parameter(nv, "Cyan",
-			    stp_get_float_parameter(nv, "Cyan") * pt->p_cyan);
-	  stp_set_float_parameter(nv, "Magenta",
-			    stp_get_float_parameter(nv,"Magenta")*pt->p_magenta);
-	  stp_set_float_parameter(nv, "Yellow",
-			    stp_get_float_parameter(nv,"Yellow") * pt->p_yellow);
-	}
-      else
-	{
-	  stp_set_float_parameter(nv, "Cyan",
-			    stp_get_float_parameter(nv, "Cyan") * pt->cyan);
-	  stp_set_float_parameter(nv, "Magenta",
-			    stp_get_float_parameter(nv,"Magenta") * pt->magenta);
-	  stp_set_float_parameter(nv, "Yellow",
-			    stp_get_float_parameter(nv, "Yellow") * pt->yellow);
-	}
-      stp_set_float_parameter(nv, "Saturation",
-			stp_get_float_parameter(nv,"Saturation")*pt->saturation);
-      stp_set_float_parameter(nv, "Gamma",
-			stp_get_float_parameter(nv, "Gamma") * pt->gamma);
+      paper_density = pt->base_density;
       k_lower *= pt->k_lower_scale;
       paper_k_upper = pt->k_upper;
       k_upper *= pt->k_upper;
+      if (init->total_channels >= 5)
+	{
+	  stp_scale_float_parameter(nv, "Cyan", pt->p_cyan);
+	  stp_scale_float_parameter(nv, "Magenta", pt->p_magenta);
+	  stp_scale_float_parameter(nv, "Yellow", pt->p_yellow);
+	}
+      else
+	{
+	  stp_scale_float_parameter(nv, "Cyan", pt->cyan);
+	  stp_scale_float_parameter(nv, "Magenta", pt->magenta);
+	  stp_scale_float_parameter(nv, "Yellow", pt->yellow);
+	}
+      stp_scale_float_parameter(nv, "Saturation", pt->saturation);
+      stp_scale_float_parameter(nv, "Gamma", pt->gamma);
     }
-  else				/* Can't find paper type? Assume plain */
+  else				/* Assume some kind of plain paper */
     {
-      if (init->output_type != OUTPUT_RAW_PRINTER &&
-	  init->output_type != OUTPUT_RAW_CMYK)
-	stp_set_float_parameter(nv, "Density",
-			  stp_get_float_parameter(nv, "Density") * .8 *
-			escp2_density(init->model, init->res->resid, nv));
+      paper_density = .8;
       k_lower *= .1;
       paper_k_upper = .5;
       k_upper *= .5;
     }
+
+  if (init->output_type != OUTPUT_RAW_PRINTER &&
+      init->output_type != OUTPUT_RAW_CMYK)
+    stp_scale_float_parameter
+      (nv, "Density",
+       paper_density * escp2_density(init->model, init->res->resid, nv));
+
   if (stp_get_float_parameter(nv, "Density") > 1.0)
     stp_set_float_parameter(nv, "Density", 1.0);
-  if (init->output_type == OUTPUT_GRAY)
-    stp_set_float_parameter(nv, "Gamma", stp_get_float_parameter(nv, "Gamma") / .8);
 
   for (i = 0; i <= NCOLORS; i++)
     stp_dither_set_black_level(dither, i, 1.0);
@@ -1115,51 +1105,60 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   stp_dither_set_black_upper(dither, k_upper);
 
   inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
-  if (inks) {
-    for (i = 0; i < init->channel_limit; i++) {
-      if ((*inks)[i]) {
-	stp_dither_set_ranges(dither, i, (*inks)[i]->numranges, (*inks)[i]->range,
-			      (*inks)[i]->density * paper_k_upper *
-			      stp_get_float_parameter(nv, "Density"));
+  if (inks)
+    {
+      for (i = 0; i < init->channel_limit; i++)
+	{
+	  const ink_channel_t *ink = (*inks)[i];
+	  if (ink)
+	    {
+	      stp_dither_set_ranges(dither, i, ink->numranges, ink->range,
+				    ink->density * paper_k_upper *
+				    stp_get_float_parameter(nv, "Density"));
 
-        stp_dither_set_shades(dither, i, (*inks)[i]->numshades, (*inks)[i]->shades,
-			      (*inks)[i]->density * paper_k_upper *
-			      stp_get_float_parameter(nv, "Density"));
-      }
+	      stp_dither_set_shades(dither, i, ink->numshades, ink->shades,
+				    ink->density * paper_k_upper *
+				    stp_get_float_parameter(nv, "Density"));
+	    }
+	}
     }
-  }
 
   stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 
-  sat_adjustment = stp_read_and_compose_curves(init->inkname->sat_adjustment,
-					       pt ? pt->sat_adjustment : NULL,
-					       STP_CURVE_COMPOSE_MULTIPLY);
-  lum_adjustment = stp_read_and_compose_curves(init->inkname->lum_adjustment,
-					       pt ? pt->lum_adjustment : NULL,
-					       STP_CURVE_COMPOSE_MULTIPLY);
-  hue_adjustment = stp_read_and_compose_curves(init->inkname->hue_adjustment,
-					       pt ? pt->hue_adjustment : NULL,
-					       STP_CURVE_COMPOSE_ADD);
-  if (stp_get_curve_parameter(nv, "HueMap"))
-    stp_curve_compose(&hue_adjustment, hue_adjustment,
-		      stp_get_curve_parameter(nv, "HueMap"),
-		      STP_CURVE_COMPOSE_ADD, -1);
-  if (stp_get_curve_parameter(nv, "LumMap"))
-    stp_curve_compose(&lum_adjustment, lum_adjustment,
-		      stp_get_curve_parameter(nv, "LumMap"),
-		      STP_CURVE_COMPOSE_MULTIPLY, -1);
-  if (stp_get_curve_parameter(nv, "SatMap"))
-    stp_curve_compose(&sat_adjustment, sat_adjustment,
-		      stp_get_curve_parameter(nv, "SatMap"),
-		      STP_CURVE_COMPOSE_MULTIPLY, -1);
-  stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
-  stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
-  stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
-
+  if (!stp_check_curve_parameter(nv, "HueMap"))
+    {
+      hue_adjustment = stp_read_and_compose_curves
+	(init->inkname->hue_adjustment, pt ? pt->hue_adjustment : NULL,
+	 STP_CURVE_COMPOSE_ADD);
+      stp_curve_compose(&hue_adjustment, hue_adjustment,
+			stp_get_curve_parameter(nv, "HueMap"),
+			STP_CURVE_COMPOSE_ADD, -1);
+      stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
+      stp_curve_destroy(hue_adjustment);
+    }
+  if (!stp_check_curve_parameter(nv, "SatMap"))
+    {
+      sat_adjustment = stp_read_and_compose_curves
+	(init->inkname->sat_adjustment, pt ? pt->sat_adjustment : NULL,
+	 STP_CURVE_COMPOSE_ADD);
+      stp_curve_compose(&sat_adjustment, sat_adjustment,
+			stp_get_curve_parameter(nv, "SatMap"),
+			STP_CURVE_COMPOSE_MULTIPLY, -1);
+      stp_set_curve_parameter(nv, "SatMap", sat_adjustment);
+      stp_curve_destroy(sat_adjustment);
+    }
+  if (!stp_check_curve_parameter(nv, "LumMap"))
+    {
+      lum_adjustment = stp_read_and_compose_curves
+	(init->inkname->lum_adjustment, pt ? pt->lum_adjustment : NULL,
+	 STP_CURVE_COMPOSE_ADD);
+      stp_curve_compose(&lum_adjustment, lum_adjustment,
+			stp_get_curve_parameter(nv, "LumMap"),
+			STP_CURVE_COMPOSE_MULTIPLY, -1);
+      stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
+      stp_curve_destroy(lum_adjustment);
+    }
   cols = stp_color_init(nv, image, 65536);
-  stp_curve_destroy(lum_adjustment);
-  stp_curve_destroy(sat_adjustment);
-  stp_curve_destroy(hue_adjustment);
   return cols;
 }
 

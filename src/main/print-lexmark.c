@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.99 2003/01/14 00:23:43 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.99.2.1 2003/01/17 00:26:29 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1754,8 +1754,7 @@ densityDivisor /= 1.2;
 #endif
 
       /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
-      stp_set_float_parameter
-	(nv, "Density", stp_get_float_parameter(nv, "Density") /densityDivisor);
+      stp_scale_float_parameter(nv, "Density", 1.0 / densityDivisor);
     }
 
 
@@ -1768,28 +1767,20 @@ densityDivisor /= 1.2;
   else
     k_lower = .25;
 
-
-
-
-
-
   if (media)
     {
       if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-	stp_set_float_parameter(nv, "Density", stp_get_float_parameter(nv, "Density") * media->base_density);
-      stp_set_float_parameter(nv, "Cyan",
-			stp_get_float_parameter(nv, "Cyan") * media->p_cyan);
-      stp_set_float_parameter(nv, "Magenta",
-			stp_get_float_parameter(nv, "Magenta") * media->p_magenta);
-      stp_set_float_parameter(nv, "Yellow",
-			stp_get_float_parameter(nv, "Yellow") * media->p_yellow);
+	stp_scale_float_parameter(nv, "Density", media->base_density);
+      stp_scale_float_parameter(nv, "Cyan", media->p_cyan);
+      stp_scale_float_parameter(nv, "Magenta", media->p_magenta);
+      stp_scale_float_parameter(nv, "Yellow", media->p_yellow);
       k_lower *= media->k_lower_scale;
       k_upper  = media->k_upper;
     }
   else
     {
       if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-	stp_set_float_parameter(nv, "Density", stp_get_float_parameter(nv, "Density") * .8);
+	stp_scale_float_parameter(nv, "Density", .8);
       k_lower *= .1;
       k_upper = .5;
     }

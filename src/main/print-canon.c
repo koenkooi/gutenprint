@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101.2.1 2003/01/15 02:29:37 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.2 2003/01/17 00:26:29 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2317,18 +2317,15 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
     {
       if (pt)
-	stp_set_float_parameter(nv, "Density",
-			  stp_get_float_parameter(nv, "Density") * pt->base_density);
+	stp_scale_float_parameter(nv, "Density", pt->base_density);
       else			/* Can't find paper type? Assume plain */
-	stp_set_float_parameter(nv, "Density",
-			  stp_get_float_parameter(nv, "Density") * .5);
-      stp_set_float_parameter(nv, "Density",
-			stp_get_float_parameter(nv, "Density") * canon_density(caps, res_code));
+	stp_scale_float_parameter(nv, "Density", .5);
+      stp_scale_float_parameter(nv, "Density", canon_density(caps, res_code));
     }
   if (stp_get_float_parameter(nv, "Density") > 1.0)
     stp_set_float_parameter(nv, "Density", 1.0);
   if (colormode == COLOR_MONOCHROME)
-    stp_set_float_parameter(nv, "Gamma", stp_get_float_parameter(nv, "Gamma") / .8);
+    stp_scale_float_parameter(nv, "Gamma", 1.25);
 
   stp_deprintf(STP_DBG_CANON,"density is %f\n",
 	       stp_get_float_parameter(nv, "Density"));

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.25.4.2 2003/01/15 02:29:38 rlk Exp $"
+ * "$Id: print-vars.c,v 1.25.4.3 2003/01/17 00:26:30 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -715,7 +715,7 @@ stp_clear_int_parameter(stp_vars_t v, const char *parameter)
   stp_set_verified(v, 0);
 }
 
-const int
+int
 stp_get_int_parameter(const stp_vars_t v, const char *parameter)
 {
   stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
@@ -789,7 +789,7 @@ stp_clear_boolean_parameter(stp_vars_t v, const char *parameter)
   stp_set_verified(v, 0);
 }
 
-const int
+int
 stp_get_boolean_parameter(const stp_vars_t v, const char *parameter)
 {
   stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
@@ -857,7 +857,7 @@ stp_clear_float_parameter(stp_vars_t v, const char *parameter)
   stp_set_verified(v, 0);
 }
 
-const double
+double
 stp_get_float_parameter(const stp_vars_t v, const char *parameter)
 {
   stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
@@ -871,6 +871,15 @@ stp_get_float_parameter(const stp_vars_t v, const char *parameter)
     }
   else
     return 1.0;
+}
+
+void
+stp_scale_float_parameter(const stp_vars_t v, const char *parameter,
+			  double scale)
+{
+  if (stp_check_float_parameter(v, parameter))
+    stp_set_float_parameter(v, parameter,
+			    stp_get_float_parameter(v, parameter) * scale);
 }
 
 int

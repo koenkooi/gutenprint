@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.6.4.2 2003/01/15 02:29:37 rlk Exp $"
+ * "$Id: dither.h,v 1.6.4.3 2003/01/17 00:26:29 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -41,9 +41,32 @@ extern "C" {
 #include <config.h>
 #endif
 
+typedef struct stp_dither_matrix_short
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned short *data;
+} stp_dither_matrix_short_t;
 
-#include "dither-matrices.h"
+typedef struct stp_dither_matrix_normal
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned *data;
+} stp_dither_matrix_normal_t;
 
+typedef struct stp_dither_matrix
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const void *data;
+} stp_dither_matrix_t;
 
 extern const stp_dither_matrix_short_t stp_dither_matrix_1_1;
 extern const stp_dither_matrix_short_t stp_dither_matrix_2_1;
@@ -185,5 +208,5 @@ extern void stp_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.6.4.2 2003/01/15 02:29:37 rlk Exp $".
+ * End of "$Id: dither.h,v 1.6.4.3 2003/01/17 00:26:29 rlk Exp $".
  */

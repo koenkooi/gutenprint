@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.15.2.2 2003/01/15 02:29:37 rlk Exp $
+ *  $Id: gimp-print.h,v 1.15.2.3 2003/01/17 00:26:29 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -556,12 +556,12 @@ extern const char *stp_get_string_parameter(const stp_vars_t v,
 					    const char *param);
 extern const char *stp_get_file_parameter(const stp_vars_t v,
 					  const char *param);
-extern const double stp_get_float_parameter(const stp_vars_t v,
+extern double stp_get_float_parameter(const stp_vars_t v,
 					    const char *param);
-extern const int stp_get_int_parameter(const stp_vars_t v,
-				       const char *param);
-extern const int stp_get_boolean_parameter(const stp_vars_t v,
-					   const char *param);
+extern int stp_get_int_parameter(const stp_vars_t v,
+				 const char *param);
+extern int stp_get_boolean_parameter(const stp_vars_t v,
+				     const char *param);
 extern const stp_curve_t stp_get_curve_parameter(const stp_vars_t v,
 						 const char *param);
 extern const stp_raw_t *stp_get_raw_parameter(const stp_vars_t v,
@@ -583,10 +583,15 @@ extern int stp_check_boolean_parameter(const stp_vars_t v, const char *param);
 extern int stp_check_curve_parameter(const stp_vars_t v, const char *param);
 extern int stp_check_raw_parameter(const stp_vars_t v, const char *param);
 
-/*
- * Manipulate lists of strings.  This will likely be subsumed by a more
- * general list manipulation technology.
- */
+extern void stp_scale_float_parameter(const stp_vars_t v, const char *param,
+				      double scale);
+
+
+/****************************************************************
+*                                                               *
+* LISTS OF STRINGS                                              *
+*                                                               *
+****************************************************************/
 
 extern stp_string_list_t stp_string_list_allocate(void);
 extern void stp_string_list_free(stp_string_list_t list);
@@ -605,9 +610,12 @@ extern void stp_string_list_add_param(stp_string_list_t list,
 extern stp_string_list_t
 stp_string_list_duplicate_params(const stp_param_string_t *list, size_t count);
 
-/*
- * Manipulate curves
- */
+
+/****************************************************************
+*                                                               *
+* CURVES                                                        *
+*                                                               *
+****************************************************************/
 
 /*
  * Allocate a new curve.  Curves have y=lower..upper.
@@ -1025,5 +1033,5 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.15.2.2 2003/01/15 02:29:37 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.15.2.3 2003/01/17 00:26:29 rlk Exp $
  */
