@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.23 1999/11/10 01:13:27 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.24 1999/11/13 02:32:58 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.24  1999/11/13 02:32:58  rlk
+ *   Comments on some good settings!
+ *
  *   Revision 1.23  1999/11/10 01:13:27  rlk
  *   1440x720 two-pass
  *
@@ -310,6 +313,13 @@ escp2_write_weave(FILE *, int, int, int, int, int, int,
 #define MODEL_1440DPI_MASK	0x1000
 #define MODEL_1440DPI_NO	0x0000
 #define MODEL_1440DPI_YES	0x1000
+
+/*
+ * SUGGESTED SETTINGS FOR STYLUS PHOTO EX:
+ * Brightness 127
+ * Blue 92
+ * Saturation 1.2
+ */
 
 int model_capabilities[] =
 {
@@ -2066,5 +2076,5 @@ escp2_write_weave(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.23 1999/11/10 01:13:27 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.24 1999/11/13 02:32:58 rlk Exp $".
  */
