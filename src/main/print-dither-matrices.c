@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.23.2.2 2003/06/19 01:43:57 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.23.2.3 2003/06/19 02:27:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -549,7 +549,6 @@ stpi_dither_array_create_from_xmltree(mxml_node_t *dm) /* Dither matrix node */
 {
   const char *stmp;
   mxml_node_t *child;
-  stp_array_t ret = NULL;
   int x_aspect, y_aspect; /* Dither matrix size */
 
   /* Get x-size */
@@ -577,12 +576,11 @@ stpi_dither_array_create_from_xmltree(mxml_node_t *dm) /* Dither matrix node */
 
   /* Now read in the array */
   child = mxmlFindElement(dm, dm, "array", NULL, NULL, MXML_DESCEND);
-
-  return ret;
-
+  if (child)
+    return stpi_array_create_from_xmltree(child);
+  else
+    stpi_erprintf("stpi_dither_array_create_from_xmltree: cannot find root\n");
  error:
-  if (ret)
-    stp_array_destroy(ret);
   return NULL;
 }
 
