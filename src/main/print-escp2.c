@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.300 2003/11/16 03:26:09 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.301 2003/11/16 03:40:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2263,7 +2263,8 @@ escp2_print_data(stp_vars_t v, stp_image_t *image)
 
       if (cd_mask)
 	{
-	  int y_distance_from_center = y_center - y;
+	  int y_distance_from_center =
+	    pd->cd_y_offset - (y * pd->micro_units / pd->res->vres);
 	  if (y_distance_from_center < 0)
 	    y_distance_from_center = -y_distance_from_center;
 	  memset(cd_mask, 0, (pd->image_scaled_width + 7) / 8);
