@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.22 2000/01/13 03:17:11 rlk Exp $"
+ * "$Id: print.h,v 1.23 2000/01/17 02:05:47 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -161,7 +161,7 @@ typedef void 	(*convert_t)(unsigned char *in, unsigned short *out, int width,
  * Prototypes...
  */
 
-extern void	dither_black(unsigned short *, int, int, int, unsigned char *);
+extern void	dither_black(unsigned short *, int, int, int, unsigned char *, int);
 
 extern void	dither_cmyk(unsigned short *, int, int, int, unsigned char *,
 			    unsigned char *, unsigned char *,
@@ -169,11 +169,11 @@ extern void	dither_cmyk(unsigned short *, int, int, int, unsigned char *,
 			    unsigned char *, unsigned char *, int);
 
 extern void	dither_black4(unsigned short *, int, int, int,
-			      unsigned char *);
+			      unsigned char *, int);
 
 extern void	dither_cmyk4(unsigned short *, int, int, int, unsigned char *,
 			     unsigned char *, unsigned char *,
-			     unsigned char *);
+			     unsigned char *, int);
 
 extern void	gray_to_gray(unsigned char *, unsigned short *, int, int,
 			     lut_t *, unsigned char *, vars_t *);
@@ -237,5 +237,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.22 2000/01/13 03:17:11 rlk Exp $".
+ * End of "$Id: print.h,v 1.23 2000/01/17 02:05:47 rlk Exp $".
  */
