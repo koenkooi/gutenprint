@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.10 2003/05/04 21:35:51 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.11 2003/05/04 22:52:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1827,13 +1827,17 @@ setup_resolution(stp_vars_t v)
     {
       pd->unit_scale = escp2_max_hres(v);
       pd->horizontal_units = horizontal;
+      pd->micro_units = horizontal;
     }
   else
     {
       pd->unit_scale = 3600;
+      if (pd->res->hres <= 720)
+	pd->micro_units = vertical;
+      else
+	pd->micro_units = horizontal;
       pd->horizontal_units = vertical;
     }
-  pd->micro_units = horizontal;
   pd->vertical_units = vertical;
   pd->page_management_units = vertical;
 }  
