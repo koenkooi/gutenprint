@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.6 2000/07/15 01:22:57 rlk Exp $"
+ * "$Id: escputil.c,v 1.6.2.1 2000/08/03 11:01:46 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -207,7 +207,7 @@ do_print_cmd(void)
   bufpos += 5;
   if (raw_device)
     {
-      pfile = fopen(raw_device, "rb");
+      pfile = fopen(raw_device, "wb");
       if (!pfile)
 	{
 	  fprintf(stderr, "Cannot open device %s: %s\n", raw_device,
