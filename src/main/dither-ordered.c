@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.7.2.4 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7.2.5 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -152,7 +152,7 @@ print_color_ordered(const stpi_dither_t *d, stpi_dither_channel_t *dc, int x, in
 	  v = subc->value;
 	  if (dc->ptr)
 	    {
-	      tptr = dc->ptr;
+	      tptr = dc->ptr + d->ptr_offset;
 
 	      /*
 	       * Lay down all of the bits in the pixel.
@@ -205,15 +205,13 @@ stpi_dither_ordered(stp_vars_t v,
   QUANT(6);
   for (x = 0; x != terminate; x ++)
     {
-      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
-	  if (CHANNEL(d, i).base_ptr)
+	  if (CHANNEL(d, i).ptr)
 	    {
-	      CHANNEL(d, i).v = raw[in_ch];
+	      CHANNEL(d, i).v = raw[i];
 	      CHANNEL(d, i).o = CHANNEL(d, i).v;
 	      print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit, length, 0);
-	      in_ch++;
 	    }
 	}
 

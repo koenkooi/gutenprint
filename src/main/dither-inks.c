@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.10 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.11 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -58,7 +58,7 @@ stpi_dither_get_channel(stp_vars_t v, unsigned channel, unsigned subchannel)
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int place = stpi_dither_translate_channel(v, channel, subchannel);
   if (place >= 0)
-    return d->channel[place].base_ptr;
+    return d->channel[place].ptr;
   else
     return NULL;
 }
@@ -84,7 +84,36 @@ insert_channel(stp_vars_t v, stpi_dither_t *d, int channel)
   d->channel_count = channel + 1;
 }
 
-static void initialize_channel(stp_vars_t v, int channel, int subchannel)
+void
+stpi_dither_channel_destroy(stpi_dither_channel_t *channel)
+{
+  int i;
+  SAFE_FREE(channel->vals);
+  SAFE_FREE(channel->ink_list);
+  if (channel->errs)
+    {
+      for (i = 0; i < channel->error_rows; i++)
+	SAFE_FREE(channel->errs[i]);
+      SAFE_FREE(channel->errs);
+    }
+  SAFE_FREE(channel->errs);
+  SAFE_FREE(channel->ranges);
+  if (channel->shades)
+    {
+      for (i = 0; i < channel->numshades; i++)
+	{
+	  SAFE_FREE(channel->shades[i].dotsizes);
+	  SAFE_FREE(channel->shades[i].errs);
+	  SAFE_FREE(channel->shades[i].et_dis);
+	}
+      SAFE_FREE(channel->shades);
+    }
+  stpi_dither_matrix_destroy(&(channel->pick));
+  stpi_dither_matrix_destroy(&(channel->dithermat));
+}  
+
+static void
+initialize_channel(stp_vars_t v, int channel, int subchannel)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   int idx = stpi_dither_translate_channel(v, channel, subchannel);
@@ -143,15 +172,39 @@ insert_subchannel(stp_vars_t v, stpi_dither_t *d, int channel, int subchannel)
 }
 
 void
+stpi_dither_finalize(stp_vars_t v)
+{
+  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
+  if (!d->finalized)
+    {
+      int i;
+      unsigned rc = 1 + (unsigned) ceil(sqrt(CHANNEL_COUNT(d)));
+      unsigned x_n = d->dither_matrix.x_size / rc;
+      unsigned y_n = d->dither_matrix.y_size / rc;
+      for (i = 0; i < CHANNEL_COUNT(d); i++)
+	{
+	  stpi_dither_channel_t *dc = &(CHANNEL(d, i));
+	  stpi_dither_matrix_clone(&(d->dither_matrix), &(dc->dithermat),
+				   x_n * (i % rc), y_n * (i / rc));
+	  stpi_dither_matrix_clone(&(d->dither_matrix), &(dc->pick),
+				   x_n * (i % rc), y_n * (i / rc));
+	}
+      d->finalized = 1;
+    }
+}
+
+void
 stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
 			unsigned channel, unsigned subchannel)
 {
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
+  int idx;
   if (channel >= d->channel_count)
     insert_channel(v, d, channel);
   if (subchannel >= d->subchannel_count[channel])
     insert_subchannel(v, d, channel, subchannel);
-  d->channel[d->channel_index[channel] + subchannel].base_ptr = data;
+  idx = stpi_dither_translate_channel(v, channel, subchannel);
+  d->channel[idx].ptr = data;
 }
 
 static void
@@ -357,6 +410,8 @@ stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 
       dc->numshades = 1;
       dc->shades = stpi_zalloc(dc->numshades * sizeof(stpi_shade_segment_t));
+      dc->density_adjustment = stp_get_float_parameter(v, "Density");
+      dc->sqrt_density_adjustment = sqrt(density);
 
       sp = &dc->shades[0];
       sp->value = 1.0;
@@ -381,7 +436,7 @@ stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
 
       sp->numdotsizes = shades[i].numsizes;
       sp->dotsizes = stpi_zalloc(sp->numdotsizes * sizeof(stpi_ink_defn_t));
-      if (idx > 0)
+      if (idx >= 0)
 	stpi_dither_set_ranges(v, &(CHANNEL(d, idx)), &shades[i], density);
       for (j=0; j < sp->numdotsizes; j++)
 	{

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.7.2.4 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.7.2.5 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -49,18 +49,18 @@
 static int *
 get_errline(stpi_dither_t *d, int row, int color)
 {
+  stpi_dither_channel_t *dc;
   if (row < 0 || color < 0 || color >= CHANNEL_COUNT(d))
     return NULL;
-  if (!CHANNEL(d, color).errs)
-    CHANNEL(d, color).errs = stpi_zalloc(d->error_rows * sizeof(int *));
-  if (CHANNEL(d, color).errs[row & 1])
-    return CHANNEL(d, color).errs[row & 1] + MAX_SPREAD;
-  else
+  dc = &(CHANNEL(d, color));
+  if (!dc->errs)
+    dc->errs = stpi_zalloc(d->error_rows * sizeof(int *));
+  if (!dc->errs[row % dc->error_rows])
     {
       int size = 2 * MAX_SPREAD + (16 * ((d->dst_width + 7) / 8));
-      CHANNEL(d, color).errs[row & 1] = stpi_zalloc(size * sizeof(int));
-      return CHANNEL(d, color).errs[row & 1] + MAX_SPREAD;
+      dc->errs[row % dc->error_rows] = stpi_zalloc(size * sizeof(int));
     }
+  return dc->errs[row % dc->error_rows] + MAX_SPREAD;
 }
 
 /*
@@ -357,6 +357,8 @@ shared_ed_initializer(stpi_dither_t *d,
 		      int **ndither)
 {
   int i, j;
+  for (i = 0; i < CHANNEL_COUNT(d); i++)
+    CHANNEL(d, i).error_rows = 2;
   if (!duplicate_line)
     {
       if ((zero_mask & ((1 << CHANNEL_COUNT(d)) - 1)) !=
@@ -447,12 +449,11 @@ stpi_dither_ed(stp_vars_t v,
   QUANT(6);
   for (; x != terminate; x += direction)
     {
-      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
-	  if (CHANNEL(d, i).base_ptr)
+	  if (CHANNEL(d, i).ptr)
 	    {
-	      CHANNEL(d, i).v = raw[in_ch];
+	      CHANNEL(d, i).v = raw[i];
 	      CHANNEL(d, i).o = CHANNEL(d, i).v;
 	      CHANNEL(d, i).b = CHANNEL(d, i).v;
 	      CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
@@ -460,7 +461,6 @@ stpi_dither_ed(stp_vars_t v,
 					    length, 0, d->stpi_dither_type);
 	      ndither[i] = update_dither(d, i, d->src_width,
 					 direction, error[i][0], error[i][1]);
-	      in_ch++;
 	    }
 	}
       QUANT(12);

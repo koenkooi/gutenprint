@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.5.2.4 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.5.2.5 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -158,7 +158,6 @@ typedef struct dither_channel
   dither_matrix_t dithermat;
   int row_ends[2];
   unsigned char *ptr;
-  unsigned char *base_ptr;
 } stpi_dither_channel_t;
 
 typedef struct dither
@@ -226,6 +225,8 @@ extern stpi_ditherfunc_t stpi_dither_et;
 extern void stpi_dither_reverse_row_ends(stpi_dither_t *d);
 extern int stpi_dither_translate_channel(stp_vars_t v, unsigned channel,
 					 unsigned subchannel);
+extern void stpi_dither_channel_destroy(stpi_dither_channel_t *channel);
+extern void stpi_dither_finalize(stp_vars_t v);
 
 
 #define ADVANCE_UNIDIRECTIONAL(d, bit, input, width, xerror, xstep, xmod) \
@@ -291,5 +292,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.5.2.4 2003/05/23 22:54:43 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.5.2.5 2003/05/24 22:37:36 rlk Exp $".
  */

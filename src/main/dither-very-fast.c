@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-very-fast.c,v 1.5.2.3 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-very-fast.c,v 1.5.2.4 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Very fast dither algorithm
  *
@@ -77,16 +77,13 @@ stpi_dither_very_fast(stp_vars_t v,
   QUANT(14);
   for (x = 0; x != dst_width; x++)
     {
-      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
 	  stpi_dither_channel_t *dc = &(CHANNEL(d, i));
-	  if (dc->base_ptr &&
-	      input[in_ch] > ditherpoint_fast(d, &(dc->dithermat), x))
+	  if (dc->ptr && input[i] > ditherpoint_fast(d, &(dc->dithermat), x))
 	    {
 	      set_row_ends(dc, x);
-	      dc->ptr[0] |= bit;
-	      in_ch++;
+	      dc->ptr[d->ptr_offset] |= bit;
 	    }
 	}
       QUANT(16);

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.11.2.3 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.11.2.4 2003/05/24 22:37:36 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -408,11 +408,10 @@ stpi_dither_et(stp_vars_t v,
 
   for (; x != terminate; x += direction) {
 
-    int in_ch = 0;
     range = 0;
 
     for (i=0; i < channel_count; i++) {
-      if (CHANNEL(d, i).base_ptr)
+      if (CHANNEL(d, i).ptr)
 	{
 	  int inkspot;
 	  stpi_shade_segment_t *sp;
@@ -420,7 +419,7 @@ stpi_dither_et(stp_vars_t v,
 	  stpi_ink_defn_t *inkp;
 	  stpi_ink_defn_t lower, upper;
 
-	  dc->o = dc->v = raw[in_ch];
+	  dc->o = dc->v = raw[i];
 
 	  advance_eventone_pre(dc, et, x);
 
@@ -453,7 +452,6 @@ stpi_dither_et(stp_vars_t v,
 
 	  /* Spread the error around to the adjacent dots */
 	  diffuse_error(dc, et, diff_factor, x, direction);
-	  in_ch++;
 	}
     }
     if (direction == 1)

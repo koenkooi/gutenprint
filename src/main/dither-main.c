@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.17.2.7 2003/05/23 22:54:43 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17.2.8 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -216,40 +216,12 @@ stpi_dither_set_randomizer(stp_vars_t v, int i, double val)
 }
 
 static void
-dither_channel_destroy(stpi_dither_channel_t *channel)
-{
-  int i;
-  SAFE_FREE(channel->vals);
-  SAFE_FREE(channel->ink_list);
-  if (channel->errs)
-    {
-      for (i = 0; i < channel->error_rows; i++)
-	SAFE_FREE(channel->errs[i]);
-      SAFE_FREE(channel->errs);
-    }
-  SAFE_FREE(channel->errs);
-  SAFE_FREE(channel->ranges);
-  if (channel->shades)
-    {
-      for (i = 0; i < channel->numshades; i++)
-	{
-	  SAFE_FREE(channel->shades[i].dotsizes);
-	  SAFE_FREE(channel->shades[i].errs);
-	  SAFE_FREE(channel->shades[i].et_dis);
-	}
-      SAFE_FREE(channel->shades);
-    }
-  stpi_dither_matrix_destroy(&(channel->pick));
-  stpi_dither_matrix_destroy(&(channel->dithermat));
-}  
-
-static void
 stpi_dither_free(void *vd)
 {
   stpi_dither_t *d = (stpi_dither_t *) vd;
   int j;
   for (j = 0; j < CHANNEL_COUNT(d); j++)
-    dither_channel_destroy(&(CHANNEL(d, j)));
+    stpi_dither_channel_destroy(&(CHANNEL(d, j)));
   SAFE_FREE(d->offset0_table);
   SAFE_FREE(d->offset1_table);
   stpi_dither_matrix_destroy(&(d->dither_matrix));
@@ -375,25 +347,16 @@ stpi_dither_get_last_position(stp_vars_t v, int color, int subchannel)
   return CHANNEL(d, color).row_ends[1];
 }
 
-static void
-stpi_dither_finalize(stp_vars_t v)
-{
-  stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  if (d->finalized)
-    return;
-  d->channel =
-    stpi_zalloc(d->total_channel_count * sizeof(stpi_dither_channel_t));
-}
-
 void
 stpi_dither_internal(stp_vars_t v, int row, const unsigned short *input,
 		     int duplicate_line, int zero_mask)
 {
   int i;
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
+  stpi_dither_finalize(v);
   for (i = 0; i < CHANNEL_COUNT(d); i++)
     {
-      CHANNEL(d, i).ptr = CHANNEL(d, i).base_ptr;
+      CHANNEL(d, i).ptr = CHANNEL(d, i).ptr;
       if (CHANNEL(d, i).ptr)
 	  memset(CHANNEL(d, i).ptr, 0,
 		 (d->dst_width + 7) / 8 * CHANNEL(d, i).signif_bits);

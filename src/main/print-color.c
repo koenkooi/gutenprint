@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.75.2.2 2003/05/16 02:13:10 rlk Exp $"
+ * "$Id: print-color.c,v 1.75.2.3 2003/05/24 22:37:36 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1022,7 +1022,7 @@ compute_gcr_curve(stp_const_vars_t vars)
 }
 
 static void
-generic_rgb_to_cmyk(stp_const_vars_t vars, const unsigned short *in,
+generic_rgb_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
 		    unsigned short *out)
 {
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
@@ -1068,9 +1068,9 @@ generic_rgb_to_cmyk(stp_const_vars_t vars, const unsigned short *in,
       int y = in[2];
       int k = FMIN(c, FMIN(m, y));
       for (j = 0; j < 3; j++)
-	out[j] = in[j];
+	out[j + 1] = in[j];
       if (k == 0)
-	out[3] = 0;
+	out[0] = 0;
       else
 	{
 	  int where, resid;
@@ -1090,43 +1090,43 @@ generic_rgb_to_cmyk(stp_const_vars_t vars, const unsigned short *in,
 	  if (kk > k)
 	    kk = k;
 	  if (lut->steps == 65536)
-	    out[3] = black_lookup[kk];
+	    out[0] = black_lookup[kk];
 	  else
 	    {
 	      where = kk / step;
 	      resid = kk % step;
 	      if (resid)
-		out[3] = black_lookup[where] +
+		out[0] = black_lookup[where] +
 		  (black_lookup[where + 1] - black_lookup[where]) * resid /
 		  step;
 	      else
-		out[3] = black_lookup[where];
+		out[0] = black_lookup[where];
 	    }
-	  for (j = 0; j < 3; j++)
+	  for (j = 1; j < 4; j++)
 	    out[j] -= kk;
 	}
     }
 }
 
-#define RGB_TO_CMYK_FUNC(name)						\
+#define RGB_TO_KCMY_FUNC(name)						\
 static unsigned								\
-name##_to_cmyk(stp_const_vars_t vars, const unsigned char *in,		\
+name##_to_kcmy(stp_const_vars_t vars, const unsigned char *in,		\
 	       unsigned short *out)					\
 {									\
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
   if (!lut->cmy_tmp)							\
     lut->cmy_tmp = stpi_malloc(4 * 2 * lut->image_width);		\
   name##_to_rgb(vars, in, lut->cmy_tmp);				\
-  generic_rgb_to_cmyk(vars, lut->cmy_tmp, out);				\
+  generic_rgb_to_kcmy(vars, lut->cmy_tmp, out);				\
 }
 
-RGB_TO_CMYK_FUNC(gray)
-RGB_TO_CMYK_FUNC(fast_gray)
-RGB_TO_CMYK_FUNC(rgb)
-RGB_TO_CMYK_FUNC(fast_rgb)
+RGB_TO_KCMY_FUNC(gray)
+RGB_TO_KCMY_FUNC(fast_gray)
+RGB_TO_KCMY_FUNC(rgb)
+RGB_TO_KCMY_FUNC(fast_rgb)
 
 static unsigned
-cmyk_8_to_cmyk(stp_const_vars_t vars, const unsigned char *in,
+cmyk_8_to_kcmy(stp_const_vars_t vars, const unsigned char *in,
 	       unsigned short *out)
 {
   int i;
@@ -1149,20 +1149,22 @@ cmyk_8_to_cmyk(stp_const_vars_t vars, const unsigned char *in,
   for (i = 0; i < lut->image_width; i++)
     {
       j = *in++;
+      nz[3] |= j;
+      out[3] = vlut[j];
+
+      j = *in++;
       nz[0] |= j;
-      *out++ = vlut[j];
+      out[0] = vlut[j];
 
       j = *in++;
       nz[1] |= j;
-      *out++ = vlut[j];
+      out[1] = vlut[j];
 
       j = *in++;
       nz[2] |= j;
-      *out++ = vlut[j];
+      out[2] = vlut[j];
 
-      j = *in++;
-      nz[3] |= j;
-      *out++ = vlut[j];
+      out += 4;
     }
   for (i = 0; i < 4; i++)
     retval += nz[i] ? 0 : 1 << i;
@@ -1228,7 +1230,7 @@ raw_to_raw(stp_const_vars_t vars, const unsigned char *in,
 }
 
 static unsigned
-cmyk_to_cmyk(stp_const_vars_t vars, const unsigned char *in,
+cmyk_to_kcmy(stp_const_vars_t vars, const unsigned char *in,
 	     unsigned short *out)
 {
   int i;
@@ -1241,11 +1243,12 @@ cmyk_to_cmyk(stp_const_vars_t vars, const unsigned char *in,
   memset(nz, 0, sizeof(nz));
   for (i = 0; i < lut->image_width; i++)
     {
+      out[0] = usin[3];
+      out[1] = usin[0];
+      out[2] = usin[1];
+      out[3] = usin[2];
       for (j = 0; j < 4; j++)
-	{
-	  nz[j] |= usin[j];
-	  out[j] = usin[j];
-	}
+	nz[j] |= out[j];
       usin += 4;
       out += 4;
     }
@@ -1286,6 +1289,7 @@ stpi_color_get_row(stp_const_vars_t v, stp_image_t *image, int row,
     return 2;
   stpi_channel_initialize(v, image, lut->out_channels);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
+  stpi_channel_convert(v);
   if (zero_mask)
     *zero_mask = zero;
   return 0;
@@ -1712,9 +1716,9 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 	    case 3:
 	    case 2:
 	    case 1:
-	      SET_COLORFUNC(gray_to_cmyk);
+	      SET_COLORFUNC(gray_to_kcmy);
 	    case 0:
-	      SET_COLORFUNC(fast_gray_to_cmyk);
+	      SET_COLORFUNC(fast_gray_to_kcmy);
 	    default:
 	      set_null_colorfunc();
 	      SET_COLORFUNC(NULL);
@@ -1727,18 +1731,18 @@ stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 	    case 3:
 	    case 2:
 	    case 1:
-	      SET_COLORFUNC(rgb_to_cmyk);
+	      SET_COLORFUNC(rgb_to_kcmy);
 	    case 0:
-	      SET_COLORFUNC(fast_rgb_to_cmyk);
+	      SET_COLORFUNC(fast_rgb_to_kcmy);
 	    default:
 	      set_null_colorfunc();
 	      SET_COLORFUNC(NULL);
 	    }
 	  break;
 	case 4:
-	  SET_COLORFUNC(cmyk_8_to_cmyk);
+	  SET_COLORFUNC(cmyk_8_to_kcmy);
 	case 8:
-	  SET_COLORFUNC(cmyk_to_cmyk);
+	  SET_COLORFUNC(cmyk_to_kcmy);
 	default:
 	  set_null_colorfunc();
 	  SET_COLORFUNC(NULL);
