@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.52 2001/04/23 23:58:17 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.53 2001/04/29 12:21:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3109,15 +3109,6 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
     }
   stp_dither_set_black_lower(dither, k_lower);
   stp_dither_set_black_upper(dither, k_upper);
-  if (bits == 2)
-    {
-      if (ncolors > 4)
-	stp_dither_set_adaptive_divisor(dither, 8);
-      else
-	stp_dither_set_adaptive_divisor(dither, 4);
-    }
-  else
-    stp_dither_set_adaptive_divisor(dither, 4);
 
   inks = escp2_inks(model, resid, ncolors, bits, nv);
   if (inks)
@@ -3126,25 +3117,6 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 	stp_dither_set_ranges(dither, i, (*inks)[i]->count, (*inks)[i]->range,
 			      (*inks)[i]->density * k_upper *
 			      stp_get_density(nv));
-
-  if (!strcmp(stp_get_dither_algorithm(nv), _("Ordered")))
-    stp_dither_set_transition(dither, 1);
-  else
-    {
-      double transition;
-      if (bits == 2)
-	{
-	  if (ncolors > 4)
-	    transition = .7;
-	  else
-	    transition = .5;
-	}
-      else
-	transition = .6;
-      if (transition < stp_get_density(nv))
-	transition = stp_get_density(nv);
-      stp_dither_set_transition(dither, transition);
-    }
 
   switch (stp_get_image_type(nv))
     {
