@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.6 2000/04/04 00:26:51 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.7 2000/04/22 23:27:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -90,8 +90,8 @@ L  The subpass printed by the current pass is not consistent with an earlier\n\
 M  The same physical row is being printed more than once.\n";
 
 
-void
-print_header()
+static void
+print_header(void)
 {
   printf("%s", header);
 }
