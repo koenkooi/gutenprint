@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.14 2003/10/14 03:15:06 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.15 2003/10/14 11:23:34 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -55,8 +55,11 @@ static color_t color_map[] =
   {
     { "black", 0 },
     { "cyan", 1 },
+    { "red", 1 },
     { "magenta", 2 },
+    { "green", 2 },
     { "yellow", 3 },
+    { "blue", 3 },
     { "l_black", 4 },
     { "l_cyan", 5 },
     { "l_magenta", 6 },
