@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.h,v 1.3 2005/03/26 23:32:42 rlk Exp $"
+ * "$Id: channel.h,v 1.4 2005/03/28 00:43:29 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -59,6 +59,8 @@ extern void stp_channel_set_cutoff_adjustment(stp_vars_t *v,
 					      int color, int subchannel,
 					      double adjustment);
 extern void stp_channel_set_black_channel(stp_vars_t *v, int channel);
+extern void stp_channel_set_gloss_channel(stp_vars_t *v, int channel);
+extern void stp_channel_set_gloss_limit(stp_vars_t *v, double limit);
 extern void stp_channel_set_hue_angle(stp_vars_t *v,
 				      int color, double angle);
 
