@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.35 2001/11/06 00:21:57 rlk Exp $"
+ * "$Id: genppd.c,v 1.36 2001/11/11 21:25:36 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -64,6 +64,10 @@
 #endif
 #include <gimp-print/gimp-print-intl.h>
 #include "../../lib/libprintut.h"
+
+#ifndef CUPS_PPD_PS_LEVEL
+#define CUPS_PPD_PS_LEVEL 2
+#endif
 
 
 /*
@@ -458,7 +462,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzprintf(fp, "*ShortNickName: \"%s\"\n", long_name);
   gzprintf(fp, "*NickName:      \"%s, CUPS+GIMP-print v" VERSION "\"\n", long_name);
   gzputs(fp, "*PSVersion:	\"(3010.000) 550\"\n");
-  gzputs(fp, "*LanguageLevel:	\"3\"\n");
+  gzprintf(fp, "*LanguageLevel:	\"%d\"\n", CUPS_PPD_PS_LEVEL);
   gzprintf(fp, "*ColorDevice:	%s\n",
            stp_get_output_type(printvars) == OUTPUT_COLOR ? "True" : "False");
   gzprintf(fp, "*DefaultColorSpace: %s\n",
@@ -850,5 +854,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.35 2001/11/06 00:21:57 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.36 2001/11/11 21:25:36 rlk Exp $".
  */
