@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36.2.1 2002/11/16 22:34:49 rlk Exp $
+## $Id: Makefile.am,v 1.36.2.2 2002/11/17 12:55:09 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ bin_SCRIPTS = gimpprint-config
 
 libgimpprint_la_SOURCES = \
 	gimp-print-internal.h \
+	list.h \
 	print-lexmark.c \
 	print-canon.c \
 	print-dither.c \
@@ -49,6 +50,7 @@ libgimpprint_la_SOURCES = \
 	print-escp2-data.c \
 	print-pcl.c \
 	print-ps.c \
+	print-list.c \
 	print-util.c \
 	print-vars.c \
 	print-papers.c \
