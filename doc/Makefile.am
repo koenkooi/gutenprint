@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.33 2004/03/28 15:12:08 rleigh Exp $
+## $Id: Makefile.am,v 1.34 2004/04/11 17:55:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,8 @@ else
 all-local:
 endif
 
-gimpprint-stamp: gimpprint.dox.in
+# Rerun doxygen whenever autogen is run
+gimpprint-stamp: gimpprint.dox.in $(top_srcdir)/configure
 	$(DOXYGEN) gimpprint.dox
 	touch $@
 
