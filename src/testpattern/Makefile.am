@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.5.4.1 2002/04/25 22:59:41 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = @LIBS@ $(INTLLIBS)
 
 ## Programs
@@ -42,7 +43,7 @@ LFLAGS = -i
 YFLAGS = -d
 
 testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
-testpattern_LDADD = $(LIBGIMPPRINT_LIBS)
+testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 testpattern_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 testpatternl.o: testpatterny.o
