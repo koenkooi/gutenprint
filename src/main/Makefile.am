@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.67 2003/04/20 03:07:40 rlk Exp $
+## $Id: Makefile.am,v 1.68 2003/05/06 11:21:32 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ canon_la_LDFLAGS = -module -avoid-version
 
 escp2_la_SOURCES = \
 	print-escp2.c \
+	escp2-driver.c \
 	print-escp2.h \
 	print-escp2-data.c \
 	escp2-channels.c \
