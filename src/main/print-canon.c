@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.77 2002/09/25 00:35:04 rlk Exp $"
+ * "$Id: print-canon.c,v 1.77.2.1 2002/10/21 01:15:31 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2255,11 +2255,9 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   const char	*resolution = stp_get_resolution(v);
   const char	*media_source = stp_get_media_source(v);
   int 		output_type = stp_get_output_type(v);
-  int		orientation = stp_get_orientation(v);
   const char	*ink_type = stp_get_ink_type(v);
-  double 	scaling = stp_get_scaling(v);
-  int		top = stp_get_top(v);
-  int		left = stp_get_left(v);
+  int		top;
+  int		left;
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   int		n;		/* Output number */
@@ -2280,15 +2278,11 @@ canon_print(const stp_printer_t printer,		/* I - Model */
                 delay_lm,
                 delay_ly,
                 delay_max;
-  int		page_left,	/* Left margin of page */
-		page_right,	/* Right margin of page */
-		page_top,	/* Top of page */
-		page_bottom,	/* Bottom of page */
-		page_width,	/* Width of page */
+  int		page_width,	/* Width of page */
 		page_height,	/* Length of page */
 		page_true_height,	/* True length of page */
 		out_width,	/* Width of image on page */
-		out_length,	/* Length of image on page */
+		out_height,	/* Length of image on page */
 		out_bpp,	/* Output bytes per pixel */
 		length,		/* Length of raster data */
                 buf_length,     /* Length of raster data buffer (dmt) */
@@ -2336,8 +2330,6 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   */
 
   image->init(image);
-  image_height = image->height(image);
-  image_width = image->width(image);
   image_bpp = image->bpp(image);
 
   /* force grayscale if image is grayscale
@@ -2386,18 +2378,10 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   * Compute the output size...
   */
 
-  canon_imageable_area(printer, nv, &page_left, &page_right,
-                       &page_bottom, &page_top);
+  stp_compute_page_parameters(printer, nv, image,
+			      &page_width, &page_height, &out_width,
+			      &out_height, &left, &top);
 
-  stp_compute_page_parameters(page_right, page_left, page_top, page_bottom,
-			  scaling, image_width, image_height, image,
-			  &orientation, &page_width, &page_height,
-			  &out_width, &out_length, &left, &top);
-
-  /*
-   * Recompute the image length and width.  If the image has been
-   * rotated, these will change from previously.
-   */
   image_height = image->height(image);
   image_width = image->width(image);
 
@@ -2405,15 +2389,9 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 
   PUT("top        ",top,72);
   PUT("left       ",left,72);
-  PUT("page_top   ",page_top,72);
-  PUT("page_bottom",page_bottom,72);
-  PUT("page_left  ",page_left,72);
-  PUT("page_right ",page_right,72);
-  PUT("page_width ",page_width,72);
-  PUT("page_height",page_height,72);
   PUT("page_true_height",page_true_height,72);
   PUT("out_width ", out_width,xdpi);
-  PUT("out_length", out_length,ydpi);
+  PUT("out_height", out_height,ydpi);
 
   image->progress_init(image);
 
@@ -2450,10 +2428,10 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   */
 
   out_width  = xdpi * out_width / 72;
-  out_length = ydpi * out_length / 72;
+  out_height = ydpi * out_height / 72;
 
   PUT("out_width ", out_width,xdpi);
-  PUT("out_length", out_length,ydpi);
+  PUT("out_height", out_height,ydpi);
 
   left = xdpi * left / 72;
 
@@ -2607,8 +2585,8 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   in  = stp_zalloc(image_width * image_bpp);
   out = stp_zalloc(image_width * out_bpp * 2);
 
-  errdiv  = image_height / out_length;
-  errmod  = image_height % out_length;
+  errdiv  = image_height / out_height;
+  errmod  = image_height % out_height;
   errval  = 0;
   errlast = -1;
   errline  = 0;
@@ -2651,11 +2629,11 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   stp_add_channel(dt, lmagenta, ECOLOR_M, 1);
   stp_add_channel(dt, yellow, ECOLOR_Y, 0);
 
-  for (y = 0; y < out_length; y ++)
+  for (y = 0; y < out_height; y ++)
   {
     int duplicate_line = 1;
     if ((y & 63) == 0)
-      image->note_progress(image, y, out_length);
+      image->note_progress(image, y, out_height);
 
     if (errline != errlast)
     {
@@ -2691,9 +2669,9 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 
     errval += errmod;
     errline += errdiv;
-    if (errval >= out_length)
+    if (errval >= out_height)
     {
-      errval -= out_length;
+      errval -= out_height;
       errline ++;
     }
   }

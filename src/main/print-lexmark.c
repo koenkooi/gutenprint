@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.77 2002/09/25 00:35:06 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.77.2.1 2002/10/21 01:15:31 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1627,11 +1627,7 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   int		n;		/* Output number */
   unsigned short *out;	/* Output pixels (16-bit) */
   unsigned char	*in;		/* Input pixels */
-  int		page_left,	/* Left margin of page */
-    page_right,	/* Right margin of page */
-    page_top,	/* Top of page */
-    page_bottom,	/* Bottom of page */
-    page_width,	/* Width of page */
+  int page_width,	/* Width of page */
     page_height,	/* Length of page */
     page_true_height,	/* True length of page */
     out_width,	/* Width of image on page in pixles */
@@ -1685,11 +1681,9 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   const char	*media_type   = stp_get_media_type(v);
   const char	*media_source = stp_get_media_source(v);
   int 		output_type   = stp_get_output_type(v);
-  int		orientation   = stp_get_orientation(v);
   const char	*ink_type     = stp_get_ink_type(v);
-  double 	scaling       = stp_get_scaling(v);
-  int		top           = stp_get_top(v);
-  int		left          = stp_get_left(v);
+  int		top;
+  int		left;
   stp_vars_t	nv            = stp_allocate_copy(v);
 
   const lexmark_cap_t * caps= lexmark_get_model_capabilities(model);
@@ -1720,8 +1714,6 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   */
 
   image->init(image);
-  image_height = image->height(image);
-  image_width = image->width(image);
   image_bpp = image->bpp(image);
 
 
@@ -1821,22 +1813,14 @@ densityDivisor /= 1.2;
   * Compute the output size...
   */
 
-  lexmark_imageable_area(printer, nv, &page_left, &page_right,
-			 &page_bottom, &page_top);
-
-  stp_compute_page_parameters(page_right, page_left, page_top, page_bottom,
-			  scaling, image_width, image_height, image,
-			  &orientation, &page_width, &page_height,
-			  &out_width, &out_height, &left, &top);
+  stp_compute_page_parameters(printer, nv, image,
+			      &page_width, &page_height, &out_width,
+			      &out_height, &left, &top);
 
 #ifdef DEBUG
   stp_erprintf("page_right %d, page_left %d, page_top %d, page_bottom %d, left %d, top %d\n",page_right, page_left, page_top, page_bottom,left, top);
 #endif
 
-  /*
-   * Recompute the image length and width.  If the image has been
-   * rotated, these will change from previously.
-   */
   image_height = image->height(image);
   image_width = image->width(image);
 

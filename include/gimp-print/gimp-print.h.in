@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.10 2002/09/21 14:24:06 rleigh Exp $
+ *  $Id: gimp-print.h.in,v 1.10.2.1 2002/10/21 01:15:31 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -562,20 +562,6 @@ extern void stp_allocate_lut (stp_vars_t v, size_t steps);
 extern void stp_free_lut (stp_vars_t v);
 extern void stp_compute_lut (stp_vars_t v, size_t steps);
 
-/*
- * This is likely to change in the future.  In particular, responsibility
- * for orientation will likely be transferred to the application from
- * the library.
- */
-extern void stp_compute_page_parameters (int page_right, int page_left,
-                                         int page_top, int page_bottom,
-                                         double scaling, int image_width,
-                                         int image_height, stp_image_t *image,
-                                         int *orientation,
-                                         int *page_width, int *page_height,
-                                         int *out_width, int *out_height,
-                                         int *left, int *top);
-
 extern const stp_vars_t stp_default_settings (void);
 extern const stp_vars_t stp_maximum_settings (void);
 extern const stp_vars_t stp_minimum_settings (void);
@@ -586,5 +572,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.10 2002/09/21 14:24:06 rleigh Exp $
+ * End of $Id: gimp-print.h.in,v 1.10.2.1 2002/10/21 01:15:31 rlk Exp $
  */

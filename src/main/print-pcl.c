@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.56 2002/09/25 00:35:06 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.56.2.1 2002/10/21 01:15:31 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1935,10 +1935,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   const char	*media_source = stp_get_media_source(v);
   const char	*ink_type = stp_get_ink_type(v);
   int 		output_type = stp_get_output_type(v);
-  int		orientation = stp_get_orientation(v);
-  double 	scaling = stp_get_scaling(v);
-  int		top = stp_get_top(v);
-  int		left = stp_get_left(v);
+  int		top;
+  int		left;
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   unsigned short *out;
@@ -1949,11 +1947,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		*yellow,	/* Yellow bitmap data */
 		*lcyan,		/* Light Cyan bitmap data */
 		*lmagenta;	/* Light Magenta bitmap data */
-  int		page_left,	/* Left margin of page */
-		page_right,	/* Right margin of page */
-		page_top,	/* Top of page */
-		page_bottom,	/* Bottom of page */
-		page_width,	/* Width of page */
+  int		page_width,	/* Width of page */
 		page_height,	/* Height of page */
 		out_width,	/* Width of image on page */
 		out_height,	/* Height of image on page */
@@ -2077,19 +2071,9 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   * Compute the output size...
   */
 
-  pcl_imageable_area(printer, nv, &page_left, &page_right,
-                     &page_bottom, &page_top);
-  stp_deprintf(STP_DBG_PCL,"Before stp_compute_page_parameters()\n");
-  stp_deprintf(STP_DBG_PCL,"page_left = %d, page_right = %d, page_top = %d, page_bottom = %d\n",
-    page_left, page_right, page_top, page_bottom);
-  stp_deprintf(STP_DBG_PCL,"top = %d, left = %d\n", top, left);
-  stp_deprintf(STP_DBG_PCL,"scaling = %f, image_width = %d, image_height = %d\n", scaling,
-    image_width, image_height);
-
-  stp_compute_page_parameters(page_right, page_left, page_top, page_bottom,
-			  scaling, image_width, image_height, image,
-			  &orientation, &page_width, &page_height,
-			  &out_width, &out_height, &left, &top);
+  stp_compute_page_parameters(printer, nv, image,
+			      &page_width, &page_height, &out_width,
+			      &out_height, &left, &top);
 
   /*
    * Recompute the image height and width.  If the image has been
@@ -2097,11 +2081,6 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
    */
   image_height = image->height(image);
   image_width = image->width(image);
-
-  stp_deprintf(STP_DBG_PCL,"After stp_compute_page_parameters()\n");
-  stp_deprintf(STP_DBG_PCL,"page_width = %d, page_height = %d\n", page_width, page_height);
-  stp_deprintf(STP_DBG_PCL,"out_width = %d, out_height = %d\n", out_width, out_height);
-  stp_deprintf(STP_DBG_PCL,"top = %d, left = %d\n", top, left);
 
  /*
   * Let the user know what we're doing...
