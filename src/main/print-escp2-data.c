@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.15.4.15 2002/10/10 23:21:25 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.15.4.16 2002/10/19 00:52:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2564,7 +2564,7 @@ static const escp2_dot_size_t c4pl_pigment_dotsizes =
 { -1,   0x12,   -1, 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x11,   -1, 0x10, 0x10 };
 
 static const escp2_dot_size_t spro_c4pl_pigment_dotsizes =
-{ 0x12,   -1, 0x12,   -1, 0x12,   -1, 0x11,   -1, 0x11,   -1, 0x10, 0x10, 0x10 };
+{ 0x11,   -1, 0x11,   -1, 0x11,   -1, 0x10,   -1, 0x10,   -1,    5,    5,    5 };
 
 /*
  * Bits are for:
