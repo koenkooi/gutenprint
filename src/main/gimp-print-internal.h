@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.7 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.8 2001/02/03 04:00:49 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -34,7 +34,11 @@
 #define _GIMP_PRINT_INTERNAL_H_
 
 
+#ifndef DISABLE_NLS
 #include "../../lib/libprintut.h"
+#else
+#define xmalloc malloc
+#endif
 
 
 #define ECOLOR_C 0
@@ -427,5 +431,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.7 2001/02/03 03:35:21 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.8 2001/02/03 04:00:49 rlk Exp $".
  */
