@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.7 2000/03/13 13:31:26 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.8 2000/04/10 10:19:58 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -84,6 +84,7 @@ typedef struct {
   int softweave;
   int horizontal_passes;
   int vertical_passes;
+  int vertical_subsample;
 } res_t;
 #endif
 
