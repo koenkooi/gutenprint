@@ -1,8 +1,9 @@
 gimp-print (4.2.0-4) unstable; urgency=low
 
-  * Apply Roger's user's guide Makefile.am patch to maybe fix #128421
+  * Apply Roger's user's guide Makefile.am patch, Closes: #128421
+  * Work around bug #130756 by building docs with EPS1 figures.
 
- -- Eric Sharkey <sharkey@debian.org>  Sun,  3 Feb 2002 12:53:27 -0500
+ -- Eric Sharkey <sharkey@debian.org>  Sat, 16 Feb 2002 22:46:29 -0500
 
 gimp-print (4.2.0-3) unstable; urgency=low
 
