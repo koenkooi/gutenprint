@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.47 2002/12/07 23:24:25 rlk Exp $"
+ * "$Id: escputil.c,v 1.48 2002/12/26 20:31:37 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -473,12 +473,12 @@ do_print_cmd(void)
         if (printer == NULL)
           strcpy(command, "lpr -l");
 	else
-          sprintf(command, "lpr -P%s -l", printer);
+          snprintf(command, 1023, "lpr -P%s -l", printer);
         }
       else if (printer == NULL)
 	strcpy(command, "lp -s -oraw");
       else
-	sprintf(command, "lp -s -oraw -d%s", printer);
+	snprintf(command, 1023, "lp -s -oraw -d%s", printer);
 
       if ((pfile = popen(command, "w")) == NULL)
 	{

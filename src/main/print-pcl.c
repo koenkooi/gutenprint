@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.70 2002/12/23 00:19:55 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.71 2002/12/26 20:31:38 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1856,7 +1856,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
 		page_bottom,
 		out_width,	/* Width of image on page */
 		out_height,	/* Height of image on page */
-		out_bpp,	/* Output bytes per pixel */
+		out_channels,	/* Output bytes per pixel */
 		height,		/* Height of raster data */
 		errdiv,		/* Error dividend */
 		errmod,		/* Error modulus */
@@ -1954,7 +1954,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
     }
   stp_set_output_color_model(nv, COLOR_MODEL_CMY);
 
-  colorfunc = stp_choose_colorfunc(nv, image_bpp, &out_bpp);
+  colorfunc = stp_choose_colorfunc(nv, image_bpp, &out_channels);
 
   do_cret = (xdpi >= 300 &&
 	     ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4) &&
@@ -2396,7 +2396,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
     stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 
   in  = stp_malloc(image_width * image_bpp);
-  out = stp_malloc(image_width * out_bpp * 2);
+  out = stp_malloc(image_width * out_channels * 2);
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;
