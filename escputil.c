@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.15 2000/10/14 02:50:17 rlk Exp $"
+ * "$Id: escputil.c,v 1.16 2000/10/21 19:55:29 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -245,6 +245,7 @@ main(int argc, char **argv)
 	    }
 	  printer_model = malloc(strlen(optarg) + 1);
 	  strcpy(printer_model, optarg);
+	  break;
 	case 'u':
 	  isUSB = 1;
 	  break;
