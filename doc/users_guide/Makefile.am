@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36 2003/01/01 21:05:59 rleigh Exp $
+## $Id: Makefile.am,v 1.37 2003/01/06 20:50:59 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,8 @@ include $(top_srcdir)/scripts/global.mk
 
 
 ## Variables
+
+EPSLEVEL = 2
 
 UTIL_MANUAL = util-edition
 UTIL_MANUAL_SRC_FILES = $(srcdir)/$(UTIL_MANUAL).sgml \
@@ -310,7 +312,7 @@ $(MANUAL).ps:  $(MANUAL_SRC_FILES) $(EPS_IMAGES)
 
 %.eps:
 	if test ! -d figures ; then mkdir figures ; fi
-	$(CONVERT) $(srcdir)/$(basename $@).png EPS2:$@
+	$(CONVERT) $(srcdir)/$(basename $@).png EPS$(EPSLEVEL):$@
 
 util_html: util-html-stamp
 gimp_html: gimp-html-stamp

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2003/01/01 21:05:59 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2003/01/06 20:50:59 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ include $(top_srcdir)/scripts/global.mk
 MANUAL = gimpprint
 HTMLDIR = developer-html
 DOCS = $(MANUAL).dvi $(MANUAL).ps html-stamp
+EPSLEVEL = 2
 
 IMAGES =
 
@@ -78,7 +79,7 @@ gimpprint.dvi: $(EPS_IMAGES) $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS) $(info
 	$(TEXI2DVI) $(TEXI2DVIFLAGS) $(srcdir)/gimpprint.texi
 
 %.eps: %.png
-	  $(CONVERT) $< EPS2:$@
+	  $(CONVERT) $< EPS$(EPSLEVEL):$@
 
 html: html-stamp
 
