@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.98 2004/03/31 02:46:27 rlk Exp $
+dnl $Id: configure.ac,v 1.99 2004/04/11 10:05:01 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.98 $)
+AC_REVISION($Revision: 1.99 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -214,14 +214,15 @@ STP_ARG_ENABLE([translated-cups-ppds],
 
 USE_LEVEL3_PS=no
 if test -n "${CUPS_CONFIG}" -a "${BUILD_CUPS}" = "yes" ; then
-  cups_version="`${CUPS_CONFIG} --version`"
-  cups_major="`echo $cups_version | awk -F. '{print $1}'`"
-  cups_minor="`echo $cups_version | awk -F. '{print $2}'`"
-  cups_point="`echo $cups_version | awk -F. '{print $3}'`"
+  cups_version=`${CUPS_CONFIG} --version`
+dnl Quote to protect sed regexes
+  [cups_major=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\1/'`]
+  [cups_minor=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
+  [cups_point=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\3/'`]
   if test "$cups_major" -gt 1 -o "$cups_minor" -gt 1 -o "$cups_point" -gt 14 ; then
     USE_LEVEL3_PS=yes
   fi
-fi   
+fi
 
 STP_ARG_ENABLE([cups-ppds-at-top-level],
 	       [place CUPS PPD files at top level],
@@ -326,11 +327,21 @@ STP_ARG_WITH_DETAILED([readline], ,
 dnl if test -z "${[EXTRA_LIBREADLINE_DEPS]}" ; then
 dnl   [EXTRA_LIBREADLINE_DEPS]=""
 dnl fi
-AC_PATH_PROG(GIMP_CONFIG, gimp-config)
-if test -z "${GIMP_CONFIG}" ; then
+
+AC_PATH_PROGS([GIMPTOOL_CHECK], [gimptool-1.2 gimptool])
+if test -z "${GIMPTOOL_CHECK}" ; then
   BUILD_GIMP="no"
 else
-  BUILD_GIMP="yes"
+  # Check we have version 1.2
+  gimptool_check_version=`${GIMPTOOL_CHECK} --version`
+dnl Quote to protect sed regexes
+  [gimptool_check_major=`echo "$gimptool_check_version" | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\1/'`]
+  [gimptool_check_minor=`echo "$gimptool_check_version" | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
+  if test "$gimptool_check_major" -eq 1 -a "$gimptool_check_minor" -eq 2; then
+    BUILD_GIMP="yes"
+  else
+    BUILD_GIMP="no"
+  fi
 fi
 
 AM_PATH_GTK(1.2.0,
