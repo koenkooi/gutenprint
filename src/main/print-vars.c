@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.58 2003/09/18 03:00:40 rlk Exp $"
+ * "$Id: print-vars.c,v 1.59 2003/10/11 21:31:01 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -154,7 +154,8 @@ value_freefunc(void *item)
       stpi_free((char *) v->value.rval.data);
       break;
     case STP_PARAMETER_TYPE_CURVE:
-      stp_curve_free(v->value.cval);
+      if (v->value.cval)
+	stp_curve_free(v->value.cval);
       break;
     case STP_PARAMETER_TYPE_ARRAY:
       stp_array_destroy(v->value.cval);
@@ -717,7 +718,8 @@ stp_set_curve_parameter(stp_vars_t v, const char *parameter,
 	  val = (value_t *) stpi_list_item_get_data(item);
 	  if (val->active == STP_PARAMETER_DEFAULTED)
 	    val->active = STP_PARAMETER_ACTIVE;
-	  stp_curve_free(val->value.cval);
+	  if (val->value.cval)
+	    stp_curve_free(val->value.cval);
 	}
       else
 	{

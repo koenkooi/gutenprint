@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.43 2003/06/08 15:53:41 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.44 2003/10/11 21:30:36 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -618,8 +618,10 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
 	case STP_PARAMETER_TYPE_CURVE:
 	  curve = stp_curve_create_from_string(vbuf);
 	  if (curve)
-	    stp_set_curve_parameter(img->v, key, curve);
-	  stp_curve_free(curve);
+	    {
+	      stp_set_curve_parameter(img->v, key, curve);
+	      stp_curve_free(curve);
+	    }
 	  break;
 	case STP_PARAMETER_TYPE_DOUBLE:
 	  if (! img->monochrome_flag || strcmp (key, "Contrast") != 0)
