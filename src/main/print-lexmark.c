@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.77.2.4 2002/10/24 01:01:48 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.77.2.5 2002/10/26 01:28:49 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1366,8 +1366,8 @@ lexmark_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 
   *left   = caps->border_left;
   *right  = width - caps->border_right;
-  *top    = length - caps->border_top;
-  *bottom = caps->border_bottom;
+  *top    = caps->border_top;
+  *bottom = length - caps->border_bottom;
 
   lxm3200_linetoeject = (length * 1200) / 72;
 }
@@ -1825,7 +1825,7 @@ densityDivisor /= 1.2;
   left -= page_left;
   top -= page_top;
   page_width = page_right - page_left;
-  page_height = page_top - page_bottom;
+  page_height = page_bottom - page_top;
 
 #ifdef DEBUG
   stp_erprintf("page_right %d, page_left %d, page_top %d, page_bottom %d, left %d, top %d\n",page_right, page_left, page_top, page_bottom,left, top);

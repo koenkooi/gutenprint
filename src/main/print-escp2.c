@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.188.2.4 2002/10/24 01:01:48 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.188.2.5 2002/10/26 01:28:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -499,15 +499,15 @@ escp2_imageable_area(const stp_printer_t printer,	/* I - Printer model */
     {
       *left =	escp2_roll_left_margin(model, v);
       *right =	width - escp2_roll_right_margin(model, v);
-      *top =	height - escp2_roll_top_margin(model, v);
-      *bottom =	escp2_roll_bottom_margin(model, v);
+      *top =	escp2_roll_top_margin(model, v);
+      *bottom =	height - escp2_roll_bottom_margin(model, v);
     }
   else
     {
       *left =	escp2_left_margin(model, v);
       *right =	width - escp2_right_margin(model, v);
-      *top =	height - escp2_top_margin(model, v);
-      *bottom =	escp2_bottom_margin(model, v);
+      *top =	escp2_top_margin(model, v);
+      *bottom =	height - escp2_bottom_margin(model, v);
     }
 }
 
@@ -860,8 +860,8 @@ escp2_set_page_height(const escp2_init_t *init)
 static void
 escp2_set_margins(const escp2_init_t *init)
 {
-  int left = init->ydpi * (init->page_true_height - init->page_bottom) / 72;
-  int top = init->ydpi * (init->page_true_height - init->page_top) / 72;
+  int bot = init->ydpi * init->page_bottom / 72;
+  int top = init->ydpi * init->page_top / 72;
 
   top += init->initial_vertical_offset;
   if (escp2_use_extended_commands(init->model, init->v, init->res->softweave))
@@ -870,14 +870,14 @@ escp2_set_margins(const escp2_init_t *init)
 	  escp2_has_cap(init->model,MODEL_COMMAND,MODEL_COMMAND_PRO,init->v))
 	stp_zprintf(init->v, "\033(c\010%c%c%c%c%c%c%c%c%c", 0,
 		    BYTE(top, 0), BYTE(top, 1), BYTE(top, 2), BYTE(top, 3),
-		    BYTE(left, 0), BYTE(left, 1), BYTE(left, 2), BYTE(left,3));
+		    BYTE(bot, 0), BYTE(bot, 1), BYTE(bot, 2), BYTE(bot,3));
       else
 	stp_zprintf(init->v, "\033(c\004%c%c%c%c%c", 0,
-		    BYTE(top, 0), BYTE(top, 1), BYTE(left, 0), BYTE(left, 1));
+		    BYTE(top, 0), BYTE(top, 1), BYTE(bot, 0), BYTE(bot, 1));
     }
   else
     stp_zprintf(init->v, "\033(c\004%c%c%c%c%c", 0,
-		BYTE(top, 0), BYTE(top, 1), BYTE(left, 0), BYTE(left, 1));
+		BYTE(top, 0), BYTE(top, 1), BYTE(bot, 0), BYTE(bot, 1));
 }
 
 static void
@@ -1336,7 +1336,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   left -= page_left;
   top -= page_top;
   page_width = page_right - page_left;
-  page_height = page_top - page_bottom;
+  page_height = page_bottom - page_top;
 
   stp_default_media_size(printer, nv, &n, &page_true_height);
 

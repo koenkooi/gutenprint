@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.29.2.4 2002/10/24 01:01:49 rlk Exp $"
+ * "$Id: print-ps.c,v 1.29.2.5 2002/10/26 01:28:49 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -282,7 +282,8 @@ ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 	fright,
 	fbottom,
 	ftop;
-
+  int width, height;
+  ps_media_size(printer, v, &width, &height);
 
   if ((area = ppd_find(stp_get_ppd_file(v), "ImageableArea",
 		       stp_get_media_size(v), NULL))
@@ -293,19 +294,18 @@ ps_imageable_area(const stp_printer_t printer,	/* I - Printer model */
 	{
 	  *left   = (int)fleft;
 	  *right  = (int)fright;
-	  *bottom = (int)fbottom;
-	  *top    = (int)ftop;
+	  *bottom = height - (int)fbottom;
+	  *top    = height - (int)ftop;
 	}
       else
 	*left = *right = *bottom = *top = 0;
     }
   else
     {
-      stp_default_media_size(printer, v, right, top);
       *left   = 18;
-      *right  -= 18;
-      *top    -= 36;
-      *bottom = 36;
+      *right  = width - 18;
+      *top    = 36;
+      *bottom = height - 36;
     }
 }
 
@@ -419,7 +419,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   left -= page_left;
   top -= page_top;
   page_width = page_right - page_left;
-  page_height = page_top - page_bottom;
+  page_height = page_bottom - page_top;
 
   image_height = image->height(image);
   image_width = image->width(image);
