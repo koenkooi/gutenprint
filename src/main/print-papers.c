@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.2 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print-papers.c,v 1.3 2002/10/27 02:39:42 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -34,6 +34,8 @@
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
+#include <string.h>
+#include <stdlib.h>
 
 typedef struct
 {
