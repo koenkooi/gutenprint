@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.8 2003/05/04 20:57:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.9 2003/05/04 21:15:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1195,17 +1195,17 @@ static void
 escp2_set_margins(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int bot = pd->page_management_units * pd->page_bottom / 72;
+  int bot = pd->page_bottom;
   int top = pd->page_management_units * pd->page_top / 72;
-  int head_offset =
-    pd->max_head_offset * pd->page_management_units / pd->res->vres;
 
   /* adjust bottom margin for a 480 like head configuration */
-  bot -= head_offset;
-  if ((head_offset % pd->page_management_units) != 0)
+  bot -= pd->max_head_offset * 72 / pd->page_management_units;
+  if ((pd->max_head_offset * 72 % pd->page_management_units) != 0)
     bot -= 1;
   if (pd->page_bottom < 0)
     bot = 0;
+
+  bot = bot * pd->page_management_units / 72;
 
   top += pd->initial_vertical_offset;
   if (escp2_use_extended_commands(v, pd->res->softweave) &&
@@ -1927,15 +1927,22 @@ setup_head_parameters(stp_vars_t v)
 
   setup_head_offset(v);
 
-  if (stp_get_output_type(v) == OUTPUT_GRAY && pd->physical_channels == 1 &&
-      pd->use_black_parameters)
-    pd->initial_vertical_offset = escp2_black_initial_vertical_offset(v);
+  if (stp_get_output_type(v) == OUTPUT_GRAY && pd->physical_channels == 1)
+    {
+      if (pd->use_black_parameters)
+	pd->initial_vertical_offset =
+	  escp2_black_initial_vertical_offset(v) * pd->page_management_units /
+	  escp2_base_separation(v);
+      else
+	pd->initial_vertical_offset = pd->head_offset[0] +
+	  (escp2_initial_vertical_offset(v) *
+	   pd->page_management_units / escp2_base_separation(v));
+    }
   else
-    pd->initial_vertical_offset = escp2_initial_vertical_offset(v);
-  pd->initial_vertical_offset =
-    pd->initial_vertical_offset * pd->vertical_units /escp2_base_separation(v);
-  pd->initial_vertical_offset +=
-    pd->head_offset[0] * pd->res->vertical_undersample;
+    pd->initial_vertical_offset =
+      escp2_initial_vertical_offset(v) * pd->page_management_units /
+      escp2_base_separation(v);
+
   pd->printing_initial_vertical_offset = 0;
   pd->bitwidth = escp2_bits(v, pd->res->resid);
 }
