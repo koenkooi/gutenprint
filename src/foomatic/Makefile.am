@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.5 2002/04/06 18:40:06 tillkamppeter Exp $
+## $Id: Makefile.am,v 1.16.2.6 2002/04/07 00:16:56 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -82,20 +82,18 @@ all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  if test -n "$(DESTDIR)" ; then \
-	    $(mkinstalldirs) $(DESTDIR)`$(FOOMATIC_KITLOAD) -l` ; \
-	    $(FOOMATIC_KITLOAD) -d $(DESTDIR) -k foomatic-db/gimp-print ; \
-	  else \
-	    $(FOOMATIC_KITLOAD) -k foomatic-db/gimp-print ; \
-	  fi ; \
+	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print ; \
 	  if test -n "$(FOOMATIC_IJS)" ; then \
-	    if test -n "$(DESTDIR)" ; then \
-	      $(mkinstalldirs) $(DESTDIR)`$(FOOMATIC_KITLOAD) -l` ; \
-	      $(FOOMATIC_KITLOAD) -d $(DESTDIR) -k foomatic-db/gimp-print-ijs ; \
-	    else \
-	      $(FOOMATIC_KITLOAD) -k foomatic-db/gimp-print-ijs ; \
-	    fi ; \
+	    $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gimp-print-ijs ; \
 	  fi ; \
+	fi
+
+install-kit:
+	if test -n "$(DESTDIR)" ; then \
+	  $(mkinstalldirs) $(DESTDIR)`$(FOOMATIC_KITLOAD) -l` ; \
+	  $(FOOMATIC_KITLOAD) -d $(DESTDIR) -k $(FOOMATIC_DB) ; \
+	else \
+	  $(FOOMATIC_KITLOAD) -k $(FOOMATIC_DB) ; \
 	fi
 
 clean-local:
