@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.89 2003/12/12 03:34:59 rlk Exp $
+dnl $Id: configure.ac,v 1.90 2003/12/12 03:43:12 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.89 $)
+AC_REVISION($Revision: 1.90 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -211,7 +211,7 @@ STP_ARG_ENABLE([translated-cups-ppds],
 
 USE_LEVEL3_PS=no
 if test -n "${CUPS_CONFIG}" -a "${BUILD_CUPS}" = "yes" ; then
-  cups_version="`${CUPS_CONFIG} -version`"
+  cups_version="`${CUPS_CONFIG} --version`"
   cups_major="`echo $cups_version | awk -F. '{print $1}'`"
   cups_minor="`echo $cups_version | awk -F. '{print $2}'`"
   cups_point="`echo $cups_version | awk -F. '{print $3}'`"
