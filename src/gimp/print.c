@@ -1,5 +1,5 @@
 /*
-* "$Id: print.c,v 1.33.2.3 2002/11/16 21:39:06 rlk Exp $"
+* "$Id: print.c,v 1.33.2.4 2002/11/16 21:47:06 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1142,15 +1142,11 @@ printrc_load(void)
 	  stp_set_ppd_file(key.v, value);
 	} else if (strcasecmp("output-type", keyword) == 0) {
 	  stp_set_output_type(key.v, atoi(value));
-	} else if (strcasecmp("resolution", keyword) == 0) {
-	  stp_set_string_parameter(key.v, "Resolution", value);
 	} else if (strcasecmp("media-size", keyword) == 0) {
 	  stp_set_string_parameter(key.v, "PageSize", value);
 	} else if (strcasecmp("media-type", keyword) == 0) {
 	  stp_set_string_parameter(key.v, "MediaType", value);
 	} else if (strcasecmp("media-source", keyword) == 0) {
-	  stp_set_string_parameter(key.v, "InputSlot", value);
-	} else if (strcasecmp("brightness", keyword) == 0) {
 	  stp_set_float_parameter(key.v, "Brightness", atof(value));
 	} else if (strcasecmp("scaling", keyword) == 0) {
 	  key.scaling = atof(value);
@@ -1160,28 +1156,10 @@ printrc_load(void)
 	  stp_set_left(key.v, atoi(value));
 	} else if (strcasecmp("top", keyword) == 0) {
 	  stp_set_top(key.v, atoi(value));
-	} else if (strcasecmp("gamma", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Gamma", atof(value));
-	} else if (strcasecmp("contrast", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Contrast", atof(value));
-	} else if (strcasecmp("cyan", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Cyan", atof(value));
-	} else if (strcasecmp("magenta", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Magenta", atof(value));
-	} else if (strcasecmp("yellow", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Yellow", atof(value));
 	} else if (strcasecmp("linear", keyword) == 0) {
 	  /* Ignore linear */
 	} else if (strcasecmp("image-type", keyword) == 0) {
 	  stp_set_image_type(key.v, atoi(value));
-	} else if (strcasecmp("saturation", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Saturation", atof(value));
-	} else if (strcasecmp("density", keyword) == 0) {
-	  stp_set_float_parameter(key.v, "Density", atof(value));
-	} else if (strcasecmp("ink-type", keyword) == 0) {
-	  stp_set_string_parameter(key.v, "InkType", value);
-	} else if (strcasecmp("dither-algorithm", keyword) == 0) {
-	  stp_set_string_parameter(key.v, "DitherAlgorithm", value);
 	} else if (strcasecmp("unit", keyword) == 0) {
 	  key.unit = atoi(value);
 	} else if (strcasecmp("custom-page-width", keyword) == 0) {
@@ -1559,5 +1537,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.33.2.3 2002/11/16 21:39:06 rlk Exp $".
+ * End of "$Id: print.c,v 1.33.2.4 2002/11/16 21:47:06 rlk Exp $".
  */
