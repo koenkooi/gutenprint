@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.24.2.1 2002/10/23 23:43:47 rlk Exp $"
+ * "$Id: print.c,v 1.24.2.2 2002/10/26 18:30:11 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -58,6 +58,14 @@ static void	run (char *, int, GimpParam *, int *, GimpParam **);
 static int	do_print_dialog (char *proc_name);
 
 /*
+ * Work around GIMP library not being const-safe.  This is a very ugly
+ * hack, but the excessive warnings generated can mask more serious
+ * problems.
+ */
+
+#define BAD_CONST_CHAR char *
+
+/*
  * Globals...
  */
 
@@ -83,6 +91,8 @@ gint32          image_ID;	        /* image ID */
 const char *image_filename;
 int image_width;
 int image_height;
+int image_true_width;
+int image_true_height;
 
 #define SAFE_FREE(x)				\
 do						\
@@ -189,6 +199,8 @@ initialize_printer(gp_plist_t *printer)
   printer->orientation = ORIENT_AUTO;
   printer->unit = 0;
   printer->v = stp_allocate_vars();
+  printer->left_is_valid = 0;
+  printer->top_is_valid = 0;
 }
 
 void
@@ -201,6 +213,8 @@ copy_printer(gp_plist_t *vd, const gp_plist_t *vs)
   vd->scaling = vs->scaling;
   vd->orientation = vs->orientation;
   vd->unit = vs->unit;
+  vd->left_is_valid = vs->left_is_valid;
+  vd->top_is_valid = vs->top_is_valid;
   plist_set_name(vd, plist_get_name(vs));
   plist_set_output_to(vd, plist_get_output_to(vs));
 }
@@ -218,7 +232,10 @@ check_plist(int count)
       current_plist_size = count;
       plist = xmalloc(current_plist_size * sizeof(gp_plist_t));
       for (i = 0; i < current_plist_size; i++)
-	initialize_printer(&(plist[i]));
+	{
+	  memset(&(plist[i]), 0, sizeof(gp_plist_t));
+	  initialize_printer(&(plist[i]));
+	}
     }
   else
     {
@@ -228,7 +245,10 @@ check_plist(int count)
 	current_plist_size = count;
       plist = realloc(plist, current_plist_size * sizeof(gp_plist_t));
       for (i = old_plist_size; i < current_plist_size; i++)
-	initialize_printer(&(plist[i]));
+	{
+	  memset(&(plist[i]), 0, sizeof(gp_plist_t));
+	  initialize_printer(&(plist[i]));
+	}
     }
 }
 
@@ -247,52 +267,55 @@ static int print_finished = 0;
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static /* const */ GimpParamDef args[] =
   {
-    { GIMP_PDB_INT32,	"run_mode",	"Interactive, non-interactive" },
-    { GIMP_PDB_IMAGE,	"image",	"Input image" },
-    { GIMP_PDB_DRAWABLE,	"drawable",	"Input drawable" },
-    { GIMP_PDB_STRING,	"output_to",	"Print command or filename (| to pipe to command)" },
-    { GIMP_PDB_STRING,	"driver",	"Printer driver short name" },
-    { GIMP_PDB_STRING,	"ppd_file",	"PPD file" },
-    { GIMP_PDB_INT32,	"output_type",	"Output type (0 = gray, 1 = color)" },
-    { GIMP_PDB_STRING,	"resolution",	"Resolution (\"300\", \"720\", etc.)" },
-    { GIMP_PDB_STRING,	"media_size",	"Media size (\"Letter\", \"A4\", etc.)" },
-    { GIMP_PDB_STRING,	"media_type",	"Media type (\"Plain\", \"Glossy\", etc.)" },
-    { GIMP_PDB_STRING,	"media_source",	"Media source (\"Tray1\", \"Manual\", etc.)" },
-    { GIMP_PDB_FLOAT,	"brightness",	"Brightness (0-400%)" },
-    { GIMP_PDB_FLOAT,	"scaling",	"Output scaling (0-100%, -PPI)" },
-    { GIMP_PDB_INT32,	"orientation",	"Output orientation (-1 = auto, 0 = portrait, 1 = landscape)" },
-    { GIMP_PDB_INT32,	"left",		"Left offset (points, -1 = centered)" },
-    { GIMP_PDB_INT32,	"top",		"Top offset (points, -1 = centered)" },
-    { GIMP_PDB_FLOAT,	"gamma",	"Output gamma (0.1 - 3.0)" },
-    { GIMP_PDB_FLOAT,	"contrast",	"Contrast" },
-    { GIMP_PDB_FLOAT,	"cyan",		"Cyan level" },
-    { GIMP_PDB_FLOAT,	"magenta",	"Magenta level" },
-    { GIMP_PDB_FLOAT,	"yellow",		"Yellow level" },
-    { GIMP_PDB_INT32,	"linear",	"Linear output (0 = normal, 1 = linear)" },
-    { GIMP_PDB_INT32,	"image_type",	"Image type (0 = line art, 1 = solid tones, 2 = continuous tone, 3 = monochrome)"},
-    { GIMP_PDB_FLOAT,	"saturation",	"Saturation (0-1000%)" },
-    { GIMP_PDB_FLOAT,	"density",	"Density (0-200%)" },
-    { GIMP_PDB_STRING,	"ink_type",	"Type of ink or cartridge" },
-    { GIMP_PDB_STRING,	"dither_algorithm", "Dither algorithm" },
-    { GIMP_PDB_INT32,	"unit",		"Unit 0=Inches 1=Metric" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "run_mode",	(BAD_CONST_CHAR) "Interactive, non-interactive" },
+    { GIMP_PDB_IMAGE,	(BAD_CONST_CHAR) "image",	(BAD_CONST_CHAR) "Input image" },
+    { GIMP_PDB_DRAWABLE,	(BAD_CONST_CHAR) "drawable",	(BAD_CONST_CHAR) "Input drawable" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "output_to",	(BAD_CONST_CHAR) "Print command or filename (| to pipe to command)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "driver",	(BAD_CONST_CHAR) "Printer driver short name" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "ppd_file",	(BAD_CONST_CHAR) "PPD file" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "output_type",	(BAD_CONST_CHAR) "Output type (0 = gray, 1 = color)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "resolution",	(BAD_CONST_CHAR) "Resolution (\"300\", \"720\", etc.)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "media_size",	(BAD_CONST_CHAR) "Media size (\"Letter\", \"A4\", etc.)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "media_type",	(BAD_CONST_CHAR) "Media type (\"Plain\", \"Glossy\", etc.)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "media_source",	(BAD_CONST_CHAR) "Media source (\"Tray1\", \"Manual\", etc.)" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "brightness",	(BAD_CONST_CHAR) "Brightness (0-400%)" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "scaling",	(BAD_CONST_CHAR) "Output scaling (0-100%, -PPI)" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "orientation",	(BAD_CONST_CHAR) "Output orientation (-1 = auto, 0 = portrait, 1 = landscape)" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "left",	(BAD_CONST_CHAR) "Left offset (points, -1 = centered)" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "top",		(BAD_CONST_CHAR) "Top offset (points, -1 = centered)" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "gamma",	(BAD_CONST_CHAR) "Output gamma (0.1 - 3.0)" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "contrast",	(BAD_CONST_CHAR) "Contrast" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "cyan",	(BAD_CONST_CHAR) "Cyan level" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "magenta",	(BAD_CONST_CHAR) "Magenta level" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "yellow",	(BAD_CONST_CHAR) "Yellow level" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "linear",	(BAD_CONST_CHAR) "Linear output (0 = normal, 1 = linear)" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "image_type",	(BAD_CONST_CHAR) "Image type (0 = line art, 1 = solid tones, 2 = continuous tone, 3 = monochrome)"},
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "saturation",	(BAD_CONST_CHAR) "Saturation (0-1000%)" },
+    { GIMP_PDB_FLOAT,	(BAD_CONST_CHAR) "density",	(BAD_CONST_CHAR) "Density (0-200%)" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "ink_type",	(BAD_CONST_CHAR) "Type of ink or cartridge" },
+    { GIMP_PDB_STRING,	(BAD_CONST_CHAR) "dither_algorithm", (BAD_CONST_CHAR) "Dither algorithm" },
+    { GIMP_PDB_INT32,	(BAD_CONST_CHAR) "unit",	(BAD_CONST_CHAR) "Unit 0=Inches 1=Metric" },
   };
   static gint nargs = sizeof(args) / sizeof(args[0]);
 
-  static gchar *blurb = "This plug-in prints images from The GIMP.";
-  static gchar *help  = "Prints images to PostScript, PCL, or ESC/P2 printers.";
-  static gchar *auth  = "Michael Sweet <mike@easysw.com> and Robert Krawitz <rlk@alum.mit.edu>";
-  static gchar *copy  = "Copyright 1997-2000 by Michael Sweet and Robert Krawitz";
-  static gchar *types = "RGB*,GRAY*,INDEXED*";
+  static const gchar *blurb = "This plug-in prints images from The GIMP.";
+  static const gchar *help  = "Prints images to PostScript, PCL, or ESC/P2 printers.";
+  static const gchar *auth  = "Michael Sweet <mike@easysw.com> and Robert Krawitz <rlk@alum.mit.edu>";
+  static const gchar *copy  = "Copyright 1997-2000 by Michael Sweet and Robert Krawitz";
+  static const gchar *types = "RGB*,GRAY*,INDEXED*";
 
-  gimp_plugin_domain_register (PACKAGE, PACKAGE_LOCALE_DIR);
+  gimp_plugin_domain_register ((BAD_CONST_CHAR) PACKAGE, (BAD_CONST_CHAR) PACKAGE_LOCALE_DIR);
 
-  gimp_install_procedure ("file_print_gimp",
-			  blurb, help, auth, copy,
-			  PLUG_IN_VERSION,
-			  N_("<Image>/File/Print..."),
-			  types,
+  gimp_install_procedure ((BAD_CONST_CHAR) "file_print_gimp",
+			  (BAD_CONST_CHAR) blurb,
+			  (BAD_CONST_CHAR) help,
+			  (BAD_CONST_CHAR) auth,
+			  (BAD_CONST_CHAR) copy,
+			  (BAD_CONST_CHAR) PLUG_IN_VERSION,
+			  (BAD_CONST_CHAR) N_("<Image>/File/Print..."),
+			  (BAD_CONST_CHAR) types,
 			  GIMP_PLUGIN,
 			  nargs, 0,
 			  args, NULL);
@@ -383,10 +406,16 @@ run (char   *name,		/* I - Name of print program. */
 #ifdef INIT_I18N_UI
   INIT_I18N_UI();
 #else
+  /*
+   * With GCC and glib 1.2, there will be a warning here about braces in
+   * expressions.  Getting rid of it causes more problems than it solves.
+   * In particular, turning on -ansi on the command line causes a number of
+   * other useful things, such as strcasecmp, popen, and snprintf to go away
+   */
   INIT_LOCALE (PACKAGE);
 #endif
 
-  gimp_vars.v = stp_allocate_copy(stp_default_settings());
+  initialize_printer(&gimp_vars);
   stp_set_input_color_model(gimp_vars.v, COLOR_MODEL_RGB);
   stp_set_output_color_model(gimp_vars.v, COLOR_MODEL_RGB);
   /*
@@ -439,8 +468,8 @@ run (char   *name,		/* I - Name of print program. */
 
   drawable = gimp_drawable_get (drawable_ID);
 
-  image_width  = drawable->width;
-  image_height = drawable->height;
+  image_true_width  = drawable->width;
+  image_true_height = drawable->height;
 
   /*
    * See how we will run
@@ -966,7 +995,7 @@ printrc_load(void)
   * Generate the filename for the current user...
   */
 
-  filename = gimp_personal_rc_file ("printrc");
+  filename = gimp_personal_rc_file ((BAD_CONST_CHAR) "printrc");
 
 #ifdef __EMX__
   _fnslashify(filename);
@@ -1008,6 +1037,8 @@ printrc_load(void)
 	*/
 
         initialize_printer(&key);
+	key.left_is_valid = 1;
+	key.top_is_valid = 1;
         lineptr = line;
 
        /*
@@ -1100,6 +1131,8 @@ printrc_load(void)
 #endif
 
 	  initialize_printer(&key);
+	  key.left_is_valid = 1;
+	  key.top_is_valid = 1;
 	  plist_set_name(&key, value);
 	} else if (strcasecmp("destination", keyword) == 0) {
 	  plist_set_output_to(&key, value);
@@ -1217,7 +1250,7 @@ printrc_save(void)
   * Generate the filename for the current user...
   */
 
-  filename = gimp_personal_rc_file ("printrc");
+  filename = gimp_personal_rc_file ((BAD_CONST_CHAR) "printrc");
 
 #ifdef __EMX__
   _fnslashify(filename);
@@ -1494,5 +1527,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.24.2.1 2002/10/23 23:43:47 rlk Exp $".
+ * End of "$Id: print.c,v 1.24.2.2 2002/10/26 18:30:11 rlk Exp $".
  */

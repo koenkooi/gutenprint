@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.19.12.1 2002/10/23 23:43:47 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.19.12.2 2002/10/26 18:30:11 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -36,6 +36,7 @@ gint    thumbnail_w, thumbnail_h, thumbnail_bpp;
 guchar *thumbnail_data;
 gint    adjusted_thumbnail_bpp;
 guchar *adjusted_thumbnail_data;
+guchar *preview_thumbnail_data;
 
 GtkWidget *gimp_color_adjust_dialog;
 
@@ -188,6 +189,7 @@ gimp_create_color_adjust_window (void)
    */
 
   adjusted_thumbnail_data = g_malloc (3 * thumbnail_w * thumbnail_h);
+  preview_thumbnail_data = g_malloc (3 * thumbnail_w * thumbnail_h);
 
   gimp_color_adjust_dialog =
     gimp_dialog_new (_("Print Color Adjust"), "print",

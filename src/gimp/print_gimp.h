@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.20.12.2 2002/10/23 23:43:47 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.20.12.3 2002/10/26 18:30:11 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -72,6 +72,8 @@ typedef struct		/**** Printer List ****/
   float	scaling;		/* Scaling, percent of printable area */
   int   orientation;
   int	unit;			/* Units for preview area 0=Inch 1=Metric */
+  int	left_is_valid;
+  int	top_is_valid;
   stp_vars_t v;
 } gp_plist_t;
 
@@ -82,6 +84,7 @@ extern gint    thumbnail_w, thumbnail_h, thumbnail_bpp;
 extern guchar *thumbnail_data;
 extern gint    adjusted_thumbnail_bpp;
 extern guchar *adjusted_thumbnail_data;
+extern guchar *preview_thumbnail_data;
 
 extern gint             plist_count;	   /* Number of system printers */
 extern gint             plist_current;     /* Current system printer */
@@ -90,6 +93,8 @@ extern gint32           image_ID;
 extern const gchar     *image_filename;
 extern gint             image_width;
 extern gint             image_height;
+extern gint             image_true_width;
+extern gint             image_true_height;
 extern stp_printer_t current_printer;
 extern gint             runme;
 extern gint             saveme;

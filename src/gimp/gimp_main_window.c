@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.54.12.2 2002/10/24 01:01:46 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.54.12.3 2002/10/26 18:30:11 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -128,6 +128,9 @@ static gint	       buttons_mask = 0;
 static gint	       move_constraint = 0;
 static gint            mouse_button = -1;	/* Button being dragged with */
 static gint	       suppress_preview_reset = 0;
+static gint	       physical_orientation = -2; /* Actual orientation */
+static gint	       preview_thumbnail_w = 0;
+static gint	       preview_thumbnail_h = 0;
 
 static gint            printable_left;	/* Left pixel column of page */
 static gint            printable_top;	/* Top pixel row of page */
@@ -241,6 +244,50 @@ Combo_get_name(GtkWidget   *combo,
   return (NULL);
 }
 
+static void
+set_orientation(int orientation)
+{
+  pv->orientation = orientation;
+  if (orientation == ORIENT_AUTO)
+    {
+      if ((printable_width >= printable_height &&
+	   image_true_width >= image_true_height) ||
+	  (printable_height >= printable_width &&
+	   image_true_height >= image_true_width))
+	orientation = ORIENT_PORTRAIT;
+      else
+	orientation = ORIENT_LANDSCAPE;
+    }
+  physical_orientation = orientation;
+  switch (orientation)
+    {
+    case ORIENT_PORTRAIT:
+      image_height = image_true_height;
+      image_width = image_true_width;
+      preview_thumbnail_h = thumbnail_h;
+      preview_thumbnail_w = thumbnail_w;
+      break;
+    case ORIENT_LANDSCAPE:
+      image_height = image_true_width;
+      image_width = image_true_height;
+      preview_thumbnail_h = thumbnail_w;
+      preview_thumbnail_w = thumbnail_h;
+      break;
+    case ORIENT_UPSIDEDOWN:
+      image_height = image_true_height;
+      image_width = image_true_width;
+      preview_thumbnail_h = thumbnail_h;
+      preview_thumbnail_w = thumbnail_w;
+      break;
+    case ORIENT_SEASCAPE:
+      image_height = image_true_width;
+      image_width = image_true_height;
+      preview_thumbnail_h = thumbnail_w;
+      preview_thumbnail_w = thumbnail_h;
+      break;
+    }
+  gimp_update_adjusted_thumbnail();
+}
 
 static gchar *
 c_strdup(const gchar *s)
@@ -1657,6 +1704,7 @@ static void
 gimp_do_misc_updates (void)
 {
   suppress_preview_update++;
+  set_orientation(pv->orientation);
   gimp_invalidate_preview_thumbnail ();
   gimp_preview_update ();
 
@@ -1753,16 +1801,16 @@ gimp_position_callback (GtkWidget *widget)
 
   if (widget == recenter_button)
     {
-      stp_set_left (pv->v, -1);
-      stp_set_top (pv->v, -1);
+      pv->left_is_valid = 0;
+      pv->top_is_valid = 0;
     }
   else if (widget == recenter_horizontal_button)
     {
-      stp_set_left (pv->v, -1);
+      pv->left_is_valid = 0;
     }
   else if (widget == recenter_vertical_button)
     {
-      stp_set_top (pv->v, -1);
+      pv->top_is_valid = 0;
     }
   else
     {
@@ -1775,19 +1823,17 @@ gimp_position_callback (GtkWidget *widget)
       new_value *= unit_scaler;
 
       if (widget == top_entry)
-	stp_set_top (pv->v, ((new_value + (1.0 / 144.0)) * 72) - top);
+	stp_set_top (pv->v, ((new_value + (1.0 / 144.0)) * 72));
       else if (widget == bottom_entry)
-	stp_set_top (pv->v,
-                     ((new_value + (1.0 / 144.0)) * 72) - (top + print_height));
+	stp_set_top (pv->v, ((new_value + (1.0 / 144.0)) * 72) - print_height);
       else if (widget == bottom_border_entry)
-	stp_set_top (pv->v, paper_height - print_height - top - (new_value * 72));
+	stp_set_top (pv->v, paper_height - print_height - (new_value * 72));
       else if (widget == left_entry)
-	stp_set_left (pv->v, ((new_value + (1.0 / 144.0)) * 72) - left);
+	stp_set_left (pv->v, ((new_value + (1.0 / 144.0)) * 72));
       else if (widget == right_entry)
-	stp_set_left (pv->v,
-                      ((new_value + (1.0 / 144.0)) * 72) - (left +print_width));
+	stp_set_left (pv->v, ((new_value + (1.0 / 144.0)) * 72) - print_width);
       else if (widget == right_border_entry)
-	stp_set_left (pv->v, paper_width - print_width - left - (new_value * 72));
+	stp_set_left (pv->v, paper_width - print_width - (new_value * 72));
       else if (widget == width_entry)
 	{
 	  if (pv->scaling >= 0)
@@ -1826,10 +1872,6 @@ gimp_position_callback (GtkWidget *widget)
 	      gtk_adjustment_value_changed (GTK_ADJUSTMENT (scaling_adjustment));
 	    }
 	}
-      if (stp_get_left (pv->v) < 0)
-	stp_set_left (pv->v, 0);
-      if (stp_get_top (pv->v) < 0)
-	stp_set_top (pv->v, 0);
     }
 
   suppress_preview_update--;
@@ -2070,7 +2112,7 @@ gimp_media_size_callback (GtkWidget *widget,
       else if (new_value > width_limit)
 	new_value = width_limit;
       stp_set_page_width (pv->v, new_value);
-      stp_set_left(pv->v, -1);
+      pv->left_is_valid = 0;
       new_value = new_value / 72.0;
       if (pv->unit)
 	new_value *= 2.54;
@@ -2096,7 +2138,7 @@ gimp_media_size_callback (GtkWidget *widget,
       else if (new_value > height_limit)
 	new_value = height_limit;
       stp_set_page_height (pv->v, new_value);
-      stp_set_top(pv->v, -1);
+      pv->top_is_valid = 0;
       new_value = new_value / 72.0;
       if (pv->unit)
 	new_value *= 2.54;
@@ -2165,8 +2207,8 @@ gimp_media_size_callback (GtkWidget *widget,
       if (strcmp (stp_get_media_size (pv->v), new_media_size) != 0)
 	{
 	  stp_set_media_size (pv->v, new_media_size);
-	  stp_set_left (pv->v, -1);
-	  stp_set_top (pv->v, -1);
+	  pv->left_is_valid = 0;
+	  pv->top_is_valid = 0;
 	  gimp_preview_update ();
 	}
     }
@@ -2253,9 +2295,9 @@ gimp_orientation_callback (GtkWidget *widget,
     {
       gimp_invalidate_frame ();
       gimp_invalidate_preview_thumbnail ();
-      pv->orientation = (gint) data;
-      stp_set_left (pv->v, -1);
-      stp_set_top (pv->v, -1);
+      set_orientation((gint) data);
+      pv->left_is_valid = 0;
+      pv->top_is_valid = 0;
     }
   gimp_preview_update ();
 }
@@ -2497,8 +2539,8 @@ gimp_new_printer_ok_callback (void)
 
   if (strlen (key.name))
     {
+      copy_printer(&key, pv);
       key.active = 0;
-      key.v = stp_allocate_copy (pv->v);
 
       if (add_printer (&key, 1))
 	{
@@ -2621,9 +2663,10 @@ gimp_update_adjusted_thumbnail (void)
 {
   gint           x, y;
   stp_convert_t  colorfunc;
-  gushort        out[3 * THUMBNAIL_MAXW];
+  gushort        out[3 * (THUMBNAIL_MAXW + THUMBNAIL_MAXH)];
   guchar        *adjusted_data = adjusted_thumbnail_data;
   gfloat         old_density = stp_get_density(pv->v);
+  gint preview_limit = (thumbnail_h * thumbnail_w) - 1;
 
   if (thumbnail_data == 0 || adjusted_thumbnail_data == 0)
     return;
@@ -2632,7 +2675,6 @@ gimp_update_adjusted_thumbnail (void)
   stp_compute_lut (pv->v, 256);
   colorfunc = stp_choose_colorfunc (stp_get_output_type(pv->v), thumbnail_bpp,
 				    NULL, &adjusted_thumbnail_bpp, pv->v);
-
   for (y = 0; y < thumbnail_h; y++)
     {
       (*colorfunc) (pv->v, thumbnail_data + thumbnail_bpp * thumbnail_w * y,
@@ -2647,6 +2689,39 @@ gimp_update_adjusted_thumbnail (void)
   stp_free_lut (pv->v);
 
   stp_set_density (pv->v, old_density);
+
+  switch (physical_orientation)
+    {
+    case ORIENT_PORTRAIT:
+      memcpy(preview_thumbnail_data, adjusted_thumbnail_data,
+	     adjusted_thumbnail_bpp * thumbnail_h * thumbnail_w);
+      break;
+    case ORIENT_SEASCAPE:
+      for (x = 0; x < thumbnail_w; x++)
+	for (y = 0; y < thumbnail_h; y++)
+	  memcpy((preview_thumbnail_data +
+		  adjusted_thumbnail_bpp * (x * thumbnail_h + y)),
+		 (adjusted_thumbnail_data +
+		  adjusted_thumbnail_bpp * (y * thumbnail_w + x)),
+		 adjusted_thumbnail_bpp);
+      break;
+
+    case ORIENT_UPSIDEDOWN:
+      for (x = 0; x < thumbnail_h * thumbnail_w; x++)
+	memcpy(preview_thumbnail_data + adjusted_thumbnail_bpp * (preview_limit - x),
+	       adjusted_thumbnail_data + adjusted_thumbnail_bpp * x,
+	       adjusted_thumbnail_bpp);
+      break;
+    case ORIENT_LANDSCAPE:
+      for (x = 0; x < thumbnail_w; x++)
+	for (y = 0; y < thumbnail_h; y++)
+	  memcpy((preview_thumbnail_data +
+		  adjusted_thumbnail_bpp * (preview_limit - (x * thumbnail_h + y))),
+		 (adjusted_thumbnail_data +
+		  adjusted_thumbnail_bpp * (y * thumbnail_w + x)),
+		 adjusted_thumbnail_bpp);
+      break;
+    }
 
   gimp_redraw_color_swatch ();
   gimp_preview_update ();
@@ -2668,49 +2743,18 @@ static void
 draw_arrow (GdkWindow *w,
             GdkGC     *gc,
             gint       paper_left,
-            gint       paper_top,
-            gint       orient)
+            gint       paper_top)
 {
   gint u  = preview_ppi/2;
   gint ox = paper_left + preview_ppi * paper_width / 72 / 2;
   gint oy = paper_top + preview_ppi * paper_height / 72 / 2;
 
-  if (orient == ORIENT_LANDSCAPE)
-    {
-      ox += preview_ppi * paper_width / 72 / 4;
-      if (ox > paper_left + preview_ppi * paper_width / 72 - u)
-	ox = paper_left + preview_ppi * paper_width / 72 - u;
-      gdk_draw_line (w, gc, ox + u, oy, ox, oy - u);
-      gdk_draw_line (w, gc, ox + u, oy, ox, oy + u);
-      gdk_draw_line (w, gc, ox + u, oy, ox - u, oy);
-    }
-  else if (orient == ORIENT_SEASCAPE)
-    {
-      ox -= preview_ppi * paper_width / 72 / 4;
-      if (ox < paper_left + u)
-	ox = paper_left + u;
-      gdk_draw_line (w, gc, ox - u, oy, ox, oy - u);
-      gdk_draw_line (w, gc, ox - u, oy, ox, oy + u);
-      gdk_draw_line (w, gc, ox - u, oy, ox + u, oy);
-    }
-  else if (orient == ORIENT_UPSIDEDOWN)
-    {
-      oy += preview_ppi * paper_height / 72 / 4;
-      if (oy > paper_top + preview_ppi * paper_height / 72 - u)
-	oy = paper_top + preview_ppi * paper_height / 72 - u;
-      gdk_draw_line (w, gc, ox, oy + u, ox - u, oy);
-      gdk_draw_line (w, gc, ox, oy + u, ox + u, oy);
-      gdk_draw_line (w, gc, ox, oy + u, ox, oy - u);
-    }
-  else /* (orient == ORIENT_PORTRAIT) */
-    {
-      oy -= preview_ppi * paper_height / 72 / 4;
-      if (oy < paper_top + u)
-	oy = paper_top + u;
-      gdk_draw_line (w, gc, ox, oy - u, ox - u, oy);
-      gdk_draw_line (w, gc, ox, oy - u, ox + u, oy);
-      gdk_draw_line (w, gc, ox, oy - u, ox, oy + u);
-    }
+  oy -= preview_ppi * paper_height / 72 / 4;
+  if (oy < paper_top + u)
+    oy = paper_top + u;
+  gdk_draw_line (w, gc, ox, oy - u, ox - u, oy);
+  gdk_draw_line (w, gc, ox, oy - u, ox + u, oy);
+  gdk_draw_line (w, gc, ox, oy - u, ox, oy + u);
 }
 
 /*
@@ -2718,8 +2762,7 @@ draw_arrow (GdkWindow *w,
  */
 static void
 gimp_do_preview_thumbnail (gint paper_left,
-                           gint paper_top,
-                           gint orient)
+                           gint paper_top)
 {
   static GdkGC	*gc    = NULL;
   static GdkGC  *gcinv = NULL;
@@ -2730,10 +2773,10 @@ gimp_do_preview_thumbnail (gint paper_left,
   static gint    oph = 0;
   static gint    opw = 0;
 
-  gint preview_x = 1 + printable_left + preview_ppi * stp_get_left (pv->v) / 72;
-  gint preview_y = 1 + printable_top + preview_ppi * stp_get_top (pv->v) / 72;
-  gint preview_w = MAX (1, (preview_ppi * print_width) / 72 - 1);
-  gint preview_h = MAX (1, (preview_ppi * print_height) / 72 - 1);
+  gint preview_x = 1 + paper_left + preview_ppi * stp_get_left (pv->v) / 72;
+  gint preview_y = 1 + paper_top + preview_ppi * stp_get_top (pv->v) / 72;
+  gint preview_w = MAX (1, ((preview_ppi * print_width) / 72) - 1);
+  gint preview_h = MAX (1, ((preview_ppi * print_height) / 72) - 1);
 
   if (gc == NULL)
     {
@@ -2747,13 +2790,14 @@ gimp_do_preview_thumbnail (gint paper_left,
   if (!preview_valid)
     {
       gint v_denominator = preview_h > 1 ? preview_h - 1 : 1;
-      gint v_numerator = (thumbnail_h - 1) % v_denominator;
-      gint v_whole = (thumbnail_h - 1) / v_denominator;
+      gint v_numerator = (preview_thumbnail_h - 1) % v_denominator;
+      gint v_whole = (preview_thumbnail_h - 1) / v_denominator;
       gint h_denominator = preview_w > 1 ? preview_w - 1 : 1;
-      gint h_numerator = (thumbnail_w - 1) % h_denominator;
-      gint h_whole = (thumbnail_w - 1) / h_denominator;
+      gint h_numerator = (preview_thumbnail_w - 1) % h_denominator;
+      gint h_whole = (preview_thumbnail_w - 1) / h_denominator;
       gint adjusted_preview_width = adjusted_thumbnail_bpp * preview_w;
-      gint adjusted_thumbnail_width = adjusted_thumbnail_bpp * thumbnail_w;
+      gint adjusted_thumbnail_width = adjusted_thumbnail_bpp *
+	preview_thumbnail_w;
       gint v_cur = 0;
       gint v_last = -1;
       gint v_error = v_denominator / 2;
@@ -2775,7 +2819,7 @@ gimp_do_preview_thumbnail (gint paper_left,
 	    }
 	  else
 	    {
-	      guchar *inbuf = adjusted_thumbnail_data - adjusted_thumbnail_bpp
+	      guchar *inbuf = preview_thumbnail_data - adjusted_thumbnail_bpp
 		+ adjusted_thumbnail_width * v_cur;
 
 	      gint h_cur = 0;
@@ -2824,14 +2868,14 @@ gimp_do_preview_thumbnail (gint paper_left,
       /* draw paper frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
 			  paper_left, paper_top,
-			  MAX(2, preview_ppi * paper_width / 72),
-			  MAX(2, preview_ppi * paper_height / 72));
+			  MAX(2, (preview_ppi * paper_width) / 72),
+			  MAX(2, (preview_ppi * paper_height) / 72));
 
       /* draw printable frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
 			  printable_left, printable_top,
-			  MAX(2, preview_ppi * printable_width / 72),
-			  MAX(2, preview_ppi * printable_height / 72));
+			  MAX(2, (preview_ppi * printable_width) / 72),
+			  MAX(2, (preview_ppi * printable_height) / 72));
       need_exposure = 0;
     }
   else if (!frame_valid)
@@ -2840,14 +2884,14 @@ gimp_do_preview_thumbnail (gint paper_left,
       /* draw paper frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
 			  paper_left, paper_top,
-			  MAX(2, preview_ppi * paper_width / 72),
-			  MAX(2, preview_ppi * paper_height / 72));
+			  MAX(2, (preview_ppi * paper_width) / 72),
+			  MAX(2, (preview_ppi * paper_height) / 72));
 
       /* draw printable frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
 			  printable_left, printable_top,
-			  MAX(2, preview_ppi * printable_width / 72),
-			  MAX(2, preview_ppi * printable_height / 72));
+			  MAX(2, (preview_ppi * printable_width) / 72),
+			  MAX(2, (preview_ppi * printable_height) / 72));
       frame_valid = 1;
     }
   else
@@ -2876,7 +2920,7 @@ gimp_do_preview_thumbnail (gint paper_left,
 	}
     }
 
-  draw_arrow (preview->widget.window, gcset, paper_left, paper_top, orient);
+  draw_arrow (preview->widget.window, gcset, paper_left, paper_top);
 
   if (adjusted_thumbnail_bpp == 1)
     gdk_draw_gray_image (preview->widget.window, gc,
@@ -2888,7 +2932,7 @@ gimp_do_preview_thumbnail (gint paper_left,
 			GDK_RGB_DITHER_NORMAL, preview_data, 3 * preview_w);
 
   /* draw orientation arrow pointing to top-of-paper */
-  draw_arrow (preview->widget.window, gcinv, paper_left, paper_top, orient);
+  draw_arrow (preview->widget.window, gcinv, paper_left, paper_top);
 
   opx = preview_x;
   opy = preview_y;
@@ -2906,8 +2950,6 @@ gimp_preview_expose (void)
 static void
 gimp_preview_update (void)
 {
-  gint	  temp;
-  gint    orient;            /* True orientation of page */
   gdouble max_ppi_scaling;   /* Maximum PPI for current page size */
   gdouble min_ppi_scaling;   /* Minimum PPI for current page size */
   gdouble min_ppi_scaling1;  /* Minimum PPI for current page size */
@@ -2924,63 +2966,6 @@ gimp_preview_update (void)
 
   printable_width  = right - left;
   printable_height = bottom - top;
-
-  if (pv->orientation == ORIENT_AUTO)
-    {
-      if ((printable_width >= printable_height && image_width>=image_height) ||
-	  (printable_height >= printable_width && image_height >= image_width))
-	orient = ORIENT_PORTRAIT;
-      else
-	orient = ORIENT_LANDSCAPE;
-    }
-  else
-    orient = pv->orientation;
-
-  /*
-   * Adjust page dimensions depending on the page orientation.
-   */
-
-  bottom = paper_height - bottom;
-  right = paper_width - right;
-
-  if (orient == ORIENT_LANDSCAPE || orient == ORIENT_SEASCAPE)
-    {
-      temp              = printable_width;
-      printable_width   = printable_height;
-      printable_height  = temp;
-      temp              = paper_width;
-      paper_width       = paper_height;
-      paper_height      = temp;
-
-      if (orient == ORIENT_LANDSCAPE)
-	{
-	  temp              = left;
-	  left              = bottom;
-	  bottom            = right;
-	  right             = top;
-	  top               = temp;
-	}
-      else
-	{
-	  temp              = left;
-	  left              = top;
-	  top               = right;
-	  right             = bottom;
-	  bottom            = temp;
-	}
-    }
-  else if (orient == ORIENT_UPSIDEDOWN)
-    {
-      temp              = left;
-      left              = right;
-      right		= temp;
-      temp              = top;
-      top               = bottom;
-      bottom		= temp;
-    }
-
-  bottom = paper_height - bottom;
-  right = paper_width - right;
 
   if (pv->scaling < 0)
     {
@@ -3056,47 +3041,45 @@ gimp_preview_update (void)
 
   paper_left = (PREVIEW_SIZE_HORIZ - preview_ppi * paper_width / 72) / 2;
   paper_top  = (PREVIEW_SIZE_VERT - preview_ppi * paper_height / 72) / 2;
-  printable_left = paper_left +  preview_ppi * left / 72;
+  printable_left = paper_left + preview_ppi * left / 72;
   printable_top  = paper_top + preview_ppi * top / 72 ;
 
   if (preview == NULL || preview->widget.window == NULL)
     return;
 
-  if (stp_get_left (pv->v) < 0)
+  if (!pv->left_is_valid || stp_get_left(pv->v) < left)
     {
-      stp_set_left (pv->v, (paper_width - print_width) / 2 - left);
-      if (stp_get_left (pv->v) < 0)
-	stp_set_left (pv->v, 0);
+      stp_set_left (pv->v, (paper_width - print_width) / 2);
+      pv->left_is_valid = 1;
     }
 
   /* we leave stp_get_left(pv->v) etc. relative to printable area */
-  if (stp_get_left (pv->v) > (printable_width - print_width))
-    stp_set_left (pv->v, printable_width - print_width);
+  if (stp_get_left (pv->v) > right - print_width)
+    stp_set_left (pv->v, right - print_width);
 
-  if (stp_get_top (pv->v) < 0)
+  if (!pv->top_is_valid || stp_get_top(pv->v) < top)
     {
-      stp_set_top (pv->v, ((paper_height - print_height) / 2) - top);
-      if (stp_get_top (pv->v) < 0)
-	stp_set_top (pv->v, 0);
+      stp_set_top (pv->v, ((paper_height - print_height) / 2));
+      pv->top_is_valid = 1;
     }
 
-  if (stp_get_top (pv->v) > (printable_height - print_height))
-    stp_set_top (pv->v, printable_height - print_height);
+  if (stp_get_top (pv->v) > bottom - print_height)
+    stp_set_top (pv->v, bottom - print_height);
 
   if(pv->unit)
     unit_scaler /= 2.54;
 
-  set_entry_value (top_entry, (top + stp_get_top (pv->v)) / unit_scaler, 1);
-  set_entry_value (left_entry, (left + stp_get_left (pv->v)) / unit_scaler, 1);
+  set_entry_value (top_entry, (stp_get_top (pv->v)) / unit_scaler, 1);
+  set_entry_value (left_entry, (stp_get_left (pv->v)) / unit_scaler, 1);
   set_entry_value (bottom_entry,
                    (top + stp_get_top(pv->v) + print_height) / unit_scaler, 1);
   set_entry_value (bottom_border_entry,
-                   (paper_height - (top + stp_get_top (pv->v) + print_height)) /
+                   (paper_height - (stp_get_top (pv->v) + print_height)) /
                    unit_scaler, 1);
   set_entry_value (right_entry,
-                   (left + stp_get_left(pv->v) + print_width) / unit_scaler, 1);
+                   (stp_get_left(pv->v) + print_width) / unit_scaler, 1);
   set_entry_value (right_border_entry,
-                   (paper_width - (left + stp_get_left (pv->v) + print_width)) /
+                   (paper_width - (stp_get_left (pv->v) + print_width)) /
                    unit_scaler, 1);
   set_entry_value (width_entry, print_width / unit_scaler, 1);
   set_entry_value (height_entry, print_height / unit_scaler, 1);
@@ -3106,7 +3089,7 @@ gimp_preview_update (void)
   /* draw image */
   if (! suppress_preview_update)
     {
-      gimp_do_preview_thumbnail (paper_left, paper_top, orient);
+      gimp_do_preview_thumbnail (paper_left, paper_top);
       gdk_flush ();
     }
 }
@@ -3183,11 +3166,13 @@ gimp_preview_motion_callback (GtkWidget      *widget,
     return;
   if (preview_active != 1)
     return;
+#if 0
   if (stp_get_left(pv->v) < 0 || stp_get_top(pv->v) < 0)
     {
       stp_set_left(pv->v, 72 * (printable_width - print_width) / 20);
       stp_set_top(pv->v, 72 * (printable_height - print_height) / 20);
     }
+#endif
   if (move_constraint == MOVE_CONSTRAIN)
     {
       int dx = abs(event->x - mouse_x);
@@ -3210,7 +3195,7 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	  int x_threshold = MAX (1, (preview_ppi * print_width) / 72);
 	  while (event->x - mouse_x >= x_threshold)
 	    {
-	      if (left + stp_get_left (pv->v) + (print_width * 2) <= right)
+	      if (stp_get_left (pv->v) + (print_width * 2) <= right)
 		{
 		  stp_set_left (pv->v, stp_get_left (pv->v) + print_width);
 		  mouse_x += x_threshold;
@@ -3221,7 +3206,7 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	    }
 	  while (mouse_x - event->x >= x_threshold)
 	    {
-	      if (stp_get_left (pv->v) >= print_width)
+	      if (stp_get_left (pv->v) >= print_width + left)
 		{
 		  stp_set_left (pv->v, stp_get_left (pv->v) - print_width);
 		  mouse_x -= x_threshold;
@@ -3236,7 +3221,7 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	{
 	  while (event->y - mouse_y >= y_threshold)
 	    {
-	      if (top + stp_get_top (pv->v) + (print_height * 2) <= bottom)
+	      if (stp_get_top (pv->v) + (print_height * 2) <= bottom)
 		{
 		  stp_set_top (pv->v, stp_get_top (pv->v) + print_height);
 		  mouse_y += y_threshold;
@@ -3247,7 +3232,11 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	    }
 	  while (mouse_y - event->y >= y_threshold)
 	    {
-	      if (stp_get_top (pv->v) >= print_height)
+	      printf("top %d left %d bottom %d right %d\n",
+		     top, left, bottom, right);
+	      printf("image top %d print height %d %d\n",
+		     stp_get_top(pv->v), print_height, stp_get_height(pv->v));
+	      if (stp_get_top (pv->v) >= print_height + top)
 		{
 		  stp_set_top (pv->v, stp_get_top (pv->v) - print_height);
 		  mouse_y -= y_threshold;
@@ -3283,14 +3272,14 @@ gimp_preview_motion_callback (GtkWidget      *widget,
 	    new_left += event->x - mouse_x;
 	}
 
-      if (new_top < 0)
-	new_top = 0;
-      if (new_top > (bottom - top) - print_height)
-	new_top = (bottom - top) - print_height;
-      if (new_left < 0)
-	new_left = 0;
-      if (new_left > (right - left) - print_width)
-	new_left = (right - left) - print_width;
+      if (new_top < top)
+	new_top = top;
+      if (new_top > bottom - print_height)
+	new_top = bottom - print_height;
+      if (new_left < left)
+	new_left = left;
+      if (new_left > right - print_width)
+	new_left = right - print_width;
 
       if (new_top != old_top)
 	{
