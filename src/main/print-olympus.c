@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33.4.6 2004/03/27 23:56:03 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.7 2004/03/28 04:44:47 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -782,6 +782,12 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_TYPE_BOOLEAN, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 0, -1, 1
   },
+  {
+    "PrintingMode", N_("Printing Mode"), N_("Core Parameter"),
+    N_("Printing Output Mode"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+  },
 };
 
 static int the_parameter_count =
@@ -1009,6 +1015,14 @@ olympus_parameters(stp_const_vars_t v, const char *name,
     {
       if (olympus_feature(caps, OLYMPUS_FEATURE_BORDERLESS)) 
         description->is_active = 1;
+    }
+  else if (strcmp(name, "PrintingMode") == 0)
+    {
+      description->bounds.str = stp_string_list_create();
+      stp_string_list_add_string
+	(description->bounds.str, "Color", _("Color"));
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
   else
     description->is_active = 0;
