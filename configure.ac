@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.110 2004/06/28 22:11:18 rleigh Exp $
+dnl $Id: configure.ac,v 1.111 2004/07/24 14:36:09 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.110 $)
+AC_REVISION($Revision: 1.111 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -452,9 +452,10 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AM_PROG_LEX
 AC_PROG_YACC
-AC_PATH_PROG(FIND, find)
-AC_PATH_PROG(PERL, perl)
-AC_PATH_PROG(CONVERT, convert)
+AC_PATH_PROG([FIND], [find])
+AC_PATH_PROG([PERL], [perl])
+AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
+AC_PATH_PROG([CONVERT], [convert])
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${CONVERT} = x ; then
     AC_MSG_WARN([PostScript user's guide cannot be regenerated!])

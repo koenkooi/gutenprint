@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui.h,v 1.2 2004/06/22 18:52:13 rleigh Exp $"
+ * "$Id: gimp-print-ui.h,v 1.3 2004/07/24 14:36:11 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -41,6 +41,10 @@ extern "C" {
 #include <gtk/gtk.h>
 
 #include <gimp-print/gimp-print.h>
+
+#include <gimp-print-ui2/curve.h>
+#include <gimp-print-ui2/gammacurve.h>
+#include <gimp-print-ui2/typebuiltins.h>
 
 /*
  * All Gimp-specific code is in this file.
