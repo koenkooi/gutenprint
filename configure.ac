@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.32 2002/12/09 21:39:59 rleigh Exp $
+dnl $Id: configure.ac,v 1.33 2002/12/18 10:18:41 tillkamppeter Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.32 $)
+AC_REVISION($Revision: 1.33 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -217,6 +217,17 @@ STP_ARG_WITH([foomatic],
              [BUILD_FOOMATIC],
              [(automatic)])
 
+
+AC_PATH_PROG(FOOMATIC_PPDFILE, foomatic-ppdfile)
+if test -z "${FOOMATIC_PPDFILE}" ; then
+  BUILD_FOOMATIC_3="no"
+else
+  BUILD_FOOMATIC_3="yes"
+fi
+STP_ARG_WITH([foomatic3],
+             [make use of foomatic 3 extra features],
+             [BUILD_FOOMATIC_3],
+             [(automatic)])
 
 AC_PATH_PROG(IJS_CONFIG, ijs-config)
 if test -z "${IJS_CONFIG}" ; then
@@ -537,6 +548,8 @@ AC_CHECK_FUNC(getopt_long,
 
 dnl Define what has to be built
 AM_CONDITIONAL(BUILD_FOOMATIC, test x${BUILD_FOOMATIC} = xyes)
+
+AM_CONDITIONAL(BUILD_FOOMATIC_3, test x${BUILD_FOOMATIC_3} = xyes)
 
 AM_CONDITIONAL(BUILD_GHOSTSCRIPT, test x${BUILD_GHOSTSCRIPT} = xyes)
 

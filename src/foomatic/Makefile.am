@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2002/10/27 00:43:01 rlk Exp $
+## $Id: Makefile.am,v 1.31 2002/12/18 10:18:41 tillkamppeter Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,10 @@ LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
+if BUILD_FOOMATIC_3
+BUILD_FOOMATIC = 1
+endif
+
 
 ## Programs
 
@@ -67,6 +71,12 @@ else
 INSTALL_DATA_LOCAL_DEPS =
 endif
 
+if BUILD_FOOMATIC_3
+FOOMATIC_GENERATOR_FOOMATIC_3_OPTS = -f 3
+else
+FOOMATIC_GENERATOR_FOOMATIC_3_OPTS =
+endif
+
 all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
@@ -89,7 +99,7 @@ foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator foomatic-printermap $(noinst_PROGRAMS) mk_printerlist
 	-$(RM) -r foomatic-db
-	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS)
+	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS)
 	touch foomatic-stamp
 
 $(GIMPPRINT_LIBS):
