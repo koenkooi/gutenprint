@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.16 2001/02/24 03:14:25 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.17 2001/02/24 19:29:46 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -160,7 +160,7 @@ typedef union {		/* number of rows for a pass */
 
 
 typedef union {			/* Base pointers for each pass */
-  unsigned char *v[6];
+  unsigned char *v[7];
   struct {
     unsigned char *k;
     unsigned char *m;
@@ -439,5 +439,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.16 2001/02/24 03:14:25 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.17 2001/02/24 19:29:46 rlk Exp $".
  */

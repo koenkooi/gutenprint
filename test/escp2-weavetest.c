@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.10 2001/02/19 19:32:53 rleigh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.11 2001/02/24 19:29:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -141,9 +141,7 @@ run_one_weavetest(int physjets, int physsep, int hpasses, int vpasses,
   memset(errors, 0, sizeof(int) * 26);
   if (physjets < hpasses * vpasses * subpasses)
     {
-      if (quiet <= 1)
-	printf("Oversample exceeds jets\n");
-      return 1;
+      return 0;
     }
   passstarts = xmalloc(sizeof(int) * (nrows + physsep));
   logpassstarts = xmalloc(sizeof(int) * (nrows + physsep));
