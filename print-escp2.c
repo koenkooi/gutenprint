@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.119.2.2 2000/03/29 23:17:51 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.119.2.3 2000/04/12 02:25:34 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1091,8 +1091,8 @@ escp2_print(const printer_t *printer,		/* I - Model */
   if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
     {
       dither_set_black_levels(dither, 1.5, 1.7, 1.9);
-      dither_set_black_lower(dither, .5);
-      dither_set_black_upper(dither, .7);
+      dither_set_black_lower(dither, .2);
+      dither_set_black_upper(dither, .4);
       dither_set_light_inks(dither, .5, .5, .5);
     }
   switch (v->image_type)
@@ -2861,6 +2861,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.119.2.3  2000/04/12 02:25:34  rlk
+ *   Constant hacking
+ *
  *   Revision 1.119.2.2  2000/03/29 23:17:51  rlk
  *   Fuck patents
  *
@@ -3352,5 +3355,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.119.2.2 2000/03/29 23:17:51 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.119.2.3 2000/04/12 02:25:34 rlk Exp $".
  */
