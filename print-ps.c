@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.26 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print-ps.c,v 1.27 2000/06/04 15:28:06 cpbs Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -446,6 +446,8 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
 
   if (left < 0)
     left = (page_width - out_width) / 2 + page_left;
+  else
+    left += page_left;
 
   if (top < 0)
     top  = (page_height + out_height) / 2 + page_bottom;
@@ -463,7 +465,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   _fsetmode(prn, "t");
 #endif
   fputs("%!PS-Adobe-3.0\n", prn);
-  fprintf(prn, "%%Creator: %s\n", Image_get_pluginname(image));
+  fprintf(prn, "%%%%Creator: %s\n", Image_get_pluginname(image));
   fprintf(prn, "%%%%CreationDate: %s", ctime(&curtime));
   fputs("%%Copyright: 1997-2000 by Michael Sweet (mike@easysw.com) and Robert Krawitz (rlk@alum.mit.edu)\n", prn);
   fprintf(prn, "%%%%BoundingBox: %d %d %d %d\n",
