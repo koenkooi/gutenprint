@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.81 2004/05/07 19:20:32 rleigh Exp $"
+ * "$Id: print-escp2.h,v 1.82 2004/06/30 01:16:20 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -379,6 +379,10 @@ typedef struct
 #define MODEL_SUPPORTS_INK_CHANGE_NO	0x000ul
 #define MODEL_SUPPORTS_INK_CHANGE_YES	0x800ul
 
+#define MODEL_PACKET_MODE_MASK	0x1000ul
+#define MODEL_PACKET_MODE_NO	0x0000ul
+#define MODEL_PACKET_MODE_YES	0x1000ul
+
 typedef enum
 {
   MODEL_COMMAND,
@@ -390,6 +394,7 @@ typedef enum
   MODEL_FAST_360,
   MODEL_SEND_ZERO_ADVANCE,
   MODEL_SUPPORTS_INK_CHANGE,
+  MODEL_PACKET_MODE,
   MODEL_LIMIT
 } escp2_model_option_t;
 
@@ -676,5 +681,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.81 2004/05/07 19:20:32 rleigh Exp $".
+ * End of "$Id: print-escp2.h,v 1.82 2004/06/30 01:16:20 rlk Exp $".
  */
