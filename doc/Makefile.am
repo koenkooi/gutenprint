@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27.2.2 2002/02/16 00:54:41 rleigh Exp $
+## $Id: Makefile.am,v 1.27.2.3 2002/05/11 23:07:16 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -122,11 +122,11 @@ install-data-local: $(STANDARD_TARGETS)
 	    $(INSTALL_DATA) $(srcdir)/$(MANUAL).ps $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
 	  fi ; \
 	  if test -d $(HTMLDIR) ; then \
-	    cd $(HTMLDIR) ; \
+	    HTMLSRCDIR="$(HTMLDIR)" ; \
 	  elif test -d $(srcdir)/$(HTMLDIR) ; then \
-	    cd $(srcdir)/$(HTMLDIR) ; \
+	    HTMLSRCDIR="$(srcdir)/$(HTMLDIR)" ; \
 	  fi ; \
-	  for file in * ; do \
+	  for file in $$HTMLSRCDIR/* ; do \
 	    if test -f $$file ; then \
 	      $(INSTALL_DATA) $$file $(DESTDIR)$(datadir)/$(PACKAGE)/doc/$(HTMLDIR) ; \
 	    fi ; \
