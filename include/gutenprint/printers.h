@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: printers.h,v 1.2 2004/11/28 15:59:29 rleigh Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -91,7 +91,7 @@ extern const stp_printer_t *stp_get_printer(const stp_vars_t *v);
 
 /**
  * Get the printer index number from the printer model short (driver) name.
- * @deprecated there should never be any need to use this function.
+ * @deprecated There should never be any need to use this function.
  * @param driver the printer model's short (driver) name.
  * @returns the index number, or -1 on failure.
  */
@@ -232,5 +232,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GUTENPRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: printers.h,v 1.2 2004/11/28 15:59:29 rleigh Exp $".
  */

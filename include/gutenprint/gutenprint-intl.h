@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprint-intl.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: gutenprint-intl.h,v 1.2 2004/11/28 15:59:29 rleigh Exp $"
  *
  *   I18N header file for Gimp-Print.
  *
@@ -22,7 +22,7 @@
  */
 
 /**
- * @file gutenprint/gimp-print-intl.h
+ * @file gutenprint/gutenprint-intl.h
  * @brief Internationalisation functions.
  */
 
