@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.18 2001/01/16 12:50:06 rlk Exp $"
+ * "$Id: genppd.c,v 1.19 2001/01/19 03:01:41 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -179,8 +179,8 @@ main(int  argc,			/* I - Number of command-line arguments */
     else
       usage();
 
-  for (i = 0; i < known_printers(); i++)
-    if (write_ppd(get_printer_by_index(i), prefix))
+  for (i = 0; i < stp_known_printers(); i++)
+    if (write_ppd(stp_get_printer_by_index(i), prefix))
       return (1);
 
   return (0);
@@ -654,5 +654,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.18 2001/01/16 12:50:06 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.19 2001/01/19 03:01:41 rlk Exp $".
  */
