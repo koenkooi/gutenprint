@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.16 2003/05/08 02:33:37 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17 2003/05/10 14:43:11 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -37,7 +37,6 @@
 #include <math.h>
 #include <string.h>
 #include "dither-impl.h"
-#include "vars.h"
 
 static const stpi_dither_algorithm_t dither_algos[] =
 {
