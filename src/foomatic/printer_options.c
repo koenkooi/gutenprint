@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.38 2004/04/13 23:54:44 rlk Exp $"
+ * "$Id: printer_options.c,v 1.39 2004/04/17 19:38:20 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -153,8 +153,8 @@ main(int argc, char **argv)
 		{
 		  if (desc.is_mandatory)
 		    {
-		      printf("$defaults{'%s'}{'%s'} = '%s';\n",
-			     driver, p->name, desc.deflt.str);
+		      printf("$defaults{'%s'}{'%s'} = '%d';\n",
+			     driver, p->name, desc.deflt.boolean);
 		    }
 		  else
 		    {
