@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.21 2004/03/22 03:07:56 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.22 2004/03/23 02:08:25 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -48,6 +48,40 @@
 typedef unsigned (*stp_convert_t)(stp_const_vars_t vars,
 				  const unsigned char *in,
 				  unsigned short *out);
+
+typedef enum
+{
+  COLOR_CORRECTION_DEFAULT,
+  COLOR_CORRECTION_UNCORRECTED,
+  COLOR_CORRECTION_BRIGHT,
+  COLOR_CORRECTION_ACCURATE,
+  COLOR_CORRECTION_THRESHOLD,
+  COLOR_CORRECTION_DENSITY,
+  COLOR_CORRECTION_RAW
+} color_correction_enum_t;
+
+typedef struct
+{
+  const char *name;
+  const char *text;
+  color_correction_enum_t correction;
+  int correct_hsl;
+} color_correction_t;
+
+static const color_correction_t color_corrections[] =
+{
+  { "None",        N_("Default"),       COLOR_CORRECTION_DEFAULT,     1 },
+  { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE,    1 },
+  { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT,      1 },
+  { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED, 0 },
+  { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
+  { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
+  { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
+};
+
+static const int color_correction_count =
+sizeof(color_corrections) / sizeof(color_correction_t);
+
 
 typedef enum
 {
@@ -129,18 +163,27 @@ typedef struct
   color_model_t color_model;
   unsigned channels;
   int channel_count;
+  color_correction_enum_t default_correction;
 } color_description_t;
 
 static const color_description_t color_descriptions[] =
 {
-  { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK,   CMASK_K,      1 },
-  { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CMASK_W,      1 },
-  { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CMASK_RGB,    3 },
-  { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CMASK_CMY,    3 },
-  { "CMYK",       1, 0, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4 },
-  { "KCMY",       1, 1, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4 },
-  { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6 },
-  { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,             -1 },
+  { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK,   CMASK_K,      1,
+    COLOR_CORRECTION_UNCORRECTED },
+  { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CMASK_W,      1,
+    COLOR_CORRECTION_UNCORRECTED },
+  { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CMASK_RGB,    3,
+    COLOR_CORRECTION_ACCURATE    },
+  { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CMASK_CMY,    3,
+    COLOR_CORRECTION_ACCURATE    },
+  { "CMYK",       1, 0, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4,
+    COLOR_CORRECTION_ACCURATE    },
+  { "KCMY",       1, 1, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4,
+    COLOR_CORRECTION_ACCURATE    },
+  { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6,
+    COLOR_CORRECTION_ACCURATE    },
+  { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,           -1,
+    COLOR_CORRECTION_RAW         },
 };
 
 static const int color_description_count =
@@ -162,38 +205,6 @@ static const channel_depth_t channel_depths[] =
 static const int channel_depth_count =
 sizeof(channel_depths) / sizeof(channel_depth_t);
 
-
-typedef enum
-{
-  COLOR_CORRECTION_UNCORRECTED,
-  COLOR_CORRECTION_BRIGHT,
-  COLOR_CORRECTION_ACCURATE,
-  COLOR_CORRECTION_THRESHOLD,
-  COLOR_CORRECTION_DENSITY,
-  COLOR_CORRECTION_RAW
-} color_correction_enum_t;
-
-typedef struct
-{
-  const char *name;
-  const char *text;
-  color_correction_enum_t correction;
-  int correct_hsl;
-} color_correction_t;
-
-static const color_correction_t color_corrections[] =
-{
-  { "None",        N_("Default"),       COLOR_CORRECTION_ACCURATE,    1 },
-  { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE,    1 },
-  { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT,      1 },
-  { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED, 0 },
-  { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
-  { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
-  { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
-};
-
-static const int color_correction_count =
-sizeof(color_corrections) / sizeof(color_correction_t);
 
 typedef struct
 {
@@ -281,7 +292,7 @@ static const float_param_t float_parameters[] =
       N_("Raw Channels"),
       STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_INTERNAL, 1, 1, -1, 1
-    }, 1.0, 32.0, 0.0, CMASK_EVERY
+    }, 1.0, STP_CHANNEL_LIMIT, 0.0, CMASK_EVERY
   },
   {
     {
@@ -402,7 +413,7 @@ static const float_param_t float_parameters[] =
       N_("Limit the total ink printed to the page"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 0
-    }, 0.0, 32.0, 32.0, CMASK_CMY
+    }, 0.0, STP_CHANNEL_LIMIT, STP_CHANNEL_LIMIT, CMASK_CMY
   },
   {
     {
@@ -755,6 +766,18 @@ get_color_correction(const char *name)
 	if (strcmp(name, color_corrections[i].name) == 0)
 	  return &(color_corrections[i]);
       }
+  return NULL;
+}
+
+static const color_correction_t *
+get_color_correction_by_tag(color_correction_enum_t correction)
+{
+  int i;
+  for (i = 0; i < color_correction_count; i++)
+    {
+      if (correction == color_corrections[i].correction)
+	return &(color_corrections[i]);
+    }
   return NULL;
 }
 
@@ -2209,8 +2232,8 @@ CMYK_to_##name(stp_const_vars_t vars, const unsigned char *in,		\
     return kcmy_to_##name(vars, in, out);				\
   else									\
     {									\
-      stp_eprintf("Bad dispatch to CMYK_to_%s: %d\n", #name,		\
-		  lut->input_color_description->color_id);		\
+      stpi_eprintf(vars, "Bad dispatch to CMYK_to_%s: %d\n", #name,	\
+		   lut->input_color_description->color_id);		\
       return 0;								\
     }									\
 }
@@ -2227,12 +2250,52 @@ CMYK_DISPATCH(kcmy_threshold)
 CMYK_DISPATCH(gray)
 CMYK_DISPATCH(gray_threshold)
 
-
-#define RAW_TO_RAW_FUNC(T, bits)					\
+#define RAW_TO_RAW_FUNC(T, size)					\
 static unsigned								\
-raw_##bits##_to_raw(stp_const_vars_t vars,				\
+raw_##size##_to_raw(stp_const_vars_t vars,				\
 		    const unsigned char *in,				\
 		    unsigned short *out)				\
+{									\
+  int i;								\
+  unsigned retval = 0;							\
+  int j;								\
+  int nz[STP_CHANNEL_LIMIT];						\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+									\
+  for (i = 0; i < lut->out_channels; i++)				\
+    {									\
+      stp_curve_resample(lut->channel_curves[i].curve, 1 << size);	\
+      (void) cache_get_ushort_data(&(lut->channel_curves[i]));		\
+    }									\
+									\
+  memset(nz, 0, sizeof(nz));						\
+									\
+  for (i = 0; i < lut->image_width; i++, out += lut->out_channels)	\
+    {									\
+      for (j = 0; j < lut->out_channels; j++)				\
+	{								\
+	  int inval = *s_in++;						\
+	  nz[j] |= inval;						\
+	  out[j] = cache_fast_ushort(&(lut->channel_curves[j]))[inval];	\
+	}								\
+    }									\
+  for (j = 0; j < lut->out_channels; j++)				\
+    if (nz[j] == 0)							\
+      retval |= (1 << j);						\
+  return retval;							\
+}
+
+RAW_TO_RAW_FUNC(unsigned char, 8)
+RAW_TO_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(raw, raw)
+
+
+#define RAW_TO_RAW_RAW_FUNC(T, bits)					\
+static unsigned								\
+raw_##bits##_to_raw_raw(stp_const_vars_t vars,				\
+		        const unsigned char *in,			\
+		        unsigned short *out)				\
 {									\
   int i;								\
   int j;								\
@@ -2259,9 +2322,9 @@ raw_##bits##_to_raw(stp_const_vars_t vars,				\
   return retval;							\
 }
 
-RAW_TO_RAW_FUNC(unsigned char, 8)
-RAW_TO_RAW_FUNC(unsigned short, 16)
-GENERIC_COLOR_FUNC(raw, raw)
+RAW_TO_RAW_RAW_FUNC(unsigned char, 8)
+RAW_TO_RAW_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(raw, raw_raw)
 
 
 static void
@@ -2769,12 +2832,16 @@ stpi_color_traditional_init(stp_vars_t v,
       if (strcmp(image_type, "Text") == 0)
 	lut->color_correction = get_color_correction("Threshold");
       else
-	lut->color_correction = get_color_correction("Accurate");
+	lut->color_correction = get_color_correction("Default");
     }
   else if (color_correction)
     lut->color_correction = get_color_correction(color_correction);
   else
-    lut->color_correction = get_color_correction("Accurate");
+    lut->color_correction = get_color_correction("Default");
+  if (lut->color_correction->correction == COLOR_CORRECTION_DEFAULT)
+    lut->color_correction =
+      (get_color_correction_by_tag
+       (lut->output_color_description->default_correction));
 
   stpi_compute_lut(v);
 
