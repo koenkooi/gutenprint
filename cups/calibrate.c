@@ -1,5 +1,5 @@
 /*
- * "$Id: calibrate.c,v 1.4 2000/09/18 00:31:24 easysw Exp $"
+ * "$Id: calibrate.c,v 1.5 2000/09/20 22:52:06 rlk Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
@@ -280,7 +280,7 @@ main(int  argc,
 	  m[1][0] * 1000.0f, m[1][1] * 1000.0f, m[1][2] * 1000.0f,
 	  m[2][0] * 1000.0f, m[2][1] * 1000.0f, m[2][2] * 1000.0f);
 
-  sprintf(cupsProfile, "    *cupsProfile %s/%s: \"%.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f\"\n",
+  sprintf(cupsProfile, "    *cupsColorProfile %s/%s: \"%.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f\"\n",
           resolution[0] ? resolution : "-", mediatype[0] ? mediatype : "-",
 	  kd, g, m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2],
 	  m[2][0], m[2][1], m[2][2]);
