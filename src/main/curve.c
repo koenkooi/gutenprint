@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.48 2004/06/12 16:31:37 rlk Exp $"
+ * "$Id: curve.c,v 1.49 2004/08/03 17:57:48 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -28,6 +28,9 @@
 #include "gimp-print-internal.h"
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
+#ifdef sun
+#include <ieeefp.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>

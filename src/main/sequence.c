@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.17 2004/06/12 16:31:38 rlk Exp $"
+ * "$Id: sequence.c,v 1.18 2004/08/03 17:57:52 rleigh Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -30,6 +30,9 @@
 #include "gimp-print-internal.h"
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
+#ifdef sun
+#include <ieeefp.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
