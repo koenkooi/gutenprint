@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.39 2004/03/27 19:13:13 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.40 2004/03/27 20:43:18 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1196,9 +1196,9 @@ lookup_rgb(lut_t *lut, unsigned short *rgbout,
     }
   else
     {
-      rgbout[0] = red[rgbout[0] / 256];
-      rgbout[1] = green[rgbout[1] / 256];
-      rgbout[2] = blue[rgbout[2] / 256];
+      rgbout[0] = red[rgbout[0] / 257];
+      rgbout[1] = green[rgbout[1] / 257];
+      rgbout[2] = blue[rgbout[2] / 257];
     }
 }
 
@@ -3409,7 +3409,6 @@ compute_one_lut(lut_t *lut, int i)
     {
       int invert_output =
 	!channel_is_synthesized(lut, i) && lut->invert_output;
-      stpi_erprintf("compute_one_lut %d curve\n", i);
       stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
 			STP_CURVE_BOUNDS_RESCALE);
       invert_curve(curve, invert_output);
@@ -3417,7 +3416,6 @@ compute_one_lut(lut_t *lut, int i)
     }
   else
     {
-      stpi_erprintf("compute_one_lut %d gamma\n", i);
       curve = stp_curve_create_copy(color_curve_bounds);
       stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
 			STP_CURVE_BOUNDS_RESCALE);
