@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/10/05 20:20:08 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2001/10/05 21:23:06 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ OUTPUTS = \
  html
 
 DISTHOOKDIRS = figures $(HTMLDIR)
+DISTHOOKFILES = $(MANUAL).pdf
 
 CATALOG_FILES = /etc/sgml/catalog
 
@@ -45,7 +46,7 @@ PDF_IMAGES = $(addsuffix .pdf,$(basename $(PNG_IMAGES)))
 
 ## Rules
 
-dist-hook: html
+dist-hook: html pdf
 	for dir in $(DISTHOOKDIRS) ; do \
 	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
@@ -58,6 +59,11 @@ dist-hook: html
 	      fi ; \
 	    done \
 	  fi \
+	done
+	for file in $(DISTHOOKFILES) ; do \
+	  if test -f $$file ; then \
+	    cp -p $$file $(distdir) ; \
+	fi ; \
 	done
 
 #
