@@ -1,9 +1,5 @@
-/*
 
-
- */
-
-/*$Id: gdevstp.h,v 1.1 2000/02/13 01:33:41 rlk Exp $ */
+/*$Id: gdevstp.h,v 1.2 2000/03/11 23:27:06 rlk Exp $ */
 /*                    */
 
 #ifndef gdevstp_INCLUDED
