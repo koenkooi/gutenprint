@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.19.2.5 2000/04/16 02:13:55 rlk Exp $"
+ * "$Id: print-dither.c,v 1.19.2.6 2000/04/16 02:37:46 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -272,8 +272,8 @@ init_dither(int in_width, int out_width)
   d->src_width = in_width;
   d->dst_width = out_width;
   d->density = 4096;
-  d->k_lower = 12 * 256;
-  d->k_upper = 128 * 256;
+  d->k_lower = 26214;		/* .4 */
+  d->k_upper = 45875;		/* .7 */
   d->lc_level = 32768;
   d->lm_level = 32768;
   d->ly_level = 32768;
@@ -851,20 +851,12 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	      unsigned char *tptr;
 	      unsigned bits;
 	      
-#if 0
-	      xy3 = MODOP2((x /* + y / 3 */), (MATRIX_SIZE2));
-	      yx3 = MODOP2((y /* + x / 3 */), (MATRIX_SIZE2));
-	      xy3 = MODOP((x * 3 + y * 2), (MATRIX_SIZE));
-	      yx3 = MODOP((y * 3 + y * 2), (MATRIX_SIZE));
-#endif
-#if 0
-	      xy3 = rand() % (MATRIX_SIZE - 1);
-	      yx3 = rand() % (MATRIX_SIZE - 1);
-#endif
-	      /*
-	       * FIXME we should use different matrices for each color
-	       */
-	      if (rangepoint >= DITHERPOINT(x, y, 2, d))
+	      if (dd->isdark_h == dd->isdark_l && dd->bits_h == dd->bits_l)
+		{
+		  isdark = dd->isdark_h;
+		  bits = dd->bits_h;
+		}
+	      else if (rangepoint >= DITHERPOINT(x, y, 2, d))
 		{
 		  isdark = dd->isdark_h;
 		  bits = dd->bits_h;
@@ -1351,6 +1343,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.19.2.6  2000/04/16 02:37:46  rlk
+ *   Final
+ *
  *   Revision 1.19.2.5  2000/04/16 02:13:55  rlk
  *   More improvements
  *
@@ -1413,5 +1408,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.19.2.5 2000/04/16 02:13:55 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.19.2.6 2000/04/16 02:37:46 rlk Exp $".
  */
