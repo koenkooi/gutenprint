@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.41 2002/11/17 17:59:50 rleigh Exp $
+# $Id: rules,v 1.42 2002/11/18 23:16:42 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -76,8 +76,6 @@ install: build debian/control
 
 	cd debian/gimp-print-build ; \
 	$(MAKE) DESTDIR=`pwd`/../gimp-print-install install
-
-	scripts/mkinstalldirs debian/gimp1.2-print/usr/lib/gimp/1.2/plug-ins
 
 	dh_movefiles --sourcedir=debian/gimp-print-install
 	rm debian/foomatic-db-gimp-print/usr/share/foomatic/kitload.log
