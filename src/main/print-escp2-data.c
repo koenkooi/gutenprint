@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.25 2002/06/18 02:42:14 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.26 2002/06/18 11:59:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -146,7 +146,7 @@ DECLARE_INK(spro10000_standard, 1.0);
 
 static const stp_simple_dither_range_t photo_4pl_2880_dither_ranges[] =
 {
-  { 0.35,  0x1, 1, 1 },
+  { 0.26,  0x1, 1, 1 },
   { 1.00,  0x1, 0, 1 },
 };
 
