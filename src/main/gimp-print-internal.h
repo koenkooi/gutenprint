@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.31.2.3 2001/05/29 22:48:04 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.31.2.4 2001/05/31 01:36:33 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -82,12 +82,9 @@ typedef struct
 
 typedef struct
 {
-   double value_l;
-   double value_h;
-   unsigned bits_l;
-   unsigned bits_h;
-   int isdark_l;
-   int isdark_h;
+   double value[2];
+   unsigned bits[2];
+   int isdark[2];
 } stp_full_dither_range_t;
 
 typedef struct			/* Weave parameters for a specific row */
@@ -515,5 +512,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.31.2.3 2001/05/29 22:48:04 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.31.2.4 2001/05/31 01:36:33 rlk Exp $".
  */
