@@ -1,5 +1,5 @@
 /*
- * "$Id: print-intl.h,v 1.4 2003/01/23 01:30:58 rlk Exp $"
+ * "$Id: print-intl.h,v 1.5 2003/01/23 01:31:34 rlk Exp $"
  *
  *   I18N header file for the gimp-print plugin.
  *
@@ -26,11 +26,13 @@
 #include <glib.h>
 #include <gimp-print/gimp-print-intl.h>
 
-#define INIT_LOCALE(domain)   G_STMT_START{ \
-        gtk_set_locale ();                  \
-        setlocale (LC_NUMERIC, "C");        \
-        bindtextdomain (domain, PACKAGE_LOCALE_DIR); \
-        textdomain (domain);                \
-                                }G_STMT_END
+#define INIT_LOCALE(domain)   					\
+do								\
+{								\
+        gtk_set_locale ();					\
+        setlocale (LC_NUMERIC, "C");				\
+        bindtextdomain (domain, PACKAGE_LOCALE_DIR);		\
+        textdomain (domain);					\
+} while (0)
 
 #endif /* __PRINT_INTL_H__ */
