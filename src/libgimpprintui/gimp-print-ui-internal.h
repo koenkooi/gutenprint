@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.4.6.4 2003/02/09 00:52:20 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.4.6.5 2003/02/09 03:50:27 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -237,15 +237,5 @@ extern void stpui_create_scale_entry(option_t    *option,
 
 stp_image_t *stpui_image_thumbnail_new(const guchar *data, gint w, gint h,
 				       gint bpp);
-
-typedef union yylv {
-  int ival;
-  double dval;
-  char *sval;
-} YYSTYPE;
-
-extern YYSTYPE yylval;
-
-#include "printrcy.h"
 
 #endif  /* __GIMP_PRINT_UI_INTERNAL_H__ */

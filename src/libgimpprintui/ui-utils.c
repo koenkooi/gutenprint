@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.3.6.4 2003/02/09 00:52:21 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.3.6.5 2003/02/09 03:50:28 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -815,7 +815,7 @@ table_label(GtkTable *table, gint column, gint row)
 static GtkWidget *
 table_checkbutton(GtkTable *table, gint column, gint row)
 {
-  GList *children = table->children;;
+  GList *children = table->children;
   while (children)
     {
       GtkTableChild *child = (GtkTableChild *)children->data;
