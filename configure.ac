@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.86 2003/11/20 02:17:32 rlk Exp $
+dnl $Id: configure.ac,v 1.87 2003/11/23 00:58:00 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.86 $)
+AC_REVISION($Revision: 1.87 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -491,7 +491,7 @@ if test "$CC" = "gcc" ; then
     GNUCFLAGS="${GNUCFLAGS} -pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
   fi
   if test x$ENABLE_PROFILE = xyes ; then
-    GNUCFLAGS="${GNUCFLAGS:=} -pg"
+    CFLAGS="${CFLAGS:=} -pg"
   fi
 else
   if test x$ENABLE_DEBUG = xyes ; then
