@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.38 2002/11/17 12:56:07 rleigh Exp $
+## $Id: Makefile.am,v 1.39 2002/11/18 23:03:01 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,11 @@ lib_LTLIBRARIES = libgimpprint.la
 bin_SCRIPTS = gimpprint-config
 
 libgimpprint_la_SOURCES = \
+	dither.h \
+	dither-matrices.h \
 	gimp-print-internal.h \
 	list.h \
+	papers.h \
 	print-lexmark.c \
 	print-canon.c \
 	print-dither.c \
@@ -58,13 +61,15 @@ libgimpprint_la_SOURCES = \
 	print-weave.c \
 	print-version.c \
 	print-dither-matrices.c \
-	print-dither.h \
 	printers.c \
-	print-printers.c \
+	printers.h \
+	printers-oldlist.h \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h \
-	vars.h
+	util.h \
+	vars.h \
+	weave.h
 
 libgimpprint_la_LIBADD = $(GIMPPRINT_DEPLIBS)
 # Uncommment to build an unversioned library (version in soname)
@@ -84,8 +89,8 @@ pkgconfigdata_DATA = gimpprint.pc
 
 ## Rules
 
-$(srcdir)/print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
-	../printdef/printdef < $(srcdir)/printers.xml > $(srcdir)/print-printers.c
+$(srcdir)/printers-oldlist.h: ../printdef/printdef $(srcdir)/printers.xml
+	../printdef/printdef < $(srcdir)/printers.xml > $(srcdir)/printers-oldlist.h
 
 printdefl.o: printdefy.o
 
@@ -96,7 +101,7 @@ printdefl.o: printdefy.o
 
 ## Clean
 
-CLEANFILES = print-printers.c
+CLEANFILES = printers-oldlist.h
 DISTCLEANFILES = gimpprint-config gimpprint-config.in gimpprint.pc gimpprint.pc.in gimpprint.m4
 MAINTAINERCLEANFILES = Makefile.in
 
