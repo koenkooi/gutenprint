@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.110 2000/08/02 11:51:46 rlk Exp $"
+ * "$Id: print-util.c,v 1.111 2000/08/02 12:19:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -419,7 +419,7 @@ rgb_to_rgb(unsigned char	*rgbin,		/* I - RGB pixels */
 {
   unsigned ld = vars->density * 65536;
   double isat = 1.0;
-  double ssat = sqrt(vars->saturation * 2.5);
+  double ssat = sqrt(vars->saturation * 1.25);
   if (ssat > 1)
     isat = 1.0 / ssat;
   while (width > 0)
