@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.1 2001/03/05 17:44:20 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.2 2001/05/09 16:32:50 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ cupsexec_backenddir = $(pkglibdir)/backend
 cupsexec_filterdir = $(pkglibdir)/filter
 cups_modeldir = $(pkgdatadir)/model
 
-CFLAGS = @CFLAGS@ $(CUPS_CFLAGS)
+AM_CFLAGS = @MAINTAINER_CFLAGS@ $(CUPS_CFLAGS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
@@ -65,7 +65,12 @@ epson_LDADD = $(CUPS_LIBS)
 
 genppd_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
 
+genppd_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
 rastertoprinter_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
+
+rastertoprinter_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
 
 ## Data
 
@@ -74,13 +79,23 @@ pkgdata_DATA = @CUPS_PKG@
 pkgsysconf_DATA = @CUPS_CONF@
 
 if BUILD_CUPS
-install-data-local: ppd
+INSTALL_DATA_LOCAL_DEPS = ppd
 endif
-	$(mkinstalldirs) $(DESTDIR)$(cups_modeldir)
-	cd ppd ; \
-	for ppdfile in * ; do \
-	  $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir) ; \
-	done
+
+if BUILD_CUPS
+INSTALL_PPD = true
+else
+INSTALL_PPD =
+endif
+
+install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
+	if test -n "$(INSTALL_PPD)" ; then \
+	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
+	  cd ppd ; \
+	  for ppdfile in * ; do \
+	    $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir) ; \
+	  done \
+	fi
 
 install-data-hook:
 # Remove unused directories in install tree

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4.2.1 2001/04/30 18:09:04 sharkey Exp $
+## $Id: Makefile.am,v 1.4.2.2 2001/05/09 16:32:50 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,25 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+AM_CFLAGS = @MAINTAINER_CFLAGS@
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
-AM_CPPFLAGS =\
- -DLOCALEDIR=\""$(localedir)"\" \
- @MAINTAINER_CFLAGS@
-
 noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
 
-EXTRA_PROGRAMS = printer_options
+EXTRA_PROGRAMS = printer_options gimp-print-version paper_sizes
 
 printer_options_SOURCES = printer_options.c
 printer_options_LDADD = -lm $(LIBGIMPPRINT_LIBS)
 printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+gimp_print_version_SOURCES = gimp-print-version.c
+gimp_print_version_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+gimp_print_version_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+paper_sizes_SOURCES = paper_sizes.c
+paper_sizes_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+paper_sizes_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../../src/main
@@ -55,6 +60,6 @@ install: @FOOMATIC_INSTALL@
 clean-local:
 	-rm -rf foomatic-db
 
-foomatic-data: printer_options
+foomatic-data: printer_options gimp-print-version paper_sizes
 	-rm -rf foomatic-db
 	./foomatic-generator

@@ -1,3 +1,12 @@
+gimp-print (4.1.7-1) unstable; urgency=low
+
+  * New package libgimpprint-doc for Info and dvi docs. (Roger Leigh)
+  * Change debian/rules to use separate binary-arch and binary-indep
+    targets (Roger Leigh)
+  * New upstream release
+
+ -- Eric Sharkey <sharkey@debian.org>  Wed,  9 May 2001 12:19:43 -0400
+
 gimp-print (4.1.6-2) unstable; urgency=low
 
   * Fix build dependencies to include flex, Closes: #96401

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.4.2.1 2001/03/05 17:44:23 sharkey Exp $"
+ * "$Id: testdither.c,v 1.4.2.2 2001/05/09 16:32:51 sharkey Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -146,6 +146,11 @@ main(int  argc,				/* I - Number of command-line arguments */
 		  "random"
 		};
 
+ /*
+  * Initialise libgimpprint
+  */
+
+  stp_init();
 
  /*
   * Get command-line args...
@@ -727,5 +732,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.4.2.1 2001/03/05 17:44:23 sharkey Exp $".
+ * End of "$Id: testdither.c,v 1.4.2.2 2001/05/09 16:32:51 sharkey Exp $".
  */

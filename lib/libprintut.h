@@ -1,5 +1,5 @@
 /*
- * $Id: libprintut.h,v 1.2 2001/02/03 19:42:09 rleigh Exp $
+ * $Id: libprintut.h,v 1.2.4.1 2001/05/09 16:32:49 sharkey Exp $
  * Header for utility library functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -30,8 +30,8 @@
 #ifndef HAVE_ASPRINTF
 #include <stdarg.h>
 #include <varargs.h>
-extern int vasprintf (char **result, const char *format, va_list args)
-extern int asprintf (char **result, const char *format, ...)
+extern int vasprintf (char **result, const char *format, va_list args);
+extern int asprintf (char **result, const char *format, ...);
 #endif
 
 #ifndef HAVE_XMALLOC

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.4.2 2001/04/30 17:47:12 sharkey Exp $"
+ * "$Id: print-ps.c,v 1.5.4.3 2001/05/09 16:32:51 sharkey Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -147,6 +147,74 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
     return (valptrs);
 }
 
+static const char *
+ps_default_parameters(const stp_printer_t printer,
+		      const char *ppd_file,
+		      const char *name)
+{
+  int		i;
+  char		line[1024],
+		lname[255],
+		loption[255];
+
+  if (ppd_file == NULL || name == NULL)
+    return (NULL);
+
+  if (strcmp(name, "Resolution") == 0)
+    {
+      return _("default");
+    }
+
+  if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
+  {
+    if (ps_ppd != NULL)
+      fclose(ps_ppd);
+
+    ps_ppd = fopen(ppd_file, "r");
+
+    if (ps_ppd == NULL)
+      ps_ppd_file = NULL;
+    else
+      ps_ppd_file = ppd_file;
+  }
+
+  if (ps_ppd == NULL)
+    {
+      if (strcmp(name, "PageSize") == 0)
+	{
+	  int papersizes = stp_known_papersizes();
+	  for (i = 0; i < papersizes; i++)
+	    {
+	      const stp_papersize_t pt = stp_get_papersize_by_index(i);
+	      if (strlen(stp_papersize_get_name(pt)) > 0)
+		{
+		  return _(stp_papersize_get_name(pt));
+		}
+	    }
+	  return NULL;
+	}
+      else
+	return (NULL);
+    }
+
+  rewind(ps_ppd);
+
+  while (fgets(line, sizeof(line), ps_ppd) != NULL)
+  {
+    if (line[0] != '*')
+      continue;
+
+    if (sscanf(line, "*%s %[^/:]", lname, loption) != 2)
+      continue;
+
+    if (strcasecmp(lname, name) == 0)
+    {
+      return _(loption);
+    }
+  }
+  return NULL;
+}
+
 
 /*
  * 'ps_media_size()' - Return the size of the page.
@@ -229,12 +297,6 @@ ps_limit(const stp_printer_t printer,	/* I - Printer model */
 {
   *width =	INT_MAX;
     *height =	INT_MAX;
-}
-
-static const char *
-ps_default_resolution(const stp_printer_t printer)
-{
-  return "default";
 }
 
 /*
@@ -364,9 +426,6 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   printf("left = %d, top = %d\n", left, top);
 #endif /* DEBUG */
 
-#ifdef __EMX__
-  _fsetmode(v, "t");
-#endif
   stp_puts("%!PS-Adobe-3.0\n", v);
 #ifdef HAVE_CONFIG_H
   stp_zprintf(v, "%%%%Creator: %s/Gimp-Print %s (%s)\n",
@@ -767,7 +826,7 @@ const stp_printfuncs_t stp_ps_printfuncs =
   ps_imageable_area,
   ps_limit,
   ps_print,
-  ps_default_resolution,
+  ps_default_parameters,
   ps_describe_resolution,
   stp_verify_printer_params
 };

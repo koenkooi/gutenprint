@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2.4.1 2001/05/09 16:32:51 sharkey Exp $
+## $Id: Makefile.am,v 1.1.2.1 2001/05/09 16:32:49 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,18 +23,25 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-AM_CFLAGS = @CFLAGS@ @MAINTAINER_CFLAGS@
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
+DOCS = \
+ FAQ.html \
+ README.dither \
+ README.escp2 \
+ README.maintaining \
+ README.new-printer \
+ README.weave \
+ docbook.css \
+ print-color.png \
+ print-main.png \
+ print-setup.png \
+ print.html \
+ print.sgml
 
-LFLAGS = -i
-YFLAGS = -d
+info_TEXINFOS = gimpprint.texi
 
-noinst_PROGRAMS = printdef
-printdef_SOURCES = printdefl.l printdefy.y printdef.h
+gimpprint_TEXINFOS = gpl.texi
 
-printdefl.o: printdefy.o
-
-DISTCLEANFILES = printdefl.c printdefy.c printdefy.h
+DISTCLEANFILES =
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = printdefy.h
+EXTRA_DIST = $(DOCS)

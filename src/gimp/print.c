@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.4.2 2001/04/30 17:47:12 sharkey Exp $"
+ * "$Id: print.c,v 1.4.4.3 2001/05/09 16:32:50 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -180,7 +180,7 @@ query (void)
   gimp_install_procedure ("file_print_gimp",
 			  blurb, help, auth, copy,
 			  PLUG_IN_VERSION,
-			  N_("<Image>/File/Print (Gimp)..."),
+			  N_("<Image>/File/Print..."),
 			  types,
 			  PROC_PLUG_IN,
 			  nargs, 0,
@@ -247,7 +247,7 @@ run (char   *name,		/* I - Name of print program. */
 {
   GDrawable	*drawable;	/* Drawable for image */
   GRunModeType	 run_mode;	/* Current run mode */
-  FILE		*prn;		/* Print file/command */
+  FILE		*prn = NULL;	/* Print file/command */
   int		 ncolors;	/* Number of colors in colormap */
   GParam	*values;	/* Return values */
 #ifdef __EMX__
@@ -264,6 +264,12 @@ run (char   *name,		/* I - Name of print program. */
   while (SDEBUG)
     ;
 #endif
+
+ /*
+  * Initialise libgimpprint
+  */
+
+  stp_init();
 
 #ifdef INIT_I18N_UI
   INIT_I18N_UI();
@@ -1426,5 +1432,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.4.2 2001/04/30 17:47:12 sharkey Exp $".
+ * End of "$Id: print.c,v 1.4.4.3 2001/05/09 16:32:50 sharkey Exp $".
  */

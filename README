@@ -1,4 +1,4 @@
-This is Gimp-Print version 4.1.6, a development release in the 4.1
+This is Gimp-Print version 4.1.7, a development release in the 4.1
 line.  Gimp-print is the print facility for the Gimp, and in addition
 a suite of drivers that may be used with common UNIX spooling systems
 using GhostScript or CUPS.  These drivers provide printing quality for
@@ -173,6 +173,7 @@ libgimpprint		The libgimpprint library (GIMP-Print core).
 libgimpprint-dev	Headers, symlinks, m4 macro (AM_PATH_GIMPPRINT)
 			and gimpprint-config needed to develop programs
 			that link with libgimpprint.
+libgimpprint-doc	Documentation in Info and dvi format.
 escputil		The escputil printer tool.
 
 The library symlinks will get packaged without any modification needed

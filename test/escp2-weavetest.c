@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.9.2.2 2001/04/30 17:47:13 sharkey Exp $"
+ * "$Id: escp2-weavetest.c,v 1.9.2.3 2001/05/09 16:32:51 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -334,6 +334,12 @@ main(int argc, char **argv)
   int color_jet_arrangement;
   int quiet = 0;
   int status = 0;
+
+ /*
+  * Initialise libgimpprint
+  */
+
+  stp_init();
 
   v = stp_allocate_vars();
   stp_set_outfunc(v, writefunc);

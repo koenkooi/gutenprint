@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13.4.2 2001/04/30 17:47:12 sharkey Exp $
+## $Id: Makefile.am,v 1.13.4.3 2001/05/09 16:32:50 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,11 +23,8 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+AM_CFLAGS = @MAINTAINER_CFLAGS@
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
-
-AM_CPPFLAGS =\
- -DLOCALEDIR=\""$(localedir)"\"\
- @MAINTAINER_CFLAGS@
 
 bin_SCRIPTS = gimpprint-config
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.7.2.1 2001/03/05 17:44:20 sharkey Exp $"
+ * "$Id: genppd.c,v 1.7.2.2 2001/05/09 16:32:50 sharkey Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -164,6 +164,12 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   prefix = "ppd";
 
+ /*
+  * Initialise libgimpprint
+  */
+
+  stp_init();
+
   for (i = 1; i < argc; i ++)
     if (strcmp(argv[i], "--help") == 0)
     {
@@ -226,7 +232,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   msize_t	*size;			/* Page size */
   int		num_opts;		/* Number of printer options */
   char		**opts;			/* Printer options */
-  char		*opt;			/* Pointer into option string */
+  const char	*opt;			/* Pointer into option string */
+  const char	*defopt;
   int		xdpi, ydpi;		/* Resolution info */
   stp_vars_t	v;			/* Variable info */
   int		width, height,		/* Page information */
@@ -310,10 +317,13 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   */
 
   opts = (*(printfuncs->parameters))(p, NULL, "PageSize", &num_opts);
+  defopt = (*(printfuncs->default_parameters))(p, NULL, "PageSize");
 
   gzputs(fp, "*OpenUI *PageSize: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageSize\n");
-  gzputs(fp, "*DefaultPageSize: " DEFAULT_SIZE "\n");
+  gzputs(fp, "*DefaultPageSize: ");
+  gzputs(fp, defopt);
+  gzputs(fp, "\n");
 
   v = stp_allocate_copy(printvars);
 
@@ -323,6 +333,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
     * Get the media size...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -343,13 +355,17 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 
   gzputs(fp, "*OpenUI *PageRegion: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageRegion\n");
-  gzputs(fp, "*DefaultPageRegion: " DEFAULT_SIZE "\n");
+  gzputs(fp, "*DefaultPageRegion: ");
+  gzputs(fp, defopt);
+  gzputs(fp, "\n");
 
   for (i = 0; i < num_opts; i ++)
   {
    /*
     * Get the media size...
     */
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -368,13 +384,17 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   }
   gzputs(fp, "*CloseUI: *PageRegion\n");
 
-  gzputs(fp, "*DefaultImageableArea: " DEFAULT_SIZE "\n");
+  gzputs(fp, "*DefaultImageableArea: ");
+  gzputs(fp, defopt);
+  gzputs(fp, "\n");
   for (i = 0; i < num_opts; i ++)
   {
    /*
     * Get the media size and margins...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -393,7 +413,9 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
              left, bottom, right, top);
   }
 
-  gzputs(fp, "*DefaultPaperDimension: " DEFAULT_SIZE "\n");
+  gzputs(fp, "*DefaultPaperDimension: ");
+  gzputs(fp, defopt);
+  gzputs(fp, "\n");
 
   for (i = 0; i < num_opts; i ++)
   {
@@ -401,6 +423,8 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
     * Get the media size...
     */
 
+    if (strcmp(opts[i], "Custom") == 0)
+      continue;
     stp_set_media_size(v, opts[i]);
 
     (*(printfuncs->media_size))(p, v, &width, &height);
@@ -467,13 +491,14 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   */
 
   opts = (*(printfuncs->parameters))(p, NULL, "MediaType", &num_opts);
+  defopt = (*(printfuncs->default_parameters))(p, NULL, "MediaType");
 
   if (num_opts > 0)
   {
     gzputs(fp, "*OpenUI *MediaType: PickOne\n");
     gzputs(fp, "*OrderDependency: 10 AnySetup *MediaType\n");
     gzputs(fp, "*DefaultMediaType: ");
-    for (opt = opts[0]; *opt; opt ++)
+    for (opt = defopt; *opt; opt ++)
       if (*opt != ' ' && *opt != '/')
 	gzputc(fp, *opt);
     gzputc(fp, '\n');
@@ -500,13 +525,14 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   */
 
   opts = (*(printfuncs->parameters))(p, NULL, "InputSlot", &num_opts);
+  defopt = (*(printfuncs->default_parameters))(p, NULL, "InputSlot");
 
   if (num_opts > 0)
   {
     gzputs(fp, "*OpenUI *InputSlot: PickOne\n");
     gzputs(fp, "*OrderDependency: 10 AnySetup *InputSlot\n");
     gzputs(fp, "*DefaultInputSlot: ");
-    for (opt = opts[0]; *opt; opt ++)
+    for (opt = defopt; *opt; opt ++)
       if (*opt != ' ' && *opt != '/')
 	gzputc(fp, *opt);
     gzputc(fp, '\n');
@@ -561,9 +587,22 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
   */
 
   opts = (*(printfuncs->parameters))(p, NULL, "Resolution", &num_opts);
-
+  defopt = (*(printfuncs->default_parameters))(p, NULL, "Resolution");
   gzputs(fp, "*OpenUI *Resolution: PickOne\n");
   gzputs(fp, "*OrderDependency: 20 AnySetup *Resolution\n");
+
+  if (defopt)
+    {
+      const char *s = defopt;
+      char *copy = xmalloc(strlen(defopt) + 1);
+      char *d = copy;
+      do
+	{
+	  if (*s != ' ' && *s != '\t' && *s != '-')
+	    *d++ = *s;
+	} while (*s++);
+      gzprintf(fp, "*DefaultResolution: %s\n", copy);
+    }
 
   for (i = 0; i < num_opts; i ++)
   {
@@ -588,12 +627,6 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
    /*
     * Write the resolution option...
     */
-
-    if (printed_default_resolution == 0)
-    {
-      gzprintf(fp, "*DefaultResolution: %s\n", copy);
-      printed_default_resolution = 1;
-    }
 
     gzprintf(fp, "*Resolution %s/%s:\t\"<</HWResolution[%d %d]/cupsCompression %d>>setpagedevice\"\n",
              copy, opts[i], xdpi, ydpi, i);
@@ -650,5 +683,5 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.7.2.1 2001/03/05 17:44:20 sharkey Exp $".
+ * End of "$Id: genppd.c,v 1.7.2.2 2001/05/09 16:32:50 sharkey Exp $".
  */

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.2 2001/04/30 17:47:11 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.3 2001/05/09 16:32:49 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = intl lib man src test po
+SUBDIRS = doc intl lib man src test po
 
 if MAINTAINER_MODE
 MAINT_MODE = true
@@ -59,10 +59,10 @@ ChangeLog:
 	fi
 
 dist-hook:
-	for dir in debian doc scripts ; do \
-	  if test -d $$dir ; then \
+	for dir in debian scripts ; do \
+	  if test -d $(top_srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $$dir/*; do \
+	    for dirfile in $(top_srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \
@@ -71,14 +71,12 @@ dist-hook:
 	done
 # Do some extra magic to make a distribution for GIMP CVS
 	if test -f .gimp-dist ; then \
-	  rm -rf $(distdir)/src/cups $(distdir)/src/ghost ; \
-	  rm -rf $(distdir)/scripts $(distdir)/test ; \
-	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/stamp-h.in ; \
+	  rm -rf $(distdir)/src/cups $(distdir)/src/escputil $(distdir)/src/foomatic $(distdir)/src/ghost ; \
+	  rm -rf $(distdir)/debian $(distdir)/scripts $(distdir)/test ; \
+	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/configure $(distdir)/stamp-h.in ; \
 	  find $(distdir) -name Makefile.in -print | xargs --no-run-if-empty rm ; \
 	  rm -f .gimp-dist ; \
 	fi
-
-.PHONY: gimp-dist install-gimp install-cups install-ghost snapshot ChangeLog
 
 gimp-dist:
 	touch .gimp-dist

@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.18.2.2 2001/04/30 17:47:11 sharkey Exp $
+dnl $Id: configure.in.in,v 1.18.2.3 2001/05/09 16:32:49 sharkey Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -55,8 +55,8 @@ dnl For more detailed information, see the libtool info documentation.
 dnl
 GIMPPRINT_MAJOR_VERSION=4
 GIMPPRINT_MINOR_VERSION=1
-GIMPPRINT_MICRO_VERSION=6
-GIMPPRINT_CURRENT_INTERFACE=3
+GIMPPRINT_MICRO_VERSION=7
+GIMPPRINT_CURRENT_INTERFACE=4
 GIMPPRINT_INTERFACE_AGE=0
 GIMPPRINT_BINARY_AGE=0
 GIMPPRINT_VERSION=$GIMPPRINT_MAJOR_VERSION.$GIMPPRINT_MINOR_VERSION.$GIMPPRINT_MICRO_VERSION
@@ -93,7 +93,7 @@ dnl Save this value here, since automake will set cflags later.
 cflags_set=${CFLAGS+set}
 
 dnl Initialize automake stuff.
-AM_INIT_AUTOMAKE(gimp-print, $GIMPPRINT_VERSION)
+AM_INIT_AUTOMAKE(gimp-print, ${GIMPPRINT_VERSION})
 
 dnl Specify a configuration file.
 AM_CONFIG_HEADER(config.h)
@@ -113,7 +113,7 @@ fi
 
 dnl Compiler options and definitions
 CFLAGS="${CFLAGS:=}"
-INCLUDES="${INCLUDES} -I\$(top_srcdir)/src/include -I\$(top_builddir)/src/include"
+INCLUDES="${INCLUDES} -I\$(top_srcdir)/src/include -I\$(top_builddir)/src/include -I\$(top_srcdir)/intl"
 OPTIM=""
 
 dnl Defaults
@@ -210,7 +210,7 @@ AC_ARG_WITH(ghost,
 
 AC_MSG_CHECKING([whether to build foomatic data files])
 AC_ARG_WITH(foomatic,
-[  --with-foomatic            build foomatic data files [default=${BUILD_FOOMATIC}]],
+[  --with-foomatic          build foomatic data files [default=${BUILD_FOOMATIC}]],
   [case "${withval}" in
     yes) BUILD_FOOMATIC="yes" ; AC_MSG_RESULT([yes]) ;;
     no) BUILD_FOOMATIC="no" ; AC_MSG_RESULT([no]) ;;
@@ -277,6 +277,8 @@ AC_PATH_PROG(PERL_PROG, perl)
 
 dnl GNU gettext checks.
 AM_GNU_GETTEXT
+
+dnl Set PACKAGE_LOCALE_DIR in config.h
 if test "x${prefix}" = "xNONE"; then
   AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${ac_default_prefix}/${DATADIRNAME}/locale")
 else
@@ -396,6 +398,7 @@ fi
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
+AC_C_INLINE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
@@ -421,7 +424,7 @@ AC_CHECK_FUNC(getopt_long,
 
 dnl Define what has to be built
 if test x${BUILD_FOOMATIC} = xyes ; then
-  FOOMATIC_NOINST_BIN="printer_options"
+  FOOMATIC_NOINST_BIN="printer_options paper_sizes gimp-print-version"
   FOOMATIC_INSTALL="install-am"
 else
   FOOMATIC_INSTALL=""
@@ -579,9 +582,10 @@ dnl po/Makefile.in *MUST* be surrounded by spaces to work with buggy
 dnl gettext 0.10.36.  Do not move this file to the beginning or end
 dnl of a line.
 AC_OUTPUT([
-Makefile intl/Makefile lib/Makefile man/Makefile man/cups-calibrate.8
-man/escputil.1 man/gimpprint-config.1 po/Makefile.in src/Makefile
-src/cups/Makefile src/escputil/Makefile src/foomatic/Makefile
+Makefile doc/Makefile intl/Makefile lib/Makefile man/Makefile
+man/cups-calibrate.8 man/escputil.1 man/gimpprint.3
+man/gimpprint-config.1 po/Makefile.in src/Makefile src/cups/Makefile
+src/escputil/Makefile src/foomatic/Makefile
 src/foomatic/foomatic-generator src/ghost/Makefile src/gimp/Makefile
 src/include/Makefile src/include/gimp-print.h src/main/Makefile
 src/main/gimpprint-config src/printdef/Makefile test/Makefile
