@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.5 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.6 2003/04/27 17:32:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -297,6 +297,7 @@ stpi_dither_set_ranges_and_shades_simple(stp_vars_t v, int color, int nlevels,
   int i;
   s.dot_sizes = d;
   s.subchannel = 0;
+  s.value = 65535.0;
   s.numsizes = nlevels;
 
   for (i = 0; i < nlevels; i++)
