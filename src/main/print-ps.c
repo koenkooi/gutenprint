@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.49 2003/01/12 22:38:33 rlk Exp $"
+ * "$Id: print-ps.c,v 1.50 2003/01/14 00:23:44 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -573,7 +573,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
 
     stp_puts("[ 1 0 0 -1 0 1 ]\n", v);
 
-    if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
+    if (output_type == OUTPUT_GRAY)
       stp_puts("{currentfile picture readhexstring pop} image\n", v);
     else
       stp_puts("{currentfile picture readhexstring pop} false 3 colorimage\n", v);
@@ -594,7 +594,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
   }
   else
   {
-    if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
+    if (output_type == OUTPUT_GRAY)
       stp_puts("/DeviceGray setcolorspace\n", v);
     else
       stp_puts("/DeviceRGB setcolorspace\n", v);
@@ -606,7 +606,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
     stp_zprintf(v, "\t/Height %d\n", image_height);
     stp_puts("\t/BitsPerComponent 8\n", v);
 
-    if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
+    if (output_type == OUTPUT_GRAY)
       stp_puts("\t/Decode [ 0 1 ]\n", v);
     else
       stp_puts("\t/Decode [ 0 1 0 1 0 1 ]\n", v);

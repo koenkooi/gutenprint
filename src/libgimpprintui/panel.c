@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.8 2003/01/12 22:38:30 rlk Exp $"
+ * "$Id: panel.c,v 1.9 2003/01/14 00:23:41 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -244,10 +244,7 @@ static radio_group_t output_types[] =
   {
     { N_("Color"), N_("Color output"), OUTPUT_COLOR, NULL },
     { N_("Grayscale"),
-      N_("Print in shades of gray using black ink"), OUTPUT_GRAY, NULL },
-    { N_("Black and White"),
-      N_("Print in black and white (no color, and no shades of gray)"),
-      OUTPUT_MONOCHROME, NULL }
+      N_("Print in shades of gray using black ink"), OUTPUT_GRAY, NULL }
   };
 
 static const gint output_type_count = (sizeof(output_types) /

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.219 2003/01/12 22:38:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220 2003/01/14 00:23:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1366,7 +1366,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 
   ink_type = get_inktype(nv, model);
   total_channels = count_channels(ink_type);
-  if (output_type != OUTPUT_GRAY && output_type != OUTPUT_MONOCHROME &&
+  if (output_type != OUTPUT_GRAY &&
       output_type != OUTPUT_RAW_PRINTER && !ink_type->is_color)
     {
       output_type = OUTPUT_GRAY;
@@ -1430,7 +1430,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
   memset(head_offset, 0, sizeof(head_offset));
   if (output_type == OUTPUT_RAW_PRINTER)
     channel_limit = escp2_physical_channels(model, v);
-  else if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
+  else if (output_type == OUTPUT_GRAY)
     channel_limit = 1;
   else
     channel_limit = NCOLORS;
@@ -1516,8 +1516,6 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
   init.model = model;
   init.v = nv;
   init.output_type = output_type;
-  if (init.output_type == OUTPUT_MONOCHROME)
-    init.output_type = OUTPUT_GRAY;
   init.ydpi = ydpi * undersample;
   if (init.ydpi > escp2_max_vres(init.model, init.v))
     init.ydpi = escp2_max_vres(init.model, init.v);
