@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.66 2000/02/26 16:07:44 rlk Exp $"
+ * "$Id: print.c,v 1.67 2000/02/26 17:59:46 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -395,7 +395,7 @@ query(void)
       _("This plug-in prints images from The GIMP."),
       _("Prints images to PostScript, PCL, or ESC/P2 printers."),
       "Michael Sweet <mike@easysw.com> and Robert Krawitz <rlk@alum.mit.edu>",
-      "Copyright 1997-1999 by Michael Sweet and Robert Krawitz",
+      "Copyright 1997-2000 by Michael Sweet and Robert Krawitz",
       PLUG_IN_VERSION,
       N_("<Image>/File/Print..."),
       "RGB*,GRAY*,INDEXED*",
@@ -3610,5 +3610,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.66 2000/02/26 16:07:44 rlk Exp $".
+ * End of "$Id: print.c,v 1.67 2000/02/26 17:59:46 rlk Exp $".
  */
