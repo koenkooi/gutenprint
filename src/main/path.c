@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.1 2003/01/06 20:57:39 rleigh Exp $"
+ * "$Id: path.c,v 1.2 2003/01/09 03:08:16 rlk Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -31,7 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "list.h"
 #include "path.h"
 
 static int stp_path_check(const struct dirent *module);

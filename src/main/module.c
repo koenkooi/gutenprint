@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.2 2003/01/07 18:18:15 rleigh Exp $"
+ * "$Id: module.c,v 1.3 2003/01/09 03:08:16 rlk Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -70,11 +70,11 @@ extern stp_module_t raw_LTX_stp_module_data;
  */
 static stp_module_t *static_modules[] =
   {
+    &ps_LTX_stp_module_data,
     &canon_LTX_stp_module_data,
     &escp2_LTX_stp_module_data,
-    &lexmark_LTX_stp_module_data,
     &pcl_LTX_stp_module_data,
-    &ps_LTX_stp_module_data,
+    &lexmark_LTX_stp_module_data,
     &raw_LTX_stp_module_data,
     NULL
   };
@@ -299,7 +299,9 @@ stp_module_open(const char *modulename /* Module filename */)
 static int stp_module_register(stp_module_t *module /* Module to register */)
 {
   /* Add to the module list */
-  if (stp_list_item_create(module_list, NULL, (void *) module))
+  if (stp_list_item_create(module_list,
+			   stp_list_get_end(module_list),
+			   (void *) module))
     return 1;
 
 #ifdef DEBUG

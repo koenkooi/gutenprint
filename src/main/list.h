@@ -1,5 +1,5 @@
 /*
- * "$Id: list.h,v 1.3 2003/01/01 02:46:29 rlk Exp $"
+ * "$Id: list.h,v 1.4 2003/01/09 03:08:16 rlk Exp $"
  *
  *   libgimpprint list functions.
  *
@@ -52,14 +52,11 @@ typedef struct stp_internal_list_head
   struct stp_internal_list_node *start;     /* start node */
   struct stp_internal_list_node *end;       /* end node */
   struct stp_internal_list_node *cache;     /* cached node */
-  void (*freefunc)(stp_list_item_t *item);  /* callback: free node data */
-  const char *(*namefunc)(const stp_list_item_t *item);
-                                            /* callback: get node name */
-  const char *(*long_namefunc)(const stp_list_item_t *item);
-                                            /* callback: get node long name */
-  int (*sortfunc)(const stp_list_item_t *item1,
-		  const stp_list_item_t *item2);
-                                            /* callback: sort nodes */
+  node_freefunc freefunc;	/* callback: free node data */
+  node_copyfunc copyfunc;	/* callback: copy node */
+  node_namefunc namefunc;	/* callback: get node name */
+  node_namefunc long_namefunc;	/* callback: get node long name */
+  node_sortfunc sortfunc;	/* callback: compare (sort) nodes */
 } stp_internal_list_head_t;
 
 
