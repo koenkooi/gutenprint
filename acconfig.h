@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.2 2001/01/22 19:58:37 rleigh Exp $
+ * $Id: acconfig.h,v 1.3 2001/01/24 02:03:25 rlk Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -52,6 +52,8 @@
 /* Define if xmalloc is present */
 #undef HAVE_XMALLOC
 
+/* Define if libz is present */
+#undef HAVE_LIBZ
 
 /* Definitions for GNU gettext (taken from gettext source and gettext.info */
 
