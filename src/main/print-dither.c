@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115.2.2 2003/01/15 02:29:37 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.3 2003/01/18 00:42:48 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -236,7 +236,6 @@ typedef struct dither
   unsigned short virtual_dot_scale[65536];
   void (*ditherfunc)(const unsigned short *, int, struct dither *, int, int);
   eventone_t *eventone;
-  stp_vars_t v;
 } dither_t;
 
 typedef void ditherfunc_t(const unsigned short *, int, struct dither *, int, int);
@@ -451,10 +450,11 @@ do								\
 } while (0)
 
 static ditherfunc_t *
-stp_set_dither_function(dither_t *d, int image_bpp)
+stp_set_dither_function(stp_vars_t v, int image_bpp)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i;
-  const char *algorithm = stp_get_string_parameter(d->v, "DitherAlgorithm");
+  const char *algorithm = stp_get_string_parameter(v, "DitherAlgorithm");
   d->dither_type = D_ADAPTIVE_HYBRID;
   if (algorithm)
     {
@@ -475,15 +475,15 @@ stp_set_dither_function(dither_t *d, int image_bpp)
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_fast, v);
 	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, v);
 	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_raw_ordered, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_ordered, v);
 	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_raw_et, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_et, v);
 	default:
-	  RETURN_DITHERFUNC(stp_dither_raw_ed, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
 	}
       break;
     case OUTPUT_RAW_PRINTER:
@@ -492,15 +492,15 @@ stp_set_dither_function(dither_t *d, int image_bpp)
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_fast, v);
 	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, v);
 	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_raw_ordered, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_ordered, v);
 	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_raw_et, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_et, v);
 	default:
-	  RETURN_DITHERFUNC(stp_dither_raw_ed, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_ed, v);
 	}
       break;
     case OUTPUT_RAW_CMYK:
@@ -509,19 +509,19 @@ stp_set_dither_function(dither_t *d, int image_bpp)
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_fast, v);
 	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_very_fast, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_very_fast, v);
 	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ordered, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ordered, v);
 	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_et, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_et, v);
 	default:
-	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ed, d->v);
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ed, v);
 	}
       break;
     }
-  RETURN_DITHERFUNC(NULL, d->v);
+  RETURN_DITHERFUNC(NULL, v);
 }
 
 void
@@ -536,10 +536,12 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   const stp_dotsize_t ds = {1, 1.0};
   stp_shade_t shade;
 
+  stp_set_dither_data(v, d);
+
   d->dither_class = stp_get_output_type(v);
   d->error_rows = ERROR_ROWS;
   d->n_ghost_channels = 0;
-  d->ditherfunc = stp_set_dither_function(d, image_bpp);
+  d->ditherfunc = stp_set_dither_function(v, image_bpp);
 
   d->channel = stp_zalloc(d->n_channels * sizeof(dither_channel_t));
   r.value = 1.0;
@@ -554,8 +556,8 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 
   for (i = 0; i < d->n_channels; i++)
     {
-      stp_dither_set_ranges(d, i, 1, &r, 1.0);
-      /* stp_dither_set_shades(d, i, 1, &shade, 1.0); */
+      stp_dither_set_ranges(v, i, 1, &r, 1.0);
+      /* stp_dither_set_shades(v, i, 1, &shade, 1.0); */
       PHYSICAL_CHANNEL(d, i).errs = stp_zalloc(d->error_rows * sizeof(int *));
     }
   d->offset0_table = NULL;
@@ -578,7 +580,7 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
     {
       if (stp_check_int_parameter(v, "DitherVeryFastSteps"))
 	stp_dither_set_iterated_matrix
-	  (d, 2, stp_get_int_parameter(v, "DitherVeryFastSteps"), sq2, 0, 2,4);
+	  (v, 2, stp_get_int_parameter(v, "DitherVeryFastSteps"), sq2, 0, 2,4);
       else
 	stp_dither_set_iterated_matrix(d, 2, DITHER_FAST_STEPS, sq2, 0, 2, 4);
     }
@@ -587,7 +589,7 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 	    (stp_get_curve_parameter(v, "DitherMatrix"))))
     {
       stp_dither_set_matrix_from_curve
-	(d, stp_get_curve_parameter(v, "DitherMatrix"));
+	(v, stp_get_curve_parameter(v, "DitherMatrix"));
     }
   else
     {
@@ -619,26 +621,26 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 	  else
 	    mat = (stp_dither_matrix_t *) &stp_dither_matrix_2_1;
 	}
-      stp_dither_set_matrix(d, mat, transposed, 0, 0);
+      stp_dither_set_matrix(v, mat, transposed, 0, 0);
     }
 
   d->src_width = in_width;
   d->dst_width = out_width;
 
-  stp_dither_set_ink_spread(d, 13);
+  stp_dither_set_ink_spread(v, 13);
   for (i = 0; i <= d->n_channels; i++)
     {
-      stp_dither_set_randomizer(d, i, 1.0);
+      stp_dither_set_randomizer(v, i, 1.0);
     }
-  stp_dither_set_density(d, 1.0);
+  stp_dither_set_density(v, 1.0);
   d->dt.channel_count = 0;
   d->dt.c = NULL;
-  stp_set_dither_data(v, d);
 }
 
 static void
-preinit_matrix(dither_t *d)
+preinit_matrix(stp_vars_t v)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i;
   for (i = 0; i < PHYSICAL_CHANNEL_COUNT(d); i++)
     stp_dither_matrix_destroy(&(PHYSICAL_CHANNEL(d, i).dithermat));
@@ -646,8 +648,9 @@ preinit_matrix(dither_t *d)
 }
 
 static void
-postinit_matrix(dither_t *d, int x_shear, int y_shear)
+postinit_matrix(stp_vars_t v, int x_shear, int y_shear)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   unsigned rc = 1 + (unsigned) ceil(sqrt(PHYSICAL_CHANNEL_COUNT(d)));
   int i, j;
   int color = 0;
@@ -664,7 +667,7 @@ postinit_matrix(dither_t *d, int x_shear, int y_shear)
 				  x_n * i, y_n * j);
 	  color++;
 	}
-  stp_dither_set_transition(d, d->transition);
+  stp_dither_set_transition(v, d->transition);
 }
 
 void
@@ -673,9 +676,9 @@ stp_dither_set_iterated_matrix(stp_vars_t v, size_t edge, size_t iterations,
 			       int x_shear, int y_shear)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
-  preinit_matrix(d);
+  preinit_matrix(v);
   stp_dither_matrix_iterated_init(&(d->dither_matrix), edge, iterations, data);
-  postinit_matrix(d, x_shear, y_shear);
+  postinit_matrix(v, x_shear, y_shear);
 }
 
 void
@@ -694,16 +697,16 @@ stp_dither_set_matrix(stp_vars_t v, const stp_dither_matrix_t *matrix,
     stp_dither_matrix_init(&(d->dither_matrix), x, y,
 			   (const unsigned *)matrix->data,
 			   transposed, matrix->prescaled);
-  postinit_matrix(d, x_shear, y_shear);
+  postinit_matrix(v, x_shear, y_shear);
 }
 
 void
 stp_dither_set_matrix_from_curve(stp_vars_t v, const stp_curve_t curve)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
-  preinit_matrix(d);
+  preinit_matrix(v);
   stp_dither_matrix_init_from_curve(&(d->dither_matrix), curve);
-  postinit_matrix(d, 0, 0);
+  postinit_matrix(v, 0, 0);
 }
 
 void
@@ -823,8 +826,9 @@ stp_dither_set_light_ink(stp_vars_t v, int i, double val, double density)
 }
 
 static void
-stp_dither_finalize_ranges(dither_t *d, dither_channel_t *s)
+stp_dither_finalize_ranges(stp_vars_t v, dither_channel_t *s)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int max_subchannel = 0;
   int i;
   unsigned lbit = s->bit_max;
@@ -860,15 +864,15 @@ stp_dither_finalize_ranges(dither_t *d, dither_channel_t *s)
       if (s->ranges[i].upper->dot_size > s->maxdot)
 	s->maxdot = s->ranges[i].upper->dot_size;
 
-      stp_dprintf(STP_DBG_INK, d->v,
+      stp_dprintf(STP_DBG_INK, v,
 		  "    level %d value[0] %d value[1] %d range[0] %d range[1] %d\n",
 		  i, s->ranges[i].lower->value, s->ranges[i].upper->value,
 		  s->ranges[i].lower->range, s->ranges[i].upper->range);
-      stp_dprintf(STP_DBG_INK, d->v,
+      stp_dprintf(STP_DBG_INK, v,
 		  "       bits[0] %d bits[1] %d subchannel[0] %d subchannel[1] %d\n",
 		  s->ranges[i].lower->bits, s->ranges[i].upper->bits,
 		  s->ranges[i].lower->subchannel, s->ranges[i].upper->subchannel);
-      stp_dprintf(STP_DBG_INK, d->v,
+      stp_dprintf(STP_DBG_INK, v,
 		  "       rangespan %d valuespan %d same_ink %d equal %d\n",
 		  s->ranges[i].range_span, s->ranges[i].value_span,
 		  s->ranges[i].is_same_ink, s->ranges[i].is_equal);
@@ -879,7 +883,7 @@ stp_dither_finalize_ranges(dither_t *d, dither_channel_t *s)
 	  if (d->adaptive_limit > 65535)
 	    d->adaptive_limit = 65535;
 	  d->adaptive_input = (double) d->adaptive_limit / (double) d->density;
-	  stp_dprintf(STP_DBG_INK, d->v,
+	  stp_dprintf(STP_DBG_INK, v,
 		      "Setting adaptive limit to %d, input %f\n",
 		      d->adaptive_limit, d->adaptive_input);
 	}
@@ -894,15 +898,16 @@ stp_dither_finalize_ranges(dither_t *d, dither_channel_t *s)
   s->row_ends[0] = stp_zalloc(s->subchannels * sizeof(int));
   s->row_ends[1] = stp_zalloc(s->subchannels * sizeof(int));
   s->ptrs = stp_zalloc(s->subchannels * sizeof(char *));
-  stp_dprintf(STP_DBG_INK, d->v,
+  stp_dprintf(STP_DBG_INK, v,
 	      "  bit_max %d signif_bits %d\n", s->bit_max, s->signif_bits);
 }
 
 static void
-stp_dither_set_generic_ranges(dither_t *d, dither_channel_t *s, int nlevels,
+stp_dither_set_generic_ranges(stp_vars_t v, dither_channel_t *s, int nlevels,
 			      const stp_dither_range_simple_t *ranges,
 			      double density)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -917,11 +922,11 @@ stp_dither_set_generic_ranges(dither_t *d, dither_channel_t *s, int nlevels,
     stp_zalloc((s->nlevels + 1) * sizeof(ink_defn_t));
   s->bit_max = 0;
   s->density = density * 65535;
-  stp_dprintf(STP_DBG_INK, d->v,
+  stp_dprintf(STP_DBG_INK, v,
 	      "stp_dither_set_generic_ranges nlevels %d density %f\n",
 	      nlevels, density);
   for (i = 0; i < nlevels; i++)
-    stp_dprintf(STP_DBG_INK, d->v,
+    stp_dprintf(STP_DBG_INK, v,
 		"  level %d value %f pattern %x subchannel %d\n", i,
 		ranges[i].value, ranges[i].bit_pattern, ranges[i].subchannel);
   s->ranges[0].lower = &s->ink_list[0];
@@ -983,11 +988,12 @@ stp_dither_set_generic_ranges(dither_t *d, dither_channel_t *s, int nlevels,
 }
 
 static void
-stp_dither_set_generic_ranges_full(dither_t *d, dither_channel_t *s,
+stp_dither_set_generic_ranges_full(stp_vars_t v, dither_channel_t *s,
 				   int nlevels,
 				   const stp_dither_range_full_t *ranges,
 				   double density)
 {
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i, j, k;
   SAFE_FREE(s->ranges);
   SAFE_FREE(s->row_ends[0]);
@@ -1002,11 +1008,11 @@ stp_dither_set_generic_ranges_full(dither_t *d, dither_channel_t *s,
     stp_zalloc((s->nlevels * 2) * sizeof(ink_defn_t));
   s->bit_max = 0;
   s->density = density * 65535;
-  stp_dprintf(STP_DBG_INK, d->v,
+  stp_dprintf(STP_DBG_INK, v,
 	      "stp_dither_set_ranges nlevels %d density %f\n",
 	      nlevels, density);
   for (i = 0; i < nlevels; i++)
-    stp_dprintf(STP_DBG_INK, d->v,
+    stp_dprintf(STP_DBG_INK, v,
 		"  level %d value: low %f high %f pattern low %x "
 		"high %x subchannel low %d high %d\n", i,
 		ranges[i].value[0], ranges[i].value[1],

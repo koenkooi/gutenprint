@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.220.2.3 2003/01/18 00:22:32 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.220.2.4 2003/01/18 00:42:49 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1046,8 +1046,6 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
   stp_curve_t   hue_adjustment = NULL;
   const paper_t *pt;
   const stp_vars_t nv = init->v;
-  int i;
-  const escp2_variable_inkset_t *inks;
   double k_upper, k_lower;
   double paper_k_upper;
   double paper_density;
@@ -1100,27 +1098,6 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
 
   stp_set_default_float_parameter(nv, "GCRLower", k_lower);
   stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
-
-  inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
-  if (inks)
-    {
-      for (i = 0; i < init->channel_limit; i++)
-	{
-	  const escp2_variable_ink_t *ink = (*inks)[i];
-	  if (ink)
-	    {
-	      stp_dither_set_ranges(nv, i, ink->numranges, ink->range,
-				    ink->density * paper_k_upper *
-				    stp_get_float_parameter(nv, "Density"));
-
-	      stp_dither_set_shades(nv, i, ink->numshades, ink->shades,
-				    ink->density * paper_k_upper *
-				    stp_get_float_parameter(nv, "Density"));
-	    }
-	}
-    }
-
-  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 
   if (!stp_check_curve_parameter(nv, "HueMap"))
     {
@@ -1210,6 +1187,40 @@ compute_channel_count(const escp2_inkname_t *ink_type,
 	channels_in_use += channel->n_subchannels;
     }
   return channels_in_use;
+}
+
+static void
+setup_inks(const escp2_init_t *init)
+{
+  int i;
+  const escp2_variable_inkset_t *inks;
+  const stp_vars_t nv = init->v;
+  const paper_t *pt;
+  double paper_k_upper = 0.5;
+
+  pt = get_media_type(init->model,
+		      stp_get_string_parameter(nv, "MediaType"), nv);
+  if (pt)
+    paper_k_upper = pt->k_upper;
+  inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
+  if (inks)
+    {
+      for (i = 0; i < init->channel_limit; i++)
+	{
+	  const escp2_variable_ink_t *ink = (*inks)[i];
+	  if (ink)
+	    {
+	      stp_dither_set_ranges(nv, i, ink->numranges, ink->range,
+				    ink->density * paper_k_upper *
+				    stp_get_float_parameter(nv, "Density"));
+
+	      stp_dither_set_shades(nv, i, ink->numshades, ink->shades,
+				    ink->density * paper_k_upper *
+				    stp_get_float_parameter(nv, "Density"));
+	    }
+	}
+    }
+  stp_dither_set_density(nv, stp_get_float_parameter(nv, "Density"));
 }
 
 static int
@@ -1611,6 +1622,7 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 
       out_channels = adjust_print_quality(&init, image);
       stp_dither_init(nv, image, out_width, xdpi, ydpi);
+      setup_inks(&init);
       channels_in_use = setup_ink_types(ink_type, &privdata, cols, head_offset,
 					nv, channel_limit, length * bits);
 
