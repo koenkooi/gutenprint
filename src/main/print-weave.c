@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.38 2001/12/18 01:17:19 rlk Exp $"
+ * "$Id: print-weave.c,v 1.39 2002/05/09 01:00:46 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -2172,7 +2172,7 @@ stp_compute_uncompressed_linewidth(const stp_softweave_t *sw, int n)
 
 static void
 initialize_row(stp_softweave_t *sw, int row, int width,
-	       const unsigned char *cols[])
+	       unsigned char *const cols[])
 {
   stp_weave_t w;
   int i, j, jj;
@@ -2327,7 +2327,7 @@ stp_write_weave(void *        vsw,
 		int           offset,	/* I - Offset from left side of page */
 		int		xdpi,
 		int		physical_xdpi,
-		const unsigned char *cols[])
+		unsigned char *const cols[])
 {
   stp_softweave_t *sw = (stp_softweave_t *) vsw;
   stp_lineoff_t *lineoffs[8];

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.48 2001/12/21 01:52:19 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.49 2002/05/09 01:00:45 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -35,16 +35,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
-#ifndef HAVE_ASPRINTF
-#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
-#include <varargs.h>
-#else
-#include <stdarg.h>
-#endif
-extern int vasprintf (char **result, const char *format, va_list args);
-extern int asprintf (char **result, const char *format, ...);
 #endif
 
 /*
@@ -378,7 +368,7 @@ stp_write_weave(void *        vsw,
 		int           offset,	/* I - Offset from left side of page */
 		int		xdpi,
 		int		physical_xdpi,
-		const unsigned char *cols[]);
+		unsigned char *const cols[]);
 
 extern stp_lineoff_t *
 stp_get_lineoffsets_by_pass(const stp_softweave_t *sw, int pass);
@@ -501,5 +491,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.48 2001/12/21 01:52:19 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.49 2002/05/09 01:00:45 rlk Exp $".
  */

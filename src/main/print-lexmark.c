@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.71 2002/02/16 09:40:33 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.72 2002/05/09 01:00:45 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2176,7 +2176,7 @@ densityDivisor /= 1.2;
 #endif
 
       stp_write_weave(weave, length, ydpi, model, out_width, left,
-		      xdpi, physical_xdpi, (const unsigned char **)cols.v);
+		      xdpi, physical_xdpi, (unsigned char **)cols.v);
 
       errval += errmod;
       errline += errdiv;
