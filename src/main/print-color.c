@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.97 2003/09/25 23:43:55 rlk Exp $"
+ * "$Id: print-color.c,v 1.98 2003/09/28 03:31:17 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -588,7 +588,10 @@ adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat,
 		    {
 		      isadj = (1.0 / isreflection) * (isreflection - sadj);
 		      sisadj = sqrt(isadj);
+/*
 		      s *= isadj * sisadj;
+*/
+		      s *= sqrt(isadj * sisadj);
 		    }
 		  if (el < .9999)
 		    {
