@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.55 2002/09/24 23:51:08 rlk Exp $"
+# "$Id: printers.xml,v 1.56 2002/10/03 12:35:41 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -968,14 +968,6 @@
 <color>
 <model value=41>
 <gamma value=0.585>
-<density value=1.0>
-<language value=escp2>
-</printer>
-
-<printer name="EPSON MJ-520C" driver="escp2-mj520c">
-<color>
-<model value=1>
-<gamma value=0.597>
 <density value=1.0>
 <language value=escp2>
 </printer>
