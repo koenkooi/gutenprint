@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.11 2003/06/03 20:17:35 rleigh Exp $"
+ * "$Id: color.h,v 1.12 2003/06/04 11:57:45 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -90,6 +90,9 @@ extern void stpi_channel_add(stp_vars_t v, unsigned channel,
 extern void stpi_channel_set_density_adjustment(stp_vars_t v,
 						int color, int subchannel,
 						double adjustment);
+extern void stpi_channel_set_cutoff_adjustment(stp_vars_t v,
+					       int color, int subchannel,
+					       double adjustment);
 
 
 extern void stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
