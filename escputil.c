@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.8 2000/09/08 15:34:05 easysw Exp $"
+ * "$Id: escputil.c,v 1.9 2000/09/09 12:23:27 easysw Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -263,12 +263,12 @@ do_print_cmd(void)
       if (printer == NULL)
 	{
 	  command = malloc(strlen(LP_COMMAND) + 32);
-	  sprintf(command, "%s -s", LPR_COMMAND);
+	  sprintf(command, "%s -s -oraw", LP_COMMAND);
 	}
       else
 	{
 	  command = malloc(strlen(LP_COMMAND) + 32);
-	  sprintf(command, "%s -s -d%s", LPR_COMMAND, printer);
+	  sprintf(command, "%s -s -oraw -d%s", LP_COMMAND, printer);
 	}
 #endif
       if ((pfile = popen(command, "w")) == NULL)

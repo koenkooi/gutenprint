@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.2 2000/09/08 16:30:34 easysw Exp $"
+dnl "$Id: configure.in,v 1.3 2000/09/09 12:23:27 easysw Exp $"
 dnl
 dnl   Configuration script for the CUPS drivers.
 dnl
@@ -61,7 +61,7 @@ AC_CHECK_LIB(cupsimage,cupsRasterOpen)
 
 dnl add warnings to compiler switches:
 dnl do this last so messing with switches does not break tests
-if test -n "$GXX"; then
+if test -n "$GCC"; then
     CFLAGS="-Wall -fno-rtti $CFLAGS"
 
     # See if GCC supports -fno-exceptions...
