@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.17.2.1 2003/01/04 02:27:24 rlk Exp $"
+ * "$Id: printers.c,v 1.17.2.2 2003/01/05 04:23:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -47,7 +47,6 @@ typedef struct stp_internal_printer
   const char *long_name;	/* Long name for UI */
   const char *family;		/* Printer family */
   int        model;		/* Model number */
-  int	     color;
   const stp_printfuncs_t *printfuncs;
   stp_vars_t printvars;
 } stp_internal_printer_t;

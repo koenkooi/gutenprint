@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.92.2.1 2003/01/04 02:27:24 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.92.2.2 2003/01/05 04:23:45 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1430,8 +1430,7 @@ lexmark_print(const stp_vars_t v, stp_image_t *image)
     errlast;	/* Last raster line loaded */
   int           zero_mask;
   int           image_height,
-                image_width,
-                image_bpp;
+                image_width;
   int           use_dmt = 0;
   void *	dither;
   int pass_length=0;              /* count of inkjets for one pass */
@@ -1478,7 +1477,8 @@ lexmark_print(const stp_vars_t v, stp_image_t *image)
   const lexmark_res_t *res_para_ptr =
     lexmark_get_resolution_para(model, resolution);
   const paper_t *media = get_media_type(media_type,caps);
-  const lexmark_inkparam_t *ink_parameter = lexmark_get_ink_parameter(ink_type, output_type, caps, nv);
+  const lexmark_inkparam_t *ink_parameter =
+    lexmark_get_ink_parameter(ink_type, output_type, caps, nv);
 
 
 #ifdef DEBUG
@@ -1503,8 +1503,6 @@ lexmark_print(const stp_vars_t v, stp_image_t *image)
   */
 
   stp_image_init(image);
-  image_bpp = stp_image_bpp(image);
-
 
   source= lexmark_source_type(media_source,caps);
 
@@ -1513,13 +1511,12 @@ lexmark_print(const stp_vars_t v, stp_image_t *image)
    */
 
   if ((ink_parameter->used_colors == COLOR_MODE_K) ||
-      ((caps->inks == LEXMARK_INK_K) &&
-       output_type != OUTPUT_MONOCHROME))
-    {
-      output_type = OUTPUT_GRAY;
-      stp_set_output_type(nv, OUTPUT_GRAY);
-    }
-  stp_set_output_color_model(nv, COLOR_MODEL_CMY);
+      (caps->inks == LEXMARK_INK_K))
+    stp_set_output_color_mode(nv, STP_COLOR_GRAY);
+  else if (ink_parameter->used_colors == COLOR_MODE_CMY)
+    stp_set_output_color_mode(nv, STP_COLOR_CMY);
+  else
+    stp_set_output_color_mode(nv, STP_COLOR_CMYK);
 
   /*
    * Choose the correct color conversion function...
@@ -1757,7 +1754,7 @@ densityDivisor /= 1.2;
   stp_erprintf("density is %f\n",stp_get_parameter(nv, "Density"));
 #endif
 
-  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+  if (stp_image_color_mode(image) != STP_COLOR_RAW)
     {
 #ifdef DEBUG
       stp_erprintf("density is %f and will be changed to %f  (%f)\n",
@@ -1788,7 +1785,7 @@ densityDivisor /= 1.2;
 
   if (media)
     {
-      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+      if (stp_image_color_mode(image) != STP_COLOR_RAW)
 	stp_set_float_parameter(nv, "Density", stp_get_float_parameter(nv, "Density") * media->base_density);
       stp_set_float_parameter(nv, "Cyan",
 			stp_get_float_parameter(nv, "Cyan") * media->p_cyan);
@@ -1801,7 +1798,7 @@ densityDivisor /= 1.2;
     }
   else
     {
-      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
+      if (stp_image_color_mode(image) != STP_COLOR_RAW)
 	stp_set_float_parameter(nv, "Density", stp_get_float_parameter(nv, "Density") * .8);
       k_lower *= .1;
       k_upper = .5;
@@ -1826,7 +1823,7 @@ densityDivisor /= 1.2;
   stp_erprintf("density is %f\n",stp_get_float_parameter(nv, "Density"));
 #endif
 
-  dither = stp_dither_init(image_width, out_width, image_bpp, xdpi, ydpi, nv);
+  dither = stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
   for (i = 0; i <= NCOLORS; i++)
     stp_dither_set_black_level(dither, i, 1.0);

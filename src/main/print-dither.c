@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.107.2.1 2003/01/04 02:27:24 rlk Exp $"
+ * "$Id: print-dither.c,v 1.107.2.2 2003/01/05 04:23:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -266,19 +266,10 @@ static const unsigned sq2[] =
   3, 1
 };
 
-void
-stp_dither_algorithms(stp_string_list_t valptrs)
-{
-  int i;
-  for (i = 0; i < num_dither_algos; i++)
-    stp_string_list_add_param(valptrs, dither_algos[i].name,
-			     _(dither_algos[i].text));
-}
-
 stp_parameter_list_t
 stp_dither_list_parameters(const stp_vars_t v)
 {
-  static const stp_parameter_t standard_parameters[] =
+  static const stp_parameter_t dither_parameters[] =
   {
     {
       "DitherAlgorithm", N_("Dither Algorithm"),
@@ -291,12 +282,12 @@ stp_dither_list_parameters(const stp_vars_t v)
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC
     },
-  }
-  stp_list_t *ret = stp_parameter_list_create();
+  };
+  stp_parameter_list_t *ret = stp_parameter_list_create();
   int i;
-  for (i = 0; i < (sizeof(global_parameters) / sizeof(const stp_parameter_t));
+  for (i = 0; i < (sizeof(dither_parameters) / sizeof(const stp_parameter_t));
        i++)
-    stp_list_item_create(ret, NULL, (void *) &(global_parameters[i]));
+    stp_parameter_list_add_param(ret, &(dither_parameters[i]));
   return ret;
 }
 
@@ -547,10 +538,12 @@ stp_set_dither_function(dither_t *d, int image_bpp)
 }
 
 void *
-stp_dither_init(int in_width, int out_width, int image_bpp,
-		int xdpi, int ydpi, stp_vars_t v)
+stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
+		int xdpi, int ydpi)
 {
   int i;
+  int in_width = stp_image_width(image);
+  int image_bpp = stp_image_depth(image)
   dither_t *d = stp_zalloc(sizeof(dither_t));
   stp_dither_range_simple_t r;
   d->v = v;

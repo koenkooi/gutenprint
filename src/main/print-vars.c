@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.19.2.1 2003/01/04 02:27:24 rlk Exp $"
+ * "$Id: print-vars.c,v 1.19.2.2 2003/01/05 04:23:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -377,8 +377,7 @@ DEF_FUNCS(height, int, )
 DEF_FUNCS(image_type, int, )
 DEF_FUNCS(page_width, int, )
 DEF_FUNCS(page_height, int, )
-DEF_FUNCS(input_color_model, int, )
-DEF_FUNCS(output_color_model, int, )
+DEF_FUNCS(output_color_mode, int, )
 DEF_FUNCS(page_number, int, )
 DEF_FUNCS(job_mode, stp_job_mode_t, )
 DEF_FUNCS(outdata, void *, )
@@ -784,8 +783,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_image_type(vd, stp_get_image_type(vs));
   stp_set_page_width(vd, stp_get_page_width(vs));
   stp_set_page_height(vd, stp_get_page_height(vs));
-  stp_set_input_color_model(vd, stp_get_input_color_model(vd));
-  stp_set_output_color_model(vd, stp_get_output_color_model(vd));
+  stp_set_output_color_mode(vd, stp_get_output_color_mode(vd));
   stp_set_outdata(vd, stp_get_outdata(vs));
   stp_set_errdata(vd, stp_get_errdata(vs));
   stp_set_outfunc(vd, stp_get_outfunc(vs));

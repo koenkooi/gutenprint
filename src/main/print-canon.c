@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.94.2.1 2003/01/04 02:27:23 rlk Exp $"
+ * "$Id: print-canon.c,v 1.94.2.2 2003/01/05 04:23:44 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1740,33 +1740,35 @@ canon_init_setColor(const stp_vars_t v, canon_init_t *init)
 
   switch ( init->caps->model_id ) {
 
-  	case 0:			/* very old 360 dpi series: BJC-800/820 */
-		break;		/*	tbd */
+  case 0:			/* very old 360 dpi series: BJC-800/820 */
+    break;		/*	tbd */
 
-  	case 1:			/* 360 dpi series - BJC-4000, BJC-210, BJC-70 and their descendants */
-		if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
-    			arg_63_1|= 0x01;					/* PRINT_COLOUR */
+  case 1:			/* 360 dpi series BJC-4000, BJC-210, BJC-70 */
+    if (init->output_type == OUTPUT_GRAY ||
+	init->output_type == OUTPUT_MONOCHROME)
+      arg_63_1|= 0x01; /* PRINT_COLOUR */
 
-  		arg_63_2 = ((init->pt ? init->pt->media_code : 0) << 4)		/* PRINT_MEDIA */
-			+ 1;	/* hardcode to High quality for now */		/* PRINT_QUALITY */
+    arg_63_2 = ((init->pt ? init->pt->media_code : 0) << 4)  /* PRINT_MEDIA */
+      + 1; /* hardcode to High quality for now */	/* PRINT_QUALITY */
 
-  		canon_cmd(v,ESC28,0x63, 2, arg_63_1, arg_63_2);
-		break;
+    canon_cmd(v,ESC28,0x63, 2, arg_63_1, arg_63_2);
+    break;
 
-	case 2:			/* are any models using this? */
-		break;
+  case 2:			/* are any models using this? */
+    break;
 
-	case 3:			/* 720 dpi series - BJC-3000 and descendants */
-		if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
-    			arg_63_1|= 0x01;					/* colour mode */
+  case 3:			/* 720 dpi series - BJC-3000 and descendants */
+    if (init->output_type == OUTPUT_GRAY ||
+	init->output_type == OUTPUT_MONOCHROME)
+      arg_63_1|= 0x01;					/* colour mode */
 
-  		arg_63_2 = (init->pt) ? init->pt->media_code : 0;		/* print media type */
+    arg_63_2 = (init->pt) ? init->pt->media_code : 0; /* print media type */
 
-		arg_63_3 = 2;	/* hardcode to whatever this means for now */	/* quality, apparently */
+    arg_63_3 = 2; /* hardcode to whatever this means for now - quality? */
 
-  		canon_cmd(v,ESC28,0x63, 3, arg_63_1, arg_63_2, arg_63_3);
-		break;
-  	}
+    canon_cmd(v,ESC28,0x63, 3, arg_63_1, arg_63_2, arg_63_3);
+    break;
+  }
 
   return;
 }

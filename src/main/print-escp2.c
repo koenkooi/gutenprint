@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.212.2.1 2003/01/04 02:27:24 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.212.2.2 2003/01/05 04:23:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -181,7 +181,7 @@ static const stp_parameter_t the_parameters[] =
   },
   {
     "OutputMode", N_("Output Mode"),
-    N_("Choose the output mode (grayscale, monochrome, or black and white).\n"),
+    N_("Choose the output mode (grayscale, monochrome, or color).\n"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
     STP_PARAMETER_LEVEL_BASIC
   },

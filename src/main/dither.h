@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.4.2.1 2003/01/04 02:27:23 rlk Exp $"
+ * "$Id: dither.h,v 1.4.2.2 2003/01/05 04:23:44 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -47,7 +47,7 @@ extern "C" {
 extern stp_parameter_list_t stp_dither_list_parameters(const stp_vars_t v);
 
 extern void
-stp_color_describe_parameter(const stp_vars_t v, const char *name,
+stp_dither_describe_parameter(const stp_vars_t v, const char *name,
 			      stp_parameter_t *description);
 
 extern const stp_dither_matrix_short_t stp_dither_matrix_1_1;
@@ -137,8 +137,8 @@ typedef struct
 } stp_dither_data_t;
 
 
-extern void *	stp_dither_init(int in_width, int out_width, int bpp,
-				int xdpi, int ydpi, stp_vars_t vars);
+extern void *	stp_dither_init(stp_vars_t v, stp_image_t *image,
+				int out_width, int xdpi, int ydpi);
 extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
 					       size_t iterations,
 					       const unsigned *data,
@@ -190,5 +190,5 @@ extern void	stp_dither(const unsigned short *, int, void *,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.4.2.1 2003/01/04 02:27:23 rlk Exp $".
+ * End of "$Id: dither.h,v 1.4.2.2 2003/01/05 04:23:44 rlk Exp $".
  */

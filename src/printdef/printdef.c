@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.c,v 1.6 2003/01/01 02:46:30 rlk Exp $"
+ * "$Id: printdef.c,v 1.6.2.1 2003/01/05 04:23:45 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -383,11 +383,6 @@ stp_xml_process_printer(xmlNodePtr printer, xmlChar *family)
   prop = stp_xml_get_node(printer->children, (const xmlChar *) "model");
   printf("    %d,\n",
 	 xmlstrtol(xmlGetProp(prop, (const xmlChar *) "value")));
-  prop = stp_xml_get_node(printer->children, (const xmlChar *) "color");
-  printf("    %d,\n",
-	 xmlStrcmp(xmlGetProp(prop, (const xmlChar *) "value"),
-		   (const xmlChar *) "true") == 0 ?
-	 OUTPUT_COLOR : OUTPUT_GRAY);
   printf("    &stp_%s_printfuncs,\n", family);
 
   prop = printer->children;

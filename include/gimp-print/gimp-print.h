@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.6.2.1 2003/01/04 02:27:23 rlk Exp $
+ *  $Id: gimp-print.h,v 1.6.2.2 2003/01/05 04:23:44 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -952,7 +952,8 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 extern void stp_image_init(stp_image_t *image);
 extern void stp_image_reset(stp_image_t *image);
-extern int stp_image_bpp(stp_image_t *image);
+extern stp_color_mode_t stp_image_color_mode(stp_image_t *image);
+extern int stp_image_depth(stp_image_t *image);
 extern int stp_image_width(stp_image_t *image);
 extern int stp_image_height(stp_image_t *image);
 extern stp_image_status_t stp_image_get_row(stp_image_t *image,
@@ -978,5 +979,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.6.2.1 2003/01/04 02:27:23 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.6.2.2 2003/01/05 04:23:44 rlk Exp $
  */
