@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.198.2.2 2000/08/04 12:17:24 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.198.2.3 2000/08/05 00:18:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -570,13 +570,9 @@ get_media_type(const char *name)
 }
 
 const char *
-escp2_resname(int resolution)
+escp2_default_resolution(void)
 {
-  if (resolution < 0 ||
-      resolution >= ((sizeof(escp2_reslist) / sizeof(res_t)) - 1))
-    return NULL;
-  else
-    return escp2_reslist[resolution].name;
+  return escp2_reslist[0].name;
 }
 
 static int

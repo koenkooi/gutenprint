@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28.2.3 2000/08/04 01:41:21 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.4 2000/08/05 00:18:03 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -70,10 +70,8 @@ prn_device(stpm_procs, "stp",
 
 /* private data structure */
 typedef struct {
-  int resnr;
   int topoffset;   /* top offset in pixels */
   int bottom;
-  int algnr;			/* Algorithm */
   vars_t v;
 } privdata_t;
 
@@ -82,7 +80,7 @@ private uint stp_raster;
 private byte *stp_row;
 private gx_device_printer *stp_pdev;
 private privdata_t stp_data =
-{ 0, 0, 0, 0,
+{ 0, 0,
   {
     "",				/* output_to */
     "",				/* driver */
@@ -170,7 +168,6 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
 {
   int code;			/* return code */
   const printer_t *printer = NULL;
-  const char *resname;
 
   stp_print_dbg("stp_print_page", pdev, &stp_data);
   code = 0;
@@ -190,14 +187,11 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
     code = 1;
     return code;
   }
-  resname = (*printer->resname)(stp_data.resnr);
-  if (resname == NULL) {
-    code = 1;
-    return code;
-  }
 
-  strcpy(stp_data.v.resolution, resname);
-  strcpy(stp_data.v.dither_algorithm, dither_algo_names[stp_data.algnr]);
+  if (strlen(stp_data.v.resolution) == 0)
+    strcpy(stp_data.v.resolution, (*printer->default_resolution)());
+  if (strlen(stp_data.v.dither_algorithm) == 0)
+    strcpy(stp_data.v.dither_algorithm, default_dither_algorithm());
 
   stp_data.v.scaling = -pdev->x_pixels_per_inch; /* resolution of image */
 
@@ -206,11 +200,14 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;
-  (*printer->print)(printer,		/* I - Model */
-		    1,			/* I - Number of copies */
-		    file,		/* I - File to print to */
-		    NULL,		/* I - Image to print (dummy) */
-		    &stp_data.v);	/* vars_t * */
+  if (verify_printer_params(printer, &(stp_data.v)))
+    (*printer->print)(printer,		/* I - Model */
+		      1,		/* I - Number of copies */
+		      file,		/* I - File to print to */
+		      NULL,		/* I - Image to print (dummy) */
+		      &stp_data.v);	/* vars_t * */
+  else
+    code = 1;
 
   gs_free_object(pdev->memory, stp_row, "stp row buffer");
   stp_row = NULL;
@@ -257,6 +254,8 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
   gs_param_string pmodel;
   gs_param_string pmediatype;
   gs_param_string pmediasource;
+  gs_param_string palgorithm;
+  gs_param_string pquality;
 
   stp_print_debug("stp_get_params(0)", pdev, &stp_data);
   code = gdev_prn_get_params(pdev, plist);
@@ -266,6 +265,8 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
   param_string_from_string(pmediasource, stp_data.v.media_source);
   param_string_from_string(pinktype, stp_data.v.ink_type);
   param_string_from_string(pmodel, stp_data.v.driver);
+  param_string_from_string(palgorithm, stp_data.v.dither_algorithm);
+  param_string_from_string(pquality, stp_data.v.resolution);
 
   if ( code < 0 ||
        (code = param_write_int(plist, "Red", &stp_data.v.red)) < 0 ||
@@ -275,9 +276,9 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
        (code = param_write_int(plist, "Contrast", &stp_data.v.contrast)) < 0 ||
        (code = param_write_int(plist, "Color", &stp_data.v.output_type)) < 0 ||
        (code = param_write_string(plist, "Model", &pinktype)) < 0 ||
-       (code = param_write_int(plist, "Quality", &stp_data.resnr)) < 0 ||
-       (code = param_write_int(plist, "Dither", &stp_data.algnr)) < 0 ||
        (code = param_write_int(plist, "ImageType", &stp_data.v.image_type)) < 0 ||
+       (code = param_write_string(plist, "Dither", &palgorithm)) < 0 ||
+       (code = param_write_string(plist, "Quality", &pquality)) < 0 ||
        (code = param_write_string(plist, "InkType", &pinktype) < 0) ||
        (code = param_write_string(plist, "PAPERSIZE", &pmediasize)) < 0 ||
        (code = param_write_string(plist, "MediaType", &pmediatype)) < 0 ||
@@ -301,14 +302,14 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   gs_param_string pmediasource;
   gs_param_string pinktype;
   gs_param_string pmodel;
+  gs_param_string palgorithm;
+  gs_param_string pquality;
   int red    = stp_data.v.red;
   int green  = stp_data.v.green;
   int blue   = stp_data.v.blue;
   int bright = stp_data.v.brightness;
   int cont   = stp_data.v.contrast;
   int color  = stp_data.v.output_type;
-  int qual   = stp_data.resnr;
-  int algo   = stp_data.algnr;
   int itype  = stp_data.v.image_type;
   float gamma = stp_data.v.gamma;
   float sat = stp_data.v.saturation;
@@ -323,6 +324,8 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   param_string_from_string(pmediasource, stp_data.v.media_source);
   param_string_from_string(pmediatype, stp_data.v.media_type);
   param_string_from_string(pinktype, stp_data.v.ink_type);
+  param_string_from_string(palgorithm, stp_data.v.dither_algorithm);
+  param_string_from_string(pquality, stp_data.v.resolution);
 
   code = stp_put_param_int(plist, "Red", &red, 0, 200, code);
   code = stp_put_param_int(plist, "Green", &green, 0, 200, code);
@@ -330,12 +333,24 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Brightness", &bright, 0, 400, code);
   code = stp_put_param_int(plist, "Contrast", &cont, 25, 400, code);
   code = stp_put_param_int(plist, "Color", &color, 0, 1, code);
-  code = stp_put_param_int(plist, "Quality", &qual, 0, 20, code);
   code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
-  code = stp_put_param_int(plist, "Dither", &algo, 0, num_dither_algos, code);
   code = stp_put_param_float(plist, "Gamma", &gamma, 0.1, 3., code);
   code = stp_put_param_float(plist, "Saturation", &sat, 0.0, 9., code);
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
+
+  if( param_read_string(plist, "Quality", &pquality) == 0)
+    {
+      /*
+	fprintf(stderr,"Resolution defined: %s\n",pquality.data);
+      */
+    }
+
+  if( param_read_string(plist, "Dither", &palgorithm) == 0)
+    {
+      /*
+	fprintf(stderr,"Dither algorithm defined: %s\n",palgorithm.data);
+      */
+    }
 
   if( param_read_string(plist, "PAPERSIZE", &pmediasize) == 0)
     {
@@ -381,14 +396,20 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_data.v.brightness = bright;
   stp_data.v.contrast = cont;
   stp_data.v.output_type = color;
-  stp_data.resnr = qual;
-  stp_data.algnr = algo;
   stp_data.v.image_type = itype;
-  strcpy(stp_data.v.driver, pmodel.data);
-  strcpy(stp_data.v.media_size, pmediasize.data);
-  strcpy(stp_data.v.media_type, pmediatype.data);
-  strcpy(stp_data.v.media_source, pmediasource.data);
-  strcpy(stp_data.v.ink_type, pinktype.data);
+  strncpy(stp_data.v.driver, pmodel.data, sizeof(stp_data.v.driver) - 1);
+  strncpy(stp_data.v.media_size, pmediasize.data,
+	  sizeof(stp_data.v.media_size) - 1);
+  strncpy(stp_data.v.media_type, pmediatype.data,
+	  sizeof(stp_data.v.media_type) - 1);
+  strncpy(stp_data.v.media_source, pmediasource.data,
+	  sizeof(stp_data.v.media_source) - 1);
+  strncpy(stp_data.v.ink_type, pinktype.data,
+	  sizeof(stp_data.v.ink_type) - 1);
+  strncpy(stp_data.v.dither_algorithm, palgorithm.data,
+	  sizeof(stp_data.v.dither_algorithm) - 1);
+  strncpy(stp_data.v.resolution, pquality.data,
+	  sizeof(stp_data.v.resolution) - 1);
   stp_data.v.gamma = gamma;
   stp_data.v.saturation = sat;
   stp_data.v.density = den;

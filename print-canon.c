@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.69.2.2 2000/08/04 01:41:49 rlk Exp $"
+ * "$Id: print-canon.c,v 1.69.2.3 2000/08/05 00:18:02 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -377,13 +377,9 @@ canon_resolutions[] =
 };
 
 const char *
-canon_resname(int resolution)
+canon_default_resolution(void)
 {
-  if (resolution < 0 ||
-      resolution >= ((sizeof(canon_resolutions) / sizeof(char *)) - 1))
-    return NULL;
-  else
-    return canon_resolutions[resolution];
+  return canon_resolutions[0];
 }
 
 /*

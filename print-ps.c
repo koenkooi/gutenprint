@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.36.2.1 2000/08/03 00:48:12 rlk Exp $"
+ * "$Id: print-ps.c,v 1.36.2.2 2000/08/05 00:18:02 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -221,7 +221,7 @@ ps_imageable_area(const printer_t *printer,	/* I - Printer model */
 }
 
 const char *
-ps_resname(int resolution)
+ps_default_resolution(void)
 {
   return "default";
 }

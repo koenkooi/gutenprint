@@ -65,7 +65,15 @@
 <language value=pcl>
 </printer>
 
-<printer name="HP DeskJet 550C, 560C" driver="pcl-550">
+<printer name="HP DeskJet 550C" driver="pcl-550">
+<color>
+<model value=550>
+<gamma value=0.818>
+<density value=0.786>
+<language value=pcl>
+</printer>
+
+<printer name="HP DeskJet 560C" driver="pcl-560">
 <color>
 <model value=550>
 <gamma value=0.818>

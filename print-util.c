@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.111 2000/08/02 12:19:05 rlk Exp $"
+ * "$Id: print-util.c,v 1.111.2.1 2000/08/05 00:18:03 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1201,6 +1201,12 @@ get_printer_index_by_driver(const char *driver)
   return -1;
 }
 
+const char *
+default_dither_algorithm(void)
+{
+  return dither_algo_names[0];
+}
+
 convert_t
 choose_colorfunc(int output_type,
 		 int image_bpp,
@@ -1350,4 +1356,102 @@ compute_page_parameters(int page_right,	/* I */
 
   if (*top < 0)
     *top  = (*page_height - *out_height) / 2;
+}
+
+int
+verify_printer_params(const printer_t *p, const vars_t *v)
+{
+  char **vptr;
+  int count;
+  int i;
+  int answer = 1;
+
+  vptr = (*p->parameters)(p, NULL, "PageSize", &count);
+  if (count > 0)
+    {
+      for (i = 0; i < count; i++)
+	if (!strcmp(v->media_size, vptr[i]))
+	  goto good_page_size;
+      answer = 0;
+      fprintf(stderr, "%s is not a valid page size\n", v->media_size);
+    }
+ good_page_size:
+  for (i = 0; i < count; i++)
+    free(vptr[i]);
+  free(vptr);
+
+  if (strlen(v->media_type) > 0)
+    {
+      vptr = (*p->parameters)(p, NULL, "MediaType", &count);
+      if (count > 0)
+	{
+	  for (i = 0; i < count; i++)
+	    if (!strcmp(v->media_type, vptr[i]))
+	      goto good_media_type;
+	  answer = 0;
+	  fprintf(stderr, "%s is not a valid media type\n", v->media_type);
+	}
+    good_media_type:
+      for (i = 0; i < count; i++)
+	free(vptr[i]);
+      free(vptr);
+    }
+
+  if (strlen(v->media_source) > 0)
+    {
+      vptr = (*p->parameters)(p, NULL, "InputSlot", &count);
+      if (count > 0)
+	{
+	  for (i = 0; i < count; i++)
+	    if (!strcmp(v->media_source, vptr[i]))
+	      goto good_media_source;
+	  answer = 0;
+	  fprintf(stderr, "%s is not a valid media source\n", v->media_source);
+	}
+    good_media_source:
+      for (i = 0; i < count; i++)
+	free(vptr[i]);
+      free(vptr);
+    }
+
+  if (strlen(v->resolution) > 0)
+    {
+      vptr = (*p->parameters)(p, NULL, "Resolution", &count);
+      if (count > 0)
+	{
+	  for (i = 0; i < count; i++)
+	    if (!strcmp(v->resolution, vptr[i]))
+	      goto good_resolution;
+	  answer = 0;
+	  fprintf(stderr, "%s is not a valid resolution\n", v->resolution);
+	}
+    good_resolution:
+      for (i = 0; i < count; i++)
+	free(vptr[i]);
+      free(vptr);
+    }
+
+  if (strlen(v->ink_type) > 0)
+    {
+      vptr = (*p->parameters)(p, NULL, "InkType", &count);
+      if (count > 0)
+	{
+	  for (i = 0; i < count; i++)
+	    if (!strcmp(v->ink_type, vptr[i]))
+	      goto good_ink_type;
+	  answer = 0;
+	  fprintf(stderr, "%s is not a valid ink type\n", v->ink_type);
+	}
+    good_ink_type:
+      for (i = 0; i < count; i++)
+	free(vptr[i]);
+      free(vptr);
+    }
+
+  for (i = 0; i < num_dither_algos; i++)
+    if (!strcmp(v->dither_algorithm, dither_algo_names[i]))
+      return answer;
+
+  fprintf(stderr, "%s is not a valid dither algorithm\n", v->dither_algorithm);
+  return 0;
 }

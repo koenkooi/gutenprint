@@ -154,15 +154,14 @@ Printer Model Selection:
 
 -sModel=name
 
-ps			PostScript Level 1
-ps2			PostScript Level 2
 pcl-340			HP DeskJet 340
 pcl-400			HP DeskJet 400
 pcl-500			HP DeskJet 500
 pcl-520			HP DeskJet 520
 pcl-501			HP DeskJet 500C
 pcl-540			HP DeskJet 540C
-pcl-550			HP DeskJet 550C, 560C
+pcl-550			HP DeskJet 550C
+pcl-560			HP DeskJet 560C
 pcl-600			HP DeskJet 600/600C
 pcl-601			HP DeskJet 600 series
 pcl-690			HP DeskJet 690 series
@@ -170,7 +169,7 @@ pcl-800			HP DeskJet 800 series
 pcl-900			HP DeskJet 900 series
 pcl-1100		HP DeskJet 1100C
 pcl-1120		HP DeskJet 1120C
-pcl-1220		HP DeskJet, 1220C
+pcl-1220		HP DeskJet 1220C
 pcl-1200		HP DeskJet 1200C
 pcl-1600		HP DeskJet 1600C
 pcl-2000		HP DeskJet 2000 series
@@ -235,43 +234,43 @@ The meaning of this is model-specific.
 
 For Epson Stylus printers:
 
--dQuality=x
+-sQuality='
 
-0  360 DPI                               (works on all printers)
-1  720 DPI Microweave                    (works on all printers)
-2  720 DPI Softweave                     (works on all printers except
+'360 DPI'                                (works on all printers)
+'720 DPI Microweave'                     (works on all printers)
+'720 DPI Softweave'                      (works on all printers except
 					  for Stylus Color, Stylus
 					  Color 1500, Stylus Color
 					  1520, and Stylus Color 3000)
-3  720 DPI High Quality                  (works on all printers except
+'720 DPI High Quality'                   (works on all printers except
 					  above and Epson Stylus Color
 					  440/460/480)
-4  720 DPI Highest Quality               (works on all printers except
+'720 DPI Highest Quality'                (works on all printers except
 					  above and Epson Stylus Color
 					  440/460/480)
-5  1440 x 720 DPI Microweave             (works on all 1440x720 dpi printers)
-6  1440 x 720 DPI Softweave              (works on all 1440x720 dpi
+'1440 x 720 DPI Microweave'              (works on all 1440x720 dpi printers)
+'1440 x 720 DPI Softweave'               (works on all 1440x720 dpi
 					  printers except for Stylus
 					  Color 1520 and Stylus Color 3000)
-7  1440 x 720 DPI Highest Quality        (works on all 1440x720 dpi
+'1440 x 720 DPI Highest Quality'         (works on all 1440x720 dpi
 					  printers except for Stylus
 					  Color 1520 and Stylus Color 3000)
-8  Emulated 1440 x 1440 DPI              (works on all 1440x720 dpi
+'1440 x 720 DPI Enhanced'                (works on all 1440x720 dpi
 					  printers except for Stylus
 					  Color 1520 and Stylus Color 3000)
-9  Emulated 1440 x 2880 DPI              (works on all 1440x720 dpi
+'1440 x 2880 DPI Super'                  (works on all 1440x720 dpi
 					  printers except for Stylus
 					  Color 1520 and Stylus Color 3000)
 
-Modes 8 and 9 use oversampling to emulate higher resolutions than the
-printers support.  In some cases they may yield improved output
-quality, but they are slower than the lower resolution modes.  Modes
-1, 2, 3, and 4 all dither the same way, but use the printer
-differently to obtain different tradeoffs between printing time and
-banding reduction.  Likewise with modes 5, 6, and 7.
+The last two modes use oversampling to emulate higher resolutions than
+the printers actually support.  In some cases they may yield improved
+output quality, but they are slower than the lower resolution modes.
+The other 1440x720 modes use the printer in different ways to to
+achieve different tradeoffs of quality vs. performance; likewise with
+the 720 DPI modes.
 
-Modes 1 and 5 are extremely slow on many printers.  Not all printers
-can do Microweave properly, particularly at 1440x720 DPI.  If
+The Microweave modes are extremely slow on many printers.  Not all
+printers can do Microweave properly, particularly at 1440x720 DPI.  If
 Microweave is used with these printers, the printing will be done one
 row at a time.  In addition to being extremely slow (but often
 extremely high quality), this may be harmful to the print head and may
@@ -282,48 +281,42 @@ be had from using Microweave.
 
 For PCL printers (including Hewlett-Packard and Lexmark):
 
-0  150 DPI
-1  300 DPI
-2  600 x 300 DPI
-3  600 DPI (monochrome)
-4  600 DPI
-5  1200 DPI
-6  2400 DPI
+'150x150 DPI'
+'300x300 DPI'
+'600x300 DPI'
+'600x600 DPI (mono only)'
+'600x600 DPI'
+'1200x1200 DPI'
+'2400x1200 DPI'
 
 
 For Canon printers:
 
-0  300x300 DPI
-1  300x300 DPI w/ DMT
-2  600x600 DPI
-3  600x600 DPI w/ DMT
-4  1200x600 DPI
-5  1200x1200 DPI
-6  180x180 DPI
-7  360x360 DPI
-8  360x360 DPI w/ DMT
-9  720x360 DPI
-10 720x720 DPI
-11 1440x720 DPI
-12 1440x1440 DPI
-
-
-For Postscript printers:
-
-0  default
-
+'300x300 DPI'
+'300x300 DPI w/ DMT'
+'600x600 DPI'
+'600x600 DPI w/ DMT'
+'1200x600 DPI'
+'1200x1200 DPI'
+'180x180 DPI'
+'360x360 DPI'
+'360x360 DPI w/ DMT'
+'720x360 DPI'
+'720x720 DPI'
+'1440x720 DPI'
+'1440x1440 DPI'
 
 
 Dithering Algorithms:
 --------- -----------
 
--dDither=x
+-Dither='algorithm'
 
-0  Adaptive Hybrid Floyd-Steinberg
-1  Ordered
-2  Adaptive Random Floyd-Steinberg
-3  Hybrid Floyd-Steinberg
-4  Random Floyd-Steinberg
+'Adaptive Hybrid Floyd-Steinberg'
+'Ordered'
+'Adaptive Random Floyd-Steinberg'
+'Hybrid Floyd-Steinberg'
+'Random Floyd-Steinberg'
 
 Hybrid algorithms use error diffusion, but a matrix is used when a
 random number is required.  Adaptive algorithms use error diffusion
@@ -496,11 +489,12 @@ gs -sDEVICE=stp -sModel=escp2-ex -dDensity=1.6 -dGamma=1.5 -dSaturation=0.9 \
 
 Example 2 (print color photograph to /dev/lp0 at maximum quality):
 gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -sModel=escp2-870 -dDensity=0.8 -r1440 \
-   -dQuality=6 -dImageType=2 -sOutputFile=/dev/lp0 foo.ps
+   -sQuality='1440 x 720 DPI Highest Quality' -dImageType=2 \
+   -sOutputFile=/dev/lp0 foo.ps
 
 Example 3 (print pure black text to stdout)
 gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -sModel=escp2-660 -dDensity=0.8 -r720 \
-   -dQuality=2 -dImageType=3 -sOutputFile=- foo.ps
+   -sQuality='720 DPI Softweave' -dImageType=3 -sOutputFile=- foo.ps
 
 
 PDQ and CUPS

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.71.2.1 2000/08/03 00:48:12 rlk Exp $"
+ * "$Id: print.h,v 1.71.2.2 2000/08/05 00:18:03 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -189,7 +189,7 @@ typedef struct printer
   /* Print function */
   void	(*print)(const struct printer *printer, int copies, FILE *prn,
 		 Image image, const vars_t *v);
-  const char *(*resname)(int);
+  const char *(*default_resolution)(void);
   vars_t printvars;
 } printer_t;
 
@@ -322,7 +322,7 @@ extern void	escp2_imageable_area(const printer_t *printer, char *ppd_file,
 				     int *bottom, int *top);
 extern void	escp2_print(const printer_t *printer, int copies, FILE *prn,
 			    Image image, const vars_t *v);
-extern const char *escp2_resname(int resolution);
+extern const char *escp2_default_resolution(void);
 
 
 extern char	**canon_parameters(const printer_t *printer, char *ppd_file,
@@ -332,7 +332,7 @@ extern void	canon_imageable_area(const printer_t *printer, char *ppd_file,
 				     int *bottom, int *top);
 extern void	canon_print(const printer_t *printer, int copies, FILE *prn,
 			    Image image, const vars_t *v);
-extern const char *canon_resname(int resolution);
+extern const char *canon_default_resolution(void);
 
 
 extern char	**pcl_parameters(const printer_t *printer, char *ppd_file,
@@ -343,7 +343,7 @@ extern void	pcl_imageable_area(const printer_t *printer, char *ppd_file,
 				   int *top);
 extern void	pcl_print(const printer_t *printer, int copies, FILE *prn,
 			  Image image, const vars_t *v);
-extern const char *pcl_resname(int resolution);
+extern const char *pcl_default_resolution(void);
 
 
 extern char	**ps_parameters(const printer_t *printer, char *ppd_file,
@@ -355,7 +355,9 @@ extern void	ps_imageable_area(const printer_t *printer, char *ppd_file,
 		                  int *bottom, int *top);
 extern void	ps_print(const printer_t *printer, int copies, FILE *prn,
 			 Image image, const vars_t *v);
-extern const char *ps_resname(int resolution);
+extern const char *ps_default_resolution(void);
+
+extern const char *default_dither_algorithm(void);
 
 extern int	      		known_papersizes(void);
 extern const papersize_t	*get_papersizes(void);
@@ -379,7 +381,10 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 			int *page_width, int *page_height, int *out_width,
 			int *out_height, int *left, int *top);
 
+extern int
+verify_printer_params(const printer_t *, const vars_t *);
+
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.71.2.1 2000/08/03 00:48:12 rlk Exp $".
+ * End of "$Id: print.h,v 1.71.2.2 2000/08/05 00:18:03 rlk Exp $".
  */
