@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.132 2003/09/21 03:17:58 rlk Exp $"
+ * "$Id: print-canon.c,v 1.133 2003/09/22 22:38:22 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2196,6 +2196,19 @@ canon_deinit_printer(stp_const_vars_t v, canon_init_t *init)
   canon_cmd(v,ESC40,0,0);
 }
 
+static int
+canon_start_job(stp_const_vars_t v, stp_image_t *image)
+{
+  return 1;
+}
+
+static int
+canon_end_job(stp_const_vars_t v, stp_image_t *image)
+{
+  canon_cmd(v,ESC40,0,0);
+  return 1;
+}
+
 /*
  * 'advance_buffer()' - Move (num) lines of length (len) down one line
  *                      and sets first line to 0s
@@ -2698,8 +2711,8 @@ static const stpi_printfuncs_t print_canon_printfuncs =
   canon_print,
   canon_describe_resolution,
   stpi_verify_printer_params,
-  NULL,
-  NULL
+  canon_start_job,
+  canon_end_job
 };
 
 /*
