@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.87 2003/12/17 03:12:48 rlk Exp $"
+ * "$Id: genppd.c,v 1.88 2003/12/20 01:14:56 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1491,7 +1491,10 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*Font ZapfChancery-MediumItalic: Standard \"(001.007S)\" Standard ROM\n");
   gzputs(fp, "*Font ZapfDingbats: Special \"(001.004S)\" Standard ROM\n");
 
-  gzprintf(fp, "\n*%%End of %s.ppd\n", driver);
+  gzprintf(fp, "\n*%%End of stp-%s.%s%s\n",
+           driver,
+           GIMPPRINT_RELEASE_VERSION,
+           ppdext);
 
   gzclose(fp);
 
@@ -1501,5 +1504,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.87 2003/12/17 03:12:48 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.88 2003/12/20 01:14:56 rlk Exp $".
  */
