@@ -1,5 +1,5 @@
 /*
- * $Id: libprintut.h,v 1.5 2001/08/13 23:59:12 rlk Exp $
+ * $Id: libprintut.h,v 1.6 2001/08/28 17:37:04 rleigh Exp $
  * Header for utility library functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -47,6 +47,8 @@ extern char *xgetcwd (void);
 
 #ifndef HAVE_GETOPT_LONG
 #include "getopt.h"
+#else
+#include <getopt.h>
 #endif
 
 #endif /* __LIBPRINTUT_H__ */
