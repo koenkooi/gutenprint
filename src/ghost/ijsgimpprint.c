@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.3 2002/02/21 03:13:54 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.4 2002/03/30 22:26:07 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -36,8 +36,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <ijs.h>
-#include <ijs_server.h>
+#include <ijs/ijs.h>
+#include <ijs/ijs_server.h>
 #include <errno.h>
 #include <gimp-print/gimp-print-intl-internal.h>
 
