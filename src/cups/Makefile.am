@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.40 2001/10/28 14:49:01 rlk Exp $
+## $Id: Makefile.am,v 1.41 2001/11/01 01:24:50 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ cupsexec_filterdir = $(pkglibdir)/filter
 cups_modeldir = $(pkgdatadir)/model
 
 AM_CFLAGS = $(GNUCFLAGS)
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
+DEFS = @CUPS_CFLAGS@ @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
@@ -63,6 +63,8 @@ cupsexec_filter_PROGRAMS = @CUPS_FILTER_BIN@
 noinst_PROGRAMS = @CUPS_NOINST_BIN@
 
 EXTRA_PROGRAMS = cups-calibrate commandtoepson epson genppd rastertoprinter commandtocanon canon
+
+CUPS_LIBS = @CUPS_LIBS@
 
 cups_calibrate_SOURCES = cups-calibrate.c
 cups_calibrate_LDADD = -lm
