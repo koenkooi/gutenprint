@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.68 2003/06/20 00:54:41 rlk Exp $"
+ * "$Id: print-ps.c,v 1.69 2003/07/22 12:22:55 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -101,7 +101,7 @@ static const stp_parameter_t the_parameters[] =
   },
 };
 
-static int the_parameter_count =
+static const int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
 /*

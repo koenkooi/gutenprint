@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.17 2003/06/04 00:04:39 rlk Exp $"
+ * "$Id: module.c,v 1.18 2003/07/22 12:22:54 rlk Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl/libdl.
  *
@@ -49,7 +49,7 @@ static int stpi_module_register(stpi_module_t *module);
 static void *stpi_dlsym(void *handle, const char *symbol, const char *modulename);
 #endif
 
-static stpi_internal_module_class_t module_classes[] =
+static const stpi_internal_module_class_t module_classes[] =
   {
     {STPI_MODULE_CLASS_MISC, N_("Miscellaneous (unclassified)")},
     {STPI_MODULE_CLASS_FAMILY, N_("Family driver")},

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.28 2003/06/20 00:54:41 rlk Exp $"
+ * "$Id: print-raw.c,v 1.29 2003/07/22 12:22:55 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -85,7 +85,7 @@ static const stp_parameter_t the_parameters[] =
   },
 };
 
-static int the_parameter_count =
+static const int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
 static stp_parameter_list_t

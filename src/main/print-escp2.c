@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.280 2003/07/19 23:26:57 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.281 2003/07/22 12:22:54 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -209,7 +209,7 @@ static const stp_parameter_t the_parameters[] =
   PARAMETER_RAW(postinit_remote_sequence)
 };
 
-static int the_parameter_count =
+static const int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
 static const float_param_t float_parameters[] =
@@ -304,7 +304,7 @@ static const float_param_t float_parameters[] =
   },
 };
 
-static int float_parameter_count =
+static const int float_parameter_count =
 sizeof(float_parameters) / sizeof(const float_param_t);
 
 
@@ -578,7 +578,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
 static int
 compute_internal_resid(int hres, int vres)
 {
-  static int resolutions[RES_N] =
+  static const int resolutions[RES_N] =
     {
       0,
       360 * 360,

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.126 2003/06/20 00:54:40 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.127 2003/07/22 12:22:54 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -310,7 +310,7 @@ static const stp_parameter_t the_parameters[] =
   },
 };
 
-static int the_parameter_count =
+static const int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
 typedef struct
@@ -374,7 +374,7 @@ static const float_param_t float_parameters[] =
   },
 };    
 
-static int float_parameter_count =
+static const int float_parameter_count =
 sizeof(float_parameters) / sizeof(const float_param_t);
 
 /* returns the offset of the first jet when printing in the other direction */

@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.1 2003/07/19 21:52:25 rlk Exp $"
+ * "$Id: generic-options.c,v 1.2 2003/07/22 12:22:54 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -63,7 +63,7 @@ static const stp_parameter_t the_parameters[] =
   },
 };
 
-static int the_parameter_count =
+static const int the_parameter_count =
 sizeof(the_parameters) / sizeof(const stp_parameter_t);
 
 int

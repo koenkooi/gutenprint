@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.37 2003/07/12 21:20:38 rlk Exp $"
+ * "$Id: curve.c,v 1.38 2003/07/22 12:22:54 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -57,7 +57,7 @@ typedef struct
 
 } stpi_internal_curve_t;
 
-static const char *stpi_curve_type_names[] =
+static const char *const stpi_curve_type_names[] =
   {
     "linear",
     "spline",
@@ -66,7 +66,7 @@ static const char *stpi_curve_type_names[] =
 static const int stpi_curve_type_count =
 (sizeof(stpi_curve_type_names) / sizeof(const char *));
 
-static const char *stpi_wrap_mode_names[] =
+static const char *const stpi_wrap_mode_names[] =
   {
     "nowrap",
     "wrap"

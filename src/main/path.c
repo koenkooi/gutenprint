@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.7 2003/02/16 17:34:07 rlk Exp $"
+ * "$Id: path.c,v 1.8 2003/07/22 12:22:54 rlk Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -36,6 +36,7 @@
 static int stpi_path_check(const struct dirent *module);
 static char *stpi_path_merge(const char *path, const char *file);
 
+/* WARNING: This is not thread safe! -- rlk 20030721 */
 static const char *path_check_path;   /* Path for scandir() callback */
 static const char *path_check_suffix; /* Suffix for scandir() callback */
 
