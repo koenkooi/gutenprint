@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.142 2004/04/27 23:23:52 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.143 2004/05/01 01:55:36 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1146,7 +1146,7 @@ lexmark_describe_output(stp_const_vars_t v)
   const char *ink_type = stp_get_string_parameter(v, "InkType");
   const lexmark_inkparam_t *ink_parameter;
 
-  if (strcmp(print_mode, "Color") == 0)
+  if (!print_mode || strcmp(print_mode, "Color") == 0)
     printing_color = 1;
 
   ink_parameter = lexmark_get_ink_parameter(ink_type, printing_color, caps, v);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.318 2004/04/27 23:23:50 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.319 2004/05/01 01:55:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1717,9 +1717,9 @@ escp2_describe_output(stp_const_vars_t v)
 {
   const char *printing_mode = stp_get_string_parameter(v, "PrintingMode");
   const char *input_image_type = stp_get_string_parameter(v, "InputImageType");
-  if (strcmp(input_image_type, "Raw") == 0)
+  if (input_image_type && strcmp(input_image_type, "Raw") == 0)
     return "Raw";
-  else if (strcmp(printing_mode, "BW") == 0)
+  else if (printing_mode && strcmp(printing_mode, "BW") == 0)
     return "Grayscale";
   else
     {

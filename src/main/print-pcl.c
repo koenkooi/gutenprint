@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.130 2004/04/27 23:24:07 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.131 2004/05/01 01:55:36 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1750,7 +1750,7 @@ pcl_describe_output(stp_const_vars_t v)
   int xdpi, ydpi;
 
   pcl_describe_resolution(v, &xdpi, &ydpi);
-  if (strcmp(print_mode, "Color") == 0)
+  if (!print_mode || strcmp(print_mode, "Color") == 0)
     printing_color = 1;
   if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
       printing_color && xdpi == 600 && ydpi == 600)
