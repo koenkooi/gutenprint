@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.65 2001/11/08 12:55:01 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.65.2.1 2001/12/27 18:13:27 rwisi Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2329,8 +2329,11 @@ lexmark_init_line(int mode, unsigned char *prnBuf,
 		hend = (width-1)*(2400/2400);
 		break;
 	}
+ 	hend += offset;
 	prnBuf[17] = (unsigned char)(hend >> 8);
         prnBuf[18] = (unsigned char)(hend & 0xFF);
+	
+	prnBuf[10] = (pass_length==208 ? 0x1A : 0x18);
     }
 
     return prnBuf + header_size;  /* return the position where the pixels have to be written */
