@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/10/04 02:09:52 andystewart Exp $
+## $Id: Makefile.am,v 1.5 2001/10/04 02:24:22 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ html-stamp: $(MANUAL).sgml $(PNG_IMAGES)
 	  $(LN_S) ../figures figures ; \
 	fi ; \
 	cd ..; \
-	$(LN_S) $(MANUAL) html ; \
+	mv $(MANUAL) html
 	touch html-stamp
 
 tmp-all-local: html
@@ -127,7 +127,7 @@ clean-local:
 	rm -f $(MANUAL).out
 	rm -fr db2html.*
 	rm -rf figures/*.eps figures/*.pdf
-	rm -fr Makefile Makefile.in
+	rm -fr html-stamp
 
 #
 # This is my (so far failed) attempt to create an index for this documentation.
