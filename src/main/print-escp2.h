@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.19 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.20 2002/10/31 01:57:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -205,6 +205,8 @@ typedef struct
   const char *text;
   int hres;
   int vres;
+  int external_hres;
+  int external_vres;
   int softweave;
   int microweave;
   int vertical_passes;
