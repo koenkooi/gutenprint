@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.9 2003/02/09 03:50:27 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.10 2003/02/09 23:05:48 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -209,6 +209,7 @@ static void initialize_thumbnail(void);
 static void set_color_defaults (void);
 static void redraw_color_swatch (void);
 static void color_update (GtkAdjustment *adjustment);
+static void set_controls_active (GtkObject *checkbutton, gpointer optno);
 static void update_adjusted_thumbnail (void);
 
 static void set_media_size(const gchar *new_media_size);
@@ -351,6 +352,9 @@ populate_options(const stp_vars_t v)
 			 (SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
 		      gtk_widget_destroy
 			(GTK_WIDGET
+			 (SCALE_ENTRY_CHECKBUTTON(opt->info.flt.adjustment)));
+		      gtk_widget_destroy
+			(GTK_WIDGET
 			 (SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
 		    }
 		  break;
@@ -405,7 +409,7 @@ populate_options(const stp_vars_t v)
   stp_parameter_list_free(params);
 }
 
-void
+static void
 populate_option_table(GtkWidget *table, int p_class)
 {
   int i, j;
@@ -486,6 +490,9 @@ populate_option_table(GtkWidget *table, int p_class)
 	      gtk_signal_connect(GTK_OBJECT(opt->info.flt.adjustment),
 				 "value_changed",
 				 GTK_SIGNAL_FUNC(color_update), (gpointer) i);
+	      gtk_signal_connect
+		(GTK_OBJECT(SCALE_ENTRY_CHECKBUTTON(opt->info.flt.adjustment)),
+		 "toggled", GTK_SIGNAL_FUNC(set_controls_active), (gpointer) i);
 	      break;
 	    default:
 	      break;
@@ -518,7 +525,7 @@ set_options_active(void)
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
 		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
-		      if (!desc->is_mandatory)
+		      if (!(desc->is_mandatory))
 			gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_CHECKBUTTON(adj)));
 		    }
 		}
@@ -1814,6 +1821,20 @@ position_callback (GtkWidget *widget)
 }
 
 static void
+set_adjustment_active(GtkObject *adj, gboolean active, gboolean do_toggle)
+{
+  if (do_toggle)
+    gtk_toggle_button_set_active
+      (GTK_TOGGLE_BUTTON (SCALE_ENTRY_CHECKBUTTON(adj)), active);
+  gtk_widget_set_sensitive
+    (GTK_WIDGET (SCALE_ENTRY_LABEL (adj)), active);
+  gtk_widget_set_sensitive
+    (GTK_WIDGET (SCALE_ENTRY_SCALE (adj)), active);
+  gtk_widget_set_sensitive
+    (GTK_WIDGET (SCALE_ENTRY_SPINBUTTON (adj)), active);
+}
+
+static void
 do_color_updates (void)
 {
   int i;
@@ -1823,9 +1844,16 @@ do_color_updates (void)
       if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
 	  opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
 	  opt->info.flt.adjustment)
-       	gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->info.flt.adjustment),
-				 stp_get_float_parameter
-				 (pv->v, opt->fast_desc->name));
+	{
+	  gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->info.flt.adjustment),
+				   stp_get_float_parameter
+				   (pv->v, opt->fast_desc->name));
+	  if (stp_check_float_parameter(pv->v, opt->fast_desc->name,
+					 STP_PARAMETER_ACTIVE))
+	    set_adjustment_active(opt->info.flt.adjustment, TRUE, TRUE);
+	  else
+	    set_adjustment_active(opt->info.flt.adjustment, FALSE, TRUE);
+	}
     }
   update_adjusted_thumbnail ();
 }
@@ -3146,6 +3174,33 @@ color_update (GtkAdjustment *adjustment)
 }
 
 static void
+set_controls_active (GtkObject *checkbutton, gpointer optno)
+{
+  int i = (int) optno;
+  option_t *opt = &(current_options[i]);
+  if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+      opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
+      opt->info.flt.adjustment &&
+      checkbutton == GTK_OBJECT(SCALE_ENTRY_CHECKBUTTON(opt->info.flt.adjustment)))
+    {
+      gboolean setting =
+	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbutton));
+      if (setting)
+	{
+	  set_adjustment_active(opt->info.flt.adjustment, TRUE, FALSE);
+	  stp_set_float_parameter_active(pv->v, opt->fast_desc->name,
+					 STP_PARAMETER_ACTIVE);
+	}
+      else
+	{
+	  set_adjustment_active(opt->info.flt.adjustment, FALSE, FALSE);
+	  stp_set_float_parameter_active(pv->v, opt->fast_desc->name,
+					 STP_PARAMETER_INACTIVE);
+	}
+    }
+}
+
+static void
 set_color_defaults (void)
 {
   int i;
@@ -3155,8 +3210,13 @@ set_color_defaults (void)
       if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
 	  opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
 	  opt->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
-	stp_set_float_parameter(pv->v, opt->fast_desc->name,
-				opt->info.flt.deflt);
+	{
+	  stp_parameter_activity_t active =
+	    stp_get_float_parameter_active(pv->v, opt->fast_desc->name);
+	  stp_set_float_parameter(pv->v, opt->fast_desc->name,
+				  opt->info.flt.deflt);
+	  stp_set_float_parameter_active(pv->v, opt->fast_desc->name, active);
+	}
     }
 
   do_color_updates ();

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.107.2.1 2003/02/08 23:13:24 rlk Exp $"
+ * "$Id: print-canon.c,v 1.107.2.2 2003/02/09 23:05:49 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2347,8 +2347,10 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       k_lower *= .5;
       k_upper = .5;
     }
-  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
-  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
+  if (!stp_check_float_parameter(nv, "GCRLower", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  if (!stp_check_float_parameter(nv, "GCRUpper", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
   stpi_dither_init(nv, image, out_width, xdpi, ydpi);
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.229.2.2 2003/02/09 00:52:22 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.229.2.3 2003/02/09 23:05:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1104,8 +1104,10 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
   if (stp_get_float_parameter(nv, "Density") > 1.0)
     stp_set_float_parameter(nv, "Density", 1.0);
 
-  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
-  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
+  if (!stp_check_float_parameter(nv, "GCRLower", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  if (!stp_check_float_parameter(nv, "GCRUpper", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
 
   if (!stp_check_curve_parameter(nv, "HueMap", STP_PARAMETER_ACTIVE))
     {

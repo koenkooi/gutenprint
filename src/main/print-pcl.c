@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.89.2.1 2003/02/08 23:13:26 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.89.2.2 2003/02/09 23:05:51 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2386,8 +2386,10 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
 /* Set up dithering for special printers. */
 
 #if 1		/* Leave alone for now */
-  stp_set_default_float_parameter(nv, "GCRLower", .3);
-  stp_set_default_float_parameter(nv, "GCRUpper", .999);
+  if (!stp_check_float_parameter(nv, "GCRLower", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRLower", .3);
+  if (!stp_check_float_parameter(nv, "GCRUpper", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRUpper", .999);
 #endif
   stpi_dither_init(nv, image, out_width, xdpi, ydpi);
 

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.23.2.3 2003/02/08 23:13:23 rlk Exp $
+ *  $Id: gimp-print.h,v 1.23.2.4 2003/02/09 23:05:44 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -250,6 +250,7 @@ typedef enum stp_parameter_level
 typedef enum stp_parameter_activity
 {
   STP_PARAMETER_INACTIVE,
+  STP_PARAMETER_DEFAULTED,
   STP_PARAMETER_ACTIVE
 } stp_parameter_activity_t;
 
@@ -1065,5 +1066,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.23.2.3 2003/02/08 23:13:23 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.23.2.4 2003/02/09 23:05:44 rlk Exp $
  */

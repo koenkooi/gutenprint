@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.107.2.1 2003/02/08 23:13:26 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.107.2.2 2003/02/09 23:05:50 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1798,8 +1798,10 @@ densityDivisor /= 1.2;
 #endif
 
 
-  stp_set_default_float_parameter(nv, "GCRLower", k_lower);
-  stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
+  if (!stp_check_float_parameter(nv, "GCRLower", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRLower", k_lower);
+  if (!stp_check_float_parameter(nv, "GCRUpper", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(nv, "GCRUpper", k_upper);
   stpi_dither_init(nv, image, out_width, xdpi, ydpi);
 
 	/*

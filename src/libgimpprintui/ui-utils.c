@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.3.6.5 2003/02/09 03:50:28 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.3.6.6 2003/02/09 23:05:48 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -612,7 +612,7 @@ stpui_table_attach_aligned (GtkTable    *table,
   gtk_table_attach (table, widget,
 		    column + 2, column + 2 + colspan,
 		    row, row + 1,
-		    GTK_FILL, GTK_FILL, 0, 0);
+		    GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
 
   gtk_widget_show (widget);
 }

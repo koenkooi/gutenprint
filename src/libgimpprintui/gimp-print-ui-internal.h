@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.4.6.5 2003/02/09 03:50:27 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.4.6.6 2003/02/09 23:05:46 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -118,9 +118,6 @@ typedef struct
 
 #define SCALE_ENTRY_CHECKBUTTON(adj) \
         GTK_CHECK_BUTTON (gtk_object_get_data (GTK_OBJECT (adj), "checkbutton"))
-#define SCALE_ENTRY_CHECKBUTTON_ADJ(adj) \
-        gtk_check_button_get_adjustment \
-        (GTK_CHECK_BUTTON (gtk_object_get_data (GTK_OBJECT (adj), "checkbutton")))
 
 /*
  * Function prototypes

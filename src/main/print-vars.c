@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.34.2.1 2003/02/08 23:13:26 rlk Exp $"
+ * "$Id: print-vars.c,v 1.34.2.2 2003/02/09 23:05:51 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -356,30 +356,51 @@ stpi_get_verified(const stp_vars_t vv)
 }
 
 static void
+set_default_raw_parameter(stpi_list_t *list, const char *parameter,
+			  const char *value, int bytes, int typ)
+{
+  stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
+  if (value && !item)
+    {
+      value_t *val = stpi_malloc(sizeof(value_t));
+      val->name = stpi_strdup(parameter);
+      val->typ = typ;
+      val->active = STP_PARAMETER_DEFAULTED;
+      stpi_list_item_create(list, NULL, val);
+      val->value.rval.data = stpi_malloc(bytes + 1);
+      memcpy(val->value.rval.data, value, bytes);
+      ((char *) val->value.rval.data)[bytes] = '\0';
+      val->value.rval.bytes = bytes;
+    }
+}
+
+static void
 set_raw_parameter(stpi_list_t *list, const char *parameter, const char *value,
 		  int bytes, int typ)
 {
   stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
   if (value)
     {
-      value_t *v;
+      value_t *val;
       if (item)
 	{
-	  v = (value_t *) stpi_list_item_get_data(item);
-	  stpi_free(v->value.rval.data);
+	  val = (value_t *) stpi_list_item_get_data(item);
+	  if (val->active == STP_PARAMETER_DEFAULTED)
+	    val->active = STP_PARAMETER_ACTIVE;
+	  stpi_free(val->value.rval.data);
 	}
       else
 	{
-	  v = stpi_malloc(sizeof(value_t));
-	  v->name = stpi_strdup(parameter);
-	  v->typ = typ;
-	  v->active = STP_PARAMETER_ACTIVE;
-	  stpi_list_item_create(list, NULL, v);
+	  val = stpi_malloc(sizeof(value_t));
+	  val->name = stpi_strdup(parameter);
+	  val->typ = typ;
+	  val->active = STP_PARAMETER_ACTIVE;
+	  stpi_list_item_create(list, NULL, val);
 	}
-      v->value.rval.data = stpi_malloc(bytes + 1);
-      memcpy(v->value.rval.data, value, bytes);
-      ((char *) v->value.rval.data)[bytes] = '\0';
-      v->value.rval.bytes = bytes;
+      val->value.rval.data = stpi_malloc(bytes + 1);
+      memcpy(val->value.rval.data, value, bytes);
+      ((char *) val->value.rval.data)[bytes] = '\0';
+      val->value.rval.bytes = bytes;
     }
   else if (item)
     stpi_list_item_destroy(list, item);
@@ -413,10 +434,8 @@ stp_set_default_string_parameter_n(stp_vars_t v, const char *parameter,
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_STRING_LIST];
-  stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
-  if (!item)
-    set_raw_parameter(list, parameter, value, bytes,
-		      STP_PARAMETER_TYPE_STRING_LIST);
+  set_default_raw_parameter(list, parameter, value, bytes,
+			    STP_PARAMETER_TYPE_STRING_LIST);
   stpi_set_verified(v, 0);
 }
 
@@ -469,9 +488,8 @@ stp_set_default_raw_parameter(stp_vars_t v, const char *parameter,
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_RAW];
-  stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
-  if (!item)
-    set_raw_parameter(list, parameter, value, bytes, STP_PARAMETER_TYPE_RAW);
+  set_default_raw_parameter(list, parameter, value, bytes,
+			    STP_PARAMETER_TYPE_RAW);
   stpi_set_verified(v, 0);
 }
 
@@ -522,20 +540,17 @@ stp_set_file_parameter_n(stp_vars_t v, const char *parameter,
   stpi_set_verified(v, 0);
 }
 
-
 void
 stp_set_default_file_parameter(stp_vars_t v, const char *parameter,
 			       const char *value)
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
-  stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
   int byte_count = 0;
   if (value)
     byte_count = strlen(value);
-  if (!item)
-    set_raw_parameter(list, parameter, value, byte_count,
-		      STP_PARAMETER_TYPE_FILE);
+  set_default_raw_parameter(list, parameter, value, byte_count,
+			    STP_PARAMETER_TYPE_FILE);
   stpi_set_verified(v, 0);
 }
 
@@ -545,10 +560,8 @@ stp_set_default_file_parameter_n(stp_vars_t v, const char *parameter,
 {
   stpi_internal_vars_t *vv = (stpi_internal_vars_t *)v;
   stpi_list_t *list = vv->params[STP_PARAMETER_TYPE_FILE];
-  stpi_list_item_t *item = stpi_list_get_item_by_name(list, parameter);
-  if (!item)
-    set_raw_parameter(list, parameter, value, byte_count,
-		      STP_PARAMETER_TYPE_FILE);
+  set_default_raw_parameter(list, parameter, value, byte_count,
+			    STP_PARAMETER_TYPE_FILE);
   stpi_set_verified(v, 0);
 }
 
@@ -587,6 +600,8 @@ stp_set_curve_parameter(stp_vars_t v, const char *parameter,
       if (item)
 	{
 	  val = (value_t *) stpi_list_item_get_data(item);
+	  if (val->active == STP_PARAMETER_DEFAULTED)
+	    val->active = STP_PARAMETER_ACTIVE;
 	  stp_curve_free(val->value.cval);
 	}
       else
@@ -616,19 +631,11 @@ stp_set_default_curve_parameter(stp_vars_t v, const char *parameter,
       if (curve)
 	{
 	  value_t *val;
-	  if (item)
-	    {
-	      val = (value_t *) stpi_list_item_get_data(item);
-	      stp_curve_free(val->value.cval);
-	    }
-	  else
-	    {
-	      val = stpi_malloc(sizeof(value_t));
-	      val->name = stpi_strdup(parameter);
-	      val->typ = STP_PARAMETER_TYPE_CURVE;
-	      val->active = STP_PARAMETER_ACTIVE;
-	      stpi_list_item_create(list, NULL, val);
-	    }
+	  val = stpi_malloc(sizeof(value_t));
+	  val->name = stpi_strdup(parameter);
+	  val->typ = STP_PARAMETER_TYPE_CURVE;
+	  val->active = STP_PARAMETER_DEFAULTED;
+	  stpi_list_item_create(list, NULL, val);
 	  val->value.cval = stp_curve_create_copy(curve);
 	}
     }
@@ -667,6 +674,8 @@ stp_set_int_parameter(stp_vars_t v, const char *parameter, int ival)
   if (item)
     {
       val = (value_t *) stpi_list_item_get_data(item);
+      if (val->active == STP_PARAMETER_DEFAULTED)
+	val->active = STP_PARAMETER_ACTIVE;
     }
   else
     {
@@ -692,7 +701,7 @@ stp_set_default_int_parameter(stp_vars_t v, const char *parameter, int ival)
       val = stpi_malloc(sizeof(value_t));
       val->name = stpi_strdup(parameter);
       val->typ = STP_PARAMETER_TYPE_INT;
-      val->active = STP_PARAMETER_ACTIVE;
+      val->active = STP_PARAMETER_DEFAULTED;
       stpi_list_item_create(list, NULL, val);
       val->value.ival = ival;
     }
@@ -736,6 +745,8 @@ stp_set_boolean_parameter(stp_vars_t v, const char *parameter, int ival)
   if (item)
     {
       val = (value_t *) stpi_list_item_get_data(item);
+      if (val->active == STP_PARAMETER_DEFAULTED)
+	val->active = STP_PARAMETER_ACTIVE;
     }
   else
     {
@@ -765,7 +776,7 @@ stp_set_default_boolean_parameter(stp_vars_t v, const char *parameter,
       val = stpi_malloc(sizeof(value_t));
       val->name = stpi_strdup(parameter);
       val->typ = STP_PARAMETER_TYPE_BOOLEAN;
-      val->active = STP_PARAMETER_ACTIVE;
+      val->active = STP_PARAMETER_DEFAULTED;
       stpi_list_item_create(list, NULL, val);
       if (ival)
 	val->value.ival = 1;
@@ -812,6 +823,8 @@ stp_set_float_parameter(stp_vars_t v, const char *parameter, double dval)
   if (item)
     {
       val = (value_t *) stpi_list_item_get_data(item);
+      if (val->active == STP_PARAMETER_DEFAULTED)
+	val->active = STP_PARAMETER_ACTIVE;
     }
   else
     {
@@ -838,7 +851,7 @@ stp_set_default_float_parameter(stp_vars_t v, const char *parameter,
       val = stpi_malloc(sizeof(value_t));
       val->name = stpi_strdup(parameter);
       val->typ = STP_PARAMETER_TYPE_DOUBLE;
-      val->active = STP_PARAMETER_ACTIVE;
+      val->active = STP_PARAMETER_DEFAULTED;
       stpi_list_item_create(list, NULL, val);
       val->value.dval = dval;
     }
