@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.2 2000/06/18 00:21:57 rlk Exp $"
+ * "$Id: escputil.c,v 1.3 2000/06/19 11:45:03 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -275,7 +275,6 @@ do_print_cmd(void)
     fclose(pfile);
   else
     pclose(pfile);
-  pclose(pfile);
   return 0;
 }
 
