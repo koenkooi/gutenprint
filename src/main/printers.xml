@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.54 2002/09/24 23:27:41 rlk Exp $"
+# "$Id: printers.xml,v 1.55 2002/09/24 23:51:08 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -677,14 +677,6 @@
 <printer name="EPSON Stylus Photo 830" driver="escp2-830">
 <color>
 <model value=50>
-<gamma value=0.585>
-<density value=1.0>
-<language value=escp2>
-</printer>
-
-<printer name="EPSON Stylus Photo 870" driver="escp2-870">
-<color>
-<model value=22>
 <gamma value=0.585>
 <density value=1.0>
 <language value=escp2>
