@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.5 2003/06/03 20:17:37 rleigh Exp $"
+ * "$Id: print-olympus.c,v 1.6 2003/06/05 23:28:17 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -36,7 +36,6 @@
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdint.h>
 #include "module.h"
 
 #ifdef __GNUC__
