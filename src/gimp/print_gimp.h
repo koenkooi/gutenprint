@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.28 2002/11/02 17:14:01 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.29 2002/11/04 02:31:45 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -56,6 +56,9 @@
 #define ORIENT_UPSIDEDOWN       2       /* Reverse portrait orientation */
 #define ORIENT_SEASCAPE         3       /* Reverse landscape orientation */
 
+#define INVALID_TOP 1
+#define INVALID_LEFT 2
+
 typedef struct		/**** Printer List ****/
 {
   int	active;			/* Do we know about this printer? */
@@ -64,8 +67,7 @@ typedef struct		/**** Printer List ****/
   float	scaling;		/* Scaling, percent of printable area */
   int   orientation;
   int	unit;			/* Units for preview area 0=Inch 1=Metric */
-  int	left_is_valid;
-  int	top_is_valid;
+  int	invalid_mask;
   stp_vars_t v;
 } gp_plist_t;
 
