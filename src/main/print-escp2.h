@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.52 2003/06/07 20:15:30 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.53 2003/06/08 00:00:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -212,7 +212,7 @@ typedef struct
   const char *text;
   const escp2_inkname_t *const *inknames;
   const paperlist_t *papers;
-  shade_set_t *shades;
+  const shade_set_t *shades;
   short n_inks;
 } inklist_t;
 
@@ -390,12 +390,14 @@ extern const escp2_drop_list_t stpi_escp2_variable_x80_6pl_drops;
 
 extern const paperlist_t stpi_escp2_standard_paper_list;
 extern const paperlist_t stpi_escp2_c80_paper_list;
+extern const paperlist_t stpi_escp2_ultrachrome_paper_list;
 
 extern const paper_adjustment_list_t stpi_escp2_standard_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_sp780_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_sp960_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_photo_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_ultrachrome_matte_paper_adjustment_list;
 
 extern const res_t *const stpi_escp2_superfine_reslist[];
 extern const res_t *const stpi_escp2_no_microweave_reslist[];
@@ -526,5 +528,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.52 2003/06/07 20:15:30 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.53 2003/06/08 00:00:31 rlk Exp $".
  */
