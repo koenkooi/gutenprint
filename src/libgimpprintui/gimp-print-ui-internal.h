@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.2 2003/01/01 02:44:59 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.3 2003/01/06 00:14:43 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -51,6 +51,7 @@ typedef struct
   gint callback_id;
   GtkWidget *combo;
   GtkWidget *label;
+  stp_parameter_class_t p_class;
 } list_option_t;
 
 typedef struct

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.19 2003/01/05 23:06:33 rlk Exp $"
+ * "$Id: printers.c,v 1.20 2003/01/06 00:14:43 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -572,7 +572,6 @@ stp_verify_printer_params(const stp_vars_t v)
       stp_eprintf(v, _("Image is too long for the page\n"));
     }
 
-  CHECK_INT_RANGE(v, image_type);
   CHECK_INT_RANGE(v, output_type);
   CHECK_INT_RANGE(v, input_color_model);
   CHECK_INT_RANGE(v, output_color_model);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.93 2003/01/05 23:06:32 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.94 2003/01/06 00:14:43 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1848,18 +1848,6 @@ densityDivisor /= 1.2;
       stp_dither_set_light_ink(dither, ECOLOR_Y, .3333, stp_get_float_parameter(nv, "Density"));
   }
 
-  switch (stp_get_image_type(nv))
-    {
-    case IMAGE_LINE_ART:
-      stp_dither_set_ink_spread(dither, 19);
-      break;
-    case IMAGE_SOLID_TONE:
-      stp_dither_set_ink_spread(dither, 15);
-      break;
-    case IMAGE_CONTINUOUS:
-      stp_dither_set_ink_spread(dither, 14);
-      break;
-    }
   stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 
   /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.77 2003/01/05 23:06:33 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.78 2003/01/06 00:14:43 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2421,18 +2421,6 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
       stp_dither_set_light_ink(dither, ECOLOR_M, .25, stp_get_float_parameter(nv, "Density"));
     }
 
-  switch (stp_get_image_type(nv))
-    {
-    case IMAGE_LINE_ART:
-      stp_dither_set_ink_spread(dither, 19);
-      break;
-    case IMAGE_SOLID_TONE:
-      stp_dither_set_ink_spread(dither, 15);
-      break;
-    case IMAGE_CONTINUOUS:
-      stp_dither_set_ink_spread(dither, 14);
-      break;
-    }
   if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
     stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.7 2003/01/05 23:06:22 rlk Exp $
+ *  $Id: gimp-print.h,v 1.8 2003/01/06 00:14:42 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -81,11 +81,6 @@ extern const char* stp_check_version(unsigned int required_major,
 #define OUTPUT_MONOCHROME       2       /* Raw monochrome output */
 #define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
 #define OUTPUT_RAW_PRINTER	4	/* Printer-specific raw output */
-
-#define IMAGE_LINE_ART          0
-#define IMAGE_SOLID_TONE        1
-#define IMAGE_CONTINUOUS        2
-#define NIMAGE_TYPES            3
 
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
@@ -425,14 +420,10 @@ extern int stp_get_page_width(const stp_vars_t v);
 extern int stp_get_page_height(const stp_vars_t v);
 
 /*
- * Set output type and image type.  These are likely to change
- * quite drastically, particularly image type.
+ * Set output type.  This is likely to change further.
  */
 extern void stp_set_output_type(stp_vars_t v, int val);
 extern int stp_get_output_type(const stp_vars_t v);
-
-extern void stp_set_image_type(stp_vars_t v, int val);
-extern int stp_get_image_type(const stp_vars_t v);
 
 /*
  * Input color model refers to how the data is being sent to the
@@ -1001,5 +992,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.7 2003/01/05 23:06:22 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.8 2003/01/06 00:14:42 rlk Exp $
  */
