@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.82 2003/06/14 10:13:34 mtomlinson Exp $"
+ * "$Id: print-color.c,v 1.83 2003/06/15 02:32:53 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -2075,6 +2075,8 @@ stpi_color_traditional_init(stp_vars_t v,
 	itype = 1;
       else if (strcmp(image_type, "Photograph") == 0)
 	itype = 2;
+      else if (strcmp(image_type, "Default") == 0)
+	itype = 2;
       else if (strcmp(image_type, "HSLAdjust") == 0)
 	itype = 3;
       else if (strcmp(image_type, "Threshold") == 0)
@@ -2388,6 +2390,8 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	      if (!strcmp(param->param.name, "ImageOptimization"))
 		{
 		  description->bounds.str = stp_string_list_create();
+		  stp_string_list_add_string
+		    (description->bounds.str, "Default", _("Default"));
 		  stp_string_list_add_string
 		    (description->bounds.str, "Photograph", _("Photographs"));
 		  stp_string_list_add_string
