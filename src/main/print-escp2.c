@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.191.4.2 2002/11/03 14:49:51 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.191.4.3 2002/11/03 18:51:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1287,7 +1287,8 @@ escp2_print(const stp_printer_t printer,
 	  }
       if (!found)
 	{
-	  stp_eprintf(nv, _("This printer does not support raw printer output\n"));
+	  stp_eprintf(nv, _("This printer does not support raw printer output at depth %d\n"),
+		      image->bpp(image) / 2);
 	  return 0;
 	}
     }

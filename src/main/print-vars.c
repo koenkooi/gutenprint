@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.5.4.2 2002/11/03 14:49:52 rlk Exp $"
+ * "$Id: print-vars.c,v 1.5.4.3 2002/11/03 18:51:18 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -336,17 +336,17 @@ void
 stp_set_parameter_n(stp_vars_t v, const char *parameter,
 		    const char *value, int bytes)
 {
-  if      (strcmp(parameter, "Resolution"))
+  if      (strcmp(parameter, "Resolution") == 0)
     stp_set_resolution_n(v, value, bytes);
-  else if (strcmp(parameter, "PageSize"))
+  else if (strcmp(parameter, "PageSize") == 0)
     stp_set_media_size_n(v, value, bytes);
-  else if (strcmp(parameter, "MediaType"))
+  else if (strcmp(parameter, "MediaType") == 0)
     stp_set_media_type_n(v, value, bytes);
-  else if (strcmp(parameter, "InputSlot"))
+  else if (strcmp(parameter, "InputSlot") == 0)
     stp_set_media_source_n(v, value, bytes);
-  else if (strcmp(parameter, "InkType"))
+  else if (strcmp(parameter, "InkType") == 0)
     stp_set_ink_type_n(v, value, bytes);
-  else if (strcmp(parameter, "DitherAlgorithm"))
+  else if (strcmp(parameter, "DitherAlgorithm") == 0)
     stp_set_dither_algorithm_n(v, value, bytes);
   else
     stp_eprintf(v, "WARNING: Attempt to set unknown parameter %s to %s\n",
@@ -356,17 +356,17 @@ stp_set_parameter_n(stp_vars_t v, const char *parameter,
 const char *
 stp_get_parameter(const stp_vars_t v, const char *parameter)
 {
-  if      (strcmp(parameter, "Resolution"))
+  if      (strcmp(parameter, "Resolution") == 0)
     return stp_get_resolution(v);
-  else if (strcmp(parameter, "PageSize"))
+  else if (strcmp(parameter, "PageSize") == 0)
     return stp_get_media_size(v);
-  else if (strcmp(parameter, "MediaType"))
+  else if (strcmp(parameter, "MediaType") == 0)
     return stp_get_media_type(v);
-  else if (strcmp(parameter, "InputSlot"))
+  else if (strcmp(parameter, "InputSlot") == 0)
     return stp_get_media_source(v);
-  else if (strcmp(parameter, "InkType"))
+  else if (strcmp(parameter, "InkType") == 0)
     return stp_get_ink_type(v);
-  else if (strcmp(parameter, "DitherAlgorithm"))
+  else if (strcmp(parameter, "DitherAlgorithm") == 0)
     return stp_get_dither_algorithm(v);
   else
     {
