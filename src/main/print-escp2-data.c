@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.134 2003/10/07 03:07:20 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.135 2003/10/19 14:22:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -501,7 +501,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
      MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO |
      MODEL_FAST_360_NO | MODEL_SEND_ZERO_ADVANCE_YES |
      MODEL_SUPPORTS_INK_CHANGE_NO),
-    64, 1, 2, 64, 1, 2, 64, 1, 2, 4,
+    64, 1, 2, 128, 1, 1, 64, 1, 2, 4,
     360, 14400, -1, 1440, 720, 90, 90, 0, 1, 4, 0, 0, 0, 0,
     INCH(17 / 2), INCH(44), INCH(2), INCH(4),
     8, 9, 9, 40, 8, 9, 9, 40, 8, 9, 0, 0, 8, 9, 0, 0,
@@ -517,7 +517,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
      MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO |
      MODEL_FAST_360_NO | MODEL_SEND_ZERO_ADVANCE_YES |
      MODEL_SUPPORTS_INK_CHANGE_NO),
-    64, 1, 2, 128, 1, 1, 128, 1, 1, 4,
+    64, 1, 2, 128, 1, 1, 64, 1, 2, 4,
     360, 14400, -1, 1440, 720, 90, 90, 0, 1, 4, 0, 0, 0, 0,
     INCH(17 / 2), INCH(44), INCH(2), INCH(4),
     9, 9, 9, 40, 9, 9, 9, 40, 9, 9, 0, 0, 9, 9, 0, 0,
@@ -825,7 +825,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO |
      MODEL_FAST_360_NO | MODEL_SEND_ZERO_ADVANCE_YES |
      MODEL_SUPPORTS_INK_CHANGE_NO),
-    64, 1, 2, 128, 1, 1, 128, 1, 1, 4,
+    64, 1, 2, 128, 1, 1, 64, 1, 2, 4,
     360, 14400, -1, 1440, 720, 90, 90, 0, 1, 4, 0, 0, 0, 0,
     INCH(17), INCH(44), INCH(2), INCH(4),
     8, 9, 9, 40, 8, 9, 9, 40, 8, 9, 0, 0, 8, 9, 0, 0,
