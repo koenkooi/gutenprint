@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.36 2001/10/17 23:53:25 rlk Exp $"
+ * "$Id: escputil.c,v 1.37 2001/10/18 23:00:53 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -953,8 +953,8 @@ do_final_alignment(void)
 	  break;
 	case 'r':
 	case 'R':
-	  printf(_("Please confirm by typing 'r' again that you wish to repeat the\n"));
-	  printf(_("alignment process:\n"));
+	  printf(_("Please confirm by typing 'r' again that you wish to repeat the\n"
+		   "alignment process:\n"));
 	  fflush(stdout);
 	  inbuf = do_get_input(_("> "));
 	  if (inbuf[0] == 'r' || inbuf[0] == 'R')
