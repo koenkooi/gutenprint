@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.21 2000/01/08 23:30:56 rlk Exp $"
+ * "$Id: print.h,v 1.22 2000/01/13 03:17:11 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -26,6 +26,17 @@
  */
 
 /*
+ *
+ * This file must not include any gimp, glib, gtk, etc. headers.
+ *
+ * Eventually I intend to port this to GhostScript and/or CUPS.  The only
+ * file that should have GIMP-specific code is print.c.  The rest of this
+ * program should be completely generic.
+ *
+ * rlk 20000112
+ */
+
+/*
  * Include necessary header files...
  */
 #ifndef HAVE_UNISTD_H
@@ -36,6 +47,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -224,5 +237,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.21 2000/01/08 23:30:56 rlk Exp $".
+ * End of "$Id: print.h,v 1.22 2000/01/13 03:17:11 rlk Exp $".
  */
