@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.12 2003/05/31 04:07:23 rlk Exp $"
+ * "$Id: print-list.c,v 1.13 2003/06/01 16:07:05 rlk Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
@@ -694,7 +694,7 @@ stpi_list_item_destroy(stpi_list_t *list, stpi_list_item_t *item)
   lh->length--;
 
   if (lh->freefunc)
-    lh->freefunc(((stpi_internal_list_node_t *) item)->data);
+    lh->freefunc((void *)((stpi_internal_list_node_t *) item)->data);
   if (ln->prev)
     ln->prev->next = ln->next;
   else
