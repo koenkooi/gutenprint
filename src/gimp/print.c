@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.5 2001/02/24 03:14:25 rlk Exp $"
+ * "$Id: print.c,v 1.6 2001/03/31 20:56:52 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -311,6 +311,8 @@ run (char   *name,		/* I - Name of print program. */
 #endif
 
   vars = stp_allocate_copy(stp_default_settings());
+  stp_set_input_color_model(vars, COLOR_MODEL_RGB);
+  stp_set_output_color_model(vars, COLOR_MODEL_RGB);
   /*
    * Initialize parameter data...
    */
@@ -1491,5 +1493,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.5 2001/02/24 03:14:25 rlk Exp $".
+ * End of "$Id: print.c,v 1.6 2001/03/31 20:56:52 rlk Exp $".
  */
