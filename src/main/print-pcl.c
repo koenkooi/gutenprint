@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.47.4.1 2002/01/21 19:18:19 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.47.4.2 2002/04/04 00:03:46 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2408,7 +2408,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 #ifndef PCL_DEBUG_DISABLE_COMPRESSION
   if ((caps->stp_printer_type & PCL_PRINTER_TIFF) == PCL_PRINTER_TIFF)
   {
-    comp_buf = stp_malloc(height + (height + 126) / 127);
+    comp_buf = stp_malloc((height + 128 + 7) * 129 / 128);
     writefunc = pcl_mode2;
   }
   else
