@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.8 2003/01/01 18:44:08 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.9 2003/01/18 21:00:48 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -99,7 +99,7 @@ is_po2(size_t i)
 
 void
 stp_dither_matrix_iterated_init(dither_matrix_t *mat, size_t size, size_t exp,
-			 const unsigned *array)
+				const unsigned *array)
 {
   int i;
   int x, y;

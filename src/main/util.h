@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.11 2003/01/02 02:51:16 rlk Exp $"
+ * "$Id: util.h,v 1.12 2003/01/18 21:01:13 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -71,10 +71,14 @@ extern void stp_erprintf(const char *format, ...);
 #define STP_DBG_WEAVE_PARAMS	0x100
 #define STP_DBG_ROWS		0x200
 #define STP_DBG_MARK_FILE       0x400
+extern unsigned long stp_debug_level;
+
 extern void stp_dprintf(unsigned long level, const stp_vars_t v,
 			const char *format, ...);
 extern void stp_deprintf(unsigned long level, const char *format, ...);
-extern unsigned long stp_debug_level;
+extern void stp_init_debug_messages(const stp_vars_t v);
+extern void stp_flush_debug_messages(const stp_vars_t v);
+
 
 extern void *stp_malloc (size_t);
 extern void *stp_zalloc (size_t);
@@ -163,5 +167,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.11 2003/01/02 02:51:16 rlk Exp $".
+ * End of "$Id: util.h,v 1.12 2003/01/18 21:01:13 rlk Exp $".
  */
