@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.34 2000/08/13 17:52:42 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.35 2000/08/23 02:06:08 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -497,8 +497,8 @@ stp_open(gx_device *pdev)
   st[0] = (float)left / 72;          /* left margin   */
   st[2] = (float)(width-right) / 72; /* right margin  */
 
-  stp_data.v.top    = length-top;
-  stp_data.bottom = bottom;
+  stp_data.v.top    = 0;
+  stp_data.bottom = bottom + length-top;
 
   STP_DEBUG(fprintf(gs_stderr, "margins:  l %f  b %f  r %f  t %f\n",
 		    st[0], st[1], st[2], st[3]));
