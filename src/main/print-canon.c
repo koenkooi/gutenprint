@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.71.2.2 2002/05/03 01:30:28 rlk Exp $"
+ * "$Id: print-canon.c,v 1.71.2.3 2002/05/18 23:46:47 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1589,7 +1589,7 @@ canon_describe_resolution(const stp_printer_t printer,
   return;
 }
 
-static stp_param_t media_sources[] =
+static const stp_param_t media_sources[] =
               {
                 { "Auto",	N_ ("Auto Sheet Feeder") },
                 { "Manual",	N_ ("Manual with Pause") },
