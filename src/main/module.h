@@ -1,7 +1,7 @@
 /*
- * "$Id: module.h,v 1.3 2003/01/20 22:19:18 rlk Exp $"
+ * "$Id: module.h,v 1.4 2003/06/03 20:17:35 rleigh Exp $"
  *
- *   libgimpprint module loader header
+ *   libgimpprint module loader - load modules with libltdl/libdl.
  *
  *   Copyright 1997-2000 Michael Sweet (mike@easysw.com),
  *	Robert Krawitz (rlk@alum.mit.edu) and Michael Natterer (mitch@gimp.org)
@@ -67,6 +67,7 @@ typedef enum
   STPI_MODULE_CLASS_INVALID,
   STPI_MODULE_CLASS_MISC,
   STPI_MODULE_CLASS_FAMILY,
+  STPI_MODULE_CLASS_COLOR,
   STPI_MODULE_CLASS_DITHER
 } stpi_module_class_t;
 
