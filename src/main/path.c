@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.2 2003/01/09 03:08:16 rlk Exp $"
+ * "$Id: path.c,v 1.3 2003/01/10 05:02:00 rlk Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -187,7 +187,7 @@ stp_path_split(stp_list_t *list, /* List to add directories to */
 
       if (len && !(len == 1 && !end))
 	{
-	  dir = (char *) stp_malloc(sizeof(char) * len);
+	  dir = (char *) stp_malloc(len + 1);
 	  strncpy(dir, start, len);
 	  dir[len] = '\0';
 	  stp_list_item_create(list, stp_list_get_end(list), dir);
