@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2001/07/05 19:23:36 rleigh Exp $
+## $Id: Makefile.am,v 1.7 2001/07/05 23:25:22 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ DOCS = \
 
 info_TEXINFOS = gimpprint.texi
 
-gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi types.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi new-printer.texi indices.texi
+gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi new-printer.texi indices.texi
 
 
 ## Rules
@@ -58,7 +58,6 @@ html-stamp: gimpprint.texi $(gimpprint_TEXINFOS)
 	    $(TEXI2HTML_PROG) -menu -split_node -number -expandinfo \
 	    -I ../$(srcdir) ../$(srcdir)/gimpprint.texi ; \
 	fi
-	
 	touch html-stamp
 
 dist-hook: html
