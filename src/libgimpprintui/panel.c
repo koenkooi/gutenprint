@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.67 2004/05/26 03:16:14 rlk Exp $"
+ * "$Id: panel.c,v 1.68 2004/05/26 12:15:28 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2863,7 +2863,7 @@ plist_callback (GtkWidget *widget,
 		gpointer   data)
 {
   gint         i;
-  const char *tmp;
+  char *tmp;
   stp_parameter_t desc;
 
   suppress_preview_update++;
@@ -2930,6 +2930,7 @@ plist_callback (GtkWidget *widget,
 		     stpui_plist_get_output_filename(pv));
   tmp = stpui_build_standard_print_command(pv, stp_get_printer(pv->v));
   gtk_entry_set_text(GTK_ENTRY(standard_cmd_entry), tmp);
+  stp_free(tmp);
   gtk_entry_set_text(GTK_ENTRY(custom_command_entry),
 		     stpui_plist_get_custom_command(pv));
   do_all_updates();
