@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.92 2004/02/07 18:05:32 rlk Exp $"
+   "$Id: printers.xml,v 1.93 2004/02/10 01:10:31 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -801,6 +801,24 @@
         <density value="1.0"/>
       </printer>
       <printer name="EPSON Stylus CX-5200" driver="escp2-cx5200" manufacturer="EPSON">
+        <color value="true"/>
+        <model value="55"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-5300" driver="escp2-cx5300" manufacturer="EPSON">
+        <color value="true"/>
+        <model value="55"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-5400" driver="escp2-cx5400" manufacturer="EPSON">
         <color value="true"/>
         <model value="55"/>
         <cyan value="0.96"/>
