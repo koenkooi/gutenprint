@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.23 2001/01/19 03:01:40 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.24 2001/01/20 14:26:29 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -67,8 +67,8 @@ static void gimp_dither_algo_callback (GtkWidget *widget,
 extern void gimp_update_adjusted_thumbnail (void);
 extern void gimp_plist_build_combo         (GtkWidget      *combo,
 					    gint            num_items,
-					    gchar         **items,
-					    gchar          *cur_item,
+					    const gchar         **items,
+					    const gchar          *cur_item,
 					    GtkSignalFunc   callback,
 					    gint           *callback_id);
 
@@ -440,12 +440,18 @@ gimp_set_color_defaults (void)
 void
 gimp_build_dither_combo (void)
 {
+  int i;
+  const char **vec = malloc(sizeof(const char *) *
+			    stp_dither_algorithm_count());
+  for (i = 0; i < stp_dither_algorithm_count(); i++)
+    vec[i] = stp_dither_algorithm_name(i);
   gimp_plist_build_combo (dither_algo_combo,
-			  num_dither_algos,
-			  dither_algo_names,
+			  stp_dither_algorithm_count(),
+			  vec,
 			  plist[plist_current].v.dither_algorithm,
 			  &gimp_dither_algo_callback,
 			  &dither_algo_callback_id);
+  free(vec);
 }
 
 static void

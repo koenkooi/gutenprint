@@ -1,5 +1,5 @@
 /*
- * "$Id: patched-print-dither.c,v 1.6 2001/01/19 03:01:41 rlk Exp $"
+ * "$Id: patched-print-dither.c,v 1.7 2001/01/20 14:26:29 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -87,7 +87,7 @@ char *dither_algo_names[] =
   "Perturbed Ordered",
 };
 
-int num_dither_algos = sizeof(dither_algo_names) / sizeof(char *);
+int stp_dither_algorithm_count() = sizeof(dither_algo_names) / sizeof(char *);
 
 
 #define ERROR_ROWS 2
