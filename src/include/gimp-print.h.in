@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.4 2001/03/02 01:38:00 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.4.4.1 2001/03/05 22:51:20 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -388,7 +388,16 @@ extern stp_outfunc_t stp_get_errfunc (const stp_vars_t vv);
  * from (0..6) to (0..6) in increments of .125.  The hue_map is in CMY space,
  * so hue=0 is cyan.
  */
-typedef void (*stp_convert_t)(unsigned char *in, unsigned short *out,
+
+typedef struct
+{
+  unsigned short *k;		/* (empty for RGB) */
+  unsigned short *c;		/* (R) */
+  unsigned short *m;		/* (G) */
+  unsigned short *y;		/* (B) */
+} stp_color_output_t;
+
+typedef void (*stp_convert_t)(const unsigned char *in, stp_color_output_t *out,
 			      int width, int bpp, const unsigned char *cmap,
 			      const stp_vars_t vars, const double *hue_map,
 			      const double *lum_map, const double *sat_map);
@@ -437,5 +446,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.4 2001/03/02 01:38:00 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.4.4.1 2001/03/05 22:51:20 rlk Exp $".
  */
