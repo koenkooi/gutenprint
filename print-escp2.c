@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.187 2000/07/15 13:02:55 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.188 2000/07/17 23:56:37 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2804,7 +2804,7 @@ modd(int x, int y)
  */
 
 static inline int
-roundup(int x, int y)
+rroundup(int x, int y)
 {
   if (x < 0)
     return -(y * divv(-x, y));
@@ -2814,7 +2814,7 @@ roundup(int x, int y)
 
 #if 0
 static inline int
-rounddown(int x, int y)
+rrounddown(int x, int y)
 {
   if (x < 0)
     return -(y * divv((y - x - 1), y));
@@ -2853,7 +2853,7 @@ weave_parameters_by_row(const escp2_softweave_t *sw, int row,
 	w->physpassstart = w->logicalpassstart;
       else
 	w->physpassstart = w->logicalpassstart +
-	  roundup(-w->logicalpassstart, sw->separation);
+	  rroundup(-w->logicalpassstart, sw->separation);
       w->jet = (w->row - w->logicalpassstart) / sw->separation;
       if (w->logicalpassstart >= 0)
 	w->missingstartrows = 0;
