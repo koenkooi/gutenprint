@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.6 2000/09/28 00:57:53 rlk Exp $"
+ * "$Id: print-weave.c,v 1.7 2000/10/17 00:35:37 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -882,7 +882,7 @@ main(int ac, char *av[])
 			}
 			putchar('\n');
 		}
-		//putchar('\n');
+		/* putchar('\n'); */
 	}
 
 	return 0;
