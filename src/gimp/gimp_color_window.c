@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.8 2001/06/02 13:58:13 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.9 2001/06/02 23:10:11 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -410,9 +410,7 @@ gimp_set_adjustment_active(GtkObject *adj, int active)
 {
   gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_LABEL(adj)), active);
   gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE(adj)), active);
-  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE_ADJ(adj)), active);
   gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON(adj)), active);
-  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON_ADJ(adj)), active);
 }
 
 void
