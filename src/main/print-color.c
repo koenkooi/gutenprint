@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.95 2003/09/18 03:00:39 rlk Exp $"
+ * "$Id: print-color.c,v 1.96 2003/09/19 01:32:04 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -966,8 +966,8 @@ compute_gcr_curve(stp_const_vars_t vars)
     k_upper = stp_get_float_parameter(vars, "GCRUpper");
   if (stp_check_float_parameter(vars, "GCRLower", STP_PARAMETER_DEFAULTED))
     k_lower = stp_get_float_parameter(vars, "GCRLower");
-  if (stp_check_float_parameter(vars, "Black", STP_PARAMETER_DEFAULTED))
-    k_gamma = stp_get_float_parameter(vars, "Black");
+  if (stp_check_float_parameter(vars, "BlackGamma", STP_PARAMETER_DEFAULTED))
+    k_gamma = stp_get_float_parameter(vars, "BlackGamma");
   k_upper *= lut->steps;
   k_lower *= lut->steps;
 
