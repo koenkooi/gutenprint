@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.149 2001/12/02 20:14:36 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.150 2001/12/02 22:11:21 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1229,7 +1229,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   offset_ptr = escp2_head_offset(model, nv);
   max_head_offset = 0;
   if (ncolors > 1)
-    for (i = 0; i < NCHANNELS; i++)
+    for (i = 0; i < ncolors; i++)
       {
 	head_offset[i] = offset_ptr[i] * ydpi /
 	  escp2_base_separation(model, nv);
