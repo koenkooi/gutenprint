@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/05/03 18:06:29 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2001/05/09 18:00:49 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,37 @@ info_TEXINFOS = gimpprint.texi
 
 gimpprint_TEXINFOS = gpl.texi
 
-DISTCLEANFILES =
+all-local: html
+
+html: html-stamp
+html-stamp: gimpprint.texi version.texi gpl.texi
+	if test x$(TEXI2HTML_PROG) != x ; then \
+	  rm -rf manual-html ; \
+	  mkdir manual-html ; \
+	  cd manual-html ; \
+	    $(TEXI2HTML_PROG) -menu -split_node -number -expandinfo -I .. \
+	    ../gimpprint.texi ; \
+	fi
+	touch html-stamp
+
+dist-hook: html
+	for dir in manual-html ; do \
+	  if test -d $(srcdir)/$$dir ; then \
+	    mkdir $(distdir)/$$dir; \
+	    for dirfile in $(srcdir)/$$dir/*; do \
+	      if test -f $$dirfile ; then \
+	        cp -p $$dirfile $(distdir)/$$dir; \
+	      fi \
+	    done \
+	  fi \
+	done
+
+maintainer-clean-local:
+	rm -rf manual-html
+
+DISTCLEANFILES = html-stamp
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = $(DOCS)
+
+.PHONY: html

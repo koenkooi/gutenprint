@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.21 2001/05/06 22:08:52 rleigh Exp $
+## $Id: Makefile.am,v 1.22 2001/05/09 18:00:49 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -123,9 +123,9 @@ $(LIBGIMPPRINT_LIBS):
 
 dist-hook:
 	for dir in commands ; do \
-	  if test -d $$dir ; then \
+	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $$dir/*; do \
+	    for dirfile in $(srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \

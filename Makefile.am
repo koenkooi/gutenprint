@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.96 2001/05/05 20:27:07 rleigh Exp $
+## $Id: Makefile.am,v 1.97 2001/05/09 18:00:48 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,9 +60,9 @@ ChangeLog:
 
 dist-hook:
 	for dir in debian scripts ; do \
-	  if test -d $(top_srcdir)/$$dir ; then \
+	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $(top_srcdir)/$$dir/*; do \
+	    for dirfile in $(srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \
@@ -91,6 +91,9 @@ install-cups: all
 install-ghost: all
 	$(MAKE) -C src/ghost install
 
+html:
+	$(MAKE) -C doc html
+
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`
 
@@ -106,4 +109,4 @@ CLEANSCRIPTS = \
 CLEANFILES = .gimp-dist .noupdate
 MAINTAINERCLEANFILES = ABOUT-NLS INSTALL aclocal.m4 config.h.in configure Makefile.in stamp-h.in $(addprefix scripts/, $(CLEANSCRIPTS))
 
-.PHONY: gimp-dist install-gimp install-cups install-ghost snapshot ChangeLog
+.PHONY: gimp-dist install-gimp install-cups install-ghost html snapshot ChangeLog
