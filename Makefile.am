@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.117 2001/10/17 13:30:55 easysw Exp $
+## $Id: Makefile.am,v 1.118 2001/10/22 00:19:05 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,17 @@ ChangeLog:
 	fi
 
 ## @-@-@-@-@ YES-GIMP @-@-@-@-@
+
+# Rebuild configure.in from configure.in.in if configure.in.in is available.
+# If not, don't do anything.
+
+configure.in: configure.in.in
+	if test -f configure.in.in ; then \
+	  sed "s/XXXRELEASE_DATE=XXX/RELEASE_DATE=\"`date '+%d %b %Y'`\"/" configure.in.in > configure.in ; \
+	fi
+
+configure.in.in:
+	true
 
 dist-hook:
 	for dir in $(DISTDIRS) ; do \
