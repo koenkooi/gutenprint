@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.6 2001/01/29 02:07:17 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.7 2001/01/29 02:26:07 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -565,15 +565,18 @@ lexmark_size_type(const stp_vars_t *v, lexmark_cap_t caps)
 }
 
 
-int lexmark_get_color_nozzles(const stp_printer_t *printer) {
+static int lexmark_get_color_nozzles(const stp_printer_t *printer) 
+{
   return 192;
 }
 
-int lexmark_get_black_nozzles(const stp_printer_t *printer) {
+static int lexmark_get_black_nozzles(const stp_printer_t *printer) 
+{
   return 208;
 }
 
-int lexmark_get_nozzle_resolution(const stp_printer_t *printer) {
+static int lexmark_get_nozzle_resolution(const stp_printer_t *printer) 
+{
   return 1200;
 }
 
@@ -640,7 +643,7 @@ static const lexmark_res_t
   return NULL;
 }	  
 
-int
+static int
 lexmark_print_bidirectional(const stp_printer_t *printer,
 			    const char *resolution)
 {
