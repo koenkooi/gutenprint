@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.99 2002/12/29 19:41:03 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.100 2002/12/29 20:36:40 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2037,7 +2037,7 @@ setup_update (void)
 
   gtk_entry_set_text (GTK_ENTRY (ppd_file), stp_get_ppd_file (pv->v));
 
-  if (strncmp (stp_get_driver (pv->v),"ps", 2) == 0)
+  if (strcmp(stp_printer_get_family(stp_get_printer(pv->v)), "ps") == 0)
     {
       gtk_widget_show (ppd_box);
       gtk_widget_show (ppd_label);
