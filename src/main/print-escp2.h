@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.9 2002/06/09 21:10:54 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.10 2002/06/15 00:29:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -281,13 +281,15 @@ typedef struct
   const char *name;
   const char *text;
   int is_color;
+  double k_lower;
+  double k_upper;
   const ink_channel_t *channels[NCOLORS];
 } escp2_inkname_t;
 
 typedef struct
 {
   int n_inks;
-  const escp2_inkname_t *inknames;
+  const escp2_inkname_t **inknames;
 } inklist_t;
 
 typedef struct escp2_printer
