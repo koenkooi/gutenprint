@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.8 2001/02/19 19:32:53 rleigh Exp $"
+ * "$Id: genppd.c,v 1.8.2.1 2001/02/20 04:41:32 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -189,8 +189,12 @@ main(int  argc,			/* I - Number of command-line arguments */
       usage();
 
   for (i = 0; i < stp_known_printers(); i++)
-    if (write_ppd(stp_get_printer_by_index(i), prefix))
-      return (1);
+    {
+      const stp_printer_t *printer = stp_get_printer_by_index(i);
+      if (printer && write_ppd(printer, prefix))
+	return (1);
+      stp_free_printer(printer);
+    }
 
   return (0);
 }
@@ -284,9 +288,9 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*PSVersion:	\"(3010.000) 550\"\n");
   gzputs(fp, "*LanguageLevel:	\"3\"\n");
   gzprintf(fp, "*ColorDevice:	%s\n",
-           p->printvars.output_type == OUTPUT_COLOR ? "True" : "False");
+           stp_get_output_type(p->printvars) == OUTPUT_COLOR ? "True" : "False");
   gzprintf(fp, "*DefaultColorSpace: %s\n", 
-           p->printvars.output_type == OUTPUT_COLOR ? "RGB" : "Gray");
+           stp_get_output_type(p->printvars) == OUTPUT_COLOR ? "RGB" : "Gray");
   gzputs(fp, "*FileSystem:	False\n");
   gzputs(fp, "*LandscapeOrientation: Plus90\n");
   gzputs(fp, "*TTRasterizer:	Type42\n");
@@ -308,7 +312,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageSize\n");
   gzputs(fp, "*DefaultPageSize: " DEFAULT_SIZE "\n");
 
-  memcpy(&v, &(p->printvars), sizeof(v));
+  v = stp_allocate_copy(p->printvars);
 
   for (i = 0; i < num_opts; i ++)
   {
@@ -316,9 +320,9 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
     * Get the media size...
     */
 
-    strcpy(v.media_size, opts[i]);
+    stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, &v, &width, &height);
+    (*(p->printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -343,10 +347,9 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
    /*
     * Get the media size...
     */
+    stp_set_media_size(v, opts[i]);
 
-    strcpy(v.media_size, opts[i]);
-
-    (*(p->printfuncs->media_size))(p, &v, &width, &height);
+    (*(p->printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -369,10 +372,10 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
     * Get the media size and margins...
     */
 
-    strcpy(v.media_size, opts[i]);
+    stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, &v, &width, &height);
-    (*(p->printfuncs->imageable_area))(p, &v, &left, &right, &bottom, &top);
+    (*(p->printfuncs->media_size))(p, v, &width, &height);
+    (*(p->printfuncs->imageable_area))(p, v, &left, &right, &bottom, &top);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -395,9 +398,9 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
     * Get the media size...
     */
 
-    strcpy(v.media_size, opts[i]);
+    stp_set_media_size(v, opts[i]);
 
-    (*(p->printfuncs->media_size))(p, &v, &width, &height);
+    (*(p->printfuncs->media_size))(p, v, &width, &height);
 
     for (j = sizeof(sizes) / sizeof(sizes[0]), size = sizes; j > 0; j --, size ++)
       if (size->width == width && size->height == height)
@@ -421,7 +424,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*OpenUI *ColorModel: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *ColorModel\n");
 
-  if (p->printvars.output_type == OUTPUT_COLOR)
+  if (stp_get_output_type(p->printvars) == OUTPUT_COLOR)
     gzputs(fp, "*DefaultColorModel: RGB\n");
   else
     gzputs(fp, "*DefaultColorModel: Gray\n");
@@ -432,7 +435,7 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 	       "/cupsBitsPerColor 8>>setpagedevice\"\n",
            CUPS_CSPACE_W, CUPS_ORDER_CHUNKED);
 
-  if (p->printvars.output_type == OUTPUT_COLOR)
+  if (stp_get_output_type(p->printvars) == OUTPUT_COLOR)
     gzprintf(fp, "*ColorModel RGB/Color:\t\"<<"
                  "/cupsColorSpace %d"
 		 "/cupsColorOrder %d"
@@ -639,9 +642,10 @@ write_ppd(const stp_printer_t *p,		/* I - Printer driver */
 
   gzclose(fp);
 
+  stp_free_vars(v);
   return (0);
 }
 
 /*
- * End of "$Id: genppd.c,v 1.8 2001/02/19 19:32:53 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.8.2.1 2001/02/20 04:41:32 rlk Exp $".
  */

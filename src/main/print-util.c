@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.1 2001/02/20 04:08:38 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.2 2001/02/20 04:41:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -230,6 +230,11 @@ void							\
 stp_set_##s(stp_vars_t vv, const char *val)		\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  if (v->s)						\
+    {							\
+      free(v->s);					\
+      v->s = NULL;					\
+    }							\
   v->s = c_strdup(val);					\
 }							\
 							\
