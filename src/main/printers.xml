@@ -5,7 +5,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.61 2002/11/22 18:32:31 rleigh Exp $"
+   "$Id: printers.xml,v 1.62 2002/11/23 00:20:29 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -275,7 +275,7 @@
       </printer>
       <printer name="EPSON Stylus C82" driver="escp2-c82">
         <color value="true"/>
-        <model value="44"/>
+        <model value="55"/>
         <cyan value="0.96"/>
         <magenta value="1.02"/>
         <yellow value="1.02"/>
@@ -693,6 +693,21 @@
         <color value="true"/>
         <model value="12"/>
         <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-3200" driver="escp2-cx3200">
+        <color value="true"/>
+        <model value="52"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus CX-5200" driver="escp2-cx5200">
+        <color value="true"/>
+        <model value="55"/>
+        <cyan value="0.96"/>
+        <magenta value="1.02"/>
+        <yellow value="1.02"/>
+        <gamma value="0.688"/>
         <density value="1.0"/>
       </printer>
       <printer name="EPSON CL-700" driver="escp2-cl700">
