@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.40 2001/08/04 16:47:57 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.41 2001/08/13 00:24:53 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -33,9 +33,18 @@
 #ifndef _GIMP_PRINT_INTERNAL_H_
 #define _GIMP_PRINT_INTERNAL_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#ifndef DISABLE_NLS
-#include "../../lib/libprintut.h"
+#ifndef HAVE_ASPRINTF
+#if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
+#include <varargs.h>
+#else
+#include <stdarg.h>
+#endif
+extern int vasprintf (char **result, const char *format, va_list args);
+extern int asprintf (char **result, const char *format, ...);
 #endif
 
 /*
@@ -511,5 +520,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.40 2001/08/04 16:47:57 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.41 2001/08/13 00:24:53 rlk Exp $".
  */
