@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.23 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: print-ps.c,v 1.24 2000/04/27 02:40:27 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -464,7 +464,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   fputs("%!PS-Adobe-3.0\n", prn);
   fprintf(prn, "%%Creator: %s\n", Image_get_pluginname(image));
   fprintf(prn, "%%%%CreationDate: %s", ctime(&curtime));
-  fputs("%%Copyright: 1997-1999 by Michael Sweet (mike@easysw.com) and Robert Krawitz (rlk@alum.mit.edu)\n", prn);
+  fputs("%%Copyright: 1997-2000 by Michael Sweet (mike@easysw.com) and Robert Krawitz (rlk@alum.mit.edu)\n", prn);
   fprintf(prn, "%%%%BoundingBox: %d %d %d %d\n",
           left, top - out_height, left + out_width, top);
   fputs("%%DocumentData: Clean7Bit\n", prn);
@@ -863,6 +863,9 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 /*
  *   $Log: print-ps.c,v $
+ *   Revision 1.24  2000/04/27 02:40:27  rlk
+ *   Fix copyright
+ *
  *   Revision 1.23  2000/04/20 02:42:54  rlk
  *   Reduce initial memory footprint.
  *
@@ -1039,5 +1042,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-ps.c,v 1.23 2000/04/20 02:42:54 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.24 2000/04/27 02:40:27 rlk Exp $".
  */
