@@ -1,6 +1,6 @@
 #define VERBOSE
 /*
- * "$Id: print-dither.c,v 1.53.2.7 2000/06/23 01:58:27 jmv Exp $"
+ * "$Id: print-dither.c,v 1.53.2.8 2000/06/29 00:31:03 jmv Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -119,7 +119,6 @@ typedef struct dither
   int dst_width;		/* Output width */
 
   int density;			/* Desired density, 0-1.0 (scaled 0-65536) */
-  int dither_density;	/* Dither density, 0-1.0 (scaled 0-65536) */
 
   int spread;			/* With Floyd-Steinberg, how widely the */
 				/* error is distributed.  This should be */
@@ -164,8 +163,8 @@ typedef struct dither
   int *offset0_table;
   int *offset1_table;
 
-  int ink_limit;		/* Maximum amount of ink that may be */
-				/* deposited */
+  int light_ink_limit;		/* Maximum amount of light ink that may be */
+							/* deposited */
   int oversampling;
 
   /* Hardwiring these matrices in here is an abomination.  This */
@@ -526,14 +525,14 @@ init_dither(int in_width, int out_width, vars_t *v)
   d->adaptive_divisor = 2;
 
   dither_set_aspect_ratio(d, 1, 1);
-  dither_set_max_ink(d, INT_MAX, 1.0);
+  dither_set_max_ink(d, INT_MAX);
   dither_set_ink_spread(d, 13);
   dither_set_black_lower(d, .4);
   dither_set_black_upper(d, .7);
   dither_set_black_levels(d, 1.0, 1.0, 1.0);
   dither_set_randomizers(d, 1.0, 1.0, 1.0, 1.0);
-  dither_set_ink_darkness(d, .4, .22, .12);
-  dither_set_density(d, 1, 1.0);
+  dither_set_ink_darkness(d, .45, .22, .10);
+  dither_set_density(d, 1.0);
   return d;
 }
 
@@ -546,9 +545,8 @@ dither_set_aspect_ratio(void *vd, int horizontal, int vertical)
 }
 
 void
-dither_set_density(void *vd, int oversampling, double dither_density)
+dither_set_density(void *vd, double density)
 {
-  double density = dither_density / oversampling;
   dither_t *d = (dither_t *) vd;
   if (density > 1)
     density = 1;
@@ -557,20 +555,18 @@ dither_set_density(void *vd, int oversampling, double dither_density)
   d->k_upper = d->k_upper * density;
   d->k_lower = d->k_lower * density;
   d->density = (int) ((65536 * density) + .5);
-  d->dither_density = (int) ((65536 * dither_density) + .5);
   d->d_cutoff = d->density / 16;
   d->adaptive_limit = d->density / d->adaptive_divisor;
   d->adaptive_lower_limit = d->adaptive_limit / 4;
 }
 
 void
-dither_set_max_ink(void *vd, int levels, double max_ink)
+dither_set_max_ink(void *vd, int max_ink)
 {
   dither_t *d = (dither_t *) vd;
-  d->ink_limit = (max_ink+0.5)*levels+0.5;
-  if(d->ink_limit < levels) d->ink_limit = levels;
+  d->light_ink_limit = max_ink;
 #ifdef VERBOSE
-  fprintf(stderr, "Maxink: %f %d\n", max_ink, d->ink_limit);
+  fprintf(stderr, "Maxink: %d\n", d->light_ink_limit);
 #endif
 }
 
@@ -800,8 +796,7 @@ dither_set_ranges(dither_color_t *s, int nlevels,
 
 static void
 dither_set_ranges_full(dither_color_t *s, int nlevels,
-		       const full_dither_range_t *ranges, double density,
-		       int max_ink)
+		       const full_dither_range_t *ranges, double density)
 {
   int i, j;
   unsigned lbit;
@@ -903,8 +898,7 @@ dither_set_c_ranges_full(void *vd, int nlevels,
 			 const full_dither_range_t *ranges, double density)
 {
   dither_t *d = (dither_t *) vd;
-  dither_set_ranges_full(&(d->c_dither), nlevels, ranges, density,
-			 d->ink_limit);
+  dither_set_ranges_full(&(d->c_dither), nlevels, ranges, density);
 }
 
 void
@@ -937,8 +931,7 @@ dither_set_m_ranges_full(void *vd, int nlevels,
 			 const full_dither_range_t *ranges, double density)
 {
   dither_t *d = (dither_t *) vd;
-  dither_set_ranges_full(&(d->m_dither), nlevels, ranges, density,
-			 d->ink_limit);
+  dither_set_ranges_full(&(d->m_dither), nlevels, ranges, density);
 }
 
 void
@@ -971,8 +964,7 @@ dither_set_y_ranges_full(void *vd, int nlevels,
 			 const full_dither_range_t *ranges, double density)
 {
   dither_t *d = (dither_t *) vd;
-  dither_set_ranges_full(&(d->y_dither), nlevels, ranges, density,
-			 d->ink_limit);
+  dither_set_ranges_full(&(d->y_dither), nlevels, ranges, density);
 }
 
 void
@@ -1005,8 +997,7 @@ dither_set_k_ranges_full(void *vd, int nlevels,
 			 const full_dither_range_t *ranges, double density)
 {
   dither_t *d = (dither_t *) vd;
-  dither_set_ranges_full(&(d->k_dither), nlevels, ranges, density,
-			 d->ink_limit);
+  dither_set_ranges_full(&(d->k_dither), nlevels, ranges, density);
 }
 
 
@@ -1104,7 +1095,7 @@ get_valueline(dither_t *d, int color)
 
 /*
  * Add the error to the input value.  Notice that we micro-optimize this
- * to save a division when appropriate.
+ * to save a division.
  */
 
 static inline int
@@ -1205,7 +1196,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
   if(dither_type & D_ORDERED_BASE)
 	density = base;
   if ((adjusted <= 0 && !(dither_type & D_ADAPTIVE_BASE)) ||
-      base <= 0 || density <= 0 || *ink_budget == 0)
+      base <= 0 || density <= 0)
     return adjusted;
   if (density > 65536)
     density = 65536;
@@ -1224,8 +1215,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
       unsigned rangepoint;
       unsigned virtual_value;
       unsigned vmatrix;
-      if (density <= dd->range_l || *ink_budget < dd->dot_size_h ||
-		  *ink_budget < dd->dot_size_l)
+      if (density <= dd->range_l ||
+		  (*ink_budget <= 0 && !(dd->isdark_l && dd->isdark_h)))
 	continue;
       /*
        * If we're using an adaptive dithering method, decide whether
@@ -1387,7 +1378,6 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 	  unsigned bits;
 	  unsigned v;
 	  unsigned dot_size;
-	  unsigned arangepoint;
 	      
 	  if (dd->value_l == 0 ||
 		 (dd->isdark_h == dd->isdark_l && dd->bits_h == dd->bits_l))
@@ -1402,8 +1392,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 			   * Choosing a rangepoint deserves a few sanity
 			   * checks: If adjusted is very low, we pick the
 			   * low value. If adjusted is very high we pick the
-			   * high value. If low means not printing (0) we
-			   * follow adjusted. Otherwise we stick to the
+			   * high value. Otherwise we stick to the
 			   * density rangepoint for better transition smoothness.
 			   * The latter applies only to printers with more
 			   * than one level (otherwise low is always 0). That
@@ -1411,14 +1400,10 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 			   * one ink level.
 			   */
 		if(adjusted < (int)dd->value_l * 2 /3)
-				arangepoint = 0;
+				rangepoint = 0;
 		else if(adjusted > (int)dd->value_h)
-				arangepoint = 65535;
-		else if(dd->value_l != 0)
-			arangepoint = rangepoint;
-		else
-			arangepoint = adjusted * 65536 / dd->value_h;
-		if (arangepoint >= ditherpoint(d, pick_matrix, x, y))
+				rangepoint = 65535;
+		if (rangepoint >= ditherpoint(d, pick_matrix, x, y))
 	    {
 	      isdark = dd->isdark_h;
 	      bits = dd->bits_h;
@@ -1576,7 +1561,7 @@ dither_black(unsigned short   *gray,		/* I - Grayscale pixels */
 	 kerror0 += direction,
 	 kerror1 += direction)
     {
-      unsigned ink_budget = d->ink_limit;
+      unsigned ink_budget = d->light_ink_limit;
 
       k = 65535 - *gray;
       ok = k;
@@ -1731,7 +1716,7 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
    *
    * k already contains the grey contained in CMY but we don't use it.
    * First we calculate darkness, and we look up where value is between
-   * lowerbound and dither_density:
+   * lowerbound and density:
    */
   ok = (c * d->c_darkness + m * d->m_darkness + y * d->y_darkness) / 64;
   if(k > ok)
@@ -1778,9 +1763,9 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
     bk = kl = 0;
   if(bk <= 0)
 	  bk = ok = kl = 0;
-  else
+/*  else
   if (bk > k)
-		bk = k;
+		bk = k;*/
   *nc = c;
   *nm = m;
   *ny = y;
@@ -1941,8 +1926,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       int printed_black = 0;
       int omd, oyd, ocd;
 
-	  if(ink_budget) ink_budget = 1;
-	  ink_budget += d->ink_limit;
+	  if(ink_budget >= 0) ink_budget = 1;
+	  else ink_budget = 0;
+	  ink_budget += d->light_ink_limit;
       /*
        * First get the standard CMYK separation color values.
        */
@@ -2051,12 +2037,13 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 	   * Hence the apparent complexity
 	   * of the following and the terrible use of goto's. Yuk.
 	   */
-	  if(!(d->dither_type & D_ORDERED_BASE)) {
+#if 0
+	  if(1 || !(d->dither_type & D_ORDERED_BASE)) {
 	  	first_color = ECOLOR_Y;
-	  	if(c > m && c > y)
+	  	if(ocd > omd && ocd > oyd)
 	  		first_color = ECOLOR_C;
 	  	else
-	    	 if(m>y) first_color = ECOLOR_M;
+	    	 if(omd>oyd) first_color = ECOLOR_M;
 	  	PRINTED=0;
 	  } else
 	  	PRINTED=8;
@@ -2071,7 +2058,7 @@ PRINT_ECC:
 		      			   &(d->c_pick), &(d->c_dithermat), d->dither_type);
 				}
 				switch(PRINTED) {
-					case 4:	if(m > y) goto PRINT_ECM;
+					case 4:	if(omd > oyd) goto PRINT_ECM;
 							else goto PRINT_ECY;
 					case 5: goto PRINT_ECM;
 					case 6: goto PRINT_ECY;
@@ -2089,7 +2076,7 @@ PRINT_ECY:
 		      			   &(d->y_pick), &(d->y_dithermat), d->dither_type);
 				}
 				switch(PRINTED) {
-					case 1:	if(m > c) goto PRINT_ECM;
+					case 1:	if(omd > ocd) goto PRINT_ECM;
 							else goto PRINT_ECC;
 					case 3: goto PRINT_ECC;
 					case 5: goto PRINT_ECM;
@@ -2107,7 +2094,7 @@ PRINT_ECM:
 		      			   &(d->m_pick), &(d->m_dithermat), d->dither_type);
 				}
 				switch(PRINTED) {
-					case 2:	if(y > c) goto PRINT_ECY;
+					case 2:	if(oyd > ocd) goto PRINT_ECY;
 							else goto PRINT_ECC;
 					case 3: goto PRINT_ECC;
 					case 6: goto PRINT_ECY;
@@ -2116,6 +2103,20 @@ PRINT_ECM:
 				}
 				break;
 	  }
+#else
+      c = print_color(d, &(d->c_dither), oc, ocd,
+	  		   c, x, row, cptr, lcptr, bit, length,
+	   		   d->c_randomizer, printed_black, &ink_budget,
+	   		   &(d->c_pick), &(d->c_dithermat), d->dither_type);
+      m = print_color(d, &(d->m_dither), om, omd,
+	  		   m, x, row, mptr, lmptr, bit, length,
+	   		   d->m_randomizer, printed_black, &ink_budget,
+	   		   &(d->m_pick), &(d->m_dithermat), d->dither_type);
+	  y = print_color(d, &(d->y_dither), oy, oyd,
+			   y, x, row, yptr, lyptr, bit, length,
+			   d->y_randomizer, printed_black, &ink_budget,
+			   &(d->y_pick), &(d->y_dithermat), d->dither_type);
+#endif
 	out:
 
       if (!(d->dither_type & D_ORDERED_BASE))

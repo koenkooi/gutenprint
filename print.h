@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.55.2.5 2000/06/23 01:58:28 jmv Exp $"
+ * "$Id: print.h,v 1.55.2.6 2000/06/29 00:31:04 jmv Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -227,7 +227,7 @@ typedef struct
 extern void *	init_dither(int in_width, int out_width, vars_t *vars);
 extern void	dither_set_aspect_ratio(void *vd, int horizontal,
 					int vertical);
-extern void	dither_set_density(void *vd, int, double);
+extern void	dither_set_density(void *vd, double);
 extern void 	dither_set_black_lower(void *vd, double);
 extern void 	dither_set_black_upper(void *vd, double);
 extern void	dither_set_black_levels(void *vd, double, double, double);
@@ -281,7 +281,7 @@ extern void	dither_set_y_ranges_complete(void *vd, int nlevels,
 extern void	dither_set_k_ranges_complete(void *vd, int nlevels,
 					     const dither_range_t *ranges);
 extern void	dither_set_ink_spread(void *vd, int spread);
-extern void	dither_set_max_ink(void *vd, int, double);
+extern void dither_set_max_ink(void *vd, int);
 extern void	dither_set_x_oversample(void *vd, int os);
 extern void	dither_set_y_oversample(void *vd, int os);
 extern void	dither_set_adaptive_divisor(void *vd, unsigned divisor);
@@ -397,5 +397,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.55.2.5 2000/06/23 01:58:28 jmv Exp $".
+ * End of "$Id: print.h,v 1.55.2.6 2000/06/29 00:31:04 jmv Exp $".
  */

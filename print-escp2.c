@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155.2.6 2000/06/23 01:58:28 jmv Exp $"
+ * "$Id: print-escp2.c,v 1.155.2.7 2000/06/29 00:31:03 jmv Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -243,8 +243,9 @@ static full_dither_range_t normal_dither_ranges[] =
 
 static full_dither_range_t twoink_dither_ranges[] =
 {
-  { 0.0,   0.33,  0x0, 0x1, 0, 0, 0, 2},
-  { 0.33,  1.0,  0x1, 0x1, 0, 1, 3, 1}
+  { 0.0,   1.0,  0x0, 0x1, 1, 1, 0, 1},
+  { 0.0,   0.31, 0x0, 0x1, 0, 0, 0, 1},
+  { 0.31,  1.0,  0x1, 0x1, 0, 1, 1, 1}
 };
 
 static full_dither_range_t oneink_dither_ranges[] =
@@ -254,70 +255,86 @@ static full_dither_range_t oneink_dither_ranges[] =
 
 static full_dither_range_t full_c_dither_ranges[] =
 {
-  { 0.0,  0.51,  0x0, 0x1, 1, 1, 0, 1},
-  { 0.51, 0.67,  0x1, 0x2, 1, 1, 1, 2},
-  { 0.67, 0.96,  0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55,  0x0, 0x1, 1, 1, 0, 1},
+  { 0.55, 0.70,  0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 0.96,  0x2, 0x3, 1, 1, 2, 3}
 };
 
+/* with oversampling, we don't use largest drops of light
+ * inks (ink reduction)
+ */
 static full_dither_range_t stp870_c1_dither_ranges[] =
 {
-  { 0.0,  0.16, 0x0, 0x1, 0, 0, 0, 1},
-  { 0.16, 0.23, 0x1, 0x2, 0, 0, 1, 2},
-  { 0.23, 0.51, 0x2, 0x1, 0, 1, 2, 1},
-  { 0.23, 0.36, 0x2, 0x3, 0, 0, 2, 3},
-  { 0.36, 0.51, 0x3, 0x1, 0, 1, 3, 1},
-  { 0.51, 0.67, 0x1, 0x2, 1, 1, 1, 2},
-  { 0.67, 0.96, 0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55, 0x0, 0x1, 1, 1, 0, 1}, /* for low ink budget */
+  { 0.0,  0.15, 0x0, 0x1, 0, 0, 0, 1},
+  { 0.15, 0.24, 0x1, 0x2, 0, 0, 1, 2},
+  { 0.24, 0.55, 0x2, 0x1, 0, 1, 2, 1},
+  { 0.55, 0.70, 0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 0.96, 0x2, 0x3, 1, 1, 2, 3}
 };
 
+/* Without oversampling we try not to use smallest size
+ * dark inks
+ * Not sure whether this is really useful
+ */
 static full_dither_range_t stp870_c2_dither_ranges[] =
 {
-  { 0.0,  0.16, 0x0, 0x1, 0, 0, 0, 1},
-  { 0.16, 0.23, 0x1, 0x2, 0, 0, 1, 2},
-  { 0.23, 0.36, 0x2, 0x3, 0, 0, 2, 3},
-  { 0.36, 0.67, 0x3, 0x2, 0, 1, 3, 2},
-  { 0.67, 0.96, 0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55, 0x0, 0x1, 1, 1, 0, 1}, /* for low ink budget not used in this*/
+  { 0.55, 0.70, 0x1, 0x2, 1, 1, 1, 2}, /* mode though */
+  { 0.0,  0.15, 0x0, 0x1, 0, 0, 0, 1},
+  { 0.15, 0.24, 0x1, 0x2, 0, 0, 1, 2},
+  { 0.24, 0.38, 0x2, 0x3, 0, 0, 2, 3},
+  { 0.38, 0.70, 0x3, 0x2, 0, 1, 3, 2},
+  { 0.70, 0.96, 0x2, 0x3, 1, 1, 2, 3}
 };
 
 static full_dither_range_t full_m_dither_ranges[] =
 {
-  { 0.0,  0.51,  0x0, 0x1, 1, 1, 0, 1},
-  { 0.51, 0.67,  0x1, 0x2, 1, 1, 1, 2},
-  { 0.67, 1.0,   0x2, 0x3, 1, 1, 2, 1}
+  { 0.0,  0.55,  0x0, 0x1, 1, 1, 0, 1},
+  { 0.55, 0.70,  0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 1.0,   0x2, 0x3, 1, 1, 2, 1}
 };
 
 static full_dither_range_t stp870_m1_dither_ranges[] =
 {
-  { 0.0,  0.16, 0x0, 0x1, 0, 0, 0, 1},
-  { 0.16, 0.23, 0x1, 0x2, 0, 0, 1, 2},
-  { 0.23, 0.51, 0x2, 0x1, 0, 1, 2, 1},
-  { 0.23, 0.36, 0x2, 0x3, 0, 0, 2, 3},
-  { 0.36, 0.51, 0x3, 0x1, 0, 1, 3, 1},
-  { 0.51, 0.67, 0x1, 0x2, 1, 1, 1, 2},
-  { 0.67, 1.0,  0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55, 0x0, 0x1, 1, 1, 0, 1}, /* for low ink budget */
+  { 0.0,  0.15, 0x0, 0x1, 0, 0, 0, 1},
+  { 0.15, 0.24, 0x1, 0x2, 0, 0, 1, 2},
+  { 0.24, 0.55, 0x2, 0x1, 0, 1, 2, 1},
+  { 0.55, 0.70, 0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 1.0,  0x2, 0x3, 1, 1, 2, 3}
 };
 
 static full_dither_range_t stp870_m2_dither_ranges[] =
 {
-  { 0.0,  0.16, 0x0, 0x1, 0, 0, 0, 1},
-  { 0.16, 0.23, 0x1, 0x2, 0, 0, 1, 2},
-  { 0.23, 0.36, 0x2, 0x3, 0, 0, 2, 3},
-  { 0.36, 0.67, 0x3, 0x2, 0, 1, 3, 2},
-  { 0.67, 1.0,  0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55, 0x0, 0x1, 1, 1, 0, 1}, /* for low ink budget */
+  { 0.55, 0.70, 0x1, 0x2, 1, 1, 1, 2}, /* idem */
+  { 0.0,  0.15, 0x0, 0x1, 0, 0, 0, 1},
+  { 0.15, 0.24, 0x1, 0x2, 0, 0, 1, 2},
+  { 0.24, 0.38, 0x2, 0x3, 0, 0, 2, 3},
+  { 0.38, 0.70, 0x3, 0x2, 0, 1, 3, 2},
+  { 0.70, 1.0,  0x2, 0x3, 1, 1, 2, 3}
 };
 
 static full_dither_range_t stp870_y_dither_ranges[] =
 {
   { 0.0,  0.55,  0x0, 0x1, 1, 1, 0, 1},
-  { 0.55, 0.71,  0x1, 0x2, 1, 1, 1, 2},
-  { 0.71, 1.0,   0x2, 0x3, 1, 1, 2, 3}
+  { 0.55, 0.70,  0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 1.0,   0x2, 0x3, 1, 1, 2, 3}
 };
 
-static full_dither_range_t stp870_k_dither_ranges[] =
+static full_dither_range_t stp870_khigh_dither_ranges[] =
 {
-  { 0.0,  0.51,  0x0, 0x1, 1, 1, 0, 1},
-  { 0.51, 0.67,  0x1, 0x2, 1, 1, 1, 2},
-  { 0.67, 1.0,   0x2, 0x3, 1, 1, 2, 3}
+  { 0.0,  0.55,  0x0, 0x1, 1, 1, 0, 1},
+  { 0.55, 0.70,  0x1, 0x2, 1, 1, 1, 2},
+  { 0.70, 1.0,   0x2, 0x3, 1, 1, 2, 3}
+};
+
+/* without oversampling don't use small dots; they're too small */
+static full_dither_range_t stp870_klow_dither_ranges[] =
+{
+  { 0.0,  0.70,  0x0, 0x2, 1, 1, 0, 2},
+  { 0.70, 1.0,   0x2, 0x3, 1, 1, 2, 3}
 };
 
 /*
@@ -962,7 +979,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
   int		nozzles = 1;
   int		nozzle_separation = 1;
   int		horizontal_passes = 1;
-  int		real_horizontal_passes = 1;
   int		vertical_passes = 1;
   int		vertical_subsample = 1;
   const res_t 	*res;
@@ -1037,9 +1053,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	{
 	  use_softweave = res->softweave;
 	  horizontal_passes = res->horizontal_passes;
-	  real_horizontal_passes = horizontal_passes;
 	  vertical_passes = res->vertical_passes;
 	  vertical_subsample = res->vertical_subsample;
+	  oversample = horizontal_passes * vertical_subsample;
 	  if (use_softweave && escp2_xres(model) < 720)
 	    horizontal_passes *= 720 / escp2_xres(model);
 	  xdpi = res->hres;
@@ -1146,21 +1162,20 @@ escp2_print(const printer_t *printer,		/* I - Model */
   * Output the page...
   */
 
-  oversample = real_horizontal_passes * vertical_subsample;
   dither_density = nv.density * printer->printvars.density;
   if (bits == 2)
-    dither_density *= 3.3;
-  nv.density = dither_density / (horizontal_passes * vertical_subsample);
-  if(dither_density > 1.0)
-	dither_density = 1.0;
+    dither_density *= 1.55;
+  nv.density = dither_density / oversample;
   if (nv.density > 1.0)
     nv.density = 1.0;
+  if (dither_density > 1.0)
+    dither_density = 1.0;
   nv.saturation *= printer->printvars.saturation;
 
   dither = init_dither(image_width, out_width, &nv);
 
   dither_set_black_levels(dither, 1.0, 1.0, 1.0);
-  dither_set_black_lower(dither, .3);
+  dither_set_black_lower(dither, .1);
   if (use_glossy_film)
     dither_set_black_upper(dither, .999);
   else
@@ -1171,25 +1186,36 @@ escp2_print(const printer_t *printer,		/* I - Model */
     dither_set_adaptive_divisor(dither, 2);
   if (bits == 2)
     {
-      dither_set_max_ink(dither, 3, 3.0/oversample);
-      dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
-					           dither_density);
       dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
+					           dither_density);
+	  if(oversample > 1)
+      	dither_set_k_ranges_full(dither, 3, stp870_khigh_dither_ranges,
+					           dither_density);
+	  else
+      	dither_set_k_ranges_full(dither, 2, stp870_klow_dither_ranges,
 					           dither_density);
       if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
 	{
-	  if(vertical_subsample > 1)
+      switch(oversample) {
+			  case 2: dither_set_max_ink(dither, 3);
+					  break;
+			  case 4: dither_set_max_ink(dither, 2);
+					  break;
+			  case 8: dither_set_max_ink(dither, 1);
+					  break;
+	  }
+	  if(oversample > 1)
 	  {
-	    dither_set_c_ranges_full(dither, 7, stp870_c1_dither_ranges,
+	    dither_set_c_ranges_full(dither, 6, stp870_c1_dither_ranges,
 					             dither_density);
-	    dither_set_m_ranges_full(dither, 7, stp870_m1_dither_ranges,
+	    dither_set_m_ranges_full(dither, 6, stp870_m1_dither_ranges,
 					             dither_density);
 	  }
 	  else
 	  {
-	    dither_set_c_ranges_full(dither, 5, stp870_c2_dither_ranges,
+	    dither_set_c_ranges_full(dither, 7, stp870_c2_dither_ranges,
 					             dither_density);
-	    dither_set_m_ranges_full(dither, 5, stp870_m2_dither_ranges,
+	    dither_set_m_ranges_full(dither, 7, stp870_m2_dither_ranges,
 					             dither_density);
 	  }
 	}
@@ -1200,32 +1226,26 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	  dither_set_m_ranges_full(dither, 3, full_m_dither_ranges,
 					           dither_density);
 	}
-#if 0
-      dither_set_k_ranges_full(dither, 1, oneink_dither_ranges,
-					           dither_density);
-      dither_set_c_ranges_full(dither, 1, oneink_dither_ranges,
-					           dither_density);
-      dither_set_m_ranges_full(dither, 1, oneink_dither_ranges,
-					           dither_density);
-      dither_set_y_ranges_full(dither, 1, oneink_dither_ranges,
-					           dither_density);
-#endif
     }
   else {
-	dither_set_max_ink(dither, 1, 4.0/oversample);
     dither_set_k_ranges_full(dither, 1, oneink_dither_ranges,
 					           dither_density);
     dither_set_y_ranges_full(dither, 1, oneink_dither_ranges,
 					           dither_density);
 	if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES)) {
-#if 0
-    	dither_set_light_inks(dither, .33, .33, 0.0, nv.density);
-#else
-      	dither_set_c_ranges_full(dither, 2, twoink_dither_ranges,
+      	switch(oversample) {
+			  case 2: dither_set_max_ink(dither, 2);
+					  break;
+			  case 4: dither_set_max_ink(dither, 1);
+					  break;
+			  case 8: dither_set_max_ink(dither, 1);
+					  dither_density *= 0.7;
+					  break;
+	  	}
+      	dither_set_c_ranges_full(dither, 3, twoink_dither_ranges,
 					           dither_density);
-      	dither_set_m_ranges_full(dither, 2, twoink_dither_ranges,
+      	dither_set_m_ranges_full(dither, 3, twoink_dither_ranges,
 					           dither_density);
-#endif
 	} else {
     	dither_set_c_ranges_full(dither, 1, oneink_dither_ranges,
 						           dither_density);
@@ -1255,7 +1275,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, ink_spread);
       break;
     }
-  dither_set_density(dither, oversample, dither_density);
+  dither_set_density(dither, nv.density);
 
   in  = malloc(image_width * image_bpp);
   out = malloc(image_width * out_bpp * 2);
