@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.47 2002/11/05 02:45:45 rlk Exp $"
+ * "$Id: genppd.c,v 1.48 2002/11/06 23:46:03 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -837,7 +837,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   for (i = 0; i < cur_opt; i ++)
   {
     gzprintf(fp,  "*PageRegion %s", the_papers[i].name);
-    gzprintf(fp, "/%s:\t\"<</PageRegion[%d %d]/ImagingBBox null>>setpagedevice\"\n",
+    gzprintf(fp, "/%s:\t\"<</PageSize[%d %d]/ImagingBBox null>>setpagedevice\"\n",
 	     the_papers[i].text, the_papers[i].width, the_papers[i].height);
   }
   gzputs(fp, "*CloseUI: *PageRegion\n\n");
@@ -1168,5 +1168,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.47 2002/11/05 02:45:45 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.48 2002/11/06 23:46:03 rlk Exp $".
  */
