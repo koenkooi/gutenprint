@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.38 2003/04/05 17:27:54 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.39 2003/04/05 22:08:08 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -54,26 +54,26 @@ typedef unsigned long model_featureset_t;
  * An entry of -1 in a slot means that this resolution is not available.
  */
 
-typedef int escp2_dot_size_t[14];
+typedef int escp2_dot_size_t[12];
 
 /*
  * Choose the number of bits to use at each resolution.
  */
 
-typedef int escp2_bits_t[14];
+typedef int escp2_bits_t[12];
 
 /*
  * Choose the base resolution to use at each resolution.
  */
 
-typedef int escp2_base_resolutions_t[14];
+typedef int escp2_base_resolutions_t[12];
 
 /*
  * Specify the base density for each available resolution.
  * This obviously depends upon the dot size.
  */
 
-typedef double escp2_densities_t[14];
+typedef double escp2_densities_t[12];
 
 /*
  * Definition of the multi-level inks available to a given printer.
@@ -425,5 +425,5 @@ extern const res_t stpi_escp2_sc440_reslist[];
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.38 2003/04/05 17:27:54 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.39 2003/04/05 22:08:08 rlk Exp $".
  */

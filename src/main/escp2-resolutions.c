@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.6 2003/04/05 17:27:54 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.7 2003/04/05 22:08:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -108,8 +108,6 @@ const res_t stpi_escp2_1440dpi_reslist[] =
   { "720sw",            N_("720 DPI"),
     720,  720,  720,  720,  1,  0, 1, 1, 1, 1, RES_720 },
 
-  { "1440x720mw",       N_("1440 x 720 DPI Microweave"),
-    1440, 720,  1440, 720,  0,  1, 1, 1, 1, 1, RES_1440_720_M },
   { "1440x720sw",       N_("1440 x 720 DPI"),
     1440, 720,  1440, 720,  1,  0, 1, 1, 1, 1, RES_1440_720 },
   { "1440x720hq2",      N_("1440 x 720 DPI Highest Quality"),
@@ -160,8 +158,6 @@ const res_t stpi_escp2_standard_reslist[] =
   { "720sw",            N_("720 DPI"),
     720,  720,  720,  720,  1,  0, 1, 1, 1, 1, RES_720 },
 
-  { "1440x720mw",       N_("1440 x 720 DPI Microweave"),
-    1440, 720,  1440, 720,  0,  1, 1, 1, 1, 1, RES_1440_720_M },
   { "1440x720sw",       N_("1440 x 720 DPI"),
     1440, 720,  1440, 720,  1,  0, 1, 1, 1, 1, RES_1440_720 },
 
