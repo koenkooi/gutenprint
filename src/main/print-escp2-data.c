@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.18 2002/06/09 21:10:54 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.19 2002/06/09 21:14:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2447,7 +2447,7 @@ static const escp2_inkname_t photo_ink_types[] =
     }
   },
   {
-    "CMYK", N_ ("Five Color Photo Composite"), 1,
+    "PhotoCMY", N_ ("Five Color Photo Composite"), 1,
     {
       NULL, &photo_cyan_channels,
       &photo_magenta_channels, &photo_yellow_channels
@@ -2507,7 +2507,7 @@ static const escp2_inkname_t photo7_japan_ink_types[] =
     }
   },
   {
-    "CMYK", N_ ("Five Color Photo Composite"), 1,
+    "PhotoCMY", N_ ("Five Color Photo Composite"), 1,
     {
       NULL, &standard_cyan_channels,
       &standard_magenta_channels, &standard_yellow_channels
@@ -2553,7 +2553,7 @@ static const escp2_inkname_t photo7_ink_types[] =
     }
   },
   {
-    "CMYK", N_ ("Five Color Photo Composite"), 1,
+    "PhotoCMY", N_ ("Five Color Photo Composite"), 1,
     {
       NULL, &standard_cyan_channels,
       &standard_magenta_channels, &standard_yellow_channels
