@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115.2.1 2003/01/14 01:43:54 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.2 2003/01/15 02:29:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -135,6 +135,18 @@ typedef struct shade_segment
   int base;
 } shade_segment_t;
 
+typedef struct
+{
+  unsigned subchannel_count;
+  unsigned char **c;
+} stp_dither_channel_t;
+
+typedef struct
+{
+  unsigned channel_count;
+  stp_dither_channel_t *c;
+} stp_dither_data_t;
+
 typedef struct dither_channel
 {
   unsigned randomizer;		/* With Floyd-Steinberg dithering, control */
@@ -219,6 +231,7 @@ typedef struct dither
   dither_matrix_t dither_matrix;
   dither_matrix_t transition_matrix;
   dither_channel_t *channel;
+  stp_dither_data_t dt;
 
   unsigned short virtual_dot_scale[65536];
   void (*ditherfunc)(const unsigned short *, int, struct dither *, int, int);
@@ -402,25 +415,19 @@ reverse_row_ends(dither_t *d)
       }
 }
 
-stp_dither_data_t *
-stp_dither_data_allocate(void)
-{
-  stp_dither_data_t *ret = stp_zalloc(sizeof(stp_dither_data_t));
-  ret->channel_count = 0;
-  ret->c = NULL;
-  return ret;
-}
-
 void
-stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
+stp_dither_add_channel(stp_vars_t v, unsigned char *data,
 		       unsigned channel, unsigned subchannel)
 {
+  stp_dither_data_t *d = &(((dither_t *) stp_get_dither_data(v))->dt);
   stp_dither_channel_t *chan;
   if (channel >= d->channel_count)
     {
       unsigned oc = d->channel_count;
-      d->c = stp_realloc(d->c, sizeof(stp_dither_channel_t) * (channel + 1));
-      (void) memset(d->c + oc, 0, sizeof(stp_dither_channel_t) * (channel + 1 - oc));
+      d->c = stp_realloc(d->c,
+			 sizeof(stp_dither_channel_t) * (channel + 1));
+      (void) memset(d->c + oc, 0,
+		    sizeof(stp_dither_channel_t) * (channel + 1 - oc));
       d->channel_count = channel + 1;
     }
   chan = d->c + channel;
@@ -434,16 +441,6 @@ stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
       chan->subchannel_count = subchannel + 1;
     }
   chan->c[subchannel] = data;
-}
-
-void
-stp_dither_data_free(stp_dither_data_t *d)
-{
-  int i;
-  for (i = 0; i < d->channel_count; i++)
-    stp_free(d->c[i].c);
-  stp_free(d->c);
-  stp_free(d);
 }
 
 #define RETURN_DITHERFUNC(func, v)				\
@@ -539,7 +536,6 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   const stp_dotsize_t ds = {1, 1.0};
   stp_shade_t shade;
 
-  d->v = v;
   d->dither_class = stp_get_output_type(v);
   d->error_rows = ERROR_ROWS;
   d->n_ghost_channels = 0;
@@ -632,10 +628,11 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   stp_dither_set_ink_spread(d, 13);
   for (i = 0; i <= d->n_channels; i++)
     {
-      stp_dither_set_black_level(d, i, 1.0);
       stp_dither_set_randomizer(d, i, 1.0);
     }
   stp_dither_set_density(d, 1.0);
+  d->dt.channel_count = 0;
+  d->dt.c = NULL;
   stp_set_dither_data(v, d);
 }
 
@@ -799,24 +796,24 @@ stp_dither_set_ink_spread(stp_vars_t v, int spread)
 }
 
 void
-stp_dither_set_randomizer(stp_vars_t v, int i, double v)
+stp_dither_set_randomizer(stp_vars_t v, int i, double val)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d))
     return;
-  PHYSICAL_CHANNEL(d, i).randomizer = v * 65535;
+  PHYSICAL_CHANNEL(d, i).randomizer = val * 65535;
 }
 
 void
-stp_dither_set_light_ink(stp_vars_t v, int i, double v, double density)
+stp_dither_set_light_ink(stp_vars_t v, int i, double val, double density)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
   stp_dither_range_simple_t range[2];
-  if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d) || v <= 0 || v > 1)
+  if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d) || val <= 0 || val > 1)
     return;
   range[0].bit_pattern = 1;
   range[0].subchannel = 1;
-  range[0].value = v;
+  range[0].value = val;
   range[0].dot_size = 1;
   range[1].bit_pattern = 1;
   range[1].subchannel = 0;
@@ -1143,6 +1140,7 @@ void
 stp_dither_free(stp_vars_t v)
 {
   dither_t *d = (dither_t *) stp_get_dither_data(v);
+  stp_dither_data_t *dt = &(d->dt);
   int i;
   int j;
   stp_set_dither_data(v, NULL);
@@ -1181,6 +1179,10 @@ stp_dither_free(stp_vars_t v)
     stp_free(d->eventone);
   }
   stp_free(d->channel);
+  for (i = 0; i < dt->channel_count; i++)
+    stp_free(dt->c[i].c);
+  stp_free(dt->c);
+  stp_free(dt);
   stp_free(d);
 }
 
@@ -2822,12 +2824,8 @@ stp_dither_raw_et(const unsigned short  *raw,
 }
 
 void
-stp_dither(const unsigned short  *input,
-	   int           row,
-	   void 	  *stp_get_dither_data(v),
-	   stp_dither_data_t *dt,
-	   int		  duplicate_line,
-	   int		  zero_mask)
+stp_dither(stp_vars_t v, int row, const unsigned short *input,
+	   int duplicate_line, int zero_mask)
 {
   int i, j;
   dither_t *d = (dither_t *) stp_get_dither_data(v);
@@ -2836,13 +2834,13 @@ stp_dither(const unsigned short  *input,
     {
       for (j = 0; j < PHYSICAL_CHANNEL(d, i).subchannels; j++)
 	{
-	  if (i >= dt->channel_count || j >= dt->c[i].subchannel_count)
+	  if (i >= d->dt.channel_count || j >= d->dt.c[i].subchannel_count)
 	    {
 	      PHYSICAL_CHANNEL(d, i).ptrs[j] = NULL;
 	      ghost_channels++;
 	    }
 	  else
-	    PHYSICAL_CHANNEL(d, i).ptrs[j] = dt->c[i].c[j];
+	    PHYSICAL_CHANNEL(d, i).ptrs[j] = d->dt.c[i].c[j];
 	  if (PHYSICAL_CHANNEL(d, i).ptrs[j])
 	    memset(PHYSICAL_CHANNEL(d, i).ptrs[j], 0,
 		   (d->dst_width + 7) / 8 * PHYSICAL_CHANNEL(d, i).signif_bits);

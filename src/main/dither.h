@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.6.4.1 2003/01/14 01:43:54 rlk Exp $"
+ * "$Id: dither.h,v 1.6.4.2 2003/01/15 02:29:37 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -119,18 +119,6 @@ typedef struct
    int subchannel[2];
 } stp_dither_range_full_t;
 
-typedef struct
-{
-  unsigned subchannel_count;
-  unsigned char **c;
-} stp_dither_channel_t;
-
-typedef struct
-{
-  unsigned channel_count;
-  stp_dither_channel_t *c;
-} stp_dither_data_t;
-
 typedef struct stp_dotsize
 {
   unsigned bit_pattern;
@@ -165,7 +153,6 @@ extern void stp_dither_set_matrix_from_curve(stp_vars_t v,
 extern void stp_dither_set_transition(stp_vars_t v, double);
 extern void stp_dither_set_density(stp_vars_t v, double);
 extern void stp_dither_set_randomizer(stp_vars_t v, int color, double);
-extern void stp_dither_set_light_ink(stp_vars_t v, int color, double, double);
 extern void stp_dither_set_ranges(stp_vars_t v, int color, int nlevels,
 				  const stp_dither_range_simple_t *ranges,
 				  double density);
@@ -179,19 +166,17 @@ extern void stp_dither_set_ink_spread(stp_vars_t v, int spread);
 extern void stp_dither_set_adaptive_limit(stp_vars_t v, double limit);
 extern int stp_dither_get_first_position(stp_vars_t v, int color, int subchan);
 extern int stp_dither_get_last_position(stp_vars_t v, int color, int subchan);
+extern void stp_dither_set_light_ink(stp_vars_t v, int color, double, double);
 extern void stp_dither_set_shades(stp_vars_t v, int color, int nshades,
 				  const stp_shade_t *shades, double density);
 
 extern void stp_dither_free(stp_vars_t v);
 
-extern stp_dither_data_t *stp_dither_data_allocate(void);
-extern void stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
+extern void stp_dither_add_channel(stp_vars_t v, unsigned char *data,
 				   unsigned channel, unsigned subchannel);
-extern void stp_dither_data_free(stp_dither_data_t *d);
 
-extern void stp_dither(const unsigned short *, int, void *,
-		       stp_dither_data_t *, int duplicate_line,
-		       int zero_mask);
+extern void stp_dither(stp_vars_t v, int row, const unsigned short *input,
+		       int duplicate_line, int zero_mask);
 
 
 #ifdef __cplusplus
@@ -200,5 +185,5 @@ extern void stp_dither(const unsigned short *, int, void *,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.6.4.1 2003/01/14 01:43:54 rlk Exp $".
+ * End of "$Id: dither.h,v 1.6.4.2 2003/01/15 02:29:37 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.48.2.1 2003/01/14 01:43:54 rlk Exp $"
+ * "$Id: print-color.c,v 1.48.2.2 2003/01/15 02:29:37 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1052,12 +1052,14 @@ fast_gray_to_rgb(const stp_vars_t vars,
 static stp_curve_t
 compute_gcr_curve(const stp_vars_t vars)
 {
+  stp_curve_t curve;
   lut_t *lut = (lut_t *)(stp_get_color_data(vars));
   double k_lower = 0.0;
   double k_upper = 1.0;
   double *tmp_data = stp_malloc(sizeof(double) * lut->steps);
   int step = 65535 / (lut->steps - 1); /* 1 or 257 */
-      
+  int i;
+
   if (stp_check_float_parameter(vars, "GCRUpper"))
     k_upper = stp_get_float_parameter(vars, "GCRUpper");
   if (stp_check_float_parameter(vars, "GCRLower"))
@@ -1066,7 +1068,7 @@ compute_gcr_curve(const stp_vars_t vars)
     k_lower = 65535;
   if (k_upper < k_lower)
     k_upper = k_lower + 1;
-  for (i = 0; i < k_lower; i++)
+  for (i = 0; i < k_lower; i += step)
     tmp_data[i] = 0;
   if (k_upper < 65535)
     {
@@ -1078,7 +1080,7 @@ compute_gcr_curve(const stp_vars_t vars)
   else
     for (i = k_lower; i < 65536; i += step)
       tmp_data[i] = k_upper * (i - k_lower) / (k_upper - k_lower);
-  gcr_curve = stp_curve_allocate(STP_CURVE_WRAP_NONE);
+  curve = stp_curve_allocate(STP_CURVE_WRAP_NONE);
   stp_curve_set_bounds(curve, 0.0, 65535.0);
   stp_curve_set_data(curve, lut->steps, tmp_data);
   stp_set_curve_parameter(vars, "GCRCurve", curve);
@@ -1097,7 +1099,7 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
   int step = 65535 / (lut->steps - 1); /* 1 or 257 */
 
   stp_curve_t gcr_curve;
-  unsigned short *gcr_lookup;
+  const unsigned short *gcr_lookup;
   size_t points;
   int i;
 
@@ -1123,13 +1125,13 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
       else
 	{
 	  int kk;
-	  if (lut->steps = 65536)
+	  if (lut->steps == 65536)
 	    kk = gcr_lookup[k];
 	  else
 	    {
 	      int where = k / step;
 	      int resid = k % step;
-	      if (resid = 0)
+	      if (resid == 0)
 		kk = gcr_lookup[where];
 	      else
 		kk = gcr_lookup[where] +
@@ -1651,15 +1653,16 @@ lut->colorfunc = x;							    \
 break
 
 int
-stp_color_init(stp_vars_t v,
-	       stp_image_t *image,
-	       size_t steps)
+stp_color_init(stp_vars_t v, stp_image_t *image, size_t steps)
 {
   const char *image_type = stp_get_string_parameter(v, "ImageOptimization");
   int itype = 0;
   int out_channels = 0;
   int image_bpp = stp_image_bpp(image);
   lut_t *lut;
+  if (steps != 256 && steps != 65536)
+    return -1;
+
   stp_compute_lut(v, steps);
   lut = (lut_t *)(stp_get_color_data(v));
   lut->image_bpp = image_bpp;

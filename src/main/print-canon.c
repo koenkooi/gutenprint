@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101 2003/01/14 00:23:42 rlk Exp $"
+ * "$Id: print-canon.c,v 1.101.2.1 2003/01/15 02:29:37 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2102,7 +2102,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
                 image_width,
                 image_bpp;
   int		ink_spread;
-  void *	dither;
   int           res_code;
   int           use_6color= 0;
   double        k_upper, k_lower;
@@ -2118,7 +2117,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   colormode_t colormode = canon_printhead_colors(ink_type,caps);
   const paper_t *pt;
   const canon_variable_inkset_t *inks;
-  stp_dither_data_t *dt;
   const canon_res_t *res = canon_resolutions;
 
   if (!stp_verify(nv))
@@ -2339,10 +2337,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   * Output the page...
   */
 
-  dither = stp_dither_init(nv, image, out_width, xdpi, ydpi);
-
-  for (i = 0; i <= NCOLORS; i++)
-    stp_dither_set_black_level(dither, i, 1.0);
+  stp_dither_init(nv, image, out_width, xdpi, ydpi);
 
   if (use_6color)
     k_lower = .4 / bits + .1;
@@ -2358,29 +2353,29 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       k_lower *= .5;
       k_upper = .5;
     }
-  stp_dither_set_black_lower(dither, k_lower);
-  stp_dither_set_black_upper(dither, k_upper);
+  stp_dither_set_black_lower(v, k_lower);
+  stp_dither_set_black_upper(v, k_upper);
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
       if (inks->c)
-	stp_dither_set_ranges(dither, ECOLOR_C, inks->c->count, inks->c->range,
+	stp_dither_set_ranges(v, ECOLOR_C, inks->c->count, inks->c->range,
 			      inks->c->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->m)
-	stp_dither_set_ranges(dither, ECOLOR_M, inks->m->count, inks->m->range,
+	stp_dither_set_ranges(v, ECOLOR_M, inks->m->count, inks->m->range,
 			      inks->m->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->y)
-	stp_dither_set_ranges(dither, ECOLOR_Y, inks->y->count, inks->y->range,
+	stp_dither_set_ranges(v, ECOLOR_Y, inks->y->count, inks->y->range,
 			      inks->y->density *
 			      stp_get_float_parameter(nv, "Density"));
       if (inks->k)
-	stp_dither_set_ranges(dither, ECOLOR_K, inks->k->count, inks->k->range,
+	stp_dither_set_ranges(v, ECOLOR_K, inks->k->count, inks->k->range,
 			      inks->k->density *
 			      stp_get_float_parameter(nv, "Density"));
     }
-  stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
+  stp_dither_set_density(v, stp_get_float_parameter(nv, "Density"));
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;
@@ -2421,13 +2416,12 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 
   out = stp_zalloc(image_width * out_channels * 2);
 
-  dt = stp_dither_data_allocate();
-  stp_dither_add_channel(dt, black, ECOLOR_K, 0);
-  stp_dither_add_channel(dt, cyan, ECOLOR_C, 0);
-  stp_dither_add_channel(dt, lcyan, ECOLOR_C, 1);
-  stp_dither_add_channel(dt, magenta, ECOLOR_M, 0);
-  stp_dither_add_channel(dt, lmagenta, ECOLOR_M, 1);
-  stp_dither_add_channel(dt, yellow, ECOLOR_Y, 0);
+  stp_dither_add_channel(v, black, ECOLOR_K, 0);
+  stp_dither_add_channel(v, cyan, ECOLOR_C, 0);
+  stp_dither_add_channel(v, lcyan, ECOLOR_C, 1);
+  stp_dither_add_channel(v, magenta, ECOLOR_M, 0);
+  stp_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
+  stp_dither_add_channel(v, yellow, ECOLOR_Y, 0);
 
   for (y = 0; y < out_height; y ++)
   {
@@ -2446,7 +2440,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 	}
     }
 
-    stp_dither(out, y, dither, dt, duplicate_line, zero_mask);
+    stp_dither(nv, y, out, duplicate_line, zero_mask);
 
     canon_write_line(nv, caps, ydpi,
 		     black,    delay_k,
@@ -2474,10 +2468,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       errline ++;
     }
   }
-  stp_image_progress_conclude(image);
-
-  stp_dither_data_free(dt);
-  stp_dither_free(dither);
 
   /*
    * Flush delayed buffers...
@@ -2507,6 +2497,10 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       canon_advance_buffer(lyellow, buf_length,delay_ly);
     }
   }
+
+  stp_image_progress_conclude(image);
+
+  stp_dither_free(dither);
 
  /*
   * Cleanup...
