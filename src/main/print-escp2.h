@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.4 2001/12/14 02:47:15 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.5 2002/01/04 01:36:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -208,6 +208,10 @@ typedef struct
 #define MODEL_MICROWEAVE_EXCEPTION_360    0x1000000ul
 #define MODEL_MICROWEAVE_EXCEPTION_BLACK  0x2000000ul
 
+#define MODEL_DEINITIALIZE_JE_MASK      0x4000000ul
+#define MODEL_DEINITIALIZE_JE_NO        0x0000000ul
+#define MODEL_DEINITIALIZE_JE_YES       0x4000000ul
+
 #define MODEL_INIT			(0)
 #define MODEL_HASBLACK			(1)
 #define MODEL_COLOR			(2)
@@ -222,7 +226,8 @@ typedef struct
 #define MODEL_MICROWEAVE		(11)
 #define MODEL_VACUUM			(12)
 #define MODEL_MICROWEAVE_EXCEPTION	(13)
-#define MODEL_LIMIT			(14)
+#define MODEL_DEINITIALIZE_JE           (14)
+#define MODEL_LIMIT			(15)
 
 typedef struct
 {
