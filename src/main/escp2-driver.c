@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.14 2003/12/02 01:44:13 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.15 2004/02/07 17:47:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -485,15 +485,17 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int nlines)
     {
       int ygap = 3600 / pd->vertical_units;
       int xgap = 3600 / pd->physical_xdpi;
-      if (pd->vertical_units == 720 && pd->extra_720dpi_separation)
-	ygap *= pd->extra_720dpi_separation;
-      else if (pd->nozzles == 1)
+      if (pd->nozzles == 1)
 	{
-	  if (pd->pseudo_separation_rows > 0)
-	    ygap *= pd->pseudo_separation_rows;
-	  else
-	    ygap *= pd->separation_rows;
+	  if (pd->vertical_units == 720 && pd->extra_720dpi_separation)
+	    ygap *= pd->extra_720dpi_separation;
 	}
+      else if (pd->extra_720dpi_separation)
+	ygap *= pd->extra_720dpi_separation;
+      else if (pd->pseudo_separation_rows > 0)
+	ygap *= pd->pseudo_separation_rows;
+      else
+	ygap *= pd->separation_rows;
       stpi_send_command(v, "\033.", "cccch", COMPRESSION, ygap, xgap, nlines,
 			lwidth);
     }
