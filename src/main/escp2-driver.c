@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.7 2003/06/14 21:36:00 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.8 2003/06/15 02:32:25 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -626,7 +626,8 @@ void
 stpi_escp2_terminate_page(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  if (pd->input_slot->roll_feed_cut_flags != ROLL_FEED_DONT_EJECT)
+  if (!pd->input_slot ||
+      pd->input_slot->roll_feed_cut_flags != ROLL_FEED_DONT_EJECT)
     {
       if (!pd->printed_something)
 	stpi_send_command(v, "\n", "");
