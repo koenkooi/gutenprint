@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.24.4.1 2003/05/12 01:22:50 rlk Exp $"
+ * "$Id: print-raw.c,v 1.24.4.2 2003/05/24 23:00:26 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -44,6 +44,7 @@ typedef struct
 {
   int color_model;
   int output_channels;
+  int rotate_channels;
   const char *name;
 } ink_t;
 
@@ -64,11 +65,12 @@ static const raw_printer_t raw_model_capabilities[] =
 
 static const ink_t inks[] =
 {
-  { COLOR_MODEL_RGB, 3, "RGB" },
-  { COLOR_MODEL_CMY, 3, "CMY" },
-  { COLOR_MODEL_CMY, 4, "CMYK" },
-  { COLOR_MODEL_RGB, 1, "RGBGray" },
-  { COLOR_MODEL_CMY, 1, "CMYGray" },
+  { COLOR_MODEL_RGB, 3, 0, "RGB" },
+  { COLOR_MODEL_CMY, 3, 0, "CMY" },
+  { COLOR_MODEL_CMY, 4, 1, "CMYK" },
+  { COLOR_MODEL_CMY, 4, 0, "KCMY" },
+  { COLOR_MODEL_RGB, 1, 0, "RGBGray" },
+  { COLOR_MODEL_CMY, 1, 0, "CMYGray" },
 };
 
 static const int ink_count = sizeof(inks) / sizeof(ink_t);
@@ -177,6 +179,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
   int		status = 1;
   int bytes_per_channel = raw_model_capabilities[model].output_bits / 8;
   int ink_channels = 1;
+  int rotate_output = 0;
   const char *ink_type = stp_get_string_parameter(nv, "InkType");
 
   stpi_prune_inactive_options(nv);
@@ -200,6 +203,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 	  {
 	    stpi_set_output_color_model(nv, inks[i].color_model);
 	    ink_channels = inks[i].output_channels;
+	    rotate_output = inks[i].rotate_channels;
 	    break;
 	  }
     }
@@ -229,8 +233,8 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 
   for (y = 0; y < height; y++)
     {
-      unsigned short *out = stpi_channel_get_input(nv);
-      unsigned short *real_out = out;
+      unsigned short *out;
+      unsigned short *real_out;
       unsigned zero_mask;
       if ((y & 63) == 0)
 	stpi_image_note_progress(image, y, height);
@@ -238,6 +242,20 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 	{
 	  status = 2;
 	  break;
+	}
+      out = stpi_channel_get_input(nv);
+      real_out = out;
+      if (rotate_output)
+	{
+	  unsigned short *tmp_out = real_out;
+	  for (i = 0; i < width; i++)
+	    {
+	      unsigned short tmp = tmp_out[0];
+	      for (j = 0; j < ink_channels - 1; j++)
+		tmp_out[j] = tmp_out[j + 1];
+	      tmp_out[ink_channels - 1] = tmp;
+	      tmp_out += ink_channels;
+	    }
 	}
       if (out_channels != ink_channels)
 	{
@@ -268,7 +286,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 	    char_out[i] = real_out[i] / 257;
 	}
       stpi_zfwrite((char *) real_out,
-		  width * ink_channels * bytes_per_channel, 1, nv);
+		   width * ink_channels * bytes_per_channel, 1, nv);
     }
   stpi_image_progress_conclude(image);
   if (final_out)

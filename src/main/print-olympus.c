@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.2.2.1 2003/05/23 00:08:14 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.2.2.2 2003/05/24 23:00:26 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -399,7 +399,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
     for (y = (image_top & 0xfff0); y <= ((image_bottom - 1) | 0x000f); y++)
 #endif
       {
-      unsigned short *out = stpi_channel_get_input(nv);
+      unsigned short *out;
       if ((y % 16) == 0)
         {
         /* block init */
@@ -439,7 +439,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   	  status = 2;
   	  break;
           }
-
+	out = stpi_channel_get_input(nv);
         if (out_channels != ink_channels)
   	{
   	  real_out = final_out;

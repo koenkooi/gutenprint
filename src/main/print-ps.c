@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.64.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-ps.c,v 1.64.2.2 2003/05/24 23:00:26 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -562,8 +562,6 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 
   out_channels = stpi_color_init(nv, image, 256);
 
-  out = stpi_channel_get_input(nv);
-
   if (model == 0)
   {
     stpi_zprintf(v, "/picture %d string def\n", image_width * out_channels);
@@ -588,6 +586,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 	  break;
 	}
 
+      out = stpi_channel_get_input(nv);
       ps_hex(v, out, image_width * out_channels);
     }
   }
@@ -631,6 +630,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
 	  status = 2;
 	  break;
 	}
+      out = stpi_channel_get_input(nv);
 
       out_ps_height = out_offset + image_width * out_channels;
 
