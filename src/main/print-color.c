@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.30 2004/03/25 00:58:46 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.31 2004/03/25 01:01:05 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -443,17 +443,7 @@ static const float_param_t float_parameters[] =
 	 "using color and black inks"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 9.0, 1.0, CMASK_CMY
-  },
-  {
-    {
-      "Saturation", N_("Saturation"), N_("Basic Image Adjustment"),
-      N_("Adjust the saturation (color balance) of the print\n"
-	 "Use zero saturation to produce grayscale output "
-	 "using color and black inks"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 9.0, 1.0, CMASK_RGB
+    }, 0.0, 9.0, 1.0, CMASK_CMY | CMASK_RGB
   },
   /* Need to think this through a bit more -- rlk 20030712 */
   {
