@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.99 2001/08/11 21:26:11 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.100 2001/08/11 21:34:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -86,6 +86,7 @@ typedef int escp2_dot_size_t[11];
 /*
  * Specify the base density for each available resolution.
  * This obviously depends upon the dot size.
+ */
 
 typedef double escp2_densities_t[12];
 
