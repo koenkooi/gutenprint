@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.3 2003/05/29 01:28:44 rlk Exp $"
+ * "$Id: channel.c,v 1.4 2003/06/02 23:43:40 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -340,15 +340,18 @@ stpi_channel_convert(stp_const_vars_t v, unsigned *zero_mask)
 	    {
 	      stpi_channel_t *c = &(cg->c[j]);
 	      int s_count = c->subchannel_count;
-	      if (s_count == 1)
-		nz[zero_ptr++] |= *(output++) = *(input);
-	      else if (s_count > 1)
+	      if (s_count >= 1)
 		{
-		  for (k = 0; k < s_count; k++)
-		    nz[zero_ptr++] |= (*output++) =
-		      c->lut[((*input) * s_count) + k];
+		  if (s_count == 1)
+		    nz[zero_ptr++] |= *(output++) = *(input);
+		  else
+		    {
+		      for (k = 0; k < s_count; k++)
+			nz[zero_ptr++] |= (*output++) =
+			  c->lut[((*input) * s_count) + k];
+		    }
+		  input++;
 		}
-	      input++;
 	    }
 	}
     }
