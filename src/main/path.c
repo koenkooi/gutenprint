@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.11 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: path.c,v 1.12 2004/05/09 16:06:10 rleigh Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -79,9 +79,9 @@ stp_path_search(stp_list_t *dirlist, /* List of directories to search */
 	      module_name = stpi_path_merge((const char *) stp_list_item_get_data(diritem),
 					   module_dir[idx]->d_name);
 	      stp_list_item_create(findlist, NULL, module_name);
-	      stp_free (module_dir[idx]);
+	      free (module_dir[idx]); /* Must use plain free() */
 	    }
-	  free (module_dir);
+	  free (module_dir); /* Must use plain free() */
 	}
       diritem = stp_list_item_next(diritem);
     }

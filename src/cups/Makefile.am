@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.75 2004/04/30 01:50:22 rlk Exp $
+## $Id: Makefile.am,v 1.76 2004/05/09 16:06:06 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -65,23 +65,23 @@ STATIC_LDOPTS=-static -export-dynamic
 endif
 
 cups_calibrate_SOURCES = cups-calibrate.c
-cups_calibrate_LDADD = $(LIBPRINTUT) -lm
+cups_calibrate_LDADD = -lm
 
 commandtoepson_SOURCES = commandtoepson.c
-commandtoepson_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
+commandtoepson_LDADD = $(CUPS_LIBS)
 
 canon_SOURCES = canon.c
-canon_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
+canon_LDADD = $(CUPS_LIBS)
 
 epson_SOURCES = epson.c
-epson_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
+epson_LDADD = $(CUPS_LIBS)
 
 cups_genppd_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_SOURCES = genppd.c
-cups_genppd_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDADD = $(LIBPRINTUT) $(CUPS_LIBS) $(GENPPD_LIBS) $(GIMPPRINT_LIBS)
+cups_genppd_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDADD = $(CUPS_LIBS) $(GENPPD_LIBS) $(GIMPPRINT_LIBS)
 cups_genppd_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDFLAGS = $(STATIC_LDOPTS)
 
 rastertogimpprint_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_SOURCES = rastertoprinter.c
-rastertogimpprint_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDADD = $(LIBPRINTUT) $(CUPS_LIBS) $(GIMPPRINT_LIBS)
+rastertogimpprint_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS)
 rastertogimpprint_@GIMPPRINT_MAJOR_VERSION@_@GIMPPRINT_MINOR_VERSION@_LDFLAGS = $(STATIC_LDOPTS)
 
 cups-genppdconfig.@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@: $(top_builddir)/config.status cups-genppdconfig.in

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.5 2004/05/09 16:06:11 rleigh Exp $"
+ * "$Id: gimp-print-version.c,v 1.3 2004/05/09 16:06:08 rleigh Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -29,20 +29,15 @@
 #else
 #include <gimp-print/gimp-print.h>
 #endif
-#include <string.h>
 
 int
 main(int argc, char **argv)
 {
-  int i;
-
-  stp_init();
-  for (i = 0; i < stp_printer_model_count(); i++)
-    {
-      const stp_printer_t *p = stp_get_printer_by_index(i);
-      if (strcmp(stp_printer_get_family(p), "ps") &&
-	  strcmp(stp_printer_get_family(p), "raw"))
-	printf("%s\n", stp_printer_get_driver(p));
-    }
+#ifdef VERSION
+  printf("%s\n", VERSION);
   return 0;
+#else
+  fprintf(stderr, "VERSION not defined!\n");
+  return 1;
+#endif
 }

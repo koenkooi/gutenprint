@@ -29,6 +29,9 @@
 #ifndef GIMP_PRINT_VARS_H
 #define GIMP_PRINT_VARS_H
 
+#include <gimp-print/array.h>
+#include <gimp-print/curve.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1297,5 +1300,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GIMP_PRINT_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.12 2004/05/07 19:20:23 rleigh Exp $".
+ * End of "$Id: vars.h,v 1.13 2004/05/09 16:06:05 rleigh Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.33 2003/06/24 21:04:57 rleigh Exp $
+## $Id: Makefile.am,v 1.34 2004/05/09 16:06:08 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -43,4 +43,4 @@ if BUILD_GHOSTSCRIPT
 bin_PROGRAMS = ijsgimpprint
 endif
 
-ijsgimpprint_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS) $(IJS_LIBS)
+ijsgimpprint_LDADD = $(GIMPPRINT_LIBS) $(IJS_LIBS)

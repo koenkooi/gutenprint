@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.6 2004/05/07 19:20:23 rleigh Exp $"
+ * "$Id: util.h,v 1.7 2004/05/09 16:06:05 rleigh Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -29,10 +29,12 @@
 #ifndef GIMP_PRINT_UTIL_H
 #define GIMP_PRINT_UTIL_H
 
+#include <gimp-print/curve.h>
+#include <gimp-print/vars.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * Utility functions.
@@ -49,7 +51,6 @@ extern "C" {
  * @returns 0 on success, 1 on failure.
  */
 extern int stp_init(void);
-
 
 /**
  * Set the output encoding.  This function sets the encoding that all
@@ -155,5 +156,5 @@ extern char *stp_strdup(const char *s);
 
 #endif /* GIMP_PRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.6 2004/05/07 19:20:23 rleigh Exp $".
+ * End of "$Id: util.h,v 1.7 2004/05/09 16:06:05 rleigh Exp $".
  */

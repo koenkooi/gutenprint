@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.8 2004/05/07 19:20:25 rleigh Exp $"
+ * "$Id: printers.c,v 1.9 2004/05/09 16:06:08 rleigh Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -29,7 +29,6 @@
 #else
 #include <gimp-print/gimp-print.h>
 #endif
-#include "../../lib/libprintut.h"
 
 int
 main(int argc, char **argv)

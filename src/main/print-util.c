@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.104 2004/05/07 19:20:33 rleigh Exp $"
+ * "$Id: print-util.c,v 1.105 2004/05/09 16:06:11 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -76,7 +76,7 @@ typedef struct
 	break;								\
       else								\
 	{								\
-	  free (result);						\
+	  stp_free (result);						\
 	  if (bytes < 0)						\
 	    current_allocation *= 2;					\
 	  else								\
@@ -272,7 +272,7 @@ stp_eprintf(const stp_vars_t *v, const char *format, ...)
       char *result;
       STPI_VASPRINTF(result, bytes, format);
       (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
-      free(result);
+      stp_free(result);
     }
   else
     {
@@ -333,7 +333,7 @@ stp_dprintf(unsigned long level, const stp_vars_t *v, const char *format, ...)
       char *result;
       STPI_VASPRINTF(result, bytes, format);
       (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
-      free(result);
+      stp_free(result);
     }
 }
 

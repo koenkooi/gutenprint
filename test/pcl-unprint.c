@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.7 2003/01/17 11:19:06 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.8 2004/05/09 16:06:26 rleigh Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -27,13 +27,13 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include "../lib/libprintut.h"
+#include <gimp-print/util.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
 
-static const char *id="@(#) $Id: pcl-unprint.c,v 1.7 2003/01/17 11:19:06 davehill Exp $";
+static const char *id="@(#) $Id: pcl-unprint.c,v 1.8 2004/05/09 16:06:26 rleigh Exp $";
 
 /*
  * Size of buffer used to read file
@@ -1054,39 +1054,39 @@ int main(int argc, char *argv[])
 		output_data.buffer_length = (image_data.image_width + 7) / 8;
 
 		if (output_data.black_data_rows_per_row != 0) {
-		    output_data.black_bufs = xmalloc(output_data.black_data_rows_per_row * sizeof (char *));
+		    output_data.black_bufs = stp_malloc(output_data.black_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.black_data_rows_per_row; i++) {
-			output_data.black_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.black_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 		if (output_data.cyan_data_rows_per_row != 0) {
-		    output_data.cyan_bufs = xmalloc(output_data.cyan_data_rows_per_row * sizeof (char *));
+		    output_data.cyan_bufs = stp_malloc(output_data.cyan_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.cyan_data_rows_per_row; i++) {
-			output_data.cyan_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.cyan_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 		if (output_data.magenta_data_rows_per_row != 0) {
-		    output_data.magenta_bufs = xmalloc(output_data.magenta_data_rows_per_row * sizeof (char *));
+		    output_data.magenta_bufs = stp_malloc(output_data.magenta_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.magenta_data_rows_per_row; i++) {
-			output_data.magenta_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.magenta_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 		if (output_data.yellow_data_rows_per_row != 0) {
-		    output_data.yellow_bufs = xmalloc(output_data.yellow_data_rows_per_row * sizeof (char *));
+		    output_data.yellow_bufs = stp_malloc(output_data.yellow_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.yellow_data_rows_per_row; i++) {
-			output_data.yellow_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.yellow_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 		if (output_data.lcyan_data_rows_per_row != 0) {
-		    output_data.lcyan_bufs = xmalloc(output_data.lcyan_data_rows_per_row * sizeof (char *));
+		    output_data.lcyan_bufs = stp_malloc(output_data.lcyan_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.lcyan_data_rows_per_row; i++) {
-			output_data.lcyan_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.lcyan_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 		if (output_data.lmagenta_data_rows_per_row != 0) {
-		    output_data.lmagenta_bufs = xmalloc(output_data.lmagenta_data_rows_per_row * sizeof (char *));
+		    output_data.lmagenta_bufs = stp_malloc(output_data.lmagenta_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.lmagenta_data_rows_per_row; i++) {
-			output_data.lmagenta_bufs[i] = xmalloc(output_data.buffer_length * sizeof (char));
+			output_data.lmagenta_bufs[i] = stp_malloc(output_data.buffer_length * sizeof (char));
 		    }
 		}
 
@@ -1100,7 +1100,7 @@ int main(int argc, char *argv[])
 		    output_data.yellow_data_rows_per_row + output_data.lcyan_data_rows_per_row +
 		    output_data.lmagenta_data_rows_per_row;
 
-		received_rows = xmalloc(expected_data_rows_per_row * sizeof(char *));
+		received_rows = stp_malloc(expected_data_rows_per_row * sizeof(char *));
 		j = 0;
 		for (i = 0; i < output_data.black_data_rows_per_row; i++)
 		    received_rows[j++] = output_data.black_bufs[i];
@@ -1145,47 +1145,47 @@ int main(int argc, char *argv[])
 
 		if (output_data.black_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.black_data_rows_per_row; i++) {
-			free(output_data.black_bufs[i]);
+			stp_free(output_data.black_bufs[i]);
 		    }
-		    free(output_data.black_bufs);
+		    stp_free(output_data.black_bufs);
 		    output_data.black_bufs = NULL;
 		}
 		if (output_data.cyan_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.cyan_data_rows_per_row; i++) {
-			free(output_data.cyan_bufs[i]);
+			stp_free(output_data.cyan_bufs[i]);
 		    }
-		    free(output_data.cyan_bufs);
+		    stp_free(output_data.cyan_bufs);
 		    output_data.cyan_bufs = NULL;
 		}
 		if (output_data.magenta_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.magenta_data_rows_per_row; i++) {
-			free(output_data.magenta_bufs[i]);
+			stp_free(output_data.magenta_bufs[i]);
 		    }
-		    free(output_data.magenta_bufs);
+		    stp_free(output_data.magenta_bufs);
 		    output_data.magenta_bufs = NULL;
 		}
 		if (output_data.yellow_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.yellow_data_rows_per_row; i++) {
-			free(output_data.yellow_bufs[i]);
+			stp_free(output_data.yellow_bufs[i]);
 		    }
-		    free(output_data.yellow_bufs);
+		    stp_free(output_data.yellow_bufs);
 		    output_data.yellow_bufs = NULL;
 		}
 		if (output_data.lcyan_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.lcyan_data_rows_per_row; i++) {
-			free(output_data.lcyan_bufs[i]);
+			stp_free(output_data.lcyan_bufs[i]);
 		    }
-		    free(output_data.lcyan_bufs);
+		    stp_free(output_data.lcyan_bufs);
 		    output_data.lcyan_bufs = NULL;
 		}
 		if (output_data.lmagenta_data_rows_per_row != 0) {
 		    for (i=0; i < output_data.lmagenta_data_rows_per_row; i++) {
-			free(output_data.lmagenta_bufs[i]);
+			stp_free(output_data.lmagenta_bufs[i]);
 		    }
-		    free(output_data.lmagenta_bufs);
+		    stp_free(output_data.lmagenta_bufs);
 		    output_data.lmagenta_bufs = NULL;
 		}
-		free(received_rows);
+		stp_free(received_rows);
 		received_rows = NULL;
 
 		break;

@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.10 2004/05/07 19:20:23 rleigh Exp $"
+ * "$Id: curve.h,v 1.11 2004/05/09 16:06:05 rleigh Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -28,6 +28,11 @@
 
 #ifndef GIMP_PRINT_CURVE_H
 #define GIMP_PRINT_CURVE_H
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <gimp-print/sequence.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -622,5 +627,5 @@ extern int stp_curve_compose(stp_curve_t **retval,
 
 #endif /* GIMP_PRINT_CURVE_H */
 /*
- * End of "$Id: curve.h,v 1.10 2004/05/07 19:20:23 rleigh Exp $".
+ * End of "$Id: curve.h,v 1.11 2004/05/09 16:06:05 rleigh Exp $".
  */

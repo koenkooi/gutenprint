@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.11 2004/05/07 19:20:27 rleigh Exp $"
+ * "$Id: printrcy.y,v 1.12 2004/05/09 16:06:10 rleigh Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -26,7 +26,6 @@
 #include <config.h>
 #endif
 
-#include "../../lib/libprintut.h"
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <gimp-print-ui/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.5 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.6 2004/05/09 16:06:10 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -26,7 +26,6 @@
 #include <config.h>
 #endif
 #include <sys/types.h>
-#include "../../lib/libprintut.h"
 #include <string.h>
 
 #include <gimp-print-ui/gimp-print-ui.h>
@@ -67,7 +66,7 @@ stpui_image_thumbnail_new(const guchar *data, gint w, gint h, gint bpp)
 {
   thumbnail_image_t *im;
   if (! theImage.rep)
-    theImage.rep = xmalloc(sizeof(thumbnail_image_t));
+    theImage.rep = stp_malloc(sizeof(thumbnail_image_t));
   im = (thumbnail_image_t *) (theImage.rep);
   memset(im, 0, sizeof(thumbnail_image_t));
   im->data = data;
@@ -127,5 +126,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.5 2004/03/28 21:17:37 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.6 2004/05/09 16:06:10 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.102 2004/04/30 01:50:22 rlk Exp $
-dnl Copyright (C) 2001 Roger Leigh
+dnl $Id: configure.ac,v 1.103 2004/05/09 16:06:04 rleigh Exp $
+dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.102 $)
+AC_REVISION($Revision: 1.103 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -674,6 +674,7 @@ STP_GIMP2_PLUG_IN_DIR
 
 dnl Checks for header files.
 AC_HEADER_STDC
+AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_HEADER(readline/readline.h,
   HAVE_READLINE_READLINE_H=true,
   HAVE_READLINE_READLINE_H=false)
@@ -692,7 +693,6 @@ AC_CHECK_HEADERS(stdarg.h stdlib.h string.h)
 AC_CHECK_HEADERS(sys/time.h sys/types.h)
 AC_CHECK_HEADERS(time.h)
 AC_CHECK_HEADERS(unistd.h)
-AC_CHECK_HEADERS(varargs.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -702,22 +702,8 @@ AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
 
 dnl Checks for library functions.
-AC_FUNC_ALLOCA
-dnl [commented out while I find a memcmp.c for lib/] AC_FUNC_MEMCMP
-dnl GNU libc memcmp.c is too glibc-dependent to include.
-AC_CHECK_FUNCS(nanosleep poll usleep)
-dnl The following is used to build a "utility library" in lib/
-AC_REPLACE_FUNCS(xgetcwd xmalloc)
-AC_CHECK_FUNC([asprintf],
-  [AC_DEFINE([HAVE_ASPRINTF],, [Define if you have the 'asprintf' function.])],
-  [AC_LIBOBJ([vasprintf])])
-AC_CHECK_FUNC([vasprintf],
-  [AC_DEFINE([HAVE_VASPRINTF],, [Define if you have the 'vasprintf' function.])],
-  [AC_LIBOBJ([vasprintf])])
-AC_CHECK_FUNC([getopt_long],
-  [AC_DEFINE([HAVE_GETOPT_LONG],, [Define if you have the 'getopt_long' function.])],
-  [AC_LIBOBJ([getopt])
-   AC_LIBOBJ([getopt1])])
+AC_CHECK_FUNCS([nanosleep poll usleep])
+AC_CHECK_FUNC([getopt_long])
 
 
 dnl Define what has to be built
@@ -923,7 +909,6 @@ AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([include/gimp-print/Makefile])
 AC_CONFIG_FILES([include/gimp-print-ui/Makefile])
 AC_CONFIG_FILES([include/gimp-print/gimp-print-version.h])
-AC_CONFIG_FILES([lib/Makefile])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([man/cups-calibrate.8])
 AC_CONFIG_FILES([man/cups-genppd.8])

@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.6 2003/11/20 00:30:54 rleigh Exp $"
+ * "$Id: printrcl.l,v 1.7 2004/05/09 16:06:10 rleigh Exp $"
  *
  *   printrc parser
  *
@@ -26,7 +26,6 @@
 #include <config.h>
 #endif
 
-#include "../../lib/libprintut.h"
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <gimp-print-ui/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
