@@ -1,9 +1,9 @@
 /*
- * "$Id: print.c,v 1.36 1999/12/25 17:50:15 rlk Exp $"
+ * "$Id: print.c,v 1.37 2000/01/08 23:30:56 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
- *   Copyright 1997-1999 Michael Sweet (mike@easysw.com) and
+ *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
@@ -3294,5 +3294,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.36 1999/12/25 17:50:15 rlk Exp $".
+ * End of "$Id: print.c,v 1.37 2000/01/08 23:30:56 rlk Exp $".
  */

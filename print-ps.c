@@ -1,9 +1,9 @@
 /*
- * "$Id: print-ps.c,v 1.11 2000/01/03 13:25:13 rlk Exp $"
+ * "$Id: print-ps.c,v 1.12 2000/01/08 23:30:56 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
- *   Copyright 1997-1999 Michael Sweet (mike@easysw.com) and
+ *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,9 @@
  * Revision History:
  *
  *   $Log: print-ps.c,v $
+ *   Revision 1.12  2000/01/08 23:30:56  rlk
+ *   Y2K copyright
+ *
  *   Revision 1.11  2000/01/03 13:25:13  rlk
  *   Fix from Salvador Pinto Abreu <spa@khromeleque.dmat.uevora.pt>
  *
@@ -1157,5 +1160,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 
 /*
- * End of "$Id: print-ps.c,v 1.11 2000/01/03 13:25:13 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.12 2000/01/08 23:30:56 rlk Exp $".
  */

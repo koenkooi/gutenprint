@@ -1,9 +1,9 @@
 /*
- * "$Id: print.h,v 1.20 1999/11/30 02:45:23 rlk Exp $"
+ * "$Id: print.h,v 1.21 2000/01/08 23:30:56 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
- *   Copyright 1997-1999 Michael Sweet (mike@easysw.com) and
+ *   Copyright 1997-2000 Michael Sweet (mike@easysw.com) and
  *	Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
@@ -224,5 +224,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.20 1999/11/30 02:45:23 rlk Exp $".
+ * End of "$Id: print.h,v 1.21 2000/01/08 23:30:56 rlk Exp $".
  */
