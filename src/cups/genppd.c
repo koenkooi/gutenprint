@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.81 2003/07/19 23:26:57 rlk Exp $"
+ * "$Id: genppd.c,v 1.82 2003/11/06 02:41:47 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -805,8 +805,13 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
   * with commas.  Now use a dash instead...
   */
 
-  gzprintf(fp, "*NickName:      \"%s - CUPS+Gimp-Print v" VERSION "\"\n",
-           long_name);
+  /*
+   * NOTE - code in rastertoprinter looks for this version string.
+   * If this is changed, the corresponding change must be made in
+   * rastertoprinter.c.  Look for "ppd->nickname"
+   */
+  gzprintf(fp, "*NickName:      \"%s%s%s\"\n",
+	   long_name, PPD_NICKNAME_STRING, VERSION);
 #if CUPS_PPD_PS_LEVEL == 2
   gzputs(fp, "*PSVersion:	\"(2017.000) 550\"\n");
 #else
@@ -832,7 +837,7 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*cupsVersion:	1.1\n");
   gzprintf(fp, "*cupsModelNumber: \"0\"\n");
   gzputs(fp, "*cupsManualCopies: True\n");
-  gzputs(fp, "*cupsFilter:	\"application/vnd.cups-raster 100 rastertoprinter\"\n");
+  gzprintf(fp, "*cupsFilter:	\"application/vnd.cups-raster 100 rastertogimpprint.%s\"\n", GIMPPRINT_CUPS_VERSION);
   if (strcasecmp(manufacturer, "EPSON") == 0)
     gzputs(fp, "*cupsFilter:	\"application/vnd.cups-command 33 commandtoepson\"\n");
   gzputs(fp, "\n");
@@ -1482,5 +1487,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.81 2003/07/19 23:26:57 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.82 2003/11/06 02:41:47 rlk Exp $".
  */
