@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print-version.h.in,v 1.3 2004/04/08 21:49:44 rleigh Exp $
+ *  $Id: gimp-print-version.h.in,v 1.4 2004/04/10 03:43:12 rlk Exp $
  *
  *   Version of Gimp-print
  *
@@ -25,7 +25,7 @@
  */
 
 /**
- * @file version.h
+ * @file gimp-print-version.h
  * @brief Version functions.
  */
 
