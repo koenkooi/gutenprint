@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.14 2001/07/24 01:38:33 sharkey Exp $
+# $Id: rules,v 1.2.2.15 2001/07/26 19:17:46 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -71,6 +71,10 @@ binary-indep: build install ChangeLog
 	  mkdir -p debian/gimp1.2-print/usr/share/doc/gimp1.2-print/samples
 	  cp -r samples/*.png samples/*.jpg debian/gimp1.2-print/usr/share/doc/gimp1.2-print/samples
 	dh_installexamples -i
+	  mkdir -p debian/gimp1.2-print/usr/share/doc/gimp1.2-print/samples
+	  cp -r samples/*.png debian/gimp1.2-print/usr/share/doc/gimp1.2-print/samples
+	  mkdir -p debian/cupsys-driver-gimpprint/usr/share/doc/cupsys-driver-gimpprint/samples
+	  cp -r samples/profile.jpg debian/cupsys-driver-gimpprint/usr/share/doc/cupsys-driver-gimpprint/samples
 #	dh_installmenu -i
 #	dh_installlogrotate -i
 #	dh_installemacsen -i
