@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.74 2003/11/06 02:41:47 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.75 2003/11/08 16:09:59 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -531,7 +531,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "ERROR: Gimp-Print: If you have upgraded your version of Gimp-Print\n");
     fprintf(stderr, "ERROR: Gimp-Print: recently, you must reinstall all printer queues.\n");
     fprintf(stderr, "ERROR: Gimp-Print: If the previous installed version of Gimp-Print\n");
-    fprintf(stderr, "ERROR: Gimp-Print: was 4.3.19 or higher, you can use the `cups-genppdupdate.%s'\n", GIMPPRINT_CUPS_VERSION);
+    fprintf(stderr, "ERROR: Gimp-Print: was 4.3.19 or higher, you can use the `cups-genppdupdate.%s'\n", GIMPPRINT_RELEASE_VERSION);
     fprintf(stderr, "ERROR: Gimp-Print: program to do this; if the previous installed version\n");
     fprintf(stderr, "ERROR: Gimp-Print: was older, you can use the Modify Printer command via\n");
     fprintf(stderr, "ERROR: Gimp-Print: the CUPS web interface: http://localhost:631/printers.\n");
@@ -958,5 +958,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.74 2003/11/06 02:41:47 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.75 2003/11/08 16:09:59 rlk Exp $".
  */
