@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.11 2000/02/11 08:36:22 sharkey Exp $ */
+/* $Id: unprint.c,v 1.12 2000/02/11 09:19:12 sharkey Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -259,7 +259,7 @@ void write_output(FILE *fp_w) {
     }
   }
   fprintf(stderr,"Image from (%d,%d) to (%d,%d).\n",left,first,right,last);
-  width=right-left;
+  width=right-left+1;
   if (width<0) {
     width=0;
   }
