@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.59 2000/09/16 03:10:49 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.60 2000/09/16 03:16:53 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1546,6 +1546,7 @@ gimp_image_type_callback (GtkWidget *widget,
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
       vars.image_type = (gint) data;
+      gimp_update_adjusted_thumbnail();
       plist[plist_current].v.image_type = (gint) data;
     }
 }
