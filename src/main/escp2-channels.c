@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.39 2005/03/22 12:29:09 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.40 2005/03/26 20:19:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1607,7 +1607,7 @@ static const escp2_inkname_t *const cmykrb_matte_ink_types[] =
 
 DECLARE_INKLIST("cmykrbmatte", cmykrb_matte, cmykrb_matte,
 		N_("Matte Black"),
-		standard, standard, standard);
+		ultrachrome, ultrachrome_matte, ultrachrome_matte);
 
 static const escp2_inkname_t *const cmykrb_photo_ink_types[] =
 {
@@ -1629,7 +1629,7 @@ static const escp2_inkname_t *const cmykrb_photo_ink_types[] =
 
 DECLARE_INKLIST("cmykrbphoto", cmykrb_photo, cmykrb_photo,
 		N_("Photo Black"),
-		standard, standard, standard);
+		ultrachrome, ultrachrome_photo, ultrachrome_photo);
 
 
 #define DECLARE_INKGROUP(name)			\
