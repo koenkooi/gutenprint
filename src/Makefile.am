@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2001/12/16 02:06:31 rlk Exp $
+## $Id: Makefile.am,v 1.9 2001/12/21 19:39:28 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-NONGIMP_SUBDIRS =
 ## @-@-@-@-@ NO-GIMP @-@-@-@-@
 NONGIMP_SUBDIRS = ijs cups foomatic ghost testpattern
 ## @-@-@-@-@ YES-GIMP @-@-@-@-@

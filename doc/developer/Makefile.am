@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/12/02 03:02:35 rlk Exp $
+## $Id: Makefile.am,v 1.5 2001/12/21 19:39:28 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ MAINT_CHARSET = latin1
 
 MANUAL = gimpprint
 HTMLDIR = developer-html
-DOCS = $(MANUAL).dvi $(MANUAL).ps html
+DOCS = $(MANUAL).dvi $(MANUAL).ps html-stamp
 
 IMAGES =
 
@@ -177,6 +177,6 @@ mostlyclean-aminfo:
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
-EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES) html-stamp
+EXTRA_DIST = $(DOCS) $(IMAGES) $(EPS_IMAGES)
 
 .PHONY: html ps pdf docs
