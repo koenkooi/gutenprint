@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.64 2003/05/30 02:59:23 rlk Exp $
+dnl $Id: configure.ac,v 1.65 2003/05/31 04:07:07 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.64 $)
+AC_REVISION($Revision: 1.65 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -284,6 +284,11 @@ STP_ARG_ENABLE([debug],
                [ENABLE_DEBUG],
                [no])
 
+STP_ARG_ENABLE([profile],
+               [turn on profiling in build],
+               [ENABLE_PROFILE],
+               [no])
+
 STP_ARG_WITH_DETAILED([readline], ,
                       [use readline],
                       [(default tries -lncurses, -lcurses, -ltermcap)],
@@ -478,11 +483,17 @@ else
   else
     CFLAGS="${CFLAGS:=} -O"
   fi
+  if test x$ENABLE_PROFILE = xyes ; then
+    CFLAGS="${CFLAGS:=} -pg"
+  fi
 fi
 if test "$CC" = "gcc" ; then
   GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic -Werror-implicit-function-declaration -Winline"
   if test x${USE_MAINTAINER_MODE} = xyes ; then
     GNUCFLAGS="${GNUCFLAGS} -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls"
+  fi
+  if test x$ENABLE_PROFILE = xyes ; then
+    GNUCFLAGS="${GNUCFLAGS:=} -pg"
   fi
 fi
 AC_SUBST(GNUCFLAGS)
