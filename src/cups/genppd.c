@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.20 2001/07/18 01:43:51 rlk Exp $"
+ * "$Id: genppd.c,v 1.21 2001/07/21 17:04:09 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -89,7 +89,7 @@
 
 typedef struct
 {
-  char		*name;			/* Name of size */
+  const char	*name;			/* Name of size */
   int		width,			/* Width in points */
 		height;			/* Height in points */
 } msize_t;
@@ -887,5 +887,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.20 2001/07/18 01:43:51 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.21 2001/07/21 17:04:09 rlk Exp $".
  */
