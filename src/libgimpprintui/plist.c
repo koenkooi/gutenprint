@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.37 2004/05/26 03:16:14 rlk Exp $"
+ * "$Id: plist.c,v 1.38 2004/06/07 01:14:10 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -948,6 +948,7 @@ stpui_printrc_load(void)
 	  stpui_printrc_load_v1(fp);
 	  break;
 	case 2:
+	case 3:
 	  stpui_printrc_load_v2(fp);
 	  break;
 	}
@@ -982,7 +983,7 @@ stpui_printrc_save(void)
       fprintf(stderr, "Number of printers: %d\n", stpui_plist_count);
 #endif
 
-      fputs("#PRINTRCv2 written by Gimp-Print " PLUG_IN_VERSION "\n\n", fp);
+      fputs("#PRINTRCv3 written by Gimp-Print " PLUG_IN_VERSION "\n\n", fp);
 
       fprintf(fp, "Global-Settings:\n");
       fprintf(fp, "  Current-Printer: \"%s\"\n",
@@ -1457,5 +1458,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.37 2004/05/26 03:16:14 rlk Exp $".
+ * End of "$Id: plist.c,v 1.38 2004/06/07 01:14:10 rlk Exp $".
  */
