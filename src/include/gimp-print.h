@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h,v 1.4 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: gimp-print.h,v 1.5 2001/02/09 18:20:22 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -277,6 +277,19 @@ typedef struct stp_image
  *   
  */
 
+
+/*
+ * Library versioning details
+ */
+extern const unsigned int gimpprint_major_version;
+extern const unsigned int gimpprint_minor_version;
+extern const unsigned int gimpprint_micro_version;
+extern const unsigned int gimpprint_binary_age;
+extern const unsigned int gimpprint_interface_age;
+char* stp_check_version (unsigned int required_major,
+			 unsigned int required_minor,
+			 unsigned int required_micro);
+
 struct stp_printer;
 
 typedef struct
@@ -364,5 +377,5 @@ extern const stp_vars_t *stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h,v 1.4 2001/02/03 03:35:21 rlk Exp $".
+ * End of "$Id: gimp-print.h,v 1.5 2001/02/09 18:20:22 rleigh Exp $".
  */

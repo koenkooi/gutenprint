@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.6 2001/02/03 19:42:09 rleigh Exp $"
+ * "$Id: print-dither.c,v 1.7 2001/02/09 18:20:22 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -285,7 +285,7 @@ stp_dither_algorithm_name(int id)
 {
   if (id < 0 || id >= num_dither_algos)
     return NULL;
-  return dither_algos[id].name;
+  return _(dither_algos[id].name);
 }
 
 static inline int
@@ -567,7 +567,7 @@ stp_init_dither(int in_width, int out_width, int horizontal_aspect,
   d->dither_type = D_FLOYD_HYBRID;
   for (i = 0; i < num_dither_algos; i++)
     {
-      if (!strcmp(v->dither_algorithm, dither_algos[i].name))
+      if (!strcmp(v->dither_algorithm, _(dither_algos[i].name)))
 	{
 	  d->dither_type = dither_algos[i].id;
 	  break;
