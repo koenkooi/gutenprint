@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.32 2002/11/06 03:34:46 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.32.2.1 2002/11/15 01:34:44 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -47,9 +47,8 @@ static void color_update (GtkAdjustment *adjustment);
 typedef struct
 {
   const char *name;
+  const char *text;
   const char *help;
-  gfloat (*accessor)(const stp_vars_t);
-  void (*mutator)(stp_vars_t, gfloat);
   GtkObject *adjustment;
   gfloat scale;
   gint is_color;
@@ -58,36 +57,39 @@ typedef struct
 
 static color_option_t color_options[] =
   {
-    { N_("Brightness:"), N_("Set the brightness of the print.\n"
+    { "Brightness", N_("Brightness:"), N_("Set the brightness of the print.\n"
                             "0 is solid black, 2 is solid white"),
-      stp_get_brightness, stp_set_brightness, NULL, 10, 0, 1 },
-    { N_("Contrast:"), N_("Set the contrast of the print"),
-      stp_get_contrast, stp_set_contrast, NULL, 10, 0, 1 },
-    { N_("Cyan:"), N_("Set the cyan balance of the print"),
-      stp_get_cyan, stp_set_cyan, NULL, 10, 1, 1 },
-    { N_("Magenta:"), N_("Set the magenta balance of the print"),
-      stp_get_magenta, stp_set_magenta, NULL, 10, 1, 1 },
-    { N_("Yellow:"), N_("Set the yellow balance of the print"),
-      stp_get_yellow, stp_set_yellow, NULL, 10, 1, 1 },
-    { N_("Saturation"), N_("Adjust the saturation (color balance) of the print\n"
-			   "Use zero saturation to produce grayscale output "
-			   "using color and black inks"),
-      stp_get_saturation, stp_set_saturation, NULL, 100, 1, 1 },
-    { N_("Density:"), N_("Adjust the density (amount of ink) of the print. "
-			 "Reduce the density if the ink bleeds through the "
-			 "paper or smears; increase the density if black "
-			 "regions are not solid."),
-      stp_get_density, stp_set_density, NULL, 100, 0, 0 },
-    { N_("Gamma"), N_("Adjust the gamma of the print. Larger values will "
-		      "produce a generally brighter print, while smaller "
-		      "values will produce a generally darker print. "
-		      "Black and white will remain the same, unlike with "
-		      "the brightness adjustment."),
-      stp_get_gamma, stp_set_gamma, NULL, 100, 0, 1 }
+      NULL, 10, 0, 1 },
+    { "Contrast", N_("Contrast:"), N_("Set the contrast of the print"),
+      NULL, 10, 0, 1 },
+    { "Cyan", N_("Cyan:"), N_("Set the cyan balance of the print"),
+      NULL, 10, 1, 1 },
+    { "Magenta", N_("Magenta:"), N_("Set the magenta balance of the print"),
+      NULL, 10, 1, 1 },
+    { "Yellow", N_("Yellow:"), N_("Set the yellow balance of the print"),
+      NULL, 10, 1, 1 },
+    { "Saturation", N_("Saturation:"),
+      N_("Adjust the saturation (color balance) of the print\n"
+	 "Use zero saturation to produce grayscale output "
+	 "using color and black inks"),
+      NULL, 100, 1, 1 },
+    { "Density", N_("Density:"),
+      N_("Adjust the density (amount of ink) of the print. "
+	 "Reduce the density if the ink bleeds through the "
+	 "paper or smears; increase the density if black "
+	 "regions are not solid."),
+      NULL, 100, 0, 0 },
+    { "Gamma", N_("Gamma:"),
+      N_("Adjust the gamma of the print. Larger values will "
+	 "produce a generally brighter print, while smaller "
+	 "values will produce a generally darker print. "
+	 "Black and white will remain the same, unlike with "
+	 "the brightness adjustment."),
+      NULL, 100, 0, 1 }
   };
-
 const static gint color_option_count = (sizeof(color_options) /
 					sizeof(color_option_t));
+
 static void set_color_defaults (void);
 
 static void dither_algo_callback (GtkWidget *widget, gpointer data);
@@ -110,19 +112,20 @@ dither_algo_callback (GtkWidget *widget, gpointer data)
 void
 build_dither_combo (void)
 {
-  stp_param_list_t vec = stp_printer_get_parameters
-    (current_printer, pv->v, "DitherAlgorithm");
+  stp_param_string_list_t vec;
+  stp_parameter_description_t desc;
   const char *default_parameter =
-    stp_printer_get_default_parameter(current_printer, pv->v,
-				      "DitherAlgorithm");
-  if (stp_get_parameter(pv->v, "DitherAlgorithm")[0] == '\0')
+    stp_get_default_parameter(pv->v, "DitherAlgorithm").str;
+  stp_describe_parameter(pv->v, "DitherAlgorithm", &desc);
+  vec = desc.restrictions.string_list;
+  if (stp_get_parameter(pv->v, "DitherAlgorithm").str[0] == '\0')
     stp_set_parameter(pv->v, "DitherAlgorithm", default_parameter);
   else if (stp_param_list_count(vec) == 0)
     stp_set_parameter(pv->v, "DitherAlgorithm", NULL);
 
   plist_build_combo (dither_algo_combo,
 		     vec,
-		     stp_get_parameter (pv->v, "DitherAlgorithm"),
+		     stp_get_parameter (pv->v, "DitherAlgorithm").str,
 		     default_parameter,
 		     &dither_algo_callback,
 		     &dither_algo_callback_id,
@@ -172,9 +175,6 @@ create_color_adjust_window (void)
   gint i;
   GtkWidget *table;
   GtkWidget *event_box;
-  const stp_vars_t lower   = stp_minimum_settings ();
-  const stp_vars_t upper   = stp_maximum_settings ();
-  const stp_vars_t defvars = stp_default_settings ();
 
   /*
    * Fetch a thumbnail of the image we're to print from the Gimp.  This must
@@ -240,17 +240,26 @@ create_color_adjust_window (void)
   for (i = 0; i < color_option_count; i++)
     {
       color_option_t *opt = &(color_options[i]);
-      opt->adjustment =
-	gimp_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(opt->name), 200, 0,
-			     (opt->accessor)(defvars),
-			     (opt->accessor)(lower),
-			     (opt->accessor)(upper),
-			     (opt->accessor)(defvars) / (opt->scale * 10),
-			     (opt->accessor)(defvars) / opt->scale,
-			     3, TRUE, 0, 0, NULL, NULL);
-      set_adjustment_tooltip(opt->adjustment, _(opt->help));
-      gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
-			 GTK_SIGNAL_FUNC(color_update), (gpointer) i);
+      stp_parameter_description_t desc;
+      stp_describe_parameter(stp_default_settings(), opt->name, &desc);
+      if (desc.type == STP_PARAMETER_TYPE_DOUBLE &&
+	  desc.class == STP_PARAMETER_CLASS_OUTPUT &&
+	  desc.level == STP_PARAMETER_LEVEL_BASIC)
+	{
+	  gdouble defval = stp_get_default_parameter(stp_default_settings(),
+						      opt->name).dbl;
+	  opt->adjustment =
+	    gimp_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(opt->name),
+				 200, 0, defval,
+				 desc.restrictions.double_bounds.lower,
+				 desc.restrictions.double_bounds.upper,
+				 defval / (opt->scale * 10),
+				 defval / opt->scale,
+				 3, TRUE, 0, 0, NULL, NULL);
+	  set_adjustment_tooltip(opt->adjustment, _(opt->help));
+	  gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
+			     GTK_SIGNAL_FUNC(color_update), (gpointer) i);
+	}
     }
 
   /*
@@ -290,9 +299,9 @@ color_update (GtkAdjustment *adjustment)
 	{
 	  if (opt->update_thumbnail)
 	    invalidate_preview_thumbnail ();
-	  if ((opt->accessor)(pv->v) != adjustment->value)
+	  if (stp_get_parameter(pv->v, opt->name).dbl != adjustment->value)
 	    {
-	      (opt->mutator)(pv->v, adjustment->value);
+	      stp_set_parameter(pv->v, opt->name, adjustment->value);
 	      if (opt->update_thumbnail)
 		update_adjusted_thumbnail();
 	    }
@@ -330,7 +339,7 @@ do_color_updates (void)
     {
       color_option_t *opt = &(color_options[i]);
       gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->adjustment),
-			       (opt->accessor)(pv->v));
+			       stp_get_parameter(pv->v, opt->name).dbl);
     }
   update_adjusted_thumbnail ();
 }
@@ -343,7 +352,8 @@ set_color_defaults (void)
   for (i = 0; i < color_option_count; i++)
     {
       color_option_t *opt = &(color_options[i]);
-      (opt->mutator)(pv->v, (opt->accessor)(defvars));
+      stp_set_parameter(pv->v, opt->name,
+			stp_get_parameter(defvars, opt->name).dbl);
     }
 
   do_color_updates ();

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.34.2.1 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-ps.c,v 1.34.2.2 2002/11/15 01:34:45 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -86,7 +86,10 @@ ps_parameters(const stp_vars_t v, const char *name,
   description->type = STP_PARAMETER_TYPE_INVALID;
 
   if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
-    return;
+    {
+      stp_describe_internal_parameter(v, name, description);
+      return;
+    }
 
   if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
   {
@@ -119,6 +122,8 @@ ps_parameters(const stp_vars_t v, const char *name,
 		   stp_papersize_get_name(pt), stp_papersize_get_text(pt));
 	    }
 	}
+      else
+	stp_describe_internal_parameter(v, name, description);
       return;
     }
 
@@ -160,7 +165,7 @@ ps_default_parameters(const stp_vars_t v, const char *name)
   r.str = NULL;
 
   if (ppd_file == NULL || strlen(ppd_file) == 0 || name == NULL)
-    return r;
+    return stp_default_internal_parameter(v, name);
 
   sprintf(defname, "Default%s", name);
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.77.2.2 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-util.c,v 1.77.2.3 2002/11/15 01:34:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -276,7 +276,7 @@ stp_param_string_t *
 stp_param_list_param(const stp_param_string_list_t list, size_t element)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
-  chec_param_list(ilist);
+  check_param_list(ilist);
   if (element >= ilist->active_count)
     return NULL;
   else
@@ -287,7 +287,7 @@ size_t
 stp_param_list_count(const stp_param_string_list_t list)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
-  chec_param_list(ilist);
+  check_param_list(ilist);
   return ilist->active_count;
 }
 

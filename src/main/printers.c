@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.7.2.2 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: printers.c,v 1.7.2.3 2002/11/15 01:34:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -178,7 +178,10 @@ verify_string_param(const stp_vars_t v, const char *parameter,
       if (count == 0)
 	return 1;
       else
-	return 0;
+	{
+	  stp_eprintf(v, _("Value must be set for %s\n"), parameter);
+	  return 0;
+	}
     }
   if (count > 0)
     {
@@ -220,7 +223,10 @@ verify_curve_param(const stp_vars_t v, const char *parameter,
   const stp_param_curve_t *curve = stp_get_parameter(v, parameter).curve;
   size_t i;
   if (curve->count == 0)
-    return 0;
+    {
+      stp_eprintf(v, _("No points present for curve %s\n"), parameter);
+      return 0;
+    }
   for (i = 0; i < curve->count; i++)
     if (curve->value[i] < bounds->lower || curve->value[i] > bounds->upper)
       {
@@ -249,6 +255,8 @@ verify_param(const stp_vars_t v, const char *parameter)
     case STP_PARAMETER_TYPE_FILE:
       return 1;			/* No way to verify this here */
     default:
+      stp_eprintf(v, _("Unknown type parameter %s (%d)\n"),
+		  parameter, desc.type);
       return 0;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.6.2.2 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-vars.c,v 1.6.2.3 2002/11/15 01:34:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -242,7 +242,8 @@ static const stp_parameter_t global_parameters[] =
 stp_vars_t
 stp_allocate_vars(void)
 {
-  void *retval = stp_zalloc(sizeof(stp_internal_vars_t));
+  stp_internal_vars_t *retval = stp_zalloc(sizeof(stp_internal_vars_t));
+  retval->cookie = COOKIE_VARS;
   stp_copy_vars(retval, (stp_vars_t)&default_vars);
   return (retval);
 }
@@ -748,14 +749,14 @@ stp_minimum_settings()
 const stp_parameter_t *
 stp_list_parameters(const stp_vars_t v, int *count)
 {
-  *count = sizeof(global_parameters) / sizeof(char *);
+  *count = (sizeof(global_parameters) / sizeof(const stp_parameter_t)) - 1;
   return global_parameters;
 }
 
 stp_parameter_type_t
 stp_parameter_type(const stp_vars_t v, const char *parameter)
 {
-  static const stp_parameter_t *param = global_parameters;
+  const stp_parameter_t *param = global_parameters;
   while (param->name)
     {
       if (strcmp(parameter, param->name) == 0)
@@ -768,7 +769,7 @@ stp_parameter_type(const stp_vars_t v, const char *parameter)
 stp_parameter_class_t
 stp_parameter_class(const stp_vars_t v, const char *parameter)
 {
-  static const stp_parameter_t *param = global_parameters;
+  const stp_parameter_t *param = global_parameters;
   while (param->name)
     {
       if (strcmp(parameter, param->name) == 0)
@@ -781,7 +782,7 @@ stp_parameter_class(const stp_vars_t v, const char *parameter)
 stp_parameter_level_t
 stp_parameter_level(const stp_vars_t v, const char *parameter)
 {
-  static const stp_parameter_t *param = global_parameters;
+  const stp_parameter_t *param = global_parameters;
   while (param->name)
     {
       if (strcmp(parameter, param->name) == 0)

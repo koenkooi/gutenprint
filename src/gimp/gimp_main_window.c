@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.87.2.1 2002/11/10 01:24:33 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.87.2.2 2002/11/15 01:34:44 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -43,7 +43,7 @@ typedef struct
   const char *name;
   const char *text;
   const char *help;
-  stp_param_list_t params;
+  stp_param_string_list_t params;
   void (*extra)(const gchar *);
   gint callback_id;
   GtkWidget *combo;
@@ -273,7 +273,7 @@ static const gint image_type_count = (sizeof(image_types) /
 
 static gdouble preview_ppi = 10;
 
-static stp_param_list_t printer_list = 0;
+static stp_param_string_list_t printer_list = 0;
 gp_plist_t *pv;
 
 
@@ -336,7 +336,7 @@ create_new_combo(list_option_t *list_option, GtkWidget *table,
 
 static const char *
 Combo_get_name(GtkWidget   *combo,
-	       const stp_param_list_t options)
+	       const stp_param_string_list_t options)
 {
   gchar *text;
   gint   i;
@@ -1432,7 +1432,7 @@ scaling_callback (GtkWidget *widget)
  ****************************************************************************/
 void
 plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
-		   stp_param_list_t items,      /* I - Menu items */
+		   stp_param_string_list_t items,      /* I - Menu items */
 		   const gchar    *cur_item,    /* I - Current item */
 		   const gchar    *def_value,   /* I - default item */
 		   GtkSignalFunc   callback,    /* I - Callback */
@@ -1670,23 +1670,27 @@ do_all_updates(void)
 
   for (i = 0; i < list_option_count; i++)
     {
+      stp_parameter_description_t desc;
       list_option_t *option = &(the_list_options[i]);
       const gchar *default_parameter =
-	stp_printer_get_default_parameter(current_printer, pv->v,option->name);
+	stp_get_default_parameter(pv->v, option->name).str;
       if (option->params)
 	stp_param_list_free(option->params);
-      option->params = stp_printer_get_parameters
-	(current_printer, pv->v, option->name);
-      if (stp_get_parameter(pv->v, option->name)[0] == '\0')
-	stp_set_parameter(pv->v, option->name, default_parameter);
-      else if (option->params == NULL)
-	stp_set_parameter(pv->v, option->name, NULL);
-      plist_build_combo(option->combo, option->params,
-			stp_get_parameter(pv->v, option->name),
-			default_parameter, combo_callback,
-			&(option->callback_id), option);
-      if (option->extra)
-	(option->extra)(stp_get_parameter(pv->v, option->name));
+      stp_describe_parameter(pv->v, option->name, &desc);
+      if (desc.type == STP_PARAMETER_TYPE_STRING_LIST)
+	{
+	  option->params = desc.restrictions.string_list;
+	  if (stp_get_parameter(pv->v, option->name).str[0] == '\0')
+	    stp_set_parameter(pv->v, option->name, default_parameter);
+	  else if (option->params == NULL)
+	    stp_set_parameter(pv->v, option->name, NULL);
+	  plist_build_combo(option->combo, option->params,
+			    stp_get_parameter(pv->v, option->name).str,
+			    default_parameter, combo_callback,
+			    &(option->callback_id), option);
+	  if (option->extra)
+	    (option->extra)(stp_get_parameter(pv->v, option->name).str);
+	}
     }
 
   build_dither_combo ();
@@ -1748,9 +1752,8 @@ custom_media_size_callback(GtkWidget *widget,
   invalidate_preview_thumbnail ();
   reset_preview ();
 
-  stp_printer_get_size_limit(current_printer, pv->v,
-			     &width_limit, &height_limit,
-			     &min_width_limit, &min_height_limit);
+  stp_get_size_limit(pv->v, &width_limit, &height_limit,
+		     &min_width_limit, &min_height_limit);
   if (widget == custom_size_width)
     {
       if (new_value < min_width_limit)
@@ -1787,8 +1790,7 @@ set_media_size(const gchar *new_media_size)
 
       if (stp_papersize_get_width (pap) == 0)
 	{
-	  stp_printer_get_media_size
-	    (current_printer, pv->v, &default_width, &default_height);
+	  stp_get_media_size(pv->v, &default_width, &default_height);
 	  gtk_widget_set_sensitive (GTK_WIDGET (custom_size_width), TRUE);
 	  gtk_entry_set_editable (GTK_ENTRY (custom_size_width), TRUE);
 	  size = default_width;
@@ -1804,8 +1806,7 @@ set_media_size(const gchar *new_media_size)
 
       if (stp_papersize_get_height (pap) == 0)
 	{
-	  stp_printer_get_media_size
-	    (current_printer, pv->v, &default_height, &default_height);
+	  stp_get_media_size(pv->v, &default_height, &default_height);
 	  gtk_widget_set_sensitive (GTK_WIDGET (custom_size_height), TRUE);
 	  gtk_entry_set_editable (GTK_ENTRY (custom_size_height), TRUE);
 	  size = default_height;
@@ -1828,7 +1829,7 @@ combo_callback(GtkWidget *widget, gpointer data)
   const gchar *new_value =
     Combo_get_name(option->combo, option->params);
   reset_preview();
-  if (strcmp(stp_get_parameter(pv->v, option->name), new_value) != 0)
+  if (strcmp(stp_get_parameter(pv->v, option->name).str, new_value) != 0)
     {
       invalidate_frame();
       invalidate_preview_thumbnail();
@@ -2226,13 +2227,13 @@ update_adjusted_thumbnail (void)
   stp_convert_t  colorfunc;
   gushort        out[3 * (THUMBNAIL_MAXW + THUMBNAIL_MAXH)];
   guchar        *adjusted_data = adjusted_thumbnail_data;
-  gfloat         old_density = stp_get_density(pv->v);
+  gfloat         old_density = stp_get_parameter(pv->v, "Density").dbl;
   gint preview_limit = (thumbnail_h * thumbnail_w) - 1;
 
   if (thumbnail_data == 0 || adjusted_thumbnail_data == 0)
     return;
 
-  stp_set_density (pv->v, 1.0);
+  stp_set_parameter (pv->v, "Density", 1.0);
   stp_compute_lut (pv->v, 256);
   colorfunc = stp_choose_colorfunc (stp_get_output_type(pv->v), thumbnail_bpp,
 				    NULL, &adjusted_thumbnail_bpp, pv->v);
@@ -2249,7 +2250,7 @@ update_adjusted_thumbnail (void)
 
   stp_free_lut (pv->v);
 
-  stp_set_density (pv->v, old_density);
+  stp_set_parameter (pv->v, "Density", old_density);
 
   switch (physical_orientation)
     {
@@ -2564,11 +2565,9 @@ preview_update (void)
   gdouble min_ppi_scaling;   /* Minimum PPI for current page size */
 
   suppress_preview_update++;
-  stp_printer_get_media_size(current_printer, pv->v,
-			     &paper_width, &paper_height);
+  stp_get_media_size(pv->v, &paper_width, &paper_height);
 
-  stp_printer_get_imageable_area(current_printer, pv->v,
-				 &left, &right, &bottom, &top);
+  stp_get_imageable_area(pv->v, &left, &right, &bottom, &top);
 
   printable_width  = right - left;
   printable_height = bottom - top;

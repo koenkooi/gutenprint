@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.193.2.1 2002/11/10 04:46:13 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.193.2.2 2002/11/15 01:34:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -524,6 +524,7 @@ escp2_imageable_area(const stp_vars_t v,   /* I */
     }
 
   rollfeed = (strcmp(stp_get_parameter(v, "InputSlot").str, "Roll") == 0);
+  rollfeed &= escp2_has_cap(model, MODEL_ROLLFEED, MODEL_ROLLFEED_YES, v);
 
   stp_default_media_size(v, &width, &height);
 
