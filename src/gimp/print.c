@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.42 2002/12/30 17:39:26 rlk Exp $"
+ * "$Id: print.c,v 1.43 2002/12/31 14:53:19 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -250,9 +250,9 @@ run (char   *name,		/* I - Name of print program. */
    */
 
   drawable = gimp_drawable_get (drawable_ID);
-  set_image_dimensions(drawable->width, drawable->height);
+  stpui_set_image_dimensions(drawable->width, drawable->height);
   gimp_image_get_resolution (image_ID, &xres, &yres);
-  set_image_resolution(xres, yres);
+  stpui_set_image_resolution(xres, yres);
   image = Image_GimpDrawable_new(drawable, image_ID);
   stp_set_float_parameter(gimp_vars.v, "AppGamma", gimp_gamma());
 
@@ -406,6 +406,7 @@ gimp_writefunc(void *file, const char *buf, size_t bytes)
 static gint
 do_print_dialog (gchar *proc_name)
 {
+  gimp_help_init ();
 
  /*
   * Generate the filename for the current user...
