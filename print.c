@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4 1999/09/15 02:23:24 rlk Exp $"
+ * "$Id: print.c,v 1.5 1999/10/03 23:57:20 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -619,9 +619,9 @@ run(char   *name,		/* I - Name of print program. */
 
       float contrast, red, green, blue;
       contrast = vars.contrast / 100.0;
-      red = vars.red / 100.0;
-      green = vars.green / 100.0;
-      blue = vars.blue / 100.0;
+      red = 100.0 / vars.red ;
+      green = 100.0 / vars.green;
+      blue = 100.0 / vars.blue;
       if (red < 0.01)
 	red = 0.01;
       if (green < 0.01)
@@ -2826,5 +2826,5 @@ get_printers(void)
 
 
 /*
- * End of "$Id: print.c,v 1.4 1999/09/15 02:23:24 rlk Exp $".
+ * End of "$Id: print.c,v 1.5 1999/10/03 23:57:20 rlk Exp $".
  */
