@@ -1,5 +1,5 @@
 /*
- * "$Id: epson.c,v 1.5 2000/09/17 01:02:40 rlk Exp $"
+ * "$Id: epson.c,v 1.6 2000/09/18 00:31:24 easysw Exp $"
  *
  *   EPSON backend for the Common UNIX Printing System.
  *
@@ -37,14 +37,11 @@
  * Include necessary headers.
  */
 
-#include <ctype.h>
 #include <cups/cups.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <string.h>
 #include <signal.h>
-#include <stdlib.h>
+#include <ctype.h>
 
 #if defined(WIN32) || defined(__EMX__)
 #  include <io.h>
@@ -682,5 +679,5 @@ list_devices(void)
 
 
 /*
- * End of "$Id: epson.c,v 1.5 2000/09/17 01:02:40 rlk Exp $".
+ * End of "$Id: epson.c,v 1.6 2000/09/18 00:31:24 easysw Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: calibrate.c,v 1.3 2000/09/17 01:02:40 rlk Exp $"
+ * "$Id: calibrate.c,v 1.4 2000/09/18 00:31:24 easysw Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
@@ -712,7 +712,9 @@ send_pass4(FILE       *fp,
 
   fprintf(fp, "(%s) 16 22 TEXT\n", profile);
 
-  ppm = fopen("calibrate.ppm", "rb");
+  if ((ppm = fopen(CUPS_DATADIR "/calibrate.ppm", "rb")) == NULL)
+    if ((ppm = fopen("calibrate.ppm", "rb")) == NULL)
+      return;
 
   fgets(line, sizeof(line), ppm);
   while (fgets(line, sizeof(line), ppm))
@@ -761,5 +763,5 @@ send_pass4(FILE       *fp,
 
   fclose(ppm);
 
-  fputs("gsave\n", fp);
+  fputs("grestore\n", fp);
 }
