@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.91 2000/05/05 14:43:29 gandy Exp $"
+ * "$Id: print.c,v 1.92 2000/05/05 15:14:09 gandy Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -958,6 +958,8 @@ printrc_save(void)
 		p->v.image_type, p->v.dither_algorithm);
       }
     fclose(fp);
+  } else {
+    fprintf(stderr,"could not open printrc file \"%s\"\n",filename);
   }
   g_free (filename);
 }
@@ -1149,5 +1151,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.91 2000/05/05 14:43:29 gandy Exp $".
+ * End of "$Id: print.c,v 1.92 2000/05/05 15:14:09 gandy Exp $".
  */
