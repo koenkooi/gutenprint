@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.215 2003/01/06 20:57:40 rleigh Exp $"
+ * "$Id: print-escp2.c,v 1.216 2003/01/08 09:00:34 mtomlinson Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1109,12 +1109,19 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
   stp_dither_set_black_upper(dither, k_upper);
 
   inks = escp2_inks(init->model, init->res->resid, init->inkname->inkset, nv);
-  if (inks)
-    for (i = 0; i < init->channel_limit; i++)
-      if ((*inks)[i])
-	stp_dither_set_ranges(dither, i, (*inks)[i]->count, (*inks)[i]->range,
+  if (inks) {
+    for (i = 0; i < init->channel_limit; i++) {
+      if ((*inks)[i]) {
+	stp_dither_set_ranges(dither, i, (*inks)[i]->numranges, (*inks)[i]->range,
 			      (*inks)[i]->density * paper_k_upper *
 			      stp_get_float_parameter(nv, "Density"));
+
+        stp_dither_set_shades(dither, i, (*inks)[i]->numshades, (*inks)[i]->shades,
+			      (*inks)[i]->density * paper_k_upper *
+			      stp_get_float_parameter(nv, "Density"));
+      }
+    }
+  }
 
   stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
 
