@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.85 2000/10/01 18:55:23 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.86 2000/10/14 02:54:02 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -930,7 +930,7 @@ static pcl_cap_t pcl_model_capabilities[] =
       -1,
     },
   },
-  /* LaserJet 4 series */
+  /* LaserJet 4L */
   { 4,
     17 * 72 / 2, 14 * 72,
     PCL_RES_150_150 | PCL_RES_300_300,
@@ -987,7 +987,7 @@ static pcl_cap_t pcl_model_capabilities[] =
       -1,
     },
   },
-  /* LaserJet 5 series, 6 series */
+  /* LaserJet 4 series (except as above), 5 series, 6 series */
   { 6,
     17 * 72 / 2, 14 * 72,
     PCL_RES_150_150 | PCL_RES_300_300 | PCL_RES_600_600,
