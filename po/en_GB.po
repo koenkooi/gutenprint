@@ -3,7 +3,7 @@
 # Roger Leigh <roger@whinlatter.uklinux.net>, 2001.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: en_GB.po,v 1.80.2.49 2004/04/17 23:28:33 rlk Exp $
+# $Id: en_GB.po,v 1.80.2.50 2004/04/18 23:14:17 rlk Exp $
 #
 msgid ""
 msgstr ""
