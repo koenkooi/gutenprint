@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.51 2001/10/01 11:34:27 rlk Exp $"
+ * "$Id: print-util.c,v 1.52 2001/10/14 02:44:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -853,7 +853,7 @@ const char *
 stp_papersize_get_text(const stp_papersize_t pt)
 {
   const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
-  return p->text;
+  return _(p->text);
 }
 
 unsigned
