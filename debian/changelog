@@ -1,4 +1,4 @@
-gimp-print (4.2.2-pre1-2) unstable; urgency=low
+gimp-print (4.2.2-pre2-1) unstable; urgency=low
 
   * New stable release, Closes: #148737
   * Upgrade to debhelper version 4 (RL)
