@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.36.2.1 2004/05/24 01:41:07 rlk Exp $"
+ * "$Id: plist.c,v 1.36.2.2 2004/05/26 03:07:30 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -591,6 +591,10 @@ stpui_plist_add(const stpui_plist_t *key, int add_only)
 	  p = stpui_plist + stpui_plist_count;
 	  stpui_plist_count++;
 	  stpui_plist_copy(p, key);
+	  if (strlen(stpui_plist_get_queue_name(p)) == 0 &&
+	      stp_string_list_is_present(stpui_system_print_queues,
+					 stpui_plist_get_name(p)))
+	    stpui_plist_set_queue_name(p, stpui_plist_get_name(p));
 	}
       else
 	{
@@ -906,7 +910,6 @@ stpui_printrc_load(void)
   FILE		*fp;		/* Printrc file */
   char		line[1024];	/* Line in printrc file */
   int		format = 0;	/* rc file format version */
-  int		system_printers; /* printer count before reading printrc */
   const char *filename = stpui_get_printrc_file();
 
   initialize_default_parameters();
@@ -917,8 +920,6 @@ stpui_printrc_load(void)
   */
 
   stpui_get_system_printers();
-
-  system_printers = stpui_plist_count - 1;
 
   if ((fp = fopen(filename, "r")) != NULL)
     {
@@ -1211,8 +1212,6 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
    * Open the file/execute the print command...
    */
 
-  fprintf(stderr, "command type is %d %x\n",
-	  stpui_plist_get_command_type(printer), printer);
   if (stpui_plist_get_command_type(printer) == COMMAND_TYPE_DEFAULT ||
       stpui_plist_get_command_type(printer) == COMMAND_TYPE_CUSTOM)
     {
@@ -1458,5 +1457,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.36.2.1 2004/05/24 01:41:07 rlk Exp $".
+ * End of "$Id: plist.c,v 1.36.2.2 2004/05/26 03:07:30 rlk Exp $".
  */

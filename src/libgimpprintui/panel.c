@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.66.2.1 2004/05/24 01:41:07 rlk Exp $"
+ * "$Id: panel.c,v 1.66.2.2 2004/05/26 03:07:29 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -190,6 +190,7 @@ static void printandsave_callback (void);
 static void about_callback        (void);
 static void print_callback        (void);
 static void save_callback         (void);
+static void setup_callback      (GtkWidget *widget);
 
 static void setup_update          (void);
 static void setup_open_callback   (void);
@@ -628,6 +629,21 @@ stpui_create_boolean(option_t *opt,
 }
 
 static void
+build_queue_combo(void)
+{
+  plist_build_combo(queue_combo,
+		    NULL,
+		    stpui_system_print_queues,
+		    1,
+		    stpui_plist_get_queue_name(pv),
+		    NULL,
+		    queue_callback,
+		    &queue_callback_id,
+		    NULL,
+		    NULL);
+}  
+
+static void
 build_printer_combo(void)
 {
   int i;
@@ -648,21 +664,6 @@ build_printer_combo(void)
 		    NULL,
 		    NULL);
 }
-
-static void
-build_queue_combo(void)
-{
-  plist_build_combo(queue_combo,
-		    NULL,
-		    stpui_system_print_queues,
-		    1,
-		    "",
-		    NULL,
-		    queue_callback,
-		    &queue_callback_id,
-		    NULL,
-		    NULL);
-}  
 
 static int
 check_page_size(const char *paper_size)
@@ -1464,7 +1465,7 @@ create_printer_dialog (void)
   gtk_widget_show (label);
 
   event_box = gtk_event_box_new ();
-  gtk_table_attach (GTK_TABLE (table), event_box, 5, 8, 0, 2,
+  gtk_table_attach (GTK_TABLE (table), event_box, 5, 7, 0, 2,
                     GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
   gtk_widget_show (event_box);
 
@@ -1523,7 +1524,7 @@ create_printer_dialog (void)
   gtk_widget_show (ppd_label);
 
   ppd_box = gtk_hbox_new (FALSE, 8);
-  gtk_table_attach (GTK_TABLE (table), ppd_box, 2, 8, 3, 4,
+  gtk_table_attach (GTK_TABLE (table), ppd_box, 2, 7, 3, 4,
                     GTK_FILL, GTK_FILL, 0, 0);
 
   ppd_file = gtk_entry_new ();
@@ -1574,12 +1575,14 @@ create_printer_dialog (void)
   gtk_widget_show(label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 4, 5,
                     GTK_FILL, GTK_FILL, 0, 0);
-  gtk_table_attach (GTK_TABLE (table), event_box, 3, 5, 4, 5,
+  gtk_table_attach (GTK_TABLE (table), event_box, 3, 7, 4, 5,
                     GTK_FILL, GTK_FILL, 0, 0);
 
   custom_command_entry = gtk_entry_new ();
-  gtk_table_attach (GTK_TABLE (table), custom_command_entry, 2, 8, 6, 7,
+  gtk_table_attach (GTK_TABLE (table), custom_command_entry, 2, 7, 6, 7,
                     GTK_FILL, GTK_FILL, 0, 0);
+  gtk_signal_connect(GTK_OBJECT(custom_command_entry), "activate",
+		     GTK_SIGNAL_FUNC(setup_callback), NULL);
   gtk_widget_set_sensitive(custom_command_entry, FALSE);
   gtk_widget_show (custom_command_entry);
 
@@ -1587,8 +1590,10 @@ create_printer_dialog (void)
     (custom_command_entry, _("Enter the correct command to print to your printer. "));
 
   file_entry = gtk_entry_new ();
-  gtk_table_attach (GTK_TABLE (table), file_entry, 2, 7, 7, 8,
+  gtk_table_attach (GTK_TABLE (table), file_entry, 2, 6, 7, 8,
                     GTK_FILL, GTK_FILL, 0, 0);
+  gtk_signal_connect(GTK_OBJECT(file_entry), "activate",
+		     GTK_SIGNAL_FUNC(setup_callback), NULL);
   gtk_widget_show (file_entry);
 
   gtk_widget_set_sensitive(file_entry, FALSE);
@@ -1597,7 +1602,7 @@ create_printer_dialog (void)
 
   file_button = gtk_button_new_with_label (_("Browse"));
 
-  gtk_table_attach (GTK_TABLE (table), file_button, 7, 8, 7, 8,
+  gtk_table_attach (GTK_TABLE (table), file_button, 6, 7, 7, 8,
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (file_button);
 
@@ -2817,6 +2822,37 @@ static void
 queue_callback (GtkWidget *widget,
 		gpointer   data)
 {
+  int i;
+  int count = stp_string_list_count(stpui_system_print_queues);
+  const gchar *result =
+    gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(queue_combo)->entry));
+  for (i = 0; i < count; i++)
+    {
+      const stp_param_string_t *s =
+	stp_string_list_param(stpui_system_print_queues, i);
+      if (!strcmp(result, s->text))
+	{
+	  stpui_plist_set_queue_name(pv, s->name);
+	  do_all_updates();
+	  return;
+	}
+    }
+}
+
+static void
+setup_callback (GtkWidget *widget)
+{
+  gchar *new_value = gtk_entry_get_text (GTK_ENTRY (widget));
+
+  if (widget == custom_command_entry)
+    stpui_plist_set_custom_command(pv, new_value);
+  else if (widget == file_entry)
+    {
+      stpui_plist_set_output_filename(pv, new_value);
+      gtk_file_selection_set_filename
+	(GTK_FILE_SELECTION (file_browser),
+	 gtk_entry_get_text (GTK_ENTRY (file_entry)));
+    }
 }
 
 /*
@@ -2855,6 +2891,7 @@ plist_callback (GtkWidget *widget,
     }
 
   set_current_printer();
+  build_queue_combo();
   manufacturer = stp_printer_get_manufacturer(stp_get_printer(pv->v));
   build_printer_driver_clist();
 
@@ -3381,7 +3418,7 @@ setup_open_callback (void)
   reset_preview ();
   setup_update ();
 
-  gtk_widget_set_sensitive(GTK_DIALOG(print_dialog)->action_area, FALSE);
+/*  gtk_widget_set_sensitive(GTK_DIALOG(print_dialog)->action_area, FALSE); */
   gtk_widget_show (setup_dialog);
 
   if (first_time)
@@ -3408,6 +3445,7 @@ set_printer(void)
 {
   manufacturer = stp_printer_get_manufacturer(tmp_printer);
   build_printer_driver_clist();
+  build_queue_combo();
   stp_set_driver (pv->v, stp_printer_get_driver (tmp_printer));
   stpui_plist_set_custom_command
     (pv, gtk_entry_get_text (GTK_ENTRY (custom_command_entry)));
