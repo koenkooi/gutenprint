@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.180.2.1 2002/07/21 03:19:49 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.180.2.2 2002/07/21 19:46:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -182,6 +182,7 @@ DEF_SIMPLE_ACCESSOR(black_initial_vertical_offset, int)
 DEF_SIMPLE_ACCESSOR(max_black_resolution, int)
 DEF_SIMPLE_ACCESSOR(zero_margin_offset, int)
 DEF_SIMPLE_ACCESSOR(extra_720dpi_separation, int)
+DEF_SIMPLE_ACCESSOR(physical_channels, int)
 DEF_SIMPLE_ACCESSOR(paperlist, const paperlist_t *)
 DEF_SIMPLE_ACCESSOR(reslist, const res_t *)
 DEF_SIMPLE_ACCESSOR(inklist, const inklist_t *)
@@ -341,6 +342,22 @@ verify_papersize(const stp_papersize_t pt, int model, const stp_vars_t v)
     return 0;
 }
 
+static int
+verify_inktype(const escp2_inkname_t *inks, int model, const stp_vars_t v)
+{
+#if 0
+  int channels_limit = NCOLORS;
+  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+    channels_limit = escp2_physical_channels(model, v);
+  if (inks->channel_limit > channels_limit)
+    return 0;
+  else
+    return 1;
+#else
+  return 1;
+#endif
+}
+
 /*
  * 'escp2_parameters()' - Return the parameter values for the given parameter.
  */
@@ -411,12 +428,21 @@ escp2_parameters(const stp_printer_t printer,	/* I - Printer model */
       }
     valptrs = stp_malloc(sizeof(stp_param_t) * ninktypes);
     for (i = 0; i < ninktypes; i++)
-    {
-      valptrs[i].name = c_strdup(inks->inknames[i]->name);
-      valptrs[i].text = c_strdup(_(inks->inknames[i]->text));
-    }
-    *count = ninktypes;
-    return valptrs;
+      {
+	if (verify_inktype(inks->inknames[i], model, v))
+	  {
+	    valptrs[*count].name = c_strdup(inks->inknames[i]->name);
+	    valptrs[*count].text = c_strdup(_(inks->inknames[i]->text));
+	    (*count)++;
+	  }
+      }
+    if (*count)
+      return valptrs;
+    else
+      {
+	stp_free(valptrs);
+	return NULL;
+      }
   }
   else if (strcmp(name, "MediaType") == 0)
   {
@@ -563,7 +589,13 @@ escp2_default_parameters(const stp_printer_t printer,
   else if (strcmp(name, "InkType") == 0)
     {
       const inklist_t *inks = escp2_inklist(model, v);
-      return inks->inknames[0]->name;
+      int ninktypes = inks->n_inks;
+      for (i = 0; i < ninktypes; i++)
+	{
+	  if (verify_inktype(inks->inknames[i], model, v))
+	    return (inks->inknames[i]->name);
+	}
+      return NULL;
     }
   else if (strcmp(name, "MediaType") == 0)
     {
@@ -1166,7 +1198,17 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 
   if (!stp_get_verified(nv))
     {
-      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      stp_eprintf(nv, _("Print options not verified; cannot print.\n"));
+      return;
+    }
+
+  image_bpp = image->bpp(image);
+
+  if (output_type == OUTPUT_RAW_PRINTER &&
+      image_bpp != 2 * escp2_physical_channels(model, nv))
+    {
+      stp_eprintf(nv, _("Image depth must equal the number of ink channels (%d)\n"),
+		  escp2_physical_channels(model, nv));
       return;
     }
 
@@ -1266,9 +1308,12 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   head_offset = stp_zalloc(sizeof(int) * total_channels);
 
   memset(head_offset, 0, sizeof(head_offset));
-  channel_limit = NCOLORS;
-  if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
+  if (output_type == OUTPUT_RAW_PRINTER)
+    channel_limit = escp2_physical_channels(model, v);
+  else if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
     channel_limit = 1;
+  else
+    channel_limit = NCOLORS;
 
   dt = stp_create_dither_data();
 
@@ -1404,7 +1449,6 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   */
 
   stp_set_output_color_model(nv, COLOR_MODEL_CMY);
-  image_bpp = image->bpp(image);
   colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 
   in  = stp_malloc(image_width * image_bpp);

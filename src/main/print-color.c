@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.27.2.1 2002/07/21 03:19:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.27.2.2 2002/07/21 19:46:28 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1755,6 +1755,7 @@ cmyk_8_to_cmyk(const stp_vars_t vars,
   static double print_gamma = -1.0;
 
 
+  (void) memset(nz, 0, sizeof(nz));
   if (density != stp_get_density(vars) ||
       print_gamma != stp_get_gamma(vars))
   {
@@ -1793,6 +1794,45 @@ cmyk_8_to_cmyk(const stp_vars_t vars,
 }
 
 static void
+raw_to_raw(const stp_vars_t vars,
+	   const unsigned char *rawin,
+	   unsigned short *rawout,
+	   int *zero_mask,
+	   int width,
+	   int bpp,
+	   const unsigned char *cmap,
+	   const double *hue_map,
+	   const double *lum_map,
+	   const double *sat_map)
+{
+  int i;
+  int j;
+  int nz[32];
+  int colors;
+  const unsigned short *srawin = (const unsigned short *) rawin;
+  colors = bpp / 2;
+
+  (void) memset(nz, 0, sizeof(nz));
+  for (i = 0; i < width; i++)
+    {
+      for (j = 0; j < colors; j++)
+	{
+	  nz[j] |= srawin[j];
+	  rawout[j] = srawin[j];
+	}
+      srawin += colors;
+      rawout += colors;
+    }
+  if (zero_mask)
+    {
+      *zero_mask = 0;
+      for (i = 0; i < colors; i++)
+	if (! nz[i])
+	  *zero_mask |= 1 << i;
+    }
+}
+
+static void
 cmyk_to_cmyk(const stp_vars_t vars,
 	     const unsigned char *cmykin,
 	     unsigned short *cmykout,
@@ -1806,30 +1846,26 @@ cmyk_to_cmyk(const stp_vars_t vars,
 {
   int i;
   int j;
-  int nz[32];
-  int colors;
+  int nz[4];
   const unsigned short *scmykin = (const unsigned short *) cmykin;
-  if (bpp < 0)
-    colors = (-bpp) / 2;
-  else
-    colors = 4;
 
+  (void) memset(nz, 0, sizeof(nz));
   for (i = 0; i < width; i++)
     {
-      for (j = 0; j < colors; j++)
+      for (j = 0; j < 4; j++)
 	{
 	  nz[j] |= scmykin[j];
 	  cmykout[j] = scmykin[j];
 	}
-      scmykin += colors;
-      cmykout += colors;
+      scmykin += 4;
+      cmykout += 4;
     }
   if (zero_mask)
     {
-      *zero_mask = 0;
-      for (i = 0; i < colors; i++)
-	if (nz[i])
-	  *zero_mask |= 1 << i;
+      *zero_mask = nz[0] ? 0 : 1;
+      *zero_mask |= nz[1] ? 0 : 2;
+      *zero_mask |= nz[2] ? 0 : 4;
+      *zero_mask |= nz[3] ? 0 : 8;
     }
 }
 
@@ -2085,16 +2121,16 @@ stp_choose_colorfunc(int output_type,
 	}
       break;
     case OUTPUT_RAW_CMYK:
-	  *out_bpp = 4;
-	  switch (image_bpp)
-	    {
-	    case 4:
-	      RETURN_COLORFUNC(cmyk_8_to_cmyk);
-	    case 8:
-	      RETURN_COLORFUNC(cmyk_to_cmyk);
-	    default:
-	      RETURN_COLORFUNC(NULL);
-	    }
+      *out_bpp = 4;
+      switch (image_bpp)
+	{
+	case 4:
+	  RETURN_COLORFUNC(cmyk_8_to_cmyk);
+	case 8:
+	  RETURN_COLORFUNC(cmyk_to_cmyk);
+	default:
+	  RETURN_COLORFUNC(NULL);
+	}
       break;
     case OUTPUT_COLOR:
       *out_bpp = 3;
@@ -2125,10 +2161,10 @@ stp_choose_colorfunc(int output_type,
 	  RETURN_COLORFUNC(NULL);
 	}
     case OUTPUT_RAW_PRINTER:
-      if (image_bpp & 1)
+      if (image_bpp & 1 || image_bpp > 64)
 	RETURN_COLORFUNC(NULL);
       *out_bpp = image_bpp / 2;
-      RETURN_COLORFUNC(cmyk_to_cmyk);
+      RETURN_COLORFUNC(raw_to_raw);
     case OUTPUT_GRAY:
     default:
       *out_bpp = 1;

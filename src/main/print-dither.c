@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.92.2.1 2002/07/21 03:19:49 rlk Exp $"
+ * "$Id: print-dither.c,v 1.92.2.2 2002/07/21 19:46:28 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -489,6 +489,7 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
 	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_ed, v);
 	  break;
 	}
+      break;
     case OUTPUT_RAW_PRINTER:
       d->n_channels = image_bpp / 2;
       d->n_input_channels = image_bpp / 2;
@@ -3948,8 +3949,6 @@ stp_dither_raw_ed(const unsigned short  *raw,
   QUANT(6);
   for (; x != terminate; x += direction)
     {
-      int extra_k;
-      extra_k = compute_black(d) + CHANNEL(d, ECOLOR_K).v;
       for (i = 0; i < d->n_channels; i++)
 	{
 	  CHANNEL(d, i).v = raw[i];
