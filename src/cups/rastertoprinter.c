@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.19.4.13 2004/03/01 20:47:54 tylerb Exp $"
+ * "$Id: rastertoprinter.c,v 1.19.4.14 2004/03/02 04:32:07 tylerb Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -348,7 +348,8 @@ main(int  argc,				/* I - Number of command-line arguments */
 
     cups.row = 0;
 
-    fprintf(stderr, "PAGE: %d 1\n", cups.page);
+    fprintf(stderr, "PAGE: %d 1\n", cups.page + 1);
+    /* use 1-based page logging */
 
    /*
     * Debugging info...
@@ -873,5 +874,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.19.4.13 2004/03/01 20:47:54 tylerb Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.19.4.14 2004/03/02 04:32:07 tylerb Exp $".
  */
