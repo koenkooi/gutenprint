@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h.in,v 1.23 2002/11/27 01:32:01 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.24 2002/11/27 22:34:28 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -554,7 +554,8 @@ extern stp_curve_type_t stp_curve_get_interpolation_type(const stp_curve_t curve
  *
  * The number of points must not exceed 65536 (65535 for a wrap-mode curve);
  */
-extern int stp_curve_set_data(stp_curve_t curve, size_t count, double *data);
+extern int stp_curve_set_data(stp_curve_t curve, size_t count,
+			      const double *data);
 
 /*
  * Return a pointer to the curve's raw data.
@@ -908,5 +909,5 @@ extern const stp_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.23 2002/11/27 01:32:01 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.24 2002/11/27 22:34:28 rlk Exp $
  */
