@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.31 2004/03/25 01:01:05 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.32 2004/03/25 03:12:36 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -203,26 +203,43 @@ typedef struct
   unsigned channels;
   int channel_count;
   color_correction_enum_t default_correction;
+  stp_convert_t conversion_function;
 } color_description_t;
+
+static unsigned convert_to_gray(stp_const_vars_t,
+				const unsigned char *,
+				unsigned short *);
+static unsigned convert_to_color(stp_const_vars_t,
+				 const unsigned char *,
+				 unsigned short *);
+static unsigned convert_to_kcmy(stp_const_vars_t,
+				const unsigned char *,
+				unsigned short *);
+static unsigned convert_to_cmykrb(stp_const_vars_t,
+				  const unsigned char *,
+				  unsigned short *);
+static unsigned convert_raw(stp_const_vars_t,
+			    const unsigned char *,
+			    unsigned short *);
 
 static const color_description_t color_descriptions[] =
 {
   { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK,   CMASK_K,      1,
-    COLOR_CORRECTION_UNCORRECTED },
+    COLOR_CORRECTION_UNCORRECTED, &convert_to_gray   },
   { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CMASK_W,      1,
-    COLOR_CORRECTION_UNCORRECTED },
+    COLOR_CORRECTION_UNCORRECTED, &convert_to_gray   },
   { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CMASK_RGB,    3,
-    COLOR_CORRECTION_ACCURATE    },
+    COLOR_CORRECTION_ACCURATE,    &convert_to_color  },
   { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CMASK_CMY,    3,
-    COLOR_CORRECTION_ACCURATE    },
+    COLOR_CORRECTION_ACCURATE,    &convert_to_color  },
   { "CMYK",       1, 0, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4,
-    COLOR_CORRECTION_ACCURATE    },
+    COLOR_CORRECTION_ACCURATE,    &convert_to_kcmy   },
   { "KCMY",       1, 1, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4,
-    COLOR_CORRECTION_ACCURATE    },
+    COLOR_CORRECTION_ACCURATE,    &convert_to_kcmy   },
   { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6,
-    COLOR_CORRECTION_ACCURATE    },
+    COLOR_CORRECTION_ACCURATE,    &convert_to_cmykrb },
   { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,           -1,
-    COLOR_CORRECTION_RAW         },
+    COLOR_CORRECTION_RAW,         &convert_raw       },
 };
 
 static const int color_description_count =
@@ -2819,6 +2836,173 @@ RAW_TO_RAW_RAW_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(raw, raw_raw)
 
 
+#define CONVERSION_FUNCTION_WITH_FAST(from, to, from2)		\
+static unsigned							\
+generic_##from##_to_##to(stp_const_vars_t v,			\
+			 const unsigned char *in,		\
+			 unsigned short *out)			\
+{								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));	\
+  switch (lut->color_correction->correction)			\
+    {								\
+    case COLOR_CORRECTION_UNCORRECTED:				\
+      return from2##_to_##to##_fast(v, in, out);		\
+    case COLOR_CORRECTION_ACCURATE:				\
+    case COLOR_CORRECTION_BRIGHT:				\
+      return from2##_to_##to(v, in, out);			\
+    case COLOR_CORRECTION_THRESHOLD:				\
+      return from2##_to_##to##_threshold(v, in, out);		\
+    case COLOR_CORRECTION_DENSITY:				\
+    case COLOR_CORRECTION_RAW:					\
+      return from2##_to_##to##_raw(v, in, out);			\
+    default:							\
+      return (unsigned) -1;					\
+    }								\
+}
+
+#define CONVERSION_FUNCTION_WITHOUT_FAST(from, to, from2)	\
+static unsigned							\
+generic_##from##_to_##to(stp_const_vars_t v,			\
+			 const unsigned char *in,		\
+			 unsigned short *out)			\
+{								\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));	\
+  switch (lut->color_correction->correction)			\
+    {								\
+    case COLOR_CORRECTION_UNCORRECTED:				\
+    case COLOR_CORRECTION_ACCURATE:				\
+    case COLOR_CORRECTION_BRIGHT:				\
+      return from2##_to_##to(v, in, out);			\
+    case COLOR_CORRECTION_THRESHOLD:				\
+      return from2##_to_##to##_threshold(v, in, out);		\
+    case COLOR_CORRECTION_DENSITY:				\
+    case COLOR_CORRECTION_RAW:					\
+      return from2##_to_##to##_raw(v, in, out);			\
+    default:							\
+      return (unsigned) -1;					\
+    }								\
+}
+
+CONVERSION_FUNCTION_WITH_FAST(cmyk, color, CMYK)
+CONVERSION_FUNCTION_WITH_FAST(cmyk, cmykrb, CMYK)
+CONVERSION_FUNCTION_WITH_FAST(color, color, color)
+CONVERSION_FUNCTION_WITH_FAST(color, cmykrb, color)
+CONVERSION_FUNCTION_WITH_FAST(color, kcmy, color)
+CONVERSION_FUNCTION_WITHOUT_FAST(cmyk, gray, CMYK)
+CONVERSION_FUNCTION_WITHOUT_FAST(cmyk, kcmy, CMYK)
+CONVERSION_FUNCTION_WITHOUT_FAST(color, gray, color)
+CONVERSION_FUNCTION_WITHOUT_FAST(gray, gray, gray)
+CONVERSION_FUNCTION_WITHOUT_FAST(gray, color, gray)
+CONVERSION_FUNCTION_WITHOUT_FAST(gray, kcmy, gray)
+CONVERSION_FUNCTION_WITHOUT_FAST(gray, cmykrb, gray)
+
+static unsigned
+convert_to_gray(stp_const_vars_t v, const unsigned char *in, unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  switch (lut->input_color_description->color_id)
+    {
+    case COLOR_ID_GRAY:
+    case COLOR_ID_WHITE:
+      return generic_gray_to_gray(v, in, out);
+    case COLOR_ID_RGB:
+    case COLOR_ID_CMY:
+      return generic_color_to_gray(v, in, out);
+    case COLOR_ID_CMYK:
+    case COLOR_ID_KCMY:
+      return generic_cmyk_to_gray(v, in, out);
+    default:
+      return (unsigned) -1;
+    }
+}
+
+static unsigned
+convert_to_color(stp_const_vars_t v,
+		 const unsigned char *in,
+		 unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  switch (lut->input_color_description->color_id)
+    {
+    case COLOR_ID_GRAY:
+    case COLOR_ID_WHITE:
+      return generic_gray_to_color(v, in, out);
+    case COLOR_ID_RGB:
+    case COLOR_ID_CMY:
+      return generic_color_to_color(v, in, out);
+    case COLOR_ID_CMYK:
+    case COLOR_ID_KCMY:
+      return generic_cmyk_to_color(v, in, out);
+    default:
+      return (unsigned) -1;
+    }
+}
+
+static unsigned
+convert_to_kcmy(stp_const_vars_t v,
+		const unsigned char *in,
+		unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  switch (lut->input_color_description->color_id)
+    {
+    case COLOR_ID_GRAY:
+    case COLOR_ID_WHITE:
+      return generic_gray_to_kcmy(v, in, out);
+    case COLOR_ID_RGB:
+    case COLOR_ID_CMY:
+      return generic_color_to_kcmy(v, in, out);
+    case COLOR_ID_CMYK:
+    case COLOR_ID_KCMY:
+      return generic_cmyk_to_kcmy(v, in, out);
+    default:
+      return (unsigned) -1;
+    }
+}
+
+static unsigned
+convert_to_cmykrb(stp_const_vars_t v,
+		  const unsigned char *in,
+		  unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  switch (lut->input_color_description->color_id)
+    {
+    case COLOR_ID_GRAY:
+    case COLOR_ID_WHITE:
+      return generic_gray_to_cmykrb(v, in, out);
+    case COLOR_ID_RGB:
+    case COLOR_ID_CMY:
+      return generic_color_to_cmykrb(v, in, out);
+    case COLOR_ID_CMYK:
+    case COLOR_ID_KCMY:
+      return generic_cmyk_to_cmykrb(v, in, out);
+    default:
+      return (unsigned) -1;
+    }
+}
+
+static unsigned
+convert_raw(stp_const_vars_t v, const unsigned char *in, unsigned short *out)
+{
+  lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
+  switch (lut->color_correction->correction)
+    {
+    case COLOR_CORRECTION_THRESHOLD:
+      return raw_to_raw_threshold(v, in, out);
+    case COLOR_CORRECTION_UNCORRECTED:
+    case COLOR_CORRECTION_BRIGHT:
+    case COLOR_CORRECTION_ACCURATE:
+      return raw_to_raw(v, in, out);
+    case COLOR_CORRECTION_RAW:
+    case COLOR_CORRECTION_DEFAULT:
+    case COLOR_CORRECTION_DENSITY:
+      return raw_to_raw_raw(v, in, out);
+    default:
+      return (unsigned) -1;
+    }
+}
+
 static void
 initialize_channels(stp_vars_t v, stp_image_t *image)
 {
@@ -2843,7 +3027,8 @@ stpi_color_traditional_get_row(stp_vars_t v,
     return 2;
   if (!lut->channels_are_initialized)
     initialize_channels(v, image);
-  zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
+  zero = (lut->output_color_description->conversion_function)
+    (v, lut->in_data, stpi_channel_get_input(v));
   if (zero_mask)
     *zero_mask = zero;
   stpi_channel_convert(v, zero_mask);
