@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.104 2004/05/23 00:03:18 rleigh Exp $
+dnl $Id: configure.ac,v 1.105 2004/05/23 11:46:07 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.104 $)
+AC_REVISION($Revision: 1.105 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -558,7 +558,11 @@ dnl Set PACKAGE_LIB_DIR in config.h.
 AH_TEMPLATE(PACKAGE_LIB_DIR,, [Package lib directory])
 if test "x${libdir}" = 'x${exec_prefix}/lib'; then
   if test "x${exec_prefix}" = "xNONE"; then
-    PACKAGE_LIB_DIR="${ac_default_prefix}/lib/${PACKAGE}"
+    if test "x${prefix}" = "xNONE"; then
+      PACKAGE_LIB_DIR="${ac_default_prefix}/lib/${PACKAGE}"
+    else
+      PACKAGE_LIB_DIR="${prefix}/lib/${PACKAGE}"
+    fi
   else
     PACKAGE_LIB_DIR="${exec_prefix}/lib/${PACKAGE}"
   fi
