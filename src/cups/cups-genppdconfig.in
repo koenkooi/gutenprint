@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdconfig.in,v 1.1 2002/09/21 09:12:07 rleigh Exp $
+# $Id: cups-genppdconfig.in,v 1.2 2003/01/20 19:07:17 rleigh Exp $
 # A user-friendly dialog-based wrapper for cups-genppd(8).
 # Copyright (C) 2002 Roger Leigh
 #
@@ -57,7 +57,8 @@ my $silent = 0;                                 # no dialog
 
 # Set chosen_location from command-line.
 our $opt_d;
-getopt('d');
+our $opt_u;
+getopts('d:u');
 if ($opt_d) {
     $chosen_location = create_dir($opt_d);
 }
@@ -66,8 +67,8 @@ if ($opt_d) {
 init_data();
 init_defaults();
 
-# If invoked as update-cups-genppd, just regenerate PPDs noninteractively
-if (basename($0) eq "update-cups-genppd") {
+# Run non-interactively if `-u' was specified.
+if ( $opt_u ) {
     $silent = 1;
     create_ppds;
     exit 0;

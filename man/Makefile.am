@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17 2003/01/11 16:57:33 rleigh Exp $
+## $Id: Makefile.am,v 1.18 2003/01/20 19:07:17 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -69,16 +69,6 @@ EXTRA_man_MANS = \
 	escputil.1 \
 	ijsgimpprint.1
 
-
-## Rules
-
-install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(man8dir)
-	cd $(DESTDIR)$(man8dir); \
-	$(LN_S) -f cups-genppdconfig.8 update-cups-genppd.8
-
-uninstall-local:
-	$(RM) $(DESTDIR)$(man8dir)/update-cups-genppd.8
 
 ## Clean
 
