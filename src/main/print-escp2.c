@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.241 2003/03/29 18:04:53 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.242 2003/04/01 19:27:33 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -181,7 +181,7 @@ static const stp_parameter_t the_parameters[] =
   },
   {
     "PrintingDirection", N_("Printing Direction"),
-    N_("Printing directional (unidirectional is higher quality, but slower)"),
+    N_("Printing direction (unidirectional is higher quality, but slower)"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
   },
