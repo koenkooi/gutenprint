@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.24 2004/05/07 22:13:27 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.25 2004/06/08 02:51:59 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -272,7 +272,7 @@ page_size_name: PAGESIZE tSTRING
 page_size_custom: PAGESIZE tINT tINT
 	{
 	  stp_set_page_width(global_vars, $2);
-	  stp_set_page_width(global_vars, $3);
+	  stp_set_page_height(global_vars, $3);
 	}
 ;
 
