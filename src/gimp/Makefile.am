@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27 2002/12/30 17:39:26 rlk Exp $
+## $Id: Makefile.am,v 1.28 2002/12/31 20:39:19 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,9 @@ MAINT_CHARSET = latin1
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS)
 GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
+GIMPPRINTUI_LIBS = $(top_builddir)/src/libgimpprintui/libgimpprintui.la
 GIMPPRINT_DEPLIBS = -lm
+GIMPPRINTUI_DEPLIBS = @GTK_LIBS@
 LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
@@ -43,16 +45,11 @@ endif
 
 print_SOURCES = \
 	print-image-gimp.c \
-	print-image-thumbnail.c \
 	print-intl.h \
-	plist.c \
 	print.c \
-	gimp_color_window.c \
-	gimp_main_window.c \
-	print_gimp.h \
-	gimp-print-ui.h \
-	gimp-print-ui-internal.h
-print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(LIBGIMPPRINT_LIBS)
+	print_gimp.h
+
+print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(GIMPPRINTUI_LIBS) $(GIMPPRINTUI_DEPLIBS) $(LIBGIMPPRINT_LIBS)
 
 
 ## Rules

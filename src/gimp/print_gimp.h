@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.40 2002/12/30 16:48:02 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.41 2002/12/31 20:39:20 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -41,6 +41,12 @@
 #include INCLUDE_GIMP_PRINT_H
 #else
 #include <gimp-print/gimp-print.h>
+#endif
+
+#ifdef INCLUDE_GIMP_PRINT_UI_H
+#include INCLUDE_GIMP_PRINT_UI_H
+#else
+#include <gimp-print/gimp-print-ui.h>
 #endif
 
 /* How to create an Image wrapping a Gimp drawable */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.5 2002/12/31 14:53:20 rlk Exp $"
+ * "$Id: print-raw.c,v 1.6 2002/12/31 20:39:21 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -115,6 +115,10 @@ raw_parameters(const stp_vars_t v, const char *name,
 	   (strcmp(name, "InputSlot") == 0))
     {
       description->bounds.str = stp_string_list_allocate();
+	stp_string_list_add_param(description->bounds.str,
+				  "Standard", "Standard");
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
     }
   else
     stp_describe_internal_parameter(v, name, description);

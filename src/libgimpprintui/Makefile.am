@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2002/12/31 20:39:18 rlk Exp $
+## $Id: Makefile.am,v 1.1 2002/12/31 20:39:21 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,21 +23,30 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+## Variables
 
-## Data
+AM_CFLAGS = $(GNUCFLAGS)
+INCLUDES = @GTK_CFLAGS@ @INCLUDES@
 
-noinst_HEADERS = gimp-print-intl.h gimp-print-intl-internal.h
+m4datadir = $(datadir)/aclocal
 
-pkginclude_HEADERS = gimp-print.h gimp-print-ui.h
+## Programs
 
-nodist_pkginclude_HEADERS = gimp-print-version.h
+lib_LTLIBRARIES = libgimpprintui.la
 
+libgimpprintui_la_SOURCES =			\
+	panel.c					\
+	plist.c					\
+	ui-utils.c				\
+	print-image-thumbnail.c			\
+	gimp-print-ui-internal.h
 
-## Clean
+libgimpprintui_la_LIBADD = $(GTK_LIBS)
+# Uncommment to build an unversioned library (version in soname)
+libgimpprintui_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir)
+# Uncomment to build a versioned library
+#libgimpprintui_la_LDFLAGS = \
+# -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+# -rpath $(libdir)
 
-DISTCLEANFILES = gimp-print-version.h
 MAINTAINERCLEANFILES = Makefile.in
-
-EXTRA_DIST = gimp-print-version.h.in
-
-TAGS_FILES = gimp-print-version.h.in

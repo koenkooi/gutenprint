@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.4 2002/12/30 16:48:01 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.1 2002/12/31 20:39:21 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -29,8 +29,7 @@
 #include "../../lib/libprintut.h"
 #include <string.h>
 
-#include "print-intl.h"
-#include "gimp-print-ui.h"
+#include <gimp-print/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
 
 /* Concrete type to represent image */
@@ -152,5 +151,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.4 2002/12/30 16:48:01 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.1 2002/12/31 20:39:21 rlk Exp $".
  */
