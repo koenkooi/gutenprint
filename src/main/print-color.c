@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.13 2004/03/21 21:10:44 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.14 2004/03/21 21:55:28 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -603,6 +603,17 @@ static stp_curve_t compute_gcr_curve(stp_const_vars_t vars);
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 
 static void
+free_curve_cache(cached_curve_t *cache)
+{
+  if (cache->curve)
+    stp_curve_free(cache->curve);
+  cache->curve = NULL;
+  cache->d_cache = NULL;
+  cache->s_cache = NULL;
+  cache->count = 0;
+}
+
+static void
 cache_curve_data(cached_curve_t *cache)
 {
   if (cache->curve && !cache->d_cache)
@@ -611,6 +622,97 @@ cache_curve_data(cached_curve_t *cache)
       cache->d_cache = stp_curve_get_data(cache->curve, &(cache->count));
     }
 }
+
+static stp_curve_t
+cache_get_curve(cached_curve_t *cache)
+{
+  return cache->curve;
+}
+
+static void
+cache_curve_invalidate(cached_curve_t *cache)
+{
+  cache->d_cache = NULL;
+  cache->s_cache = NULL;
+  cache->count = 0;
+}
+
+static void
+cache_set_curve(cached_curve_t *cache, stp_curve_t curve)
+{
+  cache_curve_invalidate(cache);
+  cache->curve = curve;
+}
+
+static const size_t
+cache_get_count(cached_curve_t *cache)
+{
+  if (cache->curve)
+    {
+      if (!cache->d_cache)
+	cache->d_cache = stp_curve_get_data(cache->curve, &(cache->count));
+      return cache->count;
+    }
+  else
+    return 0;
+}
+
+static const unsigned short *
+cache_get_ushort_data(cached_curve_t *cache)
+{
+  if (cache->curve)
+    {
+      if (!cache->s_cache)
+	cache->s_cache =
+	  stp_curve_get_ushort_data(cache->curve, &(cache->count));
+      return cache->s_cache;
+    }
+  else
+    return NULL;
+}
+
+static const double *
+cache_get_double_data(cached_curve_t *cache)
+{
+  if (cache->curve)
+    {
+      if (!cache->d_cache)
+	cache->d_cache = stp_curve_get_data(cache->curve, &(cache->count));
+      return cache->d_cache;
+    }
+  else
+    return NULL;
+}
+
+static inline const unsigned short *
+cache_fast_ushort(cached_curve_t *cache)
+{
+  return cache->s_cache;
+}
+
+static inline const double *
+cache_fast_double(cached_curve_t *cache)
+{
+  return cache->d_cache;
+}
+
+static inline size_t
+cache_fast_count(cached_curve_t *cache)
+{
+  return cache->count;
+}
+
+static void
+cache_copy(cached_curve_t *dest, cached_curve_t *src)
+{
+  cache_curve_invalidate(dest);
+  if (dest != src)
+    {
+      if (cache_get_curve(src))
+	cache_set_curve(dest, stp_curve_create_copy(cache_get_curve(src)));
+    }
+}
+
 
 static const color_description_t *
 get_color_description(const char *name)
@@ -858,10 +960,15 @@ static inline void
 adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
 	   int split_saturation)
 {
-  if ((split_saturation || lut->hue_map.d_cache || lut->lum_map.d_cache ||
-       lut->sat_map.d_cache) &&
+  const double *hue_map = cache_fast_double(&(lut->hue_map));
+  const double *lum_map = cache_fast_double(&(lut->lum_map));
+  const double *sat_map = cache_fast_double(&(lut->sat_map));
+  if ((split_saturation || lum_map || hue_map || sat_map) &&
       (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
     {
+      size_t hue_count = cache_fast_count(&(lut->hue_map));
+      size_t lum_count = cache_fast_count(&(lut->lum_map));
+      size_t sat_count = cache_fast_count(&(lut->sat_map));
       double h, s, l;
       double oh;
       rgbout[0] ^= 65535;
@@ -870,11 +977,11 @@ adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
       calc_rgb_to_hsl(rgbout, &h, &s, &l);
       s = update_saturation(s, ssat, isat);
       oh = h;
-      h = adjust_hue(lut->hue_map.d_cache, h, lut->hue_map.count);
+      h = adjust_hue(hue_map, h, hue_count);
       if (lut->lum_map.d_cache && l > 0.0001 && l < .9999)
 	{
-	  double nh = oh * lut->lum_map.count / 6.0;
-	  double el = interpolate_value(lut->lum_map.d_cache, nh);
+	  double nh = oh * lum_count / 6.0;
+	  double el = interpolate_value(lum_map, nh);
 	  double sreflection = .8 - ((1.0 - el) / 1.3) ;
 	  double isreflection = 1.0 - sreflection;
 	  double sadj = l - sreflection;
@@ -908,8 +1015,8 @@ adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
 	}
       if (lut->sat_map.d_cache)
 	{
-	  double nh = oh * lut->sat_map.count / 6.0;
-	  double tmp = interpolate_value(lut->sat_map.d_cache, nh);
+	  double nh = oh * sat_count / 6.0;
+	  double tmp = interpolate_value(sat_map, nh);
 	  if (tmp < .9999 || tmp > 1.0001)
 	    {
 	      s = update_saturation(s, tmp, tmp > 1.0 ? 1.0 / tmp : 1.0);
@@ -926,21 +1033,24 @@ static inline void
 adjust_hsl_bright(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
 		  int split_saturation)
 {
-  if ((split_saturation || lut->hue_map.d_cache || lut->lum_map.d_cache ||
-       lut->sat_map.d_cache) &&
+  const double *hue_map = cache_fast_double(&(lut->hue_map));
+  const double *lum_map = cache_fast_double(&(lut->lum_map));
+  if ((split_saturation || lum_map || hue_map) &&
       (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
     {
+      size_t hue_count = cache_fast_count(&(lut->hue_map));
+      size_t lum_count = cache_fast_count(&(lut->lum_map));
       double h, s, l;
       rgbout[0] ^= 65535;
       rgbout[1] ^= 65535;
       rgbout[2] ^= 65535;
       calc_rgb_to_hsl(rgbout, &h, &s, &l);
       s = update_saturation(s, ssat, isat);
-      h = adjust_hue(lut->hue_map.d_cache, h, lut->hue_map.count);
-      if (lut->lum_map.d_cache && l > 0.0001 && l < .9999)
+      h = adjust_hue(hue_map, h, hue_count);
+      if (lum_map && l > 0.0001 && l < .9999)
 	{
-	  double nh = h * lut->lum_map.count / 6.0;
-	  double el = interpolate_value(lut->lum_map.d_cache, nh);
+	  double nh = h * lum_count / 6.0;
+	  double el = interpolate_value(lum_map, nh);
 	  el = 1.0 + (s * (el - 1.0));
 	  l = 1.0 - pow(1.0 - l, el);
 	}
@@ -998,11 +1108,10 @@ generic_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   const unsigned short *output_cache = NULL;
 
   initialize_gcr_curve(vars);
-  cache_curve_data(&(lut->gcr_curve));
-  gcr_lookup = lut->gcr_curve.s_cache;
-  stp_curve_resample(lut->channel_curves[CHANNEL_K].curve, lut->steps);
-  cache_curve_data(&(lut->channel_curves[CHANNEL_K]));
-  black_lookup = lut->channel_curves[CHANNEL_K].s_cache;
+  gcr_lookup = cache_get_ushort_data(&(lut->gcr_curve));
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])),
+		     lut->steps);
+  black_lookup = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));
   memset(nz, 0, sizeof(nz));
 
   for (i = 0; i < width; i++, out += 4, in += 3)
@@ -1115,16 +1224,13 @@ rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	      \
   int bright_color_adjustment = 0;					      \
 									      \
   for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				      \
-    {									      \
-      stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits);   \
-      cache_curve_data(&(lut->channel_curves[i + offset]));		      \
-    }									      \
-  red = lut->channel_curves[CHANNEL_C + offset].s_cache;		      \
-  green = lut->channel_curves[CHANNEL_M + offset].s_cache;		      \
-  blue = lut->channel_curves[CHANNEL_Y + offset].s_cache;		      \
-  cache_curve_data(&(lut->hue_map));					      \
-  cache_curve_data(&(lut->lum_map));					      \
-  cache_curve_data(&(lut->sat_map));					      \
+    stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits);     \
+  red = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C + offset]));    \
+  green = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M + offset]));  \
+  blue = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y + offset]));   \
+  (void) cache_get_double_data(&(lut->hue_map));			      \
+  (void) cache_get_double_data(&(lut->lum_map));			      \
+  (void) cache_get_double_data(&(lut->sat_map));			      \
 									      \
   if (split_saturation)							      \
     ssat = sqrt(ssat);							      \
@@ -1177,69 +1283,66 @@ GENERIC_COLOR_FUNC(rgb, rgb)
  * 'rgb_to_rgb()' - Convert rgb image data to RGB.
  */
 
-#define FAST_RGB_TO_COLOR_FUNC(C, T, bits, offset)			    \
-static unsigned								    \
-fast_rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,    \
-		         unsigned short *out)				    \
-{									    \
-  int i;								    \
-  int i0 = -1;								    \
-  int i1 = -1;								    \
-  int i2 = -1;								    \
-  int o0 = 0;								    \
-  int o1 = 0;								    \
-  int o2 = 0;								    \
-  int nz0 = 0;								    \
-  int nz1 = 0;								    \
-  int nz2 = 0;								    \
-  const T *s_in = (const T *) in;					    \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
-  const unsigned short *red;						    \
-  const unsigned short *green;						    \
-  const unsigned short *blue;						    \
-  double isat = 1.0;							    \
-  double saturation = stp_get_float_parameter(vars, "Saturation");	    \
-									    \
-  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				    \
-    {									    \
-      stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits); \
-      cache_curve_data(&(lut->channel_curves[i + offset]));		    \
-    }									    \
-  red = lut->channel_curves[CHANNEL_C + offset].s_cache;		    \
-  green = lut->channel_curves[CHANNEL_M + offset].s_cache;		    \
-  blue = lut->channel_curves[CHANNEL_Y + offset].s_cache;		    \
-									    \
-  if (saturation > 1)							    \
-    isat = 1.0 / saturation;						    \
-  for (i = 0; i < lut->image_width; i++)				    \
-    {									    \
-      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		    \
-	{								    \
-	  out[0] = o0;							    \
-	  out[1] = o1;							    \
-	  out[2] = o2;							    \
-	}								    \
-      else								    \
-	{								    \
-	  i0 = s_in[0];							    \
-	  i1 = s_in[1];							    \
-	  i2 = s_in[2];							    \
-	  out[0] = red[s_in[0]];					    \
-	  out[1] = green[s_in[1]];					    \
-	  out[2] = blue[s_in[2]];					    \
-	  if (saturation != 1.0)					    \
-	    update_saturation_from_rgb(out, saturation, isat);		    \
-	  o0 = out[0];							    \
-	  o1 = out[1];							    \
-	  o2 = out[2];							    \
-	  nz0 |= o0;							    \
-	  nz1 |= o1;							    \
-	  nz2 |= o2;							    \
-	}								    \
-      s_in += 3;							    \
-      out += 3;								    \
-    }									    \
-  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		    \
+#define FAST_RGB_TO_COLOR_FUNC(C, T, bits, offset)			     \
+static unsigned								     \
+fast_rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,     \
+		         unsigned short *out)				     \
+{									     \
+  int i;								     \
+  int i0 = -1;								     \
+  int i1 = -1;								     \
+  int i2 = -1;								     \
+  int o0 = 0;								     \
+  int o1 = 0;								     \
+  int o2 = 0;								     \
+  int nz0 = 0;								     \
+  int nz1 = 0;								     \
+  int nz2 = 0;								     \
+  const T *s_in = (const T *) in;					     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  const unsigned short *red;						     \
+  const unsigned short *green;						     \
+  const unsigned short *blue;						     \
+  double isat = 1.0;							     \
+  double saturation = stp_get_float_parameter(vars, "Saturation");	     \
+									     \
+  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				     \
+    stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits);    \
+  red = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C + offset]));   \
+  green = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M + offset])); \
+  blue = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y + offset]));  \
+									     \
+  if (saturation > 1)							     \
+    isat = 1.0 / saturation;						     \
+  for (i = 0; i < lut->image_width; i++)				     \
+    {									     \
+      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		     \
+	{								     \
+	  out[0] = o0;							     \
+	  out[1] = o1;							     \
+	  out[2] = o2;							     \
+	}								     \
+      else								     \
+	{								     \
+	  i0 = s_in[0];							     \
+	  i1 = s_in[1];							     \
+	  i2 = s_in[2];							     \
+	  out[0] = red[s_in[0]];					     \
+	  out[1] = green[s_in[1]];					     \
+	  out[2] = blue[s_in[2]];					     \
+	  if (saturation != 1.0)					     \
+	    update_saturation_from_rgb(out, saturation, isat);		     \
+	  o0 = out[0];							     \
+	  o1 = out[1];							     \
+	  o2 = out[2];							     \
+	  nz0 |= o0;							     \
+	  nz1 |= o1;							     \
+	  nz2 |= o2;							     \
+	}								     \
+      s_in += 3;							     \
+      out += 3;								     \
+    }									     \
+  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		     \
 }
 
 FAST_RGB_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
@@ -1253,59 +1356,56 @@ GENERIC_COLOR_FUNC(fast_rgb, rgb)
  * 'gray_to_rgb()' - Convert gray image data to RGB.
  */
 
-#define GRAY_TO_COLOR_FUNC(C, T, bits, offset)				    \
-static unsigned								    \
-gray_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	    \
-		   unsigned short *out)					    \
-{									    \
-  int i;								    \
-  int i0 = -1;								    \
-  int o0 = 0;								    \
-  int o1 = 0;								    \
-  int o2 = 0;								    \
-  int nz0 = 0;								    \
-  int nz1 = 0;								    \
-  int nz2 = 0;								    \
-  const T *s_in = (const T *) in;					    \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
-  const unsigned short *red;						    \
-  const unsigned short *green;						    \
-  const unsigned short *blue;						    \
-									    \
-  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				    \
-    {									    \
-      stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits); \
-      cache_curve_data(&(lut->channel_curves[i + offset]));		    \
-    }									    \
-  red = lut->channel_curves[CHANNEL_C + offset].s_cache;		    \
-  green = lut->channel_curves[CHANNEL_M + offset].s_cache;		    \
-  blue = lut->channel_curves[CHANNEL_Y + offset].s_cache;		    \
-									    \
-  for (i = 0; i < lut->image_width; i++)				    \
-    {									    \
-      if (i0 == s_in[0])						    \
-	{								    \
-	  out[0] = o0;							    \
-	  out[1] = o1;							    \
-	  out[2] = o2;							    \
-	}								    \
-      else								    \
-	{								    \
-	  i0 = s_in[0];							    \
-	  out[0] = red[s_in[0]];					    \
-	  out[1] = green[s_in[0]];					    \
-	  out[2] = blue[s_in[0]];					    \
-	  o0 = out[0];							    \
-	  o1 = out[1];							    \
-	  o2 = out[2];							    \
-	  nz0 |= o0;							    \
-	  nz1 |= o1;							    \
-	  nz2 |= o2;							    \
-	}								    \
-      s_in += 1;							    \
-      out += 3;								    \
-    }									    \
-  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		    \
+#define GRAY_TO_COLOR_FUNC(C, T, bits, offset)				     \
+static unsigned								     \
+gray_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	     \
+		   unsigned short *out)					     \
+{									     \
+  int i;								     \
+  int i0 = -1;								     \
+  int o0 = 0;								     \
+  int o1 = 0;								     \
+  int o2 = 0;								     \
+  int nz0 = 0;								     \
+  int nz1 = 0;								     \
+  int nz2 = 0;								     \
+  const T *s_in = (const T *) in;					     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  const unsigned short *red;						     \
+  const unsigned short *green;						     \
+  const unsigned short *blue;						     \
+									     \
+  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				     \
+    stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits);    \
+  red = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C + offset]));   \
+  green = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M + offset])); \
+  blue = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y + offset]));  \
+									     \
+  for (i = 0; i < lut->image_width; i++)				     \
+    {									     \
+      if (i0 == s_in[0])						     \
+	{								     \
+	  out[0] = o0;							     \
+	  out[1] = o1;							     \
+	  out[2] = o2;							     \
+	}								     \
+      else								     \
+	{								     \
+	  i0 = s_in[0];							     \
+	  out[0] = red[s_in[0]];					     \
+	  out[1] = green[s_in[0]];					     \
+	  out[2] = blue[s_in[0]];					     \
+	  o0 = out[0];							     \
+	  o1 = out[1];							     \
+	  o2 = out[2];							     \
+	  nz0 |= o0;							     \
+	  nz1 |= o1;							     \
+	  nz2 |= o2;							     \
+	}								     \
+      s_in += 1;							     \
+      out += 3;								     \
+    }									     \
+  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		     \
 }
 
 GRAY_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
@@ -1584,7 +1684,7 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
   for (i = 0; i < 4; i++)						\
     {									\
       stp_curve_resample(lut->channel_curves[i].curve, 1 << size);	\
-      cache_curve_data(&(lut->channel_curves[i]));			\
+      (void) cache_get_ushort_data(&(lut->channel_curves[i]));		\
     }									\
 									\
   memset(nz, 0, sizeof(nz));						\
@@ -1596,7 +1696,8 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
 	  int outpos = (j + 1) & 3;					\
 	  int inval = *s_in++;						\
 	  nz[outpos] |= j;						\
-	  out[outpos] = lut->channel_curves[outpos].s_cache[inval];	\
+	  out[outpos] =							\
+	    cache_fast_ushort(&(lut->channel_curves[outpos]))[inval];	\
 	}								\
     }									\
   for (j = 0; j < 4; j++)						\
@@ -1615,40 +1716,40 @@ GENERIC_COLOR_FUNC(cmyk, kcmy)
  */
 
 
-#define GRAY_TO_GRAY_FUNC(T, bits)					\
-static unsigned								\
-gray_##bits##_to_gray(stp_const_vars_t vars,				\
-		      const unsigned char *in,				\
-		      unsigned short *out)				\
-{									\
-  int i;								\
-  int i0 = -1;								\
-  int o0 = 0;								\
-  int nz = 0;								\
-  const T *s_in = (const T *) in;					\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  int width = lut->image_width;						\
-  const unsigned short *composite;					\
-									\
-  stp_curve_resample(lut->channel_curves[CHANNEL_K].curve, 1 << bits);	\
-  cache_curve_data(&(lut->channel_curves[CHANNEL_K]));			\
-  composite = lut->channel_curves[CHANNEL_K].s_cache;			\
-									\
-  memset(out, 0, width * sizeof(unsigned short));			\
-									\
-  for (i = 0; i < lut->image_width; i++)				\
-    {									\
-      if (i0 != s_in[0])						\
-	{								\
-	  i0 = s_in[0];							\
-	  o0 = composite[i0];						\
-	  nz |= o0;							\
-	}								\
-      out[0] = o0;							\
-      s_in ++;								\
-      out ++;								\
-    }									\
-  return nz == 0;							\
+#define GRAY_TO_GRAY_FUNC(T, bits)					 \
+static unsigned								 \
+gray_##bits##_to_gray(stp_const_vars_t vars,				 \
+		      const unsigned char *in,				 \
+		      unsigned short *out)				 \
+{									 \
+  int i;								 \
+  int i0 = -1;								 \
+  int o0 = 0;								 \
+  int nz = 0;								 \
+  const T *s_in = (const T *) in;					 \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	 \
+  int width = lut->image_width;						 \
+  const unsigned short *composite;					 \
+									 \
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])), \
+		     1 << bits);					 \
+  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	 \
+									 \
+  memset(out, 0, width * sizeof(unsigned short));			 \
+									 \
+  for (i = 0; i < lut->image_width; i++)				 \
+    {									 \
+      if (i0 != s_in[0])						 \
+	{								 \
+	  i0 = s_in[0];							 \
+	  o0 = composite[i0];						 \
+	  nz |= o0;							 \
+	}								 \
+      out[0] = o0;							 \
+      s_in ++;								 \
+      out ++;								 \
+    }									 \
+  return nz == 0;							 \
 }
 
 GRAY_TO_GRAY_FUNC(unsigned char, 8)
@@ -1678,9 +1779,9 @@ color_##bits##_to_gray(stp_const_vars_t vars,				   \
   int l_blue = LUM_BLUE;						   \
   const unsigned short *composite;					   \
 									   \
-  stp_curve_resample(lut->channel_curves[CHANNEL_K].curve, 1 << bits);	   \
-  cache_curve_data(&(lut->channel_curves[CHANNEL_K]));			   \
-  composite = lut->channel_curves[CHANNEL_K].s_cache;			   \
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])),   \
+		     1 << bits);					   \
+  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	   \
 									   \
   if (!lut->invert_output)						   \
     {									   \
@@ -1711,38 +1812,40 @@ COLOR_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(color, gray)
 
 
-#define CMYK_TO_GRAY_FUNC(T, size)					\
-static unsigned								\
-cmyk_##size##_to_gray(stp_const_vars_t vars,				\
-		      const unsigned char *in,				\
-		      unsigned short *out)				\
-{									\
-  int i;								\
-  int j;								\
-  int nz = 0;								\
-  const T *s_in = (const T *) in;					\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  stp_curve_resample(lut->channel_curves[CHANNEL_K].curve, 1 << size);	\
-  cache_curve_data(&(lut->channel_curves[CHANNEL_K]));			\
-									\
-  for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		\
-    {									\
-      for (j = 0; j < 4; j++)						\
-	{								\
-	  nz |= s_in[0];						\
-	  out[0] = lut->channel_curves[CHANNEL_K].s_cache[s_in[0]];	\
-	}								\
-    }									\
-  return nz ? 1 : 0;							\
+#define CMYK_TO_GRAY_FUNC(T, bits)					 \
+static unsigned								 \
+cmyk_##bits##_to_gray(stp_const_vars_t vars,				 \
+		      const unsigned char *in,				 \
+		      unsigned short *out)				 \
+{									 \
+  int i;								 \
+  int j;								 \
+  int nz = 0;								 \
+  const T *s_in = (const T *) in;					 \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	 \
+  const unsigned short *composite;					 \
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])), \
+		     1 << bits);					 \
+  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	 \
+									 \
+  for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		 \
+    {									 \
+      for (j = 0; j < 4; j++)						 \
+	{								 \
+	  nz |= s_in[0];						 \
+	  out[0] = composite[s_in[0]];					 \
+	}								 \
+    }									 \
+  return nz ? 1 : 0;							 \
 }
 
 CMYK_TO_GRAY_FUNC(unsigned char, 8)
 CMYK_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(cmyk, gray)
 
-#define CMYK_TO_KCMY_RAW_FUNC(T, size)					\
+#define CMYK_TO_KCMY_RAW_FUNC(T, bits)					\
 static unsigned								\
-cmyk_##size##_to_kcmy_raw(stp_const_vars_t vars,			\
+cmyk_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
 			  const unsigned char *in,			\
 			  unsigned short *out)				\
 {									\
@@ -1756,10 +1859,10 @@ cmyk_##size##_to_kcmy_raw(stp_const_vars_t vars,			\
   memset(nz, 0, sizeof(nz));						\
   for (i = 0; i < lut->image_width; i++)				\
     {									\
-      out[0] = s_in[3] * (65535 / (1 << size));				\
-      out[1] = s_in[0] * (65535 / (1 << size));				\
-      out[2] = s_in[1] * (65535 / (1 << size));				\
-      out[3] = s_in[2] * (65535 / (1 << size));				\
+      out[0] = s_in[3] * (65535 / (1 << bits));				\
+      out[1] = s_in[0] * (65535 / (1 << bits));				\
+      out[2] = s_in[1] * (65535 / (1 << bits));				\
+      out[3] = s_in[2] * (65535 / (1 << bits));				\
       for (j = 0; j < 4; j++)						\
 	nz[j] |= out[j];						\
       s_in += 4;							\
@@ -1775,9 +1878,9 @@ CMYK_TO_KCMY_RAW_FUNC(unsigned char, 8)
 CMYK_TO_KCMY_RAW_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(cmyk, kcmy_raw)
 
-#define RAW_TO_RAW_FUNC(T, size)					\
+#define RAW_TO_RAW_FUNC(T, bits)					\
 static unsigned								\
-raw_##size##_to_raw(stp_const_vars_t vars,				\
+raw_##bits##_to_raw(stp_const_vars_t vars,				\
 		    const unsigned char *in,				\
 		    unsigned short *out)				\
 {									\
@@ -1795,7 +1898,7 @@ raw_##size##_to_raw(stp_const_vars_t vars,				\
       for (j = 0; j < colors; j++)					\
 	{								\
 	  nz[j] |= s_in[j];						\
-	  out[j] = s_in[j] * (65535 / (1 << size));			\
+	  out[j] = s_in[j] * (65535 / (1 << bits));			\
 	}								\
       s_in += colors;							\
       out += colors;							\
@@ -1843,17 +1946,6 @@ stpi_color_traditional_get_row(stp_vars_t v,
 }
 
 static void
-free_curve_cache(cached_curve_t *cache)
-{
-  if (cache->curve)
-    stp_curve_free(cache->curve);
-  cache->curve = NULL;
-  cache->d_cache = NULL;
-  cache->s_cache = NULL;
-  cache->count = 0;
-}
-
-static void
 free_channels(lut_t *lut)
 {
   int i;
@@ -1868,8 +1960,9 @@ allocate_lut(void)
   lut_t *ret = stpi_zalloc(sizeof(lut_t));
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      ret->channel_curves[i].curve = stp_curve_create(STP_CURVE_WRAP_NONE);
-      stp_curve_set_bounds(ret->channel_curves[i].curve, 0, 65535);
+      stp_curve_t curve = stp_curve_create(STP_CURVE_WRAP_NONE);
+      stp_curve_set_bounds(curve, 0, 65535);
+      cache_set_curve(&(ret->channel_curves[i]), curve);
       ret->gamma_values[i] = 1.0;
     }
   ret->print_gamma = 1.0;
@@ -1891,18 +1984,14 @@ copy_lut(void *vlut)
   free_channels(dest);
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      dest->channel_curves[i].curve =
-	stp_curve_create_copy(src->channel_curves[i].curve);
+      cache_copy(&(dest->channel_curves[i]),
+		 (cached_curve_t *) &(src->channel_curves[i]));
       dest->gamma_values[i] = src->gamma_values[i];
     }
-  if (src->hue_map.curve)
-    dest->hue_map.curve = stp_curve_create_copy(src->hue_map.curve);
-  if (src->lum_map.curve)
-    dest->lum_map.curve = stp_curve_create_copy(src->lum_map.curve);
-  if (src->sat_map.curve)
-    dest->sat_map.curve = stp_curve_create_copy(src->sat_map.curve);
-  if (src->gcr_curve.curve)
-    dest->gcr_curve.curve = stp_curve_create_copy(src->gcr_curve.curve);
+  cache_copy(&(dest->hue_map), (cached_curve_t *) &(src->hue_map));
+  cache_copy(&(dest->lum_map), (cached_curve_t *) &(src->lum_man));
+  cache_copy(&(dest->sat_map), (cached_curve_t *) &(src->sat_map));
+  cache_copy(&(dest->gcr_curve), (cached_curve_t *) &(src->gcr_curve));
   dest->steps = src->steps;
   dest->in_channels = src->in_channels;
   dest->out_channels = src->out_channels;
@@ -2013,6 +2102,7 @@ compute_a_curve(lut_t *lut, int channel)
   double ipivot = 1.0 - pivot;
   double xcontrast = pow(lut->contrast, lut->contrast);
   double xgamma = pow(pivot, lut->screen_gamma);
+  stp_curve_t curve = cache_get_curve(&(lut->channel_curves[channel]));
   int i;
   int isteps = lut->steps;
   if (isteps > 256)
@@ -2106,9 +2196,9 @@ compute_a_curve(lut_t *lut, int channel)
 	tmp[i] = (pixel);
       tmp[i] = floor(tmp[i] + 0.5);			/* rounding is done here */
     }
-  stp_curve_set_data(lut->channel_curves[channel].curve, isteps, tmp);
+  stp_curve_set_data(curve, isteps, tmp);
   if (isteps != lut->steps)
-    stp_curve_resample(lut->channel_curves[channel].curve, lut->steps);
+    stp_curve_resample(curve, lut->steps);
   stpi_free(tmp);
 }
 
@@ -2146,12 +2236,13 @@ invert_curve(stp_curve_t curve, int invert_output)
 static void
 compute_one_lut(lut_t *lut, int i)
 {
-  if (lut->channel_curves[i].curve)
+  stp_curve_t curve = cache_get_curve(&(lut->channel_curves[i]));
+  if (curve)
     {
-      invert_curve(lut->channel_curves[i].curve, lut->invert_output);
-      stp_curve_rescale(lut->channel_curves[i].curve, 65535.0,
-			STP_CURVE_COMPOSE_MULTIPLY, STP_CURVE_BOUNDS_RESCALE);
-      stp_curve_resample(lut->channel_curves[i].curve, lut->steps);
+      invert_curve(curve, lut->invert_output);
+      stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
+			STP_CURVE_BOUNDS_RESCALE);
+      stp_curve_resample(curve, lut->steps);
     }
   else
     {
@@ -2228,12 +2319,13 @@ stpi_compute_lut(stp_vars_t v)
 
 	  if (stp_get_curve_parameter_active(v, channel_params[i].curve_name)>=
 	      stp_get_float_parameter_active(v, channel_params[i].gamma_name))
-	    lut->channel_curves[i].curve =
-	      stp_curve_create_copy(stp_get_curve_parameter
-				    (v, channel_params[i].curve_name));
+	    cache_set_curve
+	      (&(lut->channel_curves[i]),
+	       stp_curve_create_copy(stp_get_curve_parameter
+				     (v, channel_params[i].curve_name)));
 	  else
-	    lut->channel_curves[i].curve =
-	      stp_curve_create_copy(color_curve_bounds);
+	    cache_set_curve(&(lut->channel_curves[i]),
+			    stp_curve_create_copy(color_curve_bounds));
 
 	  stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n",
 		       channel_params[i].gamma_name, lut->gamma_values[i]);
@@ -2302,7 +2394,7 @@ stpi_color_traditional_init(stp_vars_t v,
     lut->color_correction = get_color_correction(color_correction);
   else
     lut->color_correction = get_color_correction("Accurate");
-    
+
   stpi_compute_lut(v);
 
   lut->image_width = stpi_image_width(image);
@@ -2392,7 +2484,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
   initialize_standard_curves();
   if (name == NULL)
     return;
-      
+
   for (i = 0; i < float_parameter_count; i++)
     {
       const float_param_t *param = &(float_parameters[i]);
@@ -2408,7 +2500,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		description->is_active = 1;
 	      else
 		description->is_active = 0;
-	    }	      
+	    }
 	  if (stp_check_string_parameter(v, "ImageType", STP_PARAMETER_ACTIVE) &&
 	      strcmp(stp_get_string_parameter(v, "ImageType"), "None") != 0 &&
 	      description->p_level > STP_PARAMETER_LEVEL_BASIC)
@@ -2512,7 +2604,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		description->is_active = 1;
 	      else
 		description->is_active = 0;
-	    }	      
+	    }
 	  if (stp_check_string_parameter(v, "ImageType", STP_PARAMETER_ACTIVE) &&
 	      strcmp(stp_get_string_parameter(v, "ImageType"), "None") != 0 &&
 	      description->p_level > STP_PARAMETER_LEVEL_BASIC)
