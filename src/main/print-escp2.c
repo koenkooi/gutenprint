@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.5 2003/05/04 04:39:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.6 2003/05/04 14:07:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1337,7 +1337,7 @@ set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
       /* 1440 is the only allowed value here */
       int pos = ((pd->image_left * 1440 / 72) + microoffset);
       if (pos > 0)
-	stpi_send_command(v, "\033(\\", "bhh", 1440, pos);
+	stpi_send_command(v, "\033(\\", "bh", 1440, pos);
     }
 }
 
