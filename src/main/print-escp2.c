@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.82 2001/07/21 01:10:47 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.83 2001/07/21 01:57:30 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2045,10 +2045,8 @@ typedef struct
 
 static const res_t escp2_reslist[] =
 {
-  {N_("180 x 120 DPI"),                            180,  120,  0,0,1,1,0,1,0 },
-  {N_("180 x 120 DPI Unidirectional"),             180,  120,  0,0,1,1,1,1,0 },
-  {N_("360 x 120 DPI"),                            360,  120,  0,0,1,1,0,1,0 },
-  {N_("360 x 120 DPI Unidirectional"),             360,  120,  0,0,1,1,1,1,0 },
+  {N_("360 x 120 DPI"),                            360,  120,  1,0,1,1,0,3,0 },
+  {N_("360 x 120 DPI Unidirectional"),             360,  120,  1,0,1,1,1,3,0 },
   {N_("180 DPI"),                                  180,  180,  0,0,1,1,0,1,2 },
   {N_("180 DPI Unidirectional"),                   180,  180,  0,0,1,1,1,1,2 },
   {N_("360 DPI"),                                  360,  360,  0,0,1,1,0,1,4 },
