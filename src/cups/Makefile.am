@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/01/24 02:27:51 rlk Exp $
+## $Id: Makefile.am,v 1.5 2001/01/24 04:19:50 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -62,9 +62,13 @@ install-data-local: ppd
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/backend
-	$(INSTALL) $(cups_backend) $(DESTDIR)$(libdir)/$(PACKAGE)/backend/
+	@for p in $(cups_backend) ; do \
+		$(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(libdir)/$(PACKAGE)/backend/ ; \
+	done
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/filter
-	$(INSTALL) $(cups_filter) $(DESTDIR)$(libdir)/$(PACKAGE)/filter/
+	@for p in $(cups_filter) ; do \
+		$(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(libdir)/$(PACKAGE)/filter/ ; \
+	done
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/model
 	cd ppd ; \
 	for ppdfile in * ; do \
