@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.34.4.2 2002/10/21 01:47:09 rlk Exp $
+## $Id: Makefile.am,v 1.34.4.3 2002/10/21 01:51:25 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -81,8 +81,8 @@ pkgconfigdata_DATA = gimpprint.pc
 
 ## Rules
 
-print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
-	../printdef/printdef < $(srcdir)/printers.xml > print-printers.c
+$(srcdir)/print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
+	../printdef/printdef < $(srcdir)/printers.xml > $(srcdir)/print-printers.c
 
 printdefl.o: printdefy.o
 
