@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.104 2000/12/23 00:21:49 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.105 2000/12/24 00:06:06 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1567,7 +1567,6 @@ pcl_limit(const printer_t *printer,	/* I - Printer model */
 
 void
 pcl_print(const printer_t *printer,		/* I - Model */
-          int       copies,		/* I - Number of copies */
           FILE      *prn,		/* I - File to print to */
           Image     image,		/* I - Image to print */
 	  const vars_t    *v)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.12 2000/12/23 00:21:49 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.13 2000/12/24 00:06:06 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -805,7 +805,6 @@ clean_color(unsigned char *line, int len)
 */
 void
 lexmark_print(const printer_t *printer,		/* I - Model */
-            int       copies,		/* I - Number of copies */
             FILE      *prn,		/* I - File to print to */
 	    Image     image,		/* I - Image to print */
 	    const vars_t    *v)

@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.45 2000/11/18 18:36:36 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.46 2000/12/24 00:06:06 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -241,7 +241,6 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   theImage.raster = stp_raster;
   if (verify_printer_params(printer, &(stp_data.v)))
     (*printer->print)(printer,		/* I - Model */
-		      1,		/* I - Number of copies */
 		      file,		/* I - File to print to */
 		      &theImage,	/* I - Image to print (dummy) */
 		      &stp_data.v);	/* vars_t * */

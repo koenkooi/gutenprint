@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.104 2000/12/16 01:40:55 rlk Exp $"
+ * "$Id: print-canon.c,v 1.105 2000/12/24 00:06:05 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1759,7 +1759,6 @@ canon_advance_buffer(unsigned char *buf, int len, int num)
  */
 void
 canon_print(const printer_t *printer,		/* I - Model */
-            int       copies,		/* I - Number of copies */
             FILE      *prn,		/* I - File to print to */
 	    Image     image,		/* I - Image to print */
 	    const vars_t    *v)

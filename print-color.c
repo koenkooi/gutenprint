@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.6 2000/12/22 01:48:09 rlk Exp $"
+ * "$Id: print-color.c,v 1.7 2000/12/24 00:06:05 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -810,7 +810,7 @@ rgb_to_rgb(unsigned char	*rgbin,		/* I - RGB pixels */
 	}
       else
 	{
-	  if ((compute_saturation || hue_map || lum_map) &&
+	  if ((compute_saturation) &&
 	      (rgbout[0] != rgbout[1] || rgbout[0] != rgbout[2]))
 	    {
 	      rgbout[0] = 65535 - rgbout[0];

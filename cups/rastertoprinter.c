@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.11 2000/12/10 14:11:14 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.12 2000/12/24 00:06:06 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -287,7 +287,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: v.ink_type |%s|\n", v.ink_type);
     fprintf(stderr, "DEBUG: v.dither_algorithm |%s|\n", v.dither_algorithm);
     if (verify_printer_params(printer, &v))
-      (*printer->print)(printer, 1, stdout, &cups, &v);
+      (*printer->print)(printer, stdout, &cups, &v);
     else
       fputs("ERROR: Invalid printer settings!\n", stderr);
 
@@ -526,5 +526,5 @@ Image_width(Image image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.11 2000/12/10 14:11:14 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.12 2000/12/24 00:06:06 rlk Exp $".
  */
