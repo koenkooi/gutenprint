@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.13 2001/12/17 00:00:48 rlk Exp $"
+ * "$Id: testdither.c,v 1.14 2001/12/23 22:59:17 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -152,14 +152,14 @@ main(int  argc,				/* I - Number of command-line arguments */
 		  "photo",
 		  "monochrome",
 		  "cmyk",
-		  "photo-cmyk"
+		  "photocmyk"
 		};
   static const char	*image_types[] =	/* Different image types */
 		{
 		  "mixed",
 		  "white",
 		  "black",
-		  "color-image",
+		  "colorimage",
 		  "random"
 		};
   struct timeval tv1, tv2;
@@ -859,5 +859,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.13 2001/12/17 00:00:48 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.14 2001/12/23 22:59:17 rlk Exp $".
  */
