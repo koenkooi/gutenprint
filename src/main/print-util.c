@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.13 2001/03/10 19:45:16 rleigh Exp $"
+ * "$Id: print-util.c,v 1.14 2001/03/17 13:59:19 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -721,7 +721,7 @@ stp_default_media_size(const stp_printer_t printer,
         	   int  *width,		/* O - Width in points */
         	   int  *height)	/* O - Height in points */
 {
-  if (stp_get_page_width(v) > stp_get_page_height(v) > 0)
+  if (stp_get_page_width(v) > 0 && stp_get_page_height(v) > 0)
     {
       *width = stp_get_page_width(v);
       *height = stp_get_page_height(v);
