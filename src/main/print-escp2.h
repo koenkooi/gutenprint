@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.54 2003/06/11 23:19:21 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.55 2003/06/13 22:53:16 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -121,10 +121,20 @@ typedef struct
   const paper_adjustment_t *papers;
 } paper_adjustment_list_t;
 
+typedef enum
+{
+  PAPER_PLAIN         = 0x01,
+  PAPER_GOOD          = 0x02,
+  PAPER_PHOTO         = 0x04,
+  PAPER_PREMIUM_PHOTO = 0x08,
+  PAPER_TRANSPARENCY  = 0x10
+} paper_class_t;
+
 typedef struct
 {
   const char *name;
   const char *text;
+  paper_class_t paper_class;
   short paper_feed_sequence;
   short platen_gap;
   short feed_adjustment;
@@ -529,5 +539,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.54 2003/06/11 23:19:21 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.55 2003/06/13 22:53:16 rlk Exp $".
  */
