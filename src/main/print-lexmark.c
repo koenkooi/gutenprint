@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.65.2.2 2002/01/04 10:06:20 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.65.2.3 2002/02/16 09:52:33 rwisi Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1070,9 +1070,9 @@ static const lexmark_res_t
 
   while (res->hres)
     {
-      if (res->vres <= caps->max_ydpi != -1 &&
-	  res->hres <= caps->max_xdpi != -1 &&
-	  !strcmp(resolution, res->name))
+      if ((res->vres <= caps->max_ydpi) && (caps->max_ydpi != -1) &&
+	  (res->hres <= caps->max_xdpi) && (caps->max_xdpi != -1) &&
+	   (!strcmp(resolution, res->name)))
 	{
 	  return res;
 	}
