@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.42.2.14 2003/01/28 15:01:29 davehill Exp $"
+# "$Id: printers.xml,v 1.42.2.15 2003/02/19 17:08:03 davehill Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -1572,6 +1572,14 @@
 <printer name="HP LaserJet II series" driver="pcl-2">
 <nocolor>
 <model value=2>
+<gamma value=1.000>
+<density value=1.000>
+<language value=pcl>
+</printer>
+
+<printer name="HP LaserJet IIP series" driver="pcl-2p">
+<nocolor>
+<model value=21>
 <gamma value=1.000>
 <density value=1.000>
 <language value=pcl>
