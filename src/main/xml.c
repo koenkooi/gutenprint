@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.21.2.3 2003/06/19 01:43:57 rlk Exp $"
+ * "$Id: xml.c,v 1.21.2.4 2003/06/19 02:19:32 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -233,6 +233,12 @@ stpi_xml_parse_file(const char *file) /* File to parse */
   cur = mxmlLoadFile(NULL, fp, MXML_NO_CALLBACK);
   fclose(fp);
 
+  cur = cur->child;
+  while (cur &&
+	 (cur->type != MXML_ELEMENT ||
+	  strcmp(cur->value.element.name, "gimp-print") != 0))
+    cur = cur->next;
+
   if (cur == NULL || cur->type != MXML_ELEMENT)
     {
       stpi_erprintf("stp_xml_parse_file: %s: parse error\n", file);
@@ -242,7 +248,9 @@ stpi_xml_parse_file(const char *file) /* File to parse */
 
   if (strcmp(cur->value.element.name, "gimp-print") != 0)
     {
-      fprintf(stderr,"XML file of the wrong type, root node != gimp-print");
+      fprintf(stderr,
+	      "XML file of the wrong type, root node is %s != gimp-print",
+	      cur->value.element.name);
       mxmlDelete(cur);
       return 1;
     }
@@ -347,7 +355,8 @@ stpi_xml_process_gimpprint(mxml_node_t *cur, const char *file) /* The node to pa
   while (child)
     {
       /* process nodes with corresponding parser */
-      stpi_xml_process_node(child, file);
+      if (child->type == MXML_ELEMENT)
+	stpi_xml_process_node(child, file);
       child = child->next;
     }
 }
