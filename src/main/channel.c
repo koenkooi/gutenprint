@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.12 2004/04/27 23:23:46 rlk Exp $"
+ * "$Id: channel.c,v 1.13 2004/05/01 16:56:31 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -538,6 +538,7 @@ stp_channel_convert(stp_const_vars_t v, unsigned *zero_mask)
 	}
       if (zero_mask)
 	{
+	  *zero_mask = 0;
 	  for (i = 0; i < cg->total_channels; i++)
 	    if (!nz[i])
 	      *zero_mask |= 1 << i;
