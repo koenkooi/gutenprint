@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/01/24 02:03:25 rlk Exp $
+## $Id: Makefile.am,v 1.4 2001/01/24 02:27:51 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ libdir = @cups_libdir@
 sysconfdir = @cups_sysconfdir@
 
 CFLAGS = @CFLAGS@ $(CUPS_CFLAGS)
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(cups_exec_prefix)/share/cups\"
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(cups_exec_prefix)/share/cups\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@
 
 ## Programs
