@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.2 2001/02/03 03:35:21 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.3 2001/02/17 22:23:30 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -258,9 +258,13 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
     return_error(gs_error_VMerror);
 
   if (strlen(stp_data.v.resolution) == 0)
-    strcpy(stp_data.v.resolution, (*printer->printfuncs->default_resolution)(printer));
+    strncpy(stp_data.v.resolution,
+	    (*printer->printfuncs->default_resolution)(printer),
+	    sizeof(stp_data.v.resolution) - 1);
   if (strlen(stp_data.v.dither_algorithm) == 0)
-    strcpy(stp_data.v.dither_algorithm, stp_default_dither_algorithm());
+    strncpy(stp_data.v.dither_algorithm,
+	    stp_default_dither_algorithm(),
+	    sizeof(stp_data.v.dither_algorithm) - 1);
 
   stp_data.v.scaling = -pdev->x_pixels_per_inch; /* resolution of image */
 
@@ -275,7 +279,7 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   if ((p =
        stp_get_papersize_by_size(stp_data.v.page_height, stp_data.v.page_width)) !=
       NULL)
-    strcpy(stp_data.v.media_size, p->name);
+    strncpy(stp_data.v.media_size, p->name, sizeof(stp_data.v.media_size) - 1);
   stp_print_dbg("stp_print_page", pdev, &stp_data);
 
   gsImage.dev = pdev;
