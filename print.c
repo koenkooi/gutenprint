@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.29 1999/11/29 12:17:37 rlk Exp $"
+ * "$Id: print.c,v 1.30 1999/11/30 02:45:23 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -64,6 +64,15 @@
 #if 0
 #include <libgimp/stdplugins-intl.h>
 #else
+#include <libgimp/gimpintl.h>
+#include <locale.h>
+
+#ifndef LOCALEDIR
+#define LOCALEDIR g_strconcat (gimp_data_directory (), \
+			       G_DIR_SEPARATOR_S, \
+			       "locale", \
+			       NULL)
+#endif
 #ifdef HAVE_LC_MESSAGES
 #define INIT_I18N() \
   setlocale(LC_MESSAGES, ""); \
@@ -3279,5 +3288,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.29 1999/11/29 12:17:37 rlk Exp $".
+ * End of "$Id: print.c,v 1.30 1999/11/30 02:45:23 rlk Exp $".
  */
