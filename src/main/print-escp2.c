@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.9 2003/05/04 21:15:23 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.10 2003/05/04 21:35:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1344,15 +1344,15 @@ set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
 
   if (pos != 0)
     {
-      if (!escp2_has_advanced_command_set(v) &&
-	  pd->res->hres < pd->micro_units)
+      /* Note hard-coded 1440 -- from Epson manuals */
+      if (!escp2_has_advanced_command_set(v) && pd->res->hres < 1440)
 	stpi_send_command(v, "\033\\", "h", pos);
       else if (escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) ||
 	       (escp2_has_advanced_command_set(v) &&
 		escp2_has_cap(v, MODEL_VARIABLE_DOT, MODEL_VARIABLE_YES)))
 	stpi_send_command(v, "\033($", "bl", pos);
       else
-	stpi_send_command(v, "\033(\\", "bh", pd->micro_units, pos);
+	stpi_send_command(v, "\033(\\", "bhh", pd->micro_units, pos);
     }
 }
 
@@ -1827,14 +1827,13 @@ setup_resolution(stp_vars_t v)
     {
       pd->unit_scale = escp2_max_hres(v);
       pd->horizontal_units = horizontal;
-      pd->micro_units = pd->horizontal_units;
     }
   else
     {
       pd->unit_scale = 3600;
       pd->horizontal_units = vertical;
-      pd->micro_units = 1440;
     }
+  pd->micro_units = horizontal;
   pd->vertical_units = vertical;
   pd->page_management_units = vertical;
 }  
