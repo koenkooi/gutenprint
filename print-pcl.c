@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.10 1999/10/26 23:36:51 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.11 1999/11/10 01:13:44 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.11  1999/11/10 01:13:44  rlk
+ *   multi-pass
+ *
  *   Revision 1.10  1999/10/26 23:36:51  rlk
  *   Comment out all remaining 16-bit code, and rename 16-bit functions to "standard" names
  *
@@ -915,7 +918,7 @@ pcl_print(int       model,		/* I - Model */
 	else
 	{
           dither_cmyk(out, x, image_height, out_width, cyan, 0, magenta,
-			0, yellow, 0, black);
+			0, yellow, 0, black, 1);
 
           if (black != NULL)
             (*writefunc)(prn, black, length, 0);
@@ -1005,7 +1008,7 @@ pcl_print(int       model,		/* I - Model */
 	else
 	{
           dither_cmyk(out, y, image_width, out_width, cyan, 0, magenta,
-			0, yellow, 0, black);
+			0, yellow, 0, black, 1);
 
           if (black != NULL)
             (*writefunc)(prn, black, length, 0);
@@ -1181,5 +1184,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.10 1999/10/26 23:36:51 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.11 1999/11/10 01:13:44 rlk Exp $".
  */
