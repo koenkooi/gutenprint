@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.63 2003/09/18 03:00:40 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.64 2003/09/18 23:40:57 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -402,9 +402,9 @@ typedef struct escp2_printer
 				/* (maximum useful value is */
 				/* nozzles * nozzle_separation) */
   short		separation_rows; /* Some printers require funky spacing */
-				/* arguments in microweave mode. */
+				/* arguments in softweave mode. */
   short		pseudo_separation_rows;/* Some printers require funky */
-				/* spacing arguments in softweave mode */
+				/* spacing arguments in microweave mode */
 
   short         zero_margin_offset;   /* Offset to use to achieve */
 				      /* zero-margin printing */
@@ -502,7 +502,6 @@ extern const res_t *const stpi_escp2_2880_1440dpi_reslist[];
 extern const res_t *const stpi_escp2_g3_reslist[];
 extern const res_t *const stpi_escp2_sc500_reslist[];
 extern const res_t *const stpi_escp2_sc640_reslist[];
-extern const res_t *const stpi_escp2_sc660_reslist[];
 
 extern const inkgroup_t stpi_escp2_cmy_inkgroup;
 extern const inkgroup_t stpi_escp2_standard_inkgroup;
@@ -626,5 +625,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.63 2003/09/18 03:00:40 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.64 2003/09/18 23:40:57 rlk Exp $".
  */
