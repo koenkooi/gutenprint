@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.2 1999/09/12 00:12:24 rlk Exp $"
+ * "$Id: print.h,v 1.3 1999/10/14 01:59:59 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -99,14 +99,15 @@ typedef struct
                  char *media_size, char *media_type, char *media_source,
                  int output_type, int orientation, float scaling, int left,
                  int top, int copies, FILE *prn, GDrawable *drawable,
-                 lut_t *lut, guchar *cmap, lut16_t *lut16);	/* Print function */
+                 lut_t *lut, guchar *cmap, lut16_t *lut16,
+		 float saturation);	/* Print function */
 } printer_t;
 
 typedef void (*convert_t)(guchar *in, guchar *out, int width, int bpp,
-                          lut_t *lut, guchar *cmap);
+                          lut_t *lut, guchar *cmap, float saturation);
 
 typedef void (*convert16_t)(guchar *in, gushort *out, int width, int bpp,
-			    lut16_t *lut, guchar *cmap);
+			    lut16_t *lut, guchar *cmap, float saturation);
 
 
 /*
@@ -122,12 +123,18 @@ extern void	dither_cmyk6(guchar *, int, int, int, unsigned char *,
 extern void	dither_cmyk6_16(gushort *, int, int, int, unsigned char *,
 				unsigned char *, unsigned char *, unsigned char *,
 				unsigned char *, unsigned char *);
-extern void	gray_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *);
-extern void	indexed_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *);
-extern void	indexed_to_rgb(guchar *, guchar *, int, int, lut_t *, guchar *);
-extern void	rgb_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *);
-extern void	rgb_to_rgb(guchar *, guchar *, int, int, lut_t *, guchar *);
-extern void	rgb_to_rgb16(guchar *, gushort *, int, int, lut16_t *, guchar *);
+extern void	gray_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *,
+			     float);
+extern void	indexed_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *,
+				float);
+extern void	indexed_to_rgb(guchar *, guchar *, int, int, lut_t *, guchar *,
+			       float);
+extern void	rgb_to_gray(guchar *, guchar *, int, int, lut_t *, guchar *,
+			    float);
+extern void	rgb_to_rgb(guchar *, guchar *, int, int, lut_t *, guchar *,
+			   float);
+extern void	rgb_to_rgb16(guchar *, gushort *, int, int, lut16_t *, guchar *,
+			     float);
 
 extern void	default_media_size(int model, char *ppd_file, char *media_size,
 		                   int *width, int *length);
@@ -141,7 +148,7 @@ extern void	escp2_print(int model, char *ppd_file, char *resolution,
 		            int output_type, int orientation, float scaling,
 		            int left, int top, int copies, FILE *prn,
 		            GDrawable *drawable, lut_t *lut, guchar *cmap,
-			    lut16_t *lut16);
+			    lut16_t *lut16, float saturation);
 
 extern char	**pcl_parameters(int model, char *ppd_file, char *name,
 		                 int *count);
@@ -152,7 +159,7 @@ extern void	pcl_print(int model, char *ppd_file, char *resolution,
 		          int output_type, int orientation, float scaling,
 		          int left, int top, int copies, FILE *prn,
 		          GDrawable *drawable, lut_t *lut, guchar *cmap,
-			  lut16_t *lut16);
+			  lut16_t *lut16, float saturation);
 
 extern char	**ps_parameters(int model, char *ppd_file, char *name,
 		                int *count);
@@ -165,9 +172,13 @@ extern void	ps_print(int model, char *ppd_file, char *resolution,
 		         int output_type, int orientation, float scaling,
 		         int left, int top, int copies, FILE *prn,
 		         GDrawable *drawable, lut_t *lut, guchar *cmap,
-			 lut16_t *lut16);
+			 lut16_t *lut16, float saturation);
 
+extern void calc_hsv_to_rgb16(gushort *rgb, double h, double s, double v);
+extern void calc_rgb16_to_hsv(gushort *rgb, double *hue, double *sat, double *val);
+extern void calc_hsv_to_rgb(guchar *rgb, double h, double s, double v);
+extern void calc_rgb_to_hsv(guchar *rgb, double *hue, double *sat, double *val);
 
 /*
- * End of "$Id: print.h,v 1.2 1999/09/12 00:12:24 rlk Exp $".
+ * End of "$Id: print.h,v 1.3 1999/10/14 01:59:59 rlk Exp $".
  */
