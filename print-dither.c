@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.93 2000/09/16 17:14:10 easysw Exp $"
+ * "$Id: print-dither.c,v 1.94 2000/09/17 17:07:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1583,7 +1583,7 @@ dither_monochrome(const unsigned short  *gray,	/* I - Grayscale pixels */
   matrix_set_row(d, kdither, row);
   for (x = 0; x < dst_width; x++)
     {
-      if (gray[0] < 32768)
+      if (!gray[0])
 	{
 	  if (d->density >= ditherpoint_fast(d, kdither, x))
 	    {
