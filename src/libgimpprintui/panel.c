@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.57.2.3 2004/03/27 00:52:00 rlk Exp $"
+ * "$Id: panel.c,v 1.57.2.4 2004/03/27 03:57:02 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2999,7 +2999,7 @@ output_type_callback (GtkWidget *widget,
 
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
-      if (strcmp((const char *) data, "BW"))
+      if (strcmp((const char *) data, "BW") == 0)
 	gtk_widget_hide(output_color_vbox);
       else
 	gtk_widget_show(output_color_vbox);
@@ -3545,7 +3545,7 @@ initialize_thumbnail(void)
       thumbnail_h = thumbnail_hinth;
       internal_thumbnail_data =
 	(stpui_get_thumbnail_func()) (stpui_get_thumbnail_data(), &thumbnail_w,
-				      &thumbnail_h, 0);
+				      &thumbnail_h, &thumbnail_bpp, 0);
       if (adjusted_thumbnail_data)
 	g_free(adjusted_thumbnail_data);
       if (preview_thumbnail_data)

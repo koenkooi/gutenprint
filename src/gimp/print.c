@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.56.4.2 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: print.c,v 1.56.4.3 2004/03/27 03:57:02 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -141,13 +141,12 @@ static guchar *gimp_thumbnail_data = NULL;
 
 static guchar *
 stpui_get_thumbnail_data_function(void *image_ID, gint *width, gint *height,
-				  gint page)
+				  gint *bpp, gint page)
 {
-  gint bpp;
   if (gimp_thumbnail_data)
     free(gimp_thumbnail_data);
   gimp_thumbnail_data =
-    gimp_image_get_thumbnail_data((gint) image_ID, width, height, &bpp);
+    gimp_image_get_thumbnail_data((gint) image_ID, width, height, bpp);
   return gimp_thumbnail_data;
 }
 
@@ -440,7 +439,7 @@ do_print_dialog (gchar *proc_name, gint32 image_ID)
   stpui_set_printrc_file(filename);
   g_free(filename);
   if (! getenv("STP_PRINT_MESSAGES_TO_STDERR"))
-  stpui_set_errfunc(gimp_errfunc);
+    stpui_set_errfunc(gimp_errfunc);
   stpui_set_thumbnail_func(stpui_get_thumbnail_data_function);
   stpui_set_thumbnail_data((void *) image_ID);
   return stpui_do_print_dialog();

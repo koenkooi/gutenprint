@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui.h,v 1.1.4.2 2004/03/26 01:20:15 rlk Exp $"
+ * "$Id: gimp-print-ui.h,v 1.1.4.3 2004/03/27 03:57:02 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -117,7 +117,7 @@ extern void stpui_set_image_raw_channels(gint channels);
 extern void stpui_set_image_channel_depth(gint bit_depth);
 
 typedef guchar *(*get_thumbnail_func_t)(void *data, gint *width, gint *height,
-					gint page);
+					gint *bpp, gint page);
 extern void stpui_set_thumbnail_func(get_thumbnail_func_t);
 extern get_thumbnail_func_t stpui_get_thumbnail_func(void);
 extern void stpui_set_thumbnail_data(void *);

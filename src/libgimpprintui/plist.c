@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.30.4.3 2004/03/27 00:52:00 rlk Exp $"
+ * "$Id: plist.c,v 1.30.4.4 2004/03/27 03:57:02 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1358,11 +1358,20 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 
   if (prn != NULL)
     {
+      char tmp[32];
       stpui_plist_t *np = allocate_stpui_plist_copy(printer);
       stp_const_vars_t current_vars =
 	stp_printer_get_defaults(stp_get_printer(np->v));
       int orientation;
       stp_merge_printvars(np->v, current_vars);
+      stp_set_string_parameter(np->v, "InputImageType", image_type);
+      if (image_raw_channels)
+	{
+	  sprintf(tmp, "%d", image_raw_channels);
+	  stp_set_string_parameter(np->v, "RawChannels", tmp);
+	}
+      sprintf(tmp, "%d", image_channel_depth);
+      stp_set_string_parameter(np->v, "ChannelBitDepth", tmp);
 
       /*
        * Set up the orientation
@@ -1425,5 +1434,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.30.4.3 2004/03/27 00:52:00 rlk Exp $".
+ * End of "$Id: plist.c,v 1.30.4.4 2004/03/27 03:57:02 rlk Exp $".
  */

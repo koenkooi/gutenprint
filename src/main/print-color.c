@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.34 2004/03/27 02:44:59 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.35 2004/03/27 03:57:02 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -540,17 +540,6 @@ typedef struct
   unsigned channel_mask;
   int hsl_only;
 } curve_param_t;
-
-typedef struct {
-  int invert_output;
-  int steps;
-  int linear_contrast_adjustment;
-  double print_gamma;
-  double app_gamma;
-  double screen_gamma;
-  double brightness;
-  double contrast;
-} lut_params_t;
 
 static int standard_curves_initialized = 0;
 
@@ -2344,7 +2333,7 @@ gray_##bits##_to_gray_raw(stp_const_vars_t vars,			\
 									\
   for (i = 0; i < lut->image_width; i++)				\
     {									\
-      out[0] = s_in[0] ^ mask;						\
+      out[0] = (s_in[0] * (65535 / ((1 << bits) - 1))) ^ mask;		\
       nz |= out[0];							\
       s_in ++;								\
       out ++;								\
@@ -2373,6 +2362,9 @@ color_##bits##_to_gray_raw(stp_const_vars_t vars,			\
   int l_red = LUM_RED;							\
   int l_green = LUM_GREEN;						\
   int l_blue = LUM_BLUE;						\
+  unsigned mask = 0;							\
+  if (lut->invert_output)						\
+    mask = 0xffff;							\
 									\
   if (!lut->invert_output)						\
     {									\
@@ -2388,7 +2380,10 @@ color_##bits##_to_gray_raw(stp_const_vars_t vars,			\
 	  i0 = s_in[0];							\
 	  i1 = s_in[1];							\
 	  i2 = s_in[2];							\
-	  o0 = (i0 * l_red + i1 * l_green + i2 * l_blue) / 100;		\
+	  o0 = (i0 * (65535 / ((1 << bits) - 1)) * l_red +		\
+		i1 * (65535 / ((1 << bits) - 1)) * l_green +		\
+		i2 * (65535 / ((1 << bits) - 1)) * l_blue) / 100;	\
+	  o0 ^= mask;							\
 	  nz |= o0;							\
 	}								\
       out[0] = o0;							\
@@ -2422,6 +2417,9 @@ cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   int l_green = LUM_GREEN;						    \
   int l_blue = LUM_BLUE;						    \
   int l_white = 0;							    \
+  unsigned mask = 0;							    \
+  if (lut->invert_output)						    \
+    mask = 0xffff;							    \
 									    \
   if (!lut->invert_output)						    \
     {									    \
@@ -2439,8 +2437,11 @@ cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
 	  i1 = s_in[1];							    \
 	  i2 = s_in[2];							    \
 	  i3 = s_in[3];							    \
-	  o0 =								    \
-	    (i0 * l_red + i1 * l_green + i2 * l_blue + i3 * l_white) / 100; \
+	  o0 = (i0 * (65535 / ((1 << bits) - 1)) * l_red +		    \
+		i1 * (65535 / ((1 << bits) - 1)) * l_green +		    \
+		i2 * (65535 / ((1 << bits) - 1)) * l_blue +		    \
+		i3 * (65535 / ((1 << bits) - 1)) * l_white) / 100;	    \
+	  o0 ^= mask;							    \
 	  nz |= o0;							    \
 	}								    \
       out[0] = o0;							    \
@@ -2473,6 +2474,9 @@ kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
   int l_green = LUM_GREEN;						    \
   int l_blue = LUM_BLUE;						    \
   int l_white = 0;							    \
+  unsigned mask = 0;							    \
+  if (lut->invert_output)						    \
+    mask = 0xffff;							    \
 									    \
   if (!lut->invert_output)						    \
     {									    \
@@ -2490,8 +2494,11 @@ kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
 	  i1 = s_in[1];							    \
 	  i2 = s_in[2];							    \
 	  i3 = s_in[3];							    \
-	  o0 =								    \
-	    (i0 * l_white + i1 * l_red + i2 * l_green + i3 * l_blue) / 100; \
+	  o0 = (i0 * (65535 / ((1 << bits) - 1)) * l_white +		    \
+		i1 * (65535 / ((1 << bits) - 1)) * l_red +		    \
+		i2 * (65535 / ((1 << bits) - 1)) * l_green +		    \
+		i3 * (65535 / ((1 << bits) - 1)) * l_blue) / 100;	    \
+	  o0 ^= mask;							    \
 	  nz |= o0;							    \
 	}								    \
       out[0] = o0;							    \
@@ -3534,12 +3541,12 @@ stpi_color_traditional_init(stp_vars_t v,
       if (strcmp(image_type, "Text") == 0)
 	lut->color_correction = get_color_correction("Threshold");
       else
-	lut->color_correction = get_color_correction("Default");
+	lut->color_correction = get_color_correction("None");
     }
   else if (color_correction)
     lut->color_correction = get_color_correction(color_correction);
   else
-    lut->color_correction = get_color_correction("Default");
+    lut->color_correction = get_color_correction("None");
   if (lut->color_correction->correction == COLOR_CORRECTION_DEFAULT)
     lut->color_correction =
       (get_color_correction_by_tag
