@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/01/25 23:18:14 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2001/02/10 20:13:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-man_MANS = escputil.1
+man_MANS = escputil.1 gimpprint-config.1
 
-DISTCLEANFILES = escputil.1
+DISTCLEANFILES = escputil.1 gimpprint-config.1
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = $(man_MANS)
