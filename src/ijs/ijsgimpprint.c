@@ -1,9 +1,11 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.5 2002/01/25 02:00:10 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.6 2002/01/26 13:24:14 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
  *   Copyright 2001 Robert Krawitz (rlk@alum.mit.edu)
+ *
+ *   Originally written by Russell Lang, copyright assigned to Robert Krawitz.
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
