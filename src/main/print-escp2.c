@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.196 2002/11/28 16:42:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.197 2002/11/28 16:50:15 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -662,7 +662,7 @@ escp2_set_remote_sequence(const escp2_init_t *init)
 			  3, 0, 0, 4, p->feed_adjustment);
 	    }
 	}
-      else
+      else if (escp2_has_advanced_command_set(init->model, init->v))
 	{
 	  if (p)
 	    feed_sequence = p->paper_feed_sequence;
