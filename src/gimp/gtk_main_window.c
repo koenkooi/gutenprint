@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.4.2.1 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.4.2.2 2001/02/22 02:34:42 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -49,7 +49,7 @@ extern gint32 image_ID;
 extern const char *image_filename;
 extern int image_width;
 extern int image_height;
-extern const stp_printer_t *current_printer;
+extern stp_printer_t current_printer;
 extern int runme;
 extern int saveme;
 extern GtkWidget* gtk_color_adjust_dialog;
@@ -209,7 +209,7 @@ void gtk_create_main_window(void)
     GSList*    group;      /* Grouping for output type */
     GSList*    image_type_group;  /* Grouping for image type */
 
-    const stp_printer_t *the_printer = stp_get_printer_by_index(0);
+    stp_printer_t the_printer = stp_get_printer_by_index(0);
 
     static char   *orients[] =    /* Orientation strings */
     {
@@ -725,10 +725,10 @@ void gtk_create_main_window(void)
 		     0, 0);
     gtk_widget_show(box);
 
-    (*current_printer->printfuncs->media_size) (current_printer, &vars,
+    (*stp_printer_get_printfuncs(current_printer)->media_size) (current_printer, vars,
 						&paper_width, &paper_height);
 
-    (*current_printer->printfuncs->imageable_area) (current_printer, &vars,
+    (*stp_printer_get_printfuncs(current_printer)->imageable_area) (current_printer, vars,
 						    &left, &right,
 						    &bottom, &top);
 
@@ -977,12 +977,12 @@ void gtk_create_main_window(void)
     for (i = 0; i < stp_known_printers(); i ++)
     {
         char *tmp;
-	if (!strcmp(the_printer->long_name, ""))
+	the_printer = stp_get_printer_by_index(i);
+	if (!strcmp(stp_printer_get_long_name(the_printer), ""))
 	    continue;
-	tmp = c_strdup(gettext(the_printer->long_name));
+	tmp = c_strdup(gettext(stp_printer_get_long_name(the_printer)));
 	gtk_clist_insert(GTK_CLIST(list), i, &tmp);
 	gtk_clist_set_row_data(GTK_CLIST(list), i, (gpointer)i);
-	the_printer++;
     }
     gtk_table_attach(GTK_TABLE(table),
 		     printer_crawler,
@@ -1128,7 +1128,7 @@ static void gtk_scaling_update(GtkAdjustment *adjustment) /* I - New value */
       stp_set_scaling(vars, -adjustment->value);
     else
       stp_set_scaling(vars, adjustment->value);
-    stp_set_scaling(plist[plist_current], stp_get_scaling(vars));
+    stp_set_scaling(plist[plist_current].v, stp_get_scaling(vars));
 
     sprintf(s, "%.1f", adjustment->value);
 
@@ -1197,7 +1197,7 @@ static void gtk_scaling_callback(GtkWidget* widget) /* I - New value */
     GTK_ADJUSTMENT (scaling_adjustment)->value =
       min_ppi_scaling / (current_scale / 100);
     stp_set_scaling(vars, 0.0);
-    stp_set_scaling(plist[plist_current], stp_get_scaling(vars));
+    stp_set_scaling(plist[plist_current].v, stp_get_scaling(vars));
     gtk_signal_emit_by_name(scaling_adjustment, "value_changed");
   }
   else if (widget == scaling_percent)
@@ -1216,7 +1216,7 @@ static void gtk_scaling_callback(GtkWidget* widget) /* I - New value */
       new_percent = 5;
     GTK_ADJUSTMENT (scaling_adjustment)->value = new_percent;
     stp_set_scaling(vars, 0.0);
-    stp_set_scaling(plist[plist_current], stp_get_scaling(vars));
+    stp_set_scaling(plist[plist_current].v, stp_get_scaling(vars));
     gtk_signal_emit_by_name(scaling_adjustment, "value_changed");
   }
 }
@@ -1358,17 +1358,18 @@ static void gtk_plist_build_combo(GtkWidget*  combo,   /* I - Combo widget */
 static void gtk_do_misc_updates(void)
 {
   char s[255];
-  stp_set_scaling(vars, stp_set_scaling(plist[plist_current]),
-  stp_set_orientation(vars, stp_set_orientation(plist[plist_current]),
-  stp_set_left(vars, stp_set_left(plist[plist_current]),
-  stp_set_top(vars, stp_set_top(plist[plist_current]),
-  stp_set_unit(vars, stp_set_unit(plist[plist_current]),
+  stp_set_scaling(vars, stp_get_scaling(plist[plist_current].v)),
+    stp_set_orientation(vars, stp_get_orientation(plist[plist_current].v));
+  stp_set_left(vars, stp_get_left(plist[plist_current].v));
+  stp_set_top(vars, stp_get_top(plist[plist_current].v));
+  stp_set_unit(vars, stp_get_unit(plist[plist_current].v));
 
   gtk_preview_update();
 
-  if (stp_set_scaling(plist[plist_current], 0))
+  if (stp_get_scaling(plist[plist_current].v) < 0)
     {
-      gdouble tmp = -stp_set_scaling(plist[plist_current],      gdouble max_ppi_scaling);
+      gdouble tmp = -stp_get_scaling(plist[plist_current].v);
+      gdouble max_ppi_scaling;
       gdouble min_ppi_scaling, min_ppi_scaling1, min_ppi_scaling2;
       min_ppi_scaling1 = 72.0 * (gdouble) image_width /
 	(gdouble) printable_width;
@@ -1389,7 +1390,7 @@ static void gtk_do_misc_updates(void)
 	  tmp = max_ppi_scaling;
 	  stp_set_scaling(vars, -tmp);
 	}
-      stp_set_scaling(plist[plist_current], tmp);
+      stp_set_scaling(plist[plist_current].v, tmp);
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_ppi), TRUE);
       GTK_ADJUSTMENT(scaling_adjustment)->lower = min_ppi_scaling;
       GTK_ADJUSTMENT(scaling_adjustment)->upper = max_ppi_scaling + 1;
@@ -1399,11 +1400,12 @@ static void gtk_do_misc_updates(void)
       gtk_entry_set_text(GTK_ENTRY(scaling_entry), s);
       gtk_signal_handler_unblock_by_data(GTK_OBJECT(scaling_entry), NULL);
       gtk_signal_emit_by_name(scaling_adjustment, "value_changed");
-      stp_set_scaling(plist[plist_current], stp_get_scaling(vars));
+      stp_set_scaling(plist[plist_current].v, stp_get_scaling(vars));
     }
   else
     {
-      gdouble tmp = stp_set_scaling(plist[plist_current],      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_percent), TRUE));
+      gdouble tmp = stp_get_scaling(plist[plist_current].v);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scaling_percent), TRUE);
       GTK_ADJUSTMENT(scaling_adjustment)->lower = 5.0;
       GTK_ADJUSTMENT(scaling_adjustment)->upper = 101.0;
       sprintf(s, "%.1f", tmp);
@@ -1416,17 +1418,18 @@ static void gtk_do_misc_updates(void)
 
   gtk_do_color_updates();
 
-  if (stp_set_output_type(plist[plist_current],= OUTPUT_GRAY))
+  if (stp_get_output_type(plist[plist_current].v) == OUTPUT_GRAY)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_gray), TRUE);
   else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_color), TRUE);
 
-  if (stp_set_unit(plist[plist_current],= 0))
+  if (stp_get_unit(plist[plist_current].v) == 0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unit_inch), TRUE);
   else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unit_cm), TRUE);
 
-  switch (stp_set_image_type(plist[plist_current],    ){
+  switch (stp_get_image_type(plist[plist_current].v))
+  {
     case IMAGE_LINE_ART:
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(image_line_art), TRUE);
       break;
@@ -1441,7 +1444,7 @@ static void gtk_do_misc_updates(void)
       break;
     default:
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(image_continuous_tone), TRUE);
-      stp_set_image_type(plist[plist_current], IMAGE_CONTINUOUS);
+      stp_set_image_type(plist[plist_current].v, IMAGE_CONTINUOUS);
       break;
     }
 
@@ -1521,8 +1524,8 @@ gtk_position_callback (GtkWidget *widget)
 	stp_set_top(vars, 0);
     }
 
-  stp_set_left(plist[plist_current], stp_get_left(vars));
-  stp_set_top(plist[plist_current], stp_get_top(vars));
+  stp_set_left(plist[plist_current].v, stp_get_left(vars));
+  stp_set_top(plist[plist_current].v, stp_get_top(vars));
   gtk_preview_update ();
 }
 
@@ -1544,21 +1547,23 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
   plist_current = data;
   p             = plist + plist_current;
 
-  if (p->v.driver[0] != '\0')
-  {
-    strcpy(stp_get_driver(vars), p->v.driver);
+  if (strcmp(stp_get_driver(p->v), ""))
+    {
+      stp_set_driver(vars, stp_get_driver(p->v));
 
-    current_printer = stp_get_printer_by_driver(stp_get_driver(vars));
-  }
+      fprintf(stderr, "gtk_plist_callback current_printer was %x, ", current_printer);
+      current_printer = stp_get_printer_by_driver(stp_get_driver(vars));
+      fprintf(stderr, "now %x\n", current_printer);
+    }
 
-  strcpy(stp_get_ppd_file(vars), p->v.ppd_file);
-  strcpy(stp_get_media_size(vars), p->v.media_size);
-  strcpy(stp_get_media_type(vars), p->v.media_type);
-  strcpy(stp_get_media_source(vars), p->v.media_source);
-  strcpy(stp_get_ink_type(vars), p->v.ink_type);
-  strcpy(stp_get_dither_algorithm(vars), p->v.dither_algorithm);
-  strcpy(stp_get_resolution(vars), p->v.resolution);
-  strcpy(stp_get_output_to(vars), p->v.output_to);
+  stp_set_ppd_file(vars, stp_get_ppd_file(p->v));
+  stp_set_media_size(vars, stp_get_media_size(p->v));
+  stp_set_media_type(vars, stp_get_media_type(p->v));
+  stp_set_media_source(vars, stp_get_media_source(p->v));
+  stp_set_ink_type(vars, stp_get_ink_type(p->v));
+  stp_set_dither_algorithm(vars, stp_get_dither_algorithm(p->v));
+  stp_set_resolution(vars, stp_get_resolution(p->v));
+  stp_set_output_to(vars, stp_get_output_to(p->v));
   gtk_do_misc_updates();
 
  /*
@@ -1566,45 +1571,46 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
   */
   gtk_build_dither_menu();
 
-  media_sizes = (*(current_printer->printfuncs->parameters))(current_printer,
-                                                 p->v.ppd_file,
-                                                 "PageSize", &num_media_sizes);
-
+  media_sizes = (*(stp_printer_get_printfuncs(current_printer)->parameters))
+    (current_printer, stp_get_ppd_file(p->v), "PageSize", &num_media_sizes);
   if (stp_get_media_size(vars)[0] == '\0')
-    strcpy(stp_get_media_size(vars), media_sizes[0]);
+    stp_set_media_size(vars, media_sizes[0]);
 
   gtk_plist_build_combo(media_size_combo,
 		        num_media_sizes,
 		        media_sizes,
-		        p->v.media_size,
+		        (char *) stp_get_media_size(p->v),
 		        gtk_media_size_callback);
 
   for (i = 0; i < num_media_sizes; i ++)
     free(media_sizes[i]);
   free(media_sizes);
 
+  media_types = (*(stp_printer_get_printfuncs(current_printer)->parameters)) (current_printer,
+						  stp_get_ppd_file(p->v),
+						  "MediaType",
+						  &num_media_types);
+  if (stp_get_media_type(vars)[0] == '\0' && media_types != NULL)
+    stp_set_media_type(vars, media_types[0]);
+  else if (media_types == NULL)
+    stp_set_media_type(vars, NULL);
   if (num_media_types > 0)
+  gtk_plist_build_menu(media_type,
+		       &media_type_menu,
+		       num_media_types,
+		       media_types,
+		       (char *) stp_get_media_type(p->v),
+		       gtk_media_type_callback);
   {
     for (i = 0; i < num_media_types; i ++)
       free(media_types[i]);
     free(media_types);
   }
 
-  media_types = (*(current_printer->printfuncs->parameters))(current_printer,
-						 p->v.ppd_file,
-						 "MediaType",
-						 &num_media_types);
-  if (stp_get_media_type(vars)[0] == '\0' && media_types != NULL)
-    strcpy(stp_get_media_type(vars), media_types[0]);
-  else if (media_types == NULL)
-    stp_get_media_type(vars)[0] = '\0';
-  gtk_plist_build_menu(media_type,
-		       &media_type_menu,
-		       num_media_types,
-		       media_types,
-		       p->v.media_type,
-		       gtk_media_type_callback);
-
+  media_sources = (*(stp_printer_get_printfuncs(current_printer)->parameters)) (current_printer,
+						    stp_get_ppd_file(p->v),
+						    "InputSlot",
+						    &num_media_sources);
   if (num_media_sources > 0)
   {
     for (i = 0; i < num_media_sources; i ++)
@@ -1612,19 +1618,15 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
     free(media_sources);
   }
 
-  media_sources = (*(current_printer->printfuncs->parameters))(current_printer,
-						   p->v.ppd_file,
-						   "InputSlot",
-						   &num_media_sources);
   if (stp_get_media_source(vars)[0] == '\0' && media_sources != NULL)
-    strcpy(stp_get_media_source(vars), media_sources[0]);
+    stp_set_media_source(vars, media_sources[0]);
   else if (media_sources == NULL)
-    stp_get_media_source(vars)[0] = '\0';
+    stp_set_media_source(vars, NULL);
   gtk_plist_build_menu(media_source,
 		       &media_source_menu,
 		       num_media_sources,
 		       media_sources,
-		       p->v.media_source,
+		       (char *) stp_get_media_source(p->v),
 		       gtk_media_source_callback);
 
 
@@ -1635,18 +1637,18 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
     free(ink_types);
   }
 
-  ink_types = (*(current_printer->printfuncs->parameters))(current_printer,
-					       p->v.ppd_file,
-					       "InkType", &num_ink_types);
+  ink_types = (*(stp_printer_get_printfuncs(current_printer)->parameters)) (current_printer,
+						stp_get_ppd_file(p->v),
+						"InkType", &num_ink_types);
   if (stp_get_ink_type(vars)[0] == '\0' && ink_types != NULL)
-    strcpy(stp_get_ink_type(vars), ink_types[0]);
+    stp_set_ink_type(vars, ink_types[0]);
   else if (ink_types == NULL)
-    stp_get_ink_type(vars)[0] = '\0';
+    stp_set_ink_type(vars, NULL);
   gtk_plist_build_menu(ink_type,
 		       &ink_type_menu,
 		       num_ink_types,
 		       ink_types,
-		       p->v.ink_type,
+		       (char *) stp_get_ink_type(p->v),
 		       gtk_ink_type_callback);
 
   if (num_resolutions > 0)
@@ -1656,19 +1658,19 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
     free(resolutions);
   }
 
-  resolutions = (*(current_printer->printfuncs->parameters))(current_printer,
-						 p->v.ppd_file,
-						 "Resolution",
-						 &num_resolutions);
+  resolutions = (*(stp_printer_get_printfuncs(current_printer)->parameters)) (current_printer,
+						  stp_get_ppd_file(p->v),
+						  "Resolution",
+						  &num_resolutions);
   if (stp_get_resolution(vars)[0] == '\0' && resolutions != NULL)
-    strcpy(stp_get_resolution(vars), resolutions[0]);
+    stp_set_resolution(vars, resolutions[0]);
   else if (resolutions == NULL)
-    stp_get_resolution(vars)[0] = '\0';
+    stp_set_resolution(vars, NULL);
   gtk_plist_build_menu(resolution,
 		       &resolution_menu,
 		       num_resolutions,
 		       resolutions,
-		       p->v.resolution,
+		       (char *) stp_get_resolution(p->v),
 		       gtk_resolution_callback);
   if (dither_algo_menu)
     gtk_build_dither_menu();
@@ -1690,12 +1692,12 @@ static void gtk_media_size_callback(GtkWidget *widget, /* I -Media size menu */
     = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(media_size_combo)->entry));
   if (strcmp(stp_get_media_size(vars), new_media_size) != 0)
     {
-      strcpy(stp_get_media_size(vars), new_media_size);
-      strcpy(stp_set_media_size(plist[plist_current],new_media_size));
-      stp_get_left(vars)       = -1;
-      stp_get_top(vars)        = -1;
-      stp_set_left(plist[plist_current], stp_get_left(vars));
-      stp_set_top(plist[plist_current], stp_get_top(vars));
+      stp_set_media_size(vars, new_media_size);
+      stp_set_media_size(plist[plist_current].v,new_media_size);
+      stp_set_left(vars, -1);
+      stp_set_top(vars, -1);
+      stp_set_left(plist[plist_current].v, stp_get_left(vars));
+      stp_set_top(plist[plist_current].v, stp_get_top(vars));
     }
   gtk_preview_update();
 }
@@ -1709,8 +1711,8 @@ static void gtk_media_size_callback(GtkWidget *widget, /* I -Media size menu */
 static void gtk_media_type_callback(GtkWidget *widget, /* I- Media type menu */
 				    gint      data)    /* I - Data */
 {
-  strcpy(stp_get_media_type(vars), media_types[data]);
-  strcpy(stp_set_media_type(plist[plist_current],media_types[data]));
+  stp_set_media_type(vars, media_types[data]);
+  stp_set_media_type(plist[plist_current].v,media_types[data]);
   gtk_preview_update();
 }
 
@@ -1723,8 +1725,8 @@ static void gtk_media_type_callback(GtkWidget *widget, /* I- Media type menu */
 static void gtk_media_source_callback(GtkWidget *widget, /* I-Media source */
 				      gint      data)    /* I - Data */
 {
-  strcpy(stp_get_media_source(vars), media_sources[data]);
-  strcpy(stp_set_media_source(plist[plist_current],media_sources[data]));
+  stp_set_media_source(vars, media_sources[data]);
+  stp_set_media_source(plist[plist_current].v,media_sources[data]);
   gtk_preview_update();
 }
 
@@ -1736,8 +1738,8 @@ static void gtk_media_source_callback(GtkWidget *widget, /* I-Media source */
 static void gtk_ink_type_callback(GtkWidget *widget, /* I-Ink type menu */
 				  gint      data)    /* I - Data */
 {
-  strcpy(stp_get_ink_type(vars), ink_types[data]);
-  strcpy(stp_set_ink_type(plist[plist_current],ink_types[data]));
+  stp_set_ink_type(vars, ink_types[data]);
+  stp_set_ink_type(plist[plist_current].v,ink_types[data]);
   gtk_preview_update();
 }
 
@@ -1749,8 +1751,8 @@ static void gtk_ink_type_callback(GtkWidget *widget, /* I-Ink type menu */
 static void gtk_resolution_callback(GtkWidget *widget, /* I-Media size menu */
 				    gint      data)    /* I - Data */
 {
-  strcpy(stp_get_resolution(vars), resolutions[data]);
-  strcpy(stp_set_resolution(plist[plist_current],resolutions[data]));
+  stp_set_resolution(vars, resolutions[data]);
+  stp_set_resolution(plist[plist_current].v,resolutions[data]);
   gtk_preview_update();
 }
 
@@ -1766,11 +1768,11 @@ static void gtk_orientation_callback(GtkWidget *widget,
   if (stp_get_orientation(vars) != (gint) data)
     {
       stp_set_orientation(vars, data);
-      stp_get_left(vars)        = -1;
-      stp_get_top(vars)         = -1;
-      stp_set_orientation(plist[plist_current], stp_get_orientation(vars));
-      stp_set_left(plist[plist_current], stp_get_left(vars));
-      stp_set_top(plist[plist_current], stp_get_top(vars));
+      stp_set_left(vars, -1);
+      stp_set_top(vars, -1);
+      stp_set_orientation(plist[plist_current].v, stp_get_orientation(vars));
+      stp_set_left(plist[plist_current].v, stp_get_left(vars));
+      stp_set_top(plist[plist_current].v, stp_get_top(vars));
     }
   gtk_preview_update();
 }
@@ -1787,7 +1789,7 @@ static void gtk_output_type_callback(GtkWidget *widget,
   if (GTK_TOGGLE_BUTTON(widget)->active)
   {
     stp_set_output_type(vars, data);
-    stp_set_output_type(plist[plist_current], data);
+    stp_set_output_type(plist[plist_current].v, data);
   }
   gtk_preview_update();
 }
@@ -1803,7 +1805,7 @@ static void gtk_unit_callback(GtkWidget *widget,
   if (GTK_TOGGLE_BUTTON(widget)->active)
   {
     stp_set_unit(vars, data);
-    stp_set_unit(plist[plist_current], data);
+    stp_set_unit(plist[plist_current].v, data);
     gtk_preview_update();
   }
 }
@@ -1820,7 +1822,7 @@ static void gtk_linear_callback(GtkWidget *widget, /* I - Output type button */
   if (GTK_TOGGLE_BUTTON(widget)->active)
   {
     stp_set_linear(vars, data);
-    stp_set_linear(plist[plist_current], data);
+    stp_set_linear(plist[plist_current].v, data);
   }
   gtk_preview_update();
 }
@@ -1837,7 +1839,7 @@ static void gtk_image_type_callback(GtkWidget *widget,
   if (GTK_TOGGLE_BUTTON(widget)->active)
   {
     stp_set_image_type(vars, data);
-    stp_set_image_type(plist[plist_current], data);
+    stp_set_image_type(plist[plist_current].v, data);
   }
   gtk_preview_update();
 }
@@ -1928,14 +1930,14 @@ static void gtk_setup_open_callback(void)
   GtkAdjustment *adjustment;
   int idx;
 
-  current_printer = stp_get_printer_by_driver(stp_set_driver(plist[plist_current]),
-  idx = stp_get_printer_index_by_driver(stp_set_driver(plist[plist_current]),
+  current_printer = stp_get_printer_by_driver(stp_get_driver(plist[plist_current].v));
+  idx = stp_get_printer_index_by_driver(stp_get_driver(plist[plist_current].v));
 
   gtk_clist_select_row(GTK_CLIST(printer_driver), idx, 0);
 
-  gtk_entry_set_text(GTK_ENTRY(ppd_file), stp_set_ppd_file(plist[plist_current]),
+  gtk_entry_set_text(GTK_ENTRY(ppd_file), stp_get_ppd_file(plist[plist_current].v));
 
-  if (strncmp(stp_set_driver(plist[plist_current],"ps", 2) == 0))
+  if (strncmp(stp_get_driver(plist[plist_current].v) ,"ps", 2) == 0)
     {
       gtk_widget_show(ppd_file);
       gtk_widget_show(ppd_button);
@@ -1946,7 +1948,8 @@ static void gtk_setup_open_callback(void)
       gtk_widget_hide(ppd_button);
     }
 
-  gtk_entry_set_text(GTK_ENTRY(output_cmd), stp_set_output_to(plist[plist_current]),
+  gtk_entry_set_text(GTK_ENTRY(output_cmd),
+		     stp_get_output_to(plist[plist_current].v));
 
   if (plist_current == 0)
     gtk_widget_hide(output_cmd);
@@ -1962,19 +1965,19 @@ static void gtk_setup_open_callback(void)
 
 /****************************************************************************
  *
- * gtk_setup_ok__callback() -
+ * gtk_setup_ok_callback() -
  *
  ****************************************************************************/
 static void gtk_setup_ok_callback(void)
 {
-  strcpy(stp_get_driver(vars), current_printer->driver);
-  strcpy(stp_set_driver(plist[plist_current],current_printer->driver));
+  stp_set_driver(vars, stp_printer_get_driver(current_printer));
+  stp_set_driver(plist[plist_current].v,stp_printer_get_driver(current_printer));
 
-  strcpy(stp_get_output_to(vars), gtk_entry_get_text(GTK_ENTRY(output_cmd)));
-  strcpy(stp_set_output_to(plist[plist_current],stp_get_output_to(vars)));
+  stp_set_output_to(vars, gtk_entry_get_text(GTK_ENTRY(output_cmd)));
+  stp_set_output_to(plist[plist_current].v,stp_get_output_to(vars));
 
-  strcpy(stp_get_ppd_file(vars), gtk_entry_get_text(GTK_ENTRY(ppd_file)));
-  strcpy(stp_set_ppd_file(plist[plist_current],stp_get_ppd_file(vars)));
+  stp_set_ppd_file(vars, gtk_entry_get_text(GTK_ENTRY(ppd_file)));
+  stp_set_ppd_file(plist[plist_current].v,stp_get_ppd_file(vars));
 
   gtk_plist_callback(NULL, plist_current);
 
@@ -2005,7 +2008,7 @@ static void gtk_print_driver_callback(GtkWidget *widget, /* I - Driver list */
   data = gtk_clist_get_row_data(GTK_CLIST(widget), row);
   current_printer = stp_get_printer_by_index((int) data);
 
-  if (strncmp(current_printer->driver, "ps", 2) == 0)
+  if (strncmp(stp_printer_get_driver(current_printer), "ps", 2) == 0)
   {
     gtk_widget_show(ppd_file);
     gtk_widget_show(ppd_button);
@@ -2059,8 +2062,8 @@ static void gtk_ppd_cancel_callback(void)
 static void gtk_file_ok_callback(void)
 {
   gtk_widget_hide(file_browser);
-  strcpy(stp_get_output_to(vars),
-         gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_browser)));
+  stp_set_output_to(vars,
+		    gtk_file_selection_get_filename(GTK_FILE_SELECTION(file_browser)));
 
   runme = TRUE;
   gtk_widget_destroy (gtk_color_adjust_dialog);
@@ -2101,11 +2104,11 @@ static void gtk_preview_update(void)
   gdouble unit_scaler;
 
 
-  (*current_printer->printfuncs->media_size)(current_printer, &vars,
-					     &paper_width, &paper_height);
+  (*stp_printer_get_printfuncs(current_printer)->media_size)
+    (current_printer, vars, &paper_width, &paper_height);
 
-  (*current_printer->printfuncs->imageable_area)(current_printer, &vars,
-						 &left, &right, &bottom, &top);
+  (*stp_printer_get_printfuncs(current_printer)->imageable_area)
+    (current_printer, vars, &left, &right, &bottom, &top);
 
   /* Rationalise things a bit by measuring everything from the top left */
   top = paper_height - top;
@@ -2272,13 +2275,13 @@ static void gtk_preview_update(void)
       stp_set_left(vars, printable_width - print_width);
 
   if (stp_get_top(vars) < 0)
-    stp_get_top(vars)  = ((paper_height - print_height) / 2) - top;
+    stp_set_top(vars, ((paper_height - print_height) / 2) - top);
 
   if (stp_get_top(vars) > (printable_height - print_height))
       stp_set_top(vars, printable_height - print_height);
 
-  stp_set_left(plist[plist_current], stp_get_left(vars));
-  stp_set_top(plist[plist_current], stp_get_top(vars));
+  stp_set_left(plist[plist_current].v, stp_get_left(vars));
+  stp_set_top(plist[plist_current].v, stp_get_top(vars));
 
 
   if(stp_get_unit(vars)) unit_scaler = 72.0/2.54;
@@ -2384,26 +2387,29 @@ static void gtk_preview_motion_callback(GtkWidget      *w,
 {
 
   if (stp_get_left(vars) < 0 || stp_get_top(vars) < 0)
-  {
-    stp_set_left(vars, 72 * (printable_width - print_width) / 20);
-    stp_get_top(vars)  = 72 * (printable_height - print_height) / 20;
-  }
+    {
+      stp_set_left(vars, 72 * (printable_width - print_width) / 20);
+      stp_set_top(vars, 72 * (printable_height - print_height) / 20);
+    }
 
-  if (mouse_button == 1) {
-    stp_get_left(vars) += 72 * (event->x - mouse_x) / preview_ppi;
-    stp_get_top(vars)  += 72 * (event->y - mouse_y) / preview_ppi;
-  } else {
-    stp_get_left(vars) += event->x - mouse_x;
-    stp_get_top(vars)  += event->y - mouse_y;
-  }
+  if (mouse_button == 1)
+    {
+      stp_set_left(vars, stp_get_left(vars) + 72 * (event->x - mouse_x) / preview_ppi);
+      stp_set_top(vars, stp_get_top(vars) + 72 * (event->y - mouse_y) / preview_ppi);
+    }
+  else
+    {
+      stp_set_left(vars, stp_get_left(vars) + event->x - mouse_x);
+      stp_set_top(vars, stp_get_top(vars) + event->y - mouse_y);
+    }
 
   if (stp_get_left(vars) < 0)
-    stp_get_left(vars, 0);
+    stp_set_left(vars, 0);
 
   if (stp_get_top(vars) < 0)
     stp_set_top(vars, 0);
-  stp_set_left(plist[plist_current], stp_get_left(vars));
-  stp_set_top(plist[plist_current], stp_get_top(vars));
+  stp_set_left(plist[plist_current].v, stp_get_left(vars));
+  stp_set_top(plist[plist_current].v, stp_get_top(vars));
 
   gtk_preview_update();
 
@@ -2421,4 +2427,4 @@ static void gtk_show_adjust_button_callback(GtkWidget * w)
     gtk_widget_show(gtk_color_adjust_dialog);
 }
 
-#endif  /* ! NEW_UI_ONLY */
+#endif /* ! NEW_UI_ONLY */

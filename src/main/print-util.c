@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.2.5 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: print-util.c,v 1.8.2.6 2001/02/22 02:34:42 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -196,6 +196,7 @@ stp_allocate_vars()
 {
   void *retval = xmalloc(sizeof(stp_internal_vars_t));
   memset(retval, 0, sizeof(stp_internal_vars_t));
+  stp_copy_vars(retval, &default_vars);
   return (retval);
 }
 
@@ -212,25 +213,37 @@ c_strdup(const char *s)
 {
   char *ret;
   if (!s)
-    return NULL;
-  ret = xmalloc(strlen(s) + 1);
-  strcpy(ret, s);
-  return ret;
+    {
+      ret = xmalloc(1);
+      ret[0] = 0;
+      return ret;
+    }
+  else
+    {
+      ret = xmalloc(strlen(s) + 1);
+      strcpy(ret, s);
+      return ret;
+    }
 }
 
 static char *
 c_strndup(const char *s, int n)
 {
   char *ret;
-  if (!s)
-    return NULL;
-  if (n < 0)
-    return NULL;
-  if (n > strlen(s))
-    n = strlen(s);
-  ret = xmalloc(n + 1);
-  strncpy(ret, s, n);
-  return ret;
+  if (!s || n < 0)
+    {
+      ret = xmalloc(1);
+      ret[0] = 0;
+      return ret;
+    }
+  else
+    {
+      if (n > strlen(s))
+	n = strlen(s);
+      ret = xmalloc(n + 1);
+      strncpy(ret, s, n);
+      return ret;
+    }
 }
 
 void
@@ -330,6 +343,8 @@ DEF_FUNCS(cmap, unsigned char *);
 void
 stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
 {
+  if (vs == vd)
+    return;
   stp_set_output_to(vd, stp_get_output_to(vs));
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));

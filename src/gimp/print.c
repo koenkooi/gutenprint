@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.2.2 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: print.c,v 1.4.2.3 2001/02/22 02:34:42 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -125,9 +125,7 @@ int
 main(int  argc,		/* I - Number of command-line args */
      char *argv[])	/* I - Command-line args */
 {
-  vars = stp_allocate_copy(stp_default_vars());
   return (gimp_main(argc, argv));
-  stp_free_vars(vars);
 }
 #else
 MAIN()
@@ -312,6 +310,7 @@ run (char   *name,		/* I - Name of print program. */
   INIT_LOCALE ("gimp-print");
 #endif
 
+  vars = stp_allocate_copy(stp_default_settings());
   /*
    * Initialize parameter data...
    */
@@ -635,6 +634,7 @@ run (char   *name,		/* I - Name of print program. */
 #else
   ; /* MRS: empty statement to suppress compiler warning */
 #endif
+  stp_free_vars(vars);
 }
 
 /*
@@ -860,6 +860,7 @@ printrc_load(void)
     */
 
     (void) memset(&key, 0, sizeof(gp_plist_t));
+    initialize_printer(&key);
     (void) memset(line, 0, 1024);
     while (fgets(line, sizeof(line), fp) != NULL)
     {
@@ -935,18 +936,20 @@ printrc_load(void)
 #endif
 	    p = &plist[0];
 	    memcpy(p, &key, sizeof(gp_plist_t));
+	    p->v = stp_allocate_copy(key.v);
 	    p->active = 1;
 	  }
-        else
-	  {
-            if ((p = psearch(&key, plist + 1, plist_count - 1, sizeof(gp_plist_t),
-                         (int (*)(const void *, const void *))compare_printers))
-	        != NULL)
-	      {
-#ifdef DEBUG
-	        printf("Updating printer %s.\n", key.name);
-#endif
-	        memcpy(p, &key, sizeof(gp_plist_t));
+	 else
+	   {
+	     if ((p = psearch(&key, plist + 1, plist_count - 1, sizeof(gp_plist_t),
+			  (int (*)(const void *, const void *))compare_printers))
+		 != NULL)
+	       {
+ #ifdef DEBUG
+		 printf("Updating printer %s.\n", key.name);
+ #endif
+		 memcpy(p, &key, sizeof(gp_plist_t));
+		 stp_copy_vars(p->v, key.v);
 	        p->active = 1;
 	      }
             else
@@ -958,6 +961,7 @@ printrc_load(void)
 	        check_plist(plist_count + 1);
 	        p = plist + plist_count;
 	        memcpy(p, &key, sizeof(gp_plist_t));
+		p->v = stp_allocate_copy(key.v);
 	        p->active = 0;
 	        plist_count++;
 	      }
@@ -1016,6 +1020,7 @@ printrc_load(void)
 	      {
 		p = &plist[0];
 		memcpy(p, &key, sizeof(gp_plist_t));
+		p->v = stp_allocate_copy(key.v);
 		p->active = 1;
 	      }
 	  }
@@ -1032,15 +1037,21 @@ printrc_load(void)
 		    p = plist + plist_count;
 		    plist_count++;
 		    memcpy(p, &key, sizeof(gp_plist_t));
+		    p->v = stp_allocate_copy(key.v);
 		    p->active = 0;
 		  }
 		else
 		  {
 		    memcpy(p, &key, sizeof(gp_plist_t));
+		    stp_copy_vars(p->v, key.v);
 		    p->active = 1;
 		  }
 	      }
 	  }
+#ifdef DEBUG
+	  printf("output_to is now %s\n", stp_get_output_to(p->v));
+#endif
+
 	  initialize_printer(&key);
 	  strncpy(key.name, value, 127);
 	} else if (strcasecmp("destination", keyword) == 0) {
@@ -1120,6 +1131,7 @@ printrc_load(void)
 	      {
 		p = &plist[0];
 		memcpy(p, &key, sizeof(gp_plist_t));
+		p->v = stp_allocate_copy(key.v);
 		p->active = 1;
 	      }
 	  }
@@ -1136,11 +1148,13 @@ printrc_load(void)
 		    p = plist + plist_count;
 		    plist_count++;
 		    memcpy(p, &key, sizeof(gp_plist_t));
+		    p->v = stp_allocate_copy(key.v);
 		    p->active = 0;
 		  }
 		else
 		  {
 		    memcpy(p, &key, sizeof(gp_plist_t));
+		    stp_copy_vars(p->v, key.v);
 		    p->active = 1;
 		  }
 	      }
@@ -1150,6 +1164,7 @@ printrc_load(void)
   }
 
   g_free (filename);
+
 
  /*
   * Select the current printer as necessary...
@@ -1295,7 +1310,7 @@ compare_printers(gp_plist_t *p1,	/* I - First printer to compare */
 #define PRINTERS_LPC	1
 #define PRINTERS_LPSTAT	2
 
-extern int vasprintf (char **result, const char *format, va_list args);
+extern int asprintf (char **result, const char *format, ...);
 
 static void
 get_system_printers(void)
@@ -1394,7 +1409,7 @@ get_system_printers(void)
 		initialize_printer(&plist[plist_count]);
 		strncpy(plist[plist_count].name, line, sizeof(plist[0].name) - 1);
 		plist[plist_count].name[sizeof(plist[0].name) - 1] = '\0';
-		vasprintf(&result, "lpr -P%s -l", line);
+		asprintf(&result, "lpr -P%s -l", line);
 		stp_set_output_to(plist[plist_count].v, result);
 		free(result);
 		stp_set_driver(plist[plist_count].v, "ps2");
@@ -1409,7 +1424,7 @@ get_system_printers(void)
 		check_plist(plist_count + 1);
 		initialize_printer(&plist[plist_count]);
 		strcpy(plist[plist_count].name, name);
-		vasprintf(&result, "lp -s -d%s -oraw", name);
+		asprintf(&result, "lp -s -d%s -oraw", name);
 		stp_set_output_to(plist[plist_count].v, result);
 		free(result);
 		stp_set_driver(plist[plist_count].v, "ps2");
@@ -1455,5 +1470,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.2.2 2001/02/21 23:36:05 rlk Exp $".
+ * End of "$Id: print.c,v 1.4.2.3 2001/02/22 02:34:42 rlk Exp $".
  */

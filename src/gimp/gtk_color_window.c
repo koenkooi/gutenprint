@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.2.2.1 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.2.2.2 2001/02/22 02:34:42 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -28,7 +28,7 @@
 
 #include "print_gimp.h"
 
-#ifndef NEW_UI_ONLY
+/* #ifndef NEW_UI_ONLY */
 
 #include "print-intl.h"
 
@@ -107,9 +107,9 @@ void gtk_create_color_adjust_window(void)
     GtkWidget*  box;            /* Box container */
     GtkWidget*  scale;  /* Scale widget */
     GtkWidget*  entry;  /* Text entry widget */
-    const stp_vars_t *lower = stp_minimum_settings();
-    const stp_vars_t *upper = stp_maximum_settings();
-    const stp_vars_t *defvars = stp_default_settings();
+    const stp_vars_t lower = stp_minimum_settings();
+    const stp_vars_t upper = stp_maximum_settings();
+    const stp_vars_t defvars = stp_default_settings();
 
     GtkObject*  scale_data;  /* Scale data (limits) */
     char s[100]; /* Text string */
@@ -658,21 +658,37 @@ void gtk_create_color_adjust_window(void)
 void
 gtk_do_color_updates(void)
 {
-  GTK_ADJUSTMENT(brightness_adjustment)->value = stp_set_brightness(plist[plist_current],  gtk_signal_emit_by_name(brightness_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(brightness_adjustment)->value =
+    stp_get_brightness(plist[plist_current].v);
+  gtk_signal_emit_by_name(brightness_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(gamma_adjustment)->value = stp_set_gamma(plist[plist_current],  gtk_signal_emit_by_name(gamma_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(gamma_adjustment)->value =
+    stp_get_gamma(plist[plist_current].v);
+  gtk_signal_emit_by_name(gamma_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(contrast_adjustment)->value = stp_set_contrast(plist[plist_current],  gtk_signal_emit_by_name(contrast_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(contrast_adjustment)->value =
+    stp_get_contrast(plist[plist_current].v);
+  gtk_signal_emit_by_name(contrast_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(cyan_adjustment)->value = stp_set_cyan(plist[plist_current],  gtk_signal_emit_by_name(cyan_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(cyan_adjustment)->value =
+    stp_get_cyan(plist[plist_current].v);
+  gtk_signal_emit_by_name(cyan_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(magenta_adjustment)->value = stp_set_magenta(plist[plist_current],  gtk_signal_emit_by_name(magenta_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(magenta_adjustment)->value =
+    stp_get_magenta(plist[plist_current].v);
+  gtk_signal_emit_by_name(magenta_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(yellow_adjustment)->value = stp_set_yellow(plist[plist_current],  gtk_signal_emit_by_name(yellow_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(yellow_adjustment)->value =
+    stp_get_yellow(plist[plist_current].v);
+  gtk_signal_emit_by_name(yellow_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(saturation_adjustment)->value = stp_set_saturation(plist[plist_current],  gtk_signal_emit_by_name(saturation_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(saturation_adjustment)->value =
+    stp_get_saturation(plist[plist_current].v);
+  gtk_signal_emit_by_name(saturation_adjustment, "value_changed");
 
-  GTK_ADJUSTMENT(density_adjustment)->value = stp_set_density(plist[plist_current],  gtk_signal_emit_by_name(density_adjustment, "value_changed"));
+  GTK_ADJUSTMENT(density_adjustment)->value =
+    stp_get_density(plist[plist_current].v);
+  gtk_signal_emit_by_name(density_adjustment, "value_changed");
 }
 
 /***************************************************************************
@@ -713,7 +729,7 @@ static void gtk_brightness_update(GtkAdjustment *adjustment) /* I- New value */
     if (stp_get_brightness(vars) != adjustment->value)
     {
 	stp_set_brightness(vars, adjustment->value);
-	stp_set_brightness(plist[plist_current], adjustment->value);
+	stp_set_brightness(plist[plist_current].v, adjustment->value);
 
 	sprintf(s, "%5.3f", stp_get_brightness(vars));
 
@@ -760,7 +776,7 @@ static void gtk_contrast_update(GtkAdjustment *adjustment) /* I - New value */
     if (stp_get_contrast(vars) != adjustment->value)
     {
 	stp_set_contrast(vars, adjustment->value);
-	stp_set_contrast(plist[plist_current], adjustment->value);
+	stp_set_contrast(plist[plist_current].v, adjustment->value);
 
 	sprintf(s, "%5.3f", stp_get_contrast(vars));
 
@@ -806,7 +822,7 @@ static void gtk_cyan_update(GtkAdjustment *adjustment)	/* I - New value */
   if (stp_get_cyan(vars) != adjustment->value)
   {
     stp_set_cyan(vars, adjustment->value);
-    stp_set_cyan(plist[plist_current], adjustment->value);
+    stp_set_cyan(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%5.3f", stp_get_cyan(vars));
 
@@ -851,7 +867,7 @@ static void gtk_magenta_update(GtkAdjustment *adjustment)	/* I - New value */
   if (stp_get_magenta(vars) != adjustment->value)
   {
     stp_set_magenta(vars, adjustment->value);
-    stp_set_magenta(plist[plist_current], adjustment->value);
+    stp_set_magenta(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%5.3f", stp_get_magenta(vars));
 
@@ -896,7 +912,7 @@ static void gtk_yellow_update(GtkAdjustment *adjustment)	/* I - New value */
   if (stp_get_yellow(vars) != adjustment->value)
   {
     stp_set_yellow(vars, adjustment->value);
-    stp_set_yellow(plist[plist_current], adjustment->value);
+    stp_set_yellow(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%5.3f", stp_get_yellow(vars));
 
@@ -942,7 +958,7 @@ static void gtk_gamma_update(GtkAdjustment *adjustment)	/* I - New value */
   {
     stp_set_gamma(vars, adjustment->value);
 
-    stp_set_gamma(plist[plist_current], adjustment->value);
+    stp_set_gamma(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%5.3f", stp_get_gamma(vars));
 
@@ -989,7 +1005,7 @@ static void gtk_saturation_update(GtkAdjustment *adjustment)
   if (stp_get_saturation(vars) != adjustment->value)
   {
     stp_set_saturation(vars, adjustment->value);
-    stp_set_saturation(plist[plist_current], adjustment->value);
+    stp_set_saturation(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%5.3f", stp_get_saturation(vars));
 
@@ -1035,7 +1051,7 @@ static void gtk_density_update(GtkAdjustment *adjustment)  /* I - New value */
   if (stp_get_density(vars) != adjustment->value)
   {
     stp_set_density(vars, adjustment->value);
-    stp_set_density(plist[plist_current], adjustment->value);
+    stp_set_density(plist[plist_current].v, adjustment->value);
 
     sprintf(s, "%4.3f", stp_get_density(vars));
 
@@ -1113,7 +1129,8 @@ void gtk_build_dither_menu()
 	printf("item[%d] = \'%s\'\n", i, stp_dither_algorithm_name(i));
 #endif /* DEBUG */
 
-	if (strcmp(stp_dither_algorithm_name(i), stp_set_dither_algorithm(plist[plist_current],== 0))
+	if (strcmp(stp_dither_algorithm_name(i),
+		   stp_get_dither_algorithm(plist[plist_current].v)) == 0)
 	{
 	    gtk_option_menu_set_history(GTK_OPTION_MENU(dither_algo_button), i);
 	    break;
@@ -1138,7 +1155,8 @@ gtk_dither_algo_callback (GtkWidget *widget,
 			  gint   data)
 {
   stp_set_dither_algorithm(vars, stp_dither_algorithm_name(data));
-  strcpy(stp_set_dither_algorithm(plist[plist_current],	 stp_dither_algorithm_name(data)));
+  stp_set_dither_algorithm(plist[plist_current].v,
+			   stp_dither_algorithm_name(data));
 }
 
-#endif  /* ! NEW_UI_ONLY */
+/* #endif  ! NEW_UI_ONLY */

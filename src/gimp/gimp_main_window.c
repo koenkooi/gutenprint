@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.6.2.1 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.6.2.2 2001/02/22 02:34:42 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -587,10 +587,10 @@ gimp_create_main_window (void)
   gtk_widget_show (table);
 
   (stp_printer_get_printfuncs(current_printer)->media_size) (current_printer,
-					      &vars, &paper_width,
+					      vars, &paper_width,
 					      &paper_height);
 
-  (stp_printer_get_printfuncs(current_printer)->imageable_area) (current_printer, &vars,
+  (stp_printer_get_printfuncs(current_printer)->imageable_area) (current_printer, vars,
 						  &left, &right,
 						  &bottom, &top);
 
@@ -1361,11 +1361,11 @@ gimp_plist_callback (GtkWidget *widget,
   plist_current = (gint) data;
   p             = plist + plist_current;
 
-  if (!strcmp(stp_get_driver(p->v), ""))
+  if (strcmp(stp_get_driver(p->v), ""))
     {
       stp_set_driver(vars, stp_get_driver(p->v));
 
-      current_printer = stp_get_printer_by_driver (stp_get_driver(vars));
+      current_printer = stp_get_printer_by_driver(stp_get_driver(vars));
     }
 
   stp_set_ppd_file(vars, stp_get_ppd_file(p->v));
@@ -1516,7 +1516,7 @@ gimp_media_size_callback (GtkWidget *widget,
       if (stp_get_unit(vars))
 	unit_scaler /= 2.54;
       new_value *= unit_scaler;
-      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, &vars,
+      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, vars,
 					   &width_limit, &height_limit);
       if (new_value < 72)
 	new_value = 72;
@@ -1542,7 +1542,7 @@ gimp_media_size_callback (GtkWidget *widget,
       if (stp_get_unit(vars))
 	unit_scaler /= 2.54;
       new_value *= unit_scaler;
-      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, &vars,
+      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, vars,
 					   &width_limit, &height_limit);
       if (new_value < 144)
 	new_value = 144;
@@ -1569,7 +1569,7 @@ gimp_media_size_callback (GtkWidget *widget,
 	  gdouble size;
 	  if (stp_papersize_get_width(pap) == 0)
 	    {
-	      stp_default_media_size(current_printer, &vars,
+	      stp_default_media_size(current_printer, vars,
 				 &default_width, &default_height);
 	      size = default_width / 72.0;
 	      if (stp_get_unit(vars))
@@ -1593,7 +1593,7 @@ gimp_media_size_callback (GtkWidget *widget,
 	    }
 	  if (stp_papersize_get_height(pap) == 0)
 	    {
-	      stp_default_media_size(current_printer, &vars,
+	      stp_default_media_size(current_printer, vars,
 				 &default_width, &default_height);
 	      size = default_height / 72.0;
 	      if (stp_get_unit(vars))
@@ -1974,14 +1974,14 @@ gimp_update_adjusted_thumbnail (void)
 
   stp_set_density(vars, 1.0);
 
-  stp_compute_lut (256, &vars);
+  stp_compute_lut (256, vars);
   colourfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
-				 &adjusted_thumbnail_bpp, &vars);
+				 &adjusted_thumbnail_bpp, vars);
 
   for (y = 0; y < thumbnail_h; y++)
     {
       (*colourfunc) (thumbnail_data + thumbnail_bpp * thumbnail_w * y,
-		     out, thumbnail_w, thumbnail_bpp, NULL, &vars, NULL, NULL,
+		     out, thumbnail_w, thumbnail_bpp, NULL, vars, NULL, NULL,
 		     NULL);
       for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
 	{
@@ -1989,7 +1989,7 @@ gimp_update_adjusted_thumbnail (void)
 	}
     }
 
-  stp_free_lut (&vars);
+  stp_free_lut (vars);
 
   stp_set_density(vars, old_density);
 
@@ -2015,11 +2015,11 @@ gimp_preview_update (void)
   gint          paper_left, paper_top;
   gdouble	unit_scaler = 72.0;
 
-  (stp_printer_get_printfuncs(current_printer)->media_size) (current_printer, &vars, &paper_width,
-				  &paper_height);
+  (stp_printer_get_printfuncs(current_printer)->media_size)
+    (current_printer, vars, &paper_width, &paper_height);
 
-  (stp_printer_get_printfuncs(current_printer)->imageable_area) (current_printer, &vars, &left, &right,
-				      &bottom, &top);
+  (stp_printer_get_printfuncs(current_printer)->imageable_area)
+    (current_printer, vars, &left, &right, &bottom, &top);
 
   /* Rationalise things a bit by measuring everything from the top left */
   top = paper_height - top;
