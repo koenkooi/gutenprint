@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.14 2002/11/24 02:19:06 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.15 2002/11/26 02:13:29 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -729,14 +729,24 @@ static stp_internal_papersize_t paper_sizes[] =
    */
   { "ARCHA",		N_ ("ArchA"),
     648,  864, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { "ARCHA_trans",	N_ ("ArchA Transverse"),
+    864,  648, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "ARCHB",		N_ ("ArchB"),
     864, 1296, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { "ARCHB_trans",	N_ ("ArchB Transverse"),
+    1296, 864, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "ARCHC",		N_ ("ArchC"),
     1296, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { "ARCHC_trans",	N_ ("ArchC Transverse"),
+    1728, 1296, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "ARCHD",		N_ ("ArchD"),
     1728, 2592, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { "ARCHD_trans",	N_ ("ArchD Transverse"),
+    2592, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
   { "ARCHE",		N_ ("ArchE"),
     2592, 3456, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { "ARCHE_trans",	N_ ("ArchE Transverse"),
+    3456, 2592, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
   /*
    * Foolscap
