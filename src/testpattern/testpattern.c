@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.36 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: testpattern.c,v 1.37 2004/04/11 02:45:46 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -73,7 +73,7 @@ int global_printer_width;
 int global_printer_height;
 int global_band_height;
 int global_n_testpatterns;
-char *global_printer;
+char *global_printer = NULL;
 double global_density;
 double global_xtop;
 double global_xleft;
@@ -193,6 +193,8 @@ initialize_global_parameters(void)
   global_printer_height = 0;
   global_band_height = 0;
   global_n_testpatterns = -1;
+  if (global_printer)
+    free(global_printer);
   global_printer = NULL;
   global_density = 1.0;
   global_xtop = 0;
