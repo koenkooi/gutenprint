@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.27 2003/06/01 23:02:12 rlk Exp $"
+ * "$Id: testpattern.c,v 1.28 2003/08/07 01:26:16 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -336,6 +336,8 @@ main(int argc, char **argv)
   stp_set_outdata(v, stdout);
   stp_set_errdata(v, stderr);
   stp_set_float_parameter(v, "Density", density);
+  stp_set_string_parameter(v, "Quality", "None");
+  stp_set_string_parameter(v, "ImageType", "None");
 
   params = stp_get_parameter_list(v);
   count = stp_parameter_list_count(params);
