@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.104 2000/07/18 00:13:01 rlk Exp $"
+ * "$Id: print.c,v 1.105 2000/08/05 16:50:35 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -121,7 +121,9 @@ vars_t vars =
 	1.0,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
 	0,			/* Unit 0=Inch */
-	1.0			/* Application gamma placeholder */
+	1.0,			/* Application gamma placeholder */
+	0,			/* Page width */
+	0			/* Page height */
 };
 
 int		plist_current = 0,	/* Current system printer */
@@ -388,6 +390,8 @@ run (char   *name,		/* I - Name of print program. */
        * Possibly retrieve data...
        */
       gimp_get_data (PLUG_IN_NAME, &vars);
+      vars.page_width = 0;
+      vars.page_height = 0;
 
       current_printer = get_printer_by_driver (vars.driver);
 
@@ -510,6 +514,8 @@ run (char   *name,		/* I - Name of print program. */
        * Possibly retrieve data...
        */
       gimp_get_data (PLUG_IN_NAME, &vars);
+      vars.page_width = 0;
+      vars.page_height = 0;
 
       current_printer = get_printer_by_driver (vars.driver);
       break;
@@ -637,7 +643,10 @@ run (char   *name,		/* I - Name of print program. */
 	   * and close the output file/command...
 	   */
 
-	  (*current_printer->print) (current_printer, 1, prn, image, &vars);
+	  if (verify_printer_params(current_printer, &vars))
+	    (*current_printer->print) (current_printer, 1, prn, image, &vars);
+	  else
+	    values[0].data.d_status = STATUS_EXECUTION_ERROR;
 
 	  if (plist_current > 0)
 #ifndef __EMX__
@@ -1167,5 +1176,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.104 2000/07/18 00:13:01 rlk Exp $".
+ * End of "$Id: print.c,v 1.105 2000/08/05 16:50:35 rlk Exp $".
  */

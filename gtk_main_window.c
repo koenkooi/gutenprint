@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.43 2000/07/22 14:04:42 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.44 2000/08/05 16:50:34 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2134,11 +2134,10 @@ static void gtk_preview_update(void)
   double unit_scaler;
 
 
-  (*current_printer->media_size)(current_printer, vars.ppd_file,
-				 vars.media_size, &paper_width, &paper_height);
+  (*current_printer->media_size)(current_printer, &vars, &paper_width,
+				 &paper_height);
 
-  (*current_printer->imageable_area)(current_printer, vars.ppd_file,
-				     vars.media_size, &left, &right,
+  (*current_printer->imageable_area)(current_printer, &vars, &left, &right,
 				     &bottom, &top);
 
   /* Rationalise things a bit by measuring everything from the top left */
