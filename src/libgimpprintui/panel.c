@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.55 2003/11/20 00:30:53 rleigh Exp $"
+ * "$Id: panel.c,v 1.56 2004/01/21 09:20:55 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -989,8 +989,8 @@ set_options_active(const char *omit)
     }
 }
 
-static int
-color_button_callback(GtkObject *button)
+static void
+color_button_callback(GtkWidget *widget, gpointer data)
 {
   invalidate_preview_thumbnail();
   update_adjusted_thumbnail();
