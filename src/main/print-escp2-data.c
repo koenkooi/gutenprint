@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.15.4.41 2003/12/02 01:50:59 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.15.4.42 2004/02/16 21:09:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -4938,8 +4938,8 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     59, 60, 2, 180, 180, 2, 180, 180, 2,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
-    9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 0, 0, 9, 9, 0, 0,
-    0, 1, 0, 0, -240, 0, 0,
+    0, 0, 0, 9, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 125, -240, 0, 0,
     c3pl_pigment_dotsizes, c3pl_pigment_densities, &variable_3pl_pigment_inks,
     &c80_paper_list, standard_reslist, &c80_inklist,
     variable_bits, variable_base_res, &default_input_slot_list,
@@ -4953,8 +4953,8 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     29, 30, 3, 90, 90, 3, 90, 90, 3,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
-    9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 0, 0, 9, 9, 0, 0,
-    0, 1, 0, 0, -180, 0, 0,
+    0, 0, 0, 9, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 125, -180, 0, 0,
     c3pl_pigment_dotsizes, c3pl_pigment_densities, &variable_3pl_pigment_inks,
     &c80_paper_list, standard_reslist, &c64_inklist,
     variable_bits, variable_base_res, &default_input_slot_list,
