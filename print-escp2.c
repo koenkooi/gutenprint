@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.53 2000/02/05 14:56:41 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.54 2000/02/05 23:54:58 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.54  2000/02/05 23:54:58  rlk
+ *   Do horizontal positioning correctly in microweave
+ *
  *   Revision 1.53  2000/02/05 14:56:41  rlk
  *   1) print-util.c: decrement rather than increment counter!
  *
@@ -1638,8 +1641,16 @@ escp2_write(FILE          *prn,		/* I - Print file or command */
     fprintf(prn, "\033r%c", plane);
 
   if (escp2_has_cap(model, MODEL_1440DPI_MASK, MODEL_1440DPI_YES))
-    fprintf(prn, "\033(\\%c%c%c%c%c%c", 4, 0, 160, 5,
-	    (offset * 1440 / ydpi) & 255, (offset * 1440 / ydpi) >> 8);
+    {
+      if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK,
+			MODEL_VARIABLE_4))
+	fprintf(prn, "\033(/%c%c%c%c%c%c", 4, 0,
+		(offset * 1440 / ydpi) & 255, (offset * 1440 / ydpi) >> 8,
+		0, 0);
+      else
+	fprintf(prn, "\033(\\%c%c%c%c%c%c", 4, 0, 160, 5,
+		(offset * 1440 / ydpi) & 255, (offset * 1440 / ydpi) >> 8);
+    }
   else
     fprintf(prn, "\033\\%c%c", offset & 255, offset >> 8);
 
@@ -2723,5 +2734,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.53 2000/02/05 14:56:41 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.54 2000/02/05 23:54:58 rlk Exp $".
  */
