@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.11.16.3 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.11.16.4 2004/03/27 02:43:27 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -90,6 +90,7 @@ typedef struct
   guchar *cmap;
   guchar *alpha_table;
   guchar *tmp;
+  gint last_printed_percent;
   gint initialized;
 } Gimp_Image_t;
 
@@ -218,6 +219,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	      int row)
 {
   Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
+  int last_printed_percent;
   guchar *inter;
   if (!im->initialized)
     {
@@ -236,6 +238,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	    im->tmp = xmalloc(im->drawable->bpp * im->w);
 	  break;
 	}
+      im->initialized = 1;
     }    
   if (im->tmp)
     inter = im->tmp;
@@ -308,7 +311,12 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	    }
 	}
     }
-  gimp_progress_update((double) row / (double) im->h);
+  last_printed_percent = row * 100 / im->h;
+  if (last_printed_percent > im->last_printed_percent)
+    {
+      gimp_progress_update((double) row / (double) im->h);
+      im->last_printed_percent = last_printed_percent;
+    }
   return STP_IMAGE_STATUS_OK;
 }
 
@@ -436,5 +444,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.11.16.3 2004/03/26 01:20:16 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.11.16.4 2004/03/27 02:43:27 rlk Exp $".
  */
