@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.13 2000/09/18 13:09:03 easysw Exp $"
+# "$Id: Makefile.in,v 1.14 2000/09/20 22:59:17 rlk Exp $"
 #
 #   Makefile for the CUPS drivers.
 #
@@ -96,8 +96,8 @@ all:
 #
 
 clean:
+	$(RM) -r ppd
 	$(RM) $(OBJS) $(TARGETS)
-	$(RM) -r ppd/*
 
 
 #
@@ -210,5 +210,5 @@ rastertoprinter.o:	cups-print.h cups-quickmatrix257.h cups-ran.367.179.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.13 2000/09/18 13:09:03 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.14 2000/09/20 22:59:17 rlk Exp $".
 #
