@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.8 2002/06/05 23:14:45 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.9 2002/06/09 21:10:54 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -266,10 +266,22 @@ typedef struct
 
 typedef struct
 {
+  int color;
+  int density;
+} physical_subchannel_t;
+
+typedef struct
+{
+  const physical_subchannel_t *channels;
+  int n_subchannels;
+} ink_channel_t;
+
+typedef struct
+{
   const char *name;
   const char *text;
-  int hasblack;
-  int ncolors;
+  int is_color;
+  const ink_channel_t *channels[NCOLORS];
 } escp2_inkname_t;
 
 typedef struct
