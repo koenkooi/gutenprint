@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2001/09/18 20:21:56 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ $(srcdir)/gdevstp-print.h: $(top_srcdir)/include/gimp-print/gimp-print.h
 $(srcdir)/gdevstp-print-internal.h: $(top_srcdir)/src/main/gimp-print-internal.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
-$(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/src/main/gimp-print-intl-internal.h
+$(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/include/gimp-print/gimp-print-intl-internal.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
 gdevstp-%.h: $(srcdir)/../main/%.h Makefile
