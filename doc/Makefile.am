@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2002/01/26 20:43:04 rleigh Exp $
+## $Id: Makefile.am,v 1.31 2002/03/23 11:49:07 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,19 +29,19 @@ SUBDIRS = developer users_guide
 ## Data
 
 docs:
-	cd programming; $(MAKE) doc
-	cd users_guide; $(MAKE) doc
+	cd developer; $(MAKE)
+	cd users_guide; $(MAKE)
 
 ps: $(MANUAL).ps
-	cd programming; $(MAKE) ps
+	cd developer; $(MAKE) ps
 	cd users_guide; $(MAKE) ps
 
 pdf: $(MANUAL).pdf
-	cd programming; $(MAKE) pdf
+	cd developer; $(MAKE) pdf
 	cd users_guide; $(MAKE) pdf
 
 html: 
-	cd programming; $(MAKE) html
+	cd developer; $(MAKE) html
 	cd users_guide; $(MAKE) html
 
 

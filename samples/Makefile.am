@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/09/18 18:03:57 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2002/03/23 11:49:08 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,18 +26,18 @@ MAINT_CHARSET = latin1
 
 ## Variables
 
-SAMPLE_IMAGES = colorbars4.png colorsweep.png profile.jpg
-
-pkgdatadir = $(datadir)/$(PACKAGE)/samples
+pkgsampledatadir = $(datadir)/$(PACKAGE)/samples
 
 
 ## Data
 
-pkgdata_DATA = @SAMPLE_IMAGES@
+if INSTALL_SAMPLES
+pkgsampledata_DATA = colorbars4.png colorsweep.png profile.jpg
+endif
 
 
 ## Clean
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(SAMPLE_IMAGES)
+EXTRA_DIST = $(pkgsampledata_DATA)

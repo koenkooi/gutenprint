@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2002/01/26 20:44:49 rleigh Exp $
+## $Id: Makefile.am,v 1.30 2002/03/23 11:49:07 rleigh Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,9 @@ OUTPUTS = \
 
 USER_GUIDE = $(MANUAL).pdf html $(MANUAL).ps
 
-STANDARD_TARGETS=@USER_GUIDE@
+if INSTALL_USER_GUIDE
+STANDARD_TARGETS = $(USER_GUIDE)
+endif
 
 DISTHOOKDIRS = figures $(HTMLDIR)
 DISTHOOKFILES = $(STANDARD_TARGETS)

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/12/21 19:39:28 rleigh Exp $
+## $Id: Makefile.am,v 1.6 2002/03/23 11:49:07 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,10 +40,11 @@ else
 MAINT_MODE = false
 endif
 
-USER_GUIDE = $(MANUAL).ps html
-
-STANDARD_TARGETS=@USER_GUIDE@
-
+if INSTALL_USER_GUIDE
+STANDARD_TARGETS = $(MANUAL).ps html
+else
+STANDARD_TARGETS =
+endif
 
 if MAINTAINER_MODE
 ALL_LOCAL_TARGETS = docs
