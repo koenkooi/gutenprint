@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.101 2004/04/27 23:23:44 rlk Exp $
+dnl $Id: configure.ac,v 1.102 2004/04/30 01:50:22 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.101 $)
+AC_REVISION($Revision: 1.102 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -543,13 +543,37 @@ dnl Set PACKAGE_DATA_DIR in config.h.
 AH_TEMPLATE(PACKAGE_DATA_DIR,, [Package data directory])
 if test "x${datadir}" = 'x${prefix}/share'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}")
+    PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
+    PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
+  PACKAGE_DATA_DIR="${datadir}/${PACKAGE}"
 fi
+
+AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${PACKAGE_DATA_DIR}")
+
+dnl Set PACKAGE_LIB_DIR in config.h.
+AH_TEMPLATE(PACKAGE_LIB_DIR,, [Package lib directory])
+if test "x${libdir}" = 'x${exec_prefix}/lib'; then
+  if test "x${exec_prefix}" = "xNONE"; then
+    PACKAGE_LIB_DIR="${ac_default_prefix}/lib/${PACKAGE}"
+  else
+    PACKAGE_LIB_DIR="${exec_prefix}/lib/${PACKAGE}"
+  fi
+else
+  PACKAGE_LIB_DIR="${libdir}/${PACKAGE}"
+fi
+
+AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${PACKAGE_LIB_DIR}")
+
+AH_TEMPLATE(PKGXMLDATADIR,, [Package XML data directory])
+PKGXMLDATADIR="${PACKAGE_DATA_DIR}/${PACKAGE_VERSION}/xml"
+AC_DEFINE_UNQUOTED(PKGXMLDATADIR, ["$PKGXMLDATADIR"], )
+
+AH_TEMPLATE(PKGMODULEDIR,, [Package module directory])
+PKGMODULEDIR="${PACKAGE_LIB_DIR}/${PACKAGE_VERSION}/modules"
+AC_DEFINE_UNQUOTED(PKGMODULEDIR, ["$PKGMODULEDIR"])
 
 dnl Compiler flags
 if test "$CC" = "gcc" ; then
@@ -808,7 +832,19 @@ LTALLOCA=`echo "$ALLOCA" | sed 's/\.o/.lo/g'`
 AC_SUBST(LTALLOCA)])
 
 dnl Definitions
-AC_DEFINE_UNQUOTED(CUPS_DATADIR, "${cups_conf_datadir}/share/cups", [CUPS data directory.])
+AC_DEFINE_UNQUOTED(CUPS_DATADIR, "${cups_conf_datadir}", [CUPS data directory.])
+
+AH_TEMPLATE(CUPS_MODELDIR,, [CUPS PPD file directory])
+if test "${CUPS_PPDS_AT_TOP_LEVEL}" = yes ; then
+  AC_DEFINE_UNQUOTED(CUPS_MODELDIR, "${cups_conf_datadir}/model/")
+else
+  AC_DEFINE_UNQUOTED(CUPS_MODELDIR, "${cups_conf_datadir}/model/${PACKAGE}/${GIMPPRINT_RELEASE_VERSION}/")
+fi
+
+AH_TEMPLATE(CUPS_PPD_NICKNAME_STRING,, [CUPS PPD Nickname string])
+AC_DEFINE_UNQUOTED(CUPS_PPD_NICKNAME_STRING, [" - CUPS+Gimp-Print v"])
+
+
 AC_DEFINE_UNQUOTED(CUPS_PPD_PS_LEVEL, ${CUPS_PPD_PS_LEVEL}, [CUPS PPD PostScript level])
 STP_RELEASE_DATE
 

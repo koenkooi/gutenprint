@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.83 2004/04/25 12:17:50 rleigh Exp $
+## $Id: Makefile.am,v 1.84 2004/04/30 01:50:22 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,11 +28,8 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-LOCAL_CPPFLAGS = $(GIMPPRINT_CFLAGS) -DPKGMODULEDIR=\"$(pkgmoduledir)\" -DPKGXMLDATADIR=\"$(pkgxmldatadir)\" -DPKGMISCDATADIR=\"$(pkgmiscdatadir)\"
-
 pkgconfigdatadir = $(prefix)/lib/pkgconfig
 pkgxmldatadir = $(pkgdatadir)/$(VERSION)/xml
-pkgmiscdatadir = $(pkgdatadir)/$(VERSION)
 pkgmoduledir = $(pkglibdir)/$(VERSION)/modules
 
 

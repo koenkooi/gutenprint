@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.74 2004/02/16 21:05:34 rlk Exp $
+## $Id: Makefile.am,v 1.75 2004/04/30 01:50:22 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,9 +46,8 @@ DONT_UNINSTALL_PPDS=true
 else
 cups_modeldir = $(pkgdatadir)/model/gimp-print/@GIMPPRINT_MAJOR_VERSION@.@GIMPPRINT_MINOR_VERSION@/
 endif
-CUPS_PPD_NICKNAME_STRING=$(empty)\ -\ CUPS+Gimp-Print\ v$(empty)
 
-DEFS = -I. -I$(srcdir) -I../.. $(AM_CFLAGS) -DGENPPD_PPD_PREFIX=\"$(cups_modeldir)\" @CUPS_CFLAGS@ @DEFS@ $(GIMPPRINT_CFLAGS) -DPPD_NICKNAME_STRING=\"$(CUPS_PPD_NICKNAME_STRING)\" -DCUPS_MODELDIR=\"$(cups_modeldir)\"
+DEFS = -I. -I$(srcdir) -I../.. $(AM_CFLAGS) @CUPS_CFLAGS@ @DEFS@ $(GIMPPRINT_CFLAGS)
 
 
 ## Programs
