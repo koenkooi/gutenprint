@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.18 2003/11/11 03:03:57 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.19 2003/11/14 04:01:12 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -105,6 +105,7 @@ typedef struct dither_channel
   unsigned bit_max;
   unsigned signif_bits;
   unsigned density;
+  double darkness;		/* Relative darkness of this ink */
 
   int v;
   int o;
@@ -252,5 +253,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.18 2003/11/11 03:03:57 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.19 2003/11/14 04:01:12 rlk Exp $".
  */
