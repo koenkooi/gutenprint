@@ -1,5 +1,5 @@
 /*
- * "$Id: paper_sizes.c,v 1.2 2001/04/21 21:51:28 rlk Exp $"
+ * "$Id: paper_sizes.c,v 1.3 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -30,17 +30,6 @@
 #include <gimp-print.h>
 #endif
 #include "../../lib/libprintut.h"
-
-char *params[] =
-{
-  "PageSize",
-  "Resolution",
-  "InkType",
-  "MediaType",
-  "InputSlot"
-};
-
-int nparams = sizeof(params) / sizeof(const char *);
 
 int
 main(int argc, char **argv)

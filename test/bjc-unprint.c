@@ -1,4 +1,4 @@
-/* $Id: bjc-unprint.c,v 1.4 2001/06/03 18:35:03 rleigh Exp $ */
+/* $Id: bjc-unprint.c,v 1.5 2001/06/03 20:53:24 rlk Exp $ */
 /*
  * Convert BJC-printjobs to xbm files, one for each color channel
  *
@@ -271,16 +271,16 @@ char conv(char i) {
 void save2xbm(const char *filename,char col, bitimage_t *img, 
 	      int xmin, int ymin, int xmax, int ymax) 
 {
-  char *outfilename= (char*) xmalloc(strlen(filename)+7);
+  char *outfilename= (char*) xmalloc(strlen(filename)+16);
   FILE *o;
   int i,j,k,i0,i1,j0,j1,w,h;
 
   if (!img) return;
 
   if (col) 
-    snprintf(outfilename,strlen(filename)+7,"%s_%c.xbm",filename,col);
+    sprintf(outfilename,"%s_%c.xbm",filename,col);
   else
-    snprintf(outfilename,strlen(filename)+5,"%s.xbm",filename);
+    sprintf(outfilename,"%s.xbm",filename);
 
   if (!(o= fopen(outfilename,"w"))) {
     free(outfilename);

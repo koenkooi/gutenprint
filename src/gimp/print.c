@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.16 2001/06/03 18:35:03 rleigh Exp $"
+ * "$Id: print.c,v 1.17 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -28,6 +28,7 @@
 
 #include "print_gimp.h"
 
+#include <sys/types.h>
 #include <signal.h>
 #include <ctype.h>
 #include <sys/wait.h>
@@ -138,7 +139,7 @@ cleanupfunc(void)
 static void
 query (void)
 {
-  static GimpParamDef	args[] =
+  static const GimpParamDef args[] =
   {
     { GIMP_PDB_INT32,	"run_mode",	"Interactive, non-interactive" },
     { GIMP_PDB_IMAGE,	"image",	"Input image" },
@@ -968,7 +969,7 @@ printrc_load(void)
 	if (strcasecmp("current-printer", keyword) == 0) {
 	  if (current_printer)
 	    free (current_printer);
-	  current_printer = strdup(value);
+	  current_printer = g_strdup(value);
 	} else if (strcasecmp("printer", keyword) == 0) {
 	  /* Switch to printer named VALUE */
 	  add_printer(&key, 0);
@@ -1214,7 +1215,7 @@ get_system_printers(void)
 #ifdef __EMX__
   BYTE  pnum;
 #endif
-  static char	*lpcs[] =	/* Possible locations of LPC... */
+  static const char	*lpcs[] =	/* Possible locations of LPC... */
 		{
 		  "/etc"
 		  "/usr/bsd",
@@ -1367,5 +1368,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.16 2001/06/03 18:35:03 rleigh Exp $".
+ * End of "$Id: print.c,v 1.17 2001/06/03 20:53:24 rlk Exp $".
  */

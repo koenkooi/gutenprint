@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.2 2001/04/22 03:15:49 rlk Exp $"
+ * "$Id: printer_options.c,v 1.3 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -31,7 +31,7 @@
 #endif
 #include "../../lib/libprintut.h"
 
-char *params[] =
+const char *params[] =
 {
   "PageSize",
   "Resolution",

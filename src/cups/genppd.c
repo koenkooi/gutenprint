@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.15 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: genppd.c,v 1.16 2001/06/03 20:53:24 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -160,7 +160,7 @@ main(int  argc,			/* I - Number of command-line arguments */
      char *argv[])		/* I - Command-line arguments */
 {
   int		i;		/* Looping var */
-  char		*prefix;	/* Directory prefix for output */
+  const char		*prefix;	/* Directory prefix for output */
 
   prefix = "ppd";
 
@@ -670,5 +670,5 @@ write_ppd(const stp_printer_t p,		/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.15 2001/06/01 02:48:32 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.16 2001/06/03 20:53:24 rlk Exp $".
  */

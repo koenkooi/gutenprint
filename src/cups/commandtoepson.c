@@ -1,5 +1,5 @@
 /*
- * "$Id: commandtoepson.c,v 1.1 2001/01/22 20:22:54 rleigh Exp $"
+ * "$Id: commandtoepson.c,v 1.2 2001/06/03 20:53:24 rlk Exp $"
  *
  *   EPSON ESC/P2 command filter for the Common UNIX Printing System.
  *
@@ -39,7 +39,7 @@
 #include <cups/cups.h>
 #include <ctype.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 /*
  * Macros...
@@ -237,5 +237,5 @@ main(int  argc,		/* I - Number of command-line arguments */
 
 
 /*
- * End of "$Id: commandtoepson.c,v 1.1 2001/01/22 20:22:54 rleigh Exp $".
+ * End of "$Id: commandtoepson.c,v 1.2 2001/06/03 20:53:24 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.11 2001/06/03 18:35:03 rleigh Exp $"
+ * "$Id: print_gimp.h,v 1.12 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -28,6 +28,10 @@
 
 #ifndef __PRINT_GIMP_H__
 #define __PRINT_GIMP_H__
+
+#ifdef __GNUC__
+#define inline __inline__
+#endif
 
 #include <gtk/gtk.h>
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.16 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: print-ps.c,v 1.17 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -703,7 +703,7 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
       b /= 85;
       c[0] = b + '!';
 
-      stp_zfwrite(c, 5, 1, v);
+      stp_zfwrite((const char *)c, 5, 1, v);
     }
 
     data += 4;
@@ -726,7 +726,7 @@ ps_ascii85(const stp_vars_t v,		/* I - File to print to */
       b /= 85;
       c[0] = b + '!';
 
-      stp_zfwrite(c, length + 1, 1, v);
+      stp_zfwrite((const char *)c, length + 1, 1, v);
     }
 
     stp_puts("~>\n", v);

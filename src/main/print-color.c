@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.17 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: print-color.c,v 1.18 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -34,6 +34,10 @@
 #include <gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
+
+#ifdef __GNUC__
+#define inline __inline__
+#endif
 
 typedef struct
 {

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.9 2001/06/03 18:35:03 rleigh Exp $"
+ * "$Id: testdither.c,v 1.10 2001/06/03 20:53:24 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -140,13 +140,13 @@ main(int  argc,				/* I - Number of command-line arguments */
   FILE		*fp;			/* PPM/PGM output file */
   char		filename[1024];		/* Name of file */
   stp_vars_t	v;			/* Dither variables */
-  static char	*dither_types[] =	/* Different dithering modes */
+  static const char	*dither_types[] =	/* Different dithering modes */
 		{
 		  "gray",
 		  "color",
 		  "photo"
 		};
-  static char	*image_types[] =	/* Different image types */
+  static const char	*image_types[] =	/* Different image types */
 		{
 		  "mixed",
 		  "white",
@@ -736,5 +736,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.9 2001/06/03 18:35:03 rleigh Exp $".
+ * End of "$Id: testdither.c,v 1.10 2001/06/03 20:53:24 rlk Exp $".
  */
