@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.53 2002/06/09 16:06:04 rleigh Exp $
+## $Id: Makefile.am,v 1.54 2002/06/09 19:43:21 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -110,11 +110,13 @@ endif
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
-	  for language in C $(LINGUAS) ; do \
-	    echo "Installing $$language locale PPD files..." ; \
-	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language ; \
-	    for ppdfile in ppd/$$language/* ; do \
-	      $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(cups_modeldir)/$$language ; \
+	  cd ppd ; \
+	  for language in * ; do \
+	    cd ..; \
+	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language; \
+	    cd ppd/$$language; \
+	    for ppdfile in * ; do \
+	      (cd ../..; $(INSTALL_DATA) ppd/$$language/$$ppdfile $(DESTDIR)$(cups_modeldir)/$$language ; \
 	    done; \
 	  done \
 	fi
