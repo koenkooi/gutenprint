@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.35 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.36 2001/10/13 20:01:16 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -168,13 +168,13 @@ ppd-stamp: genppd
 	cd $(top_builddir)/po ; \
 	$(MAKE) ; \
 	$(MAKE) prefix=$${wdir}/catalog install
-	-rm -rf ppd
+	-$(RM) -r ppd
 	-mkdir ppd
 	for language in C $(ALL_LINGUAS) ; do \
 	  mkdir ppd/$$language ; \
 	  ./genppd --prefix=ppd/$$language --language=$$language --catalog=`pwd`/catalog/share/locale ; \
 	done
-	rm -rf catalog
+	$(RM) -r catalog
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
@@ -194,7 +194,7 @@ dist-hook:
 	done
 
 clean-local:
-	-rm -rf ppd
+	-$(RM) -r ppd
 
 
 ## Clean

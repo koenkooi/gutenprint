@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.14 2001/10/13 20:01:16 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -78,12 +78,12 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	fi
 
 clean-local:
-	-rm -rf foomatic-db
+	-$(RM) -r foomatic-db
 
 foomatic-data: foomatic-stamp
 
 foomatic-stamp: foomatic-generator $(EXTRA_PROGRAMS)
-	-rm -rf foomatic-db
+	-$(RM) -r foomatic-db
 	./foomatic-generator
 	touch foomatic-stamp
 
