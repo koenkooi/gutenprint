@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.2.3 2001/02/22 02:34:42 rlk Exp $"
+ * "$Id: print.c,v 1.4.2.4 2001/02/23 01:14:32 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -861,6 +861,7 @@ printrc_load(void)
 
     (void) memset(&key, 0, sizeof(gp_plist_t));
     initialize_printer(&key);
+    strcpy(key.name, _("File"));
     (void) memset(line, 0, 1024);
     while (fgets(line, sizeof(line), fp) != NULL)
     {
@@ -945,13 +946,13 @@ printrc_load(void)
 			  (int (*)(const void *, const void *))compare_printers))
 		 != NULL)
 	       {
- #ifdef DEBUG
+#ifdef DEBUG
 		 printf("Updating printer %s.\n", key.name);
- #endif
+#endif
 		 memcpy(p, &key, sizeof(gp_plist_t));
 		 stp_copy_vars(p->v, key.v);
-	        p->active = 1;
-	      }
+		 p->active = 1;
+	       }
             else
     	      {
 #ifdef DEBUG
@@ -1018,6 +1019,9 @@ printrc_load(void)
 	  {
 	    if (stp_get_printer_by_driver(stp_get_driver(key.v)))
 	      {
+#ifdef DEBUG
+		printf("Updated File printer directly\n");
+#endif
 		p = &plist[0];
 		memcpy(p, &key, sizeof(gp_plist_t));
 		p->v = stp_allocate_copy(key.v);
@@ -1033,6 +1037,10 @@ printrc_load(void)
 			    (int (*)(const void *, const void *)) compare_printers);
 		if (p == NULL)
 		  {
+#ifdef DEBUG
+                fprintf(stderr, "Adding new printer from printrc file: %s\n",
+                  key.name);
+#endif
 		    check_plist(plist_count + 1);
 		    p = plist + plist_count;
 		    plist_count++;
@@ -1042,6 +1050,9 @@ printrc_load(void)
 		  }
 		else
 		  {
+#ifdef DEBUG
+		    printf("Updating printer %s.\n", key.name);
+#endif
 		    memcpy(p, &key, sizeof(gp_plist_t));
 		    stp_copy_vars(p->v, key.v);
 		    p->active = 1;
@@ -1407,8 +1418,12 @@ get_system_printers(void)
 		check_plist(plist_count + 1);
 		*ptr = '\0';
 		initialize_printer(&plist[plist_count]);
-		strncpy(plist[plist_count].name, line, sizeof(plist[0].name) - 1);
-		plist[plist_count].name[sizeof(plist[0].name) - 1] = '\0';
+		strncpy(plist[plist_count].name, line,
+			sizeof(plist[plist_count].name) - 1);
+#ifdef DEBUG
+                fprintf(stderr, "Adding new printer from lpc: <%s>\n",
+                  line);
+#endif
 		asprintf(&result, "lpr -P%s -l", line);
 		stp_set_output_to(plist[plist_count].v, result);
 		free(result);
@@ -1423,7 +1438,12 @@ get_system_printers(void)
 	      {
 		check_plist(plist_count + 1);
 		initialize_printer(&plist[plist_count]);
-		strcpy(plist[plist_count].name, name);
+		strncpy(plist[plist_count].name, name,
+			sizeof(plist[plist_count].name) - 1);
+#ifdef DEBUG
+                fprintf(stderr, "Adding new printer from lpc: <%s>\n",
+                  name);
+#endif
 		asprintf(&result, "lp -s -d%s -oraw", name);
 		stp_set_output_to(plist[plist_count].v, result);
 		free(result);
@@ -1470,5 +1490,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.2.3 2001/02/22 02:34:42 rlk Exp $".
+ * End of "$Id: print.c,v 1.4.2.4 2001/02/23 01:14:32 rlk Exp $".
  */

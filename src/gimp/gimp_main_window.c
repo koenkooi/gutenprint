@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.6.2.2 2001/02/22 02:34:42 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.6.2.3 2001/02/23 01:14:32 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1569,8 +1569,8 @@ gimp_media_size_callback (GtkWidget *widget,
 	  gdouble size;
 	  if (stp_papersize_get_width(pap) == 0)
 	    {
-	      stp_default_media_size(current_printer, vars,
-				 &default_width, &default_height);
+	      (stp_printer_get_printfuncs(current_printer)->media_size)
+		(current_printer, vars, &default_width, &default_height);
 	      size = default_width / 72.0;
 	      if (stp_get_unit(vars))
 		size *= 2.54;
@@ -1593,8 +1593,8 @@ gimp_media_size_callback (GtkWidget *widget,
 	    }
 	  if (stp_papersize_get_height(pap) == 0)
 	    {
-	      stp_default_media_size(current_printer, vars,
-				 &default_width, &default_height);
+	      (stp_printer_get_printfuncs(current_printer)->media_size)
+		(current_printer, vars, &default_width, &default_height);
 	      size = default_height / 72.0;
 	      if (stp_get_unit(vars))
 		size *= 2.54;

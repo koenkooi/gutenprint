@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.1.2.4 2001/02/21 23:36:05 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.1.2.5 2001/02/23 01:14:32 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -396,11 +396,6 @@ extern void	stp_merge_printvars(stp_vars_t user, const stp_vars_t print);
 extern void	stp_free_lut(stp_vars_t v);
 extern void	stp_compute_lut(size_t steps, stp_vars_t v);
 
-
-extern void	stp_default_media_size(const stp_printer_t printer,
-				       const stp_vars_t v, int *width,
-				       int *height);
-
 extern size_t	  stp_dither_algorithm_count(void);
 extern const char *stp_dither_algorithm_name(int);
 extern const char *stp_default_dither_algorithm(void);
@@ -443,5 +438,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.1.2.4 2001/02/21 23:36:05 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.1.2.5 2001/02/23 01:14:32 rlk Exp $".
  */
