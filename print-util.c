@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.138 2000/09/13 02:25:48 rlk Exp $"
+ * "$Id: print-util.c,v 1.139 2000/09/15 05:13:12 anikin Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1964,7 +1964,6 @@ int quantify_high_index = 0;
 int quantify_first_time = 1;
 struct timeval quantify_cur_time;
 struct timeval quantify_prev_time;
-void quantify_calibrate
 
 void print_timers() 
 {
@@ -1972,9 +1971,11 @@ void print_timers()
 
     printf("Quantify timers:\n");
     for (i = 0; i <= quantify_high_index; i++) {
+       if (quantify_counts[i] == 0) continue;
         printf("Bucket %d:\t%ld.%ld s\thit %u times\n", i, quantify_buckets[i].tv_sec, quantify_buckets[i].tv_usec, quantify_counts[i]);
         quantify_buckets[i].tv_sec = 0;
         quantify_buckets[i].tv_usec = 0;
+        quantify_counts[i] = 0;
     }
 }
 #endif

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.87 2000/09/12 18:58:45 easysw Exp $"
+ * "$Id: print.h,v 1.88 2000/09/15 05:13:12 anikin Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -433,8 +433,8 @@ extern struct timeval quantify_prev_time;
     } else {\
         if (number > quantify_high_index) quantify_high_index = number;\
         if (quantify_prev_time.tv_usec > quantify_cur_time.tv_usec) {\
-           quantify_buckets[number].tv_usec += 1000000 - (quantify_cur_time.tv_usec - quantify_prev_time.tv_usec);\
-           quantify_buckets[number].tv_sec += quantify_cur_time.tv_sec - quantify_prev_time.tv_sec - 1;\
+           quantify_buckets[number].tv_usec += ((quantify_cur_time.tv_usec + 1000000) - quantify_prev_time.tv_usec);\
+           quantify_buckets[number].tv_sec += (quantify_cur_time.tv_sec - quantify_prev_time.tv_sec - 1);\
         } else {\
            quantify_buckets[number].tv_sec += quantify_cur_time.tv_sec - quantify_prev_time.tv_sec;\
            quantify_buckets[number].tv_usec += quantify_cur_time.tv_usec - quantify_prev_time.tv_usec;\
@@ -454,5 +454,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.87 2000/09/12 18:58:45 easysw Exp $".
+ * End of "$Id: print.h,v 1.88 2000/09/15 05:13:12 anikin Exp $".
  */
