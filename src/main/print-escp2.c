@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.24.2.9 2001/11/18 15:40:37 sharkey Exp $"
+ * "$Id: print-escp2.c,v 1.24.2.10 2001/11/26 03:26:24 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1730,7 +1730,7 @@ static const paper_t c80_papers[] =
     6, 0, 1.00, 1, .999, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1, 1.0, 0x6d, 0x00, 0x01, NULL, NULL, NULL},
   { "Matte", N_("Matte Paper"),
-    7, 0, 0.85, 1.0, .999, 1.05, .9, 1.05, .9, 1.0, 1.1,
+    7, 0, 0.9, 1.0, .999, 1.0, 1.0, 1.0, .9, 1.0, 1.1,
     1, 1.0, 0x00, 0x00, 0x02, NULL, NULL, NULL},
   { "Inkjet", N_("Inkjet Paper"),
     7, 0, 0.85, .25, .6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -1739,10 +1739,10 @@ static const paper_t c80_papers[] =
     7, 0, 1.00, 1.0, .999, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1, 1.0, 0x6b, 0x1a, 0x01, NULL, NULL, NULL},
   { "Photo", N_("Photo Paper"),
-    8, 0, 1.00, 1.0, .9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    8, 0, 1.20, 1.0, .9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1, 1.0, 0x67, 0x00, 0x02, NULL, NULL, NULL},
   { "GlossyPhoto", N_("Premium Glossy Photo Paper"),
-    8, 0, 1.10, 1, .999, 1.0, 1.0, 1.0, 1.0, 1.03, 1.0,
+    8, 0, 1.00, 1, .999, 1.0, 1.0, 1.0, 1.0, 1.03, 1.0,
     1, 1.0, 0x80, 0x00, 0x02,
     pgpp_hue_adjustment, pgpp_lum_adjustment, pgpp_sat_adjustment},
   { "Luster", N_("Premium Luster Photo Paper"),
@@ -1884,7 +1884,7 @@ static const escp2_densities_t c3pl_densities =
 { 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.646, 0.73,  0.7,   0.7,   0.91,  0.91,  0.455 };
 
 static const escp2_densities_t c4pl_densities =
-{ 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.431, 0.568, 0.784, 0.784, 0.450, 0.450, 0.225 };
+{ 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.431, 0.568, 0.784, 0.784, 0.593, 0.593, 0.297 };
 
 static const escp2_densities_t sc660_densities =
 { 3.0, 3.0, 2.0, 2.0, 1.0,  1.0,  0.646, 0.646, 0.323, 0.323, 0.162, 0.162, 0.081 };

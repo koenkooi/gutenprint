@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.10 2001/11/18 15:40:34 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.11 2001/11/26 03:26:22 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,8 @@ NONGIMP_DISTDIRS = debian
 ## @-@-@-@-@ YES-GIMP @-@-@-@-@
 SUBDIRS = include intl lib man src samples $(NONGIMP_SUBDIRS) po doc
 DISTDIRS = scripts $(NONGIMP_DISTDIRS)
+
+EXTRA_DIST = configure.in.in autogen.sh
 
 if MAINTAINER_MODE
 MAINT_MODE = true
