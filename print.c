@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.57 2000/02/15 22:10:41 davehill Exp $"
+ * "$Id: print.c,v 1.58 2000/02/16 03:21:35 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -49,7 +49,7 @@
  */
 #include <gtk/gtk.h>
 #include <libgimp/gimp.h>
-#define PLUG_IN_VERSION		"3.1 Alpha - 05 Feb 2000"
+#define PLUG_IN_VERSION		"3.1.0 - 16 Feb 2000"
 #define PLUG_IN_NAME		"Print"
 
 #include <math.h>
@@ -3253,6 +3253,7 @@ printrc_load(void)
 	}
 
 
+      /* bsearch is WRONG!!! -- rlk */
       if ((p = bsearch(&key, plist, plist_count, sizeof(plist_t),
                        (int (*)(const void *, const void *))compare_printers))
 	  != NULL)
@@ -3532,5 +3533,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.57 2000/02/15 22:10:41 davehill Exp $".
+ * End of "$Id: print.c,v 1.58 2000/02/16 03:21:35 rlk Exp $".
  */
