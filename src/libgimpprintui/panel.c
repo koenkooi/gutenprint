@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.57.2.5 2004/03/28 04:24:27 rlk Exp $"
+ * "$Id: panel.c,v 1.57.2.6 2004/03/28 15:41:38 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -374,7 +374,7 @@ set_default_curve_callback(GtkObject *button, gpointer xopt)
   invalidate_preview_thumbnail();
   update_adjusted_thumbnail();
   return 1;
-}  
+}
 
 static int
 set_previous_curve_callback(GtkObject *button, gpointer xopt)
@@ -542,7 +542,7 @@ checkbox_callback(GtkObject *button, gpointer xopt)
     update_adjusted_thumbnail();
   preview_update();
   return 1;
-}  
+}
 
 static void
 stpui_create_boolean(option_t *opt,
@@ -636,7 +636,7 @@ build_page_size_combo(option_t *option)
 		      stp_get_string_parameter(pv->v, option->fast_desc->name),
 		      option->info.list.default_val, combo_callback,
 		      &(option->info.list.callback_id),
-		      check_page_size, option);    
+		      check_page_size, option);
 }
 
 static void
@@ -815,7 +815,7 @@ populate_option_table(GtkWidget *table, int p_class)
 	vpos[i][j] = 0;
 	counts[i][j] = 0;
       }
-	
+
 
   /* First scan the options to figure out where to start */
   for (i = 0; i < current_option_count; i++)
@@ -1447,7 +1447,7 @@ create_printer_dialog (void)
       gtk_clist_set_row_data_full(GTK_CLIST(manufacturer_clist), i, xname,
 				  g_free);
     }
-  stp_string_list_free(manufacturer_list);	  
+  stp_string_list_free(manufacturer_list);
   gtk_clist_sort(GTK_CLIST(manufacturer_clist));
   build_printer_driver_clist();
 
@@ -2744,22 +2744,35 @@ plist_callback (GtkWidget *widget,
   manufacturer = stp_printer_get_manufacturer(stp_get_printer(pv->v));
   build_printer_driver_clist();
 
-  if (strcmp(stp_get_driver(pv->v), ""))
+  if (strcmp(stp_get_driver(pv->v), "") != 0)
     tmp_printer = stp_get_printer(pv->v);
 
   stp_describe_parameter(pv->v, "PrintingMode", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST &&
-      strcmp(desc.deflt.str, "Color") == 0)
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
     {
-      gtk_widget_set_sensitive (output_types[0].button, TRUE);
-    }
-  else
-    {
-      if (gtk_toggle_button_get_active
-	  (GTK_TOGGLE_BUTTON (output_types[0].button)) == TRUE)
-	gtk_toggle_button_set_active
-	  (GTK_TOGGLE_BUTTON (output_types[1].button), TRUE);
-      gtk_widget_set_sensitive (output_types[0].button, FALSE);
+      if (!stp_string_list_is_present(desc.bounds.str, "Color"))
+	{
+	  gtk_widget_set_sensitive (output_types[1].button, TRUE);
+	  if (gtk_toggle_button_get_active
+	      (GTK_TOGGLE_BUTTON (output_types[0].button)) == TRUE)
+	    gtk_toggle_button_set_active
+	      (GTK_TOGGLE_BUTTON (output_types[1].button), TRUE);
+	  gtk_widget_set_sensitive (output_types[0].button, FALSE);
+	}
+      else if (!stp_string_list_is_present(desc.bounds.str, "BW"))
+	{
+	  gtk_widget_set_sensitive (output_types[0].button, TRUE);
+	  if (gtk_toggle_button_get_active
+	      (GTK_TOGGLE_BUTTON (output_types[1].button)) == TRUE)
+	    gtk_toggle_button_set_active
+	      (GTK_TOGGLE_BUTTON (output_types[0].button), TRUE);
+	  gtk_widget_set_sensitive (output_types[1].button, FALSE);
+	}
+      else
+	{
+	  gtk_widget_set_sensitive (output_types[0].button, TRUE);
+	  gtk_widget_set_sensitive (output_types[1].button, TRUE);
+	}
     }
   stp_parameter_description_free(&desc);
   do_all_updates();
@@ -2865,7 +2878,7 @@ set_media_size(const gchar *new_media_size)
 		}
 	    }
 	}
-	  
+
       if (pap->width == 0)
 	{
 	  int max_w, max_h, min_w, min_h;
@@ -3302,11 +3315,11 @@ static void
 pop_ppd_box(void)
 {
   stp_const_vars_t v = stp_printer_get_defaults(tmp_printer);
-  if (stp_parameter_find_in_settings(v, "PPDFile")) 
+  if (stp_parameter_find_in_settings(v, "PPDFile"))
     {
       gtk_widget_show (ppd_label);
       gtk_widget_show (ppd_box);
-    } 
+    }
   else
     {
       gtk_widget_hide (ppd_label);
@@ -3334,7 +3347,7 @@ build_printer_driver_clist(void)
 	   * example, try listing olympus_LTX_stpi_module_data after
 	   * raw_LTX_stpi_module_data.
 	   */
-	  
+
 	  gtk_clist_insert (GTK_CLIST (printer_driver), current_idx, &tmp);
 	  gtk_clist_set_row_data (GTK_CLIST (printer_driver), current_idx,
 				  (gpointer) i);
@@ -3343,7 +3356,7 @@ build_printer_driver_clist(void)
 	}
     }
 }
-  
+
 static void
 manufacturer_callback(GtkWidget      *widget, /* I - Driver list */
 		      gint            row,
@@ -3361,7 +3374,7 @@ manufacturer_callback(GtkWidget      *widget, /* I - Driver list */
   build_printer_driver_clist();
   setup_update();
   calling_manufacturer_callback--;
-}  
+}
 
 /*
  *  print_driver_callback() - Update the current printer driver.
@@ -3664,7 +3677,7 @@ compute_thumbnail(stp_const_vars_t v)
     }
   stp_vars_free(nv);
   return answer;
-}  
+}
 
 static void
 set_thumbnail_orientation(void)
@@ -3704,7 +3717,7 @@ set_thumbnail_orientation(void)
 		  bpp * ((thumbnail_h - y - 1) * thumbnail_w + x)), bpp);
       break;
     }
-}  
+}
 
 static void
 update_adjusted_thumbnail (void)
@@ -3990,7 +4003,7 @@ do_preview_thumbnail (void)
     gdk_draw_rectangle (preview->widget.window, gc, 0,
 			paper_display_left, paper_display_top,
 			paper_display_width, paper_display_height);
-    
+
 
   /* draw orientation arrow pointing to top-of-paper */
   draw_arrow (preview->widget.window, gcinv, paper_display_left,
@@ -4385,7 +4398,7 @@ set_controls_active (GtkObject *checkbutton, gpointer xopt)
 	default:
 	  break;
 	}
-    }   
+    }
   invalidate_preview_thumbnail();
   update_adjusted_thumbnail();
 }
