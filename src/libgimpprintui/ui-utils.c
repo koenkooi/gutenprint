@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.6 2003/04/15 02:24:51 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.7 2003/11/20 00:30:54 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -28,7 +28,7 @@
 #include "../../lib/libprintut.h"
 
 #include <gimp-print/gimp-print-intl-internal.h>
-#include <gimp-print/gimp-print-ui.h>
+#include <gimp-print-ui/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
 
 #include <stdio.h>

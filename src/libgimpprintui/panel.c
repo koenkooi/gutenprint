@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.54 2003/11/16 03:24:29 rlk Exp $"
+ * "$Id: panel.c,v 1.55 2003/11/20 00:30:53 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -34,7 +34,7 @@
 #define SCALE(x, y) (((x) + (1.0 / (2.0 * (y)))) * (y))
 
 #include <gimp-print/gimp-print-intl-internal.h>
-#include <gimp-print/gimp-print-ui.h>
+#include <gimp-print-ui/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
 
 #include <string.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui.h,v 1.3 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: gimp-print-ui.h,v 1.1 2003/11/20 00:30:53 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *

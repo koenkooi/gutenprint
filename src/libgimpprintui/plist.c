@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.29 2003/07/12 21:21:24 rlk Exp $"
+ * "$Id: plist.c,v 1.30 2003/11/20 00:30:53 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -27,7 +27,7 @@
 #include "../../lib/libprintut.h"
 
 #include <gimp-print/gimp-print-intl-internal.h>
-#include <gimp-print/gimp-print-ui.h>
+#include <gimp-print-ui/gimp-print-ui.h>
 #include "gimp-print-ui-internal.h"
 
 #include <unistd.h>
@@ -1367,5 +1367,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.29 2003/07/12 21:21:24 rlk Exp $".
+ * End of "$Id: plist.c,v 1.30 2003/11/20 00:30:53 rleigh Exp $".
  */
