@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.9 2003/05/30 01:23:24 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.10 2003/06/08 07:49:47 mtomlinson Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -104,21 +104,12 @@ typedef struct
 
 typedef struct shade_segment
 {
-  int subchannel;
-  unsigned lower;
-  unsigned trans;
-  unsigned density;
-  unsigned div1, div2;
-
   stpi_dis_t dis;
   stpi_dis_t *et_dis;
 
   int numdotsizes;
   stpi_ink_defn_t *dotsizes;
 
-  int *errs;
-  int value;
-  int base;
 } stpi_shade_segment_t;
 
 typedef struct dither_channel
@@ -136,8 +127,6 @@ typedef struct dither_channel
   int o;
   int b;
   int very_fast;
-
-  int maxdot;			/* Maximum dot size */
 
   stpi_ink_defn_t *ink_list;
 
@@ -288,5 +277,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.9 2003/05/30 01:23:24 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.10 2003/06/08 07:49:47 mtomlinson Exp $".
  */
