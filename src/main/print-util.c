@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.3 2001/05/09 16:32:51 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.4 2001/06/30 03:20:00 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -26,8 +26,6 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-/* #define PRINT_DEBUG */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -37,6 +35,9 @@
 #include <math.h>
 #include <limits.h>
 #include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -89,6 +90,7 @@ typedef struct					/* Plug-in variables */
   void (*errfunc)(void *data, const char *buffer, size_t bytes);
   void *errdata;
   stp_internal_option_t *options;
+  int verified;			/* Ensure that params are OK! */
 } stp_internal_vars_t;
 
 typedef struct stp_internal_printer
@@ -244,7 +246,7 @@ stp_allocate_vars(void)
 do						\
 {						\
   if ((x))					\
-    free((char *)(x));				\
+    stp_free((char *)(x));				\
   ((x)) = NULL;					\
 } while (0)
 
@@ -310,6 +312,7 @@ stp_set_##s(stp_vars_t vv, const char *val)		\
     return;						\
   SAFE_FREE(v->s);					\
   v->s = c_strdup(val);					\
+  v->verified = 0;					\
 }							\
 							\
 void							\
@@ -320,6 +323,7 @@ stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
     return;						\
   SAFE_FREE(v->s);					\
   v->s = c_strndup(val, n);				\
+  v->verified = 0;					\
 }							\
 							\
 const char *						\
@@ -334,6 +338,7 @@ void							\
 stp_set_##s(stp_vars_t vv, t val)			\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  v->verified = 0;					\
   v->s = val;						\
 }							\
 							\
@@ -344,53 +349,68 @@ stp_get_##s(const stp_vars_t vv)			\
   return v->s;						\
 }
 
-DEF_STRING_FUNCS(output_to);
-DEF_STRING_FUNCS(driver);
-DEF_STRING_FUNCS(ppd_file);
-DEF_STRING_FUNCS(resolution);
-DEF_STRING_FUNCS(media_size);
-DEF_STRING_FUNCS(media_type);
-DEF_STRING_FUNCS(media_source);
-DEF_STRING_FUNCS(ink_type);
-DEF_STRING_FUNCS(dither_algorithm);
-DEF_FUNCS(output_type, int);
-DEF_FUNCS(orientation, int);
-DEF_FUNCS(left, int);
-DEF_FUNCS(top, int);
-DEF_FUNCS(image_type, int);
-DEF_FUNCS(unit, int);
-DEF_FUNCS(page_width, int);
-DEF_FUNCS(page_height, int);
-DEF_FUNCS(input_color_model, int);
-DEF_FUNCS(output_color_model, int);
-DEF_FUNCS(brightness, float);
-DEF_FUNCS(scaling, float);
-DEF_FUNCS(gamma, float);
-DEF_FUNCS(contrast, float);
-DEF_FUNCS(cyan, float);
-DEF_FUNCS(magenta, float);
-DEF_FUNCS(yellow, float);
-DEF_FUNCS(saturation, float);
-DEF_FUNCS(density, float);
-DEF_FUNCS(app_gamma, float);
-DEF_FUNCS(lut, void *);
-DEF_FUNCS(outdata, void *);
-DEF_FUNCS(errdata, void *);
-DEF_FUNCS(driver_data, void *);
-DEF_FUNCS(cmap, unsigned char *);
-DEF_FUNCS(outfunc, stp_outfunc_t);
-DEF_FUNCS(errfunc, stp_outfunc_t);
+DEF_STRING_FUNCS(output_to)
+DEF_STRING_FUNCS(driver)
+DEF_STRING_FUNCS(ppd_file)
+DEF_STRING_FUNCS(resolution)
+DEF_STRING_FUNCS(media_size)
+DEF_STRING_FUNCS(media_type)
+DEF_STRING_FUNCS(media_source)
+DEF_STRING_FUNCS(ink_type)
+DEF_STRING_FUNCS(dither_algorithm)
+DEF_FUNCS(output_type, int)
+DEF_FUNCS(orientation, int)
+DEF_FUNCS(left, int)
+DEF_FUNCS(top, int)
+DEF_FUNCS(image_type, int)
+DEF_FUNCS(unit, int)
+DEF_FUNCS(page_width, int)
+DEF_FUNCS(page_height, int)
+DEF_FUNCS(input_color_model, int)
+DEF_FUNCS(output_color_model, int)
+DEF_FUNCS(brightness, float)
+DEF_FUNCS(scaling, float)
+DEF_FUNCS(gamma, float)
+DEF_FUNCS(contrast, float)
+DEF_FUNCS(cyan, float)
+DEF_FUNCS(magenta, float)
+DEF_FUNCS(yellow, float)
+DEF_FUNCS(saturation, float)
+DEF_FUNCS(density, float)
+DEF_FUNCS(app_gamma, float)
+DEF_FUNCS(lut, void *)
+DEF_FUNCS(outdata, void *)
+DEF_FUNCS(errdata, void *)
+DEF_FUNCS(driver_data, void *)
+DEF_FUNCS(cmap, unsigned char *)
+DEF_FUNCS(outfunc, stp_outfunc_t)
+DEF_FUNCS(errfunc, stp_outfunc_t)
+
+void
+stp_set_verified(stp_vars_t vv, int val)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  v->verified = val;
+}
+
+int
+stp_get_verified(const stp_vars_t vv)
+{
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
+  return v->verified;
+}
 
 void
 stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
 {
   const stp_internal_vars_t *src = (const stp_internal_vars_t *)vs;
-  stp_internal_vars_t *dest = (stp_internal_vars_t *)dest;
+  stp_internal_vars_t *dest = (stp_internal_vars_t *)vd;
   stp_internal_option_t *opt = (stp_internal_option_t *) src->options;
   stp_internal_option_t *popt = NULL;
   if (opt)
     {
       stp_internal_option_t *nopt = xmalloc(sizeof(stp_internal_option_t));
+      stp_set_verified(vd, 0);
       dest->options = nopt;
       memcpy(nopt, opt, sizeof(stp_internal_option_t));
       nopt->name = xmalloc(strlen(opt->name) + 1);
@@ -458,6 +478,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_errfunc(vd, stp_get_errfunc(vs));
   stp_clear_all_options(vd);
   stp_copy_options(vd, vs);
+  stp_set_verified(vd, stp_get_verified(vs));
 }
 
 stp_vars_t
@@ -525,7 +546,7 @@ stp_set_option(stp_vars_t vd, const char *name, const char *data, int bytes)
     {
       if (opt->length == bytes && !memcmp(opt->data, data, bytes))
         return;
-      free(opt->data);
+      stp_free(opt->data);
     }
   else
     {
@@ -552,13 +573,13 @@ stp_clear_option(stp_vars_t vd, const char *name)
     {
       if (!strcmp(opt->name, name))
         {
-          free(opt->name);
-          free(opt->data);
+          stp_free(opt->name);
+          stp_free(opt->data);
           if (opt->prev)
             opt->prev->next = opt->next;
           if (opt->next)
             opt->next->prev = opt->prev;
-          free(opt);
+          stp_free(opt);
           return;
         }
       opt = opt->next;
@@ -621,9 +642,9 @@ stp_clear_all_options(stp_vars_t vd)
   while (opt)
     {
       stp_internal_option_t *nopt = opt->next;
-      free(opt->name);
-      free(opt->data);
-      free(opt);
+      stp_free(opt->name);
+      stp_free(opt->data);
+      stp_free(opt);
       opt = nopt;
     }
   v->options = NULL;
@@ -805,6 +826,16 @@ static const stp_internal_papersize_t paper_sizes[] =
   { N_ ("A2 Invitation"), 315, 414, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US A2 invitation */
   { N_ ("Custom"), 0, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
+  { N_ ("89 mm Roll Paper"), 252, 0, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("4\" Roll Paper"), 288, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("5\" Roll Paper"), 360, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("210 mm Roll Paper"), 595, 0, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("13\" Roll Paper"), 936, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("22\" Roll Paper"), 1584, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("24\" Roll Paper"), 1728, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("36\" Roll Paper"), 2592, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("44\" Roll Paper"), 3168, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+
   { "",           0,    0, 0, 0, 0, 0, PAPERSIZE_METRIC }
 };
 
@@ -870,18 +901,44 @@ stp_papersize_get_unit(const stp_papersize_t pt)
   return p->paper_unit;
 }
 
+#if 0
+/*
+ * This is, of course, blatantly thread-unsafe.  However, it certainly
+ * speeds up genppd by a lot!
+ */
+const stp_papersize_t
+stp_get_papersize_by_name(const char *name)
+{
+  static int last_used_papersize = 0;
+  int base = last_used_papersize;
+  int sizes = stp_known_papersizes();
+  int i;
+  for (i = 0; i < sizes; i++)
+    {
+      int size_to_try = (i + base) % sizes;
+      const stp_internal_papersize_t *val = &(paper_sizes[size_to_try]);
+      if (!strcmp(_(val->name), name))
+	{
+	  last_used_papersize = size_to_try;
+	  return (const stp_papersize_t) val;
+	}
+    }
+  return NULL;
+}
+#else
 const stp_papersize_t
 stp_get_papersize_by_name(const char *name)
 {
   const stp_internal_papersize_t *val = &(paper_sizes[0]);
   while (strlen(val->name) > 0)
     {
-      if (!strcasecmp(_(val->name), name))
+      if (!strcmp(_(val->name), name))
 	return (const stp_papersize_t) val;
       val++;
     }
   return NULL;
 }
+#endif
 
 const stp_papersize_t
 stp_get_papersize_by_index(int index)
@@ -908,7 +965,9 @@ stp_get_papersize_by_size(int l, int w)
   int score = INT_MAX;
   const stp_internal_papersize_t *ref = NULL;
   const stp_internal_papersize_t *val = &(paper_sizes[0]);
-  while (strlen(val->name) > 0)
+  int sizes = stp_known_papersizes();
+  int i;
+  for (i = 0; i < sizes; i++)
     {
       if (val->width == w && val->height == l)
 	return (const stp_papersize_t) val;
@@ -1163,18 +1222,16 @@ stp_compute_page_parameters(int page_right,	/* I */
       && *left >= 0)
     {
       *left = *page_width - *left - *out_width;
-      if (*left < 0) {
+      if (*left < 0)
 	*left = 0;
-      }
     }
 
   if ((*orientation == ORIENT_UPSIDEDOWN || *orientation == ORIENT_LANDSCAPE)
       && *top >= 0)
     {
       *top = *page_height - *top - *out_height;
-      if (*top < 0) {
+      if (*top < 0)
 	*top = 0;
-      }
     }
 
   if (*left < 0)
@@ -1194,6 +1251,10 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
   const stp_printfuncs_t *printfuncs = stp_printer_get_printfuncs(p);
   const stp_vars_t printvars = stp_printer_get_printvars(p);
 
+  /*
+   * Note that in raw CMYK mode the user is responsible for not sending
+   * color output to black & white printers!
+   */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
       stp_get_output_type(v) == OUTPUT_COLOR)
     {
@@ -1213,20 +1274,15 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 		      stp_get_media_size(v));
 	good_page_size:
 	  for (i = 0; i < count; i++)
-	    free(vptr[i]);
+	    stp_free(vptr[i]);
 	}
       if (vptr)
-	free(vptr);
+	stp_free(vptr);
     }
   else
     {
       int height, width;
       (*printfuncs->limit)(p, v, &width, &height);
-#if 0
-      stp_eprintf(v, "limit %d %d dims %d %d\n",
-		  width, height, stp_get_page_width(v),
-		  stp_get_page_height(v));
-#endif
       if (stp_get_page_height(v) <= 0 || stp_get_page_height(v) > height ||
 	  stp_get_page_width(v) <= 0 || stp_get_page_width(v) > width)
 	{
@@ -1248,10 +1304,10 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 		      stp_get_media_type(v));
 	good_media_type:
 	  for (i = 0; i < count; i++)
-	    free(vptr[i]);
+	    stp_free(vptr[i]);
 	}
       if (vptr)
-	free(vptr);
+	stp_free(vptr);
     }
 
   if (strlen(stp_get_media_source(v)) > 0)
@@ -1267,10 +1323,10 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 		      stp_get_media_source(v));
 	good_media_source:
 	  for (i = 0; i < count; i++)
-	    free(vptr[i]);
+	    stp_free(vptr[i]);
 	}
       if (vptr)
-	free(vptr);
+	stp_free(vptr);
     }
 
   if (strlen(stp_get_resolution(v)) > 0)
@@ -1286,10 +1342,10 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 		      stp_get_resolution(v));
 	good_resolution:
 	  for (i = 0; i < count; i++)
-	    free(vptr[i]);
+	    stp_free(vptr[i]);
 	}
       if (vptr)
-	free(vptr);
+	stp_free(vptr);
     }
 
   if (strlen(stp_get_ink_type(v)) > 0)
@@ -1304,18 +1360,22 @@ stp_verify_printer_params(const stp_printer_t p, const stp_vars_t v)
 	  stp_eprintf(v, "%s is not a valid ink type\n", stp_get_ink_type(v));
 	good_ink_type:
 	  for (i = 0; i < count; i++)
-	    free(vptr[i]);
+	    stp_free(vptr[i]);
 	}
       if (vptr)
-	free(vptr);
+	stp_free(vptr);
     }
 
   for (i = 0; i < stp_dither_algorithm_count(); i++)
     if (!strcmp(stp_get_dither_algorithm(v), stp_dither_algorithm_name(i)))
-      return answer;
+      {
+	stp_set_verified(v, 1);
+	return answer;
+      }
 
   stp_eprintf(v, "%s is not a valid dither algorithm\n",
 	      stp_get_dither_algorithm(v));
+  stp_set_verified(v, 0);
   return 0;
 }
 
@@ -1471,11 +1531,61 @@ stp_eprintf(const stp_vars_t v, const char *format, ...)
   va_list args;
   int bytes;
   char *result;
+  if (stp_get_errfunc(v))
+    {
+      va_start(args, format);
+      bytes = vasprintf(&result, format, args);
+      va_end(args);
+      (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
+      free(result);
+    }
+}
+
+void
+stp_erputc(int ch)
+{
+  putc(ch, stderr);
+}
+
+void
+stp_erprintf(const char *format, ...)
+{
+  va_list args;
   va_start(args, format);
-  bytes = vasprintf(&result, format, args);
+  vfprintf(stderr, format, args);
   va_end(args);
-  (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
-  free(result);
+}
+
+static unsigned long stp_debug_level = 0;
+
+static void
+init_stp_debug(void)
+{
+  static int debug_initialized = 0;
+  if (!debug_initialized)
+    {
+      const char *dval = getenv("STP_DEBUG");
+      debug_initialized = 1;
+      if (dval)
+	stp_debug_level = strtoul(dval, 0, 0);
+    }
+}
+
+void
+stp_dprintf(unsigned long level, const stp_vars_t v, const char *format, ...)
+{
+  va_list args;
+  int bytes;
+  char *result;
+  init_stp_debug();
+  if ((level & stp_debug_level) && stp_get_errfunc(v))
+    {
+      va_start(args, format);
+      bytes = vasprintf(&result, format, args);
+      va_end(args);
+      (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
+      free(result);
+    }
 }
 
 void *
@@ -1485,12 +1595,17 @@ stp_malloc (size_t size)
 
   if ((memptr = malloc (size)) == NULL)
     {
-      fprintf (stderr, "Virtual memory exhausted.\n");
+      fputs("Virtual memory exhausted.\n", stderr);
       exit (EXIT_FAILURE);
     }
   return (memptr);
 }
 
+void
+stp_free(void *ptr)
+{
+  free(ptr);
+}
 
 #ifdef QUANTIFY
 unsigned quantify_counts[NUM_QUANTIFY_BUCKETS] = {0};

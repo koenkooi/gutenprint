@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.12.4.2 2001/04/30 17:47:12 sharkey Exp $"
+ * "$Id: print-weave.c,v 1.12.4.3 2001/06/30 03:20:00 sharkey Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -382,8 +382,8 @@ invert_map(int *map, int *stagger, int count, int oldfirstpass,
 
 	memcpy(map, newmap, count * sizeof(int));
 	memcpy(stagger, newstagger, count * sizeof(int));
-	free(newstagger);
-	free(newmap);
+	stp_free(newstagger);
+	stp_free(newmap);
 }
 
 static void
@@ -561,11 +561,11 @@ stp_destroy_weave_params(void *vw)
 {
 	cooked_t *w = (cooked_t *) vw;
 
-	if (w->pass_premap) free(w->pass_premap);
-	if (w->stagger_premap) free(w->stagger_premap);
-	if (w->pass_postmap) free(w->pass_postmap);
-	if (w->stagger_postmap) free(w->stagger_postmap);
-	free(w);
+	if (w->pass_premap) stp_free(w->pass_premap);
+	if (w->stagger_premap) stp_free(w->stagger_premap);
+	if (w->pass_postmap) stp_free(w->pass_postmap);
+	if (w->stagger_postmap) stp_free(w->stagger_postmap);
+	stp_free(w);
 }
 
 static void
@@ -679,7 +679,7 @@ stp_split_2_1(int length,
   unsigned char *outs[2];
   int i;
   int row = 0;
-  int limit = length * 2;
+  int limit = length;
   outs[0] = outhi;
   outs[1] = outlo;
   memset(outs[1], 0, limit);
@@ -800,7 +800,7 @@ stp_split_4_1(int length,
   unsigned char *outs[4];
   int i;
   int row = 0;
-  int limit = length * 2;
+  int limit = length;
   outs[0] = out0;
   outs[1] = out1;
   outs[2] = out2;
@@ -943,6 +943,8 @@ stp_unpack_2_1(int length,
   if (length <= 0)
     return;
 
+  length = (length + 1) / 2;
+
   for (;length; length --)
     {
       ti0 = *in++;
@@ -1035,6 +1037,8 @@ stp_unpack_4_1(int length,
   if (length <= 0)
     return;
 
+  length = (length + 3) / 4;
+
   for (;length; length --)
     {
       ti0 = *in++;
@@ -1099,7 +1103,6 @@ stp_unpack_4_2(int length,
 		temp1,
 		temp2,
 		temp3;
-
 
   length *= 2;
 
@@ -1723,11 +1726,11 @@ stp_initialize_weave(int jets,	/* Width of print head */
 					int vertical_subpass),
 		     int (*pack)(const unsigned char *in, int bytes,
 				 unsigned char *out, unsigned char **optr),
-		     int (*compute_linewidth)(const stp_softweave_t *sw))
+		     int (*compute_linewidth)(const stp_softweave_t *sw,
+					      int n))
 {
   int i;
   int last_line, maxHeadOffset;
-  int horizontal_width;
   stp_softweave_t *sw = stp_malloc(sizeof (stp_softweave_t));
 
   (void) memset(sw, 0, sizeof(stp_softweave_t));
@@ -1758,7 +1761,7 @@ stp_initialize_weave(int jets,	/* Width of print head */
 	}
       stp_eprintf(v, "Weave error: oversample (%d) > jets (%d)\n",
 		  sw->oversample, jets);
-      free(sw);
+      stp_free(sw);
       return 0;
     }
   else
@@ -1776,7 +1779,7 @@ stp_initialize_weave(int jets,	/* Width of print head */
     {
       stp_eprintf(v, "Weave error: oversample (%d) > jets (%d)\n",
 		  sw->oversample, jets);
-      free(sw);
+      stp_free(sw);
       return 0;
     }
 
@@ -1805,9 +1808,10 @@ stp_initialize_weave(int jets,	/* Width of print head */
    * The value of vmod limits how many passes may be unfinished at a time.
    * If pass x is not yet printed, pass x+vmod cannot be started.
    *
-   * rlk 20010227: why the 6?
+   * The multiplier of 2: 1 for the normal passes, 1 for the special passes
+   * at the start or end.
    */
-  sw->vmod = 6 * sw->separation * sw->oversample * sw->repeat_count;
+  sw->vmod = 2 * sw->separation * sw->oversample * sw->repeat_count;
   sw->separation_rows = separation_rows;
 
   sw->bitwidth = width;
@@ -1836,8 +1840,10 @@ stp_initialize_weave(int jets,	/* Width of print head */
   sw->rcache = -2;
   sw->vcache = -2;
   sw->fill_start = fill_start;
+  sw->compute_linewidth = compute_linewidth;
   sw->pack = pack;
-  horizontal_width = (compute_linewidth)(sw);
+  sw->horizontal_width = (sw->compute_linewidth)(sw, sw->linewidth);
+  sw->horizontal_width = 8 * ((sw->horizontal_width + 7) / 8);
 
   for (i = 0; i < sw->vmod; i++)
     {
@@ -1846,7 +1852,7 @@ stp_initialize_weave(int jets,	/* Width of print head */
       for (j = 0; j < sw->ncolors; j++)
 	{
 	  sw->linebases[i].v[j] =
-	    stp_malloc(jets * sw->bitwidth * horizontal_width / 8);
+	    stp_malloc(jets * sw->bitwidth * sw->horizontal_width / 8);
 	}
     }
   return (void *) sw;
@@ -1857,30 +1863,30 @@ stp_destroy_weave(void *vsw)
 {
   int i, j;
   stp_softweave_t *sw = (stp_softweave_t *) vsw;
-  free(sw->linecounts);
-  free(sw->passes);
-  free(sw->lineactive);
-  free(sw->lineoffsets);
+  stp_free(sw->linecounts);
+  stp_free(sw->passes);
+  stp_free(sw->lineactive);
+  stp_free(sw->lineoffsets);
   if (sw->fold_buf)
-    free(sw->fold_buf);
+    stp_free(sw->fold_buf);
   if (sw->comp_buf)
-    free(sw->comp_buf);
+    stp_free(sw->comp_buf);
   for (i = 0; i < 8; i++)
     if (sw->s[i])
-      free(sw->s[i]);
+      stp_free(sw->s[i]);
   for (i = 0; i < sw->vmod; i++)
     {
       for (j = 0; j < sw->ncolors; j++)
 	{
-	  free(sw->linebases[i].v[j]);
+	  stp_free(sw->linebases[i].v[j]);
 	}
     }
-  free(sw->linebases);
+  stp_free(sw->linebases);
   stp_destroy_weave_params(sw->weaveparm);
-  free(vsw);
+  stp_free(vsw);
 }
 
-static inline void
+static void
 weave_parameters_by_row(const stp_softweave_t *sw, int row,
 			int vertical_subpass, stp_weave_t *w)
 {
@@ -2072,15 +2078,15 @@ stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
 }
 
 int
-stp_compute_tiff_linewidth(const stp_softweave_t *sw)
+stp_compute_tiff_linewidth(const stp_softweave_t *sw, int n)
 {
-  return ((sw->linewidth + 128 + 7) * 129 / 128);
+  return ((n + 128 + 7) * 129 / 128);
 }
 
 int
-stp_compute_uncompressed_linewidth(const stp_softweave_t *sw)
+stp_compute_uncompressed_linewidth(const stp_softweave_t *sw, int n)
 {
-  return (8 * ((sw->linewidth + 7) / 8));
+  return (8 * ((n + 7) / 8));
 }
 
 static void
@@ -2213,6 +2219,15 @@ finalize_row(stp_softweave_t *sw, int row, int model, int width,
     }
 }
 
+static void *
+xzmalloc(size_t bytes)
+{
+  void *retval = stp_malloc(bytes);
+  if (retval)
+    memset(retval, 0, bytes);
+  return (retval);
+}
+
 void
 stp_write_weave(void *        vsw,
 		int           length,	/* I - Length of bitmap data */
@@ -2229,6 +2244,7 @@ stp_write_weave(void *        vsw,
   stp_lineactive_t *lineactives[8];
   const stp_linebufs_t *bufs[8];
   int xlength = (length + sw->horizontal_weave - 1) / sw->horizontal_weave;
+  int ylength = xlength * sw->horizontal_weave;
   unsigned char *comp_ptr;
   int i, j;
   int setactive;
@@ -2236,9 +2252,9 @@ stp_write_weave(void *        vsw,
   int cpass = sw->current_vertical_subpass * h_passes;
 
   if (!sw->fold_buf)
-    sw->fold_buf = stp_malloc(COMPBUFWIDTH);
+    sw->fold_buf = xzmalloc(sw->bitwidth * ylength);
   if (!sw->comp_buf)
-    sw->comp_buf = stp_malloc(COMPBUFWIDTH);
+    sw->comp_buf = xzmalloc(sw->bitwidth *(sw->compute_linewidth)(sw,ylength));
   if (sw->current_vertical_subpass == 0)
     initialize_row(sw, sw->lineno, xlength);
 
@@ -2251,10 +2267,14 @@ stp_write_weave(void *        vsw,
         for (i = 0; i < h_passes; i++)
 	  {
 	    if (!sw->s[i])
-	      sw->s[i] = stp_malloc(COMPBUFWIDTH);
-	    lineoffs[i] = stp_get_lineoffsets(sw, sw->lineno, cpass + i, sw->head_offset[j]);
-	    lineactives[i] = stp_get_lineactive(sw, sw->lineno, cpass + i, sw->head_offset[j]);
-	    bufs[i] = stp_get_linebases(sw, sw->lineno, cpass + i, sw->head_offset[j]);
+	      sw->s[i] = xzmalloc(sw->bitwidth *
+				    (sw->compute_linewidth)(sw, ylength));
+	    lineoffs[i] = stp_get_lineoffsets(sw, sw->lineno, cpass + i,
+					      sw->head_offset[j]);
+	    lineactives[i] = stp_get_lineactive(sw, sw->lineno, cpass + i,
+						sw->head_offset[j]);
+	    bufs[i] = stp_get_linebases(sw, sw->lineno, cpass + i,
+					sw->head_offset[j]);
 	  }
 
 	  if (sw->bitwidth == 2)
@@ -2322,7 +2342,7 @@ stp_write_weave(void *        vsw,
 	      for (i = 0; i < h_passes; i++)
 		{
 		  setactive = (sw->pack)(sw->s[i], sw->bitwidth * xlength,
-				       sw->comp_buf, &comp_ptr);
+					 sw->comp_buf, &comp_ptr);
 		  add_to_row(sw, sw->lineno, sw->comp_buf,
 			     comp_ptr - sw->comp_buf, j, setactive,
 			     lineoffs[i], lineactives[i], bufs[i]);

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.4.2.3 2001/05/09 16:32:50 sharkey Exp $"
+ * "$Id: gimp-print.h.in,v 1.4.2.4 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -37,10 +37,7 @@
  * Include necessary header files...
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <stddef.h>	/* For size_t */
 
 #ifdef __cplusplus
 extern "C" {
@@ -82,8 +79,8 @@ extern const char* stp_check_version (unsigned int required_major,
 
 #define OUTPUT_GRAY             0       /* Grayscale output */
 #define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_RAW_CMYK         2       /* Raw CMYK output */
-#define OUTPUT_GRAY_COLOR       3       /* Grayscale output using color */
+#define OUTPUT_MONOCHROME       2       /* Raw monochrome output */
+#define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
 
 #define ORIENT_AUTO             -1      /* Best orientation */
 #define ORIENT_PORTRAIT         0       /* Portrait orientation */
@@ -94,8 +91,7 @@ extern const char* stp_check_version (unsigned int required_major,
 #define IMAGE_LINE_ART          0
 #define IMAGE_SOLID_TONE        1
 #define IMAGE_CONTINUOUS        2
-#define IMAGE_MONOCHROME        3
-#define NIMAGE_TYPES            4
+#define NIMAGE_TYPES            3
 
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
@@ -572,5 +568,5 @@ extern const stp_vars_t stp_minimum_settings (void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.4.2.3 2001/05/09 16:32:50 sharkey Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.4.2.4 2001/06/30 03:19:59 sharkey Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.2.4.1 2001/05/09 16:32:51 sharkey Exp $"
+ * "$Id: pcl-unprint.c,v 1.2.4.2 2001/06/30 03:20:00 sharkey Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -33,7 +33,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.2.4.1 2001/05/09 16:32:51 sharkey Exp $";
+static const char *id="@(#) $Id: pcl-unprint.c,v 1.2.4.2 2001/06/30 03:20:00 sharkey Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -139,14 +139,14 @@ typedef struct {
 #define PCL_PALETTE_CONFIGURATION 32
 
 typedef struct {
-    char initial_command[3];		/* First part of command */
-    char final_command;			/* Last part of command */
-    int has_data;			/* Data follows */
-    int command;			/* Command name */
-    char *description;			/* Text for printing */
+  const char initial_command[3];		/* First part of command */
+  const char final_command;			/* Last part of command */
+  int has_data;			/* Data follows */
+  int command;			/* Command name */
+  const char *description;			/* Text for printing */
 } commands_t;
 
-commands_t pcl_commands[] =
+const commands_t pcl_commands[] =
     {
 /* Two-character sequences ESC <x> */
 	{ "E", '\0', 0, PCL_RESET, "PCL RESET" },
@@ -193,6 +193,17 @@ commands_t pcl_commands[] =
 /* Resolution */
 	{ "*t", 'R', 0, PCL_RESOLUTION, "Resolution" },
    };
+
+int pcl_find_command (void);
+void fill_buffer (void);
+void pcl_read_command (void);
+void write_grey (output_t *output, image_t *image);
+void write_colour (output_t *output, image_t *image);
+int decode_tiff (char *in_buffer, int data_height, char *decode_buf,
+                 int maxlen);
+void pcl_reset (image_t *i);
+int depth_to_rows (int depth);
+
 
 /*
  * pcl_find_command(). Search the commands table for the command.

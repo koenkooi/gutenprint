@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.2 2001/05/09 16:32:50 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.3 2001/06/30 03:19:59 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,9 @@ AUTOMAKE_OPTIONS = 1.4 foreign
 
 MAINT_CHARSET = latin1
 
+
+## Variables
+
 PACKAGE = cups
 
 bindir = @cups_bindir@
@@ -38,58 +41,61 @@ cupsexec_backenddir = $(pkglibdir)/backend
 cupsexec_filterdir = $(pkglibdir)/filter
 cups_modeldir = $(pkgdatadir)/model
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@ $(CUPS_CFLAGS)
+AM_CFLAGS = $(GNUCFLAGS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
+
 ## Programs
 
+CUPS_BIN = cups-calibrate
+CUPS_BACKEND_BIN = epson canon
+CUPS_FILTER_BIN = rastertoprinter commandtoepson commandtocanon
+CUPS_NOINST_BIN = genppd
+
 bin_PROGRAMS = @CUPS_BIN@
-
 cupsexec_backend_PROGRAMS = @CUPS_BACKEND_BIN@
-
 cupsexec_filter_PROGRAMS = @CUPS_FILTER_BIN@
-
 noinst_PROGRAMS = @CUPS_NOINST_BIN@
 
 EXTRA_PROGRAMS = cups-calibrate commandtoepson epson genppd rastertoprinter commandtocanon canon
 
+cups_calibrate_SOURCES = cups-calibrate.c
 cups_calibrate_LDADD = -lm
 
+commandtoepson_SOURCES = commandtoepson.c
 commandtoepson_LDADD = $(CUPS_LIBS)
 
+canon_SOURCES = canon.c
 canon_LDADD = $(CUPS_LIBS)
 
+epson_SOURCES = epson.c
 epson_LDADD = $(CUPS_LIBS)
 
+genppd_SOURCES = genppd.c
 genppd_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
-
 genppd_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
+rastertoprinter_SOURCES = rastertoprinter.c
 rastertoprinter_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
-
 rastertoprinter_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 
 ## Data
 
-pkgdata_DATA = @CUPS_PKG@
+CUPS_PKG = calibrate.ppm
+CUPS_CONF = command.types
 
+pkgdata_DATA = @CUPS_PKG@
 pkgsysconf_DATA = @CUPS_CONF@
 
 if BUILD_CUPS
 INSTALL_DATA_LOCAL_DEPS = ppd
 endif
 
-if BUILD_CUPS
-INSTALL_PPD = true
-else
-INSTALL_PPD =
-endif
-
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
-	if test -n "$(INSTALL_PPD)" ; then \
+	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
 	  cd ppd ; \
 	  for ppdfile in * ; do \
@@ -110,22 +116,25 @@ install-data-hook:
 	-rmdir $(DESTDIR)$(sysconfdir)
 	-rmdir $(DESTDIR)$(bindir)
 
+
 ## Rules
 
 .PHONY: ppd
 
-ppd:    genppd
+ppd: ppd-stamp
+ppd-stamp: genppd
 	-rm -rf ppd
 	./genppd
+	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../main
 
 dist-hook:
 	for dir in commands ; do \
-	  if test -d $$dir ; then \
+	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $$dir/*; do \
+	    for dirfile in $(srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \
@@ -133,24 +142,25 @@ dist-hook:
 	  fi \
 	done
 
-install: @CUPS_INSTALL@
-
 clean-local:
 	-rm -rf ppd
 
-CLEANFILES = $(EXTRA_PROGRAMS)
+
+## Clean
+
+CLEANFILES = $(EXTRA_PROGRAMS) ppd-stamp
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
 	COPYING \
 	README \
-	cups-calibrate.c \
 	calibrate.ppm \
-	canon.c \
 	command.txt \
-	command.types \
-	commandtocanon.c \
-	commandtoepson.c \
-	epson.c \
-	genppd.c \
-	rastertoprinter.c
+	command.types
+
+
+
+
+
+
+

@@ -1,3 +1,9 @@
+gimp-print (4.1.10-1) unstable; urgency=low
+
+  * New upstream release  (4.1.8 and 4.1.9 were buggy)
+
+ -- Eric Sharkey <sharkey@debian.org>  Fri, 29 Jun 2001 23:08:27 -0400
+
 gimp-print (4.1.7-1) unstable; urgency=low
 
   * New package libgimpprint-doc for Info and dvi docs. (Roger Leigh)

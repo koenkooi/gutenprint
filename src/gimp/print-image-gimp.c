@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: print-image-gimp.c,v 1.2.4.1 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -59,8 +59,8 @@
 /* Concrete type to represent image */
 typedef struct
 {
-  GDrawable *drawable;
-  GPixelRgn  rgn;
+  GimpDrawable *drawable;
+  GimpPixelRgn  rgn;
 
   /*
    * Transformations we can impose on the image.  The transformations
@@ -127,7 +127,7 @@ static stp_image_t theImage =
 };
 
 stp_image_t *
-Image_GDrawable_new(GDrawable *drawable)
+Image_GimpDrawable_new(GimpDrawable *drawable)
 {
   Gimp_Image_t *i = xmalloc(sizeof(Gimp_Image_t));
   i->drawable = drawable;
@@ -292,19 +292,22 @@ Image_get_row(stp_image_t *image, unsigned char *data, int row)
   else
     gimp_pixel_rgn_get_row(&(i->rgn), data,
                            i->ox, i->oy + row * i->increment, i->w);
-  if (i->mirror) {
-    /* Flip row -- probably inefficiently */
-    int f, l, b = i->drawable->bpp;
-    for (f = 0, l = i->w - 1; f < l; f++, l--) {
-      int c;
-      unsigned char tmp;
-      for (c = 0; c < b; c++) {
-        tmp = data[f*b+c];
-        data[f*b+c] = data[l*b+c];
-        data[l*b+c] = tmp;
-      }
+  if (i->mirror)
+    {
+      /* Flip row -- probably inefficiently */
+      int f, l, b = i->drawable->bpp;
+      for (f = 0, l = i->w - 1; f < l; f++, l--)
+	{
+	  int c;
+	  unsigned char tmp;
+	  for (c = 0; c < b; c++)
+	    {
+	      tmp = data[f*b+c];
+	      data[f*b+c] = data[l*b+c];
+	      data[l*b+c] = tmp;
+	    }
+	}
     }
-  }
 }
 
 static void
@@ -334,5 +337,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.2.4.1 2001/06/30 03:19:59 sharkey Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13.4.3 2001/05/09 16:32:50 sharkey Exp $
+## $Id: Makefile.am,v 1.13.4.4 2001/06/30 03:19:59 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,20 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 
-bin_SCRIPTS = gimpprint-config
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
+INCLUDES = @INCLUDES@
+
+
+## Programs
+
+MAIN_BIN = libgimpprint.la
+MAIN_SCR = gimpprint-config
+
+bin_SCRIPTS = @MAIN_SCR@
+EXTRA_SCRIPTS = gimpprint-config
 
 lib_LTLIBRARIES = @MAIN_BIN@
 EXTRA_LTLIBRARIES = libgimpprint.la
@@ -44,10 +54,11 @@ libgimpprint_la_SOURCES = \
 	print-color.c \
 	print-weave.c \
 	print-version.c \
+	print-dither-matrices.c \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h
-#libgimpprint_la_LIBADD = ../../lib/libprintut.la -lm
+libgimpprint_la_LIBADD = $(GIMPPRINT_DEPLIBS)
 # Uncommment to build an unversioned library (version in soname)
 libgimpprint_la_LDFLAGS = -release $(VERSION) -rpath $(libdir)
 ## Uncomment to build a versioned library
@@ -56,8 +67,16 @@ libgimpprint_la_LDFLAGS = -release $(VERSION) -rpath $(libdir)
 ##	-export-dynamic                                         \
 ##	-rpath $(libdir)
 
+
+## Data
+
+MAIN_DAT = gimpprint.m4
+
 m4datadir = $(datadir)/aclocal
 m4data_DATA = @MAIN_DAT@
+
+
+## Rules
 
 print-util.lo: print-printers.c $(srcdir)/print-util.c
 
@@ -68,6 +87,9 @@ printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
 	$(MAKE) -C ../printdef
+
+
+## Clean
 
 CLEANFILES = print-printers.c
 DISTCLEANFILES = gimpprint-config

@@ -1,4 +1,4 @@
-/* $Id: bjc-unprint.c,v 1.2.2.2 2001/04/30 17:47:13 sharkey Exp $ */
+/* $Id: bjc-unprint.c,v 1.2.2.3 2001/06/30 03:20:00 sharkey Exp $ */
 /*
  * Convert BJC-printjobs to xbm files, one for each color channel
  *
@@ -65,6 +65,24 @@ typedef struct bitimage_t_ {
   int xmin;
   int xmax;
 } bitimage_t;
+
+bitimage_t *bitimage_new (void);
+int last_bit (unsigned char i);
+int first_bit (unsigned char i);
+void rle_info (const unsigned char *inbuf, int n, int *first, int *last,
+               int *width, int *length);
+int rle_decode (unsigned char *inbuf, int n, unsigned char *outbuf, int max);
+scanline_t* scanline_new (void);
+scanline_t *scanline_store (scanline_t *line, int y, unsigned char *buf,
+                            int size);
+bitimage_t *scanlines2bitimage (scanline_t *slimg);
+char conv (char i);
+void save2xbm (const char *filename,char col, bitimage_t *img,
+               int xmin, int ymin, int xmax, int ymax);
+int nextcmd (FILE *infile, unsigned char *inbuff, int *cnt);
+int process(FILE *infile, scanline_t *sf[7], int *xmin_, int *xmax_,
+            int *ymin_, int *ymax_);
+
 
 bitimage_t *bitimage_new(void)
 {
@@ -253,16 +271,16 @@ char conv(char i) {
 void save2xbm(const char *filename,char col, bitimage_t *img, 
 	      int xmin, int ymin, int xmax, int ymax) 
 {
-  char *outfilename= (char*) xmalloc(strlen(filename)+7);
+  char *outfilename= (char*) xmalloc(strlen(filename)+16);
   FILE *o;
   int i,j,k,i0,i1,j0,j1,w,h;
 
   if (!img) return;
 
   if (col) 
-    snprintf(outfilename,strlen(filename)+7,"%s_%c.xbm",filename,col);
+    sprintf(outfilename,"%s_%c.xbm",filename,col);
   else
-    snprintf(outfilename,strlen(filename)+5,"%s.xbm",filename);
+    sprintf(outfilename,"%s.xbm",filename);
 
   if (!(o= fopen(outfilename,"w"))) {
     free(outfilename);

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.3 2001/05/09 16:32:49 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.4 2001/06/30 03:19:58 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,15 +60,19 @@ ChangeLog:
 
 dist-hook:
 	for dir in debian scripts ; do \
-	  if test -d $(top_srcdir)/$$dir ; then \
+	  if test -d $(srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $(top_srcdir)/$$dir/*; do \
+	    for dirfile in $(srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \
 	    done \
 	  fi \
 	done
+# Create debian/control
+	DEBIAN_VERSION=`grep "(" debian/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
+	UPSTREAM_VERSION=`echo $DEBIAN_VERSION | sed "s/-[^-]*$$//"` ; \
+	sed -e "s/#UPSTREAM_VERSION#/$${UPSTREAM_VERSION}/g" <debian/control.in >$(distdir)/debian/control
 # Do some extra magic to make a distribution for GIMP CVS
 	if test -f .gimp-dist ; then \
 	  rm -rf $(distdir)/src/cups $(distdir)/src/escputil $(distdir)/src/foomatic $(distdir)/src/ghost ; \
@@ -91,6 +95,9 @@ install-cups: all
 install-ghost: all
 	$(MAKE) -C src/ghost install
 
+html:
+	$(MAKE) -C doc html
+
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`
 
@@ -106,4 +113,4 @@ CLEANSCRIPTS = \
 CLEANFILES = .gimp-dist .noupdate
 MAINTAINERCLEANFILES = ABOUT-NLS INSTALL aclocal.m4 config.h.in configure Makefile.in stamp-h.in $(addprefix scripts/, $(CLEANSCRIPTS))
 
-.PHONY: gimp-dist install-gimp install-cups install-ghost snapshot ChangeLog
+.PHONY: gimp-dist install-gimp install-cups install-ghost html snapshot ChangeLog

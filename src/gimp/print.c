@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.4.3 2001/05/09 16:32:50 sharkey Exp $"
+ * "$Id: print.c,v 1.4.4.4 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -28,6 +28,7 @@
 
 #include "print_gimp.h"
 
+#include <sys/types.h>
 #include <signal.h>
 #include <ctype.h>
 #include <sys/wait.h>
@@ -38,6 +39,8 @@
 #endif
 
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "print-intl.h"
 
@@ -45,26 +48,20 @@
  * Local functions...
  */
 
-static void	printrc_load(void);
-void	        printrc_save(void);
-static int	compare_printers(gp_plist_t *p1, gp_plist_t *p2);
-static void	get_system_printers(void);
+static void	printrc_load (void);
+void		printrc_save (void);
+static int	compare_printers (gp_plist_t *p1, gp_plist_t *p2);
+static void	get_system_printers (void);
 
 static void	query (void);
-static void	run (char *, int, GParam *, int *, GParam **);
+static void	run (char *, int, GimpParam *, int *, GimpParam **);
 static int	do_print_dialog (char *proc_name);
-
-extern void     gimp_create_main_window (void);
-
-#if 0
-static void	cleanupfunc(void);
-#endif
 
 /*
  * Globals...
  */
 
-GPlugInInfo	PLUG_IN_INFO =		/* Plug-in information */
+GimpPlugInInfo	PLUG_IN_INFO =		/* Plug-in information */
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -111,25 +108,9 @@ check_plist(int count)
  * 'main()' - Main entry - just call gimp_main()...
  */
 
-#if 0
-int
-main(int  argc,		/* I - Number of command-line args */
-     char *argv[])	/* I - Command-line args */
-{
-  return (gimp_main(argc, argv));
-}
-#else
 MAIN()
-#endif
 
 static int print_finished = 0;
-
-#if 0
-void
-cleanupfunc(void)
-{
-}
-#endif
 
 /*
  * 'query()' - Respond to a plug-in query...
@@ -138,36 +119,36 @@ cleanupfunc(void)
 static void
 query (void)
 {
-  static GParamDef	args[] =
+  static const GimpParamDef args[] =
   {
-    { PARAM_INT32,	"run_mode",	"Interactive, non-interactive" },
-    { PARAM_IMAGE,	"image",	"Input image" },
-    { PARAM_DRAWABLE,	"drawable",	"Input drawable" },
-    { PARAM_STRING,	"output_to",	"Print command or filename (| to pipe to command)" },
-    { PARAM_STRING,	"driver",	"Printer driver short name" },
-    { PARAM_STRING,	"ppd_file",	"PPD file" },
-    { PARAM_INT32,	"output_type",	"Output type (0 = gray, 1 = color)" },
-    { PARAM_STRING,	"resolution",	"Resolution (\"300\", \"720\", etc.)" },
-    { PARAM_STRING,	"media_size",	"Media size (\"Letter\", \"A4\", etc.)" },
-    { PARAM_STRING,	"media_type",	"Media type (\"Plain\", \"Glossy\", etc.)" },
-    { PARAM_STRING,	"media_source",	"Media source (\"Tray1\", \"Manual\", etc.)" },
-    { PARAM_FLOAT,	"brightness",	"Brightness (0-400%)" },
-    { PARAM_FLOAT,	"scaling",	"Output scaling (0-100%, -PPI)" },
-    { PARAM_INT32,	"orientation",	"Output orientation (-1 = auto, 0 = portrait, 1 = landscape)" },
-    { PARAM_INT32,	"left",		"Left offset (points, -1 = centered)" },
-    { PARAM_INT32,	"top",		"Top offset (points, -1 = centered)" },
-    { PARAM_FLOAT,	"gamma",	"Output gamma (0.1 - 3.0)" },
-    { PARAM_FLOAT,	"contrast",	"Contrast" },
-    { PARAM_FLOAT,	"cyan",		"Cyan level" },
-    { PARAM_FLOAT,	"magenta",	"Magenta level" },
-    { PARAM_FLOAT,	"yellow",		"Yellow level" },
-    { PARAM_INT32,	"linear",	"Linear output (0 = normal, 1 = linear)" },
-    { PARAM_INT32,	"image_type",	"Image type (0 = line art, 1 = solid tones, 2 = continuous tone, 3 = monochrome)"},
-    { PARAM_FLOAT,	"saturation",	"Saturation (0-1000%)" },
-    { PARAM_FLOAT,	"density",	"Density (0-200%)" },
-    { PARAM_STRING,	"ink_type",	"Type of ink or cartridge" },
-    { PARAM_STRING,	"dither_algorithm", "Dither algorithm" },
-    { PARAM_INT32,	"unit",		"Unit 0=Inches 1=Metric" },
+    { GIMP_PDB_INT32,	"run_mode",	"Interactive, non-interactive" },
+    { GIMP_PDB_IMAGE,	"image",	"Input image" },
+    { GIMP_PDB_DRAWABLE,	"drawable",	"Input drawable" },
+    { GIMP_PDB_STRING,	"output_to",	"Print command or filename (| to pipe to command)" },
+    { GIMP_PDB_STRING,	"driver",	"Printer driver short name" },
+    { GIMP_PDB_STRING,	"ppd_file",	"PPD file" },
+    { GIMP_PDB_INT32,	"output_type",	"Output type (0 = gray, 1 = color)" },
+    { GIMP_PDB_STRING,	"resolution",	"Resolution (\"300\", \"720\", etc.)" },
+    { GIMP_PDB_STRING,	"media_size",	"Media size (\"Letter\", \"A4\", etc.)" },
+    { GIMP_PDB_STRING,	"media_type",	"Media type (\"Plain\", \"Glossy\", etc.)" },
+    { GIMP_PDB_STRING,	"media_source",	"Media source (\"Tray1\", \"Manual\", etc.)" },
+    { GIMP_PDB_FLOAT,	"brightness",	"Brightness (0-400%)" },
+    { GIMP_PDB_FLOAT,	"scaling",	"Output scaling (0-100%, -PPI)" },
+    { GIMP_PDB_INT32,	"orientation",	"Output orientation (-1 = auto, 0 = portrait, 1 = landscape)" },
+    { GIMP_PDB_INT32,	"left",		"Left offset (points, -1 = centered)" },
+    { GIMP_PDB_INT32,	"top",		"Top offset (points, -1 = centered)" },
+    { GIMP_PDB_FLOAT,	"gamma",	"Output gamma (0.1 - 3.0)" },
+    { GIMP_PDB_FLOAT,	"contrast",	"Contrast" },
+    { GIMP_PDB_FLOAT,	"cyan",		"Cyan level" },
+    { GIMP_PDB_FLOAT,	"magenta",	"Magenta level" },
+    { GIMP_PDB_FLOAT,	"yellow",		"Yellow level" },
+    { GIMP_PDB_INT32,	"linear",	"Linear output (0 = normal, 1 = linear)" },
+    { GIMP_PDB_INT32,	"image_type",	"Image type (0 = line art, 1 = solid tones, 2 = continuous tone, 3 = monochrome)"},
+    { GIMP_PDB_FLOAT,	"saturation",	"Saturation (0-1000%)" },
+    { GIMP_PDB_FLOAT,	"density",	"Density (0-200%)" },
+    { GIMP_PDB_STRING,	"ink_type",	"Type of ink or cartridge" },
+    { GIMP_PDB_STRING,	"dither_algorithm", "Dither algorithm" },
+    { GIMP_PDB_INT32,	"unit",		"Unit 0=Inches 1=Metric" },
   };
   static gint nargs = sizeof(args) / sizeof(args[0]);
 
@@ -182,7 +163,7 @@ query (void)
 			  PLUG_IN_VERSION,
 			  N_("<Image>/File/Print..."),
 			  types,
-			  PROC_PLUG_IN,
+			  GIMP_PLUGIN,
 			  nargs, 0,
 			  args, NULL);
 }
@@ -220,7 +201,7 @@ usr1_handler (int signal)
   usr1_interrupt = 1;
 }
 
-static void
+void
 gimp_writefunc(void *file, const char *buf, size_t bytes)
 {
   FILE *prn = (FILE *)file;
@@ -241,20 +222,20 @@ volatile int SDEBUG = 1;
 static void
 run (char   *name,		/* I - Name of print program. */
      int    nparams,		/* I - Number of parameters passed in */
-     GParam *param,		/* I - Parameter values */
+     GimpParam *param,		/* I - Parameter values */
      int    *nreturn_vals,	/* O - Number of return values */
-     GParam **return_vals)	/* O - Return values */
+     GimpParam **return_vals)	/* O - Return values */
 {
-  GDrawable	*drawable;	/* Drawable for image */
-  GRunModeType	 run_mode;	/* Current run mode */
+  GimpDrawable	*drawable;	/* Drawable for image */
+  GimpRunModeType	 run_mode;	/* Current run mode */
   FILE		*prn = NULL;	/* Print file/command */
   int		 ncolors;	/* Number of colors in colormap */
-  GParam	*values;	/* Return values */
+  GimpParam	*values;	/* Return values */
 #ifdef __EMX__
   char		*tmpfile;	/* temp filename */
 #endif
   gint32         drawable_ID;   /* drawable ID */
-  GimpExportReturnType export = EXPORT_CANCEL;    /* return value of gimp_export_image() */
+  GimpExportReturnType export = GIMP_EXPORT_CANCEL;    /* return value of gimp_export_image() */
   int		ppid = getpid (), /* PID of plugin */
 		opid,		/* PID of output process */
 		cpid = 0,	/* PID of control/monitor process */
@@ -285,12 +266,12 @@ run (char   *name,		/* I - Name of print program. */
    */
 
   current_printer = stp_get_printer_by_index (0);
-  run_mode = (GRunModeType)param[0].data.d_int32;
+  run_mode = (GimpRunModeType)param[0].data.d_int32;
 
-  values = g_new (GParam, 1);
+  values = g_new (GimpParam, 1);
 
-  values[0].type          = PARAM_STATUS;
-  values[0].data.d_status = STATUS_SUCCESS;
+  values[0].type          = GIMP_PDB_STATUS;
+  values[0].data.d_status = GIMP_PDB_SUCCESS;
 
   *nreturn_vals = 1;
   *return_vals  = values;
@@ -305,18 +286,18 @@ run (char   *name,		/* I - Name of print program. */
   /*  eventually export the image */
   switch (run_mode)
     {
-    case RUN_INTERACTIVE:
-    case RUN_WITH_LAST_VALS:
+    case GIMP_RUN_INTERACTIVE:
+    case GIMP_RUN_WITH_LAST_VALS:
       gimp_ui_init ("print", TRUE);
       export = gimp_export_image (&image_ID, &drawable_ID, "Print",
-				  (CAN_HANDLE_RGB |
-				   CAN_HANDLE_GRAY |
-				   CAN_HANDLE_INDEXED |
-				   CAN_HANDLE_ALPHA));
-      if (export == EXPORT_CANCEL)
+				  (GIMP_EXPORT_CAN_HANDLE_RGB |
+				   GIMP_EXPORT_CAN_HANDLE_GRAY |
+				   GIMP_EXPORT_CAN_HANDLE_INDEXED |
+				   GIMP_EXPORT_CAN_HANDLE_ALPHA));
+      if (export == GIMP_EXPORT_CANCEL)
 	{
 	  *nreturn_vals = 1;
-	  values[0].data.d_status = STATUS_EXECUTION_ERROR;
+	  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	  return;
 	}
       break;
@@ -339,7 +320,7 @@ run (char   *name,		/* I - Name of print program. */
 
   switch (run_mode)
     {
-    case RUN_INTERACTIVE:
+    case GIMP_RUN_INTERACTIVE:
       /*
        * Get information from the dialog...
        */
@@ -348,12 +329,12 @@ run (char   *name,		/* I - Name of print program. */
 	goto cleanup;
       break;
 
-    case RUN_NONINTERACTIVE:
+    case GIMP_RUN_NONINTERACTIVE:
       /*
        * Make sure all the arguments are present...
        */
       if (nparams < 11)
-	values[0].data.d_status = STATUS_CALLING_ERROR;
+	values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
       else
 	{
 	  stp_set_output_to(vars, param[3].data.d_string);
@@ -417,19 +398,19 @@ run (char   *name,		/* I - Name of print program. */
       current_printer = stp_get_printer_by_driver (stp_get_driver(vars));
       break;
 
-    case RUN_WITH_LAST_VALS:
-      values[0].data.d_status = STATUS_CALLING_ERROR;
+    case GIMP_RUN_WITH_LAST_VALS:
+      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
       break;
 
     default:
-      values[0].data.d_status = STATUS_CALLING_ERROR;
+      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
       break;
     }
 
   /*
    * Print the image...
    */
-  if (values[0].data.d_status == STATUS_SUCCESS)
+  if (values[0].data.d_status == GIMP_PDB_SUCCESS)
     {
       /*
        * Set the tile cache size...
@@ -526,7 +507,7 @@ run (char   *name,		/* I - Name of print program. */
 
       if (prn != NULL)
 	{
-	  stp_image_t *image = Image_GDrawable_new(drawable);
+	  stp_image_t *image = Image_GimpDrawable_new(drawable);
 	  stp_set_app_gamma(vars, gimp_gamma());
 	  stp_merge_printvars(vars, stp_printer_get_printvars(current_printer));
 
@@ -534,7 +515,7 @@ run (char   *name,		/* I - Name of print program. */
 	   * Is the image an Indexed type?  If so we need the colormap...
 	   */
 
-	  if (gimp_image_base_type (image_ID) == INDEXED)
+	  if (gimp_image_base_type (image_ID) == GIMP_INDEXED)
 	    stp_set_cmap(vars, gimp_image_get_cmap (image_ID, &ncolors));
 	  else
 	    stp_set_cmap(vars, NULL);
@@ -553,7 +534,7 @@ run (char   *name,		/* I - Name of print program. */
 	    stp_printer_get_printfuncs(current_printer)->print
 	      (current_printer, image, vars);
 	  else
-	    values[0].data.d_status = STATUS_EXECUTION_ERROR;
+	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 
 	  if (plist_current > 0)
 #ifndef __EMX__
@@ -568,7 +549,7 @@ run (char   *name,		/* I - Name of print program. */
 	    fclose (prn);
 	    s = g_strconcat (stp_get_output_to(vars), tmpfile, NULL);
 	    if (system(s) != 0)
-	      values[0].data.d_status = STATUS_EXECUTION_ERROR;
+	      values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	    g_free (s);
 	    remove (tmpfile);
 	    g_free (tmpfile);
@@ -579,13 +560,13 @@ run (char   *name,		/* I - Name of print program. */
 	  print_finished = 1;
 	}
       else
-	values[0].data.d_status = STATUS_EXECUTION_ERROR;
+	values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 
       /*
        * Store data...
        */
 
-      if (run_mode == RUN_INTERACTIVE)
+      if (run_mode == GIMP_RUN_INTERACTIVE)
 	gimp_set_data (PLUG_IN_NAME, vars, sizeof (vars));
     }
 
@@ -596,7 +577,7 @@ run (char   *name,		/* I - Name of print program. */
 
 
  cleanup:
-  if (export == EXPORT_EXPORT)
+  if (export == GIMP_EXPORT_EXPORT)
     gimp_image_delete (image_ID);
   stp_free_vars(vars);
 }
@@ -634,7 +615,7 @@ do_print_dialog (gchar *proc_name)
   return (runme);
 }
 
-static void
+void
 initialize_printer(gp_plist_t *printer)
 {
   printer->name[0] = '\0';
@@ -741,6 +722,65 @@ psearch(const void *key, const void *base, size_t nmemb, size_t size,
   return NULL;
 }
 
+int
+add_printer(const gp_plist_t *key, int add_only)
+{
+  /*
+   * The format of the list is the File printer followed by a qsort'ed list
+   * of system printers. So, if we want to update the file printer, it is
+   * always first in the list, else call psearch.
+   */
+  gp_plist_t *p;
+  if (strcmp(_("File"), key->name) == 0
+      && strcmp(plist[0].name, _("File")) == 0)
+    {
+      if (add_only)
+	return 0;
+      if (stp_get_printer_by_driver(stp_get_driver(key->v)))
+	{
+#ifdef DEBUG
+	  printf("Updated File printer directly\n");
+#endif
+	  p = &plist[0];
+	  memcpy(p, key, sizeof(gp_plist_t));
+	  p->v = stp_allocate_copy(key->v);
+	  p->active = 1;
+	}
+      return 1;
+    }
+  else if (stp_get_printer_by_driver(stp_get_driver(key->v)))
+    {
+      p = psearch(key, plist + 1, plist_count - 1,
+		  sizeof(gp_plist_t),
+		  (int (*)(const void *, const void *)) compare_printers);
+      if (p == NULL)
+	{
+#ifdef DEBUG
+	  fprintf(stderr, "Adding new printer from printrc file: %s\n",
+		  key->name);
+#endif
+	  check_plist(plist_count + 1);
+	  p = plist + plist_count;
+	  plist_count++;
+	  memcpy(p, key, sizeof(gp_plist_t));
+	  p->v = stp_allocate_copy(key->v);
+	  p->active = 0;
+	}
+      else
+	{
+	  if (add_only)
+	    return 0;
+#ifdef DEBUG
+	  printf("Updating printer %s.\n", key->name);
+#endif
+	  memcpy(p, key, sizeof(gp_plist_t));
+	  stp_copy_vars(p->v, key->v);
+	  p->active = 1;
+	}
+    }
+  return 1;
+}  
+
 /*
  * 'printrc_load()' - Load the printer resource configuration file.
  */
@@ -753,11 +793,7 @@ printrc_load(void)
   char		line[1024],	/* Line in printrc file */
 		*lineptr,	/* Pointer in line */
 		*commaptr;	/* Pointer to next comma */
-  gp_plist_t	*p = 0,		/* Current printer */
-		key;		/* Search key */
-#if (GIMP_MINOR_VERSION == 0)
-  char		*home;		/* Home dir */
-#endif
+  gp_plist_t	key;		/* Search key */
   int		format = 0;	/* rc file format version */
   int		system_printers; /* printer count before reading printrc */
   char *	current_printer = 0; /* printer to select */
@@ -776,16 +812,7 @@ printrc_load(void)
   * Generate the filename for the current user...
   */
 
-#if (GIMP_MINOR_VERSION == 0)
-  home = getenv("HOME");
-  if (home == NULL)
-    filename=g_strdup("/.gimp/printrc");
-  else
-    filename = xmalloc(strlen(home) + 15);
-    sprintf(filename, "%s/.gimp/printrc", home);
-#else
   filename = gimp_personal_rc_file ("printrc");
-#endif
 
 #ifdef __EMX__
   _fnslashify(filename);
@@ -865,50 +892,7 @@ printrc_load(void)
         GET_OPTIONAL_STRING_PARAM(ink_type);
         GET_OPTIONAL_STRING_PARAM(dither_algorithm);
         GET_OPTIONAL_INT_PARAM(unit);
-
-/*
- * The format of the list is the File printer followed by a qsort'ed list
- * of system printers. So, if we want to update the file printer, it is
- * always first in the list, else call psearch.
- */
-        if ((strcmp(key.name, _("File")) == 0) && (strcmp(plist[0].name,
-	     _("File")) == 0))
-	  {
-#ifdef DEBUG
-	    printf("Updated File printer directly\n");
-#endif
-	    p = &plist[0];
-	    memcpy(p, &key, sizeof(gp_plist_t));
-	    p->v = stp_allocate_copy(key.v);
-	    p->active = 1;
-	  }
-	 else
-	   {
-	     if ((p = psearch(&key, plist + 1, plist_count - 1, sizeof(gp_plist_t),
-			  (int (*)(const void *, const void *))compare_printers))
-		 != NULL)
-	       {
-#ifdef DEBUG
-		 printf("Updating printer %s.\n", key.name);
-#endif
-		 memcpy(p, &key, sizeof(gp_plist_t));
-		 stp_copy_vars(p->v, key.v);
-		 p->active = 1;
-	       }
-            else
-    	      {
-#ifdef DEBUG
-                fprintf(stderr, "Adding new printer from printrc file: %s\n",
-                  key.name);
-#endif
-	        check_plist(plist_count + 1);
-	        p = plist + plist_count;
-	        memcpy(p, &key, sizeof(gp_plist_t));
-		p->v = stp_allocate_copy(key.v);
-	        p->active = 0;
-	        plist_count++;
-	      }
-	  }
+	add_printer(&key, 0);
       }
       else if (format == 1)
       {
@@ -953,54 +937,10 @@ printrc_load(void)
 	if (strcasecmp("current-printer", keyword) == 0) {
 	  if (current_printer)
 	    free (current_printer);
-	  current_printer = strdup(value);
+	  current_printer = g_strdup(value);
 	} else if (strcasecmp("printer", keyword) == 0) {
 	  /* Switch to printer named VALUE */
-	  if (strcmp(_("File"), key.name) == 0
-	      && strcmp(plist[0].name, _("File")) == 0)
-	  {
-	    if (stp_get_printer_by_driver(stp_get_driver(key.v)))
-	      {
-#ifdef DEBUG
-		printf("Updated File printer directly\n");
-#endif
-		p = &plist[0];
-		memcpy(p, &key, sizeof(gp_plist_t));
-		p->v = stp_allocate_copy(key.v);
-		p->active = 1;
-	      }
-	  }
-	  else
-	  {
-	    if (stp_get_printer_by_driver(stp_get_driver(key.v)))
-	      {
-		p = psearch(&key, plist + 1, plist_count - 1,
-			    sizeof(gp_plist_t),
-			    (int (*)(const void *, const void *)) compare_printers);
-		if (p == NULL)
-		  {
-#ifdef DEBUG
-                fprintf(stderr, "Adding new printer from printrc file: %s\n",
-                  key.name);
-#endif
-		    check_plist(plist_count + 1);
-		    p = plist + plist_count;
-		    plist_count++;
-		    memcpy(p, &key, sizeof(gp_plist_t));
-		    p->v = stp_allocate_copy(key.v);
-		    p->active = 0;
-		  }
-		else
-		  {
-#ifdef DEBUG
-		    printf("Updating printer %s.\n", key.name);
-#endif
-		    memcpy(p, &key, sizeof(gp_plist_t));
-		    stp_copy_vars(p->v, key.v);
-		    p->active = 1;
-		  }
-	      }
-	  }
+	  add_printer(&key, 0);
 #ifdef DEBUG
 	  printf("output_to is now %s\n", stp_get_output_to(p->v));
 #endif
@@ -1063,9 +1003,7 @@ printrc_load(void)
 	  stp_set_page_height(key.v, atoi(value));
 	} else {
 	  /* Unrecognised keyword; ignore it... */
-#if 1
-          printf("Unrecognised keyword `%s' in printrc; value `%s'\n", keyword, value);
-#endif
+          printf("Unrecognized keyword `%s' in printrc; value `%s'\n", keyword, value);
 	}
       }
       else
@@ -1076,43 +1014,7 @@ printrc_load(void)
       }
     }
     if (format > 0)
-      {
-	if (strcmp(_("File"), key.name) == 0
-	    && strcmp(plist[0].name, _("File")) == 0)
-	  {
-	    if (stp_get_printer_by_driver(stp_get_driver(key.v)))
-	      {
-		p = &plist[0];
-		memcpy(p, &key, sizeof(gp_plist_t));
-		p->v = stp_allocate_copy(key.v);
-		p->active = 1;
-	      }
-	  }
-	else
-	  {
-	    if (stp_get_printer_by_driver(stp_get_driver(key.v)))
-	      {
-		p = psearch(&key, plist + 1, plist_count - 1,
-			    sizeof(gp_plist_t),
-			    (int (*)(const void *, const void *)) compare_printers);
-		if (p == NULL)
-		  {
-		    check_plist(plist_count + 1);
-		    p = plist + plist_count;
-		    plist_count++;
-		    memcpy(p, &key, sizeof(gp_plist_t));
-		    p->v = stp_allocate_copy(key.v);
-		    p->active = 0;
-		  }
-		else
-		  {
-		    memcpy(p, &key, sizeof(gp_plist_t));
-		    stp_copy_vars(p->v, key.v);
-		    p->active = 1;
-		  }
-	      }
-	  }
-      }
+      add_printer(&key, 0);
     fclose(fp);
   }
 
@@ -1158,25 +1060,12 @@ printrc_save(void)
   char	       *filename;	/* Printrc filename */
   int		i;		/* Looping var */
   gp_plist_t	*p;		/* Current printer */
-#if (GIMP_MINOR_VERSION == 0)
-  char		*home;		/* Home dir */
-#endif
-
 
  /*
   * Generate the filename for the current user...
   */
 
-#if (GIMP_MINOR_VERSION == 0)
-  home = getenv("HOME");
-  if (home == NULL)
-    filename=g_strdup("/.gimp/printrc");
-  else
-    filename = xmalloc(strlen(home) + 15);
-    sprintf(filename, "%s/.gimp/printrc", home);
-#else
   filename = gimp_personal_rc_file ("printrc");
-#endif
 
 #ifdef __EMX__
   _fnslashify(filename);
@@ -1279,7 +1168,7 @@ get_system_printers(void)
 #ifdef __EMX__
   BYTE  pnum;
 #endif
-  static char	*lpcs[] =	/* Possible locations of LPC... */
+  static const char	*lpcs[] =	/* Possible locations of LPC... */
 		{
 		  "/etc"
 		  "/usr/bsd",
@@ -1432,5 +1321,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.4.3 2001/05/09 16:32:50 sharkey Exp $".
+ * End of "$Id: print.c,v 1.4.4.4 2001/06/30 03:19:59 sharkey Exp $".
  */

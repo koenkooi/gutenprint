@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9.2.3 2001/05/09 16:32:50 sharkey Exp $
+## $Id: Makefile.am,v 1.9.2.4 2001/06/30 03:19:59 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,21 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
 
-## Make DESTDIR available to gimptool
-export DESTDIR
-
 MAINT_CHARSET = latin1
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@
+
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 libexecdir = $(gimptool_prefix)/plug-ins
+
+
+## Programs
+
+GIMP_BIN = print
 
 libexec_PROGRAMS = @GIMP_BIN@
 
@@ -43,16 +48,15 @@ print_SOURCES = \
 	gimp_color_window.c \
 	gimp_main_window.c \
 	print_gimp.h
-
 print_LDADD = $(GIMP_LIBS) $(LIBGIMPPRINT_LIBS) ../../lib/libprintut.la
-
 print_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
-$(LIBGIMPPRINT_LIBS):
-	$(MAKE) -C ../main
+
+## Rules
 
 install-libexecPROGRAMS: $(libexec_PROGRAMS)
-	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
+	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
+	list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    if test -f .libs/$$p; then \
 	      cd .libs; \
@@ -63,7 +67,8 @@ install-libexecPROGRAMS: $(libexec_PROGRAMS)
 	done
 
 uninstall-libexecPROGRAMS: $(libexec_PROGRAMS)
-	@list='$(libexec_PROGRAMS)'; for p in $$list; do \
+	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
+	list='$(libexec_PROGRAMS)'; for p in $$list; do \
 	  if test -f "$$p"; then \
 	    echo $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
             $(GIMPTOOL) --uninstall-@PLUG_IN_PATH@ "$$p"; \
@@ -71,6 +76,12 @@ uninstall-libexecPROGRAMS: $(libexec_PROGRAMS)
 	    $(GIMPTOOL) --uninstall-admin-bin "$$p"; \
 	  else :; fi; \
 	done
+
+$(LIBGIMPPRINT_LIBS):
+	$(MAKE) -C ../main
+
+
+## Clean
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in

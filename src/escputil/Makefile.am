@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5.4.1 2001/05/09 16:32:50 sharkey Exp $
+## $Id: Makefile.am,v 1.5.4.2 2001/06/30 03:19:59 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,14 +23,26 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@
+
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
+
+## Programs
+
+ESCPUTIL_BIN = escputil
+
 bin_PROGRAMS = @ESCPUTIL_BIN@
+
 EXTRA_PROGRAMS = escputil
 
 escputil_LDADD = $(LIBREADLINE_DEPS)
+
+
+## Clean
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.4.3 2001/05/09 16:32:50 sharkey Exp $"
+ * "$Id: print-canon.c,v 1.10.4.4 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -42,14 +42,28 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <stdarg.h>
 #include <gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #if (0)
 #define DEBUG 1 
 #endif
+
+#define MAX_CARRIAGE_WIDTH	13 /* This really needs to go away */
+
+/*
+ * We really need to get away from this silly static nonsense...
+ */
+#define MAX_PHYSICAL_BPI 1440
+#define MAX_OVERSAMPLED 8
+#define MAX_BPP 4
+#define BITS_PER_BYTE 8
+#define COMPBUFWIDTH (MAX_PHYSICAL_BPI * MAX_OVERSAMPLED * MAX_BPP * \
+	MAX_CARRIAGE_WIDTH / BITS_PER_BYTE)
 
 #define USE_3BIT_FOLD_TYPE 323
 
@@ -465,34 +479,34 @@ static const double standard_sat_adjustment[49] =
 static const double standard_lum_adjustment[49] =
 {
   0.50,				/* C */
-  0.55,
   0.6,
-  0.65,
-  0.65,
-  0.6,
-  0.55,
-  0.53,
-  0.5,				/* B */
-  0.55,
-  0.65,
   0.7,
   0.8,
-  0.909,
-  1.0,
+  0.9,
+  0.86,
+  0.82,
+  0.79,
+  0.78,				/* B */
+  0.8,
+  0.83,
+  0.87,
+  0.9,
+  0.95,
+  1.05,
   1.15,
   1.3,				/* M */
   1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,				/* R */
   1.2,
   1.15,
-  1.1,
-  1.05,
+  1.12,
+  1.09,
+  1.06,
+  1.03,
+  1.0,				/* R */
+  1.0,
+  1.0,
+  1.0,
+  1.0,
   1.0,
   1.0,
   1.0,
@@ -500,72 +514,72 @@ static const double standard_lum_adjustment[49] =
   0.9,
   0.8,
   0.7,
+  0.65,
   0.6,
   0.55,
-  0.5,
-  0.45,
-  0.36,				/* G */
-  0.4,
-  0.45,
-  0.48,
-  0.48,
-  0.48,
-  0.51,
+  0.52,
+  0.48,				/* G */
+  0.47,
+  0.47,
+  0.49,
+  0.49,
+  0.49,
+  0.52,
   0.51,
   0.50				/* C */
 };
 
 static const double standard_hue_adjustment[49] =
 {
-  0,				/* C */
-  0.17,
-  0.29,
-  0.38,
-  0.47,
-  0.52,
-  0.57,
-  0.62,
-  0.65,				/* B */
-  0.7,
-  0.85,
-  1.05,
-  1.25,
-  1.45,
-  1.65,
-  1.8,
-  2.00,				/* M */
-  2.1,
-  2.2,
-  2.32,
-  2.45,
-  2.56,
-  2.65,
-  2.74,
-  2.83,				/* R */
-  3.0,
-  3.15,
-  3.3,
-  3.45,
-  3.6,
-  3.75,
-  3.85,
-  4.0,				/* Y */
-  4.2,
-  4.37,
-  4.55,
-  4.65,
-  4.78,
-  4.85,
-  4.9,
-  4.95,				/* G */
-  5.05,
-  5.15,
-  5.25,
-  5.35,
-  5.5,
-  5.65,
-  5.8,
-  6.0				/* C */
+  0.00,				/* C */
+  0.05,
+  0.04,
+  0.01,
+  -0.03,
+  -0.10,
+  -0.18,
+  -0.26,
+  -0.35,			/* B */
+  -0.43,
+  -0.40,
+  -0.32,
+  -0.25,
+  -0.18,
+  -0.10,
+  -0.07,
+  0.00,				/* M */
+  -0.04,
+  -0.09,
+  -0.13,
+  -0.18,
+  -0.23,
+  -0.27,
+  -0.31,
+  -0.35,			/* R */
+  -0.38,
+  -0.30,
+  -0.23,
+  -0.15,
+  -0.08,
+  0.00,
+  -0.02,
+  0.00,				/* Y */
+  0.08,
+  0.10,
+  0.08,
+  0.05,
+  0.03,
+  -0.03,
+  -0.12,
+  -0.20,			/* G */
+  -0.17,
+  -0.20,
+  -0.17,
+  -0.15,
+  -0.12,
+  -0.10,
+  -0.08,
+  0.00,				/* C */
 };
 
 typedef enum {
@@ -590,7 +604,7 @@ typedef struct canon_caps {
   int border_bottom;  /* absolute bottom margin, points */
   int inks;           /* installable cartridges (CANON_INK_*) */
   int slots;          /* available paperslots */
-  int features;       /* special bjl settings */
+  unsigned long features;       /* special bjl settings */
   const canon_dot_size_t dot_sizes;   /* Vector of dot sizes for resolutions */
   const canon_densities_t densities;   /* List of densities for each printer */
   const canon_variable_inklist_t *inxs; /* Choices of inks for this printer */
@@ -634,20 +648,20 @@ static void canon_write_line(const stp_vars_t, const canon_cap_t *, int,
 #define CANON_SLOT_MAN2    8
 
 /* model peculiarities */
-#define CANON_CAP_DMT       0x01ull    /* Drop Modulation Technology */
-#define CANON_CAP_MSB_FIRST 0x02ull    /* how to send data           */
-#define CANON_CAP_a         0x04ull
-#define CANON_CAP_b         0x08ull
-#define CANON_CAP_q         0x10ull
-#define CANON_CAP_m         0x20ull
-#define CANON_CAP_d         0x40ull
-#define CANON_CAP_t         0x80ull
-#define CANON_CAP_c         0x100ull
-#define CANON_CAP_p         0x200ull
-#define CANON_CAP_l         0x400ull
-#define CANON_CAP_r         0x800ull
-#define CANON_CAP_g         0x1000ull
-#define CANON_CAP_ACKSHORT  0x2000ull
+#define CANON_CAP_DMT       0x01ul    /* Drop Modulation Technology */
+#define CANON_CAP_MSB_FIRST 0x02ul    /* how to send data           */
+#define CANON_CAP_a         0x04ul
+#define CANON_CAP_b         0x08ul
+#define CANON_CAP_q         0x10ul
+#define CANON_CAP_m         0x20ul
+#define CANON_CAP_d         0x40ul
+#define CANON_CAP_t         0x80ul
+#define CANON_CAP_c         0x100ul
+#define CANON_CAP_p         0x200ul
+#define CANON_CAP_l         0x400ul
+#define CANON_CAP_r         0x800ul
+#define CANON_CAP_g         0x1000ul
+#define CANON_CAP_ACKSHORT  0x2000ul
 
 #define CANON_CAP_STD1 (CANON_CAP_b|CANON_CAP_c|CANON_CAP_d|CANON_CAP_l|\
                         CANON_CAP_m|CANON_CAP_p|CANON_CAP_q|CANON_CAP_t)
@@ -1093,7 +1107,7 @@ static const canon_cap_t * canon_get_model_capabilities(int model)
     }
   }
 #ifdef DEBUG
-  fprintf(stderr,"canon: model %d not found in capabilities list.\n",model);
+  stp_erprintf("canon: model %d not found in capabilities list.\n",model);
 #endif
   return &(canon_model_capabilities[0]);
 }
@@ -1107,7 +1121,7 @@ canon_source_type(const char *name, const canon_cap_t * caps)
   if (!strcmp(name,_("Manual without Pause"))) return 1;
 
 #ifdef DEBUG
-  fprintf(stderr,"canon: Unknown source type '%s' - reverting to auto\n",name);
+  stp_erprintf("canon: Unknown source type '%s' - reverting to auto\n",name);
 #endif
   return 4;
 }
@@ -1130,7 +1144,7 @@ canon_printhead_type(const char *name, const canon_cap_t * caps)
   }
 
 #ifdef DEBUG
-  fprintf(stderr,"canon: Unknown head combo '%s' - reverting to black",name);
+  stp_erprintf("canon: Unknown head combo '%s' - reverting to black",name);
 #endif
   return 0;
 }
@@ -1152,7 +1166,7 @@ canon_printhead_colors(const char *name, const canon_cap_t * caps)
   }
 
 #ifdef DEBUG
-  fprintf(stderr,"canon: Unknown head combo '%s' - reverting to black",name);
+  stp_erprintf("canon: Unknown head combo '%s' - reverting to black",name);
 #endif
   return COLOR_MONOCHROME;
 }
@@ -1180,9 +1194,9 @@ canon_size_type(const stp_vars_t v, const canon_cap_t * caps)
       /* custom */
 
 #ifdef DEBUG
-      fprintf(stderr,"canon: Unknown paper size '%s' - using custom\n",name);
+      stp_erprintf("canon: Unknown paper size '%s' - using custom\n",name);
     } else {
-      fprintf(stderr,"canon: Couldn't look up paper size %dx%d - "
+      stp_erprintf("canon: Couldn't look up paper size %dx%d - "
 	      "using custom\n",stp_get_page_height(v), stp_get_page_width(v));
 #endif
     }
@@ -1259,7 +1273,7 @@ canon_density(const canon_cap_t * caps, int res_code)
     case 0x55: return caps->densities.d_r55;
     default:
 #ifdef DEBUG
-      fprintf(stderr,"no such res_code 0x%x in density of model %d\n",
+      stp_erprintf("no such res_code 0x%x in density of model %d\n",
 	      res_code,caps->model);
 #endif
       return 0.2;
@@ -1277,12 +1291,12 @@ canon_inks(const canon_cap_t * caps, int res_code, int colors, int bits)
 
   for (i=0; i<caps->inxs_cnt; i++) {
 #ifdef DEBUG
-      fprintf(stderr,"hmm, trying ink for resolution code "
+      stp_erprintf("hmm, trying ink for resolution code "
 	      "%x, %d bits, %d colors\n",res_code,inks[i].bits,inks[i].colors);
 #endif
     if ((inks[i].bits==bits) && (inks[i].colors==colors)) {
 #ifdef DEBUG
-      fprintf(stderr,"wow, found ink for resolution code "
+      stp_erprintf("wow, found ink for resolution code "
 	      "%x, %d bits, %d colors\n",res_code,bits,colors);
 #endif
       switch (res_code)
@@ -1297,7 +1311,7 @@ canon_inks(const canon_cap_t * caps, int res_code, int colors, int bits)
     }
   }
 #ifdef DEBUG
-  fprintf(stderr,"ooo, found no ink for resolution code "
+  stp_erprintf("ooo, found no ink for resolution code "
 	  "%x, %d bits, %d colors in all %d defs!\n",
 	  res_code,bits,colors,caps->inxs_cnt);
 #endif
@@ -1393,18 +1407,18 @@ canon_parameters(const stp_printer_t printer,	/* I - Printer model */
     for (x=1; x<6; x++) {
       for (y=x-1; y<x+1; y++) {
 	if ((t= canon_ink_type(caps,(x<<4)|y)) > -1) {
-	  snprintf(tmp,99,"%dx%d DPI",
+	  sprintf(tmp,"%dx%d DPI",
 		   (1<<x)/2*caps->base_res,(1<<y)/2*caps->base_res);
 #ifdef DEBUG
-	  fprintf(stderr,"supports mode '%s'\n",tmp);
+	  stp_erprintf("supports mode '%s'\n",tmp);
 #endif
 	  valptrs[c++]= c_strdup(tmp);
 
 	  if (t==1) {
-	    snprintf(tmp,99,"%dx%d DPI DMT",
+	    sprintf(tmp,"%dx%d DPI DMT",
 		     (1<<x)/2*caps->base_res,(1<<y)/2*caps->base_res);
 #ifdef DEBUG
-	    fprintf(stderr,"supports mode '%s'\n",tmp);
+	    stp_erprintf("supports mode '%s'\n",tmp);
 #endif
 	  valptrs[c++]= c_strdup(tmp);
 	  }
@@ -1516,10 +1530,10 @@ canon_default_parameters(const stp_printer_t printer,
 	    {
 	      if ((t= canon_ink_type(caps,(x<<4)|y)) > -1)
 		{
-		  snprintf(tmp,99,"%dx%d DPI",
+		  sprintf(tmp,"%dx%d DPI",
 			   (1<<x)/2*caps->base_res,(1<<y)/2*caps->base_res);
 #ifdef DEBUG
-		  fprintf(stderr,"supports mode '%s'\n",tmp);
+		  stp_erprintf("supports mode '%s'\n",tmp);
 #endif
 		  return _(c_strdup(tmp));
 		}
@@ -1603,43 +1617,32 @@ canon_cmd(const stp_vars_t v, /* I - the printer         */
 	  ...        /* I - the args themselves */
 	  )
 {
-  static int bufsize= 0;
-  static unsigned char *buffer;
+  unsigned char *buffer = stp_malloc(num + 1);
   int i;
   va_list ap;
 
-  if (!buffer || (num > bufsize)) {
-    if (buffer)
-      free(buffer);
-    buffer = stp_malloc(num);
-    bufsize= num;
-    if (!buffer) {
-#ifdef DEBUG
-      fprintf(stderr,"\ncanon: *** buffer allocation failed...\n");
-      fprintf(stderr,"canon: *** command 0x%02x with %d args dropped\n\n",
-	      cmd,num);
-#endif
-      return;
+  if (num)
+    {
+      va_start(ap, num);
+      for (i=0; i<num; i++)
+	buffer[i]= (unsigned char) va_arg(ap, int);
+      va_end(ap);
     }
-  }
-  if (num) {
-    va_start(ap, num);
-    for (i=0; i<num; i++)
-      buffer[i]= (unsigned char) va_arg(ap, int);
-    va_end(ap);
-  }
 
   stp_zfwrite(ini,2,1,v);
-  if (cmd) {
-    stp_putc(cmd,v);
-    stp_putc((num & 255),v);
-    stp_putc((num >> 8 ),v);
-    stp_zfwrite(buffer,num,1,v);
-  }
+  if (cmd)
+    {
+      stp_putc(cmd,v);
+      stp_putc((num & 255),v);
+      stp_putc((num >> 8 ),v);
+      if (num)
+	stp_zfwrite((const char *)buffer,num,1,v);
+    }
+  stp_free(buffer);
 }
 
 #ifdef DEBUG
-#define PUT(WHAT,VAL,RES) fprintf(stderr,"canon: "WHAT\
+#define PUT(WHAT,VAL,RES) stp_erprintf("canon: "WHAT\
 " is %04x =% 5d = %f\" = %f mm\n",(VAL),(VAL),(VAL)/(1.*RES),(VAL)/(RES/25.4))
 #else
 #define PUT(WHAT,VAL,RES) do {} while (0)
@@ -1657,7 +1660,7 @@ canon_cmd(const stp_vars_t v, /* I - the printer         */
 static void
 canon_init_resetPrinter(const stp_vars_t v, canon_init_t *init)
 {
-  long long f=init->caps->features;
+  unsigned long f=init->caps->features;
   if (f & (CANON_CAP_ACKSHORT)) 
     {
       canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x1f);
@@ -1709,7 +1712,8 @@ canon_init_setColor(const stp_vars_t v, canon_init_t *init)
   else
     arg_63_1= 0x30;
 
-  if (init->output_type==OUTPUT_GRAY) arg_63_1|= 0x01;
+  if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
+    arg_63_1|= 0x01;
 
   if (init->pt) arg_63_2= init->pt->media_code;
 
@@ -1799,14 +1803,20 @@ canon_init_setPrintMode(const stp_vars_t v, canon_init_t *init)
     return;
   
   arg_6d_a= canon_size_type(v,init->caps);
-  if (!arg_6d_a) arg_6d_b= 1;
+  if (!arg_6d_a)
+    arg_6d_b= 1;
 
-  if (init->print_head==0) arg_6d_1= 0x03;
-  else if (init->print_head<=2) arg_6d_1= 0x02;
-  else if (init->print_head<=4) arg_6d_1= 0x04;
-  if (init->output_type==OUTPUT_GRAY) arg_6d_2= 0x02;
+  if (init->print_head==0)
+    arg_6d_1= 0x03;
+  else if (init->print_head<=2)
+    arg_6d_1= 0x02;
+  else if (init->print_head<=4)
+    arg_6d_1= 0x04;
+  if (init->output_type==OUTPUT_GRAY || init->output_type == OUTPUT_MONOCHROME)
+    arg_6d_2= 0x02;
 
-  if (init->caps->model==8200) arg_6d_3= 0x01;
+  if (init->caps->model==8200)
+    arg_6d_3= 0x01;
 
   canon_cmd(v,ESC28,0x6d,12, arg_6d_1,
 	    0xff,0xff,0x00,0x00,0x07,0x00,
@@ -1947,7 +1957,8 @@ static unsigned char *
 canon_alloc_buffer(int size)
 {
   unsigned char *buf= stp_malloc(size);
-  if (buf) memset(buf,0,size);
+  if (buf)
+    memset(buf,0,size);
   return buf;
 }
 
@@ -2048,8 +2059,12 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   const paper_t *pt;
   const canon_variable_inkset_t *inks;
 
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
 
-  memcpy(nv, v, sizeof(stp_vars_t));
   /*
   PUT("top        ",top,72);
   PUT("left       ",left,72);
@@ -2068,15 +2083,11 @@ canon_print(const stp_printer_t printer,		/* I - Model */
    *                 or single black cartridge installed
    */
 
-  if (stp_get_image_type(nv) == IMAGE_MONOCHROME)
-    {
-      output_type = OUTPUT_GRAY;
-    }
-
-  if (printhead == 0 || caps->inks == CANON_INK_K)
+  if ((printhead == 0 || caps->inks == CANON_INK_K) &&
+      output_type != OUTPUT_MONOCHROME)
     output_type = OUTPUT_GRAY;
 
-  if (output_type == OUTPUT_GRAY)
+  if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
     colormode = COLOR_MONOCHROME;
   stp_set_output_color_model(nv, COLOR_MODEL_CMY);
 
@@ -2092,17 +2103,17 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 
   sscanf(resolution,"%dx%d",&xdpi,&ydpi);
 #ifdef DEBUG
-  fprintf(stderr,"canon: resolution=%dx%d\n",xdpi,ydpi);
-  fprintf(stderr,"       rescode   =0x%x\n",canon_res_code(caps,xdpi,ydpi));
+  stp_erprintf("canon: resolution=%dx%d\n",xdpi,ydpi);
+  stp_erprintf("       rescode   =0x%x\n",canon_res_code(caps,xdpi,ydpi));
 #endif
   res_code= canon_res_code(caps,xdpi,ydpi);
 
   if (!strcmp(resolution+(strlen(resolution)-3),"DMT") &&
       (caps->features & CANON_CAP_DMT) &&
-      stp_get_image_type(nv) != IMAGE_MONOCHROME) {
+      output_type != OUTPUT_MONOCHROME) {
     bits= 2;
 #ifdef DEBUG
-    fprintf(stderr,"canon: using drop modulation technology\n");
+    stp_erprintf("canon: using drop modulation technology\n");
 #endif
   }
 
@@ -2192,13 +2203,13 @@ canon_print(const stp_printer_t printer,		/* I - Model */
     delay_ly= 336;
     delay_max= 336;
 #ifdef DEBUG
-    fprintf(stderr,"canon: delay on!\n");
+    stp_erprintf("canon: delay on!\n");
 #endif
   } else {
     delay_k= delay_c= delay_m= delay_y= delay_lc= delay_lm= delay_ly=0;
     delay_max=0;
 #ifdef DEBUG
-    fprintf(stderr,"canon: delay off!\n");
+    stp_erprintf("canon: delay off!\n");
 #endif
   }
 
@@ -2211,7 +2222,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   buf_length= length*bits;
 
 #ifdef DEBUG
-  fprintf(stderr,"canon: buflength is %d!\n",buf_length);
+  stp_erprintf("canon: buflength is %d!\n",buf_length);
 #endif
 
   if (colormode==COLOR_MONOCHROME) {
@@ -2248,19 +2259,19 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   }
 
 #ifdef DEBUG
-  fprintf(stderr,"canon: driver will use colors ");
-  if (cyan)     putc('C',stderr);
-  if (lcyan)    putc('c',stderr);
-  if (magenta)  putc('M',stderr);
-  if (lmagenta) putc('m',stderr);
-  if (yellow)   putc('Y',stderr);
-  if (lyellow)  putc('y',stderr);
-  if (black)    putc('K',stderr);
-  fprintf(stderr,"\n");
+  stp_erprintf("canon: driver will use colors ");
+  if (cyan)     stp_erputc('C');
+  if (lcyan)    stp_erputc('c');
+  if (magenta)  stp_erputc('M');
+  if (lmagenta) stp_erputc('m');
+  if (yellow)   stp_erputc('Y');
+  if (lyellow)  stp_erputc('y');
+  if (black)    stp_erputc('K');
+  stp_erprintf("\n");
 #endif
 
 #ifdef DEBUG
-  fprintf(stderr,"density is %f\n",stp_get_density(nv));
+  stp_erprintf("density is %f\n",stp_get_density(nv));
 #endif
 
   /*
@@ -2279,7 +2290,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   stp_compute_lut(nv, 256);
 
 #ifdef DEBUG
-  fprintf(stderr,"density is %f\n",stp_get_density(nv));
+  stp_erprintf("density is %f\n",stp_get_density(nv));
 #endif
 
  /*
@@ -2410,7 +2421,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 	       yellow, 0, black, duplicate_line, zero_mask);
 
 #ifdef DEBUG
-    /* fprintf(stderr,","); */
+    /* stp_erprintf(","); */
 #endif
 
     canon_write_line(v, caps, ydpi,
@@ -2424,7 +2435,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 		     length, out_width, left, &emptylines, bits);
 
 #ifdef DEBUG
-    /* fprintf(stderr,"!"); */
+    /* stp_erprintf("!"); */
 #endif
 
     canon_advance_buffer(black,   buf_length,delay_k);
@@ -2453,7 +2464,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 
   if (delay_max) {
 #ifdef DEBUG
-    fprintf(stderr,"\ncanon: flushing %d possibly delayed buffers\n",
+    stp_erprintf("\ncanon: flushing %d possibly delayed buffers\n",
 	    delay_max);
 #endif
     for (y= 0; y<delay_max; y++) {
@@ -2469,7 +2480,7 @@ canon_print(const stp_printer_t printer,		/* I - Model */
 		       length, out_width, left, &emptylines, bits);
 
 #ifdef DEBUG
-      /* fprintf(stderr,"-"); */
+      /* stp_erprintf("-"); */
 #endif
 
       canon_advance_buffer(black,   buf_length,delay_k);
@@ -2487,16 +2498,16 @@ canon_print(const stp_printer_t printer,		/* I - Model */
   */
 
   stp_free_lut(nv);
-  free(in);
-  free(out);
+  stp_free(in);
+  stp_free(out);
 
-  if (black != NULL)    free(black);
-  if (cyan != NULL)     free(cyan);
-  if (magenta != NULL)  free(magenta);
-  if (yellow != NULL)   free(yellow);
-  if (lcyan != NULL)    free(lcyan);
-  if (lmagenta != NULL) free(lmagenta);
-  if (lyellow != NULL)  free(lyellow);
+  if (black != NULL)    stp_free(black);
+  if (cyan != NULL)     stp_free(cyan);
+  if (magenta != NULL)  stp_free(magenta);
+  if (yellow != NULL)   stp_free(yellow);
+  if (lcyan != NULL)    stp_free(lcyan);
+  if (lmagenta != NULL) stp_free(lmagenta);
+  if (lyellow != NULL)  stp_free(lyellow);
 
   canon_deinit_printer(v, &init);
   stp_free_vars(nv);
@@ -2791,10 +2802,10 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
     if (bitoffset<8)
       canon_shift_buffer(in_ptr,length,bitoffset);
     else
-      fprintf(stderr,"SEVERE BUG IN print-canon.c::canon_write() "
+      stp_erprintf("SEVERE BUG IN print-canon.c::canon_write() "
 	      "bitoffset=%d!!\n",bitoffset);
 #ifdef DEBUG
-    /* fprintf(stderr,"shift%d ",bitoffset); */
+    /* stp_erprintf("shift%d ",bitoffset); */
 #endif
   }
 
@@ -2805,7 +2816,7 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
 
   if (*empty) {
 #ifdef DEBUG
-    /* fprintf(stderr,"<%d%c>",*empty,("CMYKcmy"[coloridx])); */
+    /* stp_erprintf("<%d%c>",*empty,("CMYKcmy"[coloridx])); */
 #endif
     stp_zfwrite("\x1b\x28\x65\x02\x00", 5, 1, v);
     stp_putc((*empty) >> 8 , v);
@@ -2821,7 +2832,7 @@ canon_write(const stp_vars_t v,		/* I - Print file or command */
   color= "CMYKcmy"[coloridx];
   if (!color) color= 'K';
   stp_putc(color,v);
-  stp_zfwrite(comp_buf, newlength, 1, v);
+  stp_zfwrite((const char *)comp_buf, newlength, 1, v);
   stp_putc('\x0d', v);
   return 1;
 }

@@ -1,4 +1,4 @@
-This is gimp-print version 4.1.7, a development release on the 4.1 line.
+This is gimp-print version 4.1.9, a development release on the 4.1 line.
 
 This software includes the Print plug-in for the Gimp, and GhostScript
 and CUPS drivers.  The support for printers in GhostScript and CUPS is
@@ -7,6 +7,116 @@ they use the identical code base.  Please read src/ghost/README and
 src/cups/README for more information on this.
 
 The Gimp Print plugin requires the Gimp 1.2.
+
+Gimp-Print 4.1.10 contains the following changes over 4.1.8:
+
+1) A critical bug that in some cases causes a segmentation violation
+   and/or data corruption is fixed.
+
+2) The package will use about 1/3 as much virtual address space when
+   printing very large images.
+
+Gimp-Print 4.1.10 has the following known issues:
+
+1) The Canon driver currently produces incorrect or no output on many
+   printers at many resolutions.  This has been the case since roughly
+   4.1.5.  We are aware of this issue, and will fix it as soon as
+   possible.
+
+
+Gimp-Print 4.1.9 was abandoned.
+
+
+Gimp-Print 4.1.8 contains the following changes over 4.1.7:
+
+1) The way to print black and white only images has changed.  In the
+   Gimp plugin, the option has been moved from the Image Type group of
+   buttons to the Output Type group.  In the Ghostscript driver, it
+   has been moved from -dImageType=3 to -dColor=2.  It has been
+   removed, at least temporarily, from the CUPS driver.
+
+   It is likely that there will be further changes related to all of
+   this before 4.2.
+
+2) A bug introduced in 4.1.7 that caused roll feed printing to fail on
+   Epson Stylus printers (such as the Stylus Photo 870) is fixed.  The
+   symptoms are typically that the ready light on the printer flashes
+   as data is sent, but nothing is printed.
+
+3) Initial support for the Epson Stylus Pro printers: 5000, 5500,
+   7000, 7500, 9000, 9500.  It is not yet tested and tuned.  There is
+   also currently no support for the paper cutter.
+
+4) Explicit support for various types of roll paper supported by Epson
+   printers.  This enables Gimp users to specify the height of the
+   page with a fixed width.
+
+5) A bug that in some cases prevented certain options from being
+   selected (and may have resulted in crashes) in the GIMP plugin has
+   been fixed.
+
+6) Color quality on Epson printers (particularly in the blue range) is
+   improved.
+
+7) Tuned Epson Premium Quality Photo Paper for new (870/1270 and
+   successors) Epson Stylus Photo printers.  This paper was
+   specifically designed for these printers, and may not give optimal
+   results with older printers.
+
+8) Partial color tuning for some papers on Epson printers.  In
+   particular, matte and plain paper should now produce more accurate
+   grays with default settings.
+
+9) Very dark tones and very saturated colors should be improved
+   somewhat.  The result may be a bit darker and more contrasty; this
+   will need some experimentation.
+
+10) The Gimp plugin should now build on systems not using GNU make.
+
+11) The Gimp plugin now permits the user to define a new printer name.
+   This allows the user to define multiple "printers" with different
+   settings.  A newly-defined printer will clone the settings in
+   effect at the time the new printer is defined.
+
+12) The Gimp plugin now grays out settings that have no effect.
+   Specifically, the custom page size boxes are grayed out unless a
+   paper size allowing custom sizing is in use, and the color control
+   sliders (cyan, magenta, yellow, and saturation) are grayed out when
+   grayscale or black and white output is selected.
+
+13) The Gimp plugin now offers an extra option for positioning the
+   image in the preview window.  The middle button moves the image in
+   increments of the image size.  This can be useful in some cases
+   when printing the same image multiple times on one page.
+
+   Furthermore, if you move the image with any mouse button, and while
+   the mouse button is held down you press another button, the entire
+   move operation is aborted; the image is returned to its previous
+   position, and does not respond to the mouse until you release all
+   buttons.
+
+14) The Gimp plugin will no longer compile against any version of 1.1.
+   It no longer uses the transitional "compatibility" API; rather, it
+   uses the 1.2 API.
+
+15) There has been a significant reorganization of the dither code.
+   While this has been tested, it is quite possible that there are
+   cases where the code has regressed.  Typical symptoms would be no
+   output, grossly wrong output (likely with vertical bands or
+   streaks), or crashes.  Please report any problems you may find.
+
+16) The package as a whole is compiled with more warnings enabled
+   (when gcc is used).  While most of the warnings have been cleaned
+   up, some of them cannot easily be removed (they're due to issues
+   with external header files or other tools, for example).
+
+Gimp-Print 4.1.8 has the following known issues:
+
+1) The Canon driver currently produces incorrect or no output on many
+   printers at many resolutions.  This has been the case since roughly
+   4.1.5.  We are aware of this issue, and will fix it as soon as
+   possible.
+
 
 Gimp-Print 4.1.7 contains the following changes over 4.1.6:
 

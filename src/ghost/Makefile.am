@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7.4.1 2001/05/09 16:32:50 sharkey Exp $
+## $Id: Makefile.am,v 1.7.4.2 2001/06/30 03:19:59 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,11 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-# Use old compatability method for now...
+## Use old compatability method for now...
 
-MAINCODE = canon.c color.c dither.c escp2.c lexmark.c pcl.c printers.c ps.c util.c weave.c
+## Variables
+
+MAINCODE = canon.c color.c dither.c escp2.c lexmark.c pcl.c printers.c ps.c util.c weave.c dither-matrices.c
 
 MAINHEADERS = print.h print-internal.h print-intl-internal.h quickmatrix257.h ran.367.179.h ran.509.131.h
 
@@ -37,29 +39,30 @@ else
 ALL_LOCAL_DEPS =
 endif
 
+
+## Rules
+
 all-local: $(ALL_LOCAL_DEPS)
 
-GHCODE = -e 's/^\\\#include "\(.*\)\.h"$$/\\\#include "gdevstp-\1.h"/' -e 's/^\\\#include <gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
+GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' -e 's/^\\\#include "\(.*\)\.h"$$/\\\#include "gdevstp-\1.h"/' -e 's/^\\\#include <gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
 
 $(srcdir)/gdevstp-print.h: $(top_srcdir)/src/include/gimp-print.h
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $(srcdir)/$@
+	sed $(GHCODE) $< > $(srcdir)/$@
 
 $(srcdir)/gdevstp-print-internal.h: $(top_srcdir)/src/main/gimp-print-internal.h
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $(srcdir)/$@
+	sed $(GHCODE) $< > $(srcdir)/$@
 
 $(srcdir)/gdevstp-print-intl-internal.h: $(top_srcdir)/src/main/gimp-print-intl-internal.h
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $(srcdir)/$@
+	sed $(GHCODE) $< > $(srcdir)/$@
 
 gdevstp-%.h: $(srcdir)/../main/%.h Makefile
-	cd $(srcdir) ; \
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $@
+	cd $(srcdir) ; sed $(GHCODE) $< > $@
 
 gdevstp-printers.c: ../main/print-printers.c
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $(srcdir)/$@
+	sed $(GHCODE) $< > $@
 
 gdevstp-%: $(srcdir)/../main/print-% Makefile
-	cd $(srcdir) ; \
-	sed -e 's/print-printers.c/gdevstp-printers.c/' $(GHCODE) $< > $@
+	cd $(srcdir) ; sed $(GHCODE) $< > $@
 
 ../main/print-printers.c: ../printdef/printdef $(srcdir)/../main/printers.xml
 	../printdef/printdef < $(srcdir)/../main/printers.xml > $(top_builddir)/src/main/print-printers.c
@@ -68,6 +71,9 @@ printdefl.o: printdefy.o
 
 ../printdef/printdef: $(addprefix ../printdef/, printdefl.l printdefy.y printdef.h)
 	        $(MAKE) -C ../printdef
+
+
+## Clean
 
 CLEANFILES = \
  $(srcdir)/gdevstp-printers.c \
@@ -82,6 +88,7 @@ CLEANFILES = \
  $(srcdir)/gdevstp-weave.c \
  $(srcdir)/gdevstp-canon.c \
  $(srcdir)/gdevstp-dither.c \
+ $(srcdir)/gdevstp-dither-matrices.c \
  $(srcdir)/gdevstp-escp2.c \
  $(srcdir)/gdevstp-lexmark.c \
  $(srcdir)/gdevstp-pcl.c \

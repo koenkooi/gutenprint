@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.8.4.2 2001/04/30 17:47:11 sharkey Exp $"
+ * "$Id: escputil.c,v 1.8.4.3 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -43,8 +43,18 @@
 #include <readline/history.h>
 #endif
 
+void do_align(void);
+void do_align_help(int passes, int choices);
+char *do_get_input (const char *prompt);
+void do_head_clean(void);
+void do_help(int code);
+void do_identify(void);
+void do_ink_level(void);
+void do_nozzle_check(void);
+int do_print_cmd(void);
 
-char *banner = "\
+
+const char *banner = "\
 Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)\n\
 \n\
 This program is free software; you can redistribute it and/or modify it\n\
@@ -80,7 +90,7 @@ struct option optlist[] =
   { NULL,		0,	NULL,	0 	  }
 };
 
-char *help_msg = "\
+const char *help_msg = "\
 Usage: escputil [-P printer | -r device] [-m model] [-u]\n\
                 [-c | -n | -a | -i] [-q]\n\
     -P|--printer-name  Specify the name of the printer to operate on.\n\
@@ -105,7 +115,7 @@ Usage: escputil [-P printer | -r device] [-m model] [-u]\n\
     -q|--quiet         Suppress the banner.\n\
     -m|--model         Specify the precise printer model for head alignment.\n";
 #else
-char *help_msg = "\
+const char *help_msg = "\
 Usage: escputil [-P printer | -r device] [-u] [-c | -n | -a | -i] [-q]\n\
     -P Specify the name of the printer to operate on.\n\
           Default is the default system printer.\n\
@@ -131,8 +141,8 @@ Usage: escputil [-P printer | -r device] [-u] [-c | -n | -a | -i] [-q]\n\
 
 typedef struct
 {
-  char *short_name;
-  char *long_name;
+  const char *short_name;
+  const char *long_name;
   int passes;
   int choices;
 } stp_printer_t;
@@ -181,16 +191,14 @@ stp_printer_t printer_list[] =
   { "1280",	"Stylus Photo 1280",	3,	15 },
   { "1290",	"Stylus Photo 1290",	3,	15 },
   { "2000",	"Stylus Photo 2000P",	2,	15 },
+  { "5000",	"Stylus Pro 5000",	1,	7 },
+  { "5500",	"Stylus Pro 5500",	1,	7 },
+  { "7000",	"Stylus Pro 7000",	1,	7 },
+  { "7500",	"Stylus Pro 7500",	1,	7 },
+  { "9000",	"Stylus Pro 9000",	1,	7 },
+  { "9500",	"Stylus Pro 9500",	1,	7 },
   { NULL,	NULL,			0,	0 }
 };
-
-void initialize_print_cmd(void);
-void do_head_clean(void);
-void do_nozzle_check(void);
-void do_align(void);
-void do_ink_level(void);
-void do_identify(void);
-char *do_get_input (const char *prompt);
 
 char *printer = NULL;
 char *raw_device = NULL;
@@ -211,6 +219,18 @@ do_help(int code)
       printer++;
     }
   exit(code);
+}
+
+static void
+initialize_print_cmd(void)
+{
+  bufpos = 0;
+  if (isUSB)
+    {
+      static char hdr[] = "\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
+      memcpy(printer_cmd, hdr, sizeof(hdr) - 1); /* Do NOT include the null! */
+      bufpos = sizeof(hdr) - 1;
+    }
 }
 
 int
@@ -390,7 +410,7 @@ do_print_cmd(void)
   return 0;
 }
 
-int
+static int
 read_from_printer(int fd, char *buf, int bufsize)
 {
 #ifdef HAVE_POLL
@@ -417,20 +437,8 @@ read_from_printer(int fd, char *buf, int bufsize)
   return status;
 }
 
-void
-initialize_print_cmd(void)
-{
-  bufpos = 0;
-  if (isUSB)
-    {
-      static char hdr[] = "\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
-      memcpy(printer_cmd, hdr, sizeof(hdr) - 1); /* Do NOT include the null! */
-      bufpos = sizeof(hdr) - 1;
-    }
-}
-
-void
-do_remote_cmd(char *cmd, int nargs, int a0, int a1, int a2, int a3)
+static void
+do_remote_cmd(const char *cmd, int nargs, int a0, int a1, int a2, int a3)
 {
   static char remote_hdr[] = "\033@\033(R\010\000\000REMOTE1";
   static char remote_trailer[] = "\033\000\000\000\033\000";
@@ -453,7 +461,7 @@ do_remote_cmd(char *cmd, int nargs, int a0, int a1, int a2, int a3)
   bufpos += sizeof(remote_trailer) - 1;
 }
 
-void
+static void
 add_newlines(int count)
 {
   int i;
@@ -464,7 +472,7 @@ add_newlines(int count)
     }
 }
 
-void
+static void
 add_resets(int count)
 {
   int i;
@@ -475,7 +483,8 @@ add_resets(int count)
     }
 }
 
-char *colors[] = {
+const char *colors[] = 
+{
   "Black", "Cyan", "Magenta", "Yellow", "Light Cyan", "Light Magenta", 0
 };
 
@@ -598,7 +607,7 @@ do_nozzle_check(void)
   exit(do_print_cmd());
 }
 
-char new_align_help[] = "\
+const char new_align_help[] = "\
 Please read these instructions very carefully before proceeding.\n\
 \n\
 This utility lets you align the print head of your Epson Stylus inkjet\n\
@@ -633,7 +642,7 @@ settings, but powering the printer off and back on will.  If you quit,\n\
 you must repeat the entire process if you wish to later save the results.\n\
 It is essential that you not turn your printer off during this procedure.\n\n";
 
-char old_align_help[] = "\
+const char old_align_help[] = "\
 Please read these instructions very carefully before proceeding.\n\
 \n\
 This utility lets you align the print head of your Epson Stylus inkjet\n\
@@ -674,7 +683,7 @@ do_align_help(int passes, int choices)
   fflush(stdout);
 }
 
-void
+static void
 align_error(void)
 {
   printf("Unable to send command to the printer, exiting.\n");
@@ -695,7 +704,7 @@ do_align(void)
   int curpass;
   int notfound = 1;
   stp_printer_t *printer = &printer_list[0];
-  char *printer_name = NULL;
+  const char *printer_name = NULL;
   if (!printer_model)
     {
       char buf[1024];
@@ -924,7 +933,8 @@ do_align(void)
   goto read_final;
 }
 
-char *do_get_input (const char *prompt)
+char *
+do_get_input (const char *prompt)
 {
 	static char *input = NULL;
 #if (HAVE_LIBREADLINE == 0 || !defined HAVE_READLINE_READLINE_H)

@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.9.2.3 2001/05/09 16:32:51 sharkey Exp $"
+ * "$Id: escp2-weavetest.c,v 1.9.2.4 2001/06/30 03:20:00 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -123,7 +123,7 @@ writefunc(void *file, const char *buf, size_t bytes)
   fwrite(buf, 1, bytes, prn);
 }
 
-int
+static int
 run_one_weavetest(int physjets, int physsep, int hpasses, int vpasses,
 		  int subpasses, int nrows, int first_line, int phys_lines,
 		  int color_jet_arrangement, int strategy, int quiet)

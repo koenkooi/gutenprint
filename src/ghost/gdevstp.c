@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.3.4.2 2001/05/09 16:32:50 sharkey Exp $ */
+/*$Id: gdevstp.c,v 1.3.4.3 2001/06/30 03:19:59 sharkey Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -440,6 +440,12 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
     param_read_string(plist, "MediaType", &pmediatype);
   param_read_string(plist, "Model", &pmodel);
   param_read_string(plist, "InkType", &pinktype);
+
+  if (stp_get_output_type(stp_data.v) == OUTPUT_RAW_CMYK)
+    {
+      param_signal_error(plist, "Color", gs_error_rangecheck);
+      code = -100;
+    }
 
   if ( code < 0 )
     return code;

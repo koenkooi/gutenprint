@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.4.3 2001/05/09 16:32:51 sharkey Exp $"
+ * "$Id: print-pcl.c,v 1.8.4.4 2001/06/30 03:20:00 sharkey Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -33,6 +33,7 @@
 #include <gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
+#include <stdio.h>
 
 /* #define DEBUG */
 /* #define PCL_DEBUG_DISABLE_COMPRESSION */
@@ -1136,37 +1137,91 @@ static const pcl_cap_t pcl_model_capabilities[] =
   },
 };
 
+
+static const double sat_adjustment[49] =
+{
+  1.0,				/* C */
+  1.1,
+  1.2,
+  1.3,
+  1.4,
+  1.5,
+  1.6,
+  1.7,
+  1.8,				/* B */
+  1.9,
+  1.9,
+  1.9,
+  1.7,
+  1.5,
+  1.3,
+  1.1,
+  1.0,				/* M */
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,				/* R */
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,				/* Y */
+  1.0,
+  1.0,
+  1.1,
+  1.2,
+  1.3,
+  1.4,
+  1.5,
+  1.5,				/* G */
+  1.4,
+  1.3,
+  1.2,
+  1.1,
+  1.0,
+  1.0,
+  1.0,
+  1.0				/* C */
+};
+
 static const double lum_adjustment[49] =
 {
-  0.57,				/* C */
-  0.67,
-  0.77,
-  0.85,
-  0.85,
+  0.50,				/* C */
+  0.6,
+  0.7,
   0.8,
-  0.75,
-  0.667,
-  0.65,				/* B */
-  0.65,
-  0.714,
-  0.769,
-  0.833,
-  0.909,
-  1.0,
+  0.9,
+  0.86,
+  0.82,
+  0.79,
+  0.78,				/* B */
+  0.8,
+  0.83,
+  0.87,
+  0.9,
+  0.95,
+  1.05,
   1.15,
   1.3,				/* M */
   1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,
-  1.25,				/* R */
   1.2,
   1.15,
-  1.1,
-  1.05,
+  1.12,
+  1.09,
+  1.06,
+  1.03,
+  1.0,				/* R */
+  1.0,
+  1.0,
+  1.0,
+  1.0,
   1.0,
   1.0,
   1.0,
@@ -1174,72 +1229,72 @@ static const double lum_adjustment[49] =
   0.9,
   0.8,
   0.7,
+  0.65,
   0.6,
   0.55,
-  0.5,
-  0.45,
-  0.36,				/* G */
-  0.4,
-  0.45,
-  0.48,
-  0.48,
-  0.48,
+  0.52,
+  0.48,				/* G */
+  0.47,
+  0.47,
+  0.49,
+  0.49,
+  0.49,
+  0.52,
   0.51,
-  0.54,
-  0.57				/* C */
+  0.50				/* C */
 };
 
 static const double hue_adjustment[49] =
 {
-  0,				/* C */
-  0.17,
-  0.29,
-  0.38,
-  0.47,
-  0.52,
-  0.57,
-  0.62,
-  0.65,				/* B */
-  0.7,
-  0.85,
-  1.05,
-  1.25,
-  1.45,
-  1.65,
-  1.8,
-  2.00,				/* M */
-  2.18,
-  2.29,
-  2.38,
-  2.47,
-  2.56,
-  2.65,
-  2.74,
-  2.83,				/* R */
-  3.0,
-  3.15,
-  3.3,
-  3.45,
-  3.6,
-  3.75,
-  3.85,
-  4.0,				/* Y */
-  4.2,
-  4.37,
-  4.55,
-  4.65,
-  4.78,
-  4.85,
-  4.9,
-  4.95,				/* G */
-  5.05,
-  5.15,
-  5.25,
-  5.35,
-  5.5,
-  5.65,
-  5.8,
-  6.0				/* C */
+  0.00,				/* C */
+  0.05,
+  0.04,
+  0.01,
+  -0.03,
+  -0.10,
+  -0.18,
+  -0.26,
+  -0.35,			/* B */
+  -0.43,
+  -0.40,
+  -0.32,
+  -0.25,
+  -0.18,
+  -0.10,
+  -0.07,
+  0.00,				/* M */
+  -0.04,
+  -0.09,
+  -0.13,
+  -0.18,
+  -0.23,
+  -0.27,
+  -0.31,
+  -0.35,			/* R */
+  -0.38,
+  -0.30,
+  -0.23,
+  -0.15,
+  -0.08,
+  0.00,
+  -0.02,
+  0.00,				/* Y */
+  0.08,
+  0.10,
+  0.08,
+  0.05,
+  0.03,
+  -0.03,
+  -0.12,
+  -0.20,			/* G */
+  -0.17,
+  -0.20,
+  -0.17,
+  -0.15,
+  -0.12,
+  -0.10,
+  -0.08,
+  0.00,				/* C */
 };
 
 /*
@@ -1266,7 +1321,7 @@ static int pcl_string_to_val(const char *string,		/* I: String */
   }
 
 #ifdef DEBUG
-  fprintf(stderr, "String: %s, Code: %d\n", string, code);
+  stp_erprintf( "String: %s, Code: %d\n", string, code);
 #endif
 
   return(code);
@@ -1296,7 +1351,7 @@ static const char * pcl_val_to_string(int code,			/* I: Code */
   }
 
 #ifdef DEBUG
-  fprintf(stderr, "Code: %d, String: %s\n", code, string);
+  stp_erprintf( "Code: %d, String: %s\n", code, string);
 #endif
 
   return(string);
@@ -1327,7 +1382,7 @@ pcl_get_model_capabilities(int model)	/* I: Model */
       return &(pcl_model_capabilities[i]);
     }
   }
-  fprintf(stderr,"pcl: model %d not found in capabilities list.\n",model);
+  stp_erprintf("pcl: model %d not found in capabilities list.\n",model);
   return &(pcl_model_capabilities[0]);
 }
 
@@ -1359,7 +1414,7 @@ static int pcl_convert_media_size(const char *media_size,	/* I: Media size strin
                                  sizeof(pcl_media_sizes) / sizeof(pcl_t));
 
 #ifdef DEBUG
-  fprintf(stderr, "Media Size: %s, Code: %d\n", media_size, media_code);
+  stp_erprintf( "Media Size: %s, Code: %d\n", media_size, media_code);
 #endif
 
  /*
@@ -1375,7 +1430,7 @@ static int pcl_convert_media_size(const char *media_size,	/* I: Media size strin
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "Media Code %d not supported by printer model %d.\n",
+    stp_erprintf( "Media Code %d not supported by printer model %d.\n",
       media_code, model);
 #endif
     return(-1);				/* Not supported */
@@ -1416,12 +1471,12 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
   caps = pcl_get_model_capabilities(model);
 
 #ifdef DEBUG
-  fprintf(stderr, "Printer model = %d\n", model);
-  fprintf(stderr, "PageWidth = %d, PageHeight = %d\n", caps->max_width, caps->max_height);
-  fprintf(stderr, "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
+  stp_erprintf( "Printer model = %d\n", model);
+  stp_erprintf( "PageWidth = %d, PageHeight = %d\n", caps->max_width, caps->max_height);
+  stp_erprintf( "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
     caps->top_margin, caps->bottom_margin, caps->left_margin, caps->right_margin);
-  fprintf(stderr, "Resolutions: %d\n", caps->resolutions);
-  fprintf(stderr, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
+  stp_erprintf( "Resolutions: %d\n", caps->resolutions);
+  stp_erprintf( "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
 #endif
 
   if (strcmp(name, "PageSize") == 0)
@@ -1546,12 +1601,12 @@ pcl_default_parameters(const stp_printer_t printer,
   caps = pcl_get_model_capabilities(model);
 
 #ifdef DEBUG
-  fprintf(stderr, "Printer model = %d\n", model);
-  fprintf(stderr, "PageWidth = %d, PageHeight = %d\n", caps->max_width, caps->max_height);
-  fprintf(stderr, "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
+  stp_erprintf( "Printer model = %d\n", model);
+  stp_erprintf( "PageWidth = %d, PageHeight = %d\n", caps->max_width, caps->max_height);
+  stp_erprintf( "Margins: top = %d, bottom = %d, left = %d, right = %d\n",
 	  caps->top_margin, caps->bottom_margin, caps->left_margin, caps->right_margin);
-  fprintf(stderr, "Resolutions: %d\n", caps->resolutions);
-  fprintf(stderr, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
+  stp_erprintf( "Resolutions: %d\n", caps->resolutions);
+  stp_erprintf( "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
 #endif
 
   if (strcmp(name, "PageSize") == 0)
@@ -1748,6 +1803,12 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		is_blank,	/* Current line is blank */
 		do_blank;	/* Blank line removal required */
 
+  if (!stp_get_verified(nv))
+    {
+      stp_eprintf(nv, "Print options not verified; cannot print.\n");
+      return;
+    }
+
   caps = pcl_get_model_capabilities(model);
 
  /*
@@ -1766,26 +1827,22 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   sscanf(resolution,"%dx%d",&xdpi,&ydpi);
 
 #ifdef DEBUG
-  fprintf(stderr,"pcl: resolution=%dx%d\n",xdpi,ydpi);
+  stp_erprintf("pcl: resolution=%dx%d\n",xdpi,ydpi);
 #endif
 
  /*
   * Choose the correct color conversion function...
   */
   if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
-      output_type != OUTPUT_GRAY && xdpi == 600 && ydpi == 600)
+      output_type != OUTPUT_GRAY && output_type != OUTPUT_MONOCHROME &&
+      xdpi == 600 && ydpi == 600)
     {
       stp_eprintf(v, "600x600 resolution only available in MONO\n");
       output_type = OUTPUT_GRAY;
       stp_set_output_type(nv, OUTPUT_GRAY);
     }
 
-  if (stp_get_image_type(nv) == IMAGE_MONOCHROME)
-    {
-      output_type = OUTPUT_GRAY;
-    }
-
-  if (caps->color_type == PCL_COLOR_NONE)
+  if (caps->color_type == PCL_COLOR_NONE && output_type != OUTPUT_MONOCHROME)
     {
       output_type = OUTPUT_GRAY;
       stp_set_output_type(nv, OUTPUT_GRAY);
@@ -1794,10 +1851,13 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 
   colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 
-  do_cret = (xdpi >= 300 && ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4) &&
-	     stp_get_image_type(nv) != IMAGE_MONOCHROME);
-  do_cretb = (xdpi >= 600 && ydpi >= 600 && ((caps->color_type & PCL_COLOR_CMYK4b) == PCL_COLOR_CMYK4b) &&
-			stp_get_image_type(nv) != IMAGE_MONOCHROME && output_type != OUTPUT_GRAY);
+  do_cret = (xdpi >= 300 &&
+	     ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4) &&
+	     output_type != OUTPUT_MONOCHROME);
+  do_cretb = (xdpi >= 600 && ydpi >= 600 &&
+	      ((caps->color_type & PCL_COLOR_CMYK4b) == PCL_COLOR_CMYK4b) &&
+	      output_type != OUTPUT_MONOCHROME &&
+	      output_type != OUTPUT_GRAY);
   if (do_cretb){
     do_cret = 1;
     dot_sizes_use=dot_sizes_cret;
@@ -1806,13 +1866,13 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   }
 
 #ifdef DEBUG
-  fprintf(stderr, "do_cret = %d\n", do_cret);
-  fprintf(stderr, "do_cretb = %d\n", do_cretb);
+  stp_erprintf( "do_cret = %d\n", do_cret);
+  stp_erprintf( "do_cretb = %d\n", do_cretb);
 #endif
 
   do_6color = (strcmp(ink_type, _("Color + Photo Cartridges")) == 0);
 #ifdef DEBUG
-  fprintf(stderr, "do_6color = %d\n", do_6color);
+  stp_erprintf( "do_6color = %d\n", do_6color);
 #endif
 
  /*
@@ -1894,9 +1954,9 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   */
 
   if (pcl_media_size == -1) {
-    fprintf(stderr, "Paper size %s is not directly supported by printer.\n",
+    stp_erprintf( "Paper size %s is not directly supported by printer.\n",
       media_size);
-    fprintf(stderr, "Trying as custom pagesize (watch the margins!)\n");
+    stp_erprintf( "Trying as custom pagesize (watch the margins!)\n");
     pcl_media_size = PCL_PAPERSIZE_CUSTOM;			/* Custom */
   }
 
@@ -1919,7 +1979,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 #endif
 
     if (pcl_media_source == -1)
-      fprintf(stderr, "Unknown media source %s, ignored.\n", media_source);
+      stp_erprintf( "Unknown media source %s, ignored.\n", media_source);
     else if (pcl_media_source != PCL_PAPERSOURCE_STANDARD) {
 
 /* Correct the value by taking the modulus */
@@ -1943,7 +2003,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 #endif
 
     if (pcl_media_type == -1) {
-      fprintf(stderr, "Unknown media type %s, set to PLAIN.\n", media_type);
+      stp_erprintf( "Unknown media type %s, set to PLAIN.\n", media_type);
       pcl_media_type = PCL_PAPERTYPE_PLAIN;
     }
   }
@@ -1992,7 +2052,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     * vertical resolutions as well as a color count...
     */
 
-    if (output_type != OUTPUT_GRAY)
+    if (output_type != OUTPUT_GRAY && output_type != OUTPUT_MONOCHROME)
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         planes = 3;
       else
@@ -2062,7 +2122,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   else
   {
     stp_zprintf(v, "\033*t%dR", xdpi);		/* Simple resolution */
-    if (output_type != OUTPUT_GRAY)
+    if (output_type != OUTPUT_GRAY && output_type != OUTPUT_MONOCHROME)
     {
       if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
         stp_puts("\033*r-3U", v);		/* Simple CMY color */
@@ -2092,7 +2152,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   out_height = ydpi * out_height / 72;
 
 #ifdef DEBUG
-  fprintf(stderr, "left %d margin %d top %d margin %d width %d height %d\n",
+  stp_erprintf( "left %d margin %d top %d margin %d width %d height %d\n",
 	  left, caps->left_margin, top, caps->top_margin, out_width, out_height);
 #endif
 
@@ -2120,7 +2180,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   if (do_cret)
     height *= 2;
 
-  if (output_type == OUTPUT_GRAY)
+  if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
   {
     black   = stp_malloc(height);
     cyan    = NULL;
@@ -2283,7 +2343,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
         {
 	  blank_lines--;		/* correct for one already output */
 #ifdef DEBUG
-	  fprintf(stderr, "Blank Lines = %d\n", blank_lines);
+	  stp_erprintf( "Blank Lines = %d\n", blank_lines);
 #endif
 	  stp_zprintf(v, "\033*b%dY", blank_lines);
 	  blank_lines=0;
@@ -2300,7 +2360,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
        /*
         * 4-level (CRet) dithers...
         */
-        if (output_type == OUTPUT_GRAY)
+        if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
         {
           (*writefunc)(v, black + height / 2, height / 2, 0);
           (*writefunc)(v, black, height / 2, 1);
@@ -2340,7 +2400,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
         * Standard 2-level dithers...
         */
 
-        if (output_type == OUTPUT_GRAY)
+        if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
         {
           (*writefunc)(v, black, height, 1);
         }
@@ -2377,7 +2437,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   {
     blank_lines--;		/* correct for one already output */
 #ifdef DEBUG
-    fprintf(stderr, "Blank Lines = %d\n", blank_lines);
+    stp_erprintf( "Blank Lines = %d\n", blank_lines);
 #endif
     stp_zprintf(v, "\033*b%dY", blank_lines);
     blank_lines=0;
@@ -2393,21 +2453,21 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   */
 
   stp_free_lut(nv);
-  free(in);
-  free(out);
+  stp_free(in);
+  stp_free(out);
 
   if (black != NULL)
-    free(black);
+    stp_free(black);
   if (cyan != NULL)
   {
-    free(cyan);
-    free(magenta);
-    free(yellow);
+    stp_free(cyan);
+    stp_free(magenta);
+    stp_free(yellow);
   }
   if (lcyan != NULL)
   {
-    free(lcyan);
-    free(lmagenta);
+    stp_free(lcyan);
+    stp_free(lmagenta);
   }
 
   if ((caps->stp_printer_type & PCL_PRINTER_NEW_ERG) == PCL_PRINTER_NEW_ERG)
@@ -2448,7 +2508,7 @@ pcl_mode0(const stp_vars_t v,		/* I - Print file or command */
           int           last_plane)	/* I - True if this is the last plane */
 {
   stp_zprintf(v, "\033*b%d%c", height, last_plane ? 'W' : 'V');
-  stp_zfwrite(line, height, 1, v);
+  stp_zfwrite((const char *) line, height, 1, v);
 }
 
 
@@ -2472,5 +2532,5 @@ pcl_mode2(const stp_vars_t v,		/* I - Print file or command */
   */
 
   stp_zprintf(v, "\033*b%d%c", (int)(comp_ptr - comp_buf), last_plane ? 'W' : 'V');
-  stp_zfwrite(comp_buf, comp_ptr - comp_buf, 1, v);
+  stp_zfwrite((const char *)comp_buf, comp_ptr - comp_buf, 1, v);
 }

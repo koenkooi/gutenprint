@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.5.4.3 2001/05/09 16:32:50 sharkey Exp $"
+ * "$Id: print-color.c,v 1.5.4.4 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -26,8 +26,6 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-/* #define PRINT_DEBUG */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -36,6 +34,10 @@
 #include <gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
+
+#ifdef __GNUC__
+#define inline __inline__
+#endif
 
 typedef struct
 {
@@ -975,7 +977,8 @@ rgb_to_rgb(const stp_vars_t vars,
 		  double nh = h * 8;
 		  ih = (int) nh;
 		  eh = nh - (double) ih;
-		  h = hue_map[ih] + eh * (hue_map[ih + 1] - hue_map[ih]);
+		  h = (ih / 8.0) + hue_map[ih] +
+		    eh * ((1.0 / 8.0) + hue_map[ih + 1] - hue_map[ih]);
 		  if (h < 0.0)
 		    h += 6.0;
 		  else if (h >= 6.0)
@@ -1572,24 +1575,22 @@ stp_free_lut(stp_vars_t v)
     {
       lut_t *lut = (lut_t *)(stp_get_lut(v));
       if (lut->composite)
-	free(lut->composite);
+	stp_free(lut->composite);
       if (lut->red)
-	free(lut->red);
+	stp_free(lut->red);
       if (lut->green)
-	free(lut->green);
+	stp_free(lut->green);
       if (lut->blue)
-	free(lut->blue);
+	stp_free(lut->blue);
       lut->steps = 0;
       lut->composite = NULL;
       lut->red = NULL;
       lut->green = NULL;
       lut->blue = NULL;
-      free(stp_get_lut(v));
+      stp_free(stp_get_lut(v));
       stp_set_lut(v, NULL);
     }
 }
-
-/* #define PRINT_LUT */
 
 void
 stp_compute_lut(stp_vars_t v, size_t steps)
@@ -1599,9 +1600,6 @@ stp_compute_lut(stp_vars_t v, size_t steps)
 		green_pixel,	/* Pixel value */
 		blue_pixel;	/* Pixel value */
   int i;
-#ifdef PRINT_LUT
-  FILE *ltfile = fopen("/mnt1/lut", "w");
-#endif
   /*
    * Got an output file/command, now compute a brightness lookup table...
    */
@@ -1613,7 +1611,9 @@ stp_compute_lut(stp_vars_t v, size_t steps)
   double contrast = stp_get_contrast(v);
   double app_gamma = stp_get_app_gamma(v);
   double brightness = stp_get_brightness(v);
-  double screen_gamma = app_gamma / 1.7;	/* Why 1.7??? */
+  double screen_gamma = app_gamma / 4.0; /* "Empirical" */
+  double pivot = .25;
+  double ipivot = 1.0 - pivot;
   lut_t *lut;
 
   /*
@@ -1623,11 +1623,19 @@ stp_compute_lut(stp_vars_t v, size_t steps)
    * Using it shifts the threshold, which is not the intent
    * of how this works.
    */
-  if (stp_get_image_type(v) == IMAGE_MONOCHROME)
+  if (stp_get_output_type(v) == OUTPUT_MONOCHROME)
     print_gamma = 1.0;
 
   lut = allocate_lut(steps);
   stp_set_lut(v, lut);
+  stp_dprintf(STP_DBG_LUT, v, "stp_compute_lut\n");
+  stp_dprintf(STP_DBG_LUT, v, " cyan %.3f\n", cyan);
+  stp_dprintf(STP_DBG_LUT, v, " magenta %.3f\n", magenta);
+  stp_dprintf(STP_DBG_LUT, v, " yellow %.3f\n", yellow);
+  stp_dprintf(STP_DBG_LUT, v, " print_gamma %.3f\n", print_gamma);
+  stp_dprintf(STP_DBG_LUT, v, " contrast %.3f\n", contrast);
+  stp_dprintf(STP_DBG_LUT, v, " brightness %.3f\n", brightness);
+  stp_dprintf(STP_DBG_LUT, v, " screen_gamma %.3f\n", screen_gamma);
   for (i = 0; i < steps; i ++)
     {
       double temp_pixel;
@@ -1670,7 +1678,10 @@ stp_compute_lut(stp_vars_t v, size_t steps)
       /*
        * Third, correct for the screen gamma
        */
-      pixel = 1.0 - pow(pixel, screen_gamma);
+
+      pixel = 1.0 -
+	(1.0 / (1.0 - pow(pivot, screen_gamma))) *
+	(pow(pivot + ipivot * pixel, screen_gamma) - pow(pivot, screen_gamma));
 
       /*
        * Third, fix up cyan, magenta, yellow values
@@ -1736,31 +1747,21 @@ stp_compute_lut(stp_vars_t v, size_t steps)
 	lut->blue[i] = 65535;
       else
 	lut->blue[i] = (unsigned)(blue_pixel);
-#ifdef PRINT_LUT
-      fprintf(ltfile, "%3i  %5d  %5d  %5d  %5d  %f %f %f %f  %f %f %f  %f\n",
-	      i, lut->composite[i], lut->red[i],
-	      lut->green[i], lut->blue[i], pixel, red_pixel,
-	      green_pixel, blue_pixel, print_gamma, screen_gamma,
-	      print_gamma, app_gamma);
-#endif
+      stp_dprintf(STP_DBG_LUT, v,
+		  "%3i  %5d  %5d  %5d  %5d\n",
+		  i, lut->composite[i], lut->red[i],
+		  lut->green[i], lut->blue[i]);
     }
-
-#ifdef PRINT_LUT
-  fclose(ltfile);
-#endif
 }
 
-#ifdef DEBUG
-#define RETURN_COLORFUNC(x)						      \
-do									      \
-{									      \
-  stp_eprintf(v, "stp_choose_colorfunc(type %d bpp %d cmap %d) ==> %s, %d\n", \
-	      output_type, image_bpp, cmap, #x, *out_bpp);		      \
-  return (x);								      \
-} while (0)
-#else
-#define RETURN_COLORFUNC(x) return(x)
-#endif
+#define RETURN_COLORFUNC(x)						   \
+do									   \
+{									   \
+  stp_dprintf(STP_DBG_COLORFUNC, v,					   \
+	      "stp_choose_colorfunc(type %d bpp %d cmap %d) ==> %s, %d\n", \
+	      output_type, image_bpp, cmap, #x, *out_bpp);		   \
+  return (x);								   \
+} while (0)								   \
 
 stp_convert_t
 stp_choose_colorfunc(int output_type,
@@ -1769,8 +1770,9 @@ stp_choose_colorfunc(int output_type,
 		     int *out_bpp,
 		     const stp_vars_t v)
 {
-  if (stp_get_image_type(v) == IMAGE_MONOCHROME)
+  switch (stp_get_output_type(v))
     {
+    case OUTPUT_MONOCHROME:
       *out_bpp = 1;
       switch (image_bpp)
 	{
@@ -1791,9 +1793,8 @@ stp_choose_colorfunc(int output_type,
 	default:
 	  RETURN_COLORFUNC(NULL);
 	}
-    }
-  else if (output_type == OUTPUT_RAW_CMYK)
-    {
+      break;
+    case OUTPUT_RAW_CMYK:
       *out_bpp = 4;
       switch (image_bpp)
 	{
@@ -1804,35 +1805,30 @@ stp_choose_colorfunc(int output_type,
 	default:
 	  RETURN_COLORFUNC(NULL);
 	}
-    }
-  else if (output_type == OUTPUT_COLOR)
-    {
+      break;
+    case OUTPUT_COLOR:
       *out_bpp = 3;
-
-      if (image_bpp >= 3)
+      if (stp_get_image_type(v) == IMAGE_CONTINUOUS)
 	{
-	  if (stp_get_image_type(v) == IMAGE_CONTINUOUS)
+	  if (image_bpp >= 3)
 	    RETURN_COLORFUNC(rgb_to_rgb);
-	  else
-	    RETURN_COLORFUNC(fast_rgb_to_rgb);
-	}
-      else if (cmap == NULL)
-        {
-          if (stp_get_image_type(v) == IMAGE_CONTINUOUS)
+	  else if (cmap == NULL)
 	    RETURN_COLORFUNC(gray_to_rgb);
-          else
-	    RETURN_COLORFUNC(fast_gray_to_rgb);
-        }
+	  else
+	    RETURN_COLORFUNC(indexed_to_rgb);
+	}
       else
 	{
-	  if (stp_get_image_type(v) == IMAGE_CONTINUOUS)
-	    RETURN_COLORFUNC(indexed_to_rgb);
+	  if (image_bpp >= 3)
+	    RETURN_COLORFUNC(fast_rgb_to_rgb);
+	  else if (cmap == NULL)
+	    RETURN_COLORFUNC(fast_gray_to_rgb);
 	  else
 	    RETURN_COLORFUNC(fast_indexed_to_rgb);
 	}
-    }
-  else				/* Grayscale */
-    {
+      break;
+    case OUTPUT_GRAY:
+    default:
       *out_bpp = 1;
       switch (image_bpp)
 	{
@@ -1853,5 +1849,6 @@ stp_choose_colorfunc(int output_type,
 	default:
 	  RETURN_COLORFUNC(NULL);
 	}
+      break;
     }
 }

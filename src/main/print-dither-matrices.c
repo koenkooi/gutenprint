@@ -1,9 +1,9 @@
 /*
- * "$Id: paper_sizes.c,v 1.2.2.2 2001/06/30 03:19:59 sharkey Exp $"
+ * "$Id: print-dither-matrices.c,v 1.2.2.1 2001/06/30 03:19:59 sharkey Exp $"
  *
- *   Dump the per-printer options for Grant Taylor's *-omatic database
+ *   Print plug-in driver utility functions for the GIMP.
  *
- *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
+ *   Copyright 2001 Robert Krawitz (rlk@alum.mit.edu)
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -18,29 +18,44 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Revision History:
+ *
+ *   See ChangeLog
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <stdio.h>
-#ifdef INCLUDE_GIMP_PRINT_H
-#include INCLUDE_GIMP_PRINT_H
-#else
 #include <gimp-print.h>
-#endif
-#include "../../lib/libprintut.h"
+#include <gimp-print-internal.h>
 
-int
-main(int argc, char **argv)
+static const unsigned short mat_1_1[] =
 {
-  int i;
-  for (i = 0; i < stp_known_papersizes(); i++)
-    {
-      const stp_papersize_t p = stp_get_papersize_by_index(i);
-      printf("%s %d %d\n", stp_papersize_get_name(p),
-	     stp_papersize_get_width(p),
-	     stp_papersize_get_height(p));
-    }
-  return 0;
-}
+#include "quickmatrix257.h"
+};
+
+const stp_dither_matrix_short_t stp_1_1_matrix =
+{
+  257, 257, 2, 1, mat_1_1
+};
+
+static const unsigned short mat_2_1[] =
+{
+#include "ran.367.179.h"
+};
+
+const stp_dither_matrix_short_t stp_2_1_matrix =
+{
+  367, 179, 2, 1, mat_2_1
+};
+
+static const unsigned short mat_4_1[] =
+{
+#include "ran.509.131.h"
+};
+
+const stp_dither_matrix_short_t stp_4_1_matrix =
+{
+  509, 131, 2, 1, mat_4_1
+};

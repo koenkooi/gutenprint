@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.4.3 2001/05/09 16:32:50 sharkey Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.4 2001/06/30 03:19:59 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -40,25 +40,14 @@
 #define xmalloc malloc
 #endif
 
-
-#define ECOLOR_C 0
-#define ECOLOR_M 1
-#define ECOLOR_Y 2
-#define ECOLOR_K 3
-#define NCOLORS (4)
-
-#define MAX_CARRIAGE_WIDTH	80 /* This really needs to go away */
-				/* For now, this is wide enough for 4B ISO */
-
 /*
- * We really need to get away from this silly static nonsense...
+ * ECOLOR_K must be 0
  */
-#define MAX_PHYSICAL_BPI 2880
-#define MAX_OVERSAMPLED 8
-#define MAX_BPP 2
-#define BITS_PER_BYTE 8
-#define COMPBUFWIDTH (MAX_PHYSICAL_BPI * MAX_OVERSAMPLED * MAX_BPP * \
-	MAX_CARRIAGE_WIDTH / BITS_PER_BYTE)
+#define ECOLOR_K 0
+#define ECOLOR_C 1
+#define ECOLOR_M 2
+#define ECOLOR_Y 3
+#define NCOLORS (4)
 
 typedef struct
 {
@@ -80,12 +69,9 @@ typedef struct
 
 typedef struct
 {
-   double value_l;
-   double value_h;
-   unsigned bits_l;
-   unsigned bits_h;
-   int isdark_l;
-   int isdark_h;
+   double value[2];
+   unsigned bits[2];
+   int isdark[2];
 } stp_full_dither_range_t;
 
 typedef struct			/* Weave parameters for a specific row */
@@ -210,6 +196,7 @@ typedef struct stp_softweave
 				/* This is used for the 1520/3000, which */
 				/* use a funny value for the "print density */
 				/* in the vertical direction". */
+  int horizontal_width;		/* Horizontal width, in bits */
   int last_color;
   int head_offset[8];		/* offset of printheads */
   unsigned char *s[8];
@@ -226,7 +213,39 @@ typedef struct stp_softweave
 		     int width, int missingstartrows, int color);
   int (*pack)(const unsigned char *in, int bytes,
 	      unsigned char *out, unsigned char **optr);
+  int (*compute_linewidth)(const struct stp_softweave *sw, int n);
 } stp_softweave_t;
+
+typedef struct stp_dither_matrix_short
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned short *data;
+} stp_dither_matrix_short_t;
+
+typedef struct stp_dither_matrix_normal
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const unsigned *data;
+} stp_dither_matrix_normal_t;
+
+typedef struct stp_dither_matrix
+{
+  int x;
+  int y;
+  int bytes;
+  int prescaled;
+  const void *data;
+} stp_dither_matrix_t;
+
+extern const stp_dither_matrix_short_t stp_1_1_matrix;
+extern const stp_dither_matrix_short_t stp_2_1_matrix;
+extern const stp_dither_matrix_short_t stp_4_1_matrix;
 
 /*
  * Prototypes...
@@ -235,6 +254,10 @@ typedef struct stp_softweave
 extern void	stp_set_driver_data (stp_vars_t vv, void * val);
 extern void * 	stp_get_driver_data (const stp_vars_t vv);
 
+extern void	stp_set_verified(stp_vars_t vv, int value);
+extern int	stp_get_verified(stp_vars_t vv);
+
+extern void     stp_copy_options(stp_vars_t vd, const stp_vars_t vs);
 
 extern void	stp_default_media_size(const stp_printer_t printer,
 				       const stp_vars_t v, int *width,
@@ -243,18 +266,13 @@ extern void	stp_default_media_size(const stp_printer_t printer,
 extern void *	stp_init_dither(int in_width, int out_width,
 				int horizontal_aspect,
 				int vertical_aspect, stp_vars_t vars);
-extern void	stp_dither_set_matrix(void *vd, size_t x, size_t y,
-				      const unsigned *data, int transpose,
-				      int prescaled, int x_shear, int y_shear);
 extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
 					       size_t iterations,
 					       const unsigned *data,
 					       int prescaled,
 					       int x_shear, int y_shear);
-extern void	stp_dither_set_matrix_short(void *vd, size_t x, size_t y,
-					    const unsigned short *data,
-					    int transpose, int prescaled,
-					    int x_shear, int y_shear);
+extern void	stp_dither_set_matrix(void *vd, const stp_dither_matrix_t *mat,
+				      int transpose, int x_shear, int y_shear);
 extern void	stp_dither_set_transition(void *vd, double);
 extern void	stp_dither_set_density(void *vd, double);
 extern void	stp_dither_set_black_density(void *vd, double);
@@ -276,7 +294,6 @@ extern void	stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
 extern void	stp_dither_set_ranges_complete(void *vd, int color, int nlevels,
 					       const stp_dither_range_t *ranges);
 extern void	stp_dither_set_ink_spread(void *vd, int spread);
-extern void	stp_dither_set_max_ink(void *vd, int, double);
 extern void	stp_dither_set_x_oversample(void *vd, int os);
 extern void	stp_dither_set_y_oversample(void *vd, int os);
 extern void	stp_dither_set_adaptive_limit(void *vd, double limit);
@@ -346,15 +363,16 @@ extern void *stp_initialize_weave(int jets, int separation, int oversample,
 				  int (*pack)(const unsigned char *in,
 					      int bytes, unsigned char *out,
 					      unsigned char **optr),
-				  int (*compute_linewidth)(const stp_softweave_t *sw));
+				  int (*compute_linewidth)(const stp_softweave_t *sw,
+							   int n));
 
 extern void stp_fill_tiff(stp_softweave_t *sw, int row, int subpass,
 			  int width, int missingstartrows, int color);
 extern void stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
 				  int width, int missingstartrows, int color);
 
-extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw);
-extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw);
+extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw, int n);
+extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw, int n);
 
 
 
@@ -393,6 +411,8 @@ stp_weave_parameters_by_row(const stp_softweave_t *sw, int row,
 
 extern void stp_destroy_weave(void *);
 
+extern void stp_destroy_weave_params(void *vw);
+
 extern int
 stp_verify_printer_params(const stp_printer_t, const stp_vars_t);
 
@@ -402,12 +422,26 @@ extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
 			const stp_vars_t v);
 
 extern void stp_putc(int ch, const stp_vars_t v);
+extern void stp_erputc(int ch);
 
 extern void stp_puts(const char *s, const stp_vars_t v);
 
 extern void stp_eprintf(const stp_vars_t v, const char *format, ...);
+extern void stp_erprintf(const char *format, ...);
+
+#define STP_DBG_LUT 		0x1
+#define STP_DBG_COLORFUNC	0x2
+#define STP_DBG_INK		0x4
+#define STP_DBG_PS		0x8
+#define STP_DBG_PCL		0x10
+#define STP_DBG_ESCP2		0x20
+#define STP_DBG_CANON		0x40
+#define STP_DBG_LEXMARK		0x80
+extern void stp_dprintf(unsigned long level, const stp_vars_t v,
+			const char *format, ...);
 
 extern void *stp_malloc (size_t);
+extern void stp_free(void *ptr);
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
@@ -472,5 +506,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.4.3 2001/05/09 16:32:50 sharkey Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.4 2001/06/30 03:19:59 sharkey Exp $".
  */

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9.2.3 2001/05/09 16:32:51 sharkey Exp $
+## $Id: Makefile.am,v 1.9.2.4 2001/06/30 03:20:00 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,12 +23,18 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@
+
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
 
-noinst_PROGRAMS = @TEST_BIN@
 
+## Programs
+TEST_BIN = testdither escp2-weavetest unprint escp2-unprint pcl-unprint bjc-unprint
+
+noinst_PROGRAMS = @TEST_BIN@
 EXTRA_PROGRAMS = escp2-weavetest unprint escp2-unprint pcl-unprint bjc-unprint testdither
 
 escp2_weavetest_SOURCES = escp2-weavetest.c
@@ -46,12 +52,16 @@ pcl_unprint_SOURCES = pcl-unprint.c
 bjc_unprint_SOURCES = bjc-unprint.c
 
 testdither_SOURCES = testdither.c
-testdither_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+testdither_LDADD = $(LIBGIMPPRINT_LIBS)
 testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../src/main
 
-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
-CLEANFILES = $(EXTRA_PROGRAMS)
+
+## Clean
+
+CLEANFILES = $(EXTRA_PROGRAMS) mixed-color-1bit.ppm
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
