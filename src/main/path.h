@@ -1,5 +1,5 @@
 /*
- * "$Id: path.h,v 1.1 2003/01/06 20:57:39 rleigh Exp $"
+ * "$Id: path.h,v 1.2 2003/01/20 22:19:20 rlk Exp $"
  *
  *   libgimpprint path functions header
  *
@@ -35,8 +35,8 @@ extern "C" {
 #endif
 
 
-extern stp_list_t *stp_path_search(stp_list_t *dirlist, const char *suffix);
-extern void stp_path_split(stp_list_t *list, const char *path);
+extern stpi_list_t *stpi_path_search(stpi_list_t *dirlist, const char *suffix);
+extern void stpi_path_split(stpi_list_t *list, const char *path);
 
 
 #ifdef __cplusplus
@@ -45,5 +45,5 @@ extern void stp_path_split(stp_list_t *list, const char *path);
 
 #endif /* GIMP_PRINT_INTERNAL_PATH_H */
 /*
- * End of "$Id: path.h,v 1.1 2003/01/06 20:57:39 rleigh Exp $".
+ * End of "$Id: path.h,v 1.2 2003/01/20 22:19:20 rlk Exp $".
  */

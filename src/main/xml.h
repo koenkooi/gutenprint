@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.h,v 1.1 2003/01/06 20:57:43 rleigh Exp $"
+ * "$Id: xml.h,v 1.2 2003/01/20 22:19:57 rlk Exp $"
  *
  *   libgimpprint module loader header
  *
@@ -31,11 +31,11 @@ extern "C" {
 #endif
 
 
-int stp_xml_init(void);
-int stp_xml_parse_file(const char *file);
+int stpi_xml_init(void);
+int stpi_xml_parse_file(const char *file);
 
 
 #endif /* GIMP_PRINT_INTERNAL_XML_H */
 /*
- * End of "$Id: xml.h,v 1.1 2003/01/06 20:57:43 rleigh Exp $".
+ * End of "$Id: xml.h,v 1.2 2003/01/20 22:19:57 rlk Exp $".
  */

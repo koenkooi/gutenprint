@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inlined-functions.h,v 1.1 2003/01/20 01:13:05 rlk Exp $"
+ * "$Id: dither-inlined-functions.h,v 1.2 2003/01/20 22:19:14 rlk Exp $"
  *
  *   Performance-critical functions that should be inlined, based on
  *   measurements.
@@ -38,7 +38,7 @@
  */
 
 static inline unsigned
-ditherpoint(const dither_t *d, dither_matrix_t *mat, int x)
+ditherpoint(const stpi_dither_t *d, dither_matrix_t *mat, int x)
 {
   if (mat->fast_mask)
     return mat->matrix[(mat->last_y_mod +
@@ -78,7 +78,7 @@ ditherpoint(const dither_t *d, dither_matrix_t *mat, int x)
 }
 
 static inline int
-compute_black(const dither_t *d)
+compute_black(const stpi_dither_t *d)
 {
   int answer = INT_MAX;
   int i;
@@ -88,7 +88,7 @@ compute_black(const dither_t *d)
 }
 
 static inline void
-set_row_ends(dither_channel_t *dc, int x, int subchannel)
+set_row_ends(stpi_dither_channel_t *dc, int x, int subchannel)
 {
   if (dc->row_ends[0][subchannel] == -1)
     dc->row_ends[0][subchannel] = x;
