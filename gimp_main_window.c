@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.9 2000/05/24 00:24:02 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.10 2000/05/25 00:41:24 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1049,12 +1049,13 @@ gimp_position_callback (GtkWidget *widget)
   else if (widget == bottom_entry)
     {
       gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
-      vars.top = top - ((new_value + 1.0 / 144) * 72 + print_height); 
+      vars.top = ((new_value + 1.0 / 144) * 72) -
+	(print_height + paper_height - top); 
     }
   else if (widget == right_entry)
     {
       gfloat new_value = atof (gtk_entry_get_text (GTK_ENTRY (widget)));
-      vars.left = right - ((new_value + 1.0 / 144) * 72 + print_width);
+      vars.left = ((new_value + 1.0 / 144) * 72) - (left + print_width);
     }
   else if (widget == recenter_button)
     {
