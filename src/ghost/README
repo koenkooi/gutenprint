@@ -407,6 +407,8 @@ certain resolutions.
 					    for Stylus Color, Stylus
 					    Color 1500, Stylus Color
 					    1520, and Stylus Color 3000)
+'720 x 360 DPI Default'			   (works on Stylus Pro printers)
+'720 x 360 DPI Default Unidirectional'	   (works on Stylus Pro printers)
 '720 x 360 DPI FOL'			   (works on Stylus Pro printers)
 '720 x 360 DPI FOL Unidirectional'	   (works on Stylus Pro printers)
 '720 x 360 DPI FOL2'	      		   (works on Stylus Pro printers)
@@ -415,17 +417,15 @@ certain resolutions.
 '720 x 360 DPI MW2 Unidirectional'	   (works on Stylus Pro printers)
 
 '720 DPI Microweave'                       (works on most printers;
-					    recommended only on
+					    recommended only on Stylus
+					    Pro printers and
 					    printers that do not
 					    support other 720 DPI modes)
 '720 DPI Microweave Unidirectional'        (works on most printers;
-					    recommended only on
+					    recommended only on Stylus
+					    Pro printers and
 					    printers that do not
 					    support other 720 DPI modes)
-'720 DPI Full Overlap'			   (works on Stylus Pro printers)
-'720 DPI Full Overlap Unidirectional'	   (works on Stylus Pro printers)
-'720 DPI Four Pass'    			   (works on Stylus Pro printers)
-'720 DPI Four Pass Unidirectional'	   (works on Stylus Pro printers)
 '720 DPI Softweave'                        (works on all printers except
 					    for Stylus Color, Stylus
 					    Color 1500, Stylus Color
@@ -446,15 +446,23 @@ certain resolutions.
 					    for Stylus Color, Stylus
 					    Color 1500, Stylus Color
 					    1520, and Stylus Color 3000)
+'720 DPI Default'			   (works on Stylus Pro printers)
+'720 DPI Default Unidirectional'	   (works on Stylus Pro printers)
+'720 DPI Full Overlap'			   (works on Stylus Pro printers)
+'720 DPI Full Overlap Unidirectional'	   (works on Stylus Pro printers)
+'720 DPI Four Pass'    			   (works on Stylus Pro printers)
+'720 DPI Four Pass Unidirectional'	   (works on Stylus Pro printers)
 
-'1440 x 720 DPI Microweave'                (works on some older 1440x720 dpi
-					    printers; not normally recommended)
-'1440 x 720 DPI Microweave Unidirectional' (works on some older 1440x720 dpi
-					    printers; not normally recommended)
-'1440 x 720 DPI Full Overlap'		   (works on Stylus Pro printers)
-'1440 x 720 DPI FOL Unidirectional'	   (works on Stylus Pro printers)
-'1440 x 720 DPI Four Pass'    		   (works on Stylus Pro printers)
-'1440 x 720 DPI Four Pass Unidirectional'  (works on Stylus Pro printers)
+'1440 x 720 DPI Microweave'                (works on some, mostly old printers;
+					    recommended only on Stylus
+					    Pro printers and
+					    printers that do not
+					    support other 720 DPI modes)
+'1440 x 720 DPI Microweave Unidirectional' (works on some, mostly old printers;
+					    recommended only on Stylus
+					    Pro printers and
+					    printers that do not
+					    support other 720 DPI modes)
 '1440 x 720 DPI Softweave'                 (works on all 1440x720 dpi
 					    printers except for Stylus
 					    Color 1520 and Stylus Color 3000)
@@ -464,6 +472,12 @@ certain resolutions.
 '1440 x 720 DPI Highest Quality'           (works on all 1440x720 dpi
 					    printers except for Stylus
 					    Color 1520 and Stylus Color 3000)
+'1440 x 720 DPI Default'		   (works on Stylus Pro printers)
+'1440 x 720 DPI Default Unidirectional'	   (works on Stylus Pro printers)
+'1440 x 720 DPI FOL'			   (works on Stylus Pro printers)
+'1440 x 720 DPI FOL Unidirectional'	   (works on Stylus Pro printers)
+'1440 x 720 DPI Four Pass'    		   (works on Stylus Pro printers)
+'1440 x 720 DPI Four Pass Unidirectional'  (works on Stylus Pro printers)
 
 '2880 x 720 DPI Softweave'                 (works on Stylus Color 680,
 					    777, 880, 83, and 980,

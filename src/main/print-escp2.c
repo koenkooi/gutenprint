@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68.2.4 2001/05/26 00:31:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.68.2.5 2001/05/26 13:50:03 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1887,6 +1887,8 @@ static const res_t escp2_reslist[] =
   {N_("360 DPI Softweave"),                        360,  360,  1,0,1,1,0,1,5 },
   {N_("360 DPI High Quality"),                     360,  360,  1,0,2,1,0,1,5 },
   {N_("360 DPI High Quality Unidirectional"),      360,  360,  1,0,2,1,1,1,5 },
+  {N_("720 x 360 DPI Default"),        	           720,  360,  0,48,1,1,0,2,7},
+  {N_("720 x 360 DPI Default Unidirectional"), 	   720,  360,  0,48,1,1,1,2,7},
   {N_("720 x 360 DPI Softweave"),                  720,  360,  1,0,1,1,0,2,7 },
   {N_("720 x 360 DPI Softweave Unidirectional"),   720,  360,  1,0,1,1,1,2,7 },
   {N_("720 x 360 DPI Microweave"),                 720,  360,  0,49,1,1,0,2,7},
@@ -1897,6 +1899,8 @@ static const res_t escp2_reslist[] =
   {N_("720 x 360 DPI FOL2 Unidirectional"),        720,  360,  0,4,1,1,1,2,7 },
   {N_("720 x 360 DPI MW2"),                        720,  360,  0,5,1,1,0,2,7 },
   {N_("720 x 360 DPI MW2 Unidirectional"),         720,  360,  0,5,1,1,1,2,7 },
+  {N_("720 DPI Default"),			   720,  720,  48,1,1,1,0,1,8},
+  {N_("720 DPI Default Unidirectional"),           720,  720,  48,1,1,1,1,1,8},
   {N_("720 DPI Microweave"),                       720,  720,  0,1,1,1,0,1,8 },
   {N_("720 DPI Microweave Unidirectional"),        720,  720,  0,1,1,1,1,1,8 },
   {N_("720 DPI Full Overlap"),                     720,  720,  0,2,1,1,0,1,8 },
@@ -1908,6 +1912,8 @@ static const res_t escp2_reslist[] =
   {N_("720 DPI High Quality"),                     720,  720,  1,0,2,1,0,1,9 },
   {N_("720 DPI High Quality Unidirectional"),      720,  720,  1,0,2,1,1,1,9 },
   {N_("720 DPI Highest Quality"),                  720,  720,  1,0,4,1,1,1,9 },
+  {N_("1440 x 720 DPI Default"),       		   1440, 720, 48,1,1,1,0,1,10},
+  {N_("1440 x 720 DPI Default Unidirectional"),	   1440, 720, 48,1,1,1,1,1,10},
   {N_("1440 x 720 DPI Microweave"),                1440, 720,  0,1,1,1,0,1,10},
   {N_("1440 x 720 DPI Microweave Unidirectional"), 1440, 720,  0,1,1,1,1,1,10},
   {N_("1440 x 720 DPI FOL"),                       1440, 720,  0,2,1,1,0,1,10},
