@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.31 2002/04/06 16:47:42 andystewart Exp $
+## $Id: Makefile.am,v 1.32 2002/04/07 01:40:12 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -280,6 +280,6 @@ help:
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
 
-EXTRA_DIST = README $(MANUAL).sgml html-stamp
+EXTRA_DIST = README $(MANUAL_SRC_FILES) html-stamp
 
 .PHONY: docs html ps pdf help
