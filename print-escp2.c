@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.89 2000/02/21 00:40:25 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.90 2000/02/21 01:08:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.90  2000/02/21 01:08:02  rlk
+ *   Weird init sequence for newer printers
+ *
  *   Revision 1.89  2000/02/21 00:40:25  rlk
  *   change softweave sequence for older printers
  *
@@ -880,12 +883,15 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi,
    * Hack that seems to be necessary for these silly things to print.
    * No, I don't know what it means. -- rlk
    */
-#if 0
   if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK, MODEL_VARIABLE_4))
-    fprintf(prn, "\033\001@EJL 1284.4\n@EJL     \n");
-#endif
+    fprintf(prn, "%c%c%c\033\001@EJL 1284.4\n@EJL     \n\033@", 0, 0, 0);
 
   fputs("\033@", prn); 				/* ESC/P2 reset */
+
+  if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK, MODEL_VARIABLE_4))
+    fprintf(prn,
+	    "\033(R\010%c%cREMOTE1PM\002%c%c%cSN\003%c%c%c\005\033%c%c%c",
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   fwrite("\033(G\001\000\001", 6, 1, prn);	/* Enter graphics mode */
   switch (ydpi)					/* Set line feed increment */
@@ -2906,5 +2912,5 @@ escp2_write_weave(void *        vsw,
 #endif
 
 /*
- * End of "$Id: print-escp2.c,v 1.89 2000/02/21 00:40:25 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.90 2000/02/21 01:08:02 rlk Exp $".
  */
