@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.48 2001/04/15 21:22:21 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.49 2001/04/15 23:00:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1340,7 +1340,7 @@ static const escp2_printer_attr_t escp2_printer_attrs[] =
   { "command_mode",		12, 4 },
   { "ink_types",		16, 1 },
   { "rollfeed",			17, 1 },
-  { "horizontal_zero_margin",	18, 1 }
+  { "horizontal_zero_margin",	18, 1 },
   { "vertical_zero_margin",	19, 1 }
 };
 
