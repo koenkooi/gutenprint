@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.13 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: string-list.c,v 1.14 2004/04/13 23:54:46 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -74,7 +74,7 @@ stp_string_list_create(void)
 }
 
 void
-stp_string_list_free(stp_string_list_t list)
+stp_string_list_destroy(stp_string_list_t list)
 {
   stpi_list_destroy((stpi_list_t *) list);
 }

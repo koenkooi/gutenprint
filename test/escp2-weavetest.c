@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.30 2003/11/03 00:54:22 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.31 2004/04/13 23:54:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -320,7 +320,7 @@ run_one_weavetest(int physjets, int physsep, int hpasses, int vpasses,
   free(passstarts);
   if (!quiet || (quiet == 1 && total_errors > 0))
     printf("%d total error%s\n", total_errors, total_errors == 1 ? "" : "s");
-  stp_vars_free(v);
+  stp_vars_destroy(v);
   return total_errors;
 }
 

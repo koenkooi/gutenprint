@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.41 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: testdither.c,v 1.42 2004/04/13 23:54:46 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -455,7 +455,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 
   (void) gettimeofday(&tv2, NULL);
 
-  stp_vars_free(v);
+  stp_vars_destroy(v);
 
   if (fp != NULL)
     fclose(fp);
@@ -892,5 +892,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.41 2004/03/28 21:17:38 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.42 2004/04/13 23:54:46 rlk Exp $".
  */

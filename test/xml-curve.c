@@ -1,5 +1,5 @@
 /*
- * "$Id: xml-curve.c,v 1.3 2003/06/19 23:09:22 rlk Exp $"
+ * "$Id: xml-curve.c,v 1.4 2004/04/13 23:54:46 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	}
       else
 	fprintf(stderr, "error creating curve string\n");
-      stp_curve_free(curve);
+      stp_curve_destroy(curve);
     }
   else
     printf("curve is NULL!\n");

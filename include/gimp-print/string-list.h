@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.h,v 1.2 2004/03/28 21:17:36 rlk Exp $"
+ * "$Id: string-list.h,v 1.3 2004/04/13 23:54:44 rlk Exp $"
  *
  *   libgimpprint string list functions.
  *
@@ -37,7 +37,7 @@ extern "C" {
 ****************************************************************/
 
 extern stp_string_list_t stp_string_list_create(void);
-extern void stp_string_list_free(stp_string_list_t list);
+extern void stp_string_list_destroy(stp_string_list_t list);
 
 extern stp_param_string_t *stp_string_list_param(stp_const_string_list_t,
 						 size_t element);
@@ -63,5 +63,5 @@ stp_string_list_is_present(stp_const_string_list_t list, const char *value);
 
 #endif /* __GIMP_PRINT_STRING_LIST_H__ */
 /*
- * End of "$Id: string-list.h,v 1.2 2004/03/28 21:17:36 rlk Exp $".
+ * End of "$Id: string-list.h,v 1.3 2004/04/13 23:54:44 rlk Exp $".
  */

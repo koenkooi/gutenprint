@@ -1,5 +1,5 @@
 /*
- * "$Id: curve-cache.c,v 1.1 2004/04/11 01:28:16 rlk Exp $"
+ * "$Id: curve-cache.c,v 1.2 2004/04/13 23:54:45 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -43,7 +43,7 @@ void
 stpi_curve_free_curve_cache(cached_curve_t *cache)
 {
   if (cache->curve)
-    stp_curve_free(cache->curve);
+    stp_curve_destroy(cache->curve);
   cache->curve = NULL;
   cache->d_cache = NULL;
   cache->s_cache = NULL;

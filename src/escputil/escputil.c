@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.58 2004/01/31 23:03:06 rlk Exp $"
+ * "$Id: escputil.c,v 1.59 2004/04/13 23:54:44 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -969,7 +969,7 @@ do_align(void)
       return;
     }
   passes = desc.deflt.integer;
-  stp_parameter_description_free(&desc);
+  stp_parameter_description_destroy(&desc);
 
   stp_describe_parameter(v, "AlignmentChoices", &desc);
   if (desc.p_type != STP_PARAMETER_TYPE_INT)
@@ -980,7 +980,7 @@ do_align(void)
       return;
     }
   choices = desc.deflt.integer;
-  stp_parameter_description_free(&desc);
+  stp_parameter_description_destroy(&desc);
   if (passes <= 0 || choices <= 0)
     {
       printf("No alignment required for printer %s\n", printer_name);

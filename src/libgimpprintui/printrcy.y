@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.9 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: printrcy.y,v 1.10 2004/04/13 23:54:44 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -243,7 +243,7 @@ Curve_Param: tWORD pCURVE tBOOLEAN tSTRING
 	      else
 		stp_set_curve_parameter_active(current_printer->v, $1,
 					       STP_PARAMETER_ACTIVE);
-	      stp_curve_free(curve);
+	      stp_curve_destroy(curve);
 	    }
 	  g_free($1);
 	  g_free($3);

@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.7 2004/04/06 22:22:29 rleigh Exp $"
+ * "$Id: curve.h,v 1.8 2004/04/13 23:54:43 rlk Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -136,7 +136,7 @@ extern void stp_curve_copy(stp_curve_t dest, stp_const_curve_t source);
    * It is an error to destroy the curve more than once.
    * @param curve the curve to destroy.
    */
-extern void stp_curve_free(stp_curve_t curve);
+extern void stp_curve_destroy(stp_curve_t curve);
 
 /**
  * Set the lower and upper bounds on a curve.
@@ -623,5 +623,5 @@ extern int stp_curve_compose(stp_curve_t *retval,
 
 #endif /* __GIMP_PRINT_CURVE_H__ */
 /*
- * End of "$Id: curve.h,v 1.7 2004/04/06 22:22:29 rleigh Exp $".
+ * End of "$Id: curve.h,v 1.8 2004/04/13 23:54:43 rlk Exp $".
  */
