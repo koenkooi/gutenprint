@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.42 2000/09/29 00:10:14 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.43 2000/10/10 01:38:01 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -138,7 +138,7 @@ typedef struct
 private void
 stp_dbg(const char *msg, const privdata_t *stp_data)
 {
-  fprintf(gs_stderr,"%s Settings: r: %f  g: %f  b: %f\n",
+  fprintf(gs_stderr,"%s Settings: c: %f  m: %f  y: %f\n",
 	  msg, stp_data->v.cyan, stp_data->v.magenta, stp_data->v.yellow);
   fprintf(gs_stderr, "Ink type %s\n", stp_data->v.ink_type);
 
@@ -149,6 +149,8 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
 	  stp_data->v.gamma, stp_data->v.saturation, stp_data->v.density);
   fprintf(gs_stderr, "Settings: width %d, height %d\n",
 	  stp_data->v.page_width, stp_data->v.page_height);
+  fprintf(gs_stderr, "Settings: output type %d  image type %d\n",
+	  stp_data->v.output_type, stp_data->v.image_type);
   fprintf(gs_stderr, "Settings: Quality %s\n", stp_data->v.resolution);
   fprintf(gs_stderr, "Settings: Dither %s\n", stp_data->v.dither_algorithm);
   fprintf(gs_stderr, "Settings: InputSlot %s\n", stp_data->v.media_source);
@@ -215,7 +217,7 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   stp_data.v.scaling = -pdev->x_pixels_per_inch; /* resolution of image */
 
   /* compute lookup table: lut_t*,float dest_gamma,float app_gamma,vars_t* */
-  stp_data.v.app_gamma = 1.0;
+  stp_data.v.app_gamma = 1.7;
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;
@@ -231,6 +233,7 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
   theImage.dev = pdev;
   theImage.data = &stp_data;
   theImage.raster = stp_raster;
+  merge_printvars(&(stp_data.v), &(printer->printvars));
   if (verify_printer_params(printer, &(stp_data.v)))
     (*printer->print)(printer,		/* I - Model */
 		      1,		/* I - Number of copies */
