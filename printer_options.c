@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.1 2000/08/29 12:09:28 rlk Exp $"
+ * "$Id: printer_options.c,v 1.2 2000/09/09 02:03:09 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -51,6 +51,9 @@ main(int argc, char **argv)
 	    {
 	      for (j = 0; j < count; j++)
 		{
+		  if (j == 0)
+		    printf("$defaults{'%s'}{'%s'} = '%s';\n",
+			   p->driver, params[k], retval[j]);
 		  printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
 			 p->driver, params[k], retval[j]);
 		  free(retval[j]);
