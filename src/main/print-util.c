@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.47 2001/09/08 17:13:48 rleigh Exp $"
+ * "$Id: print-util.c,v 1.48 2001/09/09 21:00:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1284,6 +1284,8 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	  stp_free((void *)vptr[i].text);
 	}
     }
+  else
+    stp_eprintf(v, "%s is not a valid %s\n", checkval, what);
   if (vptr)
     free(vptr);
   return answer;
