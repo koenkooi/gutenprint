@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.122 2000/09/17 02:37:35 rlk Exp $"
+ * "$Id: print.c,v 1.123 2000/09/17 02:40:51 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1065,6 +1065,7 @@ printrc_load(void)
 		  }
 	      }
 	  }
+	  initialize_printer(&key);
 	  strncpy(key.name, value, 127);
 	} else if (strcasecmp("destination", keyword) == 0) {
 	  strncpy(key.v.output_to, value, 255);
@@ -1487,5 +1488,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.122 2000/09/17 02:37:35 rlk Exp $".
+ * End of "$Id: print.c,v 1.123 2000/09/17 02:40:51 rlk Exp $".
  */
