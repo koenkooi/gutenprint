@@ -1,5 +1,5 @@
 /*
- * "$Id: commandtoepson.c,v 1.1 2000/06/18 16:15:25 easysw Exp $"
+ * "$Id: commandtoepson.c,v 1.2 2000/06/18 18:33:28 easysw Exp $"
  *
  *   EPSON ESC/P2 command filter for the CUPS driver development kit.
  *
@@ -32,6 +32,13 @@
 
 #include <cups/cups.h>
 #include <cups/ppd.h>
+
+
+/*
+ * Macros...
+ */
+
+#define pwrite(s,n) fwrite((s), 1, (n), stdout)
 
 
 /*
@@ -78,12 +85,111 @@ main(int  argc,		/* I - Number of command-line arguments */
     fp = stdin;
 
  /*
+  * Enter remote mode...
+  */
+
+  pwrite("\033@\033(R\010\000\000REMOTE1", 15);
+
+ /*
   * Read the commands from the file and send the appropriate commands...
   */
 
   while (fgets(line, sizeof(line), fp) != NULL)
   {
+   /*
+    * Drop trailing newline...
+    */
+
+    lineptr = line + strlen(line) - 1;
+    if (*lineptr == '\n')
+      *lineptr = '\0';
+
+   /*
+    * Skip leading whitespace...
+    */
+
+    for (lineptr = line; isspace(*lineptr); lineptr ++);
+
+   /*
+    * Skip comments and blank lines...
+    */
+
+    if (*lineptr == '#' || !*lineptr)
+      continue;
+
+   /*
+    * Parse the command...
+    */
+
+    if (strncasecmp(lineptr, "Clean", 5) == 0)
+    {
+     /*
+      * Clean heads...
+      */
+
+      pwrite("CH\002\000\000\000", 6);
+    }
+    else if (strncasecmp(lineptr, "PrintAlignmentPage", 18) == 0)
+    {
+     /*
+      * Print alignment page...
+      */
+
+      int phase;
+
+      phase = atoi(lineptr + 18);
+
+      pwrite("DT\003\000\000", 5);
+      putchar(phase & 255);
+      purchar(phase >> 8);
+    }
+    else if (strncasecmp(lineptr, "PrintSelfTestPrint", 18) == 0)
+    {
+     /*
+      * Print version info and nozzle check...
+      */
+
+      pwrite("VI\002\000\000\000", 6);
+      pwrite("NC\002\000\000\000", 6);
+    }
+    else if (strncasecmp(lineptr, "ReportLevels", 12) == 0)
+    {
+     /*
+      * Report ink levels...
+      */
+
+      pwrite("IQ\001\000\001", 5);
+    }
+    else if (strncasecmp(lineptr, "SetAlignment", 12) == 0)
+    {
+     /*
+      * Set head alignment...
+      */
+
+      int phase, x;
+
+      if (sscanf(lineptr + 12, "%d%d", &phase, &x) != 2)
+      {
+        fprintf(stderr, "ERROR: Invalid printer command \"%s\"!\n", lineptr);
+        continue;
+      }
+
+      pwrite("DA\004\000", 4);
+      putchar(0);
+      putchar(phase);
+      putchar(0);
+      putchar(x);
+      pwrite("SV\000\000", 4);
+    }
+    else
+      fprintf(stderr, "ERROR: Invalid printer command \"%s\"!\n", lineptr);
   }
+
+ /*
+  * Exit remote mode...
+  */
+
+  pwrite("\033\000\000\000", 4);
 
  /*
   * Close the command file and return...
@@ -92,12 +198,10 @@ main(int  argc,		/* I - Number of command-line arguments */
   if (fp != stdin)
     fclose(fp);
 
-  fputs("INFO: Ready to print.\n", stderr);
-
   return (0);
 }
 
 
 /*
- * End of "$Id: commandtoepson.c,v 1.1 2000/06/18 16:15:25 easysw Exp $".
+ * End of "$Id: commandtoepson.c,v 1.2 2000/06/18 18:33:28 easysw Exp $".
  */
