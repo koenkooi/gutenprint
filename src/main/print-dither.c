@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.91 2002/07/08 04:27:26 mtomlinson Exp $"
+ * "$Id: print-dither.c,v 1.92 2002/07/13 03:45:07 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -201,26 +201,26 @@ typedef struct dither
   stp_vars_t v;
 } dither_t;
 
-#define DECLARE_DITHERFUNC(f) \
-static void f(const unsigned short *, int, dither_t *, int, int)
+typedef void ditherfunc_t(const unsigned short *, int, struct dither *, int, int);
 
-DECLARE_DITHERFUNC(stp_dither_monochrome);
-DECLARE_DITHERFUNC(stp_dither_monochrome_very_fast);
-DECLARE_DITHERFUNC(stp_dither_black_fast);
-DECLARE_DITHERFUNC(stp_dither_black_very_fast);
-DECLARE_DITHERFUNC(stp_dither_black_ordered);
-DECLARE_DITHERFUNC(stp_dither_black_ed);
-DECLARE_DITHERFUNC(stp_dither_black_et);
-DECLARE_DITHERFUNC(stp_dither_cmyk_fast);
-DECLARE_DITHERFUNC(stp_dither_cmyk_very_fast);
-DECLARE_DITHERFUNC(stp_dither_cmyk_ordered);
-DECLARE_DITHERFUNC(stp_dither_cmyk_ed);
-DECLARE_DITHERFUNC(stp_dither_cmyk_et);
-DECLARE_DITHERFUNC(stp_dither_raw_cmyk_fast);
-DECLARE_DITHERFUNC(stp_dither_raw_cmyk_very_fast);
-DECLARE_DITHERFUNC(stp_dither_raw_cmyk_ordered);
-DECLARE_DITHERFUNC(stp_dither_raw_cmyk_ed);
-DECLARE_DITHERFUNC(stp_dither_raw_cmyk_et);
+static ditherfunc_t
+  stp_dither_monochrome,
+  stp_dither_monochrome_very_fast,
+  stp_dither_black_fast,
+  stp_dither_black_very_fast,
+  stp_dither_black_ordered,
+  stp_dither_black_ed,
+  stp_dither_black_et,
+  stp_dither_cmyk_fast,
+  stp_dither_cmyk_very_fast,
+  stp_dither_cmyk_ordered,
+  stp_dither_cmyk_ed,
+  stp_dither_cmyk_et,
+  stp_dither_raw_cmyk_fast,
+  stp_dither_raw_cmyk_very_fast,
+  stp_dither_raw_cmyk_ordered,
+  stp_dither_raw_cmyk_ed,
+  stp_dither_raw_cmyk_et;
 
 
 #define CHANNEL(d, c) ((d)->channel[(c)])
