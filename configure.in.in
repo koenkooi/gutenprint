@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.43 2001/06/01 02:48:32 rlk Exp $
+dnl $Id: configure.in.in,v 1.44 2001/06/01 17:41:54 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -491,7 +491,7 @@ else
   )
 fi
 if test x${BUILD_TEST} = xyes ; then
-  TEST_BIN="escp2-weavetest unprint escp2-unprint pcl-unprint bjc-unprint"
+  TEST_BIN="testdither escp2-weavetest unprint escp2-unprint pcl-unprint bjc-unprint"
 fi
 
 dnl CUPS path setup
