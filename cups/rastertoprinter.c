@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.7 2000/10/12 03:08:40 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.8 2000/10/16 14:35:02 easysw Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -308,7 +308,8 @@ main(int  argc,				/* I - Number of command-line arguments */
 
       while (cups.row < cups.header.cupsHeight)
       {
-        cupsRasterReadPixels(cups.ras, buffer, cups.header.cupsBytesPerLine);
+        cupsRasterReadPixels(cups.ras, (unsigned char *)buffer,
+	                     cups.header.cupsBytesPerLine);
 	cups.row ++;
       }
     }
@@ -531,5 +532,5 @@ Image_width(Image image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.7 2000/10/12 03:08:40 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.8 2000/10/16 14:35:02 easysw Exp $".
  */
