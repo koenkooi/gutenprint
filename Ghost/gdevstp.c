@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.39 2000/09/03 19:13:53 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.40 2000/09/09 20:17:08 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -595,6 +595,18 @@ void
 Image_rotate_ccw(Image img)
 {
  /* dummy function, Landscape printing unsupported atm */
+}
+
+void
+Image_rotate_cw(Image img)
+{
+ /* dummy function, Seascape printing unsupported atm */
+}
+
+void
+Image_rotate_180(Image img)
+{
+ /* dummy function,  upside down printing unsupported atm */
 }
 
 void

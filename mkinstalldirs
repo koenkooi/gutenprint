@@ -4,11 +4,15 @@
 # Created: 1993-05-16
 # Public domain
 
-# $Id: mkinstalldirs,v 1.1 2000/02/03 15:00:26 sharkey Exp $
+# $Id: mkinstalldirs,v 1.2 2000/09/09 20:17:08 rlk Exp $
 
 errstatus=0
 
-for file
+base=`dirname $1`/
+
+extras=`find Ghost/stp-interfaces -type d -print | sed "s,^,$base,"`
+
+for file in "$@" $extras
 do
    set fnord `echo ":$file" | sed -ne 's/^:\//#/;s/^://;s/\// /g;s/^#/\//;p'`
    shift
