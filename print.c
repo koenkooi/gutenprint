@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.3 1999/09/12 00:40:15 rlk Exp $"
+ * "$Id: print.c,v 1.4 1999/09/15 02:23:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -647,7 +647,7 @@ run(char   *name,		/* I - Name of print program. */
 	/*
 	 * Second, correct contrast
 	 */
-	pixel = 1.0 + ((pixel - 1.0) * contrast);
+	pixel = 0.5 + ((pixel - 0.5) * contrast);
 
 	/*
 	 * Third, fix up red, green, blue values
@@ -2826,5 +2826,5 @@ get_printers(void)
 
 
 /*
- * End of "$Id: print.c,v 1.3 1999/09/12 00:40:15 rlk Exp $".
+ * End of "$Id: print.c,v 1.4 1999/09/15 02:23:24 rlk Exp $".
  */
