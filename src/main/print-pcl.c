@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.10 2001/02/24 18:59:49 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.11 2001/02/25 01:58:35 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -295,7 +295,7 @@ typedef struct {
  * The rest use Media Type and Print Quality.
  *
  * This data comes from the HP documentation "Deskjet 1220C and 1120C
- * PCL reference guide 2.0, Nov 1999". 
+ * PCL reference guide 2.0, Nov 1999".
  */
 
 static pcl_cap_t pcl_model_capabilities[] =
@@ -1191,7 +1191,7 @@ static double lum_adjustment[49] =
   0.51,
   0.54,
   0.57				/* C */
-};  
+};
 
 static double hue_adjustment[49] =
 {

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.2 2001/02/24 03:14:25 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.3 2001/02/25 01:58:35 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -63,7 +63,7 @@ extern "C" {
   (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION > (minor)) || \
   (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION == (minor) && \
    GIMPPRINT_MICRO_VERSION >= (micro)))
-	
+
 extern const unsigned int gimpprint_major_version;
 extern const unsigned int gimpprint_minor_version;
 extern const unsigned int gimpprint_micro_version;
@@ -256,7 +256,7 @@ typedef struct stp_image
  *   returns the horizontal (X) and vertical (Y) resolution of the chosen
  *   RESOLUTION name.  The high level program may choose to use this to
  *   rasterize at an appropriate resolution.
- *   
+ *
  */
 
 typedef void *stp_printer_t;
@@ -437,5 +437,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.2 2001/02/24 03:14:25 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.3 2001/02/25 01:58:35 rlk Exp $".
  */

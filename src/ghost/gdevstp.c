@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.4 2001/02/24 03:14:25 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.5 2001/02/25 01:58:35 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -196,7 +196,7 @@ stp_init_vars(void)
       stp_set_media_size(stp_data.v, "Letter");
     }
 }
-	
+
 
 private void
 stp_writefunc(void *file, const char *buf, size_t bytes)

@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.8 2001/02/18 19:50:09 rlk Exp $"
+ * "$Id: escputil.c,v 1.9 2001/02/25 01:58:35 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -898,7 +898,7 @@ do_align(void)
       printf("it may damage your printer. Proceed?\n");
       printf("Please confirm by typing 's' again that you wish to save the settings\n");
       printf("to your printer:\n");
-	     
+
       fflush(stdout);
       inbuf = do_get_input("> ");
       if (inbuf[0] == 's' || inbuf[0] == 'S')

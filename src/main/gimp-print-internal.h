@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.17 2001/02/24 19:29:46 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.18 2001/02/25 01:58:35 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -378,7 +378,7 @@ extern void stp_eprintf(const stp_vars_t v, const char *format, ...);
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
- * run, it will print out how long and how many time did 
+ * run, it will print out how long and how many time did
  * certain pieces of code take. Of course, don't forget about
  * overhead of call to gettimeofday - it's not zero.
  * If you need more detailed performance stats, just put
@@ -439,5 +439,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.17 2001/02/24 19:29:46 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.18 2001/02/25 01:58:35 rlk Exp $".
  */
