@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.79 2004/02/10 22:37:28 rleigh Exp $"
+ * "$Id: rastertoprinter.c,v 1.80 2004/03/01 12:30:17 rlk Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -639,7 +639,7 @@ main(int  argc,				/* I - Number of command-line arguments */
       stp_set_page_number(v, cups.page);
       cups.row = 0;
       fprintf(stderr, "DEBUG: Gimp-Print printing page %d\n", cups.page);
-      fprintf(stderr, "PAGE: %d 1\n", cups.page);
+      fprintf(stderr, "PAGE: %d 1\n", cups.page + 1);
       print_debug_block(v, &cups);
       if (!stp_verify(v))
 	{
@@ -986,5 +986,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.79 2004/02/10 22:37:28 rleigh Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.80 2004/03/01 12:30:17 rlk Exp $".
  */
