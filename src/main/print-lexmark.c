@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.96 2003/01/11 04:37:36 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.97 2003/01/11 20:07:33 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -267,7 +267,7 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_BASIC, 1
   },
   {
-    "Resolution", N_("Resolutions"),
+    "Resolution", N_("Resolution"),
     N_("Resolution and quality of the print"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.217 2003/01/11 17:09:01 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.218 2003/01/11 20:07:32 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -175,7 +175,7 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_BASIC, 1
   },
   {
-    "Resolution", N_("Resolutions"),
+    "Resolution", N_("Resolution"),
     N_("Resolution and quality of the print"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1

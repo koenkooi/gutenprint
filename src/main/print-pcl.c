@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.79 2003/01/06 20:57:42 rleigh Exp $"
+ * "$Id: print-pcl.c,v 1.80 2003/01/11 20:07:33 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1438,7 +1438,7 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_BASIC, 1
   },
   {
-    "Resolution", N_("Resolutions"),
+    "Resolution", N_("Resolution"),
     N_("Resolution and quality of the print"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1
