@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.11 2003/05/04 22:52:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.12 2003/05/04 23:49:42 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -439,7 +439,6 @@ escp2_inks(stp_const_vars_t v, int resid, int inkset)
   int model = stpi_get_model_id(v);
   const escp2_variable_inklist_t *inks =
     stpi_escp2_model_capabilities[model].inks;
-  resid /= 2;
   return (*inks)[inkset][resid];
 }
 
