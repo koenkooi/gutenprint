@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.78 2000/08/12 17:27:35 rlk Exp $"
+ * "$Id: print-dither.c,v 1.79 2000/08/13 17:40:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -859,7 +859,7 @@ dither_set_ranges_full(dither_color_t *s, int nlevels,
   s->ranges = (dither_segment_t *)
     malloc(s->nlevels * sizeof(dither_segment_t));
   s->bit_max = 0;
-#if VERBOSE
+#ifdef VERBOSE
   fprintf(stderr, "dither_set_ranges nlevels %d density %f\n", nlevels, density);
   for (i = 0; i < nlevels; i++)
     fprintf(stderr, "  level %d value: low %f high %f pattern low %x high %x is_dark low %d high %d\n", i,
@@ -906,7 +906,7 @@ dither_set_ranges_full(dither_color_t *s, int nlevels,
       s->signif_bits++;
       lbit >>= 1;
     }
-#if VERBOSE
+#ifdef VERBOSE
   for (i = 0; i < s->nlevels; i++)
     {
       fprintf(stderr, "    level %d value_l %d value_h %d range_l %d range_h %d\n",
