@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.18.2.2 2001/05/27 15:59:52 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.18.2.3 2001/05/27 20:45:22 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -39,27 +39,6 @@
  */
 #define PREVIEW_SIZE_VERT  320 /* Assuming max media size of 24" A2 */
 #define PREVIEW_SIZE_HORIZ 280 /* Assuming max media size of 24" A2 */
-
-extern stp_vars_t           vars;
-extern gint             plist_count;	   /* Number of system printers */
-extern gint             plist_current;     /* Current system printer */
-extern gp_plist_t         *plist;		  /* System printers */
-extern gint32           image_ID;
-extern const gchar     *image_filename;
-extern gint             image_width;
-extern gint             image_height;
-extern stp_printer_t current_printer;
-extern gint             runme;
-extern gint             saveme;
-
-extern void  printrc_save (void);
-
-extern GtkWidget *gimp_color_adjust_dialog;
-extern GtkWidget *dither_algo_combo;
-
-extern void gimp_do_color_updates    (void);
-extern void gimp_redraw_color_swatch (void);
-extern void gimp_build_dither_combo  (void);
 
 /*
  *  Main window widgets
@@ -184,16 +163,6 @@ static void gimp_preview_motion_callback     (GtkWidget      *widget,
 static void gimp_position_callback           (GtkWidget      *widget);
 static void gimp_image_type_callback         (GtkWidget      *widget,
 					      gpointer        data);
-
-extern void gimp_create_color_adjust_window  (void);
-extern void gimp_update_adjusted_thumbnail   (void);
-extern void
-gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
-			gint            num_items,   /* I - Number of items */
-			gchar    **items,       /* I - Menu items */
-			const gchar     *cur_item,    /* I - Current item */
-			GtkSignalFunc   callback,    /* I - Callback */
-			gint           *callback_id); /* IO - Callback ID (init to -1) */
 
 static gint preview_ppi = 10;
 
