@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.15 2001/01/16 12:49:38 rlk Exp $"
+ * "$Id: printdefy.y,v 1.16 2001/01/16 13:44:50 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -255,6 +255,6 @@ main(int argc, char **argv)
   printf("{\n");
   retval = yyparse();
   printf("};\n");
-  printf("const int printer_count = sizeof(printers) / sizeof(stp_printer_t);\n");
+  printf("static const int printer_count = sizeof(printers) / sizeof(stp_printer_t);\n");
   return retval;
 }
