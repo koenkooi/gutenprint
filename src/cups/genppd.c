@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.78 2003/07/18 21:56:07 rlk Exp $"
+ * "$Id: genppd.c,v 1.79 2003/07/19 14:25:47 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -265,7 +265,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
       break;
     case 'V':
       printf("cups-genppd version %s, "
-	     "Copyright (c) 1993-2001 by Easy Software Products.\n\n",
+	     "Copyright (c) 1993-2003 by Easy Software Products and Robert Krawitz.\n\n",
 	     VERSION);
       printf("CUPS PPD PostScript Level:     %d\n", CUPS_PPD_PS_LEVEL);
       printf("Default PPD location (prefix): %s\n", GENPPD_PPD_PREFIX);
@@ -1370,5 +1370,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.78 2003/07/18 21:56:07 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.79 2003/07/19 14:25:47 rlk Exp $".
  */
