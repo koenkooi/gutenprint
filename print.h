@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.42 2000/03/11 17:30:15 rlk Exp $"
+ * "$Id: print.h,v 1.43 2000/03/13 13:31:26 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -70,6 +70,7 @@
 #define IMAGE_LINE_ART		0
 #define IMAGE_SOLID_TONE	1
 #define IMAGE_CONTINUOUS	2
+#define IMAGE_MONOCHROME	3
 
 #ifndef MIN
 #  define MIN(a,b)		((a) < (b) ? (a) : (b))
@@ -196,7 +197,9 @@ extern void	dither_set_ink_spread(void *vd, int spread);
 
 extern void	scale_dither(void *vd, int scale);
 extern void	free_dither(void *);
+
 extern void	dither_black(unsigned short *, int, void *, unsigned char *);
+extern void	dither_fastblack(unsigned short *, int, void *, unsigned char *);
 
 extern void	dither_cmyk(unsigned short *, int, void *, unsigned char *,
 			    unsigned char *, unsigned char *,
@@ -294,5 +297,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.42 2000/03/11 17:30:15 rlk Exp $".
+ * End of "$Id: print.h,v 1.43 2000/03/13 13:31:26 rlk Exp $".
  */

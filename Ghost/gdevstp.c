@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.6 2000/03/11 23:27:06 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.7 2000/03/13 13:31:26 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -328,6 +328,7 @@ private int stp_get_params(gx_device *pdev, gs_param_list *plist)
 	    (code = param_write_int(plist, "Color", &stp_data.color)) < 0 ||
 	    (code = param_write_int(plist, "Model", &stp_data.model)) < 0 ||
 	    (code = param_write_int(plist, "Quality", &stp_data.resnr)) < 0 ||
+	    (code = param_write_int(plist, "ImageType", &stp_data.image_type)) < 0 ||
 	    (code = param_write_string(plist, "PAPERSIZE", &pmedia)) < 0 ||
 	    (code = param_write_float(plist, "Gamma", &stp_data.gamma)) < 0 ||
 	    (code = param_write_float(plist, "Saturation", &stp_data.saturation)) < 0 ||
@@ -367,7 +368,7 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Color", &color, 0, 1, code);
   code = stp_put_param_int(plist, "Model", &model, 0, 17, code);
   code = stp_put_param_int(plist, "Quality", &qual, 0, 7, code);
-  code = stp_put_param_int(plist, "ImageType", &itype, 0, 2, code);
+  code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
   code = stp_put_param_float(plist, "Gamma", &gamma, 0.1, 3., code);
   code = stp_put_param_float(plist, "Saturation", &sat, 0.1, 9., code);
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
