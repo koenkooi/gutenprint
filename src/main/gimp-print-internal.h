@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.47 2001/12/18 01:17:17 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.48 2001/12/21 01:52:19 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -235,10 +235,6 @@ typedef struct stp_dither_matrix
   int prescaled;
   const void *data;
 } stp_dither_matrix_t;
-
-extern const stp_dither_matrix_short_t stp_1_1_matrix;
-extern const stp_dither_matrix_short_t stp_2_1_matrix;
-extern const stp_dither_matrix_short_t stp_4_1_matrix;
 
 /*
  * Prototypes...
@@ -505,5 +501,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.47 2001/12/18 01:17:17 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.48 2001/12/21 01:52:19 rlk Exp $".
  */
