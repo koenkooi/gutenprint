@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.29 2001/07/06 18:04:43 rlk Exp $"
+ * "$Id: print-util.c,v 1.30 2001/07/10 01:12:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -519,7 +519,8 @@ stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
   ICLAMP(saturation);
   stp_set_density(user, stp_get_density(user) * stp_get_density(print));
   ICLAMP(density);
-  if (stp_get_output_type(print) == OUTPUT_GRAY)
+  if (stp_get_output_type(print) == OUTPUT_GRAY &&
+      stp_get_output_type(user) == OUTPUT_COLOR)
     stp_set_output_type(user, OUTPUT_GRAY);
 }
 
