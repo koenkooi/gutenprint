@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.47.4.7 2003/02/19 17:07:59 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.47.4.8 2003/04/11 11:04:29 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -472,8 +472,8 @@ static const pcl_cap_t pcl_model_capabilities[] =
     17 * 72 / 2, 14 * 72,
     1, 1,				/* Min paper size */
     PCL_RES_150_150 | PCL_RES_300_300,
-    {7, 41, 18, 18},
-    {7, 41, 10, 10},	/* Check/Fix */
+    {6, 48, 18, 18},	/* from bpd07933.pdf */
+    {6, 48, 10, 11},	/* from bpd07933.pdf */
     PCL_COLOR_CMY,
     PCL_PRINTER_DJ | PCL_PRINTER_TIFF | PCL_PRINTER_BLANKLINE,
     {
