@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.119 2002/03/17 22:37:30 rlk Exp $
+dnl $Id: configure.in.in,v 1.120 2002/03/17 22:51:15 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -469,7 +469,7 @@ if test x${BUILD_CUPS} = xyes ; then
   AC_CHECK_LIB(z,gzgets,
     HAVE_LIBZ=true, HAVE_LIBZ=false)
   if test x${HAVE_LIBZ} = xtrue ; then
-    CUPS_LIBS="${CUPS_LIBS} -lz"
+    GENPPD_LIBS="${GENPPD_LIBS} -lz"
     AC_DEFINE(HAVE_LIBZ,, [Define if libz is present.])
   fi
   AC_PATH_PROG(CUPS_CONFIG, cups-config)
@@ -763,6 +763,7 @@ AC_SUBST(CUPS_CONF)
 AC_SUBST(CUPS_INSTALL)
 AC_SUBST(CUPS_CFLAGS)
 AC_SUBST(CUPS_LIBS)
+AC_SUBST(GENPPD_LIBS)
 AC_SUBST(CUPS_MAN)
 AC_SUBST(CUPS_PPD_PS_LEVEL)
 AC_SUBST(CUPS_NOINST_BIN)
