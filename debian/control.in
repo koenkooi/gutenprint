@@ -116,6 +116,7 @@ Package: foomatic-db-gimp-print
 Architecture: all
 Section: text
 Depends: libgimpprint1 (= ${Source-Version}), foomatic-db
+Replaces: foomatic-db
 Description: Printer/Driver database and print system - gimp-print database
  Foomatic is a printer and driver database with PPD generator and filter
  backends for various Printing systems from cups over lp* to pdq.
