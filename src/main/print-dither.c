@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.92.2.2 2002/07/21 19:46:28 rlk Exp $"
+ * "$Id: print-dither.c,v 1.92.2.3 2002/07/27 21:30:22 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -382,28 +382,21 @@ stp_free_dither_data(stp_dither_data_t *d)
   stp_free(d->c);
 }
 
-#define SET_DITHERFUNC(d, func, v)				\
+#define RETURN_DITHERFUNC(func, v)				\
 do								\
 {								\
   stp_dprintf(STP_DBG_COLORFUNC, v, "ditherfunc %s\n", #func);	\
-  d->ditherfunc = func;						\
+  return (func);						\
 } while (0)
 
-void *
-stp_init_dither(int in_width, int out_width, int image_bpp,
-		int horizontal_aspect, int vertical_aspect, stp_vars_t v)
+static ditherfunc_t *
+stp_set_dither_function(dither_t *d, int image_bpp)
 {
   int i;
-  dither_t *d = stp_zalloc(sizeof(dither_t));
-  stp_simple_dither_range_t r;
-  d->v = v;
-  d->dither_class = stp_get_output_type(v);
-  d->error_rows = ERROR_ROWS;
-
   d->dither_type = D_ADAPTIVE_HYBRID;
   for (i = 0; i < num_dither_algos; i++)
     {
-      if (!strcmp(stp_get_dither_algorithm(v), _(dither_algos[i].name)))
+      if (!strcmp(stp_get_dither_algorithm(d->v), _(dither_algos[i].name)))
 	{
 	  d->dither_type = dither_algos[i].id;
 	  break;
@@ -417,11 +410,9 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
       switch (d->dither_type)
 	{
 	case D_VERY_FAST:
-	  SET_DITHERFUNC(d, stp_dither_monochrome_very_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_monochrome_very_fast, d->v);
 	default:
-	  SET_DITHERFUNC(d, stp_dither_monochrome, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_monochrome, d->v);
 	}
       break;
     case OUTPUT_GRAY:
@@ -430,20 +421,15 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  SET_DITHERFUNC(d, stp_dither_black_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_black_fast, d->v);
 	case D_VERY_FAST:
-	  SET_DITHERFUNC(d, stp_dither_black_very_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_black_very_fast, d->v);
 	case D_ORDERED:
-	  SET_DITHERFUNC(d, stp_dither_black_ordered, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_black_ordered, d->v);
 	case D_EVENTONE:
-	  SET_DITHERFUNC(d, stp_dither_black_et, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_black_et, d->v);
 	default:
-	  SET_DITHERFUNC(d, stp_dither_black_ed, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_black_ed, d->v);
 	}
       break;
     case OUTPUT_COLOR:
@@ -452,20 +438,15 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  SET_DITHERFUNC(d, stp_dither_cmyk_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_cmyk_fast, d->v);
 	case D_VERY_FAST:
-	  SET_DITHERFUNC(d, stp_dither_cmyk_very_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_cmyk_very_fast, d->v);
 	case D_ORDERED:
-	  SET_DITHERFUNC(d, stp_dither_cmyk_ordered, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_cmyk_ordered, d->v);
 	case D_EVENTONE:
-	  SET_DITHERFUNC(d, stp_dither_cmyk_et, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_cmyk_et, d->v);
 	default:
-	  SET_DITHERFUNC(d, stp_dither_cmyk_ed, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_cmyk_ed, d->v);
 	}
       break;
     case OUTPUT_RAW_CMYK:
@@ -474,20 +455,15 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_fast, d->v);
 	case D_VERY_FAST:
-	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_very_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_very_fast, d->v);
 	case D_ORDERED:
-	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_ordered, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ordered, d->v);
 	case D_EVENTONE:
-	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_et, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_et, d->v);
 	default:
-	  SET_DITHERFUNC(d, stp_dither_raw_cmyk_ed, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_cmyk_ed, d->v);
 	}
       break;
     case OUTPUT_RAW_PRINTER:
@@ -496,25 +472,35 @@ stp_init_dither(int in_width, int out_width, int image_bpp,
       switch (d->dither_type)
 	{
 	case D_FAST:
-	  SET_DITHERFUNC(d, stp_dither_raw_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_fast, d->v);
 	case D_VERY_FAST:
-	  SET_DITHERFUNC(d, stp_dither_raw_very_fast, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_very_fast, d->v);
 	case D_ORDERED:
-	  SET_DITHERFUNC(d, stp_dither_raw_ordered, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_ordered, d->v);
 #if 0
 	case D_EVENTONE:
-	  SET_DITHERFUNC(d, stp_dither_raw_et, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_et, d->v);
 #endif
 	default:
-	  SET_DITHERFUNC(d, stp_dither_raw_ed, v);
-	  break;
+	  RETURN_DITHERFUNC(stp_dither_raw_ed, d->v);
 	}
       break;
     }
+  RETURN_DITHERFUNC(NULL, d->v);
+}
+
+void *
+stp_init_dither(int in_width, int out_width, int image_bpp,
+		int horizontal_aspect, int vertical_aspect, stp_vars_t v)
+{
+  int i;
+  dither_t *d = stp_zalloc(sizeof(dither_t));
+  stp_simple_dither_range_t r;
+  d->v = v;
+  d->dither_class = stp_get_output_type(v);
+  d->error_rows = ERROR_ROWS;
+  d->ditherfunc = stp_set_dither_function(d, image_bpp);
+
   d->channel = stp_zalloc(d->n_channels * sizeof(dither_channel_t));
   r.value = 1.0;
   r.bit_pattern = 1;
