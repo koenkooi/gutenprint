@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.34 2000/02/28 18:37:31 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.35 2000/03/06 01:32:05 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -36,6 +36,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.35  2000/03/06 01:32:05  rlk
+ *   more rearrangement
+ *
  *   Revision 1.34  2000/02/28 18:37:31  davehill
  *   Fixed the "configure data" command again!
  *
@@ -889,13 +892,14 @@ pcl_imageable_area(int  model,		/* I - Printer model */
  */
 
 void
-pcl_print(int       model,		/* I - Model */
+pcl_print(const printer_t *printer,		/* I - Model */
           int       copies,		/* I - Number of copies */
           FILE      *prn,		/* I - File to print to */
           Image     image,		/* I - Image to print */
 	  unsigned char    *cmap,	/* I - Colormap (for indexed images) */
 	  vars_t    *v)
 {
+  int		model = printer->model;
   char 		*ppd_file = v->ppd_file;
   char 		*resolution = v->resolution;
   char 		*media_size = v->media_size;
@@ -1353,6 +1357,9 @@ pcl_print(int       model,		/* I - Model */
   * Output the page, rotating as necessary...
   */
 
+  v->density *= printer->printvars.density;
+  v->saturation *= printer->printvars.saturation;
+
   if (landscape)
   {
     dither = init_dither(image_height, out_width, 1);
@@ -1684,5 +1691,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.34 2000/02/28 18:37:31 davehill Exp $".
+ * End of "$Id: print-pcl.c,v 1.35 2000/03/06 01:32:05 rlk Exp $".
  */

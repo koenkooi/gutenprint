@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefl.l,v 1.2 2000/03/05 20:04:37 rlk Exp $"
+ * "$Id: printdefl.l,v 1.3 2000/03/06 01:32:05 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -60,10 +60,7 @@ driver			DBG(DRIVER) return DRIVER;
 color			DBG(COLOR) return COLOR;
 nocolor			DBG(NOCOLOR) return NOCOLOR;
 model			DBG(MODEL) return MODEL;
-paramfunc		DBG(PARAMFUNC) return PARAMFUNC;
-mediasizefunc		DBG(MEDIASIZEFUNC) return MEDIASIZEFUNC;
-imageableareafunc	DBG(IMAGEABLEAREAFUNC) return IMAGEABLEAREAFUNC;
-printfunc		DBG(PRINTFUNC) return PRINTFUNC;
+language		DBG(LANGUAGE) return LANGUAGE;
 brightness		DBG(BRIGHTNESS) return BRIGHTNESS;
 gamma			DBG(GAMMA) return GAMMA;
 contrast		DBG(CONTRAST) return CONTRAST;

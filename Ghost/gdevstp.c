@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.4 2000/02/25 02:15:04 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.5 2000/03/06 01:32:05 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -144,6 +144,8 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
     int code;									/* return code */
     int model;
     vars_t stp_vars;
+    const printer_t *printer;
+    int i;
 
     code = 0;
     stp_pdev = pdev;
@@ -220,15 +222,32 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
                                               ORIENT_PORTRAIT */
     strcpy(stp_vars.media_size,stp_data.media); /* "A4", "Letter", "Legal", "A3", ... */
     
+    model = stp_data.model;                 /* 6 = Stylus Photo  */
+
+    /* Ugh */
+    for (i = 0; i < known_printers(); i++)
+      {
+	printer = get_printer_by_index(i);
+	if (printer->model == model &&
+	    printer->print == escp2_print)
+	  break;
+      }
+    if (printer->model != model &&
+	printer->print != escp2_print)
+      {
+	fprintf(stderr, "Unknown printer model\n");
+	code = 1;
+	return code;
+      }
+		
+
     /* compute lookup table: lut_t*,float dest_gamma,float app_gamma,vars_t* */
-    compute_lut(0.585 , 1 , &stp_vars);
+    compute_lut(&(printer->printvars) , 1 , &stp_vars);
 
 #ifdef DRV_DEBUG
     fprintf(stderr,"lut done!");
 #endif
  
-    model = stp_data.model;                 /* 6 = Stylus Photo  */
-
 #ifdef DRV_DEBUG
     fprintf(stderr,"prefs done, now skipping the top margin lines in input\n");
 #endif
@@ -248,7 +267,7 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
     }
 #endif
 
-    escp2_print(model,		/* I - Model */
+    escp2_print(printer,	/* I - Model */
                 1,		/* I - Number of copies */
                 file,		/* I - File to print to */
                 NULL,		/* I - Image to print (dummy) */
