@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.2 2000/02/20 20:52:31 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.3 2000/02/21 15:12:57 rlk Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -26,8 +26,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
+#include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.2 2000/02/20 20:52:31 davehill Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.3 2000/02/21 15:12:57 rlk Exp $";
 
 /* 
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -1113,6 +1114,9 @@ int main(int argc, char *argv[]) {
  * Revision History:
  *
  *   $Log: pcl-unprint.c,v $
+ *   Revision 1.3  2000/02/21 15:12:57  rlk
+ *   Minor release prep
+ *
  *   Revision 1.2  2000/02/20 20:52:31  davehill
  *   Now does TIFF compressed files and 2 level colour in CMY
  *   or CMYK
@@ -1125,6 +1129,6 @@ int main(int argc, char *argv[]) {
  *   (i.e. Deskjet 500)
  *
  *
- * End of "$Id: pcl-unprint.c,v 1.2 2000/02/20 20:52:31 davehill Exp $"
+ * End of "$Id: pcl-unprint.c,v 1.3 2000/02/21 15:12:57 rlk Exp $"
  */
 
