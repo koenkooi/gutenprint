@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.113 2001/10/03 21:31:05 rleigh Exp $
+## $Id: Makefile.am,v 1.114 2001/10/05 20:20:08 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -126,6 +126,10 @@ install-gimp: all
 	cd src/gimp ; \
 	$(MAKE) install
 
+docs:
+	cd doc ; \
+	$(MAKE) docs
+
 html:
 	cd doc ; \
 	$(MAKE) html
@@ -133,6 +137,10 @@ html:
 ps:
 	cd doc ; \
 	$(MAKE) ps
+
+pdf:
+	cd doc ; \
+	$(MAKE) pdf
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`
