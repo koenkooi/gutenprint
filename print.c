@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.125 2000/09/23 18:02:40 rlk Exp $"
+ * "$Id: print.c,v 1.126 2000/10/04 00:37:55 mitsch Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -21,6 +21,10 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "print_gimp.h"
 
 #ifdef GIMP_1_0
@@ -37,6 +41,7 @@
 #endif
 
 #include <unistd.h>
+
 #include "print-intl.h"
 
 /*
@@ -1485,5 +1490,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.125 2000/09/23 18:02:40 rlk Exp $".
+ * End of "$Id: print.c,v 1.126 2000/10/04 00:37:55 mitsch Exp $".
  */

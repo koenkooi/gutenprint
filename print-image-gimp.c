@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.7 2000/09/02 21:52:17 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.8 2000/10/04 00:37:55 mitsch Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -22,7 +22,12 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "print_gimp.h"
+
 #include "print-intl.h"
 
 
@@ -286,5 +291,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.7 2000/09/02 21:52:17 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.8 2000/10/04 00:37:55 mitsch Exp $".
  */
