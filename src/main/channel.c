@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.9.4.2 2004/03/25 03:14:12 rlk Exp $"
+ * "$Id: channel.c,v 1.9.4.3 2004/03/26 23:41:17 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -183,12 +183,9 @@ stpi_channel_set_density_adjustment(stp_vars_t v, int color, int subchannel,
 				    double adjustment)
 {
   stpi_subchannel_t *sch = get_channel(v, color, subchannel);
-#warning FIXME Need to check for output type of raw
-  /* XXXXX FIXME */
-  if (stp_check_string_parameter
-      (v, "ColorCorrection", STP_PARAMETER_DEFAULTED) &&
-      stp_get_string_parameter(v, "ColorCorrection") &&
-      strcmp(stp_get_string_parameter(v, "ColorCorrection"), "Raw") == 0)
+  if ((strcmp(stp_get_string_parameter(v, "STPIOutputType"), "Raw") == 0 &&
+       strcmp(stp_get_string_parameter(v, "ColorCorrection"), "None") == 0) ||
+      (strcmp(stp_get_string_parameter(v, "ColorCorrection"), "Raw") == 0))
     {
       stpi_dprintf(STPI_DBG_INK, v,
 		   "Ignoring channel_density channel %d subchannel %d adjustment %f\n",
