@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.7.4.5 2002/11/28 16:51:05 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.7.4.6 2002/12/06 02:31:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -288,6 +288,9 @@ typedef struct escp2_printer
   int		black_nozzles;	/* Number of black nozzles (may be extra) */
   int		min_black_nozzles;	/* # of black nozzles (may be extra) */
   int		black_nozzle_separation; /* Separation between rows */
+  int		fast_nozzles;	/* Number of fast nozzles */
+  int		min_fast_nozzles;	/* # of fast nozzles (may be extra) */
+  int		fast_nozzle_separation; /* Separation between rows */
 /*****************************************************************************/
   /* Print head resolution */
   int		base_separation; /* Basic unit of row separation */

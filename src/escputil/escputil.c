@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.39.2.4 2002/08/22 23:48:52 rlk Exp $"
+ * "$Id: escputil.c,v 1.39.2.5 2002/12/06 02:31:23 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -603,6 +603,7 @@ const char *colors[] =
   N_("Yellow"),
   N_("Light Cyan"),
   N_("Light Magenta"),
+  N_("Black/Dark Yellow"),
   0
 };
 
@@ -653,7 +654,7 @@ do_ink_level(void)
     }
   ind += 3;
   printf("%20s    %s\n", _("Ink color"), _("Percent remaining"));
-  for (i = 0; i < 6; i++)
+  for (i = 0; i < 7; i++)
     {
       int val, j;
       if (!ind[0] || ind[0] == ';')
