@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.27 2001/04/06 02:10:09 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.28 2001/04/07 00:01:11 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -280,8 +280,8 @@ extern void	stp_dither_set_max_ink(void *vd, int, double);
 extern void	stp_dither_set_x_oversample(void *vd, int os);
 extern void	stp_dither_set_y_oversample(void *vd, int os);
 extern void	stp_dither_set_adaptive_divisor(void *vd, unsigned divisor);
-extern int	stp_dither_get_first_bit(void *vd, int color, int is_dark);
-extern int	stp_dither_get_last_bit(void *vd, int color, int is_dark);
+extern int	stp_dither_get_first_position(void *vd, int color, int dark);
+extern int	stp_dither_get_last_position(void *vd, int color, int dark);
 
 
 extern void	stp_free_dither(void *);
@@ -472,5 +472,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.27 2001/04/06 02:10:09 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.28 2001/04/07 00:01:11 rlk Exp $".
  */
