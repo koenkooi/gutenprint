@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.146 2001/11/14 03:12:35 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.147 2001/11/17 14:12:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1730,7 +1730,7 @@ static const paper_t c80_papers[] =
     6, 0, 1.00, 1, .999, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
     1, 1.0, 0x6d, 0x00, 0x01, NULL, NULL, NULL},
   { "Matte", N_("Matte Paper"),
-    7, 0, 0.85, 1.0, .999, 1.05, .9, 1.05, .9, 1.0, 1.1,
+    7, 0, 0.9, 1.0, .999, 1.0, 1.0, 1.0, .9, 1.0, 1.1,
     1, 1.0, 0x00, 0x00, 0x02, NULL, NULL, NULL},
   { "Inkjet", N_("Inkjet Paper"),
     7, 0, 0.85, .25, .6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
