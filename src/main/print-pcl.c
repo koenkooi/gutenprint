@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.104.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.104.2.2 2003/05/22 01:15:39 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -82,14 +82,8 @@ static const stpi_dotsize_t single_dotsize[] =
 
 static const stpi_shade_t photo_dither_shades[] =
 {
-  { 0.3333, 1, 1, single_dotsize },
-  { 1.0000, 0, 1, single_dotsize },
-};
-
-static const stpi_dither_range_simple_t photo_dither_ranges[] =
-{
-  { 0.25, 0x1, 1, 1 },
-  { 1.00, 0x1, 0, 1 }
+  { 0.3333, 1, single_dotsize },
+  { 1.0000, 1, single_dotsize },
 };
 
 /*
@@ -1620,20 +1614,10 @@ static const stpi_dotsize_t variable_dotsizes[] =
   { 0x3, 1.0 }
 };
 
-static const stpi_shade_t variable_dither_shades[] =
+static const stpi_shade_t variable_shades[] =
 {
-  { 0.38, 1, 3, variable_dotsizes },
-  { 1.0, 0, 3, variable_dotsizes }
-};
-
-static const stpi_dither_range_simple_t variable_dither_ranges[] =
-{
-  { 0.152, 0x1, 1 },
-  { 0.255, 0x2, 1 },
-  { 0.38,  0x3, 1 },
-  { 0.5,   0x1, 0 },
-  { 0.67,  0x2, 0 },
-  { 1.0,   0x3, 0 }
+  { 0.38, 3, variable_dotsizes },
+  { 1.0, 3, variable_dotsizes }
 };
 
 /*
@@ -2582,10 +2566,10 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
   if (privdata.do_cret)			/* 4-level printing for 800/1120 */
     {
-      stpi_dither_set_ranges_and_shades_simple
+      stpi_dither_set_inks_simple
 	(v, ECOLOR_Y, 3, dot_sizes_use, density);
       if (!privdata.do_cretb)
-        stpi_dither_set_ranges_and_shades_simple
+        stpi_dither_set_inks_simple
 	  (v, ECOLOR_K, 3, dot_sizes_use, density);
 
       /* Note: no printer I know of does both CRet (4-level) and 6 colour, but
@@ -2593,31 +2577,21 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
       if (privdata.do_6color)			/* Photo for 69x */
 	{
-	  stpi_dither_set_ranges
-	    (v, ECOLOR_C, 6, variable_dither_ranges, density);
-	  stpi_dither_set_ranges
-	    (v, ECOLOR_M, 6, variable_dither_ranges, density);
-	  stpi_dither_set_shades
-	    (v, ECOLOR_C, 6, variable_dither_shades, density);
-	  stpi_dither_set_shades
-	    (v, ECOLOR_M, 6, variable_dither_shades, density);
+	  stpi_dither_set_inks(v, ECOLOR_C, 6, variable_shades, density);
+	  stpi_dither_set_inks(v, ECOLOR_M, 6, variable_shades, density);
 	}
       else
 	{
-	  stpi_dither_set_ranges_and_shades_simple
-	    (v, ECOLOR_C, 3, dot_sizes_use, density);
-	  stpi_dither_set_ranges_and_shades_simple
-	    (v, ECOLOR_M, 3, dot_sizes_use, density);
+	  stpi_dither_set_inks_simple(v, ECOLOR_C, 3, dot_sizes_use, density);
+	  stpi_dither_set_inks_simple(v, ECOLOR_M, 3, dot_sizes_use, density);
 	}
     }
   else if (privdata.do_6color)
     {
       /* Set light inks for 6 colour printers.
 	 Numbers copied from print-escp2.c */
-      stpi_dither_set_ranges(v, ECOLOR_C, 2, photo_dither_ranges, density);
-      stpi_dither_set_ranges(v, ECOLOR_M, 2, photo_dither_ranges, density);
-      stpi_dither_set_shades(v, ECOLOR_C, 2, photo_dither_shades, density);
-      stpi_dither_set_shades(v, ECOLOR_M, 2, photo_dither_shades, density);
+      stpi_dither_set_inks(v, ECOLOR_C, 2, photo_dither_shades, density);
+      stpi_dither_set_inks(v, ECOLOR_M, 2, photo_dither_shades, density);
     }
 
   if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE))

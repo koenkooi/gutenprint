@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.120.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-canon.c,v 1.120.2.2 2003/05/22 01:15:38 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -168,8 +168,6 @@ typedef struct canon_densities
 
 typedef struct canon_variable_ink
 {
-  const stpi_dither_range_simple_t *range;
-  int count;
   double density;
   const stpi_shade_t *shades;
   int numshades;
@@ -235,19 +233,16 @@ typedef struct canon_variable_printmode
  * if you get better results. Please send mail to thaller@ph.tum.de
  */
 
-#define DECLARE_INK2(name, density)					\
+#define DECLARE_INK(name, density)					\
 static const canon_variable_ink_t name##_ink =				\
 {									\
-  name##_dither_ranges,							\
-  sizeof(name##_dither_ranges) / sizeof(stpi_dither_range_simple_t),	\
   density,								\
   name##_shades,							\
   sizeof(name##_shades) / sizeof(stpi_shade_t)				\
 }
 
-#define SHADE(density, subchannel, name)				\
-{  density, subchannel,							\
-   sizeof(name)/sizeof(stpi_dotsize_t), name  }
+#define SHADE(density, name)				\
+{ density, sizeof(name)/sizeof(stpi_dotsize_t), name }
 
 /*
  * Dither ranges specifically for Cyan/LightCyan (see NOTE above)
@@ -259,38 +254,26 @@ static const stpi_dotsize_t single_dotsize[] =
   { 0x1, 1.0 }
 };
 
-static const stpi_dither_range_simple_t canon_Cc_1bit_dither_ranges[] =
-{
-  { 0.25, 0x1, 1, 1 },
-  { 1.0,  0x1, 0, 1 }
-};
-
 static const stpi_shade_t canon_Cc_1bit_shades[] =
 {
-  SHADE(0.25, 1, single_dotsize),
-  SHADE(1.0,  0, single_dotsize)
+  SHADE(0.25, single_dotsize),
+  SHADE(1.0, single_dotsize)
 };
 
-DECLARE_INK2(canon_Cc_1bit, 0.75);
+DECLARE_INK(canon_Cc_1bit, 0.75);
 
 /*
  * Dither ranges specifically for Magenta/LightMagenta (see NOTE above)
  *
  */
 
-static const stpi_dither_range_simple_t canon_Mm_1bit_dither_ranges[] =
-{
-  { 0.26, 0x1, 1, 1 },
-  { 1.0,  0x1, 0, 1 }
-};
-
 static const stpi_shade_t canon_Mm_1bit_shades[] =
 {
-  SHADE(0.26, 1, single_dotsize),
-  SHADE(1.0,  0, single_dotsize)
+  SHADE(0.26, single_dotsize),
+  SHADE(1.0, single_dotsize)
 };
 
-DECLARE_INK2(canon_Mm_1bit, 0.75);
+DECLARE_INK(canon_Mm_1bit, 0.75);
 
 /*
  * Dither ranges specifically for any Color and 2bit/pixel (see NOTE above)
@@ -305,39 +288,22 @@ static const stpi_dotsize_t two_bit_dotsize[] =
 
 static const stpi_shade_t canon_X_2bit_shades[] =
 {
-  SHADE(1.0,  0, two_bit_dotsize)
+  SHADE(1.0, two_bit_dotsize)
 };
 
-static const stpi_dither_range_simple_t canon_X_2bit_dither_ranges[] =
-{
-  { 0.45,  0x1, 0, 1 },
-  { 0.68,  0x2, 0, 2 },
-  { 1.0,   0x3, 0, 3 }
-};
-
-DECLARE_INK2(canon_X_2bit, 1.0);
+DECLARE_INK(canon_X_2bit, 1.0);
 
 /*
  * Dither ranges specifically for any Color/LightColor and 2bit/pixel
  * (see NOTE above)
  */
-static const stpi_dither_range_simple_t canon_Xx_2bit_dither_ranges[] =
-{
-  { 0.15,  0x1, 1, 1 },
-  { 0.227, 0x2, 1, 2 },
-/*{ 0.333, 0x3, 1, 3 }, */
-  { 0.45,  0x1, 0, 1 },
-  { 0.68,  0x2, 0, 2 },
-  { 1.0,   0x3, 0, 3 }
-};
-
 static const stpi_shade_t canon_Xx_2bit_shades[] =
 {
-  SHADE(0.33, 1, two_bit_dotsize),
-  SHADE(1.0,  0, two_bit_dotsize)
+  SHADE(0.33, two_bit_dotsize),
+  SHADE(1.0, two_bit_dotsize)
 };
 
-DECLARE_INK2(canon_Xx_2bit, 1.0);
+DECLARE_INK(canon_Xx_2bit, 1.0);
 
 /*
  * Dither ranges specifically for any Color and 3bit/pixel
@@ -360,47 +326,24 @@ static const stpi_dotsize_t three_bit_dotsize[] =
   { 0x6, 1.0 }
 };
 
-static const stpi_dither_range_simple_t canon_X_3bit_dither_ranges[] =
-{
-  { 0.45,  0x1, 0, 1 },
-  { 0.55,  0x2, 0, 2 },
-  { 0.66,  0x3, 0, 3 },
-  { 0.77,  0x4, 0, 4 },
-  { 0.88,  0x5, 0, 5 },
-  { 1.0,   0x6, 0, 6 }
-};
-
 static const stpi_shade_t canon_X_3bit_shades[] =
 {
-  SHADE(1.0,  0, three_bit_dotsize)
+  SHADE(1.0, three_bit_dotsize)
 };
 
-DECLARE_INK2(canon_X_3bit, 1.0);
+DECLARE_INK(canon_X_3bit, 1.0);
 
 /*
  * Dither ranges specifically for any Color/LightColor and 3bit/pixel
  * (see NOTE above)
  */
-static const stpi_dither_range_simple_t canon_Xx_3bit_dither_ranges[] =
-{
-  { 0.15,  0x1, 1, 1 },
-  { 0.227, 0x2, 1, 2 },
-  { 0.333, 0x3, 1, 3 },
-  { 0.45,  0x1, 0, 1 },
-  { 0.55,  0x2, 0, 2 },
-  { 0.66,  0x3, 0, 3 },
-  { 0.77,  0x4, 0, 4 },
-  { 0.88,  0x5, 0, 5 },
-  { 1.0,   0x6, 0, 6 }
-};
-
 static const stpi_shade_t canon_Xx_3bit_shades[] =
 {
-  SHADE(0.33, 1, three_bit_dotsize),
-  SHADE(1.0,  0, three_bit_dotsize)
+  SHADE(0.33, three_bit_dotsize),
+  SHADE(1.0, three_bit_dotsize)
 };
 
-DECLARE_INK2(canon_Xx_3bit, 1.0);
+DECLARE_INK(canon_Xx_3bit, 1.0);
 
 
 /* Inkset for printing in CMY and 1bit/pixel */
@@ -2184,10 +2127,8 @@ set_ink_ranges(stp_vars_t v, const canon_variable_ink_t *ink, int color)
 {
   if (!ink)
     return;
-  stpi_dither_set_ranges(v, color, ink->count, ink->range,
-			 ink->density * stp_get_float_parameter(v, "Density"));
-  stpi_dither_set_shades(v, color, ink->numshades, ink->shades,
-			 ink->density * stp_get_float_parameter(v, "Density"));
+  stpi_dither_set_inks(v, color, ink->numshades, ink->shades,
+		       ink->density * stp_get_float_parameter(v, "Density"));
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.45 2003/05/06 11:21:33 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.45.2.1 2003/05/22 01:15:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -87,8 +87,6 @@ typedef double escp2_densities_t[RES_N];
 
 typedef struct escp2_variable_ink
 {
-  const stpi_dither_range_simple_t *range;
-  int numranges;
   double darkness;
   const stpi_shade_t *shades;
   int numshades;
@@ -491,5 +489,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.45 2003/05/06 11:21:33 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.45.2.1 2003/05/22 01:15:39 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.120.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.120.2.2 2003/05/22 01:15:39 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -84,14 +84,8 @@ static const stpi_dotsize_t single_dotsize[] =
 
 static const stpi_shade_t photo_dither_shades[] =
 {
-  { 0.3333, 1, 1, single_dotsize },
-  { 1.0000, 0, 1, single_dotsize },
-};
-
-static const stpi_dither_range_simple_t photo_dither_ranges[] =
-{
-  { 0.3333, 0x1, 1, 1 },
-  { 1.0000, 0x1, 0, 1 }
+  { 0.3333, 1, single_dotsize },
+  { 1.0000, 1, single_dotsize },
 };
 
 
@@ -1877,23 +1871,17 @@ densityDivisor /= 1.2;
   if (!use_dmt) {
     if (cols.p.C)
       {
-	stpi_dither_set_ranges(v, ECOLOR_C, 2, photo_dither_ranges,
-			       stp_get_float_parameter(v, "Density"));
-	stpi_dither_set_shades(v, ECOLOR_C, 2, photo_dither_shades,
+	stpi_dither_set_inks(v, ECOLOR_C, 2, photo_dither_shades,
 			       stp_get_float_parameter(v, "Density"));
       }
     if (cols.p.M)
       {
-	stpi_dither_set_ranges(v, ECOLOR_M, 2, photo_dither_ranges,
-			       stp_get_float_parameter(v, "Density"));
-	stpi_dither_set_shades(v, ECOLOR_M, 2, photo_dither_shades,
+	stpi_dither_set_inks(v, ECOLOR_M, 2, photo_dither_shades,
 			       stp_get_float_parameter(v, "Density"));
       }
     if (cols.p.Y)
       {
-	stpi_dither_set_ranges(v, ECOLOR_Y, 2, photo_dither_ranges,
-			       stp_get_float_parameter(v, "Density"));
-	stpi_dither_set_shades(v, ECOLOR_Y, 2, photo_dither_shades,
+	stpi_dither_set_inks(v, ECOLOR_Y, 2, photo_dither_shades,
 			       stp_get_float_parameter(v, "Density"));
       }
   }

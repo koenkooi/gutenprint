@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.7.2.6 2003/05/20 01:51:32 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.7.2.7 2003/05/22 01:15:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -287,11 +287,9 @@ stpi_dither_set_ranges(stp_vars_t v, stpi_dither_channel_t *s,
 }
 
 void
-stpi_dither_set_ranges_and_shades_simple(stp_vars_t v, int color, int nlevels,
-					 const double *levels, double density)
+stpi_dither_set_inks_simple(stp_vars_t v, int color, int nlevels,
+			      const double *levels, double density)
 {
-  stpi_dither_range_simple_t *r =
-    stpi_malloc(nlevels * sizeof(stpi_dither_range_simple_t));
   stpi_shade_t s;
   stpi_dotsize_t *d = stpi_malloc(nlevels * sizeof(stpi_dotsize_t));
   int i;
@@ -301,21 +299,16 @@ stpi_dither_set_ranges_and_shades_simple(stp_vars_t v, int color, int nlevels,
 
   for (i = 0; i < nlevels; i++)
     {
-      r[i].bit_pattern = i + 1;
-      r[i].dot_size = i + 1;
-      r[i].value = levels[i];
       d[i].bit_pattern = i + 1;
       d[i].value = levels[i];
     }
-  stpi_dither_set_ranges(v, color, nlevels, r, density);
-  stpi_dither_set_shades(v, color, 1, &s, density);
-  stpi_free(r);
+  stpi_dither_set_inks(v, color, 1, &s, density);
   stpi_free(d);
 }
 
 void
-stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
-		       const stpi_shade_t *shades, double density)
+stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
+		     const stpi_shade_t *shades, double density)
 {
   int i, j;
 
@@ -329,30 +322,32 @@ stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
   const double ink_gamma = 0.5;
 
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  stpi_dither_channel_t *dc = &(CHANNEL(d, color));
-
-  if (dc->shades)
-    {
-      for (i = 0; i < dc->numshades; i++)
-	{
-	  SAFE_FREE(dc->shades[i].dotsizes);
-	  SAFE_FREE(dc->shades[i].errs);
-	}
-      SAFE_FREE(dc->shades);
-    }
 
   stpi_channel_reset_channel(v, color);
 
-  dc->numshades = nshades;
-  dc->shades = stpi_zalloc(nshades * sizeof(stpi_shade_segment_t));
-
-  for (i=0; i < dc->numshades; i++)
+  for (i=0; i < nshades; i++)
     {
-      stpi_shade_segment_t *sp = &dc->shades[i];
       int idx = stpi_dither_translate_channel(v, color, i);
-      sp->value = 0;
+      stpi_dither_channel_t *dc = &(CHANNEL(d, idx));
+      stpi_shade_segment_t *sp;
+
+      if (dc->shades)
+	{
+	  for (j = 0; i < dc->numshades; i++)
+	    {
+	      SAFE_FREE(dc->shades[i].dotsizes);
+	      SAFE_FREE(dc->shades[i].errs);
+	    }
+	  SAFE_FREE(dc->shades);
+	}
+
+      dc->numshades = 1;
+      dc->shades = stpi_zalloc(dc->numshades * sizeof(stpi_shade_segment_t));
+
+      sp = &dc->shades[0];
+      sp->value = 1.0;
       stpi_channel_add(v, color, i, shades[i].value);
-      sp->density = 65536.0 * shades[i].value + 0.5;
+      sp->density = 65536.0;
       if (i == 0)
 	{
 	  sp->lower = 0;

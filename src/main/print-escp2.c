@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.259.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.259.2.2 2003/05/22 01:15:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1112,11 +1112,8 @@ setup_inks(stp_vars_t v)
 	      if (param && stp_check_float_parameter(v, param,
 						     STP_PARAMETER_ACTIVE))
 		userval = stp_get_float_parameter(v, param);
-	      stpi_dither_set_ranges(v, i, ink->numranges, ink->range,
-				     ink->darkness * paper_k_upper * userval);
-
-	      stpi_dither_set_shades(v, i, ink->numshades, ink->shades,
-				     ink->darkness * paper_k_upper * userval);
+	      stpi_dither_set_inks(v, i, ink->numshades, ink->shades,
+				   ink->darkness * paper_k_upper * userval);
 	    }
 	}
       stpi_flush_debug_messages(v);

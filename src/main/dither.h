@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.17.4.4 2003/05/20 01:51:32 rlk Exp $"
+ * "$Id: dither.h,v 1.17.4.5 2003/05/22 01:15:38 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -156,19 +156,14 @@ extern void stpi_dither_set_matrix_from_dither_array(stp_vars_t v,
 						     int transpose);
 extern void stpi_dither_set_transition(stp_vars_t v, double);
 extern void stpi_dither_set_randomizer(stp_vars_t v, int color, double);
-extern void stpi_dither_set_ranges(stp_vars_t v, int color, int nlevels,
-				   const stpi_dither_range_simple_t *ranges,
-				   double density);
-extern void stpi_dither_set_ranges_and_shades_simple(stp_vars_t v,
-						     int color, int nlevels,
-						     const double *levels,
-						     double density);
 extern void stpi_dither_set_ink_spread(stp_vars_t v, int spread);
 extern void stpi_dither_set_adaptive_limit(stp_vars_t v, double limit);
 extern int stpi_dither_get_first_position(stp_vars_t v, int color, int subchan);
 extern int stpi_dither_get_last_position(stp_vars_t v, int color, int subchan);
-extern void stpi_dither_set_shades(stp_vars_t v, int color, int nshades,
-				   const stpi_shade_t *shades, double density);
+extern void stpi_dither_set_inks_simple(stp_vars_t v, int color, int nlevels,
+					const double *levels, double density);
+extern void stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
+				 const stpi_shade_t *shades, double density);
 
 extern void stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
 				    unsigned channel, unsigned subchannel);
@@ -190,5 +185,5 @@ extern void stpi_dither_internal(stp_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.17.4.4 2003/05/20 01:51:32 rlk Exp $".
+ * End of "$Id: dither.h,v 1.17.4.5 2003/05/22 01:15:38 rlk Exp $".
  */

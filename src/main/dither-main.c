@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.17.2.5 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17.2.6 2003/05/22 01:15:38 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -269,48 +269,13 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   int in_width = stpi_image_width(image);
   int image_bpp = stpi_image_bpp(image);
   stpi_dither_t *d = stpi_zalloc(sizeof(stpi_dither_t));
-  stpi_dither_range_simple_t r;
-  const stpi_dotsize_t ds = {1, 1.0};
-  stpi_shade_t shade;
-  static const char *channels[] =
-    {
-      "BlackDensity", "CyanDensity", "MagentaDensity", "YellowDensity"
-    };
 
   stpi_allocate_component_data(v, "Dither", NULL, stpi_dither_free, d);
 
   d->finalized = 0;
   d->dither_class = stp_get_output_type(v);
   d->error_rows = ERROR_ROWS;
-  switch (d->dither_class)
-    {
-    case OUTPUT_GRAY:
-      d->n_channels = 1;
-      d->n_input_channels = 1;
-      break;
-    case OUTPUT_COLOR:
-      d->n_channels = 4;
-      d->n_input_channels = 3;
-      break;
-    case OUTPUT_RAW_PRINTER:
-      d->n_channels = image_bpp / 2;
-      d->n_input_channels = image_bpp / 2;
-      break;
-    case OUTPUT_RAW_CMYK:
-      d->n_channels = 4;
-      d->n_input_channels = 4;
-      break;
-    }
   d->ditherfunc = stpi_set_dither_function(v, image_bpp);
-
-  d->channel = stpi_zalloc(d->n_channels * sizeof(stpi_dither_channel_t));
-  r.value = 1.0;
-  r.bit_pattern = 1;
-  r.dot_size = 1;
-
-  shade.value = 1.0;
-  shade.dot_sizes = &ds;
-  shade.numsizes = 1;
   if (stp_check_float_parameter(v, "Density", STP_PARAMETER_ACTIVE))
     d->fdensity = stp_get_float_parameter(v, "Density");
   else
@@ -318,24 +283,6 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   d->d_cutoff = 4096;
 
   stpi_init_debug_messages(v);
-  for (i = 0; i < d->n_channels; i++)
-    {
-      stpi_dither_set_ranges(v, i, 1, &r, 1.0);
-      CHANNEL(d, i).error_rows = d->error_rows;
-      CHANNEL(d, i).shades = NULL;
-      CHANNEL(d, i).numshades = 0;
-      stpi_dither_set_shades(v, i, 1, &shade, 1.0);
-      CHANNEL(d, i).errs =
-	stpi_zalloc(CHANNEL(d, i).error_rows * sizeof(int *));
-      CHANNEL(d, i).density_adjustment = 1;
-      if (i < sizeof(channels) / sizeof(const char *) &&
-	  (stp_check_float_parameter(v, channels[i], STP_PARAMETER_ACTIVE)))
-	CHANNEL(d, i).density_adjustment =
-	  stp_get_float_parameter(v, channels[i]);
-      CHANNEL(d, i).density_adjustment *= d->fdensity;
-      CHANNEL(d, i).sqrt_density_adjustment =
-	sqrt(CHANNEL(d, i).density_adjustment);
-    }
   stpi_flush_debug_messages(v);
   d->offset0_table = NULL;
   d->offset1_table = NULL;

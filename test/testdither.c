@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.33.4.1 2003/05/15 00:07:25 rlk Exp $"
+ * "$Id: testdither.c,v 1.33.4.2 2003/05/22 01:15:39 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -72,31 +72,41 @@ unsigned short	white_line[IMAGE_WIDTH * 4],
 		random_line[IMAGE_WIDTH * 4];
 
 
-stpi_dither_range_simple_t normal_1bit_ranges[] =
+#define SHADE(density, name)					\
+{  density, sizeof(name)/sizeof(stpi_dotsize_t), name  }
+
+static const stpi_dotsize_t single_dotsize[] =
 {
-  { 1.0,  0x1, 0, 1 }
+  { 0x1, 1.0 }
 };
 
-stpi_dither_range_simple_t normal_2bit_ranges[] =
+static const stpi_dotsize_t variable_dotsizes[] =
 {
-  { 0.45,  0x1, 0, 1 },
-  { 0.68,  0x2, 0, 2 },
-  { 1.0,   0x3, 0, 3 }
+  { 0x1, 0.28 },
+  { 0x2, 0.58 },
+  { 0x3, 1.0  }
 };
 
-stpi_dither_range_simple_t photo_1bit_ranges[] =
+static const stpi_shade_t normal_1bit_shades[] =
 {
-  { 0.33, 0x1, 1, 1 },
-  { 1.0,  0x1, 0, 1 }
+  SHADE(1.0, single_dotsize)
 };
 
-stpi_dither_range_simple_t photo_2bit_ranges[] =
+static const stpi_shade_t photo_1bit_shades[] =
 {
-  { 0.15,  0x1, 1, 1 },
-  { 0.227, 0x2, 1, 2 },
-  { 0.45,  0x1, 0, 1 },
-  { 0.68,  0x2, 0, 2 },
-  { 1.0,   0x3, 0, 3 }
+  SHADE(0.33, single_dotsize),
+  SHADE(1.0, single_dotsize)
+};
+
+static const stpi_shade_t normal_2bit_shades[] =
+{
+  SHADE(1.0, variable_dotsizes)
+};
+
+static const stpi_shade_t photo_2bit_shades[] =
+{
+  SHADE(0.33, variable_dotsizes),
+  SHADE(1.0, variable_dotsizes)
 };
 
 
@@ -315,11 +325,11 @@ main(int  argc,				/* I - Number of command-line arguments */
         switch (dither_bits)
 	{
 	  case 1 :
-              stpi_dither_set_ranges(v, ECOLOR_K, 1, normal_1bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 1, normal_1bit_shades, 1.0);
 	      break;
 	  case 2 :
 	      stpi_dither_set_transition(v, 0.5);
-              stpi_dither_set_ranges(v, ECOLOR_K, 3, normal_2bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 3, normal_2bit_shades, 1.0);
 	      break;
        }
        break;
@@ -328,17 +338,17 @@ main(int  argc,				/* I - Number of command-line arguments */
         switch (dither_bits)
 	{
 	  case 1 :
-              stpi_dither_set_ranges(v, ECOLOR_C, 1, normal_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_M, 1, normal_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_Y, 1, normal_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_K, 1, normal_1bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_C, 1, normal_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_M, 1, normal_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_Y, 1, normal_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 1, normal_1bit_shades, 1.0);
 	      break;
 	  case 2 :
 	      stpi_dither_set_transition(v, 0.5);
-              stpi_dither_set_ranges(v, ECOLOR_C, 3, normal_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_M, 3, normal_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_Y, 3, normal_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_K, 3, normal_2bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_C, 1, normal_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_M, 1, normal_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_Y, 1, normal_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 1, normal_2bit_shades, 1.0);
 	      break;
        }
        break;
@@ -347,17 +357,17 @@ main(int  argc,				/* I - Number of command-line arguments */
         switch (dither_bits)
 	{
 	  case 1 :
-              stpi_dither_set_ranges(v, ECOLOR_C, 2, photo_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_M, 2, photo_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_Y, 1, normal_1bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_K, 1, normal_1bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_C, 2, photo_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_M, 2, photo_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_Y, 1, normal_1bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 1, normal_1bit_shades, 1.0);
 	      break;
 	  case 2 :
 	      stpi_dither_set_transition(v, 0.7);
-              stpi_dither_set_ranges(v, ECOLOR_C, 5, photo_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_M, 5, photo_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_Y, 3, normal_2bit_ranges, 1.0);
-              stpi_dither_set_ranges(v, ECOLOR_K, 3, normal_2bit_ranges, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_C, 2, photo_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_M, 2, photo_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_Y, 1, normal_2bit_shades, 1.0);
+              stpi_dither_set_inks(v, ECOLOR_K, 1, normal_2bit_shades, 1.0);
 	      break;
        }
        break;
@@ -884,5 +894,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.33.4.1 2003/05/15 00:07:25 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.33.4.2 2003/05/22 01:15:39 rlk Exp $".
  */
