@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.114 2001/10/05 20:20:08 rleigh Exp $
+## $Id: Makefile.am,v 1.115 2001/10/12 01:15:53 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -157,6 +157,9 @@ deb: debian/changelog debian/control debian/rules
 	debuild $(DEBUILD_OPTIONS) ; \
 	cd .. ; \
 	rm -r $(PACKAGE)-$(VERSION)
+
+debian/control:
+	debian/rules debian/control
 
 
 ## Clean
