@@ -1,5 +1,5 @@
 /*
- * "$Id: printrc.h,v 1.3 2003/05/05 00:36:03 rlk Exp $"
+ * "$Id: printrc.h,v 1.4 2003/06/29 14:29:04 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -29,11 +29,15 @@
 #ifndef __GIMP_PRINT_PRINTRC_H__
 #define __GIMP_PRINT_PRINTRC_H__
 
+#if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
 typedef union yylv {
   int ival;
   double dval;
   char *sval;
 } YYSTYPE;
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
+# define YYSTYPE_IS_DECLARED 1
+#endif
 
 #include "printrcy.h"
 
