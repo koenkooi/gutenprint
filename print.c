@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.117 2000/09/12 18:58:45 easysw Exp $"
+ * "$Id: print.c,v 1.118 2000/09/15 12:12:22 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -812,7 +812,14 @@ do {									\
     }									\
   else									\
     {									\
+      const vars_t *maxvars = print_maximum_settings();			\
+      const vars_t *minvars = print_minimum_settings();			\
+      const vars_t *defvars = print_default_settings();			\
       key.v.param = atof(lineptr);					\
+      if (key.v.param > 0 &&						\
+	  (key.v.param > 2 * maxvars->param ||				\
+	   key.v.param < minvars->param))				\
+	key.v.param = defvars->param;					\
       lineptr = commaptr + 1;						\
     }									\
 } while (0)
@@ -1231,5 +1238,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.117 2000/09/12 18:58:45 easysw Exp $".
+ * End of "$Id: print.c,v 1.118 2000/09/15 12:12:22 rlk Exp $".
  */
