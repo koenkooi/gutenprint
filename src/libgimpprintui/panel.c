@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.14 2003/01/20 02:08:37 rlk Exp $"
+ * "$Id: panel.c,v 1.15 2003/01/20 20:37:44 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2459,7 +2459,6 @@ compute_thumbnail(stp_vars_t v)
   stp_set_page_height(nv, thumbnail_h);
   stp_set_page_width(nv, thumbnail_w);
   stp_set_float_parameter (nv, "Density", 1.0);
-  stp_set_output_color_model(nv, COLOR_MODEL_RGB);
 
   priv.base_addr = adjusted_thumbnail_data;
   priv.offset = 0;

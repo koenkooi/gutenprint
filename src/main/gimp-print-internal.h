@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.66 2003/01/18 21:00:41 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.67 2003/01/20 20:37:44 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -39,11 +39,11 @@ extern "C" {
 
 #define COOKIE_PRINTER    0x0722922c
 
+#include "util.h"
 #include "color.h"
 #include "dither.h"
 #include "papers.h"
 #include "printers.h"
-#include "util.h"
 #include "weave.h"
 #include "image.h"
 
@@ -54,5 +54,5 @@ extern "C" {
 
 #endif /* GIMP_PRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.66 2003/01/18 21:00:41 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.67 2003/01/20 20:37:44 rlk Exp $".
  */

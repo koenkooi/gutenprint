@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.c,v 1.7 2003/01/06 20:57:43 rleigh Exp $"
+ * "$Id: printdef.c,v 1.8 2003/01/20 20:37:45 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -30,8 +30,8 @@
 #include <limits.h>
 #include <libxml/parser.h>
 #include <gimp-print/gimp-print.h>
-#include "../main/papers.h"
 #include "../main/util.h"
+#include "../main/papers.h"
 #include "../main/vars.h"
 
 
