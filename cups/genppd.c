@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.11 2000/10/12 01:54:37 easysw Exp $"
+ * "$Id: genppd.c,v 1.12 2000/10/12 03:08:40 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -473,6 +473,21 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
   gzputs(fp, "*CloseUI: *ColorModel\n");
 
  /*
+  * Image types...
+  */
+
+  gzputs(fp, "*OpenUI *ImageType/Image Type: PickOne\n");
+  gzputs(fp, "*OrderDependency: 10 AnySetup *ImageType\n");
+  gzputs(fp, "*DefaultImageType: Continuous\n");
+
+  gzprintf(fp, "*ImageType LineArt/Line Art:\t\"<</cupsRowCount 0>>setpagedevice\"\n");
+  gzprintf(fp, "*ImageType SolidTone/Solid Tone:\t\"<</cupsRowCount 1>>setpagedevice\"\n");
+  gzprintf(fp, "*ImageType Continuous/Photograph:\t\"<</cupsRowCount 2>>setpagedevice\"\n");
+  gzprintf(fp, "*ImageType Monochrome/Monochrome:\t\"<</cupsRowCount 3>>setpagedevice\"\n");
+
+  gzputs(fp, "*CloseUI: *ImageType\n");
+
+ /*
   * Media types...
   */
 
@@ -665,5 +680,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.11 2000/10/12 01:54:37 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.12 2000/10/12 03:08:40 easysw Exp $".
  */
