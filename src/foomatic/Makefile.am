@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16.2.2 2002/03/30 22:21:33 tillkamppeter Exp $
+## $Id: Makefile.am,v 1.16.2.3 2002/03/30 23:49:14 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -108,5 +108,7 @@ $(LIBGIMPPRINT_LIBS):
 CLEANFILES = $(noinst_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = foomatic-printermap foomatic-templates/*.xml
+EXTRA_DIST = foomatic-printermap 		\
+	foomatic-templates-gs/*.xml		\
+	foomatic-templates-ijs/*.xml
 
