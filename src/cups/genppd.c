@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.102 2004/09/17 18:38:11 rleigh Exp $"
+ * "$Id: genppd.c,v 1.103 2004/11/22 13:31:39 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1196,7 +1196,7 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
   */
 
   stp_describe_parameter(v, "Quality", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST && desc.is_active)
     {
       stp_clear_string_parameter(v, "Resolution");
       has_quality_parameter = 1;
@@ -1225,7 +1225,7 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
   */
 
   stp_describe_parameter(v, "ImageType", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST && desc.is_active)
     {
       has_image_type_parameter = 1;
       gzprintf(fp, "*OpenUI *StpImageType/%s: PickOne\n", _(desc.text));
@@ -1683,5 +1683,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.102 2004/09/17 18:38:11 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.103 2004/11/22 13:31:39 rlk Exp $".
  */

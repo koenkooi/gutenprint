@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.8 2004/09/17 18:38:20 rleigh Exp $"
+ * "$Id: generic-options.c,v 1.9 2004/11/22 13:31:40 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -219,8 +219,8 @@ stpi_describe_generic_parameter(const stp_vars_t *v, const char *name,
 	}
       description->deflt.str = "Standard";
 #else
-      description->bounds.str = NULL;
-      description->p_type = STP_PARAMETER_TYPE_INVALID;
+      description->bounds.str = stp_string_list_create();
+      description->is_active = 0;
 #endif
     }
   else if (strcmp(name, "ImageType") == 0)
