@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.28 2003/02/26 03:19:22 rlk Exp $
+ *  $Id: gimp-print.h,v 1.29 2003/03/01 02:59:58 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -358,8 +358,10 @@ typedef void *stp_parameter_list_t;
  */
 typedef enum stp_papersize_unit
 {
-  PAPERSIZE_ENGLISH,
-  PAPERSIZE_METRIC
+  PAPERSIZE_ENGLISH_STANDARD,
+  PAPERSIZE_METRIC_STANDARD,
+  PAPERSIZE_ENGLISH_EXTENDED,
+  PAPERSIZE_METRIC_EXTENDED
 } stp_papersize_unit_t;
 
 typedef struct
@@ -1082,5 +1084,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.28 2003/02/26 03:19:22 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.29 2003/03/01 02:59:58 rlk Exp $
  */

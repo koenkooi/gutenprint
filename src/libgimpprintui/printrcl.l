@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.2 2003/02/09 23:20:32 rlk Exp $"
+ * "$Id: printrcl.l,v 1.3 2003/03/01 02:59:58 rlk Exp $"
  *
  *   printrc parser
  *
@@ -72,6 +72,7 @@ word		[a-zA-Z][a-zA-Z0-9_]*
 %%
 
 Current-Printer:	DBG(CURRENT_PRINTER); return CURRENT_PRINTER;
+Show-All-Paper-Sizes:	DBG(SHOW_ALL_PAPER_SIZES); return SHOW_ALL_PAPER_SIZES;
 Printer:		DBG(PRINTER); return PRINTER;
 Destination:		DBG(DESTINATION); return DESTINATION;
 Scaling:		DBG(SCALING); return SCALING;

@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.20 2003/02/13 03:33:05 rlk Exp $"
+ * "$Id: plist.c,v 1.21 2003/03/01 02:59:58 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -45,6 +45,7 @@ static int	compare_printers (stpui_plist_t *p1, stpui_plist_t *p2);
 int		stpui_plist_current = 0,	/* Current system printer */
 		stpui_plist_count = 0;	/* Number of system printers */
 stpui_plist_t	*stpui_plist;			/* System printers */
+int             stpui_show_all_paper_sizes = 0;
 static char *printrc_name = NULL;
 
 #define SAFE_FREE(x)				\
@@ -690,8 +691,15 @@ stpui_printrc_load_v2(FILE *fp)
     {
       int i;
       for (i = 0; i < stpui_plist_count; i ++)
-	if (strcmp(stpui_printrc_current_printer, stpui_plist[i].name) == 0)
-	  stpui_plist_current = i;
+	{
+	  if (strcmp(stpui_printrc_current_printer, stpui_plist[i].name) == 0)
+	    stpui_plist_current = i;
+	  if (!stp_check_boolean_parameter(stpui_plist[i].v,
+					   "PageSizeExtended",
+					   STP_PARAMETER_ACTIVE))
+	    stp_set_boolean_parameter(stpui_plist[i].v, "PageSizeExtended", 0);
+	}
+					   
     }
 }
 
@@ -772,8 +780,10 @@ stpui_printrc_save(void)
 
       fputs("#PRINTRCv2 written by GIMP-PRINT " PLUG_IN_VERSION "\n", fp);
 
-      fprintf(fp, "Current-Printer: \"%s\"\n", stpui_plist[stpui_plist_current].name);
-
+      fprintf(fp, "Current-Printer: \"%s\"\n",
+	      stpui_plist[stpui_plist_current].name);
+      fprintf(fp, "Show-All-Paper-Sizes: %s\n",
+	      stpui_show_all_paper_sizes ? "True" : "False");
       for (i = 0, p = stpui_plist; i < stpui_plist_count; i ++, p ++)
 	{
 	  int count;
@@ -1334,5 +1344,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.20 2003/02/13 03:33:05 rlk Exp $".
+ * End of "$Id: plist.c,v 1.21 2003/03/01 02:59:58 rlk Exp $".
  */
