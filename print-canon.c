@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.57 2000/06/18 15:36:23 rlk Exp $"
+ * "$Id: print-canon.c,v 1.58 2000/06/19 08:00:59 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -120,6 +120,16 @@ static canon_cap_t canon_model_capabilities[] =
   {   -1, 8*72,11*72,180,180,20,20,20,20, CANON_INK_K, CANON_SLOT_ASF1, 0 },
 
   /* tested models */
+
+  { /* Canon BJC 4300 */
+    4300,
+    618, 936,      /* 8.58" x 13 " */
+    1440, 720, 2,
+    11, 9, 10, 18,
+    CANON_INK_CMYK | CANON_INK_CcMmYK,
+    CANON_SLOT_ASF1 | CANON_SLOT_MAN1,
+    CANON_CAP_DMT
+  },
 
   { /* Canon BJC 6000 */
     6000,
@@ -895,7 +905,7 @@ canon_print(const printer_t *printer,		/* I - Model */
     buf_length= length;
   }
 
-  fprintf(stderr,"canon: buflength is %ld!\n",buf_length);
+  fprintf(stderr,"canon: buflength is %d!\n",buf_length);
 
   if (output_type == OUTPUT_GRAY) {
     black   = canon_alloc_buffer(buf_length*(delay_k+1));
