@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.10 2003/10/14 11:37:05 rlk Exp $"
+ * "$Id: testpattern.h,v 1.11 2003/10/16 11:56:46 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -25,8 +25,6 @@
 #endif
 
 #include <gimp-print/gimp-print.h>
-
-extern stp_vars_t tv;
 
 typedef struct
 {
@@ -63,19 +61,26 @@ typedef struct
  */
 #define YY_ALWAYS_INTERACTIVE 1
 
+extern stp_vars_t global_vars;
 extern int global_ink_depth;
 extern double global_levels[];
 extern double global_gammas[];
 extern double global_gamma;
 extern int global_steps;
 extern double global_ink_limit;
-extern char *printer;
-extern double density;
-extern double xtop;
-extern double xleft;
-extern double hsize;
-extern double vsize;
+extern char *global_printer;
+extern double global_density;
+extern double global_xtop;
+extern double global_xleft;
+extern double global_hsize;
+extern double global_vsize;
 extern int global_noblackline;
+extern int global_image_type;
+extern int global_color_model;
+extern int global_bit_depth;
+extern int global_use_raw_cmyk;
+
+
 extern char *c_strdup(const char *s);
 extern testpattern_t *get_next_testpattern(void);
 
