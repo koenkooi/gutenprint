@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.57 2001/01/25 23:18:14 rleigh Exp $
+dnl $Id: configure.in,v 1.58 2001/01/26 01:44:40 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -361,7 +361,7 @@ else
 fi
 dnl Fix "sysconfdir" variable if it hasn't been specified...
 if test "${sysconfdir}" = "\${prefix}/etc"; then
-  if test "${cups_prefix}" = "/" ; then
+  if test "${cups_prefix}" = "/usr" ; then
     cups_sysconfdir="/etc"
   else
     cups_sysconfdir="${cups_prefix}/etc"
