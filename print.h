@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.72 2000/08/05 16:50:35 rlk Exp $"
+ * "$Id: print.h,v 1.73 2000/08/06 21:00:14 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -173,6 +173,7 @@ extern void Image_get_row(Image image, unsigned char *data, int row);
 extern const char *Image_get_appname(Image image);
 extern void Image_progress_init(Image image);
 extern void Image_note_progress(Image image, double current, double total);
+extern void Image_progress_conclude(Image image);
 
 
 typedef struct printer
@@ -397,5 +398,5 @@ verify_printer_params(const printer_t *, const vars_t *);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.72 2000/08/05 16:50:35 rlk Exp $".
+ * End of "$Id: print.h,v 1.73 2000/08/06 21:00:14 rlk Exp $".
  */

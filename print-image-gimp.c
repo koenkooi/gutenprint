@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.5 2000/07/30 22:52:04 cpbs Exp $"
+ * "$Id: print-image-gimp.c,v 1.6 2000/08/06 21:00:13 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -279,6 +279,12 @@ Image_note_progress(Image image, double current, double total)
   gimp_progress_update(current / total);
 }
 
+void
+Image_progress_conclude(Image image)
+{
+  gimp_progress_update(1);
+}
+
 const char *
 Image_get_appname(Image image)
 {
@@ -288,5 +294,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.5 2000/07/30 22:52:04 cpbs Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.6 2000/08/06 21:00:13 rlk Exp $".
  */
