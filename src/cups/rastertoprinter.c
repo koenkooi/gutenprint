@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.12 2001/04/27 23:03:19 rleigh Exp $"
+ * "$Id: rastertoprinter.c,v 1.13 2001/05/03 01:29:32 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -343,6 +343,26 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: stp_get_media_source(v) |%s|\n", stp_get_media_source(v));
     fprintf(stderr, "DEBUG: stp_get_ink_type(v) |%s|\n", stp_get_ink_type(v));
     fprintf(stderr, "DEBUG: stp_get_dither_algorithm(v) |%s|\n", stp_get_dither_algorithm(v));
+    fprintf(stderr, "DEBUG: stp_get_output_type(v) |%d|\n", stp_get_output_type(v));
+    fprintf(stderr, "DEBUG: stp_get_orientation(v) |%d|\n", stp_get_orientation(v));
+    fprintf(stderr, "DEBUG: stp_get_left(v) |%d|\n", stp_get_left(v));
+    fprintf(stderr, "DEBUG: stp_get_top(v) |%d|\n", stp_get_top(v));
+    fprintf(stderr, "DEBUG: stp_get_image_type(v) |%d|\n", stp_get_image_type(v));
+    fprintf(stderr, "DEBUG: stp_get_unit(v) |%d|\n", stp_get_unit(v));
+    fprintf(stderr, "DEBUG: stp_get_page_width(v) |%d|\n", stp_get_page_width(v));
+    fprintf(stderr, "DEBUG: stp_get_page_height(v) |%d|\n", stp_get_page_height(v));
+    fprintf(stderr, "DEBUG: stp_get_input_color_model(v) |%d|\n", stp_get_input_color_model(v));
+    fprintf(stderr, "DEBUG: stp_get_output_color_model(v) |%d|\n", stp_get_output_color_model(v));
+    fprintf(stderr, "DEBUG: stp_get_brightness(v) |%.3f|\n", stp_get_brightness(v));
+    fprintf(stderr, "DEBUG: stp_get_scaling(v) |%.3f|\n", stp_get_scaling(v));
+    fprintf(stderr, "DEBUG: stp_get_gamma(v) |%.3f|\n", stp_get_gamma(v));
+    fprintf(stderr, "DEBUG: stp_get_contrast(v) |%.3f|\n", stp_get_contrast(v));
+    fprintf(stderr, "DEBUG: stp_get_cyan(v) |%.3f|\n", stp_get_cyan(v));
+    fprintf(stderr, "DEBUG: stp_get_magenta(v) |%.3f|\n", stp_get_magenta(v));
+    fprintf(stderr, "DEBUG: stp_get_yellow(v) |%.3f|\n", stp_get_yellow(v));
+    fprintf(stderr, "DEBUG: stp_get_saturation(v) |%.3f|\n", stp_get_saturation(v));
+    fprintf(stderr, "DEBUG: stp_get_density(v) |%.3f|\n", stp_get_density(v));
+    fprintf(stderr, "DEBUG: stp_get_app_gamma(v) |%.3f|\n", stp_get_app_gamma(v));
     if (stp_printer_get_printfuncs(printer)->verify(printer, v))
       stp_printer_get_printfuncs(printer)->print(printer, &theImage, v);
     else
@@ -583,5 +603,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 }
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.12 2001/04/27 23:03:19 rleigh Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.13 2001/05/03 01:29:32 rlk Exp $".
  */
