@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.7 2003/05/04 15:59:26 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.8 2003/05/04 20:57:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -135,6 +135,7 @@ typedef struct
   /* Transitory state */
   int printed_something;	/* Have we actually printed anything? */
   int initial_vertical_offset;	/* Vertical offset for C80-type printers */
+  int printing_initial_vertical_offset;	/* Vertical offset, for print cmd */
   int last_color;		/* Last color we printed */
   int last_pass_offset;		/* Starting row of last pass we printed */
 
@@ -963,25 +964,43 @@ print_debug_params(stp_vars_t v)
   print_remote_int_param(v, "Model", stpi_get_model_id(v));
   print_remote_int_param(v, "Ydpi", pd->res->vres);
   print_remote_int_param(v, "Xdpi", pd->res->hres);
-  print_remote_int_param(v, "Physical_xdpi", pd->physical_xdpi);
   print_remote_int_param(v, "Use_softweave", pd->res->softweave);
   print_remote_int_param(v, "Use_microweave", pd->res->microweave);
-  print_remote_int_param(v, "Page_true_height", pd->page_true_height);
-  print_remote_int_param(v, "Page_width", pd->page_width);
+  print_remote_int_param(v, "Page_left", pd->page_left);
+  print_remote_int_param(v, "Page_right", pd->page_right);
   print_remote_int_param(v, "Page_top", pd->page_top);
   print_remote_int_param(v, "Page_bottom", pd->page_bottom);
+  print_remote_int_param(v, "Page_width", pd->page_width);
+  print_remote_int_param(v, "Page_height", pd->page_height);
+  print_remote_int_param(v, "Page_true_height", pd->page_true_height);
+  print_remote_int_param(v, "Image_left", pd->image_left);
+  print_remote_int_param(v, "Image_top", pd->image_top);
+  print_remote_int_param(v, "Image_width", pd->image_width);
+  print_remote_int_param(v, "Image_height", pd->image_height);
+  print_remote_int_param(v, "Image_scaled_width", pd->image_scaled_width);
+  print_remote_int_param(v, "Image_scaled_height", pd->image_scaled_height);
+  print_remote_int_param(v, "Image_left_position", pd->image_left_position);
   print_remote_int_param(v, "Nozzles", pd->nozzles);
   print_remote_int_param(v, "Nozzle_separation", pd->nozzle_separation);
   print_remote_int_param(v, "Horizontal_passes", pd->horizontal_passes);
   print_remote_int_param(v, "Vertical_passes", pd->res->vertical_passes);
   print_remote_int_param(v, "Vertical_oversample", pd->res->vertical_oversample);
+  print_remote_int_param(v, "Vertical_undersample", pd->res->vertical_undersample);
+  print_remote_int_param(v, "Vertical_denominator", pd->res->vertical_denominator);
+  print_remote_int_param(v, "Physical_xdpi", pd->physical_xdpi);
+  print_remote_int_param(v, "Page_management_units", pd->page_management_units);
+  print_remote_int_param(v, "Vertical_units", pd->vertical_units);
+  print_remote_int_param(v, "Horizontal_units", pd->horizontal_units);
+  print_remote_int_param(v, "Micro_units", pd->micro_units);
+  print_remote_int_param(v, "Unit_scale", pd->unit_scale);
   print_remote_int_param(v, "Bits", pd->bitwidth);
-  print_remote_int_param(v, "Resid", pd->res->resid);
+  print_remote_int_param(v, "Resid", pd->ink_resid);
   print_remote_int_param(v, "Drop Size", pd->drop_size);
   print_remote_int_param(v, "Initial_vertical_offset", pd->initial_vertical_offset);
   print_remote_int_param(v, "Channels_in_use", pd->channels_in_use);
+  print_remote_int_param(v, "Logical_channels", pd->logical_channels);
+  print_remote_int_param(v, "Physical_channels", pd->physical_channels);
   print_remote_int_param(v, "Use_black_parameters", pd->use_black_parameters);
-  print_remote_int_param(v, "Channel_limit", pd->logical_channels);
   print_remote_int_param(v, "Use_fast_360", pd->use_fast_360);
   print_remote_param(v, "Ink name", pd->inkname->name);
   print_remote_int_param(v, "  is_color", pd->inkname->is_color);
@@ -1178,10 +1197,12 @@ escp2_set_margins(stp_vars_t v)
   escp2_privdata_t *pd = get_privdata(v);
   int bot = pd->page_management_units * pd->page_bottom / 72;
   int top = pd->page_management_units * pd->page_top / 72;
+  int head_offset =
+    pd->max_head_offset * pd->page_management_units / pd->res->vres;
 
   /* adjust bottom margin for a 480 like head configuration */
-  bot -= pd->max_head_offset * 72 / pd->page_management_units;
-  if ((pd->max_head_offset * 72 % pd->res->vres) != 0)
+  bot -= head_offset;
+  if ((head_offset % pd->page_management_units) != 0)
     bot -= 1;
   if (pd->page_bottom < 0)
     bot = 0;
@@ -1285,10 +1306,10 @@ set_vertical_position(stp_vars_t v, stpi_pass_t *pass)
     (escp2_separation_rows(v) - 1);
   advance *= pd->res->vertical_undersample;
   if (pass->logicalpassstart > pd->last_pass_offset ||
-      pd->initial_vertical_offset != 0)
+      pd->printing_initial_vertical_offset != 0)
     {
-      advance += pd->initial_vertical_offset;
-      pd->initial_vertical_offset = 0;
+      advance += pd->printing_initial_vertical_offset;
+      pd->printing_initial_vertical_offset = 0;
       if (escp2_use_extended_commands(v, pd->nozzles > 1))
 	stpi_send_command(v, "\033(v", "bl", advance);
       else
@@ -1751,7 +1772,7 @@ setup_head_offset(stp_vars_t v)
   if (pd->physical_channels > 1)
     for (i = 0; i < pd->channels_in_use; i++)
       {
-	pd->head_offset[i] = pd->head_offset[i] * pd->vertical_units /
+	pd->head_offset[i] = pd->head_offset[i] * pd->res->vres /
 	  escp2_base_separation(v);
 	if (pd->head_offset[i] > pd->max_head_offset)
 	  pd->max_head_offset = pd->head_offset[i];
@@ -1913,7 +1934,9 @@ setup_head_parameters(stp_vars_t v)
     pd->initial_vertical_offset = escp2_initial_vertical_offset(v);
   pd->initial_vertical_offset =
     pd->initial_vertical_offset * pd->vertical_units /escp2_base_separation(v);
-  pd->initial_vertical_offset += pd->head_offset[0];
+  pd->initial_vertical_offset +=
+    pd->head_offset[0] * pd->res->vertical_undersample;
+  pd->printing_initial_vertical_offset = 0;
   pd->bitwidth = escp2_bits(v, pd->res->resid);
 }
 
@@ -2013,7 +2036,7 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   stpi_initialize_weave
     (v,
      pd->nozzles,
-     pd->nozzle_separation * pd->vertical_units / escp2_base_separation(v),
+     pd->nozzle_separation * pd->res->vres / escp2_base_separation(v),
      pd->horizontal_passes,
      pd->res->vertical_passes,
      pd->res->vertical_oversample,
@@ -2021,8 +2044,8 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      pd->bitwidth,
      pd->image_scaled_width,
      pd->image_scaled_height,
-     pd->image_top * pd->vertical_units / 72,
-     (pd->page_height + escp2_extra_feed(v)) * pd->vertical_units / 72,
+     pd->image_top * pd->res->vres / 72,
+     (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72,
      pd->head_offset,
      STPI_WEAVE_ZIGZAG,
      flush_pass,
