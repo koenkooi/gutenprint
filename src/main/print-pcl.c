@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.56.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.56.2.2 2002/10/21 02:20:23 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1935,8 +1935,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   const char	*media_source = stp_get_media_source(v);
   const char	*ink_type = stp_get_ink_type(v);
   int 		output_type = stp_get_output_type(v);
-  int		top;
-  int		left;
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
   int		y;		/* Looping vars */
   int		xdpi, ydpi;	/* Resolution */
   unsigned short *out;

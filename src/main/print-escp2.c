@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.188.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.188.2.2 2002/10/21 02:20:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1190,8 +1190,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   unsigned char *cmap = stp_get_cmap(v);
   int		model = stp_printer_get_model(printer);
   int		output_type = stp_get_output_type(v);
-  int		top;
-  int		left;
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
 
   int		i;
   int		y;		/* Looping vars */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.1.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-vars.c,v 1.1.2.2 2002/10/21 02:20:24 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -34,7 +34,7 @@
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
 #include <limits.h>
-#include "printer.h"
+#include "vars.h"
 
 static const stp_internal_vars_t default_vars =
 {

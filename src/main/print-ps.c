@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.29.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-ps.c,v 1.29.2.2 2002/10/21 02:20:23 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -353,8 +353,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   const char	*media_type = stp_get_media_type(v);
   const char	*media_source = stp_get_media_source(v);
   int 		output_type = stp_get_output_type(v);
-  int		top;
-  int		left;
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
   int		i, j;		/* Looping vars */
   int		y;		/* Looping vars */
   unsigned char	*in;		/* Input pixels from image */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.77.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.77.2.2 2002/10/21 02:20:23 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1682,8 +1682,8 @@ lexmark_print(const stp_printer_t printer,		/* I - Model */
   const char	*media_source = stp_get_media_source(v);
   int 		output_type   = stp_get_output_type(v);
   const char	*ink_type     = stp_get_ink_type(v);
-  int		top;
-  int		left;
+  int		top = stp_get_top(v);
+  int		left = stp_get_left(v);
   stp_vars_t	nv            = stp_allocate_copy(v);
 
   const lexmark_cap_t * caps= lexmark_get_model_capabilities(model);
