@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.84 2000/09/05 22:08:05 cpbs Exp $"
+ * "$Id: print.h,v 1.85 2000/09/06 00:00:49 cpbs Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -303,7 +303,7 @@ extern void	free_dither(void *);
 
 extern void *	initialize_weave_params(int S, int J, int O,
 		                        int firstrow, int lastrow,
-		                        int pagelength);
+		                        int pagelength, int strategy);
 extern void	calculate_row_parameters(void *w, int row, int subpass,
 		                         int *pass, int *jet, int *startrow,
 					 int *phantomrows, int *jetsused);
@@ -455,5 +455,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.84 2000/09/05 22:08:05 cpbs Exp $".
+ * End of "$Id: print.h,v 1.85 2000/09/06 00:00:49 cpbs Exp $".
  */
