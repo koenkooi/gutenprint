@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.33 2002/12/18 10:18:41 tillkamppeter Exp $
+dnl $Id: configure.ac,v 1.34 2002/12/22 21:03:32 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.33 $)
+AC_REVISION($Revision: 1.34 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -506,7 +506,6 @@ STP_GIMP_PLUG_IN_DIR
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h)
 AC_CHECK_HEADER(readline/readline.h,
   HAVE_READLINE_READLINE_H=true,
   HAVE_READLINE_READLINE_H=false)
@@ -516,9 +515,11 @@ if test x${HAVE_READLINE_READLINE_H} = xtrue ; then
     LIBREADLINE_DEPS="-lreadline $EXTRA_LIBREADLINE_DEPS"
   fi
 fi
-
-AC_CHECK_HEADERS(varargs.h)
 AC_CHECK_HEADERS(stdarg.h)
+AC_CHECK_HEADERS(sys/fcntl.h sys/time.h sys/types.h)
+AC_CHECK_HEADERS(time.h)
+AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_HEADERS(varargs.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -531,7 +532,7 @@ dnl Checks for library functions.
 AC_FUNC_ALLOCA
 dnl [commented out while I find a memcmp.c for lib/] AC_FUNC_MEMCMP
 dnl GNU libc memcmp.c is too glibc-dependent to include.
-AC_CHECK_FUNCS(poll)
+AC_CHECK_FUNCS(nanosleep poll usleep)
 dnl The following is used to build a "utility library" in lib/
 AC_REPLACE_FUNCS(xgetcwd xmalloc)
 AC_CHECK_FUNC(asprintf,
