@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.18 2001/05/20 22:10:20 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.18.2.1 2001/05/27 01:55:23 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1162,6 +1162,7 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
   gint      i; /* Looping var */
   GList    *list = 0;
   GtkEntry *entry = GTK_ENTRY (GTK_COMBO (combo)->entry);
+  char *ncur_item;
 
   if (*callback_id != -1)
     gtk_signal_disconnect (GTK_OBJECT (entry), *callback_id);
@@ -1188,11 +1189,12 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
   *callback_id = gtk_signal_connect (GTK_OBJECT (entry), "changed",
 				     callback,
 				     NULL);
+  ncur_item = strdup(cur_item);
 
-  gtk_entry_set_text (entry, strdup(cur_item));
+  gtk_entry_set_text (entry, ncur_item);
 
   for (i = 0; i < num_items; i ++)
-    if (strcmp(items[i], cur_item) == 0)
+    if (strcmp(items[i], ncur_item) == 0)
       break;
 
   if (i == num_items)
@@ -1461,7 +1463,7 @@ gimp_plist_callback (GtkWidget *widget,
   gimp_plist_build_combo (media_size_combo,
 			  num_media_sizes,
 			  media_sizes,
-			  (char *) stp_get_media_size(p->v),
+			  stp_get_media_size(p->v),
 			  gimp_media_size_callback,
 			  &media_size_callback_id);
 
@@ -1481,7 +1483,7 @@ gimp_plist_callback (GtkWidget *widget,
   gimp_plist_build_combo (media_type_combo,
 			  num_media_types,
 			  media_types,
-			  (char *) stp_get_media_type(p->v),
+			  stp_get_media_type(p->v),
 			  gimp_media_type_callback,
 			  &media_type_callback_id);
 
@@ -1501,7 +1503,7 @@ gimp_plist_callback (GtkWidget *widget,
   gimp_plist_build_combo (media_source_combo,
 			  num_media_sources,
 			  media_sources,
-			  (char *) stp_get_media_source(p->v),
+			  stp_get_media_source(p->v),
 			  gimp_media_source_callback,
 			  &media_source_callback_id);
 
@@ -1521,7 +1523,7 @@ gimp_plist_callback (GtkWidget *widget,
   gimp_plist_build_combo (ink_type_combo,
 			  num_ink_types,
 			  ink_types,
-			  (char *) stp_get_ink_type(p->v),
+			  stp_get_ink_type(p->v),
 			  gimp_ink_type_callback,
 			  &ink_type_callback_id);
 
@@ -1541,7 +1543,7 @@ gimp_plist_callback (GtkWidget *widget,
   gimp_plist_build_combo (resolution_combo,
 			  num_resolutions,
 			  resolutions,
-			  (char *) stp_get_resolution(p->v),
+			  stp_get_resolution(p->v),
 			  gimp_resolution_callback,
 			  &resolution_callback_id);
 
