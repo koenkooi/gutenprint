@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.23 2004/03/23 02:32:39 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.24 2004/03/24 02:37:40 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -439,6 +439,262 @@ static const float_param_t float_parameters[] =
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1
     }, 0.0, 5.0, 0.5, CMASK_CMYK
   },
+  {
+    {
+      "GammaCh0", N_("Channel 0 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 0"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 0, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh1", N_("Channel 1 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 1"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 1, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh2", N_("Channel 2 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 2"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 2, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh3", N_("Channel 3 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 3"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 3, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh4", N_("Channel 4 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 4"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 4, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh5", N_("Channel 5 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 5"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 5, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh6", N_("Channel 5 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 5"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 5, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh7", N_("Channel 7 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 7"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 7, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh8", N_("Channel 8 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 8"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 8, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh9", N_("Channel 9 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 9"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 9, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh10", N_("Channel 10 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 10"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 10, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh11", N_("Channel 11 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 11"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 11, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh12", N_("Channel 12 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 12"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 12, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh13", N_("Channel 13 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 13"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 13, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh14", N_("Channel 14 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 14"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 14, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh15", N_("Channel 15 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 15"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 15, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh16", N_("Channel 16 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 16"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 16, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh17", N_("Channel 17 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 17"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 17, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh18", N_("Channel 18 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 18"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 18, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh19", N_("Channel 19 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 19"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 19, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh20", N_("Channel 20 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 20"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 20, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh21", N_("Channel 21 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 21"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 21, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh22", N_("Channel 22 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 22"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 22, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh23", N_("Channel 23 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 23"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 23, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh24", N_("Channel 24 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 24"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 24, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh25", N_("Channel 25 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 25"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 25, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh26", N_("Channel 26 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 26"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 26, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh27", N_("Channel 27 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 27"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 27, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh28", N_("Channel 28 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 28"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 28, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh29", N_("Channel 29 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 29"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 29, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh30", N_("Channel 30 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 30"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 30, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
+  {
+    {
+      "GammaCh31", N_("Channel 31 Gamma"), N_("Gamma"),
+      N_("Gamma for raw channel 31"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 31, 1
+    }, 0.1, 4.0, 1.0, CMASK_RAW
+  },
 };
 
 static const int float_parameter_count =
@@ -592,6 +848,262 @@ static curve_param_t curve_parameters[] =
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, 0, 1
     }, &gcr_curve_bounds, CMASK_CMYK, 0
+  },
+  {
+    {
+      "CurveCh0", N_("Channel 0 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 0"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 0, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh1", N_("Channel 1 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 1"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 1, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh2", N_("Channel 2 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 2"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 2, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh3", N_("Channel 3 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 3"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 3, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh4", N_("Channel 4 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 4"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 4, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh5", N_("Channel 5 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 5"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 5, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh6", N_("Channel 5 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 5"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 5, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh7", N_("Channel 7 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 7"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 7, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh8", N_("Channel 8 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 8"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 8, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh9", N_("Channel 9 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 9"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 9, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh10", N_("Channel 10 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 10"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 10, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh11", N_("Channel 11 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 11"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 11, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh12", N_("Channel 12 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 12"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 12, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh13", N_("Channel 13 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 13"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 13, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh14", N_("Channel 14 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 14"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 14, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh15", N_("Channel 15 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 15"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 15, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh16", N_("Channel 16 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 16"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 16, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh17", N_("Channel 17 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 17"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 17, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh18", N_("Channel 18 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 18"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 18, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh19", N_("Channel 19 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 19"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 19, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh20", N_("Channel 20 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 20"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 20, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh21", N_("Channel 21 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 21"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 21, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh22", N_("Channel 22 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 22"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 22, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh23", N_("Channel 23 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 23"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 23, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh24", N_("Channel 24 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 24"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 24, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh25", N_("Channel 25 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 25"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 25, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh26", N_("Channel 26 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 26"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 26, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh27", N_("Channel 27 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 27"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 27, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh28", N_("Channel 28 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 28"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 28, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh29", N_("Channel 29 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 29"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 29, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh30", N_("Channel 30 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 30"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 30, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
+  },
+  {
+    {
+      "CurveCh31", N_("Channel 31 Curve"), N_("Output Curves"),
+      N_("Curve for raw channel 31"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_INTERNAL, 0, 1, 31, 1
+    }, &color_curve_bounds, CMASK_RAW, 0
   },
 };
 
@@ -2977,7 +3489,8 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	      const color_description_t *color_description =
 		get_color_description(stpi_describe_output(v));
 	      if (color_description &&
-		  (param->channel_mask & color_description->channels))
+		  (param->channel_mask & color_description->channels) &&
+		  param->channel_mask != CMASK_RAW)
 		description->is_active = 1;
 	      else
 		description->is_active = 0;
