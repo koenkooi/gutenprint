@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.10 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.11 2000/04/24 01:04:26 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1223,7 +1223,7 @@ static void gtk_plist_build_menu(GtkWidget*  option,  /* I - Option button */
  * gtk_do_misc_updates() - Build an option menu for the given parameters...
  *
  ****************************************************************************/
-static void gtk_do_misc_updates()
+static void gtk_do_misc_updates(void)
 {
   char s[255];
   vars.scaling = plist[plist_current].v.scaling;
