@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/01/31 22:01:46 stevek Exp $
+## $Id: Makefile.am,v 1.8 2001/02/02 00:38:40 stevek Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ lib_LTLIBRARIES = @MAIN_BIN@
 EXTRA_LTLIBRARIES = libgimpprint.la
 
 libgimpprint_la_SOURCES = \
+	gimp-print-intl-internal.h \
 	gimp-print-internal.h \
 	print-lexmark.c \
 	print-canon.c \
