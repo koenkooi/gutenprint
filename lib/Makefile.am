@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/02/02 01:25:32 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2001/05/04 18:59:56 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,6 @@
 AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
-
-
-INCLUDES = -I../intl
 
 
 noinst_LTLIBRARIES = libprintut.la
