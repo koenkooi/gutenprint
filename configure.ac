@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.43 2003/01/07 00:06:44 rleigh Exp $
+dnl $Id: configure.ac,v 1.44 2003/01/07 18:19:08 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.43 $)
+AC_REVISION($Revision: 1.44 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -246,7 +246,7 @@ STP_ARG_WITH([ghostscript],
              [BUILD_GHOSTSCRIPT],
              [(automatic)])
 
-STP_ARG_WITH_DETAILED([modules],
+ STP_ARG_WITH_DETAILED([modules],
                       [],
                       [enable loadable modules],
 	              [(options: ltdl, dlopen, static)],
@@ -259,7 +259,23 @@ STP_ARG_WITH_DETAILED([modules],
     static) [WITH_MODULES]="static";  AC_MSG_RESULT([static]) ;;
     *) AC_MSG_ERROR([${withval}: not a valid module loader]) ;;
                       ],[
-    [WITH_MODULES]="yes"])
+    # if shared libraries are disabled, modules must be static
+    if test x$enable_shared = xno; then
+      [WITH_MODULES]="static"
+    else
+      [WITH_MODULES]="yes"]
+    fi)
+
+# Abort if a broken configuration was required
+if test x$enable_shared = xno; then
+  if test $WITH_MODULES = no; then
+    :
+  elif test $WITH_MODULES = static; then
+    :
+  else
+    AC_MSG_ERROR([--enable-shared must be used with --with-modules])
+  fi
+fi 
 
 STP_ARG_ENABLE([debug],
                [turn on debugging in build],
