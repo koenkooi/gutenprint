@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.58 2001/05/12 01:15:44 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.59 2001/05/12 02:24:13 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2544,7 +2544,7 @@ escp2_set_remote_sequence(const stp_vars_t v, escp2_init_t *init)
 	    stp_zprintf(v, /* Set Roll Feed mode */
 			"IR%c%c%c%c"
 			"EX%c%c%c%c%c%c%c%c",
-			3, 0, 0, 1,
+			2, 0, 0, 1,
 			6, 0, 0, 0, 0, 0, 5, 1);
 	  else
 	    stp_zprintf(v, /* Set non-Roll Feed mode */
