@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.27 2003/01/11 01:58:10 rlk Exp $"
+ * "$Id: printers.c,v 1.28 2003/01/11 04:37:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -322,14 +322,14 @@ verify_string_param(const stp_vars_t v, const char *parameter,
       if (checkval == NULL)
 	{
 	  if (count == 0)
-	    return 1;
+	    answer = 1;
 	  else
 	    {
 	      stp_eprintf(v, _("Value must be set for %s\n"), parameter);
-	      return 0;
+	      answer = 0;
 	    }
 	}
-      if (count > 0)
+      else if (count > 0)
 	{
 	  for (i = 0; i < count; i++)
 	    if (!strcmp(checkval, stp_string_list_param(vptr, i)->name))

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.95 2003/01/06 20:57:40 rleigh Exp $"
+ * "$Id: print-lexmark.c,v 1.96 2003/01/11 04:37:36 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1726,6 +1726,7 @@ densityDivisor /= 1.2;
   privdata.ink_parameter = ink_parameter;
   privdata.bidirectional = lexmark_print_bidirectional(model, resolution);
   privdata.outbuf = stp_malloc((((((pass_length/8)*11))+40) * out_width)+2000);
+  privdata.direction = 0;
   stp_set_driver_data(nv, &privdata);
   /*  lxm_nozzles_used = 1;*/
 
