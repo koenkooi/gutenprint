@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.3 2002/04/03 17:25:22 rleigh Exp $
+dnl $Id: configure.ac,v 1.4 2002/04/06 15:26:58 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.3 $)
+AC_REVISION($Revision: 1.4 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -430,7 +430,7 @@ if test "$USE_READLINE" = yes ; then
       else
 	unset ac_cv_lib_readline_readline
 	AC_CHECK_LIB(readline, readline, HAVE_LIBREADLINE=true,
-		     HAVE_LIBREADLINE=false, -lcurses)
+		     HAVE_LIBREADLINE=false, -ltermcap)
 	if test x${HAVE_LIBREADLINE} = xtrue ; then
 	  echo "  Using -lreadline -ltermcap"
 	  EXTRA_LIBREADLINE_DEPS=-ltermcap
