@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.84 2001/10/15 12:40:47 rlk Exp $
+dnl $Id: configure.in.in,v 1.85 2001/10/19 16:35:34 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -322,7 +322,6 @@ if test x${PDFJADETEX} = x ; then
   AC_MSG_WARN([PDF documentation cannot be generated!])
 fi
 AC_PATH_PROG(JADE, jade)
-AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(PS2PDF, ps2pdf)
 dnl @-@-@-@-@ NO-GIMP @-@-@-@-@
 dnl foomatic checks
