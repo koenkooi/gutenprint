@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45.2.9 2002/08/21 00:01:29 rlk Exp $
+## $Id: Makefile.am,v 1.45.2.10 2003/07/12 20:47:44 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ EXTRA_PROGRAMS = cups-calibrate commandtoepson epson genppd rastertoprinter comm
 CUPS_LIBS = @CUPS_LIBS@
 
 cups_calibrate_SOURCES = cups-calibrate.c
-cups_calibrate_LDADD = $(LIBPRINTUT) -lm
+cups_calibrate_LDADD = $(LIBPRINTUT) $(LIBM)
 
 commandtoepson_SOURCES = commandtoepson.c
 commandtoepson_LDADD = $(LIBPRINTUT) $(CUPS_LIBS)
