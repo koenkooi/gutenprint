@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $ */
+/* $Id: unprint.c,v 1.2.4.1 2001/03/05 17:44:23 sharkey Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -1072,11 +1072,11 @@ void parse_canon(FILE *fp_r){
    Cyan     2       2        2 C
    Yellow   4       4        3 Y
    L.Mag.   17      257      4 m
-   L.Cyan   18      258      5 c 
+   L.Cyan   18      258      5 c
    L.Yellow NA      NA       6 y
  */
      case 'A': /* 0x41 - transfer graphics data */
-       switch (*buf) { 
+       switch (*buf) {
        case 'K': currentcolor= 0; currentdelay= delay_K; break;
        case 'M': currentcolor= 1; currentdelay= delay_M; break;
        case 'C': currentcolor= 2; currentdelay= delay_C; break;

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15 2001/02/18 11:43:09 wollvieh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.1 2001/03/05 17:44:21 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -160,7 +160,7 @@ typedef union {		/* number of rows for a pass */
 
 
 typedef union {			/* Base pointers for each pass */
-  unsigned char *v[6];
+  unsigned char *v[7];
   struct {
     unsigned char *k;
     unsigned char *m;
@@ -196,6 +196,7 @@ typedef struct stp_softweave
 				/* quality) */
   int vmod;			/* Number of banks of passes */
   int oversample;		/* Excess precision per row */
+  int repeat_count;		/* How many times a pass is repeated */
   int ncolors;			/* How many colors (1, 4, or 6) */
   int horizontal_width;		/* Line width in output pixels */
   int vertical_height;		/* Image height in output pixels */
@@ -211,7 +212,13 @@ typedef struct stp_softweave
 				/* in the vertical direction". */
   int last_color;
   int head_offset[8];		/* offset of printheads */
-  const void *v;
+  unsigned char *s[8];
+  unsigned char *fold_buf;
+  unsigned char *comp_buf;
+  stp_weave_t wcache;
+  int rcache;
+  int vcache;
+  stp_vars_t v;
   void (*flushfunc)(struct stp_softweave *sw,
 		    int passno, int model,
 		    int width, int hoffset,
@@ -224,18 +231,27 @@ typedef struct stp_softweave
  * Prototypes...
  */
 
+extern void	stp_set_driver_data (stp_vars_t vv, void * val);
+extern void * 	stp_get_driver_data (const stp_vars_t vv);
+
+
+extern void	stp_default_media_size(const stp_printer_t printer,
+				       const stp_vars_t v, int *width,
+				       int *height);
+
 extern void *	stp_init_dither(int in_width, int out_width,
 				int horizontal_aspect,
-				int vertical_aspect, stp_vars_t *vars);
+				int vertical_aspect, stp_vars_t vars);
 extern void	stp_dither_set_matrix(void *vd, size_t x, size_t y,
-				      unsigned *data, int transpose,
+				      const unsigned *data, int transpose,
 				      int prescaled, int x_shear, int y_shear);
 extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
 					       size_t iterations,
-					       unsigned *data, int prescaled,
+					       const unsigned *data,
+					       int prescaled,
 					       int x_shear, int y_shear);
 extern void	stp_dither_set_matrix_short(void *vd, size_t x, size_t y,
-					    unsigned short *data,
+					    const unsigned short *data,
 					    int transpose, int prescaled,
 					    int x_shear, int y_shear);
 extern void	stp_dither_set_transition(void *vd, double);
@@ -277,11 +293,6 @@ extern void	stp_dither(const unsigned short *, int, void *,
 			   unsigned char *, unsigned char *,
 			   int duplicate_line);
 
-extern void *	stp_initialize_weave_params(int S, int J, int O,
-					    int firstrow, int lastrow,
-					    int pageheight, int strategy);
-extern void	stp_destroy_weave_params(void *vw);
-
 extern void	stp_fold(const unsigned char *line, int single_height,
 			 unsigned char *outbuf);
 
@@ -314,7 +325,7 @@ extern void *stp_initialize_weave(int jets, int separation, int oversample,
 				  int lineheight, int vertical_row_separation,
 				  int first_line, int phys_lines, int strategy,
                                   int *head_offset,  /* Get from model - used for 480/580 printers */
-				  const void *v,
+				  stp_vars_t v,
 				  void (*flushfunc)(stp_softweave_t *sw,
 						    int passno, int model,
 						    int width, int hoffset,
@@ -357,21 +368,24 @@ stp_weave_parameters_by_row(const stp_softweave_t *sw, int row,
 
 extern void stp_destroy_weave(void *);
 
-extern void stp_zprintf(const stp_vars_t *v, const char *format, ...);
+extern int
+stp_verify_printer_params(const stp_printer_t, const stp_vars_t);
+
+extern void stp_zprintf(const stp_vars_t v, const char *format, ...);
 
 extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
-			const stp_vars_t *v);
+			const stp_vars_t v);
 
-extern void stp_putc(int ch, const stp_vars_t *v);
+extern void stp_putc(int ch, const stp_vars_t v);
 
-extern void stp_puts(const char *s, const stp_vars_t *v);
+extern void stp_puts(const char *s, const stp_vars_t v);
 
-extern void stp_eprintf(const stp_vars_t *v, const char *format, ...);
+extern void stp_eprintf(const stp_vars_t v, const char *format, ...);
 
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
- * run, it will print out how long and how many time did 
+ * run, it will print out how long and how many time did
  * certain pieces of code take. Of course, don't forget about
  * overhead of call to gettimeofday - it's not zero.
  * If you need more detailed performance stats, just put
@@ -432,5 +446,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15 2001/02/18 11:43:09 wollvieh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.1 2001/03/05 17:44:21 sharkey Exp $".
  */

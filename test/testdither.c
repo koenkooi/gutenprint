@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.5 2001/02/19 19:32:53 rleigh Exp $"
+ * "$Id: testdither.c,v 1.4.2.1 2001/03/05 17:44:23 sharkey Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -226,7 +226,7 @@ main(int  argc,				/* I - Number of command-line arguments */
       stp_dither_set_adaptive_divisor(dither, 8);
     else
       stp_dither_set_adaptive_divisor(dither, 16);
-  }  
+  }
   else
     stp_dither_set_adaptive_divisor(dither, 4);
 
@@ -727,5 +727,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.5 2001/02/19 19:32:53 rleigh Exp $".
+ * End of "$Id: testdither.c,v 1.4.2.1 2001/03/05 17:44:23 sharkey Exp $".
  */
