@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.148 2000/05/24 00:24:02 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.149 2000/05/24 01:39:13 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1158,7 +1158,8 @@ escp2_print(const printer_t *printer,		/* I - Model */
     /* Epson printers are all 720 physical dpi */
     weave = initialize_weave(nozzles, nozzle_separation, horizontal_passes,
 			     vertical_passes, vertical_subsample, colormode,
-			     bits, out_width, out_height, separation_rows,
+			     bits, out_width * escp2_xres(model) / 720,
+			     out_height, separation_rows,
 			     top * 720 / 72, page_height * 720 / 72);
   else
     escp2_init_microweave();
