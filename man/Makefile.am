@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/01/22 19:00:18 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2001/01/25 23:18:14 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,4 +28,4 @@ man_MANS = escputil.1
 DISTCLEANFILES = escputil.1
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = escputil.1.in
+EXTRA_DIST = $(man_MANS)
