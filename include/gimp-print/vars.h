@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -139,7 +139,7 @@ typedef const void *stp_const_string_list_t;
 typedef struct
 {
   size_t bytes;
-  void *data;
+  const void *data;
 } stp_raw_t;
 
 typedef struct
@@ -571,5 +571,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $".
+ * End of "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $".
  */
