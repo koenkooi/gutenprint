@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $"
+ * "$Id: genppd.c,v 1.50 2002/11/18 23:06:19 rleigh Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -281,27 +281,12 @@ main(int  argc,			    /* I - Number of command-line arguments */
   langs = getlangs();
 #endif
 
-  /*
-   * Print lists
-   */
-
-  if (opt_printlangs)
-    {
-      printlangs(langs);
-      exit (EXIT_SUCCESS);
-    }
-
-  if (opt_printmodels)
-    {
-      printmodels(verbose);
-      exit (EXIT_SUCCESS);
-    }
-
 /*
  * Initialise libgimpprint
  */
 
   stp_init();
+
 
  /*
   * Set the language...
@@ -350,6 +335,22 @@ main(int  argc,			    /* I - Number of command-line arguments */
 #endif
   }
 #endif
+
+  /*
+   * Print lists
+   */
+
+  if (opt_printlangs)
+    {
+      printlangs(langs);
+      exit (EXIT_SUCCESS);
+    }
+
+  if (opt_printmodels)
+    {
+      printmodels(verbose);
+      exit (EXIT_SUCCESS);
+    }
 
 
  /*
@@ -1168,5 +1169,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.50 2002/11/18 23:06:19 rleigh Exp $".
  */
