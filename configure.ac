@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.115 2004/10/17 23:49:31 rlk Exp $
+dnl $Id: configure.ac,v 1.116 2004/11/01 20:45:45 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.115 $)
+AC_REVISION($Revision: 1.116 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -387,7 +387,10 @@ PKG_CHECK_MODULES([GTK2], [gtk+-2.0],
                    GUTENPRINTUI2_LIBDEPS="${GUTENPRINTUI2_LIBDEPS} ${GTK2_LIBS}"],
                   [HAVE_GTK2=no
 	           BUILD_LIBGUTENPRINTUI2=no])
-PKG_CHECK_MODULES([GIMP2], [gimpui-2.0], [HAVE_GTK2=yes], [HAVE_GTK2=no])
+# Require both gimptool and pkg-config to succeed
+if test x$BUILD_GIMP2 = xyes; then
+  PKG_CHECK_MODULES([GIMP2], [gimpui-2.0], [BUILD_GIMP2=yes], [BUILD_GIMP2=no])
+fi
 
 STP_ARG_WITH([gimp2],
              [build GIMP 2.0 Print plugin],
