@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.3 2002/12/30 16:48:00 rlk Exp $
+ *  $Id: gimp-print.h,v 1.4 2003/01/01 01:03:09 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -337,6 +337,7 @@ typedef struct
   } deflt;
 } stp_parameter_t;
 
+typedef void *stp_parameter_list_t;
 
 /*
  * Paper size
@@ -477,8 +478,24 @@ extern void stp_merge_printvars(stp_vars_t user, const stp_vars_t print);
  * use stp_describe_parameter.
  */
 
+extern stp_parameter_list_t stp_list_parameters(const stp_vars_t v);
+
+extern size_t stp_parameter_list_count(const stp_parameter_list_t list);
+
 extern const stp_parameter_t *
-stp_list_parameters(const stp_vars_t v, int *count);
+stp_parameter_find(const stp_parameter_list_t list, const char *name);
+
+extern const stp_parameter_t *
+stp_parameter_list_param(const stp_parameter_list_t list, size_t item);
+
+extern void stp_parameter_list_destroy(stp_parameter_list_t list);
+
+extern stp_parameter_list_t
+stp_parameter_list_copy(const stp_parameter_list_t list);
+
+extern void
+stp_parameter_list_append(stp_parameter_list_t list,
+			  const stp_parameter_list_t append);
 
 extern void
 stp_describe_parameter(const stp_vars_t v, const char *name,
@@ -960,5 +977,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.3 2002/12/30 16:48:00 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.4 2003/01/01 01:03:09 rlk Exp $
  */
