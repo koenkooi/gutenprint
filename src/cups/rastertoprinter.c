@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.54 2003/02/27 09:34:17 mtomlinson Exp $"
+ * "$Id: rastertoprinter.c,v 1.55 2003/03/22 06:32:38 mtomlinson Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -235,6 +235,8 @@ initialize_page(cups_image_t *cups, const stp_printer_t printer)
   stp_set_string_parameter(v, "MediaType", cups->header.MediaType);
   stp_set_string_parameter(v, "InkType", cups->header.OutputType);
 
+  stp_set_string_parameter(v, "PrintingDirection", "Auto");
+
   fprintf(stderr, "DEBUG: PageSize = %dx%d\n", cups->header.PageSize[0],
 	  cups->header.PageSize[1]);
 
@@ -324,7 +326,7 @@ purge_excess_data(cups_image_t *cups)
 	cups->row ++;
       }
   free(buffer);
-}    
+}
 
 /*
  * 'main()' - Main entry and processing of driver.
@@ -635,9 +637,11 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
     * Invert black data for monochrome output...
     */
 
-    if (cups->header.cupsColorSpace == CUPS_CSPACE_K)
-      for (i = bytes_per_line; i > 0; i --, data ++)
-        *data = ((1 << CHAR_BIT) - 1) - *data;
+    if (cups->header.cupsColorSpace == CUPS_CSPACE_K) {
+      unsigned char *dp = data;
+      for (i = bytes_per_line; i > 0; i --, dp++)
+        *dp = ((1 << CHAR_BIT) - 1) - *dp;
+    }
   }
   else
     {
@@ -747,5 +751,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.54 2003/02/27 09:34:17 mtomlinson Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.55 2003/03/22 06:32:38 mtomlinson Exp $".
  */
