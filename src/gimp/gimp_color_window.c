@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.7 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.8 2001/06/02 13:58:13 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -403,6 +403,25 @@ gimp_gamma_update (GtkAdjustment *adjustment)
       stp_set_gamma(plist[plist_current].v, adjustment->value);
       gimp_update_adjusted_thumbnail ();
     }
+}
+
+static void
+gimp_set_adjustment_active(GtkObject *adj, int active)
+{
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_LABEL(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SCALE_ADJ(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON(adj)), active);
+  gtk_widget_set_sensitive(GTK_WIDGET(GIMP_SCALE_ENTRY_SPINBUTTON_ADJ(adj)), active);
+}
+
+void
+gimp_set_color_sliders_active(int active)
+{
+  gimp_set_adjustment_active(cyan_adjustment, active);
+  gimp_set_adjustment_active(magenta_adjustment, active);
+  gimp_set_adjustment_active(yellow_adjustment, active);
+  gimp_set_adjustment_active(saturation_adjustment, active);
 }
 
 void

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.19 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.20 2001/06/02 13:58:13 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1748,6 +1748,10 @@ gimp_output_type_callback (GtkWidget *widget,
       stp_set_output_type(plist[plist_current].v, (gint) data);
       gimp_update_adjusted_thumbnail();
     }
+  if (widget == output_color)
+    gimp_set_color_sliders_active(TRUE);
+  else
+    gimp_set_color_sliders_active(FALSE);
   gimp_preview_update ();
 }
 

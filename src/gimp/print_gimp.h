@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.9 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.10 2001/06/02 13:58:13 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -111,6 +111,8 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 			const gchar     *cur_item,    /* I - Current item */
 			GtkSignalFunc   callback,    /* I - Callback */
 			gint           *callback_id); /* IO - Callback ID (init to -1) */
-extern void     gimp_create_main_window (void);
+extern void gimp_create_main_window (void);
+extern void gimp_set_color_sliders_active(int active);
+
 
 #endif  /* __PRINT_GIMP_H__ */
