@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.101 2000/06/21 00:15:53 rlk Exp $"
+ * "$Id: print.c,v 1.102 2000/06/24 07:50:42 gandy Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1102,19 +1102,23 @@ get_system_printers(void)
 #ifdef LPC_COMMAND
   if ((pfile = popen(LPC_COMMAND " status < /dev/null", "r")) != NULL)
   {
-    while (fgets(line, sizeof(line), pfile) != NULL)
-      if (strchr(line, ':') != NULL && line[0] != ' ' &&
-	  line[0] != '\t' && strncmp(line,"Press RETURN to continue",24))
-      {
-	check_plist(plist_count + 1);
-        *strchr(line, ':') = '\0';
-        strcpy(plist[plist_count].name, line);
-        sprintf(plist[plist_count].v.output_to, LPR_COMMAND " -P%s -l", line);
-        strcpy(plist[plist_count].v.driver, "ps2");
-	initialize_printer(&plist[plist_count]);
-        plist_count ++;
+    while (fgets(line, sizeof(line), pfile) != NULL) {
+      if (!strncmp(line,"Press RETURN to continue",24)) {
+	char *ptr= index(line,':')+2;
+	if (ptr && strlen(ptr)<(ptr-line))
+	  strcpy(line,ptr);
       }
-
+      if (strchr(line, ':') != NULL && line[0] != ' ' && line[0] != '\t')
+	{
+	  check_plist(plist_count + 1);
+	  *strchr(line, ':') = '\0';
+	  strcpy(plist[plist_count].name, line);
+	  sprintf(plist[plist_count].v.output_to,LPR_COMMAND" -P%s -l",line);
+	  strcpy(plist[plist_count].v.driver, "ps2");
+	  initialize_printer(&plist[plist_count]);
+	  plist_count ++;
+	}
+    }
     pclose(pfile);
   }
 #endif /* LPC_COMMAND */
@@ -1173,5 +1177,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.101 2000/06/21 00:15:53 rlk Exp $".
+ * End of "$Id: print.c,v 1.102 2000/06/24 07:50:42 gandy Exp $".
  */
