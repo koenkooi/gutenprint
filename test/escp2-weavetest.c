@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.26 2003/04/13 03:50:29 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.27 2003/04/18 01:17:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -355,9 +355,9 @@ main(int argc, char **argv)
       while (fgets(linebuf, 4096, stdin))
 	{
 	  int retval;
-	  (void) sscanf(linebuf, "%d%d%d%d%d%d%d%d%d", &physjets, &physsep,
+	  (void) sscanf(linebuf, "%d%d%d%d%d%d%d%d%d%d", &physjets, &physsep,
 			&hpasses, &vpasses, &subpasses, &nrows, &first_line,
-			&phys_lines, &color_jet_arrangement);
+			&phys_lines, &color_jet_arrangement, &strategy);
 	  fflush(stdout);
 	  if (vpasses * subpasses > physjets)
 	    continue;
