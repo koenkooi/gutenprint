@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.89.4.9 2001/10/27 21:50:35 sharkey Exp $
+## $Id: Makefile.am,v 1.89.4.10 2001/11/18 15:40:34 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -158,7 +158,7 @@ snapshot:
 
 DEBUILD_OPTIONS = -us -uc
 deb: debian/changelog debian/control debian/rules
-	$(MAKE) dist 
+	$(MAKE) dist
 	-$(RM) -r debian-build
 	-mkdir debian-build
 	cd debian-build ; \

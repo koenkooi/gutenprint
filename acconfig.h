@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.8.2.5 2001/09/14 01:26:34 sharkey Exp $
+ * $Id: acconfig.h,v 1.8.2.6 2001/11/18 15:40:34 sharkey Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -60,6 +60,9 @@
 
 /* Define as 1 if you have the stpcpy function.  */
 #undef HAVE_STPCPY
+
+/* Define as 1 if you have the mempcpy function.  */
+#undef HAVE_MEMPCPY
 
 /* Package locale directory */
 #undef PACKAGE_LOCALE_DIR

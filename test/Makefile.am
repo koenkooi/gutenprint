@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9.2.7 2001/10/27 21:50:40 sharkey Exp $
+## $Id: Makefile.am,v 1.9.2.8 2001/11/18 15:40:38 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ MAINT_CHARSET = latin1
 ## Variables
 
 AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
+INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
 
 TESTS = testdither run-weavetest

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.4.8 2001/10/27 21:50:38 sharkey Exp $"
+ * "$Id: print-canon.c,v 1.10.4.9 2001/11/18 15:40:36 sharkey Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -343,7 +343,7 @@ static const canon_variable_inkset_t ci_CMY_1 =
 {
   NULL,
   NULL,
-  NULL, 
+  NULL,
   NULL
 };
 

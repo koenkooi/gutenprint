@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.7.2.6 2001/10/27 21:50:37 sharkey Exp $"
+ * "$Id: genppd.c,v 1.7.2.7 2001/11/18 15:40:36 sharkey Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -64,6 +64,10 @@
 #endif
 #include <gimp-print/gimp-print-intl.h>
 #include "../../lib/libprintut.h"
+
+#ifndef CUPS_PPD_PS_LEVEL
+#define CUPS_PPD_PS_LEVEL 2
+#endif
 
 
 /*
@@ -135,7 +139,7 @@ static struct				/**** STP numeric options ****/
 void	initialize_stp_options(void);
 void	usage(void);
 int	write_ppd(const stp_printer_t p, const char *prefix,
-	          const char *language);
+	          const char *language, int verbose);
 
 
 /*
@@ -152,10 +156,13 @@ main(int  argc,			/* I - Number of command-line arguments */
   const char	*language;	/* Language */
   const char    *catalog = NULL;/* Catalog location */
   stp_printer_t	printer;	/* Pointer to printer driver */
+  int           verbose = 0;
   static struct option long_options[] =
 		{		/* Command-line options */
 		  /* name,	has_arg,		flag	val */
 		  {"help",	no_argument,		0,	0},
+		  {"verbose",	no_argument,		0,	0},
+		  {"quiet",	no_argument,		0,	0},
 		  {"catalog",	required_argument,	0,	0},
 		  {"prefix",	required_argument,	0,	0},
 		  {0,		0,			0,	0}
@@ -196,6 +203,17 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    usage();
 	    break;
           }
+	  if (strncmp(long_options[option_index].name, "verbose", 7) == 0)
+          {
+	    verbose = 1;
+	    break;
+          }
+
+	  if (strncmp(long_options[option_index].name, "quiet", 5) == 0)
+          {
+	    verbose = 0;
+	    break;
+          }
 
 	  if (strncmp(long_options[option_index].name, "catalog", 7) == 0)
           {
@@ -226,8 +244,8 @@ main(int  argc,			/* I - Number of command-line arguments */
  */
 
   stp_init();
-    
-  
+
+
  /*
   * Set the language...
   */
@@ -260,7 +278,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 #endif
   }
 
-  
+
  /*
   * Write PPD files...
   */
@@ -269,9 +287,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     printer = stp_get_printer_by_index(i);
 
-    if (printer && write_ppd(printer, prefix, language))
+    if (printer && write_ppd(printer, prefix, language, verbose))
       return (1);
   }
+  if (!verbose)
+    fprintf(stderr, "\n");
 
   return (0);
 }
@@ -353,7 +373,8 @@ usage(void)
 int					/* O - Exit status */
 write_ppd(const stp_printer_t p,	/* I - Printer driver */
 	  const char          *prefix,	/* I - Prefix (directory) for PPD files */
-	  const char          *language)/* I - Language/locale */
+	  const char          *language,/* I - Language/locale */
+	  int                 verbose)
 {
   int		i, j;			/* Looping vars */
   gzFile	fp;			/* File to write to */
@@ -420,7 +441,10 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
   sscanf(long_name, "%63s", manufacturer);
 
-  fprintf(stderr, "Writing %s...\n", filename);
+  if (verbose)
+    fprintf(stderr, "Writing %s...\n", filename);
+  else
+    fprintf(stderr, ".");
 
   gzputs(fp, "*PPD-Adobe: \"4.3\"\n");
   gzputs(fp, "*%PPD file for CUPS/GIMP-print.\n");
@@ -444,7 +468,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzprintf(fp, "*ShortNickName: \"%s\"\n", long_name);
   gzprintf(fp, "*NickName:      \"%s, CUPS+GIMP-print v" VERSION "\"\n", long_name);
   gzputs(fp, "*PSVersion:	\"(3010.000) 550\"\n");
-  gzputs(fp, "*LanguageLevel:	\"3\"\n");
+  gzprintf(fp, "*LanguageLevel:	\"%d\"\n", CUPS_PPD_PS_LEVEL);
   gzprintf(fp, "*ColorDevice:	%s\n",
            stp_get_output_type(printvars) == OUTPUT_COLOR ? "True" : "False");
   gzprintf(fp, "*DefaultColorSpace: %s\n",
@@ -836,5 +860,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.7.2.6 2001/10/27 21:50:37 sharkey Exp $".
+ * End of "$Id: genppd.c,v 1.7.2.7 2001/11/18 15:40:36 sharkey Exp $".
  */

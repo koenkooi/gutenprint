@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.24.2.8 2001/10/27 21:50:39 sharkey Exp $"
+ * "$Id: print-escp2.c,v 1.24.2.9 2001/11/18 15:40:37 sharkey Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -339,18 +339,16 @@ static const escp2_variable_ink_t spro10000_standard_ink =
   1.0
 };
 
-static const stp_simple_dither_range_t photo_4pl_1440_dither_ranges[] =
+static const stp_simple_dither_range_t photo_4pl_2880_dither_ranges[] =
 {
-  { 0.26,  0x1, 0, 1 },
-  { 0.393, 0x2, 0, 2 },
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 }
+  { 0.35,  0x1, 0, 1 },
+  { 1.00,  0x1, 1, 1 },
 };
 
-static const escp2_variable_ink_t photo_4pl_1440_ink =
+static const escp2_variable_ink_t photo_4pl_2880_ink =
 {
-  photo_4pl_1440_dither_ranges,
-  sizeof(photo_4pl_1440_dither_ranges) / sizeof(stp_simple_dither_range_t),
+  photo_4pl_2880_dither_ranges,
+  sizeof(photo_4pl_2880_dither_ranges) / sizeof(stp_simple_dither_range_t),
   1.0
 };
 
@@ -468,16 +466,15 @@ static const escp2_variable_ink_t standard_4pl_ink =
   1.0
 };
 
-static const stp_simple_dither_range_t standard_4pl_1440_dither_ranges[] =
+static const stp_simple_dither_range_t standard_4pl_2880_dither_ranges[] =
 {
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 },
+  { 1.00,  0x1, 1, 1 },
 };
 
-static const escp2_variable_ink_t standard_4pl_1440_ink =
+static const escp2_variable_ink_t standard_4pl_2880_ink =
 {
-  standard_4pl_1440_dither_ranges,
-  sizeof(standard_4pl_1440_dither_ranges) / sizeof(stp_simple_dither_range_t),
+  standard_4pl_2880_dither_ranges,
+  sizeof(standard_4pl_2880_dither_ranges) / sizeof(stp_simple_dither_range_t),
   1.0
 };
 
@@ -551,8 +548,7 @@ static const escp2_variable_ink_t standard_multishot_pigment_ink =
 
 static stp_simple_dither_range_t standard_6pl_pigment_dither_ranges[] =
 {
-  { 0.350, 0x1, 1, 1 },
-  { 0.500, 0x2, 1, 2 },
+  { 0.300, 0x1, 1, 1 },
   { 1.0,   0x3, 1, 3 }
 };
 
@@ -565,7 +561,7 @@ static escp2_variable_ink_t standard_6pl_pigment_ink =
 
 static const stp_simple_dither_range_t standard_3pl_pigment_dither_ranges[] =
 {
-  { 0.500, 0x1, 1, 1 },
+  { 0.650, 0x1, 1, 1 },
   { 1.000, 0x2, 1, 2 },
 };
 
@@ -749,20 +745,20 @@ static const escp2_variable_inkset_t spro10000_photo_inks =
   &spro10000_standard_ink
 };
 
-static const escp2_variable_inkset_t escp2_4pl_1440_standard_inks =
+static const escp2_variable_inkset_t escp2_4pl_2880_standard_inks =
 {
-  &standard_4pl_1440_ink,
-  &standard_4pl_1440_ink,
-  &standard_4pl_1440_ink,
-  &standard_4pl_1440_ink
+  &standard_4pl_2880_ink,
+  &standard_4pl_2880_ink,
+  &standard_4pl_2880_ink,
+  &standard_4pl_2880_ink
 };
 
-static const escp2_variable_inkset_t escp2_4pl_1440_photo_inks =
+static const escp2_variable_inkset_t escp2_4pl_2880_photo_inks =
 {
-  &standard_4pl_1440_ink,
-  &photo_4pl_1440_ink,
-  &photo_4pl_1440_ink,
-  &standard_4pl_1440_ink
+  &standard_4pl_2880_ink,
+  &photo_4pl_2880_ink,
+  &photo_4pl_2880_ink,
+  &standard_4pl_2880_ink
 };
 
 static const escp2_variable_inkset_t escp2_3pl_standard_inks =
@@ -1160,7 +1156,7 @@ static const escp2_variable_inklist_t variable_3pl_pigment_4color_inks =
       &escp2_multishot_pigment_standard_inks,
       &escp2_6pl_pigment_standard_inks,
       &escp2_3pl_pigment_standard_inks,
-      &escp2_3pl_pigment_standard_inks,
+      &escp2_3pl_pigment_2880_standard_inks,
       &escp2_3pl_pigment_2880_standard_inks,
       &escp2_3pl_pigment_2880_standard_inks,
     }
@@ -1190,9 +1186,9 @@ static const escp2_variable_inklist_t variable_4pl_4color_inks =
       &escp2_multishot_standard_inks,
       &escp2_6pl_standard_inks,
       &escp2_4pl_standard_inks,
-      &escp2_4pl_1440_standard_inks,
-      &escp2_4pl_standard_inks,
-      &escp2_4pl_standard_inks,
+      &escp2_4pl_2880_standard_inks,
+      &escp2_4pl_2880_standard_inks,
+      &escp2_4pl_2880_standard_inks,
     }
   }
 };
@@ -1231,9 +1227,9 @@ static const escp2_variable_inklist_t variable_4pl_6color_inks =
       &escp2_multishot_standard_inks,
       &escp2_6pl_standard_inks,
       &escp2_4pl_standard_inks,
-      &escp2_4pl_1440_standard_inks,
-      &escp2_4pl_standard_inks,
-      &escp2_4pl_standard_inks,
+      &escp2_4pl_2880_standard_inks,
+      &escp2_4pl_2880_standard_inks,
+      &escp2_4pl_2880_standard_inks,
     },
     {
       &escp2_multishot_photo_inks,
@@ -1242,9 +1238,9 @@ static const escp2_variable_inklist_t variable_4pl_6color_inks =
       &escp2_multishot_photo_inks,
       &escp2_6pl_photo_inks,
       &escp2_4pl_photo_inks,
-      &escp2_4pl_1440_photo_inks,
-      &escp2_4pl_photo_inks,
-      &escp2_4pl_photo_inks
+      &escp2_4pl_2880_photo_inks,
+      &escp2_4pl_2880_photo_inks,
+      &escp2_4pl_2880_photo_inks
     }
   }
 };
@@ -1841,7 +1837,7 @@ static const escp2_dot_size_t spro10000_dotsizes =
 {    4,   -1, 0x11,   -1, 0x11,   -1, 0x10,   -1, 0x10,   -1,   -1,   -1,   -1 };
 
 static const escp2_dot_size_t c3pl_pigment_dotsizes =
-{   -1, 0x13,   -1, 0x10,   -1, 0x10,   -1, 0x11,   -1, 0x12,   -1, 0x12,   -1 };
+{   -1, 0x10,   -1, 0x10,   -1, 0x10,   -1, 0x11,   -1, 0x12,   -1, 0x12,  0x12 };
 
 /*
  * Densities are for:
@@ -1888,7 +1884,7 @@ static const escp2_densities_t c3pl_densities =
 { 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.646, 0.73,  0.7,   0.7,   0.91,  0.91,  0.455 };
 
 static const escp2_densities_t c4pl_densities =
-{ 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.431, 0.568, 0.216, 0.784, 0.392, 0.392, 0.196 };
+{ 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.431, 0.568, 0.784, 0.784, 0.450, 0.450, 0.225 };
 
 static const escp2_densities_t sc660_densities =
 { 3.0, 3.0, 2.0, 2.0, 1.0,  1.0,  0.646, 0.646, 0.323, 0.323, 0.162, 0.162, 0.081 };
@@ -1903,7 +1899,7 @@ static const escp2_densities_t spro10000_densities =
 { 2.0, 2.0, 1.3, 1.3, 0.65, 0.65, 0.431, 0.710, 0.216, 0.784, 0.392, 0.392, 0.196 };
 
 static const escp2_densities_t c3pl_pigment_densities =
-{ 2.0, 2.0, 1.3, 1.3, 0.98, 0.98, 0.73,  0.73,  0.9,   0.9,   0.9,   0.9,   0.110 };
+{ 2.0, 2.0, 1.3, 1.3, 0.69, 0.69, 0.511, 0.511, 0.765, 0.765, 0.585, 0.585, 0.293 };
 
 /*
  For each printhead (=color), the offset in escp2_base_separation (1/360")
@@ -2109,7 +2105,7 @@ static const escp2_stp_printer_t model_capabilities[] =
      MODEL_COLOR_4 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_1998 | MODEL_GRAYMODE_YES | MODEL_MICROWEAVE_YES |
      MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
-     MODEL_VACUUM_NO | MODEL_MICROWEAVE_EXCEPTION_BLACK),
+     MODEL_VACUUM_NO | MODEL_MICROWEAVE_EXCEPTION_NORMAL),
     15, 1, 4, 15, 1, 4,
     720, 720, 360, 720, 720, 14400, -1, 720, 720, 90, 90,
     INCH(17 / 2), INCH(44), INCH(2), INCH(4), 14, 14, 9, 49, 14, 14, 9, 49,
@@ -2514,7 +2510,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 27: Stylus Pro 5000 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2529,7 +2525,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 28: Stylus Pro 7000 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2544,7 +2540,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 29: Stylus Pro 7500 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2559,7 +2555,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 30: Stylus Pro 9000 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_NORMAL |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2574,7 +2570,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 31: Stylus Pro 9500 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2709,7 +2705,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 40: Stylus Pro 5500 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2724,7 +2720,7 @@ static const escp2_stp_printer_t model_capabilities[] =
   },
   /* 41: Stylus Pro 10000 */
   {
-    (MODEL_INIT_NEW | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
+    (MODEL_INIT_STANDARD | MODEL_HASBLACK_YES | MODEL_INK_SELECTABLE |
      MODEL_COLOR_6 | MODEL_720DPI_DEFAULT | MODEL_VARIABLE_NORMAL |
      MODEL_COMMAND_PRO | MODEL_GRAYMODE_NO | MODEL_MICROWEAVE_ENHANCED |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
@@ -2775,7 +2771,7 @@ static const escp2_stp_printer_t model_capabilities[] =
      MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_YZEROMARGIN_NO |
      MODEL_VACUUM_NO | MODEL_MICROWEAVE_EXCEPTION_NORMAL),
     60, 60, 2, 180, 180, 2,
-    360, 360, 360, 720, 720, 14400, -1, 2880, 720, 360, 180,
+    360, 360, 360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(17 / 2), INCH(1200), INCH(2), INCH(4), 9, 9, 0, 9, 9, 9, 9, 9,
     0, 1, 0, 0, c80_head_offset, -240, 0,
     c3pl_pigment_dotsizes, c3pl_pigment_densities, &variable_3pl_pigment_4color_inks,
@@ -3207,7 +3203,7 @@ verify_resolution(const res_t *res,
     }
   return 0;
 }
-  
+
 
 /*
  * 'escp2_parameters()' - Return the parameter values for the given parameter.
@@ -4006,8 +4002,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   drop_size = escp2_ink_type(model, resid, nv);
 
   if (use_microweave &&
-      !(escp2_has_cap(model, MODEL_MICROWEAVE_EXCEPTION,
-		      MODEL_MICROWEAVE_EXCEPTION_NORMAL, nv)))
+      (escp2_has_cap(model, MODEL_MICROWEAVE_EXCEPTION,
+		     MODEL_MICROWEAVE_EXCEPTION_360, nv)))
     {
       if (ydpi == 360)
 	use_microweave = 0;

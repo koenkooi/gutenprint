@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.7 2001/10/27 21:50:40 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.8 2001/11/18 15:40:38 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -220,23 +220,6 @@ static const stp_internal_vars_t max_vars =
 	NCOLOR_MODELS - 1,	/* Input color model */
 	NCOLOR_MODELS - 1	/* Output color model */
 };
-
-int
-stp_init(void)
-{
-  static int stp_is_initialised = 0;
-  if (!stp_is_initialised)
-    {
-      /* Things that are only initialised once */
-      /* Set up gettext */
-#ifdef ENABLE_NLS
-      setlocale (LC_ALL, "");
-      bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
-#endif
-    }
-  stp_is_initialised = 1;
-  return (0);
-}
 
 stp_vars_t
 stp_allocate_vars(void)
@@ -1558,7 +1541,10 @@ init_stp_debug(void)
       const char *dval = getenv("STP_DEBUG");
       debug_initialized = 1;
       if (dval)
-	stp_debug_level = strtoul(dval, 0, 0);
+	{
+	  stp_debug_level = strtoul(dval, 0, 0);
+	  stp_erprintf("Gimp-Print %s %s\n", VERSION, RELEASE_DATE);
+	}
     }
 }
 
@@ -1613,6 +1599,24 @@ void
 stp_free(void *ptr)
 {
   free(ptr);
+}
+
+int
+stp_init(void)
+{
+  static int stp_is_initialised = 0;
+  if (!stp_is_initialised)
+    {
+      /* Things that are only initialised once */
+      /* Set up gettext */
+#ifdef ENABLE_NLS
+      setlocale (LC_ALL, "");
+      bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+#endif
+      init_stp_debug();
+    }
+  stp_is_initialised = 1;
+  return (0);
 }
 
 #ifdef QUANTIFY

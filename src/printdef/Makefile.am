@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2.4.3 2001/09/14 01:26:37 sharkey Exp $
+## $Id: Makefile.am,v 1.2.4.4 2001/11/18 15:40:38 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ MAINT_CHARSET = latin1
 ## Variables
 
 AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
+INCLUDES = @INCLUDES@
 
 LFLAGS = -i
 YFLAGS = -d

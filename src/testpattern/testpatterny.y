@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.2.2.1 2001/09/14 02:15:51 sharkey Exp $"
+ * "$Id: testpatterny.y,v 1.2.2.2 2001/11/18 15:40:38 sharkey Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -154,8 +154,8 @@ blackline: BLACKLINE tINT
 	{ noblackline = !($2); }
 ;
 
-pattern: PATTERN tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE 
-	tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE 
+pattern: PATTERN tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE
+	tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE
 	tDOUBLE tDOUBLE
 	{
 	  testpattern_t *t = get_next_testpattern();
@@ -182,9 +182,9 @@ pattern: PATTERN tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE
 Empty:
 
 Rule: global_c_level | global_m_level | global_y_level
-	| global_c_gamma | global_m_gamma | global_y_gamma | global_k_gamma 
-	| global_gamma | levels | ink_limit | printer | ink_type | resolution 
-	| media_source | media_type | media_size | dither_algorithm | density 
+	| global_c_gamma | global_m_gamma | global_y_gamma | global_k_gamma
+	| global_gamma | levels | ink_limit | printer | ink_type | resolution
+	| media_source | media_type | media_size | dither_algorithm | density
 	| top | left | hsize | vsize | blackline | pattern
 
 Rules: Rules Rule | Empty
