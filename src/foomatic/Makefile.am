@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.25 2002/05/15 23:31:59 rleigh Exp $
+## $Id: Makefile.am,v 1.26 2002/06/09 16:06:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,9 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
+GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
+GIMPPRINT_DEPLIBS = -lm
+LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
@@ -99,13 +102,14 @@ foomatic-stamp: foomatic-generator foomatic-printermap $(noinst_PROGRAMS)
 	./foomatic-generator -m $(srcdir)/foomatic-printermap -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS)
 	touch foomatic-stamp
 
-$(LIBGIMPPRINT_LIBS):
+$(GIMPPRINT_LIBS):
 	cd ../main ; \
 	$(MAKE)
 
 
 ## Clean
 
+CLEANFILES = foomatic-stamp
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = foomatic-printermap 		\

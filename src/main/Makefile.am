@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.33 2002/03/27 01:37:17 rlk Exp $
+## $Id: Makefile.am,v 1.34 2002/06/09 16:06:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,12 +35,9 @@ pkgconfigdatadir = $(prefix)/lib/pkgconfig
 
 ## Programs
 
-if BUILD_LIBGIMPPRINT
 lib_LTLIBRARIES = libgimpprint.la
-endif
-if BUILD_LIBGIMPPRINT
+
 bin_SCRIPTS = gimpprint-config
-endif
 
 libgimpprint_la_SOURCES = \
 	gimp-print-internal.h \
@@ -72,12 +69,9 @@ libgimpprint_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir)
 
 ## Data
 
-if BUILD_LIBGIMPPRINT
 m4data_DATA = gimpprint.m4
-endif
-if BUILD_LIBGIMPPRINT
+
 pkgconfigdata_DATA = gimpprint.pc
-endif
 
 
 ## Rules

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2002/05/15 23:31:59 rleigh Exp $
+## $Id: Makefile.am,v 1.9 2002/06/09 16:06:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,9 @@ MAINT_CHARSET = latin1
 
 AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
+GIMPPRINT_DEPLIBS = -lm
+LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
@@ -46,7 +49,7 @@ testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
 testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
 
-$(LIBGIMPPRINT_LIBS):
+$(GIMPPRINT_LIBS):
 	cd ../main ; \
 	$(MAKE)
 

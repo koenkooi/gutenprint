@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.52 2002/05/19 20:33:42 rleigh Exp $
+## $Id: Makefile.am,v 1.53 2002/06/09 16:06:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,9 @@ cups_modeldir = $(pkgdatadir)/model
 AM_CFLAGS = $(GNUCFLAGS)
 DEFS = @CUPS_CFLAGS@ @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
+GIMPPRINT_DEPLIBS = -lm
+LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
 LIBPRINTUT = $(top_builddir)/lib/libprintut.la
 LIBS = $(INTLLIBS) @LIBS@
 
@@ -199,7 +202,7 @@ ppd-nls: genppd
 	done
 	$(RM) -r catalog
 
-$(LIBGIMPPRINT_LIBS):
+$(GIMPPRINT_LIBS):
 	cd ../main ; \
 	$(MAKE)
 
