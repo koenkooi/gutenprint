@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.105 2001/01/20 23:10:57 rlk Exp $"
+ * "$Id: print.h,v 1.1 2001/01/22 19:52:48 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -533,5 +533,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.105 2001/01/20 23:10:57 rlk Exp $".
+ * End of "$Id: print.h,v 1.1 2001/01/22 19:52:48 rleigh Exp $".
  */
