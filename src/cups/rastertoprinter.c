@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.42 2003/01/14 00:23:40 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.43 2003/01/19 01:32:17 mtomlinson Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -414,6 +414,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 	  }
 	stp_parameter_list_destroy(params);
 	stp_set_job_mode(v, STP_JOB_MODE_JOB);
+	stp_set_output_color_model(v, COLOR_MODEL_CMYK);
       }
 
     fprintf(stderr, "DEBUG: stp_get_driver(v) |%s|\n", stp_get_driver(v));
@@ -618,9 +619,10 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
 	    bytes_per_line, cups->row);
     cupsRasterReadPixels(cups->ras, data, bytes_per_line);
     cups->row ++;
-    fprintf(stderr, "DEBUG: GIMP-PRINT tossing right %d\n", margin);
-    if (margin)
+    if (margin) {
+      fprintf(stderr, "DEBUG: GIMP-PRINT tossing right %d\n", margin);
       throwaway_data(margin, cups);
+    }
 
    /*
     * Invert black data for monochrome output...
@@ -738,5 +740,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.42 2003/01/14 00:23:40 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.43 2003/01/19 01:32:17 mtomlinson Exp $".
  */
