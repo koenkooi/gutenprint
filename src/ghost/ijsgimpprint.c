@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.47 2004/04/10 03:37:49 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.48 2004/04/10 04:09:13 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -1062,7 +1062,8 @@ main (int argc, char **argv)
       page++;
     }
   while (status == 0);
-  stp_end_job(img.v, &si);
+  if (status > 0)
+    stp_end_job(img.v, &si);
 
   if (f)
     {
