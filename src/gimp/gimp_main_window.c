@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.36 2001/08/13 22:42:48 easysw Exp $"
+ * "$Id: gimp_main_window.c,v 1.37 2001/08/16 00:14:06 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -275,8 +275,10 @@ gimp_build_printer_combo(void)
 	}
       else
 	{
-	  printer_list[i].name = c_strdup(plist[i].name);
+	  printer_list[i].name = malloc(strlen(plist[i].name) + 2);
 	  printer_list[i].text = malloc(strlen(plist[i].name) + 2);
+	  strcpy((char *)printer_list[i].name + 1, plist[i].name);
+	  ((char *)printer_list[i].name)[0] = '*';
 	  strcpy((char *)printer_list[i].text + 1, plist[i].name);
 	  ((char *)printer_list[i].text)[0] = '*';
 	}
