@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.3.4.2 2003/05/25 01:50:05 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.3.4.3 2003/05/25 02:31:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -227,8 +227,8 @@ DECLARE_INK_CHANNEL(extended_yellow);
 /* For Japanese 7-color printers, with dark yellow */
 static const physical_subchannel_t photo2_yellow_subchannels[] =
 {
-  { 4, 0, 0 },
-  { 4, 2, 0 }
+  { 4, 2, 0 },
+  { 4, 0, 0 }
 };
 
 DECLARE_INK_CHANNEL(photo2_yellow);
@@ -243,20 +243,20 @@ DECLARE_INK_CHANNEL(photo2_black);
 
 static const physical_subchannel_t quadtone_subchannels[] =
 {
-  { 4, -1, 0 },
-  { 1, -1, 0 },
+  { 0, -1, 0 },
   { 2, -1, 0 },
-  { 0, -1, 0 }
+  { 1, -1, 0 },
+  { 4, -1, 0 },
 };
 
 DECLARE_INK_CHANNEL(quadtone);
 
 static const physical_subchannel_t c80_quadtone_subchannels[] =
 {
-  { 4, -1, 240 },
-  { 1, -1, 120 },
+  { 0, -1, 0 },
   { 2, -1, 0 },
-  { 0, -1, 0 }
+  { 1, -1, 120 },
+  { 4, -1, 240 },
 };
 
 DECLARE_INK_CHANNEL(c80_quadtone);
