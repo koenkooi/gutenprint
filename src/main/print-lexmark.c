@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.56 2001/10/07 08:59:59 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.57 2001/10/14 09:42:49 rwisi Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -671,7 +671,7 @@ static const lexmark_cap_t lexmark_model_capabilities[] =
     618, 936,         /* max paper size *//* 8.58" x 13 " */
     INCH(2), INCH(4), /* min paper size */
     2400, 1200, 2, /* max resolution */
-    0, 0, 5, 10, /* 36 border l,r,t,b    unit is 1/72 DPI */
+    0, 0, 5, 15, /* 36 border l,r,t,b    unit is 1/72 DPI */
     LEXMARK_INK_CMY | LEXMARK_INK_CMYK | LEXMARK_INK_CcMmYK,
     LEXMARK_SLOT_ASF1 | LEXMARK_SLOT_MAN1,
     LEXMARK_CAP_DMT,
