@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.15.4.11 2002/09/20 02:39:56 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.15.4.12 2002/09/22 22:22:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3254,7 +3254,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     32, 1, 4, 32, 1, 4,
     360, 720, 720, 14400, -1, 1440, 720, 90, 90,
     INCH(17 / 2), INCH(44), INCH(2), INCH(4),
-    12, 12, 9, 12, 12, 12, 9, 26, 12, 12, 9, 0, 12, 12, 9, 0,
+    10, 10, 9, 25, 10, 10, 9, 25, 10, 10, 9, 0, 10, 10, 9, 0,
     0, 1, 8, 0, 0, 0, 8,
     sc660_dotsizes,sc660_densities, &simple_inks,
     &standard_paper_list, standard_reslist, &standard_inklist,
