@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.293 2003/10/24 23:10:29 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.294 2003/10/25 21:45:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2228,7 +2228,7 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
       !set_raw_ink_type(v, image))
     return 0;
 
-  pd = (escp2_privdata_t *) stpi_malloc(sizeof(escp2_privdata_t));
+  pd = (escp2_privdata_t *) stpi_zalloc(sizeof(escp2_privdata_t));
   pd->printed_something = 0;
   pd->last_color = -1;
   pd->last_pass_offset = 0;
