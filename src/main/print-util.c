@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.8 2002/05/09 00:43:07 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.9 2002/05/17 00:16:41 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1450,7 +1450,7 @@ stp_minimum_settings()
 }
 
 static int
-stp_vasprintf (char **result, const char *format, va_list *args)
+stp_vasprintf (char **result, const char *format, va_list args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -1458,7 +1458,7 @@ stp_vasprintf (char **result, const char *format, va_list *args)
   int total_width = strlen (format) + 1;
   va_list ap;
 
-  memcpy (&ap, args, sizeof (va_list));
+  memcpy (&ap, &args, sizeof (va_list));
 
   while (*p != '\0')
     {
@@ -1521,7 +1521,7 @@ stp_vasprintf (char **result, const char *format, va_list *args)
 #endif
   *result = malloc (total_width);
   if (*result != NULL)
-    return vsprintf (*result, format, *args);
+    return vsprintf (*result, format, args);
   else
     return 0;
 }
