@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33.4.7 2004/03/28 04:44:47 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.8 2004/03/30 02:51:35 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -977,8 +977,8 @@ olympus_parameters(stp_const_vars_t v, const char *name,
 	  stp_string_list_add_string(description->bounds.str,
 		r->item[i].name, _(res_text));
 	}
-      if (r->n_items < 2)
-        description->is_active = 0;
+      if (r->n_items < 1)
+        description->is_active = 1;
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
     }
