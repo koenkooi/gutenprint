@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.102 2001/06/17 00:01:32 rleigh Exp $
+## $Id: Makefile.am,v 1.103 2001/07/15 16:28:21 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -97,6 +97,9 @@ install-ghost: all
 
 html:
 	$(MAKE) -C doc html
+
+ps:
+	$(MAKE) -C doc ps
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%Y%m%d"`
