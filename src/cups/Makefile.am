@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36 2001/10/13 20:01:16 rleigh Exp $
+## $Id: Makefile.am,v 1.37 2001/10/15 12:40:49 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ ppd-stamp: genppd
 	wdir=`pwd` ; \
 	cd $(top_builddir)/po ; \
 	$(MAKE) ; \
-	$(MAKE) prefix=$${wdir}/catalog install
+	$(MAKE) prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
 	-$(RM) -r ppd
 	-mkdir ppd
 	for language in C $(ALL_LINGUAS) ; do \
