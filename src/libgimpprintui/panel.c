@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.48 2003/09/27 19:56:43 rlk Exp $"
+ * "$Id: panel.c,v 1.49 2003/10/10 02:35:29 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3179,6 +3179,7 @@ new_printer_ok_callback (void)
 	  free(key.name);
 	  free(key.output_to);
 	  stpui_plist_current = stpui_plist_count - 1;
+	  pv = &(stpui_plist[stpui_plist_current]);
 	  build_printer_combo ();
 	  set_printer();
 	}
