@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.31 2001/10/02 00:36:38 rlk Exp $"
+ * "$Id: escputil.c,v 1.32 2001/10/12 00:36:42 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -256,6 +256,7 @@ stp_printer_t printer_list[] =
   { "9500",	"Stylus Pro 9500",	1,	7,	0,	0,	0 },
   { "10000",	"Stylus Pro 10000",	3,	15,	0,	0,	0 },
   { "scan2000",	"Stylus Scan 2000",	3,	15,	0,	0,	0 },  
+  { "scan2500",	"Stylus Scan 2500",	3,	15,	0,	0,	0 },  
   { NULL,	NULL,			0,	0,	0,	0,	0 },
 };
 
