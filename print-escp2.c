@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.29 1999/11/23 02:11:37 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.30 1999/12/05 04:33:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.30  1999/12/05 04:33:43  rlk
+ *   fencepost
+ *
  *   Revision 1.29  1999/11/23 02:11:37  rlk
  *   Rationalize variables, pass 3
  *
@@ -735,6 +738,11 @@ escp2_print(int       model,		/* I - Model */
     }
   }
 
+  if (out_width == 0)
+    out_width = 1;
+  if (out_height == 0)
+    out_height = 1;
+
  /*
   * Landscape width/height...
   */
@@ -887,9 +895,11 @@ escp2_print(int       model,		/* I - Model */
 		  fwrite("\033U\000", 3, 1, prn); /* Unidirectional */
 		else
 		  fwrite("\033U\000", 3, 1, prn); /* Unidirectional */
+#if 0
 		fwrite("\033(i\001\000\000", 6, 1, prn); /* Microweave off! */
+#endif
 		initialize_weave(nozzles, nozzle_separation, horizontal_passes);
-		fwrite("\033(e\002\000\000\001", 7, 1, prn);	/* Microdots */
+		fwrite("\033(e\002\000\000\004", 7, 1, prn);	/* Microdots */
 	      }
 	    else
 	      {
@@ -2149,5 +2159,5 @@ escp2_write_weave(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.29 1999/11/23 02:11:37 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.30 1999/12/05 04:33:43 rlk Exp $".
  */
