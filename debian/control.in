@@ -54,6 +54,7 @@ Section: devel
 Depends: libgimpprint#LIBRARY_VERSION# (= ${Source-Version})
 Provides: libgimpprint-dev
 Conflicts: libgimpprint-dev
+Replaces: libgimpprint-dev
 Description: Header files and extras for compiling programs with libgimpprint
  This package contains the header files for the libgimpprint library,
  along with a static version of libgimpprint.
@@ -74,6 +75,7 @@ Description: Header files and extras for compiling programs with libgimpprint
 Package: libgimpprint#LIBRARY_VERSION#-doc
 Architecture: all
 Section: doc
+Replaces: libgimpprint-doc
 Suggests: libgimpprint#LIBRARY_VERSION# (= ${Source-Version})
 Description: Documentation and example code for the libgimpprint library
  This package contains lots of info-files, DVI docs and other
