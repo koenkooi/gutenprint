@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.24 2000/08/06 18:01:24 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.25 2000/08/22 11:56:36 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -46,8 +46,13 @@
 /*
  * Constants for GUI...
  */
+#ifdef EXPANDED_PREVIEW_WINDOW
+#define PREVIEW_SIZE_VERT  360 /* Assuming max media size of 24" A2 */
+#define PREVIEW_SIZE_HORIZ 280 /* Assuming max media size of 24" A2 */
+#else
 #define PREVIEW_SIZE_VERT  240 /* Assuming max media size of 24" A2 */
 #define PREVIEW_SIZE_HORIZ 240 /* Assuming max media size of 24" A2 */
+#endif
 
 #if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
 #define GIMP_1_0
