@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2003/06/08 00:24:57 rlk Exp $
+## $Id: Makefile.am,v 1.13 2003/06/29 16:48:17 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,10 +33,17 @@ noinst_HEADERS = gimp-print-intl.h gimp-print-intl-internal.h
 pkginclude_HEADERS = \
 	gimp-print.h \
 	array.h \
+	color.h \
 	curve.h \
 	sequence.h \
 	gimp-print-ui.h \
-	color.h
+	image.h \
+	paper.h \
+	printers.h \
+	sequence.h \
+	string-list.h \
+	util.h \
+	vars.h
 
 nodist_pkginclude_HEADERS = gimp-print-version.h
 
