@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.3 2002/10/03 01:51:41 rlk Exp $
+## $Id: Makefile.am,v 1.4 2002/12/09 21:39:59 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,25 +30,29 @@ MAINT_CHARSET = latin1
 EXTRA_DIST = \
 	changelog \
 	compat \
-	control \
 	control.in \
 	copyright \
 	cupsys-driver-gimpprint.docs \
-	cupsys-driver-gimpprint.files \
+	cupsys-driver-gimpprint.install \
 	cupsys-driver-gimpprint.postinst \
 	cupsys-driver-gimpprint.postrm \
 	escputil.docs \
-	escputil.files \
-	foomatic-db-gimp-print.files \
+	escputil.install \
+	foomatic-db-gimp-print.install \
 	gimp1.2-print.docs \
+	gimp1.2-print.files \
+	gimp1.2-print.install \
 	gimp1.2-print.postrm \
 	gimp1.2-print.preinst \
 	gimpprint-doc.doc-base \
-	gimpprint-locales.files \
+	gimpprint-doc.install \
+	gimpprint-locales.install \
+	ijsgimpprint.install \
 	libgimpprint-dev.docs \
-	libgimpprint-dev.files \
+	libgimpprint-dev.install \
 	libgimpprint-doc.doc-base.in \
-	libgimpprint.files \
+	libgimpprint-doc.install.in \
+	libgimpprint.install \
 	README.building \
 	README.Debian \
 	rules
@@ -57,7 +61,7 @@ EXTRA_DIST = \
 ## Rules
 
 dist-hook:
-# Create debian/control
+# Distribute debian/control (not in EXTRA_DIST to avoid $(srcdir) dependencies
 	DEBIAN_VERSION=`grep "(" $(srcdir)/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
 	UPSTREAM_VERSION=`echo $$DEBIAN_VERSION | sed "s/-[^-]*$$//"` ; \
 	LIBRARY_VERSION="-$${UPSTREAM_VERSION}" ; \
@@ -78,7 +82,8 @@ deb: debian/changelog debian/control debian/rules
 	cd .. ; \
 	$(RM) -r $(PACKAGE)-$(VERSION)
 
-debian/control:
+control:
+	cd ..; \
 	debian/rules debian/control
 
 
