@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17 2003/06/19 23:09:22 rlk Exp $
+## $Id: Makefile.am,v 1.18 2003/11/22 02:48:56 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -58,9 +58,7 @@ printers_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
 
 ## Data
 
-if BUILD_TESTPATTERN
 pkgdata_DATA = testpattern.sample extended.sample
-endif
 
 
 ## Clean
