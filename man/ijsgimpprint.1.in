@@ -1,5 +1,5 @@
 .\" t
-.\" $Id: ijsgimpprint.1.in,v 1.3 2002/10/28 22:29:42 rleigh Exp $
+.\" $Id: ijsgimpprint.1.in,v 1.4 2002/11/03 20:26:45 rlk Exp $
 .\" Copyright (C) 2000-2002 Robert Krawitz <rlk@alum.mit.edu>
 .\"                         Roger Leigh <roger@whinlatter.uklinux.net>
 .\"
@@ -150,7 +150,7 @@ of values, may be found in
 .BR gimpprint-color (7).
 .SH DITHERING ALGORITHMS
 .TP
-\fBDither\fP=\fIalgorithm\fP
+\fBDitherAlgorithm\fP=\fIalgorithm\fP
 Possible values for \fIalgorithm\fP may be found in
 .BR gimpprint-dithers (7).
 .SH OUTPUT TYPE
