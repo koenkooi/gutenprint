@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.18 2003/01/20 19:07:17 rleigh Exp $
+## $Id: Makefile.am,v 1.19 2003/10/28 12:07:25 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,6 @@ endif
 
 MAIN_MAN = \
 	gimpprint.3 \
-	gimpprint-config.1 \
 	gimpprint-color.7 \
 	gimpprint-dithers.7 \
 	gimpprint-imagetypes.7 \
