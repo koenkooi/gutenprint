@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.198.2.3 2000/08/05 00:18:02 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.198.2.4 2000/08/05 02:23:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -789,8 +789,7 @@ escp2_parameters(const printer_t *printer,	/* I - Printer model */
 
 void
 escp2_imageable_area(const printer_t *printer,	/* I - Printer model */
-                     char *ppd_file,	/* I - PPD file (not used) */
-                     char *media_size,	/* I - Media size */
+		     const vars_t *v,   /* I */
                      int  *left,	/* O - Left position in points */
                      int  *right,	/* O - Right position in points */
                      int  *bottom,	/* O - Bottom position in points */
@@ -798,10 +797,24 @@ escp2_imageable_area(const printer_t *printer,	/* I - Printer model */
 {
   int	width, length;			/* Size of page */
 
-  default_media_size(printer, ppd_file, media_size, &width, &length);
+  default_media_size(printer, v, &width, &length);
   *left =	escp2_left_margin(printer->model);
   *right =	width - escp2_right_margin(printer->model);
   *top =	length - escp2_top_margin(printer->model);
+  *bottom =	escp2_bottom_margin(printer->model);
+}
+
+void
+escp2_margins(const printer_t *printer,	/* I - Printer model */
+	      const vars_t *v,  	/* I */
+	      int  *left,		/* O - Left position in points */
+	      int  *right,		/* O - Right position in points */
+	      int  *bottom,		/* O - Bottom position in points */
+	      int  *top)		/* O - Top position in points */
+{
+  *left =	escp2_left_margin(printer->model);
+  *right =	escp2_right_margin(printer->model);
+  *top =	escp2_top_margin(printer->model);
   *bottom =	escp2_bottom_margin(printer->model);
 }
 
@@ -1040,9 +1053,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
 {
   unsigned char *cmap = v->cmap;
   int		model = printer->model;
-  char 		*ppd_file = v->ppd_file;
   char 		*resolution = v->resolution;
-  char 		*media_size = v->media_size;
   char		*media_type = v->media_type;
   int 		output_type = v->output_type;
   int		orientation = v->orientation;
@@ -1139,7 +1150,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
  /*
   * Compute the output size...
   */
-  escp2_imageable_area(printer, ppd_file, media_size, &page_left, &page_right,
+  escp2_imageable_area(printer, &nv, &page_left, &page_right,
                        &page_bottom, &page_top);
 
   compute_page_parameters(page_right, page_left, page_top, page_bottom,
@@ -1196,7 +1207,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
  /*
   * Send ESC/P2 initialization commands...
   */
-  default_media_size(printer, ppd_file, media_size, &n, &page_length);
+  default_media_size(printer, &nv, &n, &page_length);
   page_length += (39 + (escp2_nozzles(model) * 2) *
 		  escp2_nozzle_separation(model)) / 10; /* Top and bottom */
   page_top = 0;

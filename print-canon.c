@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.69.2.3 2000/08/05 00:18:02 rlk Exp $"
+ * "$Id: print-canon.c,v 1.69.2.4 2000/08/05 02:23:45 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -327,20 +327,24 @@ canon_printhead_type(const char *name, canon_cap_t caps)
 }
 
 static unsigned char
-canon_size_type(const char *name, canon_cap_t caps)
+canon_size_type(const vars_t *v, canon_cap_t caps)
 {
-  /* built ins: */
-  if (!strcmp(name,"A5"))          return 0x01;
-  if (!strcmp(name,"A4"))          return 0x03;
-  if (!strcmp(name,"B5"))          return 0x08;
-  if (!strcmp(name,"Letter"))      return 0x0d;
-  if (!strcmp(name,"Legal"))       return 0x0f;
-  if (!strcmp(name,"Envelope 10")) return 0x16;
-  if (!strcmp(name,"Envelope DL")) return 0x17;
-  if (!strcmp(name,"Letter+"))     return 0x2a;
-  if (!strcmp(name,"A4+"))         return 0x2b;
-  if (!strcmp(name,"Canon 4x2"))   return 0x2d;
-
+  const papersize_t *pp = get_papersize_by_size(v->page_height, v->page_width);
+  if (pp)
+    {
+      const char *name = pp->name;
+      /* built ins: */
+      if (!strcmp(name,"A5"))          return 0x01;
+      if (!strcmp(name,"A4"))          return 0x03;
+      if (!strcmp(name,"B5"))          return 0x08;
+      if (!strcmp(name,"Letter"))      return 0x0d;
+      if (!strcmp(name,"Legal"))       return 0x0f;
+      if (!strcmp(name,"Envelope 10")) return 0x16;
+      if (!strcmp(name,"Envelope DL")) return 0x17;
+      if (!strcmp(name,"Letter+"))     return 0x2a;
+      if (!strcmp(name,"A4+"))         return 0x2b;
+      if (!strcmp(name,"Canon 4x2"))   return 0x2d;
+    }
   /* custom */
 
 #ifdef DEBUG
@@ -538,8 +542,7 @@ canon_parameters(const printer_t *printer,	/* I - Printer model */
 
 void
 canon_imageable_area(const printer_t *printer,	/* I - Printer model */
-                     char *ppd_file,	/* I - PPD file (not used) */
-                     char *media_size,	/* I - Media size */
+		     const vars_t *v,   /* I */
                      int  *left,	/* O - Left position in points */
                      int  *right,	/* O - Right position in points */
                      int  *bottom,	/* O - Bottom position in points */
@@ -549,11 +552,27 @@ canon_imageable_area(const printer_t *printer,	/* I - Printer model */
 
   canon_cap_t caps= canon_get_model_capabilities(printer->model);
 
-  default_media_size(printer, ppd_file, media_size, &width, &length);
+  default_media_size(printer, v, &width, &length);
 
   *left   = caps.border_left;
   *right  = width - caps.border_right;
   *top    = length - caps.border_top;
+  *bottom = caps.border_bottom;
+}
+
+void
+canon_margins(const printer_t *printer,	/* I - Printer model */
+	      const vars_t *v,   /* I */
+	      int  *left,	/* O - Left position in points */
+	      int  *right,	/* O - Right position in points */
+	      int  *bottom,	/* O - Bottom position in points */
+	      int  *top)		/* O - Top position in points */
+{
+  canon_cap_t caps= canon_get_model_capabilities(printer->model);
+
+  *left   = caps.border_left;
+  *right  = caps.border_right;
+  *top    = caps.border_top;
   *bottom = caps.border_bottom;
 }
 
@@ -612,7 +631,7 @@ canon_cmd(FILE *prn, /* I - the printer         */
 static void
 canon_init_printer(FILE *prn, canon_cap_t caps,
 		   int output_type, char *media_str,
-		   char *size_str, int print_head,
+		   const vars_t *v, int print_head,
 		   char *source_str,
 		   int xdpi, int ydpi,
 		   int page_width, int page_height,
@@ -656,7 +675,7 @@ canon_init_printer(FILE *prn, canon_cap_t caps,
   int printable_width=  page_width*10/12;
   int printable_height= page_height*10/12;
 
-  arg_6d_a= canon_size_type(size_str,caps);
+  arg_6d_a= canon_size_type(v,caps);
   if (!arg_6d_a) arg_6d_b= 1;
 
   if (caps.model<3000)
@@ -783,9 +802,7 @@ canon_print(const printer_t *printer,		/* I - Model */
 {
   unsigned char *cmap = v->cmap;
   int		model = printer->model;
-  char 		*ppd_file = v->ppd_file;
   char 		*resolution = v->resolution;
-  char 		*media_size = v->media_size;
   char          *media_type = v->media_type;
   char          *media_source = v->media_source;
   int 		output_type = v->output_type;
@@ -900,7 +917,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   * Compute the output size...
   */
 
-  canon_imageable_area(printer, ppd_file, media_size, &page_left, &page_right,
+  canon_imageable_area(printer, &nv, &page_left, &page_right,
                        &page_bottom, &page_top);
 
   compute_page_parameters(page_right, page_left, page_top, page_bottom,
@@ -911,7 +928,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   image_height = Image_height(image);
   image_width = Image_width(image);
 
-  default_media_size(printer, ppd_file, media_size, &n, &page_length);
+  default_media_size(printer, &nv, &n, &page_length);
 
   /*
   PUT("top        ",top,72);
@@ -933,7 +950,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   PUT("left    ",left,72);
 
   canon_init_printer(prn, caps, output_type, media_type,
-		     media_size, printhead, media_source,
+		     &nv, printhead, media_source,
 		     xdpi, ydpi, page_width, page_height,
 		     top,left,use_dmt);
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.36.2.2 2000/08/05 00:18:02 rlk Exp $"
+ * "$Id: print-ps.c,v 1.36.2.3 2000/08/05 02:23:46 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -155,8 +155,7 @@ ps_parameters(const printer_t *printer,	/* I - Printer model */
 
 void
 ps_media_size(const printer_t *printer,	/* I - Printer model */
-              char *ppd_file,		/* I - PPD file (not used) */
-              char *media_size,		/* I - Media size */
+	      const vars_t *v,		/* I */
               int  *width,		/* O - Width in points */
               int  *length)		/* O - Length in points */
 {
@@ -168,10 +167,12 @@ ps_media_size(const printer_t *printer,	/* I - Printer model */
          media_size, width, length);
 #endif /* DEBUG */
 
-  if ((dimensions = ppd_find(ppd_file, "PaperDimension", media_size, NULL)) != NULL)
+  if ((dimensions = ppd_find(v->ppd_file, "PaperDimension", v->media_size,
+			     NULL))
+      != NULL)
     sscanf(dimensions, "%d%d", width, length);
   else
-    default_media_size(printer, ppd_file, media_size, width, length);
+    default_media_size(printer, v, width, length);
 }
 
 
@@ -181,8 +182,7 @@ ps_media_size(const printer_t *printer,	/* I - Printer model */
 
 void
 ps_imageable_area(const printer_t *printer,	/* I - Printer model */
-                  char *ppd_file,	/* I - PPD file (not used) */
-                  char *media_size,	/* I - Media size */
+		  const vars_t *v,      /* I */
                   int  *left,		/* O - Left position in points */
                   int  *right,		/* O - Right position in points */
                   int  *bottom,		/* O - Bottom position in points */
@@ -195,7 +195,8 @@ ps_imageable_area(const printer_t *printer,	/* I - Printer model */
 	ftop;
 
 
-  if ((area = ppd_find(ppd_file, "ImageableArea", media_size, NULL)) != NULL)
+  if ((area = ppd_find(v->ppd_file, "ImageableArea", v->media_size, NULL))
+      != NULL)
   {
 #ifdef DEBUG
     printf("area = \'%s\'\n", area);
@@ -212,10 +213,38 @@ ps_imageable_area(const printer_t *printer,	/* I - Printer model */
   }
   else
   {
-    default_media_size(printer, ppd_file, media_size, right, top);
+    default_media_size(printer, v, right, top);
     *left   = 18;
     *right  -= 18;
     *top    -= 36;
+    *bottom = 36;
+  }
+}
+
+void
+ps_margins(const printer_t *printer,	/* I - Printer model */
+		  const vars_t *v,      /* I */
+                  int  *left,		/* O - Left position in points */
+                  int  *right,		/* O - Right position in points */
+                  int  *bottom,		/* O - Bottom position in points */
+                  int  *top)		/* O - Top position in points */
+{
+  char	*area;				/* Imageable area of media */
+  float	fleft,				/* Floating point versions */
+	fright,
+	fbottom,
+	ftop;
+
+  if ((area = ppd_find(v->ppd_file, "ImageableArea", v->media_size, NULL))
+      != NULL)
+  {
+    *left = *right = *bottom = *top = 0;
+  }
+  else
+  {
+    *left   = 18;
+    *right  = 18;
+    *top    = 36;
     *bottom = 36;
   }
 }
@@ -302,7 +331,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   * Compute the output size...
   */
 
-  ps_imageable_area(printer, ppd_file, media_size, &page_left, &page_right,
+  ps_imageable_area(printer, &nv, &page_left, &page_right,
                     &page_bottom, &page_top);
   compute_page_parameters(page_right, page_left, page_top, page_bottom,
 			  scaling, image_width, image_height, image,

@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28.2.4 2000/08/05 00:18:03 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.5 2000/08/05 02:23:46 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -108,6 +108,8 @@ private privdata_t stp_data =
     0,				/* image type */
     0,				/* unit */
     1.0,			/* application gamma */
+    0,				/* Page width */
+    0,				/* Page height */
     NULL,			/* lookup table */
     NULL			/* Color map */
   }
@@ -125,7 +127,6 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
 {
   fprintf(stderr,"%s Settings: r: %d  g: %d  b: %d\n",
 	  msg, stp_data->v.red, stp_data->v.green, stp_data->v.blue);
-  fprintf(stderr, "Media size %s\n", stp_data->v.media_size);
   fprintf(stderr, "Ink type %s\n", stp_data->v.ink_type);
 
   fprintf(stderr,"Settings: model: %d  bright: %d  contrast: %d\n",
@@ -200,6 +201,11 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;
+  fprintf(stderr, "MediaSize[0] = %f, MediaSize[1] = %f\n",
+	  (double) pdev->MediaSize[0], (double) pdev->MediaSize[1]);
+
+  stp_data.v.page_width = pdev->MediaSize[0];
+  stp_data.v.page_height = pdev->MediaSize[1];
   if (verify_printer_params(printer, &(stp_data.v)))
     (*printer->print)(printer,		/* I - Model */
 		      1,		/* I - Number of copies */
@@ -260,7 +266,6 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
   stp_print_debug("stp_get_params(0)", pdev, &stp_data);
   code = gdev_prn_get_params(pdev, plist);
   stp_print_debug("stp_get_params(1)", pdev, &stp_data);
-  param_string_from_string(pmediasize, stp_data.v.media_size);
   param_string_from_string(pmediatype, stp_data.v.media_type);
   param_string_from_string(pmediasource, stp_data.v.media_source);
   param_string_from_string(pinktype, stp_data.v.ink_type);
@@ -320,7 +325,6 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_print_debug("stp_put_params", pdev, &stp_data);
 
   param_string_from_string(pmodel, stp_data.v.driver);
-  param_string_from_string(pmediasize, stp_data.v.media_size);
   param_string_from_string(pmediasource, stp_data.v.media_source);
   param_string_from_string(pmediatype, stp_data.v.media_type);
   param_string_from_string(pinktype, stp_data.v.ink_type);
@@ -398,8 +402,6 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_data.v.output_type = color;
   stp_data.v.image_type = itype;
   strncpy(stp_data.v.driver, pmodel.data, sizeof(stp_data.v.driver) - 1);
-  strncpy(stp_data.v.media_size, pmediasize.data,
-	  sizeof(stp_data.v.media_size) - 1);
   strncpy(stp_data.v.media_type, pmediatype.data,
 	  sizeof(stp_data.v.media_type) - 1);
   strncpy(stp_data.v.media_source, pmediasource.data,
@@ -414,16 +416,6 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_data.v.saturation = sat;
   stp_data.v.density = den;
 
-  {
-    byte a;
-
-    a = *stp_data.v.media_size;
-    a &= 255-32;      /* quick`n`dirty lcase->ucase for first letter ;-) */
-    *stp_data.v.media_size = a;
-#if 0
-    fprintf(stderr,"Media defined: %s\n",stp_data.v.media_size);
-#endif
-  }
 #if 0
   fprintf(stderr,"Ink type: |%s|\n",stp_data.v.ink_type);
 #endif
@@ -508,18 +500,16 @@ stp_open(gx_device *pdev)
   strcpy(none,"");
 
   (*printer->media_size)(printer,
-			 none,
-			 stp_data.v.media_size,
+			 &(stp_data.v),
 			 &width,
 			 &length);
 
-  (*printer->imageable_area)(printer,	/* I - Printer model */
-			     none,	/* I - PPD file (not used) */
-			     stp_data.v.media_size,	/* I - Media size */
-			     &left,	/* O - Left position in points */
-			     &right,	/* O - Right position in points */
-			     &bottom,	/* O - Bottom position in points */
-			     &top);	/* O - Top position in points */
+  (*printer->margins)(printer,	/* I - Printer model */
+		      &(stp_data.v),
+		      &left,	/* O - Left position in points */
+		      &right,	/* O - Right position in points */
+		      &bottom,	/* O - Bottom position in points */
+		      &top);	/* O - Top position in points */
 
   st[1] = (float)bottom / 72;        /* bottom margin */
   st[3] = (float)(length-top) / 72;  /* top margin    */

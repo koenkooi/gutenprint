@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.104.2.1 2000/08/05 00:18:03 rlk Exp $"
+ * "$Id: print.c,v 1.104.2.2 2000/08/05 02:23:46 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -121,7 +121,9 @@ vars_t vars =
 	1.0,			/* Density */
 	IMAGE_CONTINUOUS,	/* Image type */
 	0,			/* Unit 0=Inch */
-	1.0			/* Application gamma placeholder */
+	1.0,			/* Application gamma placeholder */
+	0,			/* Page width */
+	0			/* Page height */
 };
 
 int		plist_current = 0,	/* Current system printer */
@@ -388,6 +390,8 @@ run (char   *name,		/* I - Name of print program. */
        * Possibly retrieve data...
        */
       gimp_get_data (PLUG_IN_NAME, &vars);
+      vars.page_width = 0;
+      vars.page_height = 0;
 
       current_printer = get_printer_by_driver (vars.driver);
 
@@ -510,6 +514,8 @@ run (char   *name,		/* I - Name of print program. */
        * Possibly retrieve data...
        */
       gimp_get_data (PLUG_IN_NAME, &vars);
+      vars.page_width = 0;
+      vars.page_height = 0;
 
       current_printer = get_printer_by_driver (vars.driver);
       break;
@@ -1170,5 +1176,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.104.2.1 2000/08/05 00:18:03 rlk Exp $".
+ * End of "$Id: print.c,v 1.104.2.2 2000/08/05 02:23:46 rlk Exp $".
  */

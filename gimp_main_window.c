@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.34 2000/07/22 14:04:42 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.34.2.1 2000/08/05 02:23:45 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1746,11 +1746,10 @@ gimp_preview_update (void)
   gint          paper_left, paper_top;
   double		unit_scaler = 72.0;
 
-  (*current_printer->media_size) (current_printer, vars.ppd_file,
-				  vars.media_size, &paper_width, &paper_height);
+  (*current_printer->media_size)(current_printer, &vars, &paper_width,
+				 &paper_height);
 
-  (*current_printer->imageable_area) (current_printer, vars.ppd_file,
-				      vars.media_size, &left, &right,
+  (*current_printer->imageable_area) (current_printer, &vars, &left, &right,
 				      &bottom, &top);
 
   /* Rationalise things a bit by measuring everything from the top left */

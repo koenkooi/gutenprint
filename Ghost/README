@@ -330,17 +330,6 @@ six color printers.
 Adaptive hybrid dithering usually gives the best results overall.
 
 
-Currently supported Media Size:
---------- --------- ----- ----------
-
-(important: always use lower case names)
-
--sPAPERSIZE=letter
--sPAPERSIZE=legal
--sPAPERSIZE=a4
--sPAPERSIZE=a3
-
-
 Ink Types
 --- -----
 

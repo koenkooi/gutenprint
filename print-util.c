@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.111.2.1 2000/08/05 00:18:03 rlk Exp $"
+ * "$Id: print-util.c,v 1.111.2.2 2000/08/05 02:23:46 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1115,24 +1115,44 @@ get_papersize_by_name(const char *name)
   return NULL;
 }
 
+const papersize_t *
+get_papersize_by_size(int l, int w)
+{
+  const papersize_t *val = &(paper_sizes[0]);
+  while (strlen(val->name) > 0)
+    {
+      if (val->width == w && val->length == l)
+	return val;
+      val++;
+    }
+  return NULL;
+}
+
 void
 default_media_size(const printer_t *printer,
 					/* I - Printer model (not used) */
-        	   char *ppd_file,	/* I - PPD file (not used) */
-        	   char *media_size,	/* I - Media size */
+		   const vars_t *v,	/* I */
         	   int  *width,		/* O - Width in points */
         	   int  *length)	/* O - Length in points */
 {
-  const papersize_t *papersize = get_papersize_by_name(media_size);
-  if (!papersize)
+  if (v->page_width > 0 && v->page_height > 0)
     {
-      *width = 1;
-      *length = 1;
+      *width = v->page_width;
+      *length = v->page_height;
     }
   else
     {
-      *width = papersize->width;
-      *length = papersize->length;
+      const papersize_t *papersize = get_papersize_by_name(v->media_size);
+      if (!papersize)
+	{
+	  *width = 1;
+	  *length = 1;
+	}
+      else
+	{
+	  *width = papersize->width;
+	  *length = papersize->length;
+	}
     }
 }
 
