@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.5 2002/04/06 15:41:23 rlk Exp $
+dnl $Id: configure.ac,v 1.6 2002/04/09 23:02:21 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.5 $)
+AC_REVISION($Revision: 1.6 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -503,14 +503,15 @@ dnl The following is used to build a "utility library" in lib/
 AC_REPLACE_FUNCS(xgetcwd xmalloc)
 AC_CHECK_FUNC(asprintf,
   AC_DEFINE(HAVE_ASPRINTF,, [Define if you have the `asprintf' function.]),
-  LIBOBJS="${LIBOBJS} vasprintf.o")
+  AC_LIBOBJ(vasprintf))
 AC_CHECK_FUNC(vasprintf,
   AC_DEFINE(HAVE_VASPRINTF,, [Define if you have the `vasprintf' function.]),
-  LIBOBJS="${LIBOBJS} vasprintf.o")
+  AC_LIBOBJ(vasprintf))
 AC_SUBST(PRINT_VASPRINTF)
 AC_CHECK_FUNC(getopt_long,
   AC_DEFINE(HAVE_GETOPT_LONG,, [Define if you have the `getopt_long' function.]),
-  LIBOBJS="${LIBOBJS} getopt.o getopt1.o")
+  AC_LIBOBJ(getopt)
+  AC_LIBOBJ(getopt1))
 
 dnl Define what has to be built
 AM_CONDITIONAL(BUILD_FOOMATIC, test x${BUILD_FOOMATIC} = xyes)
@@ -568,8 +569,11 @@ AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
 
 
 dnl Define LTLIBOBJS
-LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.o/.lo/g'`
+AC_CONFIG_COMMANDS_PRE(
+[LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.o/.lo/g'`
+AC_SUBST(LTLIBOBJS)
 LTALLOCA=`echo "$ALLOCA" | sed 's/\.o/.lo/g'`
+AC_SUBST(LTALLOCA)])
 
 dnl Definitions
 AC_DEFINE_UNQUOTED(CUPS_DATADIR, "${cups_exec_prefix}/share/cups", [CUPS data directory.])
@@ -625,8 +629,6 @@ AC_SUBST(INCLUDES)
 LIBGIMPPRINT_LIBS="${LIBGIMPPRINT_LIBS} ${GIMPPRINT_DEPLIBS}"
 AC_SUBST(LIBGIMPPRINT_LIBS)
 AC_SUBST(LIBREADLINE_DEPS)
-AC_SUBST(LTLIBOBJS)
-AC_SUBST(LTALLOCA)
 AC_SUBST(MAIN_BIN)
 AC_SUBST(MAIN_DAT)
 AC_SUBST(MAIN_MAN)
