@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.27 2004/03/24 13:04:24 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.28 2004/03/24 22:38:06 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1476,6 +1476,39 @@ FAST_RGB_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
 FAST_RGB_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(rgb, rgb_fast)
 
+#define RAW_RGB_TO_COLOR_FUNC(C, T, bits)				  \
+static unsigned								  \
+rgb_##bits##_to_##C##_raw(stp_const_vars_t vars, const unsigned char *in, \
+			  unsigned short *out)				  \
+{									  \
+  int i;								  \
+  int j;								  \
+  int nz = 0;								  \
+  const T *s_in = (const T *) in;					  \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	  \
+  unsigned mask = 0;							  \
+  if (lut->invert_output)						  \
+    mask = 0xffff;							  \
+									  \
+  for (i = 0; i < lut->image_width; i++)				  \
+    {									  \
+      unsigned bit = 1;							  \
+      for (j = 0; j < 3; j++, bit += bit)				  \
+	{								  \
+	  out[j] = s_in[j] ^ mask;					  \
+	  if (out[j])							  \
+	    nz |= bit;							  \
+	}								  \
+      s_in += 3;							  \
+      out += 3;								  \
+    }									  \
+  return nz;								  \
+}
+
+RAW_RGB_TO_COLOR_FUNC(rgb, unsigned char, 8)
+RAW_RGB_TO_COLOR_FUNC(rgb, unsigned short, 16)
+GENERIC_COLOR_FUNC(rgb, rgb_raw)
+
 /*
  * 'gray_to_rgb()' - Convert gray image data to RGB.
  */
@@ -1538,6 +1571,37 @@ GENERIC_COLOR_FUNC(gray, cmy)
 GRAY_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
 GRAY_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(gray, rgb)
+
+#define GRAY_TO_COLOR_RAW_FUNC(C, T, bits)				   \
+static unsigned								   \
+gray_##bits##_to_##C##_raw(stp_const_vars_t vars, const unsigned char *in, \
+			   unsigned short *out)				   \
+{									   \
+  int i;								   \
+  int nz = 0;								   \
+  const T *s_in = (const T *) in;					   \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
+  unsigned mask = 0;							   \
+  if (lut->invert_output)						   \
+    mask = 0xffff;							   \
+									   \
+  for (i = 0; i < lut->image_width; i++)				   \
+    {									   \
+      unsigned outval = s_in[0] ^ mask;					   \
+      out[0] = outval;							   \
+      out[1] = outval;							   \
+      out[2] = outval;							   \
+      if (outval)							   \
+	nz = 7;								   \
+      s_in++;								   \
+      out += 3;								   \
+    }									   \
+  return nz;								   \
+}
+
+GRAY_TO_COLOR_RAW_FUNC(rgb, unsigned char, 8)
+GRAY_TO_COLOR_RAW_FUNC(rgb, unsigned short, 16)
+GENERIC_COLOR_FUNC(gray, rgb_raw)
 
 #define RGB_TO_KCMY_FUNC(name, name2, name3, bits)			   \
 static unsigned								   \
@@ -1829,8 +1893,8 @@ COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, kcmy_8, 4, 4)
 COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, kcmy_16, 4, 4)
 GENERIC_COLOR_FUNC(kcmy, gray_threshold)
 
-COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, rgb_8, 3, 4)
-COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, rgb_16, 3, 4)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, rgb_8, 3, 3)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, rgb_16, 3, 3)
 GENERIC_COLOR_FUNC(rgb, gray_threshold)
 
 COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, gray_8, 1, 1)
@@ -1978,11 +2042,6 @@ KCMY_TO_KCMY_FUNC(unsigned char, 8)
 KCMY_TO_KCMY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(kcmy, kcmy)
 
-/*
- * 'gray_to_gray()' - Convert grayscale image data to grayscale (brightness
- *                    adjusted).
- */
-
 
 #define GRAY_TO_GRAY_FUNC(T, bits)					 \
 static unsigned								 \
@@ -2023,10 +2082,6 @@ gray_##bits##_to_gray(stp_const_vars_t vars,				 \
 GRAY_TO_GRAY_FUNC(unsigned char, 8)
 GRAY_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(gray, gray)
-
-/*
- * 'rgb_to_gray()' - Convert RGB image data to grayscale.
- */
 
 #define COLOR_TO_GRAY_FUNC(T, bits)					   \
 static unsigned								   \
@@ -2189,6 +2244,186 @@ kcmy_##bits##_to_gray(stp_const_vars_t vars,				    \
 KCMY_TO_GRAY_FUNC(unsigned char, 8)
 KCMY_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(kcmy, gray)
+
+#define GRAY_TO_GRAY_RAW_FUNC(T, bits)					\
+static unsigned								\
+gray_##bits##_to_gray_raw(stp_const_vars_t vars,			\
+			  const unsigned char *in,			\
+			  unsigned short *out)				\
+{									\
+  int i;								\
+  int nz = 0;								\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int width = lut->image_width;						\
+  unsigned mask = 0;							\
+  if (lut->invert_output)						\
+    mask = 0xffff;							\
+									\
+  memset(out, 0, width * sizeof(unsigned short));			\
+									\
+  for (i = 0; i < lut->image_width; i++)				\
+    {									\
+      out[0] = s_in[0] ^ mask;						\
+      nz |= out[0];							\
+      s_in ++;								\
+      out ++;								\
+    }									\
+  return nz == 0;							\
+}
+
+GRAY_TO_GRAY_RAW_FUNC(unsigned char, 8)
+GRAY_TO_GRAY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(gray, gray_raw)
+
+#define COLOR_TO_GRAY_RAW_FUNC(T, bits)					\
+static unsigned								\
+rgb_##bits##_to_gray_raw(stp_const_vars_t vars,				\
+			 const unsigned char *in,			\
+			 unsigned short *out)				\
+{									\
+  int i;								\
+  int i0 = -1;								\
+  int i1 = -1;								\
+  int i2 = -1;								\
+  int o0 = 0;								\
+  int nz = 0;								\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int l_red = LUM_RED;							\
+  int l_green = LUM_GREEN;						\
+  int l_blue = LUM_BLUE;						\
+									\
+  if (!lut->invert_output)						\
+    {									\
+      l_red = (100 - l_red) / 2;					\
+      l_green = (100 - l_green) / 2;					\
+      l_blue = (100 - l_blue) / 2;					\
+    }									\
+									\
+  for (i = 0; i < lut->image_width; i++)				\
+    {									\
+      if (i0 != s_in[0] || i1 != s_in[1] || i2 != s_in[2])		\
+	{								\
+	  i0 = s_in[0];							\
+	  i1 = s_in[1];							\
+	  i2 = s_in[2];							\
+	  o0 = (i0 * l_red + i1 * l_green + i2 * l_blue) / 100;		\
+	  nz |= o0;							\
+	}								\
+      out[0] = o0;							\
+      s_in += 3;							\
+      out ++;								\
+    }									\
+  return nz == 0;							\
+}
+
+COLOR_TO_GRAY_RAW_FUNC(unsigned char, 8)
+COLOR_TO_GRAY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(rgb, gray_raw)
+
+
+#define CMYK_TO_GRAY_RAW_FUNC(T, bits)					    \
+static unsigned								    \
+cmyk_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
+			  const unsigned char *in,			    \
+			  unsigned short *out)				    \
+{									    \
+  int i;								    \
+  int i0 = -1;								    \
+  int i1 = -1;								    \
+  int i2 = -1;								    \
+  int i3 = -4;								    \
+  int o0 = 0;								    \
+  int nz = 0;								    \
+  const T *s_in = (const T *) in;					    \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
+  int l_red = LUM_RED;							    \
+  int l_green = LUM_GREEN;						    \
+  int l_blue = LUM_BLUE;						    \
+  int l_white = 0;							    \
+									    \
+  if (!lut->invert_output)						    \
+    {									    \
+      l_red = (100 - l_red) / 3;					    \
+      l_green = (100 - l_green) / 3;					    \
+      l_blue = (100 - l_blue) / 3;					    \
+      l_white = (100 - l_white) / 3;					    \
+    }									    \
+									    \
+  for (i = 0; i < lut->image_width; i++)				    \
+    {									    \
+      if (i0 != s_in[0] || i1 != s_in[1] || i2 != s_in[2] || i3 != s_in[3]) \
+	{								    \
+	  i0 = s_in[0];							    \
+	  i1 = s_in[1];							    \
+	  i2 = s_in[2];							    \
+	  i3 = s_in[3];							    \
+	  o0 =								    \
+	    (i0 * l_red + i1 * l_green + i2 * l_blue + i3 * l_white) / 100; \
+	  nz |= o0;							    \
+	}								    \
+      out[0] = o0;							    \
+      s_in += 4;							    \
+      out ++;								    \
+    }									    \
+  return nz ? 1 : 0;							    \
+}
+
+CMYK_TO_GRAY_RAW_FUNC(unsigned char, 8)
+CMYK_TO_GRAY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(cmyk, gray_raw)
+
+#define KCMY_TO_GRAY_RAW_FUNC(T, bits)					    \
+static unsigned								    \
+kcmy_##bits##_to_gray_raw(stp_const_vars_t vars,			    \
+			  const unsigned char *in,			    \
+			  unsigned short *out)				    \
+{									    \
+  int i;								    \
+  int i0 = -1;								    \
+  int i1 = -1;								    \
+  int i2 = -1;								    \
+  int i3 = -4;								    \
+  int o0 = 0;								    \
+  int nz = 0;								    \
+  const T *s_in = (const T *) in;					    \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
+  int l_red = LUM_RED;							    \
+  int l_green = LUM_GREEN;						    \
+  int l_blue = LUM_BLUE;						    \
+  int l_white = 0;							    \
+									    \
+  if (!lut->invert_output)						    \
+    {									    \
+      l_red = (100 - l_red) / 3;					    \
+      l_green = (100 - l_green) / 3;					    \
+      l_blue = (100 - l_blue) / 3;					    \
+      l_white = (100 - l_white) / 3;					    \
+    }									    \
+									    \
+  for (i = 0; i < lut->image_width; i++)				    \
+    {									    \
+      if (i0 != s_in[0] || i1 != s_in[1] || i2 != s_in[2] || i3 != s_in[3]) \
+	{								    \
+	  i0 = s_in[0];							    \
+	  i1 = s_in[1];							    \
+	  i2 = s_in[2];							    \
+	  i3 = s_in[3];							    \
+	  o0 =								    \
+	    (i0 * l_white + i1 * l_red + i2 * l_green + i3 * l_blue) / 100; \
+	  nz |= o0;							    \
+	}								    \
+      out[0] = o0;							    \
+      s_in += 4;							    \
+      out ++;								    \
+    }									    \
+  return nz ? 1 : 0;							    \
+}
+
+KCMY_TO_GRAY_RAW_FUNC(unsigned char, 8)
+KCMY_TO_GRAY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(kcmy, gray_raw)
 
 #define CMYK_TO_KCMY_RAW_FUNC(T, bits)					\
 static unsigned								\
@@ -2365,6 +2600,7 @@ CMYK_DISPATCH(kcmy)
 CMYK_DISPATCH(kcmy_raw)
 CMYK_DISPATCH(kcmy_threshold)
 CMYK_DISPATCH(gray)
+CMYK_DISPATCH(gray_raw)
 CMYK_DISPATCH(gray_threshold)
 
 #define RAW_TO_RAW_THRESHOLD_FUNC(T, name)				\
