@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversions.c,v 1.9 2004/06/07 01:49:57 rlk Exp $"
+ * "$Id: color-conversions.c,v 1.10 2004/06/08 02:50:48 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -552,11 +552,11 @@ fromname##_to_##toname(const stp_vars_t *vars, const unsigned char *in,	\
     {									\
       lut->printed_colorfunc = 1;					\
       stp_dprintf(STP_DBG_COLORFUNC, vars,				\
-		   "Colorfunc is %s_%d_to_%s, %s, %s, %d\n",		\
+		   "Colorfunc is %s_%d_to_%s, %s, %s, %d, %d\n",	\
 		   #fromname, lut->channel_depth, #toname,		\
 		   lut->input_color_description->name,			\
 		   lut->output_color_description->name,			\
-		   lut->invert_output);					\
+		   lut->steps, lut->invert_output);			\
     }									\
   if (lut->channel_depth == 8)						\
     return fromname##_8_to_##toname(vars, in, out);			\
