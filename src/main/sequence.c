@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.16 2004/05/07 19:20:34 rleigh Exp $"
+ * "$Id: sequence.c,v 1.17 2004/06/12 16:31:38 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -405,7 +405,7 @@ stp_sequence_create_from_xmltree(stp_mxml_node_t *da)
 }
 
 stp_mxml_node_t *
-stp_xmltree_create_from_sequence(stp_sequence_t *seq)   /* The sequence */
+stp_xmltree_create_from_sequence(const stp_sequence_t *seq)   /* The sequence */
 {
   size_t pointcount;
   double low;
