@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.8 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.9 2001/02/03 19:42:09 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -34,10 +34,6 @@
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 #endif
-
-#ifndef __GNUC__
-#  define inline
-#endif /* !__GNUC__ */
 
 static void
 escp2_write_microweave(const unsigned char *,

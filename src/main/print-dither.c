@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.5 2001/02/03 03:28:57 rlk Exp $"
+ * "$Id: print-dither.c,v 1.6 2001/02/03 19:42:09 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -51,10 +51,6 @@
 #ifdef HAVE_RANDOM
 #  define rand random
 #endif /* HAVE_RANDOM */
-
-#if !defined(__GNUC__) && !(defined(_sgi) && _COMPILER_VERSION >= 210)
-#  define inline
-#endif /* not GNU C or SGI C */
 
 /* If you don't want detailed performance numbers in this file, 
  * uncomment this:

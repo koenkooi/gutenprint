@@ -1,5 +1,5 @@
 /*
- * $Id: libprintut.h,v 1.1 2001/02/02 01:25:32 rleigh Exp $
+ * $Id: libprintut.h,v 1.2 2001/02/03 19:42:09 rleigh Exp $
  * Header for utility library functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -25,6 +25,13 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
+#ifndef HAVE_ASPRINTF
+#include <stdarg.h>
+#include <varargs.h>
+extern int vasprintf (char **result, const char *format, va_list args)
+extern int asprintf (char **result, const char *format, ...)
 #endif
 
 #ifndef HAVE_XMALLOC

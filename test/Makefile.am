@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/02/02 20:04:21 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2001/02/03 19:42:09 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 MAINT_CHARSET = latin1
 
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) -I$(top_srcdir)/src/main
-LIBS = @LIBS@ ../lib/libprintut.la
+LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
 
 AM_CPPFLAGS =\
  -DLOCALEDIR=\""$(localedir)"\" \
@@ -37,10 +37,10 @@ EXTRA_PROGRAMS = escp2-weavetest printer_options unprint escp2-unprint pcl-unpri
 escp2_weavetest_SOURCES = escp2-weavetest.c
 
 escp2_weavetest.o: escp2_weavetest.c 
-escp2_weavetest_LDADD = $(GIMPPRINT_LIBS) $(INTLLIBS)
+escp2_weavetest_LDADD = $(GIMPPRINT_LIBS)
 
 printer_options_SOURCES = printer_options.c
-printer_options_LDADD = -lm $(GIMPPRINT_LIBS) $(INTLLIBS)
+printer_options_LDADD = -lm $(GIMPPRINT_LIBS)
 
 unprint_SOURCES = unprint.c
 
@@ -49,7 +49,7 @@ escp2_unprint_SOURCES = escp2-unprint.c
 pcl_unprint_SOURCES = pcl-unprint.c
 
 testdither_SOURCES = testdither.c
-testdither_LDADD = -lm $(GIMPPRINT_LIBS) $(INTLLIBS)
+testdither_LDADD = -lm $(GIMPPRINT_LIBS)
 
 $(GIMPPRINT_LIBS):
 	$(MAKE) -C ../src/main

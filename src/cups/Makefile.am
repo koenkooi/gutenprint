@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2001/02/02 20:04:21 rleigh Exp $
+## $Id: Makefile.am,v 1.15 2001/02/03 19:42:09 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ cups_modeldir = $(pkgdatadir)/model
 CFLAGS = @CFLAGS@ $(CUPS_CFLAGS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -DCUPS_DATADIR=\"$(pkgdatadir)\" -DGIMP_PRINT_VERSION=\"$(VERSION)\"
 INCLUDES = @INCLUDES@
-LIBS = @LIBS@ ../../lib/libprintut.la
+LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
 
 ## Programs
 
@@ -63,9 +63,9 @@ canon_LDADD = $(CUPS_LIBS)
 
 epson_LDADD = $(CUPS_LIBS)
 
-genppd_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS) $(INTLLIBS)
+genppd_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS)
 
-rastertoprinter_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS) $(INTLLIBS)
+rastertoprinter_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS)
 
 ## Data
 

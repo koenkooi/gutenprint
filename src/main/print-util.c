@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.5 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: print-util.c,v 1.6 2001/02/03 19:42:09 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -37,10 +37,6 @@
 #include <math.h>
 #include <limits.h>
 #include <stdarg.h>
-
-#ifndef __GNUC__
-#  define inline
-#endif /* !__GNUC__ */
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 
