@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.35 2003/11/15 02:41:26 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.36 2003/11/15 13:10:34 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -602,9 +602,10 @@ stpi_dither_ut(stp_vars_t v,
 
     if (ddc->b > 131070)
       print_all_channels = 1;
-    else if (ddc->b > 65535)
+    else if (ddc->b > 65535) {
+      ddc->b -= 65535;
       channels_to_print = 1;
-
+    }
 
     if (ddc->b > 65535) {
       ddc->b = 65535;
