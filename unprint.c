@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.37 2000/02/27 16:54:14 sharkey Exp $ */
+/* $Id: unprint.c,v 1.38 2000/06/05 00:41:30 rlk Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -1210,7 +1210,7 @@ int main(int argc,char *argv[]){
     fprintf(stderr,"Done reading.\n");
     write_output(fp_w);
     fclose(fp_w);
-    fprintf(stderr,"Segmentation integrity.  (core contained)\n");
+    fprintf(stderr,"Image dump complete.\n");
 
     return(0);
 }
