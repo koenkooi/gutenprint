@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.78 2000/09/03 01:22:26 rlk Exp $"
+ * "$Id: print.h,v 1.79 2000/09/03 19:13:53 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -76,6 +76,8 @@
 #define IMAGE_SOLID_TONE	1
 #define IMAGE_CONTINUOUS	2
 #define IMAGE_MONOCHROME	3
+#define IMAGE_FAST_COLOR	4
+#define NIMAGE_TYPES		5
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
@@ -427,5 +429,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.78 2000/09/03 01:22:26 rlk Exp $".
+ * End of "$Id: print.h,v 1.79 2000/09/03 19:13:53 rlk Exp $".
  */

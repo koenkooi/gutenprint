@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.38 2000/09/02 21:52:18 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.39 2000/09/03 19:13:53 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -363,7 +363,7 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Color", &stp_data.v.output_type,
 			   0, 1, code);
   code = stp_put_param_int(plist, "ImageType", &stp_data.v.image_type,
-			   0, 3, code);
+			   0, NIMAGE_TYPES, code);
   code = stp_put_param_float(plist, "Gamma", &stp_data.v.gamma,
 			     lower->gamma, upper->gamma, code);
   code = stp_put_param_float(plist, "Saturation", &stp_data.v.saturation,

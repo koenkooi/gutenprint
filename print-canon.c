@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.79 2000/09/02 21:52:17 rlk Exp $"
+ * "$Id: print-canon.c,v 1.80 2000/09/03 19:13:52 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1128,8 +1128,12 @@ canon_print(const printer_t *printer,		/* I - Model */
 	else
 	  dither_black(out, y, dither, black);
       } else {
-	dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, lyellow, black);
+	if (nv.image_type == IMAGE_FAST_COLOR)
+	  dither_cmyk_fast(out, y, dither, cyan, lcyan, magenta, lmagenta,
+			   yellow, lyellow, black);
+	else
+	  dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		      yellow, lyellow, black);
       }
 
 #ifdef DEBUG

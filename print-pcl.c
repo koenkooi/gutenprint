@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.73 2000/09/02 21:52:18 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.74 2000/09/03 19:13:52 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1787,8 +1787,12 @@ pcl_print(const printer_t *printer,		/* I - Model */
       }
       else
       {
-        dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, NULL, black);
+	if (nv.image_type == IMAGE_FAST_COLOR)
+	  dither_cmyk_fast(out, y, dither, cyan, lcyan, magenta, lmagenta,
+			   yellow, NULL, black);
+	else
+	  dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		      yellow, NULL, black);
 
         (*writefunc)(prn, black + length / 2, length / 2, 0);
         (*writefunc)(prn, black, length / 2, 0);
@@ -1825,8 +1829,12 @@ pcl_print(const printer_t *printer,		/* I - Model */
       }
       else
       {
-        dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, NULL, black);
+	if (nv.image_type == IMAGE_FAST_COLOR)
+	  dither_cmyk_fast(out, y, dither, cyan, lcyan, magenta, lmagenta,
+			   yellow, NULL, black);
+	else
+	  dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		      yellow, NULL, black);
 
         if (black != NULL)
           (*writefunc)(prn, black, length, 0);
