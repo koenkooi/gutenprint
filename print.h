@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.34 2000/02/06 04:36:20 rlk Exp $"
+ * "$Id: print.h,v 1.35 2000/02/06 22:31:04 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -65,7 +65,6 @@
 #define ORIENT_LANDSCAPE	1	/* Landscape orientation */
 
 #define MAX_CARRIAGE_WIDTH	17
-#define MAX_BPI (4 * 720)
 
 #ifndef MIN
 #  define MIN(a,b)		((a) < (b) ? (a) : (b))
@@ -275,5 +274,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.34 2000/02/06 04:36:20 rlk Exp $".
+ * End of "$Id: print.h,v 1.35 2000/02/06 22:31:04 rlk Exp $".
  */
