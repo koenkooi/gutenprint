@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.25 2001/05/15 23:19:40 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.26 2001/05/16 00:06:33 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1138,7 +1138,7 @@ static const pcl_cap_t pcl_model_capabilities[] =
 };
 
 
-static const double standard_sat_adjustment[49] =
+static const double sat_adjustment[49] =
 {
   1.0,				/* C */
   1.1,
@@ -1191,7 +1191,7 @@ static const double standard_sat_adjustment[49] =
   1.0				/* C */
 };
 
-static const double standard_lum_adjustment[49] =
+static const double lum_adjustment[49] =
 {
   0.50,				/* C */
   0.6,
@@ -1244,7 +1244,7 @@ static const double standard_lum_adjustment[49] =
   0.50				/* C */
 };
 
-static const double standard_hue_adjustment[49] =
+static const double hue_adjustment[49] =
 {
   0,				/* C */
   0.17,
