@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2001/09/16 19:27:49 rleigh Exp $
+## $Id: Makefile.am,v 1.14 2001/09/17 20:29:28 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ IMAGES = \
  print-main.png \
  print-setup.png
    
+EPS_IMAGES = $(addsuffix .eps,$(basename $(IMAGES)))
 
 
 ## Data
@@ -61,6 +62,11 @@ all-local: html
 	else \
 	  echo "all-local: $(srcdir)/manual-html not found" ; \
 	fi
+
+gimpprint.dvi: $(EPS_IMAGES)
+
+%.eps:
+	$(CONVERT_PROG) $(srcdir)/$(basename $@).png EPS2:$@
 
 html: html-stamp
 
@@ -112,6 +118,8 @@ maintainer-clean-local:
 
 
 ## Clean
+
+CLEANFILES = $(EPS_IMAGES) $(TXT_IMAGES)
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
