@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.64 2000/06/20 01:28:10 rlk Exp $"
+ * "$Id: print.h,v 1.65 2000/06/20 22:47:54 cpbs Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -157,6 +157,7 @@ typedef void *Image;
 /* For how to create an Image wrapping a Gimp drawable, see print_gimp.h */
 
 extern void Image_init(Image image);
+extern void Image_reset(Image image);
 extern void Image_transpose(Image image);
 extern void Image_hflip(Image image);
 extern void Image_vflip(Image image);
@@ -167,7 +168,6 @@ extern void Image_rotate_180(Image image);
 extern int  Image_bpp(Image image);
 extern int  Image_width(Image image);
 extern int  Image_height(Image image);
-extern void Image_get_col(Image image, unsigned char *data, int column);
 extern void Image_get_row(Image image, unsigned char *data, int row);
 
 extern const char *Image_get_appname(Image image);
@@ -398,5 +398,5 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.64 2000/06/20 01:28:10 rlk Exp $".
+ * End of "$Id: print.h,v 1.65 2000/06/20 22:47:54 cpbs Exp $".
  */

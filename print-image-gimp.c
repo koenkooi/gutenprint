@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.2 2000/06/13 12:23:04 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.3 2000/06/20 22:47:54 cpbs Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -92,15 +92,9 @@ Image_GDrawable_new(GDrawable *drawable)
 {
   Gimp_Image_t *i = malloc(sizeof(Gimp_Image_t));
   i->drawable = drawable;
-  i->columns = FALSE;
-  i->increment = 1;
-  i->mirror = FALSE;
-  i->ox = 0;
-  i->oy = 0;
-  i->w = drawable->width;
-  i->h = drawable->height;
   gimp_pixel_rgn_init(&(i->rgn), drawable, 0, 0,
                       drawable->width, drawable->height, FALSE, FALSE);
+  Image_reset((Image) i);
   return i;
 }
 
@@ -108,6 +102,19 @@ void
 Image_init(Image image)
 {
   /* Nothing to do. */
+}
+
+void
+Image_reset(Image image)
+{
+  Gimp_Image_t *i = (Gimp_Image_t *) image;
+  i->columns = FALSE;
+  i->ox = 0;
+  i->oy = 0;
+  i->increment = 1;
+  i->w = i->drawable->width;
+  i->h = i->drawable->height;
+  i->mirror = FALSE;
 }
 
 void
@@ -236,39 +243,6 @@ Image_height(Image image)
 }
 
 void
-Image_get_col(Image image, unsigned char *data, int column)
-{
-  /*
-   * The data structure is optimised for easy row access.  Column access
-   * is redundant; just flip or rotate the Image and access by rows.
-   * This function should be removed sometime soon (basically, as soon
-   * as nothing uses it any more).
-   */
-  Gimp_Image_t *i = (Gimp_Image_t *) image;
-  int nx = i->mirror ? i->ox + i->w - 1 : i->ox;
-  int ny = i->increment < 0 ? i->oy - i->h + 1 : i->oy;
-  if (i->columns)
-    gimp_pixel_rgn_get_row(&(i->rgn), data,
-                           ny, nx + (i->mirror ? -column : column), i->h);
-  else
-    gimp_pixel_rgn_get_col(&(i->rgn), data,
-                           nx + (i->mirror ? -column : column), ny, i->h);
-  if (i->increment < 0) {
-    /* Flip column -- probably inefficiently */
-    int f, l, b = i->drawable->bpp;
-    for (f = 0, l = i->h - 1; f < l; f++, l--) {
-      int c;
-      unsigned char tmp;
-      for (c = 0; c < b; c++) {
-        tmp = data[f*b+c];
-        data[f*b+c] = data[l*b+c];
-        data[l*b+c] = tmp;
-      }
-    }
-  }
-}
-
-void
 Image_get_row(Image image, unsigned char *data, int row)
 {
   Gimp_Image_t *i = (Gimp_Image_t *) image;
@@ -314,5 +288,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.2 2000/06/13 12:23:04 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.3 2000/06/20 22:47:54 cpbs Exp $".
  */
