@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.129.2.1 2003/08/18 23:31:18 rlk Exp $"
+ * "$Id: print-canon.c,v 1.129.2.2 2003/08/31 17:29:56 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2506,14 +2506,11 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
       stp_set_float_parameter_active(v, "Density", STP_PARAMETER_ACTIVE);
       stp_set_float_parameter(v, "Density", 1.0);
     }
-  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-    {
-      if (pt)
-	stp_scale_float_parameter(v, "Density", pt->base_density);
-      else			/* Can't find paper type? Assume plain */
-	stp_scale_float_parameter(v, "Density", .5);
-      stp_scale_float_parameter(v, "Density", canon_density(caps, res_code));
-    }
+  if (pt)
+    stp_scale_float_parameter(v, "Density", pt->base_density);
+  else			/* Can't find paper type? Assume plain */
+    stp_scale_float_parameter(v, "Density", .5);
+  stp_scale_float_parameter(v, "Density", canon_density(caps, res_code));
   if (stp_get_float_parameter(v, "Density") > 1.0)
     stp_set_float_parameter(v, "Density", 1.0);
   if (colormode == COLOR_MONOCHROME)
@@ -2606,11 +2603,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 	 pt ? pt->sat_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(v, "SatMap", sat_adjustment);
       stp_curve_free(sat_adjustment);
-    }
-  if (output_type == OUTPUT_COLOR && privdata.cols[0])
-    {
-      output_type = OUTPUT_RAW_CMYK;
-      stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
   if (output_type == OUTPUT_GRAY)

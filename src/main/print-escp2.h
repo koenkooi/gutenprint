@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.61.2.1 2003/08/18 23:31:19 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.61.2.2 2003/08/31 17:29:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -280,7 +280,6 @@ typedef struct
 
 typedef enum
 {
-  AUTO_MODE_FULL_AUTO,
   AUTO_MODE_QUALITY,
   AUTO_MODE_MANUAL
 } auto_mode_t;
@@ -570,6 +569,7 @@ typedef struct
   int last_color;		/* Last color we printed */
   int last_pass_offset;		/* Starting row of last pass we printed */
   int last_pass;		/* Last pass printed */
+  stp_image_t *image;		/* Image description */
 
 } escp2_privdata_t;
 
@@ -593,5 +593,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.61.2.1 2003/08/18 23:31:19 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.61.2.2 2003/08/31 17:29:56 rlk Exp $".
  */

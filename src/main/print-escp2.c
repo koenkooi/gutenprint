@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.285.2.1 2003/08/18 23:31:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.285.2.2 2003/08/31 17:29:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -597,24 +597,13 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
     {
     case AUTO_MODE_QUALITY:
       if (stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) &&
-	  strcmp(stp_get_string_parameter(v, "Quality"), "None") != 0 &&
-	  stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
+	  strcmp(stp_get_string_parameter(v, "Quality"), "None") != 0)
 	return 1;
       else
 	return 0;
-#if 0
-    case AUTO_MODE_FULL_AUTO:
-      if (stp_check_string_parameter(v, "AutoMode", STP_PARAMETER_ACTIVE) &&
-	  strcmp(stp_get_string_parameter(v, "AutoMode"), "None") != 0 &&
-	  stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
-	return 1;
-      else
-	return 0;
-#endif
     case AUTO_MODE_MANUAL:
       if (!stp_check_string_parameter(v, "Quality", STP_PARAMETER_ACTIVE) ||
-	  strcmp(stp_get_string_parameter(v, "Quality"), "None") == 0 ||
-	  stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+	  strcmp(stp_get_string_parameter(v, "Quality"), "None") == 0)
 	return 1;
       else
 	return 0;
@@ -1916,7 +1905,7 @@ setup_head_parameters(stp_vars_t v)
   /*
    * Set up the output channels
    */
-  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+  if (stpi_image_type(pd->image) == STP_IMAGE_RAW)
     pd->logical_channels = escp2_physical_channels(v);
   else if (stp_get_output_type(v) == OUTPUT_GRAY)
     pd->logical_channels = 1;
@@ -2126,11 +2115,11 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     }
   stpi_image_init(image);
 
-  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER &&
-      !set_raw_ink_type(v, image))
+  if (stpi_image_type(image) == STP_IMAGE_RAW && !set_raw_ink_type(v, image))
     return 0;
 
   pd = (escp2_privdata_t *) stpi_malloc(sizeof(escp2_privdata_t));
+  pd->image = image;
   pd->printed_something = 0;
   pd->last_color = -1;
   pd->last_pass_offset = 0;
@@ -2139,20 +2128,16 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     escp2_has_cap(v, MODEL_SEND_ZERO_ADVANCE, MODEL_SEND_ZERO_ADVANCE_YES);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, pd);
 
-  if (stp_get_output_type(v) == OUTPUT_RAW_CMYK ||
-      stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
+  if (stpi_image_type(image) == STP_IMAGE_RAW)
     pd->rescale_density = 0;
   else
     pd->rescale_density = 1;
 
   pd->inkname = get_inktype(v);
   pd->channels_in_use = count_channels(pd->inkname);
-  if (stp_get_output_type(v) != OUTPUT_RAW_PRINTER &&
+  if (stpi_image_type(image) != STP_IMAGE_RAW &&
       pd->inkname->channel_set->channel_count == 1)
     stp_set_output_type(v, OUTPUT_GRAY);
-  if (stp_get_output_type(v) == OUTPUT_COLOR &&
-      pd->inkname->channel_set->channels[ECOLOR_K] != NULL)
-    stp_set_output_type(v, OUTPUT_RAW_CMYK);
 
   setup_resolution(v);
   setup_head_parameters(v);

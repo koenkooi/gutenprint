@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.1.2.2 2003/08/24 14:54:36 rlk Exp $"
+ * "$Id: image.h,v 1.1.2.3 2003/08/31 17:29:56 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -155,11 +155,11 @@ typedef struct stp_image
 {
   void (*init)(struct stp_image *image);
   void (*reset)(struct stp_image *image);
-  stp_image_type_t (*image_type)(struct stp_image *image);
-  int  (*bits_per_channel)(struct stp_image *image);
-  int  (*channels)(struct stp_image *image);
-  int  (*width)(struct stp_image *image);
-  int  (*height)(struct stp_image *image);
+  stp_image_type_t (*get_image_type)(struct stp_image *image);
+  int  (*get_bits_per_channel)(struct stp_image *image);
+  int  (*get_channels)(struct stp_image *image);
+  int  (*get_width)(struct stp_image *image);
+  int  (*get_height)(struct stp_image *image);
   stp_image_status_t (*get_row)(struct stp_image *image, unsigned char *data,
                                 size_t byte_limit, int row);
   const char *(*get_appname)(struct stp_image *image);
@@ -185,5 +185,5 @@ typedef struct stp_image
 
 #endif /* __GIMP_PRINT_IMAGE_H__ */
 /*
- * End of "$Id: image.h,v 1.1.2.2 2003/08/24 14:54:36 rlk Exp $".
+ * End of "$Id: image.h,v 1.1.2.3 2003/08/31 17:29:56 rlk Exp $".
  */

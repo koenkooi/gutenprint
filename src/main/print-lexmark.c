@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.129.2.1 2003/08/18 23:31:19 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.129.2.2 2003/08/31 17:29:56 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -474,7 +474,7 @@ typedef lexmark_res_t lexmark_res_t_array[LEXM_RES_COUNT];
 
 /* ink type parameters (substructure of lexmark_cap_t) */
 typedef struct {
-  unsigned int output_type; /* type of output */
+  stpi_color_model_t output_type; /* type of output */
   int ncolors;
   unsigned int used_colors; /* specifies the head colors to be used (e.g. COLOR_MODE_K */
   unsigned int pass_length; /* avaliable jets for one color */
@@ -610,25 +610,25 @@ static const lexmark_inkname_t ink_types_z52[] =
    *                                                           h_direction_offset
    *                                                               head_offset */
   { "CMYK",     N_("Four Color Standard"),
-    {{ OUTPUT_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
-     { OUTPUT_COLOR,      4, COLOR_MODE_CMYK,   192/3,   0, 0, 10, head_offset_cmyk },
-     { OUTPUT_RAW_CMYK,   4, COLOR_MODE_CMYK,   192/3,   0, 0, 10, head_offset_cmyk }}},
+    {{ STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
+     { STPI_COLOR_CMY,      4, COLOR_MODE_CMYK,   192/3,   0, 0, 10, head_offset_cmyk },
+     { STPI_COLOR_CMYK,   4, COLOR_MODE_CMYK,   192/3,   0, 0, 10, head_offset_cmyk }}},
   { "RGB",      N_("Three Color Composite"),
-    {{ OUTPUT_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },  /* we ignor CMY, use black */
-     { OUTPUT_COLOR,      4, COLOR_MODE_CMY,    192/3,   0, 0, 10, head_offset_cmy },
-     { OUTPUT_RAW_CMYK,   4, COLOR_MODE_CMY,    192/3,   0, 0, 10, head_offset_cmy }}},
+    {{ STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },  /* we ignor CMY, use black */
+     { STPI_COLOR_CMY,      4, COLOR_MODE_CMY,    192/3,   0, 0, 10, head_offset_cmy },
+     { STPI_COLOR_CMYK,   4, COLOR_MODE_CMY,    192/3,   0, 0, 10, head_offset_cmy }}},
   { "PhotoCMYK", N_("Six Color Photo"),
-    {{ OUTPUT_COLOR,      6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 10, head_offset_cCmMyk },
-     { OUTPUT_GRAY,       1, COLOR_MODE_K,      192/3,   0, 0, 10, head_offset_cCmMyk },
-     { OUTPUT_RAW_CMYK,   6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 10, head_offset_cCmMyk }}},
+    {{ STPI_COLOR_CMY,      6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 10, head_offset_cCmMyk },
+     { STPI_COLOR_GRAY,       1, COLOR_MODE_K,      192/3,   0, 0, 10, head_offset_cCmMyk },
+     { STPI_COLOR_CMYK,   6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 10, head_offset_cCmMyk }}},
   { "PhotoCMY", N_("Five Color Photo Composite"),
-    {{ OUTPUT_COLOR,      5, COLOR_MODE_CcMcY,  192/3,   0, 0, 10, head_offset_cCmMyk },
-     { OUTPUT_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cCmMyk }, /* we ignor CMY, use black */
-     { OUTPUT_RAW_CMYK,   5, COLOR_MODE_CcMcY,  192/3,   0, 0, 10, head_offset_cCmMyk }}},
+    {{ STPI_COLOR_CMY,      5, COLOR_MODE_CcMcY,  192/3,   0, 0, 10, head_offset_cCmMyk },
+     { STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cCmMyk }, /* we ignor CMY, use black */
+     { STPI_COLOR_CMYK,   5, COLOR_MODE_CcMcY,  192/3,   0, 0, 10, head_offset_cCmMyk }}},
   { "Gray",     N_("Black"),
-    {{ OUTPUT_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
-     { OUTPUT_COLOR,      1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
-     { OUTPUT_RAW_CMYK,   1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk }}},
+    {{ STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
+     { STPI_COLOR_CMY,      1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk },
+     { STPI_COLOR_CMYK,   1, COLOR_MODE_K,        208, 324, 0, 10, head_offset_cmyk }}},
   { NULL, NULL }
 };
 
@@ -685,21 +685,21 @@ static const lexmark_inkname_t ink_types_3200[] =
    *                                                           h_direction_offset
    *                                                               head_offset */
   { "CMYK",     N_("Four Color Standard"),
-    {{ OUTPUT_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cmyk },
-     { OUTPUT_COLOR,      4, COLOR_MODE_CMYK,   192/3,   0, 0, 12, head_offset_cmyk },
-     { OUTPUT_RAW_CMYK,   4, COLOR_MODE_CMYK,   192/3,   0, 0, 12, head_offset_cmyk }}},
+    {{ STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cmyk },
+     { STPI_COLOR_CMY,      4, COLOR_MODE_CMYK,   192/3,   0, 0, 12, head_offset_cmyk },
+     { STPI_COLOR_CMYK,   4, COLOR_MODE_CMYK,   192/3,   0, 0, 12, head_offset_cmyk }}},
   { "RGB",      N_("Three Color Composite"),
-    {{ OUTPUT_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cmyk },  /* we ignor CMY, use black */
-     { OUTPUT_COLOR,      4, COLOR_MODE_CMY,    192/3,   0, 0, 12, head_offset_cmy },
-     { OUTPUT_RAW_CMYK,   4, COLOR_MODE_CMY,    192/3,   0, 0, 12, head_offset_cmy }}},
+    {{ STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cmyk },  /* we ignor CMY, use black */
+     { STPI_COLOR_CMY,      4, COLOR_MODE_CMY,    192/3,   0, 0, 12, head_offset_cmy },
+     { STPI_COLOR_CMYK,   4, COLOR_MODE_CMY,    192/3,   0, 0, 12, head_offset_cmy }}},
   { "PhotoCMYK", N_("Six Color Photo"),
-    {{ OUTPUT_COLOR,      6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 12, head_offset_cCmMyk },
-     { OUTPUT_GRAY,       1, COLOR_MODE_K,      192/3,   0, 0, 12, head_offset_cCmMyk },
-     { OUTPUT_RAW_CMYK,   6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 12, head_offset_cCmMyk }}},
+    {{ STPI_COLOR_CMY,      6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 12, head_offset_cCmMyk },
+     { STPI_COLOR_GRAY,       1, COLOR_MODE_K,      192/3,   0, 0, 12, head_offset_cCmMyk },
+     { STPI_COLOR_CMYK,   6, COLOR_MODE_CcMcYK, 192/3,   0, 0, 12, head_offset_cCmMyk }}},
   { "PhotoCMY", N_("Five Color Photo Composite"),
-    {{ OUTPUT_COLOR,      5, COLOR_MODE_CcMcY,  192/3,   0, 0, 12, head_offset_cCmMyk },
-     { OUTPUT_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cCmMyk }, /* we ignor CMY, use black */
-     { OUTPUT_RAW_CMYK,   5, COLOR_MODE_CcMcY,  192/3,   0, 0, 12, head_offset_cCmMyk }}},
+    {{ STPI_COLOR_CMY,      5, COLOR_MODE_CcMcY,  192/3,   0, 0, 12, head_offset_cCmMyk },
+     { STPI_COLOR_GRAY,       1, COLOR_MODE_K,        208,  20, 0, 12, head_offset_cCmMyk }, /* we ignor CMY, use black */
+     { STPI_COLOR_CMYK,   5, COLOR_MODE_CcMcY,  192/3,   0, 0, 12, head_offset_cCmMyk }}},
   { NULL, NULL }
 };
 
@@ -1913,18 +1913,15 @@ densityDivisor /= 1.2;
   stpi_erprintf("density is %f\n",stp_get_parameter(v, "Density"));
 #endif
 
-  if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-    {
 #ifdef DEBUG
-      stpi_erprintf("density is %f and will be changed to %f  (%f)\n",
-		   stp_get_float_parameter(v, "Density"),
-		   stp_get_float_parameter(v, "Density") / densityDivisor,
-		   densityDivisor);
+  stpi_erprintf("density is %f and will be changed to %f  (%f)\n",
+		stp_get_float_parameter(v, "Density"),
+		stp_get_float_parameter(v, "Density") / densityDivisor,
+		densityDivisor);
 #endif
 
-      /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
-      stp_scale_float_parameter(v, "Density", 1.0 / densityDivisor);
-    }
+  /* Lexmark do not have differnet pixel sizes. We have to correct the density according the print resolution. */
+  stp_scale_float_parameter(v, "Density", 1.0 / densityDivisor);
 
 
   /*
@@ -1938,8 +1935,7 @@ densityDivisor /= 1.2;
 
   if (media)
     {
-      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-	stp_scale_float_parameter(v, "Density", media->base_density);
+      stp_scale_float_parameter(v, "Density", media->base_density);
       stp_scale_float_parameter(v, "Cyan", media->p_cyan);
       stp_scale_float_parameter(v, "Magenta", media->p_magenta);
       stp_scale_float_parameter(v, "Yellow", media->p_yellow);
@@ -1948,8 +1944,7 @@ densityDivisor /= 1.2;
     }
   else
     {
-      if (output_type != OUTPUT_RAW_PRINTER && output_type != OUTPUT_RAW_CMYK)
-	stp_scale_float_parameter(v, "Density", .8);
+      stp_scale_float_parameter(v, "Density", .8);
       k_lower *= .1;
       k_upper = .5;
     }
@@ -2056,11 +2051,6 @@ densityDivisor /= 1.2;
 	 media ? media->sat_adjustment : NULL, STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(v, "SatMap", sat_adjustment);
       stp_curve_free(sat_adjustment);
-    }
-  if (output_type == OUTPUT_COLOR && cols.p.k)
-    {
-      output_type = OUTPUT_RAW_CMYK;
-      stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
   if (output_type == OUTPUT_GRAY)

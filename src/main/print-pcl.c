@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.118.2.1 2003/08/18 23:31:20 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.118.2.2 2003/08/31 17:29:56 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2392,11 +2392,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     {
       lum_adjustment = stp_curve_create_from_string(standard_lum_adjustment);
       stp_curve_free(lum_adjustment);
-    }
-  if (output_type == OUTPUT_COLOR && black)
-    {
-      output_type = OUTPUT_RAW_CMYK;
-      stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
   if (output_type == OUTPUT_GRAY)
