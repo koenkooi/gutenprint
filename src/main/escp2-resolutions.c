@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.21.2.1 2003/11/27 18:05:41 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.21.2.2 2003/12/02 01:39:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -455,7 +455,7 @@ static const printer_weave_t pro7600_printer_weaves[] =
   { "FourPass", N_("Four Pass"), 3 },
   { "FOL2", N_("Full Overlap 2"), 4 },
   { "MW2", N_("Interleave 2"), 5 },
-  { "EightPass", N_("Eight Pass"), 5 },
+  { "EightPass", N_("Eight Pass"), 6 },
 };
 
 DECLARE_PRINTER_WEAVES(pro7600);
