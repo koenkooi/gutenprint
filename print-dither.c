@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.19.2.2 2000/04/12 02:27:57 rlk Exp $"
+ * "$Id: print-dither.c,v 1.19.2.3 2000/04/13 12:01:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -193,6 +193,8 @@ dither_set_density(void *vd, double density)
     density = 1;
   else if (density < 0)
     density = 0;
+  d->k_upper = d->k_upper * density;
+  d->k_lower = d->k_lower * density;
   d->density = (int) ((4096 * density) + .5);
 }
 
@@ -725,8 +727,10 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	      
 	      xy3 = (x * 3 + y * 2) & (MATRIX_SIZE - 1);
 	      yx3 = (y * 3 + y * 2) & (MATRIX_SIZE - 1);
+#if 0
 	      xy3 = rand() & (MATRIX_SIZE - 1);
 	      yx3 = rand() & (MATRIX_SIZE - 1);
+#endif
 	      /*
 	       * FIXME we should use different matrices for each color
 	       */
@@ -1119,7 +1123,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 	  else if (kdarkness < ub)
 	    {
 	      if (rb == 0 || (ditherbit % rb) < (kdarkness - lb))
-		bk = nk;
+		bk = ok;
 	      else
 		bk = 0;
 	    }
@@ -1127,14 +1131,14 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 	    {
 	      ub = 1;
 	      lb = 1;
-	      bk = nk;
+	      bk = ok;
 	    }
 	}
       else
 	{
-	  bk = nk;
+	  bk = ok;
 	}
-      ck = nk - bk;
+      ck = ok - bk;
     
       /*
        * These constants are empirically determined to produce a CMY value
@@ -1160,7 +1164,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 		       length);
       if (tk != k)
 	printed_black = 1;
-      tk = k;
+      k = tk;
       UPDATE_DITHER(k, 1, x, d->src_width);
     }
     else
@@ -1187,11 +1191,11 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
     if (!printed_black)
       {
-	c = print_color(d, &(d->c_dither), (oc / 2 + density / 4), oc,
+	c = print_color(d, &(d->c_dither), (oc / 3 + density / 4), c,
 			row, x, cptr, lcptr, bit, length);
-	m = print_color(d, &(d->m_dither), (om / 2 + density / 4), om,
+	m = print_color(d, &(d->m_dither), (om / 3 + density / 4), m,
 			(x + 15), (row + 15), mptr, lmptr, bit, length);
-	y = print_color(d, &(d->y_dither), (oy / 2 + density / 4), oy,
+	y = print_color(d, &(d->y_dither), (oy / 3 + density / 4), y,
 			(row + 15), (x + 15), yptr, lyptr, bit, length);
       }
 
@@ -1212,6 +1216,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.19.2.3  2000/04/13 12:01:44  rlk
+ *   Much improved
+ *
  *   Revision 1.19.2.2  2000/04/12 02:27:57  rlk
  *   some improvement
  *
@@ -1265,5 +1272,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.19.2.2 2000/04/12 02:27:57 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.19.2.3 2000/04/13 12:01:44 rlk Exp $".
  */

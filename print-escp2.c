@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.120.2.2 2000/04/12 02:27:57 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.120.2.3 2000/04/13 12:01:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1110,9 +1110,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     dither = init_dither(image_width, out_width);
   if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
     {
-      dither_set_black_levels(dither, 1, 1, 1);
-      dither_set_black_lower(dither, .2);
-      dither_set_black_upper(dither, .35);
+      dither_set_black_levels(dither, 1.5, 1.5, 1.5);
+      dither_set_black_lower(dither, .4);
+      dither_set_black_upper(dither, .7);
     }
   if (bits == 2)
     {
@@ -2882,6 +2882,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.120.2.3  2000/04/13 12:01:44  rlk
+ *   Much improved
+ *
  *   Revision 1.120.2.2  2000/04/12 02:27:57  rlk
  *   some improvement
  *
@@ -3376,5 +3379,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.120.2.2 2000/04/12 02:27:57 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.120.2.3 2000/04/13 12:01:44 rlk Exp $".
  */
