@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.28 2000/02/23 13:22:34 gandy Exp $ */
+/* $Id: unprint.c,v 1.29 2000/02/23 15:37:11 gandy Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -877,6 +877,7 @@ void parse_canon(FILE *fp_r){
 	 pstate.monomode=0;
 	 pstate.xposition= 0;
 	 pstate.yposition= 0;
+	 fprintf(stderr,"canon: init printer\n");
        }
      } else {
        fprintf(stderr,"Warning: Unknown command ESC %c 0x%X at 0x%08X.\n",0x5b,ch,cmdcounter);
