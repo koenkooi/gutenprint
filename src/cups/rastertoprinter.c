@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.6 2001/02/02 01:48:14 rleigh Exp $"
+ * "$Id: rastertoprinter.c,v 1.7 2001/02/03 03:35:21 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -104,6 +104,13 @@ static stp_image_t theImage =
   Image_progress_conclude,
   NULL
 };
+
+static void
+cups_writefunc(void *file, const char *buf, size_t bytes)
+{
+  FILE *prn = (FILE *)file;
+  fwrite(buf, 1, bytes, prn);
+}
 
 /*
  * 'main()' - Main entry and processing of driver.
@@ -280,6 +287,10 @@ main(int  argc,				/* I - Number of command-line arguments */
     v.orientation = ORIENT_PORTRAIT;
     v.gamma       = 1.0;
     v.image_type  = cups.header.cupsRowCount;
+    v.outfunc = cups_writefunc;
+    v.errfunc = cups_writefunc;
+    v.outdata = stdout;
+    v.errdata = stderr;
 
     if (cups.header.cupsColorSpace == CUPS_CSPACE_W)
       v.output_type = OUTPUT_GRAY;
@@ -324,7 +335,7 @@ main(int  argc,				/* I - Number of command-line arguments */
     fprintf(stderr, "DEBUG: v.ink_type |%s|\n", v.ink_type);
     fprintf(stderr, "DEBUG: v.dither_algorithm |%s|\n", v.dither_algorithm);
     if (stp_verify_printer_params(printer, &v))
-      (*printer->printfuncs->print)(printer, stdout, &theImage, &v);
+      (*printer->printfuncs->print)(printer, &theImage, &v);
     else
       fputs("ERROR: Invalid printer settings!\n", stderr);
 
@@ -562,5 +573,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 }
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.6 2001/02/02 01:48:14 rleigh Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.7 2001/02/03 03:35:21 rlk Exp $".
  */

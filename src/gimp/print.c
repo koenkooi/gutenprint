@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: print.c,v 1.3 2001/02/03 03:35:21 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -286,6 +286,13 @@ static void
 usr1_handler (int signal)
 {
   usr1_interrupt = 1;
+}
+
+static void
+gimp_writefunc(void *file, const char *buf, size_t bytes)
+{
+  FILE *prn = (FILE *)file;
+  fwrite(buf, 1, bytes, prn);
 }
 
 /*
@@ -644,9 +651,13 @@ run (char   *name,		/* I - Name of print program. */
 	   * and close the output file/command...
 	   */
 
+	  vars.outfunc = gimp_writefunc;
+	  vars.errfunc = gimp_writefunc;
+	  vars.outdata = prn;
+	  vars.errdata = stderr;
 	  if (stp_verify_printer_params(current_printer, &vars))
 	    (*current_printer->printfuncs->print) (current_printer,
-						   prn, image, &vars);
+						   image, &vars);
 	  else
 	    values[0].data.d_status = STATUS_EXECUTION_ERROR;
 
@@ -1518,5 +1529,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $".
+ * End of "$Id: print.c,v 1.3 2001/02/03 03:35:21 rlk Exp $".
  */
