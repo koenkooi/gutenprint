@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.20 2001/07/17 00:40:51 easysw Exp $"
+ * "$Id: print-ps.c,v 1.21 2001/07/28 01:42:26 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -552,7 +552,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
       if ((y & 15) == 0)
 	image->note_progress(image, y, image_height);
 
-      image->get_row(image, in, y);
+      if (image->get_row(image, in, y) != STP_IMAGE_OK)
+	break;
       (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
 		   NULL, NULL, NULL);
 
@@ -593,7 +594,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
       if ((y & 15) == 0)
 	image->note_progress(image, y, image_height);
 
-      image->get_row(image, in, y);
+      if (image->get_row(image, in, y) != STP_IMAGE_OK)
+	break;
       (*colorfunc)(nv, in, out + out_offset, &zero_mask, image_width,
 		   image_bpp, cmap, NULL, NULL, NULL);
 

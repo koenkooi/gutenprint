@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.87 2001/07/24 00:20:32 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.88 2001/07/28 01:42:25 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3784,7 +3784,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 	{
 	  errlast = errline;
 	  duplicate_line = 0;
-	  image->get_row(image, in, errline);
+	  if (image->get_row(image, in, errline) != STP_IMAGE_OK)
+	    break;
 	  (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
 		       escp2_hue_adjustment(model, nv) ? hue_adjustment : NULL,
 		       escp2_lum_adjustment(model, nv) ? lum_adjustment : NULL,

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.41 2001/07/16 20:54:20 easysw Exp $"
+ * "$Id: print-lexmark.c,v 1.42 2001/07/28 01:42:25 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1828,7 +1828,8 @@ densityDivisor /= 1.2;
 	{
 	  errlast = errline;
 	  duplicate_line = 0;
-	  image->get_row(image, in, errline);
+	  if (image->get_row(image, in, errline) != STP_IMAGE_OK)
+	    break;
 	  /*	  printf("errline %d ,   image height %d\n", errline, image_height);*/
 #if 1
 	  (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
