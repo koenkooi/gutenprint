@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.8 2001/02/10 22:30:40 rleigh Exp $
+dnl $Id: configure.in.in,v 1.9 2001/02/12 18:50:01 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -332,9 +332,11 @@ if test x${BUILD_CUPS} = xyes ; then
   fi
 dnl Require CUPS 1.1...
   AC_CHECK_LIB(cups,cupsPrintFiles,
-    CUPS_LIBS="${CUPS_LIBS} -lcups")
+    CUPS_LIBS="${CUPS_LIBS} -lcups",
+    AC_MSG_ERROR([Cannot find CUPS libraries (libcups)]))
   AC_CHECK_LIB(cupsimage,cupsRasterOpen,
-    CUPS_LIBS="${CUPS_LIBS} -lcupsimage",,
+    CUPS_LIBS="${CUPS_LIBS} -lcupsimage",
+    AC_MSG_ERROR([Cannot find CUPS libraries (libcupsimage)]),
     -lcups)
 
 fi
