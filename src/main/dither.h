@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.22 2003/11/14 04:01:12 rlk Exp $"
+ * "$Id: dither.h,v 1.23 2004/01/21 09:24:45 rleigh Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -97,7 +97,7 @@ typedef struct dither_matrix
 } dither_matrix_t;
 
 extern void stpi_dither_matrix_iterated_init(dither_matrix_t *mat, size_t size,
-					     size_t exp, const unsigned *array);
+					     size_t exponent, const unsigned *array);
 extern void stpi_dither_matrix_shear(dither_matrix_t *mat,
 				     int x_shear, int y_shear);
 extern void stpi_dither_matrix_init(dither_matrix_t *mat, int x_size,
@@ -195,5 +195,5 @@ extern void stpi_dither_internal(stp_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.22 2003/11/14 04:01:12 rlk Exp $".
+ * End of "$Id: dither.h,v 1.23 2004/01/21 09:24:45 rleigh Exp $".
  */
