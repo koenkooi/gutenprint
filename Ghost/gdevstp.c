@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.19 2000/06/20 22:47:54 cpbs Exp $ */
+/*$Id: gdevstp.c,v 1.20 2000/06/21 00:15:53 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -230,7 +230,7 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
   stp_data.v.scaling = -pdev->x_pixels_per_inch; /* resolution of image */
 
   /* compute lookup table: lut_t*,float dest_gamma,float app_gamma,vars_t* */
-  compute_lut(&(printer->printvars), 1, &stp_data.v);
+  stp_data.v.app_gamma = 1.0;
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;

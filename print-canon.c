@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.60 2000/06/20 22:32:51 cpbs Exp $"
+ * "$Id: print-canon.c,v 1.61 2000/06/21 00:15:53 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -948,10 +948,10 @@ canon_print(const printer_t *printer,		/* I - Model */
   if (black)    fputc('K',stderr);
   fprintf(stderr,"\n");
 
-  nv.density *= printer->printvars.density * ydpi / xdpi;
+  nv.density *= ydpi / xdpi;
   if (nv.density > 1.0)
     nv.density = 1.0;
-  nv.saturation *= printer->printvars.saturation;
+  compute_lut(256, &nv);
 
   if (xdpi > ydpi)
     dither = init_dither(image_width, out_width, 1, xdpi / ydpi, &nv);
@@ -1102,6 +1102,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   * Cleanup...
   */
 
+  free_lut(&nv);
   free(in);
   free(out);
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.33 2000/06/20 22:32:51 cpbs Exp $"
+ * "$Id: print-ps.c,v 1.34 2000/06/21 00:15:53 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -438,8 +438,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
   in  = malloc(image_width * image_bpp);
   out = malloc((image_width * out_bpp + 3) * 2);
 
-  nv.density *= printer->printvars.density;
-  nv.saturation *= printer->printvars.saturation;
+  compute_lut(256, &nv);
 
   if (model == 0)
   {
@@ -520,6 +519,7 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
     }
   }
 
+  free_lut(&nv);
   free(in);
   free(out);
 
