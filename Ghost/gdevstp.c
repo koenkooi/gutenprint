@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.10 2000/04/22 03:57:47 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.11 2000/04/22 23:25:48 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -108,7 +108,7 @@ static privdata_t stp_data =
     "",				/* output_to */
     "",				/* driver */
     "",				/* PPD file */
-    OUTPUT_GRAY,		/* output_type */
+    OUTPUT_COLOR,		/* output_type */
     "360 DPI",			/* resolution */
     "Letter",			/* Media size */
     "",				/* Media type */
@@ -126,7 +126,8 @@ static privdata_t stp_data =
     100,			/* g          */
     100,			/* b          */
     0,				/* lin        */
-    1,				/* saturation */
+    1.0,				/* saturation */
+    1.0,			/* density */
     0,				/* image type */
   }
 };
@@ -431,9 +432,9 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Contrast", &cont, 25, 400, code);
   code = stp_put_param_int(plist, "Color", &color, 0, 1, code);
   code = stp_put_param_int(plist, "Model", &model, 0, 17, code);
-  code = stp_put_param_int(plist, "Quality", &qual, 0, 7, code);
+  code = stp_put_param_int(plist, "Quality", &qual, 0, 9, code);
   code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
-  code = stp_put_param_int(plist, "Dither", &algo, 0, 2, code);
+  code = stp_put_param_int(plist, "Dither", &algo, 0, num_dither_algos, code);
   code = stp_put_param_float(plist, "Gamma", &gamma, 0.1, 3., code);
   code = stp_put_param_float(plist, "Saturation", &sat, 0.1, 9., code);
   code = stp_put_param_float(plist, "Density", &den, 0.1, 2., code);
