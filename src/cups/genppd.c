@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.57 2003/01/20 02:08:37 rlk Exp $"
+ * "$Id: genppd.c,v 1.58 2003/01/20 21:04:32 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -354,7 +354,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
     }
   else
     {
-      for (i = 0; i < stp_known_printers(); i++)
+      for (i = 0; i < stp_printer_model_count(); i++)
 	{
 	  printer = stp_get_printer_by_index(i);
 
@@ -478,7 +478,7 @@ void printmodels(int verbose)
   stp_printer_t p;
   int i;
 
-  for (i = 0; i < stp_known_printers(); i++)
+  for (i = 0; i < stp_printer_model_count(); i++)
     {
       p = stp_get_printer_by_index(i);
       if (p &&
@@ -600,7 +600,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
   driver     = stp_printer_get_driver(p);
   long_name  = stp_printer_get_long_name(p);
-  printvars  = stp_printer_get_printvars(p);
+  printvars  = stp_printer_get_defaults(p);
   the_papers = NULL;
   cur_opt    = 0;
 
@@ -697,7 +697,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   * Get the page sizes from the driver...
   */
 
-  v = stp_allocate_copy(printvars);
+  v = stp_vars_create_copy(printvars);
   variable_sizes = 0;
   stp_describe_parameter(v, "PageSize", &desc);
   num_opts = stp_string_list_count(desc.bounds.str);
@@ -1086,5 +1086,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.57 2003/01/20 02:08:37 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.58 2003/01/20 21:04:32 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.26 2003/01/18 21:01:15 rlk Exp $"
+ * "$Id: testdither.c,v 1.27 2003/01/20 21:05:02 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -198,7 +198,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   */
 
   stp_init();
-  v = stp_allocate_vars();
+  v = stp_vars_create();
   stp_set_driver(v, "escp2-ex");
   stp_describe_parameter(v, "DitherAlgorithm", &desc);
 
@@ -872,5 +872,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.26 2003/01/18 21:01:15 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.27 2003/01/20 21:05:02 rlk Exp $".
  */

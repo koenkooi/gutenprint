@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.1 2003/01/01 16:46:35 rlk Exp $"
+ * "$Id: printers.c,v 1.2 2003/01/20 21:04:59 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -38,7 +38,7 @@ main(int argc, char **argv)
   int i;
 
   stp_init();
-  for (i = 0; i < stp_known_printers(); i++)
+  for (i = 0; i < stp_printer_model_count(); i++)
     {
       const stp_printer_t p = stp_get_printer_by_index(i);
       if (strcmp(stp_printer_get_family(p), "ps") &&

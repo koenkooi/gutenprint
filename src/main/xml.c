@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.7 2003/01/19 03:14:02 rlk Exp $"
+ * "$Id: xml.c,v 1.8 2003/01/20 21:04:59 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -388,7 +388,7 @@ stp_xml_process_printer(xmlNodePtr printer,           /* The printer node */
   outprinter = stp_malloc(sizeof(stp_internal_printer_t));
   if (!outprinter)
     return NULL;
-  outprinter->printvars = stp_allocate_vars();
+  outprinter->printvars = stp_vars_create();
   if (outprinter->printvars == NULL)
     {
       stp_free(outprinter);

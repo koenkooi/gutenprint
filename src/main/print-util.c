@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.87 2003/01/20 19:09:18 rleigh Exp $"
+ * "$Id: print-util.c,v 1.88 2003/01/20 21:04:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -483,20 +483,20 @@ stp_read_and_compose_curves(const char *s1, const char *s2,
   stp_curve_t t1 = NULL;
   stp_curve_t t2 = NULL;
   if (s1)
-    t1 = stp_curve_allocate_read_string(s1);
+    t1 = stp_curve_create_read_string(s1);
   if (s2)
-    t2 = stp_curve_allocate_read_string(s2);
+    t2 = stp_curve_create_read_string(s2);
   if (t1 && t2)
     stp_curve_compose(&ret, t1, t2, comp, -1);
   if (ret)
     {
-      stp_curve_destroy(t1);
-      stp_curve_destroy(t2);
+      stp_curve_free(t1);
+      stp_curve_free(t2);
       return ret;
     }
   else if (t1)
     {
-      stp_curve_destroy(t2);
+      stp_curve_free(t2);
       return t1;
     }
   else

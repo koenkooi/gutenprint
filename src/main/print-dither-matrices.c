@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.11 2003/01/20 01:13:05 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.12 2003/01/20 21:04:42 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -47,7 +47,7 @@ read_matrix_from_file(const char *pathname)
   FILE *fp = fopen(pathname, "r");
   if (!fp)
     return NULL;
-  the_curve = stp_curve_allocate_read(fp);
+  the_curve = stp_curve_create_read(fp);
   (void) fclose(fp);
   if (!the_curve)
     return NULL;
@@ -55,7 +55,7 @@ read_matrix_from_file(const char *pathname)
     return the_curve;
   else
     {
-      stp_curve_destroy(the_curve);
+      stp_curve_free(the_curve);
       return NULL;
     }
 }
