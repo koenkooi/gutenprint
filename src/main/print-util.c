@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.53.2.1 2002/01/29 02:09:09 rlk Exp $"
+ * "$Id: print-util.c,v 1.53.2.2 2002/02/16 02:00:51 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1260,7 +1260,8 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	    break;
 	  }
       if (!answer)
-	stp_eprintf(v, _("%s is not a valid %s\n"), checkval, what);
+	stp_eprintf(v, _("%s is not a valid parameter of type %s\n"),
+		    checkval, what);
       for (i = 0; i < count; i++)
 	{
 	  stp_free((void *)vptr[i].name);
@@ -1268,7 +1269,8 @@ verify_param(const char *checkval, stp_param_t *vptr,
 	}
     }
   else
-    stp_eprintf(v, _("%s is not a valid %s\n"), checkval, what);
+    stp_eprintf(v, _("%s is not a valid parameter of type %s\n"),
+		checkval, what);
   if (vptr)
     free(vptr);
   return answer;
