@@ -1,0 +1,60 @@
+## $Id: Makefile.am,v 1.4.2.1 2001/04/30 18:09:04 sharkey Exp $
+## Copyright (C) 2000 Roger Leigh
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2, or (at your option)
+## any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+## Process this file with automake to produce Makefile.in.
+
+AUTOMAKE_OPTIONS = 1.4 gnu
+
+@SET_MAKE@
+
+MAINT_CHARSET = latin1
+
+INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
+LIBS = @LIBS@ ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la
+
+AM_CPPFLAGS =\
+ -DLOCALEDIR=\""$(localedir)"\" \
+ @MAINTAINER_CFLAGS@
+
+noinst_PROGRAMS = @FOOMATIC_NOINST_BIN@
+
+EXTRA_PROGRAMS = printer_options
+
+printer_options_SOURCES = printer_options.c
+printer_options_LDADD = -lm $(LIBGIMPPRINT_LIBS)
+printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+$(LIBGIMPPRINT_LIBS):
+	$(MAKE) -C ../../src/main
+
+EXTRA_DIST = foomatic-printermap foomatic-templates/*.xml
+CLEANFILES = $(noinst_PROGRAMS)
+MAINTAINERCLEANFILES = Makefile.in
+
+if BUILD_FOOMATIC
+install-data-local: foomatic-data
+endif
+	foomatic-kitload -k foomatic-db
+
+install: @FOOMATIC_INSTALL@
+
+clean-local:
+	-rm -rf foomatic-db
+
+foomatic-data: printer_options
+	-rm -rf foomatic-db
+	./foomatic-generator
