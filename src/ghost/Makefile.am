@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.1 2002/01/29 02:05:17 rlk Exp $
+## $Id: Makefile.am,v 1.17.2.2 2002/02/15 02:01:28 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -112,4 +112,25 @@ EXTRA_DIST = \
 	debian-patch \
 	debian-patch-stp \
 	devs.mak.addon-5.10 \
-	gdevstp.c \
+	gdevstp.c
+
+## Variables
+
+AM_CFLAGS = $(GNUCFLAGS)
+INCLUDES = @IJS_CFLAGS@ @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+LIBS = @IJS_LIBS@ @LIBS@ $(INTLLIBS)
+
+## Programs
+
+IJS_BIN = ijsgimpprint
+
+bin_PROGRAMS = @IJS_BIN@
+
+EXTRA_PROGRAMS = ijsgimpprint
+
+ijsgimpprint_LDADD = $(LIBGIMPPRINT_LIBS)
+ijsgimpprint_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
+
+$(LIBGIMPPRINT_LIBS):
+	cd ../main ; \
+	$(MAKE)
