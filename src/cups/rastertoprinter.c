@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.63 2003/06/20 00:54:40 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.64 2003/06/20 23:34:58 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -251,21 +251,25 @@ initialize_page(cups_image_t *cups, stp_const_vars_t default_settings)
       switch (p->p_type)
 	{
 	case STP_PARAMETER_TYPE_STRING_LIST:
-	  fprintf(stderr, "DEBUG: stp_get_%s(v) |%s|\n",
+	  fprintf(stderr, "DEBUG: stp_get_string %s(v) |%s| %d\n",
 		  p->name, stp_get_string_parameter(v, p->name) ?
-		  stp_get_string_parameter(v, p->name) : "NULL");
+		  stp_get_string_parameter(v, p->name) : "NULL",
+		  stp_get_string_parameter_active(v, p->name));
 	  break;
 	case STP_PARAMETER_TYPE_DOUBLE:
-	  fprintf(stderr, "DEBUG: stp_get_%s(v) |%.3f|\n",
-		  p->name, stp_get_float_parameter(v, p->name));
+	  fprintf(stderr, "DEBUG: stp_get_float %s(v) |%.3f| %d\n",
+		  p->name, stp_get_float_parameter(v, p->name),
+		  stp_get_float_parameter_active(v, p->name));
 	  break;
 	case STP_PARAMETER_TYPE_INT:
-	  fprintf(stderr, "DEBUG: stp_get_%s(v) |%.d|\n",
-		  p->name, stp_get_int_parameter(v, p->name));
+	  fprintf(stderr, "DEBUG: stp_get_int %s(v) |%.d| %d\n",
+		  p->name, stp_get_int_parameter(v, p->name),
+		  stp_get_int_parameter_active(v, p->name));
 	  break;
 	case STP_PARAMETER_TYPE_BOOLEAN:
-	  fprintf(stderr, "DEBUG: stp_get_%s(v) |%.d|\n",
-		  p->name, stp_get_boolean_parameter(v, p->name));
+	  fprintf(stderr, "DEBUG: stp_get_boolean %s(v) |%.d| %d\n",
+		  p->name, stp_get_boolean_parameter(v, p->name),
+		  stp_get_boolean_parameter_active(v, p->name));
 	  break;
 	  /*
 	   * We don't handle raw, curve, or filename arguments.
@@ -365,11 +369,10 @@ set_all_options(stp_vars_t v, cups_option_t *options, int num_options,
 		fine_val = atof(val) * 0.001;
 	      fprintf(stderr, "DEBUG: Gimp-Print set float %s to %f + %f\n",
 		      desc.name, coarse_val, fine_val);
-	      break;
 	      fine_val += coarse_val;
 	      if (fine_val > desc.bounds.dbl.upper)
 		fine_val = desc.bounds.dbl.upper;
-	      stp_set_float_parameter(v, desc.name, coarse_val + fine_val);
+	      stp_set_float_parameter(v, desc.name, fine_val);
 	    }
 	}
       else
@@ -837,5 +840,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.63 2003/06/20 00:54:40 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.64 2003/06/20 23:34:58 rlk Exp $".
  */
