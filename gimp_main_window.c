@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.15 2000/06/04 17:00:10 cpbs Exp $"
+ * "$Id: gimp_main_window.c,v 1.16 2000/06/05 01:32:03 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1636,7 +1636,7 @@ gimp_preview_update (void)
   else
     min_ppi_scaling = 72.0 * (double) image_height / (double) printable_height;
 
-  if (vars.scaling < -min_ppi_scaling)
+  if (vars.scaling < 0 && vars.scaling > -min_ppi_scaling)
     vars.scaling = -min_ppi_scaling;
 
   if (vars.scaling < 0)
