@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.82 2003/09/18 03:02:37 rlk Exp $"
+   "$Id: printers.xml,v 1.83 2003/09/21 02:37:02 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -291,6 +291,18 @@
       <printer name="EPSON Stylus C62" driver="escp2-c62">
         <color value="true"/>
         <model value="52"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C63" driver="escp2-c63">
+        <color value="true"/>
+        <model value="61"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON Stylus C64" driver="escp2-c64">
+        <color value="true"/>
+        <model value="61"/>
         <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
@@ -1037,6 +1049,12 @@
       <printer name="EPSON PM-10000" driver="escp2-pm10000">
         <color value="true"/>
         <model value="41"/>
+        <gamma value="0.731"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON PX-V500" driver="escp2-pxv500">
+        <color value="true"/>
+        <model value="61"/>
         <gamma value="0.731"/>
         <density value="1.0"/>
       </printer>
