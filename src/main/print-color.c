@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.11 2004/03/21 04:27:49 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.12 2004/03/21 17:29:10 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -56,15 +56,26 @@ typedef enum
   COLOR_UNKNOWN			/* Printer-specific uninterpreted */
 } color_model_t;
 
-#define CHANNEL_K		0x001
-#define CHANNEL_C		0x002
-#define CHANNEL_M		0x004
-#define CHANNEL_Y		0x008
-#define CHANNEL_W		0x010
-#define CHANNEL_R		0x020
-#define CHANNEL_G		0x040
-#define CHANNEL_B		0x080
-#define CHANNEL_RAW             0x100
+#define CHANNEL_K	0
+#define CHANNEL_C	1
+#define CHANNEL_M	2
+#define CHANNEL_Y	3
+#define CHANNEL_W	4
+#define CHANNEL_R	5
+#define CHANNEL_G	6
+#define CHANNEL_B	7
+#define CHANNEL_MAX	8
+#define CHANNEL_RGB_OFFSET (CHANNEL_W - CHANNEL_K)
+
+#define CMASK_K		(1 << CHANNEL_K)
+#define CMASK_C		(1 << CHANNEL_C)
+#define CMASK_M		(1 << CHANNEL_M)
+#define CMASK_Y		(1 << CHANNEL_Y)
+#define CMASK_W		(1 << CHANNEL_W)
+#define CMASK_R		(1 << CHANNEL_R)
+#define CMASK_G		(1 << CHANNEL_G)
+#define CMASK_B		(1 << CHANNEL_B)
+#define CMASK_RAW       (1 << CHANNEL_MAX)
 
 typedef struct
 {
@@ -75,27 +86,27 @@ typedef struct
 
 static const channel_param_t channel_params[] =
 {
-  { CHANNEL_K, "Black",   "BlackCurve"   },
-  { CHANNEL_C, "Cyan",    "CyanCurve"    },
-  { CHANNEL_M, "Magenta", "MagentaCurve" },
-  { CHANNEL_Y, "Yellow",  "YellowCurve"  },
-  { CHANNEL_W, "White",   "WhiteCurve"   },
-  { CHANNEL_R, "Red",     "RedCurve"     },
-  { CHANNEL_G, "Green",   "GreenCurve"   },
-  { CHANNEL_B, "Blue",    "BlueCurve"    },
+  { CMASK_K, "Black",   "BlackCurve"   },
+  { CMASK_C, "Cyan",    "CyanCurve"    },
+  { CMASK_M, "Magenta", "MagentaCurve" },
+  { CMASK_Y, "Yellow",  "YellowCurve"  },
+  { CMASK_W, "White",   "WhiteCurve"   },
+  { CMASK_R, "Red",     "RedCurve"     },
+  { CMASK_G, "Green",   "GreenCurve"   },
+  { CMASK_B, "Blue",    "BlueCurve"    },
 };
 
 static const int channel_param_count =
 sizeof(channel_params) / sizeof(channel_param_t);
 
 
-#define CHANNEL_NONE   (0)
-#define CHANNEL_RGB    (CHANNEL_R | CHANNEL_G | CHANNEL_B)
-#define CHANNEL_CMY    (CHANNEL_C | CHANNEL_M | CHANNEL_Y)
-#define CHANNEL_CMYK   (CHANNEL_CMY | CHANNEL_K)
-#define CHANNEL_CMYKRB (CHANNEL_CMYK | CHANNEL_R | CHANNEL_B)
-#define CHANNEL_ALL    (CHANNEL_CMYK | CHANNEL_RGB | CHANNEL_W)
-#define CHANNEL_EVERY  (CHANNEL_ALL | CHANNEL_RAW)
+#define CMASK_NONE   (0)
+#define CMASK_RGB    (CMASK_R | CMASK_G | CMASK_B)
+#define CMASK_CMY    (CMASK_C | CMASK_M | CMASK_Y)
+#define CMASK_CMYK   (CMASK_CMY | CMASK_K)
+#define CMASK_CMYKRB (CMASK_CMYK | CMASK_R | CMASK_B)
+#define CMASK_ALL    (CMASK_CMYK | CMASK_RGB | CMASK_W)
+#define CMASK_EVERY  (CMASK_ALL | CMASK_RAW)
 
 typedef enum
 {
@@ -122,13 +133,13 @@ typedef struct
 
 static const color_description_t color_descriptions[] =
 {
-  { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK,   CHANNEL_K,      1 },
-  { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CHANNEL_W,      1 },
-  { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CHANNEL_RGB,    3 },
-  { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CHANNEL_CMY,    3 },
-  { "CMYK",       1, 1, COLOR_ID_CMYK,   COLOR_BLACK,   CHANNEL_CMYK,   4 },
-  { "KCMY",       1, 0, COLOR_ID_KCMY,   COLOR_BLACK,   CHANNEL_CMYK,   4 },
-  { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CHANNEL_CMYKRB, 6 },
+  { "Grayscale",  1, 1, COLOR_ID_GRAY,   COLOR_BLACK,   CMASK_K,      1 },
+  { "Whitescale", 1, 1, COLOR_ID_WHITE,  COLOR_WHITE,   CMASK_W,      1 },
+  { "RGB",        1, 1, COLOR_ID_RGB,    COLOR_WHITE,   CMASK_RGB,    3 },
+  { "CMY",        1, 1, COLOR_ID_CMY,    COLOR_BLACK,   CMASK_CMY,    3 },
+  { "CMYK",       1, 1, COLOR_ID_CMYK,   COLOR_BLACK,   CMASK_CMYK,   4 },
+  { "KCMY",       1, 0, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4 },
+  { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6 },
   { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,             -1 },
 };
 
@@ -198,8 +209,6 @@ typedef struct
   const color_description_t *input_color_description;
   const color_description_t *output_color_description;
   const color_correction_t *color_correction;
-  stp_convert_t colorfunc;
-  stp_curve_t composite;
   stp_curve_t channel_curves[STP_CHANNEL_LIMIT];
   double gamma_values[STP_CHANNEL_LIMIT];
   double print_gamma;
@@ -218,7 +227,8 @@ typedef struct
   const double *sat_cache;
   size_t sat_count;
   stp_curve_t gcr_curve;
-  unsigned short *cmy_tmp;
+  unsigned short *cmy_tmp;	/* CMY -> CMYK */
+  unsigned short *cmyk_tmp;	/* CMYK -> CMYKRB */
 } lut_t;
 
 typedef struct
@@ -238,7 +248,7 @@ static const float_param_t float_parameters[] =
       N_("Color correction to be applied"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED, 1, 1, -1, 1
-    }, 0.0, 0.0, 0.0, CHANNEL_EVERY
+    }, 0.0, 0.0, 0.0, CMASK_EVERY
   },
   {
     {
@@ -246,7 +256,7 @@ static const float_param_t float_parameters[] =
       N_("Bit depth per channel"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 0.0, 0.0, CHANNEL_EVERY
+    }, 0.0, 0.0, 0.0, CMASK_EVERY
   },
   {
     {
@@ -254,7 +264,7 @@ static const float_param_t float_parameters[] =
       N_("Input image type"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 0.0, 0.0, CHANNEL_EVERY
+    }, 0.0, 0.0, 0.0, CMASK_EVERY
   },
   {
     {
@@ -262,7 +272,7 @@ static const float_param_t float_parameters[] =
       N_("Output image type"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_INTERNAL, 1, 1, -1, 1
-    }, 0.0, 0.0, 0.0, CHANNEL_EVERY
+    }, 0.0, 0.0, 0.0, CMASK_EVERY
   },
   {
     {
@@ -270,7 +280,7 @@ static const float_param_t float_parameters[] =
       N_("Raw Channels"),
       STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_INTERNAL, 1, 1, -1, 1
-    }, 1.0, 32.0, 0.0, CHANNEL_EVERY
+    }, 1.0, 32.0, 0.0, CMASK_EVERY
   },
   {
     {
@@ -278,7 +288,7 @@ static const float_param_t float_parameters[] =
       N_("Brightness of the print (0 is solid black, 2 is solid white)"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 2.0, 1.0, CHANNEL_ALL
+    }, 0.0, 2.0, 1.0, CMASK_ALL
   },
   {
     {
@@ -286,7 +296,7 @@ static const float_param_t float_parameters[] =
       N_("Contrast of the print (0 is solid gray)"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_ALL
+    }, 0.0, 4.0, 1.0, CMASK_ALL
   },
   {
     {
@@ -294,7 +304,7 @@ static const float_param_t float_parameters[] =
       N_("Use linear vs. fixed end point contrast adjustment"),
       STP_PARAMETER_TYPE_BOOLEAN, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 1, 1, -1, 1
-    }, 0.0, 0.0, 0.0, CHANNEL_ALL
+    }, 0.0, 0.0, 0.0, CMASK_ALL
   },
   {
     {
@@ -306,7 +316,7 @@ static const float_param_t float_parameters[] =
 	 "the brightness adjustment."),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.1, 4.0, 1.0, CHANNEL_EVERY
+    }, 0.1, 4.0, 1.0, CMASK_EVERY
   },
   {
     {
@@ -314,7 +324,7 @@ static const float_param_t float_parameters[] =
       N_("Gamma value assumed by application"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_INTERNAL, 0, 1, -1, 1
-    }, 0.1, 4.0, 1.0, CHANNEL_EVERY
+    }, 0.1, 4.0, 1.0, CMASK_EVERY
   },
   {
     {
@@ -322,7 +332,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the cyan gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 1, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_C
+    }, 0.0, 4.0, 1.0, CMASK_C
   },
   {
     {
@@ -330,7 +340,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the magenta gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 2, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_M
+    }, 0.0, 4.0, 1.0, CMASK_M
   },
   {
     {
@@ -338,7 +348,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the yellow gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 3, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_Y
+    }, 0.0, 4.0, 1.0, CMASK_Y
   },
   {
     {
@@ -346,7 +356,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the red gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 1, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_R
+    }, 0.0, 4.0, 1.0, CMASK_R
   },
   {
     {
@@ -354,7 +364,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the green gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 2, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_G
+    }, 0.0, 4.0, 1.0, CMASK_G
   },
   {
     {
@@ -362,7 +372,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the blue gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED1, 1, 1, 3, 1
-    }, 0.0, 4.0, 1.0, CHANNEL_B
+    }, 0.0, 4.0, 1.0, CMASK_B
   },
   {
     {
@@ -372,7 +382,7 @@ static const float_param_t float_parameters[] =
 	 "using color and black inks"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 9.0, 1.0, CHANNEL_CMY
+    }, 0.0, 9.0, 1.0, CMASK_CMY
   },
   {
     {
@@ -382,7 +392,7 @@ static const float_param_t float_parameters[] =
 	 "using color and black inks"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
-    }, 0.0, 9.0, 1.0, CHANNEL_RGB
+    }, 0.0, 9.0, 1.0, CMASK_RGB
   },
   /* Need to think this through a bit more -- rlk 20030712 */
   {
@@ -391,7 +401,7 @@ static const float_param_t float_parameters[] =
       N_("Limit the total ink printed to the page"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 0
-    }, 0.0, 32.0, 32.0, CHANNEL_CMY
+    }, 0.0, 32.0, 32.0, CMASK_CMY
   },
   {
     {
@@ -399,7 +409,7 @@ static const float_param_t float_parameters[] =
       N_("Adjust the gray component transition rate"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1
-    }, 0.0, 1.0, 1.0, CHANNEL_CMYK
+    }, 0.0, 1.0, 1.0, CMASK_CMYK
   },
   {
     {
@@ -407,7 +417,7 @@ static const float_param_t float_parameters[] =
       N_("Lower bound of gray component reduction"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1
-    }, 0.0, 1.0, 0.2, CHANNEL_CMYK
+    }, 0.0, 1.0, 0.2, CMASK_CMYK
   },
   {
     {
@@ -415,7 +425,7 @@ static const float_param_t float_parameters[] =
       N_("Upper bound of gray component reduction"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1
-    }, 0.0, 5.0, 0.5, CHANNEL_CMYK
+    }, 0.0, 5.0, 0.5, CMASK_CMYK
   },
 };
 
@@ -453,19 +463,11 @@ static curve_param_t curve_parameters[] =
 {
   {
     {
-      "CompositeCurve", N_("Composite Curve"), N_("Output Curves"),
-      N_("Composite (Grayscale) curve"),
-      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, -1, 1
-    }, &color_curve_bounds, CHANNEL_K, 0
-  },
-  {
-    {
       "CyanCurve", N_("Cyan Curve"), N_("Output Curves"),
       N_("Cyan curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
-    }, &color_curve_bounds, CHANNEL_C, 0
+    }, &color_curve_bounds, CMASK_C, 0
   },
   {
     {
@@ -473,7 +475,7 @@ static curve_param_t curve_parameters[] =
       N_("Magenta curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 2, 1
-    }, &color_curve_bounds, CHANNEL_M, 0
+    }, &color_curve_bounds, CMASK_M, 0
   },
   {
     {
@@ -481,7 +483,7 @@ static curve_param_t curve_parameters[] =
       N_("Yellow curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 3, 1
-    }, &color_curve_bounds, CHANNEL_Y, 0
+    }, &color_curve_bounds, CMASK_Y, 0
   },
   {
     {
@@ -489,7 +491,7 @@ static curve_param_t curve_parameters[] =
       N_("Black curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 0, 1
-    }, &color_curve_bounds, CHANNEL_K, 0
+    }, &color_curve_bounds, CMASK_K, 0
   },
   {
     {
@@ -497,7 +499,7 @@ static curve_param_t curve_parameters[] =
       N_("Red curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
-    }, &color_curve_bounds, CHANNEL_R, 0
+    }, &color_curve_bounds, CMASK_R, 0
   },
   {
     {
@@ -505,7 +507,7 @@ static curve_param_t curve_parameters[] =
       N_("Green curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
-    }, &color_curve_bounds, CHANNEL_G, 0
+    }, &color_curve_bounds, CMASK_G, 0
   },
   {
     {
@@ -513,7 +515,7 @@ static curve_param_t curve_parameters[] =
       N_("Blue curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
-    }, &color_curve_bounds, CHANNEL_B, 0
+    }, &color_curve_bounds, CMASK_B, 0
   },
   {
     {
@@ -521,7 +523,7 @@ static curve_param_t curve_parameters[] =
       N_("White curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1
-    }, &color_curve_bounds, CHANNEL_W, 0
+    }, &color_curve_bounds, CMASK_W, 0
   },
   {
     {
@@ -529,7 +531,7 @@ static curve_param_t curve_parameters[] =
       N_("Hue adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &hue_map_bounds, CHANNEL_CMY, 1
+    }, &hue_map_bounds, CMASK_CMY, 1
   },
   {
     {
@@ -537,7 +539,7 @@ static curve_param_t curve_parameters[] =
       N_("Saturation adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &sat_map_bounds, CHANNEL_CMY, 1
+    }, &sat_map_bounds, CMASK_CMY, 1
   },
   {
     {
@@ -545,7 +547,7 @@ static curve_param_t curve_parameters[] =
       N_("Luminosity adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &lum_map_bounds, CHANNEL_CMY, 1
+    }, &lum_map_bounds, CMASK_CMY, 1
   },
   {
     {
@@ -553,7 +555,7 @@ static curve_param_t curve_parameters[] =
       N_("Hue adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &hue_map_bounds, CHANNEL_RGB, 1
+    }, &hue_map_bounds, CMASK_RGB, 1
   },
   {
     {
@@ -561,7 +563,7 @@ static curve_param_t curve_parameters[] =
       N_("Saturation adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &sat_map_bounds, CHANNEL_RGB, 1
+    }, &sat_map_bounds, CMASK_RGB, 1
   },
   {
     {
@@ -569,7 +571,7 @@ static curve_param_t curve_parameters[] =
       N_("Luminosity adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1
-    }, &lum_map_bounds, CHANNEL_RGB, 1
+    }, &lum_map_bounds, CMASK_RGB, 1
   },
   {
     {
@@ -577,7 +579,7 @@ static curve_param_t curve_parameters[] =
       N_("Gray component reduction curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, 0, 1
-    }, &gcr_curve_bounds, CHANNEL_CMYK, 0
+    }, &gcr_curve_bounds, CMASK_CMYK, 0
   },
 };
 
@@ -988,8 +990,9 @@ generic_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
 
   initialize_gcr_curve(vars);
   gcr_lookup = stp_curve_get_ushort_data(lut->gcr_curve, &points);
-  stp_curve_resample(lut->black, lut->steps);
-  black_lookup = stp_curve_get_ushort_data(lut->black, &points);
+  stp_curve_resample(lut->channel_curves[CHANNEL_K], lut->steps);
+  black_lookup =
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_K], &points);
   memset(nz, 0, sizeof(nz));
 
   for (i = 0; i < width; i++, out += 4, in += 3)
@@ -1075,10 +1078,10 @@ fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	\
  * 'rgb_to_rgb()' - Convert rgb image data to RGB.
  */
 
-#define RGB_TO_RGB_FUNC(T, bits)					      \
+#define RGB_TO_COLOR_FUNC(C, T, bits, offset)				      \
 static unsigned								      \
-rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	      \
-		   unsigned short *out)					      \
+rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	      \
+		    unsigned short *out)				      \
 {									      \
   int i;								      \
   double isat = 1.0;							      \
@@ -1098,11 +1101,14 @@ rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	      \
   int compute_saturation = ssat <= .99999 || ssat >= 1.00001;		      \
   int split_saturation = ssat > 1.4;					      \
   const unsigned short *red =						      \
-    stp_curve_get_ushort_data(lut->cyan, &count);			      \
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_C + offset],	      \
+			      &count);					      \
   const unsigned short *green =						      \
-    stp_curve_get_ushort_data(lut->magenta, &count);			      \
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_M + offset],	      \
+			      &count);					      \
   const unsigned short *blue =						      \
-    stp_curve_get_ushort_data(lut->yellow, &count);			      \
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_Y + offset],	      \
+			      &count);					      \
   size_t h_points = 0;							      \
   size_t l_points = 0;							      \
   size_t s_points = 0;							      \
@@ -1112,24 +1118,27 @@ rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	      \
 	     "Bright") == 0)						      \
     bright_color_adjustment = 1;					      \
 									      \
-  if (lut->hue_map) {							      \
-    h_points = stp_curve_count_points(lut->hue_map);			      \
-    lut->hue_cache = stp_curve_get_data(lut->hue_map, &(lut->hue_count));     \
-  } else {								      \
+  if (lut->hue_map)							      \
+    {									      \
+      h_points = stp_curve_count_points(lut->hue_map);			      \
+      lut->hue_cache = stp_curve_get_data(lut->hue_map, &(lut->hue_count));   \
+    }									      \
+  else									      \
     lut->hue_cache = 0;							      \
-  }									      \
-  if (lut->lum_map) {							      \
-    l_points = stp_curve_count_points(lut->lum_map);			      \
-    lut->lum_cache = stp_curve_get_data(lut->lum_map, &(lut->lum_count));     \
-  } else {								      \
+  if (lut->lum_map)							      \
+    {									      \
+      l_points = stp_curve_count_points(lut->lum_map);			      \
+      lut->lum_cache = stp_curve_get_data(lut->lum_map, &(lut->lum_count));   \
+    }									      \
+  else									      \
     lut->lum_cache = 0;							      \
-  }									      \
-  if (lut->sat_map) {							      \
-    s_points = stp_curve_count_points(lut->sat_map);			      \
-    lut->sat_cache = stp_curve_get_data(lut->sat_map, &(lut->sat_count));     \
-  } else {								      \
+  if (lut->sat_map)							      \
+    {									      \
+      s_points = stp_curve_count_points(lut->sat_map);			      \
+      lut->sat_cache = stp_curve_get_data(lut->sat_map, &(lut->sat_count));   \
+    }									      \
+  else									      \
     lut->sat_cache = 0;							      \
-  }									      \
 									      \
   if (split_saturation)							      \
     ssat = sqrt(ssat);							      \
@@ -1173,142 +1182,157 @@ rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	      \
   return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		      \
 }
 
-RGB_TO_RGB_FUNC(unsigned char, 8)
-RGB_TO_RGB_FUNC(unsigned short, 16)
+RGB_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
+RGB_TO_COLOR_FUNC(cmy, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(rgb, cmy)
+RGB_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
+RGB_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(rgb, rgb)
 
 /*
  * 'rgb_to_rgb()' - Convert rgb image data to RGB.
  */
 
-#define FAST_RGB_TO_RGB_FUNC(T, bits)					 \
-static unsigned								 \
-fast_rgb_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in, \
-		       unsigned short *out)				 \
-{									 \
-  int i;								 \
-  int i0 = -1;								 \
-  int i1 = -1;								 \
-  int i2 = -1;								 \
-  int o0 = 0;								 \
-  int o1 = 0;								 \
-  int o2 = 0;								 \
-  int nz0 = 0;								 \
-  int nz1 = 0;								 \
-  int nz2 = 0;								 \
-  const T *s_in = (const T *) in;					 \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	 \
-  size_t count;								 \
-  const unsigned short *red;						 \
-  const unsigned short *green;						 \
-  const unsigned short *blue;						 \
-  double isat = 1.0;							 \
-  double saturation = stp_get_float_parameter(vars, "Saturation");	 \
-									 \
-  stp_curve_resample(lut->cyan, 1 << bits);				 \
-  stp_curve_resample(lut->magenta, 1 << bits);				 \
-  stp_curve_resample(lut->yellow, 1 << bits);				 \
-  red = stp_curve_get_ushort_data(lut->cyan, &count);			 \
-  green = stp_curve_get_ushort_data(lut->magenta, &count);		 \
-  blue = stp_curve_get_ushort_data(lut->yellow, &count);		 \
-									 \
-  if (saturation > 1)							 \
-    isat = 1.0 / saturation;						 \
-  for (i = 0; i < lut->image_width; i++)				 \
-    {									 \
-      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		 \
-	{								 \
-	  out[0] = o0;							 \
-	  out[1] = o1;							 \
-	  out[2] = o2;							 \
-	}								 \
-      else								 \
-	{								 \
-	  i0 = s_in[0];							 \
-	  i1 = s_in[1];							 \
-	  i2 = s_in[2];							 \
-	  out[0] = red[s_in[0]];					 \
-	  out[1] = green[s_in[1]];					 \
-	  out[2] = blue[s_in[2]];					 \
-	  if (saturation != 1.0)					 \
-	    update_saturation_from_rgb(out, saturation, isat);		 \
-	  o0 = out[0];							 \
-	  o1 = out[1];							 \
-	  o2 = out[2];							 \
-	  nz0 |= o0;							 \
-	  nz1 |= o1;							 \
-	  nz2 |= o2;							 \
-	}								 \
-      s_in += 3;							 \
-      out += 3;								 \
-    }									 \
-  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		 \
+#define FAST_RGB_TO_COLOR_FUNC(C, T, bits, offset)			     \
+static unsigned								     \
+fast_rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,     \
+		         unsigned short *out)				     \
+{									     \
+  int i;								     \
+  int i0 = -1;								     \
+  int i1 = -1;								     \
+  int i2 = -1;								     \
+  int o0 = 0;								     \
+  int o1 = 0;								     \
+  int o2 = 0;								     \
+  int nz0 = 0;								     \
+  int nz1 = 0;								     \
+  int nz2 = 0;								     \
+  const T *s_in = (const T *) in;					     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  size_t count;								     \
+  const unsigned short *red;						     \
+  const unsigned short *green;						     \
+  const unsigned short *blue;						     \
+  double isat = 1.0;							     \
+  double saturation = stp_get_float_parameter(vars, "Saturation");	     \
+									     \
+  stp_curve_resample(lut->channel_curves[CHANNEL_C + offset], 1 << bits);    \
+  stp_curve_resample(lut->channel_curves[CHANNEL_M + offset], 1 << bits);    \
+  stp_curve_resample(lut->channel_curves[CHANNEL_Y + offset], 1 << bits);    \
+  red = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_C + offset],   \
+				  &count);				     \
+  green = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_M + offset], \
+				    &count);				     \
+  blue = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_Y + offset],  \
+				   &count);				     \
+									     \
+  if (saturation > 1)							     \
+    isat = 1.0 / saturation;						     \
+  for (i = 0; i < lut->image_width; i++)				     \
+    {									     \
+      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		     \
+	{								     \
+	  out[0] = o0;							     \
+	  out[1] = o1;							     \
+	  out[2] = o2;							     \
+	}								     \
+      else								     \
+	{								     \
+	  i0 = s_in[0];							     \
+	  i1 = s_in[1];							     \
+	  i2 = s_in[2];							     \
+	  out[0] = red[s_in[0]];					     \
+	  out[1] = green[s_in[1]];					     \
+	  out[2] = blue[s_in[2]];					     \
+	  if (saturation != 1.0)					     \
+	    update_saturation_from_rgb(out, saturation, isat);		     \
+	  o0 = out[0];							     \
+	  o1 = out[1];							     \
+	  o2 = out[2];							     \
+	  nz0 |= o0;							     \
+	  nz1 |= o1;							     \
+	  nz2 |= o2;							     \
+	}								     \
+      s_in += 3;							     \
+      out += 3;								     \
+    }									     \
+  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		     \
 }
 
-FAST_RGB_TO_RGB_FUNC(unsigned char, 8)
-FAST_RGB_TO_RGB_FUNC(unsigned short, 16)
+FAST_RGB_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
+FAST_RGB_TO_COLOR_FUNC(cmy, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(fast_rgb, cmy)
+FAST_RGB_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
+FAST_RGB_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(fast_rgb, rgb)
 
 /*
  * 'gray_to_rgb()' - Convert gray image data to RGB.
  */
 
-#define GRAY_TO_RGB_FUNC(T, bits)					\
-static unsigned								\
-gray_##bits##_to_rgb(stp_const_vars_t vars, const unsigned char *in,	\
-		   unsigned short *out)					\
-{									\
-  int i;								\
-  int i0 = -1;								\
-  int o0 = 0;								\
-  int o1 = 0;								\
-  int o2 = 0;								\
-  int nz0 = 0;								\
-  int nz1 = 0;								\
-  int nz2 = 0;								\
-  const T *s_in = (const T *) in;					\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  size_t count;								\
-  const unsigned short *red;						\
-  const unsigned short *green;						\
-  const unsigned short *blue;						\
-									\
-  stp_curve_resample(lut->cyan, 1 << bits);				\
-  stp_curve_resample(lut->magenta, 1 << bits);				\
-  stp_curve_resample(lut->yellow, 1 << bits);				\
-  red = stp_curve_get_ushort_data(lut->cyan, &count);			\
-  green = stp_curve_get_ushort_data(lut->magenta, &count);		\
-  blue = stp_curve_get_ushort_data(lut->yellow, &count);		\
-									\
-  for (i = 0; i < lut->image_width; i++)				\
-    {									\
-      if (i0 == s_in[0])						\
-	{								\
-	  out[0] = o0;							\
-	  out[1] = o1;							\
-	  out[2] = o2;							\
-	}								\
-      else								\
-	{								\
-	  i0 = s_in[0];							\
-	  out[0] = red[s_in[0]];					\
-	  out[1] = green[s_in[0]];					\
-	  out[2] = blue[s_in[0]];					\
-	  o0 = out[0];							\
-	  o1 = out[1];							\
-	  o2 = out[2];							\
-	  nz0 |= o0;							\
-	  nz1 |= o1;							\
-	  nz2 |= o2;							\
-	}								\
-      s_in += 1;							\
-      out += 3;								\
-    }									\
-  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		\
+#define GRAY_TO_COLOR_FUNC(C, T, bits, offset)				     \
+static unsigned								     \
+gray_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	     \
+		   unsigned short *out)					     \
+{									     \
+  int i;								     \
+  int i0 = -1;								     \
+  int o0 = 0;								     \
+  int o1 = 0;								     \
+  int o2 = 0;								     \
+  int nz0 = 0;								     \
+  int nz1 = 0;								     \
+  int nz2 = 0;								     \
+  const T *s_in = (const T *) in;					     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  size_t count;								     \
+  const unsigned short *red;						     \
+  const unsigned short *green;						     \
+  const unsigned short *blue;						     \
+									     \
+  stp_curve_resample(lut->channel_curves[CHANNEL_C + offset], 1 << bits);    \
+  stp_curve_resample(lut->channel_curves[CHANNEL_M + offset], 1 << bits);    \
+  stp_curve_resample(lut->channel_curves[CHANNEL_Y + offset], 1 << bits);    \
+  red = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_C + offset],   \
+				  &count);				     \
+  green = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_M + offset], \
+				    &count);				     \
+  blue = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_Y + offset],  \
+				   &count);				     \
+									     \
+  for (i = 0; i < lut->image_width; i++)				     \
+    {									     \
+      if (i0 == s_in[0])						     \
+	{								     \
+	  out[0] = o0;							     \
+	  out[1] = o1;							     \
+	  out[2] = o2;							     \
+	}								     \
+      else								     \
+	{								     \
+	  i0 = s_in[0];							     \
+	  out[0] = red[s_in[0]];					     \
+	  out[1] = green[s_in[0]];					     \
+	  out[2] = blue[s_in[0]];					     \
+	  o0 = out[0];							     \
+	  o1 = out[1];							     \
+	  o2 = out[2];							     \
+	  nz0 |= o0;							     \
+	  nz1 |= o1;							     \
+	  nz2 |= o2;							     \
+	}								     \
+      s_in += 1;							     \
+      out += 3;								     \
+    }									     \
+  return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);		     \
 }
 
-GRAY_TO_RGB_FUNC(unsigned char, 8)
-GRAY_TO_RGB_FUNC(unsigned short, 16)
+GRAY_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
+GRAY_TO_COLOR_FUNC(cmy, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(gray, cmy)
+GRAY_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
+GRAY_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(gray, rgb)
 
 #define RGB_TO_KCMY_FUNC(name, bits)					\
@@ -1564,35 +1588,43 @@ COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, gray_8, 1, 1)
 COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, gray_16, 1, 1)
 GENERIC_COLOR_FUNC(gray, gray_line_art)
 
-#define CMYK_TO_KCMY_FUNC(T, size)					\
-static unsigned								\
-cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
-		      const unsigned char *in,				\
-		      unsigned short *out)				\
-{									\
-  int i;								\
-  unsigned retval = 0;							\
-  int j;								\
-  int nz[4];								\
-  const T *s_in = (const T *) in;					\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-									\
-  memset(nz, 0, sizeof(nz));						\
-									\
-  for (i = 0; i < lut->image_width; i++, out += 4)			\
-    {									\
-      for (j = 0; j < 4; j++)						\
-	{								\
-	  int outpos = (j + 1) & 3;					\
-	  int inval = *s_in++;						\
-	  nz[outpos] |= j;						\
-	  out[outpos] = lut->cmyk_lut[inval];				\
-	}								\
-    }									\
-  for (j = 0; j < 4; j++)						\
-    if (nz[j] == 0)							\
-      retval |= (1 << j);						\
-  return retval;							\
+#define CMYK_TO_KCMY_FUNC(T, size)					     \
+static unsigned								     \
+cmyk_##size##_to_kcmy(stp_const_vars_t vars,				     \
+		      const unsigned char *in,				     \
+		      unsigned short *out)				     \
+{									     \
+  int i;								     \
+  unsigned retval = 0;							     \
+  int j;								     \
+  int nz[4];								     \
+  const T *s_in = (const T *) in;					     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  const unsigned short *lookup[4];					     \
+  size_t count;								     \
+									     \
+  for (i = 0; i < 4; i++)						     \
+    {									     \
+      stp_curve_resample(lut->channel_curves[i], 1 << size);		     \
+      lookup[i] = stp_curve_get_ushort_data(lut->channel_curves[i], &count); \
+    }									     \
+									     \
+  memset(nz, 0, sizeof(nz));						     \
+									     \
+  for (i = 0; i < lut->image_width; i++, out += 4)			     \
+    {									     \
+      for (j = 0; j < 4; j++)						     \
+	{								     \
+	  int outpos = (j + 1) & 3;					     \
+	  int inval = *s_in++;						     \
+	  nz[outpos] |= j;						     \
+	  out[outpos] = lookup[outpos][inval];				     \
+	}								     \
+    }									     \
+  for (j = 0; j < 4; j++)						     \
+    if (nz[j] == 0)							     \
+      retval |= (1 << j);						     \
+  return retval;							     \
 }
 
 CMYK_TO_KCMY_FUNC(unsigned char, 8)
@@ -1621,8 +1653,9 @@ gray_##bits##_to_gray(stp_const_vars_t vars,				\
   size_t count;								\
   const unsigned short *composite;					\
 									\
-  stp_curve_resample(lut->composite, 1 << bits);			\
-  composite = stp_curve_get_ushort_data(lut->composite, &count);	\
+  stp_curve_resample(lut->channel_curves[CHANNEL_K], 1 << bits);	\
+  composite =								\
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_K], &count);	\
 									\
   memset(out, 0, width * sizeof(unsigned short));			\
 									\
@@ -1669,8 +1702,9 @@ color_##bits##_to_gray(stp_const_vars_t vars,				   \
   int l_green = LUM_GREEN;						   \
   int l_blue = LUM_BLUE;						   \
 									   \
-  stp_curve_resample(lut->composite, 1 << bits);			   \
-  composite = stp_curve_get_ushort_data(lut->composite, &count);	   \
+  stp_curve_resample(lut->channel_curves[CHANNEL_K], 1 << bits);	   \
+  composite =								   \
+    stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_K], &count);	   \
 									   \
   if (!lut->invert_output)						   \
     {									   \
@@ -1701,27 +1735,31 @@ COLOR_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(color, gray)
 
 
-#define CMYK_TO_GRAY_FUNC(T, size)					\
-static unsigned								\
-cmyk_##size##_to_gray(stp_const_vars_t vars,				\
-		      const unsigned char *in,				\
-		      unsigned short *out)				\
-{									\
-  int i;								\
-  int j;								\
-  int nz = 0;								\
-  const T *s_in = (const T *) in;					\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-									\
-  for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		\
-    {									\
-      for (j = 0; j < 4; j++)						\
-	{								\
-	  nz |= s_in[0];						\
-	  out[0] = lut->cmyk_lut[s_in[0]];				\
-	}								\
-    }									\
-  return nz ? 1 : 0;							\
+#define CMYK_TO_GRAY_FUNC(T, size)					      \
+static unsigned								      \
+cmyk_##size##_to_gray(stp_const_vars_t vars,				      \
+		      const unsigned char *in,				      \
+		      unsigned short *out)				      \
+{									      \
+  int i;								      \
+  int j;								      \
+  int nz = 0;								      \
+  const T *s_in = (const T *) in;					      \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	      \
+  size_t count;								      \
+  const unsigned short *lookup;						      \
+  stp_curve_resample(lut->channel_curves[CHANNEL_K], 1 << size);	      \
+  lookup = stp_curve_get_ushort_data(lut->channel_curves[CHANNEL_K], &count); \
+									      \
+  for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		      \
+    {									      \
+      for (j = 0; j < 4; j++)						      \
+	{								      \
+	  nz |= s_in[0];						      \
+	  out[0] = lookup[s_in[0]];					      \
+	}								      \
+    }									      \
+  return nz ? 1 : 0;							      \
 }
 
 CMYK_TO_GRAY_FUNC(unsigned char, 8)
@@ -1844,8 +1882,6 @@ allocate_lut(void)
 {
   int i;
   lut_t *ret = stpi_zalloc(sizeof(lut_t));
-  ret->composite = stp_curve_create(STP_CURVE_WRAP_NONE);
-  stp_curve_set_bounds(ret->composite, 0, 65535);
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
       ret->channel_curves[i] = stp_curve_create(STP_CURVE_WRAP_NONE);
@@ -1868,14 +1904,12 @@ copy_lut(void *vlut)
   if (!src)
     return NULL;
   dest = allocate_lut();
-  dest->composite = stp_curve_create_copy(src->composite);
   free_channels(dest);
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
       dest->channel_curves[i] = stp_curve_create_copy(src->channel_curves[i]);
       dest->gamma_values[i] = src->gamma_values[i];
     }
-  dest->composite = stp_curve_create_copy(src->composite);
   if (src->hue_map)
     dest->hue_map = stp_curve_create_copy(src->hue_map);
   if (src->lum_map)
@@ -1885,7 +1919,6 @@ copy_lut(void *vlut)
   if (src->gcr_curve)
     dest->gcr_curve = stp_curve_create_copy(src->gcr_curve);
   dest->steps = src->steps;
-  dest->colorfunc = src->colorfunc;
   dest->in_channels = src->in_channels;
   dest->out_channels = src->out_channels;
   dest->channel_depth = src->channel_depth;
@@ -1912,8 +1945,6 @@ free_lut(void *vlut)
 {
   lut_t *lut = (lut_t *)vlut;
   free_channels(lut);
-  if (lut->composite)
-    stp_curve_free(lut->composite);
   if (lut->hue_map)
     stp_curve_free(lut->hue_map);
   if (lut->lum_map)
@@ -1922,6 +1953,10 @@ free_lut(void *vlut)
     stp_curve_free(lut->sat_map);
   if (lut->gcr_curve)
     stp_curve_free(lut->gcr_curve);
+  if (lut->cmy_tmp)
+    stp_curve_free(lut->cmy_tmp);
+  if (lut->cmyk_tmp)
+    stp_curve_free(lut->cmyk_tmp);
   SAFE_FREE(lut->in_data);
   memset(lut, 0, sizeof(lut_t));
   stpi_free(lut);
@@ -1991,16 +2026,16 @@ compute_gcr_curve(stp_const_vars_t vars)
   return curve;
 }
 
-static stp_curve_t
-compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
+static void
+compute_a_curve(lut_t *lut, int channel)
 {
-  double *tmp = stpi_malloc(sizeof(double) * l->steps);
+  double *tmp = stpi_malloc(sizeof(double) * lut->steps);
   double pivot = .25;
   double ipivot = 1.0 - pivot;
-  double xcontrast = pow(l->contrast, l->contrast);
-  double xgamma = pow(pivot, l->screen_gamma);
+  double xcontrast = pow(lut->contrast, lut->contrast);
+  double xgamma = pow(pivot, lut->screen_gamma);
   int i;
-  int isteps = l->steps;
+  int isteps = lut->steps;
   if (isteps > 256)
     isteps = 256;
   for (i = 0; i < isteps; i ++)
@@ -2008,7 +2043,7 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
       double temp_pixel, pixel;
       pixel = (double) i / (double) (isteps - 1);
 
-      if (l->invert_output)
+      if (lut->invert_output)
 	pixel = 1.0 - pixel;
 
       /*
@@ -2018,25 +2053,25 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
 	temp_pixel = 1.0 - pixel;
       else
 	temp_pixel = pixel;
-      if (l->contrast > 3.99999)
+      if (lut->contrast > 3.99999)
 	{
 	  if (temp_pixel < .5)
 	    temp_pixel = 0;
 	  else
 	    temp_pixel = 1;
 	}
-      if (temp_pixel <= .000001 && l->contrast <= .0001)
+      if (temp_pixel <= .000001 && lut->contrast <= .0001)
 	temp_pixel = .5;
       else if (temp_pixel > 1)
 	temp_pixel = .5 * pow(2 * temp_pixel, xcontrast);
       else if (temp_pixel < 1)
 	{
-	  if (l->linear_contrast_adjustment)
+	  if (lut->linear_contrast_adjustment)
 	    temp_pixel = 0.5 -
-	      ((0.5 - .5 * pow(2 * temp_pixel, l->contrast)) * l->contrast);
+	      ((0.5 - .5 * pow(2 * temp_pixel, lut->contrast)) * lut->contrast);
 	  else
 	    temp_pixel = 0.5 -
-	      ((0.5 - .5 * pow(2 * temp_pixel, l->contrast)));
+	      ((0.5 - .5 * pow(2 * temp_pixel, lut->contrast)));
 	}
       if (temp_pixel > .5)
 	temp_pixel = .5;
@@ -2050,10 +2085,10 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
       /*
        * Second, do brightness
        */
-      if (l->brightness < 1)
-	pixel = pixel * l->brightness;
+      if (lut->brightness < 1)
+	pixel = pixel * lut->brightness;
       else
-	pixel = 1 - ((1 - pixel) * (2 - l->brightness));
+	pixel = 1 - ((1 - pixel) * (2 - lut->brightness));
 
       /*
        * Third, correct for the screen gamma
@@ -2061,7 +2096,7 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
 
       pixel = 1.0 -
 	(1.0 / (1.0 - xgamma)) *
-	(pow(pivot + ipivot * pixel, l->screen_gamma) - xgamma);
+	(pow(pivot + ipivot * pixel, lut->screen_gamma) - xgamma);
 
       /*
        * Third, fix up cyan, magenta, yellow values
@@ -2071,17 +2106,17 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
       else if (pixel > 1.0)
 	pixel = 1.0;
 
-      if (pixel > .9999 && c_gamma < .00001)
+      if (pixel > .9999 && lut->gamma_values[channel] < .00001)
 	pixel = 0;
       else
-	pixel = 1 - pow(1 - pixel, c_gamma);
+	pixel = 1 - pow(1 - pixel, lut->gamma_values[channel]);
 
       /*
        * Finally, fix up print gamma and scale
        */
 
-      pixel = 65535 * pow(pixel, l->print_gamma);	/* was + 0.5 here */
-      if (!l->invert_output)
+      pixel = 65535 * pow(pixel, lut->print_gamma);	/* was + 0.5 here */
+      if (!lut->invert_output)
 	pixel = 65535 - pixel;
 
       if (pixel <= 0.0)
@@ -2092,11 +2127,10 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
 	tmp[i] = (pixel);
       tmp[i] = floor(tmp[i] + 0.5);			/* rounding is done here */
     }
-  stp_curve_set_data(curve, isteps, tmp);
-  if (isteps != l->steps)
-    stp_curve_resample(curve, l->steps);
+  stp_curve_set_data(lut->channel_curves[channel], isteps, tmp);
+  if (isteps != lut->steps)
+    stp_curve_resample(lut->channel_curves[channel], lut->steps);
   stpi_free(tmp);
-  return curve;
 }
 
 static void
@@ -2131,29 +2165,73 @@ invert_curve(stp_curve_t curve, int invert_output)
 }
 
 static void
-compute_one_lut(stp_curve_t lut_curve, stp_const_curve_t curve,
-		double density, lut_params_t *l)
+compute_one_lut(lut_t *lut, int i)
 {
-  if (curve)
+  if (lut->channel_curves[i])
     {
-      stp_curve_copy(lut_curve, curve);
-      invert_curve(lut_curve, l->invert_output);
-      stp_curve_rescale(lut_curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
-			STP_CURVE_BOUNDS_RESCALE);
-      stp_curve_resample(lut_curve, l->steps);
+      invert_curve(lut->channel_curves[i], lut->invert_output);
+      stp_curve_rescale(lut->channel_curves[i], 65535.0,
+			STP_CURVE_COMPOSE_MULTIPLY, STP_CURVE_BOUNDS_RESCALE);
+      stp_curve_resample(lut->channel_curves[i], lut->steps);
     }
   else
     {
-      compute_a_curve(lut_curve, density, l);
+      compute_a_curve(lut, i);
     }
 }
 
 static void
-stpi_compute_lut(stp_vars_t v, size_t steps)
+stpi_compute_lut(stp_vars_t v)
 {
   int i;
   lut_t *lut = (lut_t *)(stpi_get_component_data(v, "Color"));
   stpi_dprintf(STPI_DBG_LUT, v, "stpi_compute_lut\n");
+
+  if (lut->input_color_description->color_model == COLOR_UNKNOWN ||
+      lut->output_color_description->color_model == COLOR_UNKNOWN ||
+      lut->input_color_description->color_model ==
+      lut->output_color_description->color_model)
+    lut->invert_output = 0;
+  else
+    lut->invert_output = 1;
+
+  lut->linear_contrast_adjustment = 0;
+  lut->print_gamma = 1.0;
+  lut->app_gamma = 1.0;
+  lut->contrast = 1.0;
+  lut->brightness = 1.0;
+
+  if (stp_check_boolean_parameter(v, "LinearContrast", STP_PARAMETER_DEFAULTED))
+    lut->linear_contrast_adjustment =
+      stp_get_boolean_parameter(v, "LinearContrast");
+  if (stp_check_float_parameter(v, "Gamma", STP_PARAMETER_DEFAULTED))
+    lut->print_gamma = stp_get_float_parameter(v, "Gamma");
+  if (stp_check_float_parameter(v, "Contrast", STP_PARAMETER_DEFAULTED))
+    lut->contrast = stp_get_float_parameter(v, "Contrast");
+  if (stp_check_float_parameter(v, "Brightness", STP_PARAMETER_DEFAULTED))
+    lut->brightness = stp_get_float_parameter(v, "Brightness");
+
+  if (stp_check_float_parameter(v, "AppGamma", STP_PARAMETER_ACTIVE))
+    lut->app_gamma = stp_get_float_parameter(v, "AppGamma");
+  lut->screen_gamma = lut->app_gamma / 4.0; /* "Empirical" */
+
+  /*
+   * TODO check that these are wraparound curves and all that
+   */
+
+  if (stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_DEFAULTED))
+    lut->hue_map = stp_curve_create_copy(stp_get_curve_parameter(v, "HueMap"));
+  if (stp_check_curve_parameter(v, "LumMap", STP_PARAMETER_DEFAULTED))
+    lut->lum_map = stp_curve_create_copy(stp_get_curve_parameter(v, "LumMap"));
+  if (stp_check_curve_parameter(v, "SatMap", STP_PARAMETER_DEFAULTED))
+    lut->sat_map = stp_curve_create_copy(stp_get_curve_parameter(v, "SatMap"));
+
+
+  stpi_dprintf(STPI_DBG_LUT, v, " print_gamma %.3f\n", lut->print_gamma);
+  stpi_dprintf(STPI_DBG_LUT, v, " contrast %.3f\n", lut->contrast);
+  stpi_dprintf(STPI_DBG_LUT, v, " brightness %.3f\n", lut->brightness);
+  stpi_dprintf(STPI_DBG_LUT, v, " screen_gamma %.3f\n", lut->screen_gamma);
+
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
       if (i < channel_param_count &&
@@ -2176,76 +2254,11 @@ stpi_compute_lut(stp_vars_t v, size_t steps)
 
 	  stpi_dprintf(STPI_DBG_LUT, " %s %.3f\n",
 		       channel_params[i].gamma_name, lut->gamma_values[i]);
+	  compute_one_lut(lut, i);
 	}
       else
 	lut->gamma_values[i] = 1.0;
     }
-
-  if (lut->input_color_description->color_model == COLOR_UNKNOWN ||
-      lut->output_color_description->color_model == COLOR_UNKNOWN ||
-      lut->input_color_description->color_model ==
-      lut->output_color_description->color_model)
-    lut->invert_output = 0;
-  else
-    lut->invert_output = 1;
-
-  lut->steps = steps;
-  lut->linear_contrast_adjustment = 0;
-  lut->print_gamma = 1.0;
-  lut->app_gamma = 1.0;
-  lut->contrast = 1.0;
-  lut->brightness = 1.0;
-
-  if (stp_check_boolean_parameter(v, "LinearContrast", STP_PARAMETER_DEFAULTED))
-    lut->linear_contrast_adjustment =
-      stp_get_boolean_parameter(v, "LinearContrast");
-  if (stp_check_float_parameter(v, "Gamma", STP_PARAMETER_DEFAULTED))
-    lut->print_gamma = stp_get_float_parameter(v, "Gamma");
-  if (stp_check_float_parameter(v, "Contrast", STP_PARAMETER_DEFAULTED))
-    lut->contrast = stp_get_float_parameter(v, "Contrast");
-  if (stp_check_float_parameter(v, "Brightness", STP_PARAMETER_DEFAULTED))
-    lut->brightness = stp_get_float_parameter(v, "Brightness");
-
-  if (stp_check_float_parameter(v, "AppGamma", STP_PARAMETER_ACTIVE))
-    lut->app_gamma = stp_get_float_parameter(v, "AppGamma");
-  lut->screen_gamma = lut->app_gamma / 4.0; /* "Empirical" */
-  lut = allocate_lut();
-
-  if (stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_DEFAULTED))
-    hue = stp_get_curve_parameter(v, "HueMap");
-  if (stp_check_curve_parameter(v, "LumMap", STP_PARAMETER_DEFAULTED))
-    lum = stp_get_curve_parameter(v, "LumMap");
-  if (stp_check_curve_parameter(v, "SatMap", STP_PARAMETER_DEFAULTED))
-    sat = stp_get_curve_parameter(v, "SatMap");
-  if (stp_get_curve_parameter_active(v, "CompositeCurve") >=
-      stp_get_float_parameter_active(v, "Gamma"))
-    composite_curve = stp_get_curve_parameter(v, "CompositeCurve");
-
-  /*
-   * TODO check that these are wraparound curves and all that
-   */
-  if (hue)
-    lut->hue_map = stp_curve_create_copy(hue);
-  if (lum)
-    lut->lum_map = stp_curve_create_copy(lum);
-  if (sat)
-    lut->sat_map = stp_curve_create_copy(sat);
-
-  lut->steps = steps;
-  lut->invert_output = lut->invert_output;
-
-  stpi_dprintf(STPI_DBG_LUT, v, " print_gamma %.3f\n", lut->print_gamma);
-  stpi_dprintf(STPI_DBG_LUT, v, " contrast %.3f\n", lut->contrast);
-  stpi_dprintf(STPI_DBG_LUT, v, " brightness %.3f\n", lut->brightness);
-  stpi_dprintf(STPI_DBG_LUT, v, " screen_gamma %.3f\n", lut->screen_gamma);
-
-  compute_one_lut(lut->composite, composite_curve, 1.0, &l);
-
-  compute_one_lut(lut->cyan, cyan_curve, cyan, &l);
-
-  compute_one_lut(lut->magenta, magenta_curve, magenta, &l);
-
-  compute_one_lut(lut->yellow, yellow_curve, yellow, &l);
 }
 
 static int
@@ -2309,7 +2322,7 @@ stpi_color_traditional_init(stp_vars_t v,
   else
     lut->color_correction = get_color_correction("Accurate");
     
-  stpi_compute_lut(v, steps);
+  stpi_compute_lut(v);
 
   lut->image_width = stpi_image_width(image);
   total_channel_bits = lut->in_channels * lut->channel_depth;
@@ -2405,7 +2418,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
       if (strcmp(name, param->param.name) == 0)
 	{
 	  stpi_fill_parameter_settings(description, &(param->param));
-	  if (param->channel_mask != CHANNEL_EVERY)
+	  if (param->channel_mask != CMASK_EVERY)
 	    {
 	      const color_description_t *color_description =
 		get_color_description(stpi_describe_output(v));
@@ -2509,7 +2522,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	{
 	  description->is_active = 1;
 	  stpi_fill_parameter_settings(description, &(param->param));
-	  if (param->channel_mask != CHANNEL_EVERY)
+	  if (param->channel_mask != CMASK_EVERY)
 	    {
 	      const color_description_t *color_description =
 		get_color_description(stpi_describe_output(v));
