@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.79 2002/11/22 02:16:58 rlk Exp $"
+ * "$Id: print-util.c,v 1.80 2002/12/21 23:45:21 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -288,6 +288,35 @@ stp_set_output_codeset(const char *codeset)
   return "US-ASCII";
 #endif
 }
+
+stp_curve_t
+stp_read_and_compose_curves(const char *s1, const char *s2,
+			    stp_curve_compose_t comp)
+{
+  stp_curve_t ret = NULL;
+  stp_curve_t t1 = NULL;
+  stp_curve_t t2 = NULL;
+  if (s1)
+    t1 = stp_curve_allocate_read_string(s1);
+  if (s2)
+    t2 = stp_curve_allocate_read_string(s2);
+  if (t1 && t2)
+    stp_curve_compose(&ret, t1, t2, comp, -1);
+  if (ret)
+    {
+      stp_curve_destroy(t1);
+      stp_curve_destroy(t2);
+      return ret;
+    }
+  else if (t1)
+    {
+      stp_curve_destroy(t2);
+      return t1;
+    }
+  else
+    return t2;
+}
+
 
 #ifdef QUANTIFY
 unsigned quantify_counts[NUM_QUANTIFY_BUCKETS] = {0};

@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.3 2002/12/08 20:36:03 rlk Exp $"
+ * "$Id: util.h,v 1.4 2002/12/21 23:45:21 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -96,6 +96,8 @@ extern void stp_free(void *ptr);
 extern size_t stp_strlen(const char *s);
 extern char *stp_strndup(const char *s, int n);
 extern char *stp_strdup(const char *s);
+extern stp_curve_t stp_read_and_compose_curves(const char *s1, const char *s2,
+					       stp_curve_compose_t comp);
 
 
 /* Uncomment the next line to get performance statistics:
@@ -162,5 +164,5 @@ extern void  print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.3 2002/12/08 20:36:03 rlk Exp $".
+ * End of "$Id: util.h,v 1.4 2002/12/21 23:45:21 rlk Exp $".
  */
