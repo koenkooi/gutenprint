@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.68 2003/03/16 23:38:37 rlk Exp $"
+ * "$Id: print-color.c,v 1.69 2003/03/23 16:40:09 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -77,6 +77,14 @@ typedef struct
 
 static float_param_t float_parameters[] =
 {
+  {
+    {
+      "ImageOptimization", N_("Image Type"),
+      N_("Optimize the settings for the type of image to be printed"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
+    }, 0.0, 0.0, 0.0, 0
+  },
   {
     {
       "Brightness", N_("Brightness"),
@@ -186,14 +194,6 @@ static float_param_t float_parameters[] =
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
     }, 0.0, 9.0, 1.0, 1
-  },
-  {
-    {
-      "ImageOptimization", N_("Image Type"),
-      N_("Optimize the settings for the type of image to be printed"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1
-    }, 0.0, 0.0, 0.0, 0
   },
   {
     {
