@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.7 2002/04/28 02:43:05 rlk Exp $
+dnl $Id: configure.ac,v 1.8 2002/04/28 03:47:23 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ dnl
 pushdef([GIMPPRINT_NAME],              [gimp-print])
 pushdef([GIMPPRINT_MAJOR_VERSION],     [4])
 pushdef([GIMPPRINT_MINOR_VERSION],     [3])
-pushdef([GIMPPRINT_MICRO_VERSION],     [0])
+pushdef([GIMPPRINT_MICRO_VERSION],     [1])
 pushdef([GIMPPRINT_EXTRA_VERSION],     [])
 pushdef([GIMPPRINT_CURRENT_INTERFACE], [1])
 pushdef([GIMPPRINT_INTERFACE_AGE],     [0])
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.7 $)
+AC_REVISION($Revision: 1.8 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
