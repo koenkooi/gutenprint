@@ -1,5 +1,5 @@
 /*
- * "$Id: weave.h,v 1.9 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: weave.h,v 1.10 2003/11/03 00:54:22 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -106,8 +106,8 @@ typedef enum {
   STPI_WEAVE_ASCENDING,
   STPI_WEAVE_DESCENDING,
   STPI_WEAVE_ASCENDING_2X,
-  STPI_WEAVE_ASCENDING_3X,
-  STPI_WEAVE_STAGGERED
+  STPI_WEAVE_STAGGERED,
+  STPI_WEAVE_ASCENDING_3X
 } stpi_weave_strategy_t;
 
 typedef int stpi_packfunc(stp_vars_t v,
@@ -171,5 +171,5 @@ stpi_weave_parameters_by_row(stp_const_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_WEAVE_H */
 /*
- * End of "$Id: weave.h,v 1.9 2003/05/05 00:36:04 rlk Exp $".
+ * End of "$Id: weave.h,v 1.10 2003/11/03 00:54:22 rlk Exp $".
  */
