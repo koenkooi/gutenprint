@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.208 2002/12/30 16:28:20 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.209 2002/12/30 16:48:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1477,7 +1477,9 @@ escp2_do_print(const stp_vars_t v, stp_image_t *image, int print_op)
 	    {
 	      errlast = errline;
 	      duplicate_line = 0;
-	      if (stp_image_get_row(image, in, errline) != STP_IMAGE_OK)
+	      if (stp_image_get_row(image, in,
+				    stp_image_width(image) * stp_image_bpp(image),
+				    errline) != STP_IMAGE_OK)
 		{
 		  status = 2;
 		  break;

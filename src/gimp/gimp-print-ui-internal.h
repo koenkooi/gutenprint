@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.1 2002/12/30 03:33:23 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.2 2002/12/30 16:48:01 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -61,6 +61,8 @@ extern guchar *preview_thumbnail_data;
 
 extern GtkWidget *color_adjust_dialog;
 extern GtkWidget *dither_algo_combo;
+
+extern gp_plist_t *pv;
 
 /*
  * Function prototypes

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.3 2002/12/30 03:33:23 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.4 2002/12/30 16:48:01 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -47,7 +47,8 @@ static void Thumbnail_note_progress(stp_image_t *image,
 				    double current, double total);
 static void Thumbnail_progress_init(stp_image_t *image);
 static stp_image_status_t Thumbnail_get_row(stp_image_t *image,
-					    unsigned char *data, int row);
+					    unsigned char *data,
+					    size_t byte_limit, int row);
 static int Thumbnail_height(stp_image_t *image);
 static int Thumbnail_width(stp_image_t *image);
 static int Thumbnail_bpp(stp_image_t *image);
@@ -108,7 +109,8 @@ Thumbnail_height(stp_image_t *image)
 }
 
 static stp_image_status_t
-Thumbnail_get_row(stp_image_t *image, unsigned char *data, int row)
+Thumbnail_get_row(stp_image_t *image, unsigned char *data,
+		  size_t byte_limit, int row)
 {
   thumbnail_image_t *im = (thumbnail_image_t *) (image->rep);
   const guchar *where = im->data + (row * im->w * im->bpp);
@@ -150,5 +152,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.3 2002/12/30 03:33:23 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.4 2002/12/30 16:48:01 rlk Exp $".
  */

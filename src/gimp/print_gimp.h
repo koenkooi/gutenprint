@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.39 2002/12/30 03:33:24 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.40 2002/12/30 16:48:02 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -45,13 +45,5 @@
 
 /* How to create an Image wrapping a Gimp drawable */
 extern stp_image_t *Image_GimpDrawable_new(GimpDrawable *drawable, int);
-extern void Image_transpose(stp_image_t *image);
-extern void Image_hflip(stp_image_t *image);
-extern void Image_vflip(stp_image_t *image);
-extern void Image_crop(stp_image_t *image, int left, int top,
-		       int right, int bottom);
-extern void Image_rotate_ccw(stp_image_t *image);
-extern void Image_rotate_cw(stp_image_t *image);
-extern void Image_rotate_180(stp_image_t *image);
 
 #endif  /* __PRINT_GIMP_H__ */
