@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.165 2002/06/18 00:26:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.166 2002/06/18 02:24:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -414,8 +414,8 @@ escp2_parameters(const stp_printer_t printer,	/* I - Printer model */
     valptrs = stp_malloc(sizeof(stp_param_t) * ninktypes);
     for (i = 0; i < ninktypes; i++)
     {
-      valptrs[*count].name = c_strdup(inks->inknames[i]->name);
-      valptrs[*count].text = c_strdup(_(inks->inknames[i]->text));
+      valptrs[i].name = c_strdup(inks->inknames[i]->name);
+      valptrs[i].text = c_strdup(_(inks->inknames[i]->text));
     }
     *count = ninktypes;
     return valptrs;
