@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.61.2.2 2002/11/16 20:03:53 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.61.2.3 2002/11/17 02:09:06 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2289,6 +2289,12 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
   stp_dither_set_black_lower(dither, .3);
   stp_dither_set_black_upper(dither, .999);
 #endif
+
+/* Ensure that density does not exceed 1.0 */
+
+  stp_deprintf(STP_DBG_PCL, "Density: %f\n", stp_get_float_parameter(nv, "Density"));
+  if (stp_get_float_parameter(nv, "Density") > 1.0)
+    stp_set_float_parameter(nv, "Density", 1.0);
 
   if (do_cret)				/* 4-level printing for 800/1120 */
     {
