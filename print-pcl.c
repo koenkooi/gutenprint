@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.14 2000/01/08 23:30:56 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.14.2.1 2000/01/15 14:33:02 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.14.2.1  2000/01/15 14:33:02  rlk
+ *   PCL and Gimp 1.0 patches from Dave Hill
+ *
  *   Revision 1.14  2000/01/08 23:30:56  rlk
  *   Y2K copyright
  *
@@ -426,6 +429,7 @@ pcl_print(int       model,		/* I - Model */
   char 		*resolution = v->resolution;
   char 		*media_size = v->media_size;
   char 		*media_type = v->media_type;
+  char 		*media_source = v->media_source;
   int 		output_type = v->output_type;
   int		orientation = v->orientation;
   float 	scaling = v->scaling;
@@ -687,15 +691,15 @@ pcl_print(int       model,		/* I - Model */
   else if (strcmp(media_type, "Transparency") == 0)
     fputs("\033&l4M", prn);
 
-  if (strcmp(media_type, "Manual") == 0)	/* Set media source */
+  if (strcmp(media_source, "Manual") == 0)	/* Set media source */
     fputs("\033&l2H", prn);
-  else if (strcmp(media_type, "Tray 1") == 0)
+  else if (strcmp(media_source, "Tray 1") == 0)
     fputs("\033&l8H", prn);
-  else if (strcmp(media_type, "Tray 2") == 0)
+  else if (strcmp(media_source, "Tray 2") == 0)
     fputs("\033&l1H", prn);
-  else if (strcmp(media_type, "Tray 3") == 0)
+  else if (strcmp(media_source, "Tray 3") == 0)
     fputs("\033&l4H", prn);
-  else if (strcmp(media_type, "Tray 4") == 0)
+  else if (strcmp(media_source, "Tray 4") == 0)
     fputs("\033&l5H", prn);
 
   if (model >= 500 && model < 1200 && xdpi >= 300)
@@ -1189,5 +1193,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.14 2000/01/08 23:30:56 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.14.2.1 2000/01/15 14:33:02 rlk Exp $".
  */
