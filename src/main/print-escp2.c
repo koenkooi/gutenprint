@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.197 2002/11/28 16:50:15 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.197.2.1 2002/12/21 23:26:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -867,10 +867,11 @@ escp2_deinit_printer(const escp2_init_t *init, int printed_something)
 }
 
 static void
-adjust_print_quality(const escp2_init_t *init, void *dither,
-		     double **lum_adjustment, double **sat_adjustment,
-		     double **hue_adjustment)
+adjust_print_quality(const escp2_init_t *init, void *dither)
 {
+  stp_curve_t   lum_adjustment = NULL;
+  stp_curve_t   sat_adjustment = NULL;
+  stp_curve_t   hue_adjustment = NULL;
   const paper_t *pt;
   const stp_vars_t nv = init->v;
   int i;
@@ -935,7 +936,21 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
     stp_set_float_parameter(nv, "Density", 1.0);
   if (init->output_type == OUTPUT_GRAY)
     stp_set_float_parameter(nv, "Gamma", stp_get_float_parameter(nv, "Gamma") / .8);
-  stp_compute_lut(nv, 256);
+
+  sat_adjustment = stp_read_and_compose_curves(init->inkname->sat_adjustment,
+					       pt ? pt->sat_adjustment : NULL,
+					       STP_CURVE_COMPOSE_MULTIPLY);
+  lum_adjustment = stp_read_and_compose_curves(init->inkname->lum_adjustment,
+					       pt ? pt->lum_adjustment : NULL,
+					       STP_CURVE_COMPOSE_MULTIPLY);
+  hue_adjustment = stp_read_and_compose_curves(init->inkname->hue_adjustment,
+					       pt ? pt->hue_adjustment : NULL,
+					       STP_CURVE_COMPOSE_ADD);
+
+  stp_compute_lut(nv, 65536, hue_adjustment, lum_adjustment, sat_adjustment);
+  stp_curve_destroy(lum_adjustment);
+  stp_curve_destroy(sat_adjustment);
+  stp_curve_destroy(hue_adjustment);
 
   for (i = 0; i <= NCOLORS; i++)
     stp_dither_set_black_level(dither, i, 1.0);
@@ -968,36 +983,6 @@ adjust_print_quality(const escp2_init_t *init, void *dither,
       break;
     }
   stp_dither_set_density(dither, stp_get_float_parameter(nv, "Density"));
-  if (init->inkname->lum_adjustment)
-    {
-      *lum_adjustment = stp_malloc(sizeof(double) * 49);
-      for (i = 0; i < 49; i++)
-	{
-	  (*lum_adjustment)[i] = init->inkname->lum_adjustment[i];
-	  if (pt && pt->lum_adjustment)
-	    (*lum_adjustment)[i] *= pt->lum_adjustment[i];
-	}
-    }
-  if (init->inkname->sat_adjustment)
-    {
-      *sat_adjustment = stp_malloc(sizeof(double) * 49);
-      for (i = 0; i < 49; i++)
-	{
-	  (*sat_adjustment)[i] = init->inkname->sat_adjustment[i];
-	  if (pt && pt->sat_adjustment)
-	    (*sat_adjustment)[i] *= pt->sat_adjustment[i];
-	}
-    }
-  if (init->inkname->hue_adjustment)
-    {
-      *hue_adjustment = stp_malloc(sizeof(double) * 49);
-      for (i = 0; i < 49; i++)
-	{
-	  (*hue_adjustment)[i] = init->inkname->hue_adjustment[i];
-	  if (pt && pt->hue_adjustment)
-	    (*hue_adjustment)[i] += pt->hue_adjustment[i];
-	}
-    }
 }
 
 static int
@@ -1131,9 +1116,6 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
   unsigned char **cols;
   int 		*head_offset;
   int 		max_head_offset;
-  double 	*lum_adjustment = NULL;
-  double	*sat_adjustment = NULL;
-  double	*hue_adjustment = NULL;
   escp2_privdata_t privdata;
   stp_dither_data_t *dt;
   const escp2_inkname_t *ink_type;
@@ -1448,8 +1430,7 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
   dither = stp_init_dither(image->width(image), out_width, image->bpp(image),
 			   xdpi, ydpi, nv);
 
-  adjust_print_quality(&init, dither,
-		       &lum_adjustment, &sat_adjustment, &hue_adjustment);
+  adjust_print_quality(&init, dither);
 
  /*
   * Let the user know what we're doing...
@@ -1481,8 +1462,7 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
 	      break;
 	    }
 	  (*colorfunc)(nv, in, out, &zero_mask, image->width(image),
-		       image->bpp(image), cmap,
-		       hue_adjustment, lum_adjustment, sat_adjustment);
+		       image->bpp(image), cmap);
 	}
       QUANT(1);
 
@@ -1523,12 +1503,6 @@ escp2_print(const stp_vars_t v, stp_image_t *image)
   stp_free(cols);
   stp_free(head_offset);
   stp_free(privdata.channels);
-  if (hue_adjustment)
-    stp_free(hue_adjustment);
-  if (sat_adjustment)
-    stp_free(sat_adjustment);
-  if (lum_adjustment)
-    stp_free(lum_adjustment);
 
 #ifdef QUANTIFY
   print_timers(nv);

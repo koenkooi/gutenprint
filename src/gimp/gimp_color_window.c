@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.36.2.1 2002/12/05 02:25:17 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.36.2.2 2002/12/21 23:26:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -152,7 +152,9 @@ create_color_adjust_window (void)
   gint i;
   GtkWidget *table;
   GtkWidget *event_box;
+#if 0
   GtkWidget *curve;
+#endif
 
   /*
    * Fetch a thumbnail of the image we're to print from the Gimp.  This must
@@ -265,11 +267,13 @@ create_color_adjust_window (void)
 		  "work well for text and line art.\n"
 		  "Hybrid Floyd-Steinberg generally produces "
 		  "inferior output."));
+#if 0
   curve = gtk_gamma_curve_new();
   table_attach_aligned(GTK_TABLE (table), 0, color_option_count + 2,
 		       _("Curve:"), 1.0, 0.5, curve, 1, TRUE);
   gtk_curve_set_range(GTK_CURVE(GTK_GAMMA_CURVE(curve)->curve), 0.0, 200.0, 0.0, 200.0);
   gtk_widget_show(curve);
+#endif
 }
 
 static void

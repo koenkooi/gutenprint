@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h.in,v 1.26.2.1 2002/12/05 02:25:17 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.26.2.2 2002/12/21 23:26:21 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -707,7 +707,9 @@ extern void stp_curve_print(FILE *f, const stp_curve_t curve);
  * number is -1, the read failed.
  */
 extern int stp_curve_read(FILE *f, stp_curve_t curve);
+extern stp_curve_t stp_curve_allocate_read(FILE *f);
 extern int stp_curve_read_string(const char *text, stp_curve_t curve);
+extern stp_curve_t stp_curve_allocate_read_string(const char *text);
 
 /*
  * Compose two curves, creating a third curve.  Only add and multiply
@@ -905,10 +907,7 @@ extern const char * stp_set_output_codeset(const char *codeset);
  */
 typedef void (*stp_convert_t) (const stp_vars_t vars, const unsigned char *in,
                                unsigned short *out, int *zero_mask,
-                               int width, int bpp, const unsigned char *cmap,
-			       const stp_curve_t hue_map,
-			       const stp_curve_t lum_map,
-			       const stp_curve_t sat_map);
+                               int width, int bpp, const unsigned char *cmap);
 
 /*
  * Choose the appropriate color function depending upon choice of input
@@ -925,7 +924,8 @@ extern void stp_set_lut(stp_vars_t v, void * val);
 extern void * stp_get_lut(const stp_vars_t v);
 extern void stp_allocate_lut(stp_vars_t v, size_t steps);
 extern void stp_free_lut(stp_vars_t v);
-extern void stp_compute_lut(stp_vars_t v, size_t steps);
+extern void stp_compute_lut(stp_vars_t v, size_t steps, stp_curve_t hue,
+			    stp_curve_t lum, stp_curve_t sat);
 
 /*
  * For use with indexed color: the LUT should be an array of 256
@@ -950,5 +950,5 @@ extern const stp_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.26.2.1 2002/12/05 02:25:17 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.26.2.2 2002/12/21 23:26:21 rlk Exp $
  */

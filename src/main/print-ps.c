@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.35 2002/11/22 02:16:58 rlk Exp $"
+ * "$Id: print-ps.c,v 1.35.2.1 2002/12/21 23:26:23 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -494,7 +494,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
   in  = stp_zalloc(image_width * image_bpp);
   out = stp_zalloc((image_width * out_bpp + 3) * 2);
 
-  stp_compute_lut(nv, 256);
+  stp_compute_lut(nv, 256, NULL, NULL, NULL);
 
   if (model == 0)
   {
@@ -519,8 +519,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
 	  status = 2;
 	  break;
 	}
-      (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
-		   NULL, NULL, NULL);
+      (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap);
 
       ps_hex(v, out, image_width * out_bpp);
     }
@@ -565,7 +564,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
 	  break;
 	}
       (*colorfunc)(nv, in, out + out_offset, &zero_mask, image_width,
-		   image_bpp, cmap, NULL, NULL, NULL);
+		   image_bpp, cmap);
 
       out_ps_height = out_offset + image_width * out_bpp;
 

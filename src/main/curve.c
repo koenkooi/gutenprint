@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.15.2.2 2002/12/05 02:55:21 rlk Exp $"
+ * "$Id: curve.c,v 1.15.2.3 2002/12/21 23:26:21 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -312,8 +312,11 @@ curve_dtor(stp_curve_t curve)
 void
 stp_curve_destroy(stp_curve_t curve)
 {
-  curve_dtor(curve);
-  stp_free(curve);
+  if (curve)
+    {
+      curve_dtor(curve);
+      stp_free(curve);
+    }
 }
 
 void
@@ -808,7 +811,7 @@ stp_curve_read(FILE *f, stp_curve_t curve)
   int points;
 
   check_curve(icurve);
-  fscanf(f, "STP_CURVE;%31s ;%31s ;%n",
+  fscanf(f, "STP_CURVE ; %31s ; %31s ; %n",
 	 curve_type_name,
 	 wrap_mode_name,
 	 &noffset);
@@ -828,7 +831,7 @@ stp_curve_read(FILE *f, stp_curve_t curve)
   iret = (stp_internal_curve_t *) ret;
   iret->curve_type = curve_type;
 
-  fscanf(f, "%d;%lg;%lg;%lg:%n",
+  fscanf(f, " %d ; %lg ; %lg ; %lg : %n",
 	 &points,
 	 &(iret->gamma),
 	 &(iret->blo),
@@ -849,7 +852,7 @@ stp_curve_read(FILE *f, stp_curve_t curve)
       for (i = 0; i < iret->point_count; i++)
 	{
 	  noffset = 0;
-	  fscanf(f, "%lg;%n", &(iret->data[i]), &noffset);
+	  fscanf(f, " %lg ; %n", &(iret->data[i]), &noffset);
 	  if (noffset == 0)
 	    goto bad;
 	  if (! finite(iret->data[i]) || iret->data[i] < iret->blo ||
@@ -872,6 +875,18 @@ stp_curve_read(FILE *f, stp_curve_t curve)
   return 0;
 }
 
+stp_curve_t
+stp_curve_allocate_read(FILE *f)
+{
+  stp_curve_t ret = stp_curve_allocate(STP_CURVE_WRAP_NONE);
+  if (! stp_curve_read(f, ret))
+    {
+      stp_curve_destroy(ret);
+      ret = NULL;
+    }
+  return ret;
+}
+
 int
 stp_curve_read_string(const char *text, stp_curve_t curve)
 {
@@ -888,7 +903,7 @@ stp_curve_read_string(const char *text, stp_curve_t curve)
   int points;
 
   check_curve(icurve);
-  sscanf(text, "STP_CURVE;%31s ;%31s ;%n",
+  sscanf(text, "STP_CURVE ; %31s ; %31s ; %n",
 	 wrap_mode_name,
 	 curve_type_name,
 	 &noffset);
@@ -909,7 +924,7 @@ stp_curve_read_string(const char *text, stp_curve_t curve)
   iret = (stp_internal_curve_t *) ret;
   iret->curve_type = curve_type;
 
-  sscanf(text + offset, "%d;%lg;%lg;%lg:%n",
+  sscanf(text + offset, " %d ; %lg ; %lg ; %lg : %n",
 	 &points,
 	 &(iret->gamma),
 	 &(iret->blo),
@@ -932,7 +947,7 @@ stp_curve_read_string(const char *text, stp_curve_t curve)
       for (i = 0; i < iret->point_count; i++)
 	{
 	  noffset = 0;
-	  sscanf(text + offset, "%lg;%n", &(iret->data[i]), &noffset);
+	  sscanf(text + offset, " %lg ; %n", &(iret->data[i]), &noffset);
 	  if (noffset == 0 || ! finite(iret->data[i]) ||
 	      iret->data[i] < iret->blo || iret->data[i] > iret->bhi)
 	    goto bad;
@@ -952,6 +967,18 @@ stp_curve_read_string(const char *text, stp_curve_t curve)
   stp_curve_destroy(ret);
   setlocale(LC_ALL, "");
   return 0;
+}
+
+stp_curve_t
+stp_curve_allocate_read_string(const char *text)
+{
+  stp_curve_t ret = stp_curve_allocate(STP_CURVE_WRAP_NONE);
+  if (! stp_curve_read_string(text, ret))
+    {
+      stp_curve_destroy(ret);
+      ret = NULL;
+    }
+  return ret;
 }
 
 static double
