@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.19 2003/05/30 01:23:24 rlk Exp $"
+ * "$Id: dither-main.c,v 1.20 2003/05/31 12:49:05 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -333,7 +333,7 @@ stpi_dither_get_first_position(stp_vars_t v, int color, int subchannel)
   int channel = stpi_dither_translate_channel(v, color, subchannel);
   if (channel < 0)
     return -1;
-  return CHANNEL(d, color).row_ends[0];
+  return CHANNEL(d, channel).row_ends[0];
 }
 
 int
@@ -343,7 +343,7 @@ stpi_dither_get_last_position(stp_vars_t v, int color, int subchannel)
   int channel = stpi_dither_translate_channel(v, color, subchannel);
   if (channel < 0)
     return -1;
-  return CHANNEL(d, color).row_ends[1];
+  return CHANNEL(d, channel).row_ends[1];
 }
 
 void
