@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/02/02 01:25:33 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2001/02/02 20:04:21 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,9 @@
 AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
+
+## Make DESTDIR available to gimptool
+export DESTDIR
 
 MAINT_CHARSET = latin1
 
