@@ -1,90 +1,88 @@
-# Slovak translation of GIMP Print
-# Slovenský preklad GIMP Print
+# Dutch translation of Gimp-print.
 # Copyright (C) 2002 Free Software Foundation, Inc.
-# Zdenko Podobný <zdpo@mailbox.sk>, 2002.
-#
+# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2002.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP Print\n"
+"Project-Id-Version: Gimp-print 4.2.1\n"
 "POT-Creation-Date: 2002-03-13 20:28-0500\n"
-"PO-Revision-Date: 2002-03-11 18:28+0100\n"
-"Last-Translator: Zdenko Podobný <zdpo@mailbox.sk>\n"
-"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"PO-Revision-Date: 2002-03-14 14:12+0100\n"
+"Last-Translator: Erik Kruijswijk <e.kruijswijk@ictro.drp.minjus.nl>\n"
+"Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.5\n"
 
 #: lib/getopt.c:681
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: voµba `%s' je viacznaèná\n"
+msgstr "%s: optie `%s' is ambiguous\n"
 
 #: lib/getopt.c:706
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
-msgstr "%s: voµba `--%s' nedovoµuje pou¾i» argument\n"
+msgstr "%s: optie `--%s' verwacht geen argument\n"
 
 #: lib/getopt.c:711
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
-msgstr "%s: voµba `%c%s' nedovoµuje pou¾i» argument\n"
+msgstr "%s: optie `%c%s' verwacht geen argument\n"
 
 #: lib/getopt.c:729 lib/getopt.c:902
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: voµba `%s' vy¾aduje argument\n"
+msgstr "%s: optie `%s' verwacht een argument\n"
 
 #. --option
 #: lib/getopt.c:758
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
-msgstr "%s: neznáma voµba `--%s'\n"
+msgstr "%s: onbekende optie `--%s'\n"
 
 #. +option or -option
 #: lib/getopt.c:762
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
-msgstr "%s: neznáma voµba `%c%s'\n"
+msgstr "%s: onbekende optie `%c%s'\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: neplatná voµba -- %c\n"
+msgstr "%s: ongeldige optie -- %c\n"
 
 #: lib/getopt.c:791
 #, c-format
 msgid "%s: invalid option -- %c\n"
-msgstr "%s: neplatná voµba -- %c\n"
+msgstr "%s: ongeldige optie -- %c\n"
 
 #. 1003.2 specifies the format of this message.
 #: lib/getopt.c:821 lib/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: voµba vy¾aduje argument -- %c\n"
+msgstr "%s: optie verwacht een argument -- %c\n"
 
 #: lib/getopt.c:868
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
-msgstr "%s: voµba `-W %s` je viacznaèná\n"
+msgstr "%s: optie `-W %s' is dubbelzinnig\n"
 
 #: lib/getopt.c:886
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
-msgstr "%s: voµba `-W %s' nedovoµuje pou¾i» argument\n"
+msgstr "%s: optie `-W %s' staat geen argument toe\n"
 
 #: src/main/print-canon.c:1310 src/main/print-escp2.c:1652
 #: src/main/print-escp2.c:1711 src/main/print-escp2.c:1770
 #: src/main/print-lexmark.c:882
 msgid "Plain Paper"
-msgstr "Obyèajný papier"
+msgstr "Blank papier"
 
 #: src/main/print-canon.c:1311 src/main/print-escp2.c:1664
 #: src/main/print-escp2.c:1723 src/main/print-escp2.c:1782
 #: src/main/print-lexmark.c:888
 msgid "Transparencies"
-msgstr "Priesvitná fólia"
+msgstr "Transparanten"
 
 #: src/main/print-canon.c:1312
 msgid "Back Print Film"
@@ -96,111 +94,111 @@ msgstr ""
 
 #: src/main/print-canon.c:1314
 msgid "Envelope"
-msgstr "Obálka"
+msgstr "Envelop"
 
 #: src/main/print-canon.c:1315
 msgid "High Resolution Paper"
-msgstr "Papier s vysokým rozlí¹ením"
+msgstr "Hoog-resolutie papier"
 
 #: src/main/print-canon.c:1316
 msgid "T-Shirt Transfers"
-msgstr "Na¾ehµovacia fólia"
+msgstr "T-Shirt doordrukken"
 
 #: src/main/print-canon.c:1317
 msgid "High Gloss Film"
-msgstr ""
+msgstr "Hoogglans papier"
 
 #: src/main/print-canon.c:1318
 msgid "Glossy Photo Paper"
-msgstr "Lesklý foto papier"
+msgstr "Glanzend fotopapier"
 
 #: src/main/print-canon.c:1319
 msgid "Glossy Photo Cards"
-msgstr "Lesklé foto karty"
+msgstr "Glanzende fotokaarten"
 
 #: src/main/print-canon.c:1320
 msgid "Photo Paper Pro"
-msgstr "Foto papier pro"
+msgstr "Professioneel fotopapier"
 
 #: src/main/print-canon.c:1321 src/main/print-escp2.c:1698
 #: src/main/print-escp2.c:1757 src/main/print-escp2.c:1816
 #: src/main/print-lexmark.c:918
 msgid "Other"
-msgstr "Iné"
+msgstr "Overige"
 
 #: src/main/print-canon.c:1594 src/main/print-lexmark.c:1133
 msgid "Auto Sheet Feeder"
-msgstr "Automatický podávaè papiera"
+msgstr "Automatische papierlader"
 
 #: src/main/print-canon.c:1595 src/main/print-lexmark.c:1134
 msgid "Manual with Pause"
-msgstr "Manuálne s preru¹ením"
+msgstr "Handmatig met pauze"
 
 #: src/main/print-canon.c:1596 src/main/print-lexmark.c:1135
 msgid "Manual without Pause"
-msgstr "Manuálne bez preru¹enia"
+msgstr "Handmatig zonder pauze"
 
 #: src/escputil/escputil.c:584 src/main/print-canon.c:1689
 #: src/main/print-lexmark.c:639
 msgid "Black"
-msgstr "Èierna"
+msgstr "Zwart"
 
 #: src/main/print-canon.c:1694
 msgid "CMY Color"
-msgstr "CMY farba"
+msgstr "CMY kleuren"
 
 #: src/main/print-canon.c:1699
 msgid "CMYK Color"
-msgstr "CMYK farba"
+msgstr "CMYK Kleuren"
 
 #: src/main/print-canon.c:1704
 msgid "Photo CcMmY Color"
-msgstr "Fotografická CcMmY farba"
+msgstr "Foto CcMmY kleuren"
 
 #: src/main/print-canon.c:1709
 msgid "Photo CcMmYK Color"
-msgstr "Fotografická CcMmYK farba"
+msgstr "Foto CcMmYK Kleuren"
 
 #: src/main/print-dither.c:62
 msgid "Adaptive Hybrid"
-msgstr "Adaptívne hybridný"
+msgstr ""
 
 #: src/main/print-dither.c:63
 msgid "Ordered"
-msgstr "Postupný"
+msgstr "besteld"
 
 #: src/main/print-dither.c:64
 msgid "Fast"
-msgstr "Rýchly"
+msgstr "Snel"
 
 #: src/main/print-dither.c:65
 msgid "Very Fast"
-msgstr "Veµmi rýchly"
+msgstr "Zeer snel"
 
 #: src/main/print-dither.c:66
 msgid "Hybrid Floyd-Steinberg"
-msgstr "Hybridný Floyd-Steinbergov"
+msgstr ""
 
 #: src/main/print-escp2.c:1655 src/main/print-escp2.c:1714
 #: src/main/print-escp2.c:1773
 msgid "Plain Paper Fast Load"
-msgstr "Obyèajný papier rýchle nasadenie"
+msgstr "Blak papier snellader"
 
 #. 7.25 * 10.5in
 #: src/main/print-escp2.c:1658 src/main/print-escp2.c:1717
 #: src/main/print-escp2.c:1776 src/main/print-util.c:532
 msgid "Postcard"
-msgstr "Pohµadnica"
+msgstr ""
 
 #: src/main/print-escp2.c:1661 src/main/print-escp2.c:1720
 #: src/main/print-escp2.c:1779 src/main/print-lexmark.c:885
 msgid "Glossy Film"
-msgstr "Lesklý film"
+msgstr "Glanzende laag"
 
 #: src/main/print-escp2.c:1667 src/main/print-escp2.c:1726
 #: src/main/print-escp2.c:1785 src/main/print-lexmark.c:891
 msgid "Envelopes"
-msgstr "Obálky"
+msgstr "Enveloppen"
 
 #: src/main/print-escp2.c:1670 src/main/print-escp2.c:1729
 #: src/main/print-escp2.c:1788
@@ -210,62 +208,62 @@ msgstr ""
 #: src/main/print-escp2.c:1673 src/main/print-escp2.c:1732
 #: src/main/print-escp2.c:1791 src/main/print-lexmark.c:894
 msgid "Matte Paper"
-msgstr "Matný papier"
+msgstr "Mat papier"
 
 #: src/main/print-escp2.c:1676 src/main/print-escp2.c:1735
 #: src/main/print-escp2.c:1794 src/main/print-lexmark.c:897
 msgid "Inkjet Paper"
-msgstr "Papier pre atramentovú tlaèiareò"
+msgstr "Inkjet-papier"
 
 #: src/main/print-escp2.c:1679 src/main/print-escp2.c:1738
 #: src/main/print-escp2.c:1797 src/main/print-lexmark.c:900
 msgid "Photo Quality Inkjet Paper"
-msgstr "Papier s fotografickou kvalitou"
+msgstr "Fotokwaliteit Inkjet-papier"
 
 #: src/main/print-escp2.c:1682 src/main/print-escp2.c:1741
 #: src/main/print-escp2.c:1800 src/main/print-lexmark.c:903
 msgid "Photo Paper"
-msgstr "Fotografický papier"
+msgstr "Fotopapier"
 
 #: src/main/print-escp2.c:1685 src/main/print-escp2.c:1744
 #: src/main/print-escp2.c:1803 src/main/print-lexmark.c:906
 msgid "Premium Glossy Photo Paper"
-msgstr "Lesklý foto papier Premium"
+msgstr "Premium glanzend fotopapier"
 
 #: src/main/print-escp2.c:1689 src/main/print-escp2.c:1748
 #: src/main/print-escp2.c:1807 src/main/print-lexmark.c:909
 msgid "Premium Luster Photo Paper"
-msgstr "Ligotavý foto papier Premium"
+msgstr ""
 
 #: src/main/print-escp2.c:1692 src/main/print-escp2.c:1751
 #: src/main/print-escp2.c:1810 src/main/print-lexmark.c:912
 msgid "Photo Quality Glossy Paper"
-msgstr "Lesklý fotografický papier"
+msgstr "Fotokwaliteit glanzend papier"
 
 #: src/main/print-escp2.c:1695 src/main/print-escp2.c:1754
 #: src/main/print-escp2.c:1813 src/main/print-lexmark.c:915
 msgid "Ilford Heavy Paper"
-msgstr "Ilford »a¾ký papier"
+msgstr ""
 
 #: src/main/print-escp2.c:2936 src/main/print-escp2.c:2938
 msgid "360 x 90 DPI Fast Economy Draft"
-msgstr "360 x 90 DPI Rýchly úsporný koncept"
+msgstr "360 x 90 DPI Snel Economisch ontwerp"
 
 #: src/main/print-escp2.c:2941 src/main/print-escp2.c:2943
 msgid "360 x 120 DPI Economy Draft"
-msgstr "360 x 120 DPI Úsporný koncept"
+msgstr "360 x 120 DPI Economisch ontwerp"
 
 #: src/main/print-escp2.c:2946 src/main/print-escp2.c:2948
 msgid "180 DPI Economy Draft"
-msgstr "180 DPI Úsporný koncept"
+msgstr "180 DPI Economisch ontwerp"
 
 #: src/main/print-escp2.c:2951 src/main/print-escp2.c:2953
 msgid "360 x 240 DPI Draft"
-msgstr "360 x 240 DPI Koncept"
+msgstr "360 x 240 DPI Ontwerp"
 
 #: src/main/print-escp2.c:2956 src/main/print-escp2.c:2958
 msgid "360 x 180 DPI Draft"
-msgstr "360 x 180 DPI Koncept"
+msgstr "360 x 180 DPI Ontwerp"
 
 #: src/main/print-escp2.c:2961 src/main/print-escp2.c:2969
 msgid "360 DPI"
@@ -273,39 +271,39 @@ msgstr "360 DPI"
 
 #: src/main/print-escp2.c:2963 src/main/print-escp2.c:2971
 msgid "360 DPI Unidirectional"
-msgstr "360 DPI Jednosmerne"
+msgstr "360 DPI Unidirectioneel"
 
 #: src/main/print-escp2.c:2965
 msgid "360 DPI Microweave"
-msgstr "360 DPI Microweave"
+msgstr ""
 
 #: src/main/print-escp2.c:2967
 msgid "360 DPI Microweave Unidirectional"
-msgstr "360 DPI Microweave jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:2973
 msgid "360 DPI Full Overlap"
-msgstr "360 DPI Plné krytie"
+msgstr ""
 
 #: src/main/print-escp2.c:2975
 msgid "360 DPI Full Overlap Unidirectional"
-msgstr "360 DPI Plné krytie jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:2977
 msgid "360 DPI FOL2"
-msgstr "360 DPI FOL2"
+msgstr ""
 
 #: src/main/print-escp2.c:2979
 msgid "360 DPI FOL2 Unidirectional"
-msgstr "360 DPI FOL2 jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:2981
 msgid "360 DPI MW2"
-msgstr "360 DPI MW2"
+msgstr ""
 
 #: src/main/print-escp2.c:2983
 msgid "360 DPI MW2 Unidirectional"
-msgstr "360 DPI MW2 jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:2986 src/main/print-escp2.c:2990
 msgid "720 x 360 DPI"
@@ -313,15 +311,15 @@ msgstr "720 x 360 DPI"
 
 #: src/main/print-escp2.c:2988 src/main/print-escp2.c:2992
 msgid "720 x 360 DPI Unidirectional"
-msgstr "720 x 360 DPI Jednosmerne"
+msgstr "720 x 360 DPI Unidirectioneel"
 
 #: src/main/print-escp2.c:2994
 msgid "720 x 360 DPI Microweave"
-msgstr "720 x 360 DPI Microweave"
+msgstr ""
 
 #: src/main/print-escp2.c:2996
 msgid "720 x 360 DPI Microweave Unidirectional"
-msgstr "720 x 360 DPI Microweave jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:2998
 msgid "720 x 360 DPI FOL"
@@ -329,7 +327,7 @@ msgstr "720 x 360 DPI FOL"
 
 #: src/main/print-escp2.c:3000
 msgid "720 x 360 DPI FOL Unidirectional"
-msgstr "720 x 360 DPI FOL jednosmerne"
+msgstr "720 x 360 DPI FOL  Unidirectioneel"
 
 #: src/main/print-escp2.c:3002
 msgid "720 x 360 DPI FOL2"
@@ -337,7 +335,7 @@ msgstr "720 x 360 DPI FOL2"
 
 #: src/main/print-escp2.c:3004
 msgid "720 x 360 DPI FOL2 Unidirectional"
-msgstr "720 x 360 DPI FOL2 jednosmerne"
+msgstr "720 x 360 DPI FOL2 Unidirectioneel"
 
 #: src/main/print-escp2.c:3006
 msgid "720 x 360 DPI MW2"
@@ -345,7 +343,7 @@ msgstr "720 x 360 DPI MW2"
 
 #: src/main/print-escp2.c:3008
 msgid "720 x 360 DPI MW2 Unidirectional"
-msgstr "720 x 360 DPI MW2 jednosmerne"
+msgstr "720 x 360 DPI MW2 Unidirectioneel"
 
 #: src/main/print-escp2.c:3011 src/main/print-escp2.c:3027
 msgid "720 DPI"
@@ -353,43 +351,43 @@ msgstr "720 DPI"
 
 #: src/main/print-escp2.c:3013 src/main/print-escp2.c:3029
 msgid "720 DPI Unidirectional"
-msgstr "720 DPI Jednosmerne"
+msgstr "720 DPI Unidirectioneel"
 
 #: src/main/print-escp2.c:3015
 msgid "720 DPI Microweave"
-msgstr "720 DPI Microweave"
+msgstr ""
 
 #: src/main/print-escp2.c:3017
 msgid "720 DPI Microweave Unidirectional"
-msgstr "720 DPI Microweave jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:3019
 msgid "720 DPI Full Overlap"
-msgstr "720 DPI Plné krytie"
+msgstr ""
 
 #: src/main/print-escp2.c:3021
 msgid "720 DPI Full Overlap Unidirectional"
-msgstr "720 DPI Plné krytie jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:3023
 msgid "720 DPI Four Pass"
-msgstr "720 DPI ©tvorprechodová tlaè"
+msgstr ""
 
 #: src/main/print-escp2.c:3025
 msgid "720 DPI Four Pass Unidirectional"
-msgstr "720 DPI ©tvorprechodová jednosmerná tlaè"
+msgstr ""
 
 #: src/main/print-escp2.c:3031
 msgid "720 DPI High Quality"
-msgstr "720 DPI Vysoká kvalita"
+msgstr "720 DPI Hoge kwaliteit"
 
 #: src/main/print-escp2.c:3033
 msgid "720 DPI High Quality Unidirectional"
-msgstr "720 DPI Vysoká kvalita jednosmerne"
+msgstr "720 DPI Hoge kwaliteit Unidirectioneel"
 
 #: src/main/print-escp2.c:3035
 msgid "720 DPI Highest Quality"
-msgstr "720 DPI Najvy¹¹ia kvalita"
+msgstr "720 DPI Hoogste kwaliteit"
 
 #: src/main/print-escp2.c:3038 src/main/print-escp2.c:3054
 msgid "1440 x 720 DPI"
@@ -397,15 +395,15 @@ msgstr "1440 x 720 DPI"
 
 #: src/main/print-escp2.c:3040 src/main/print-escp2.c:3056
 msgid "1440 x 720 DPI Unidirectional"
-msgstr "1440 x 720 DPI Jednosmerne"
+msgstr "1440 x 720 DPI Unidirectioneel"
 
 #: src/main/print-escp2.c:3042
 msgid "1440 x 720 DPI Microweave"
-msgstr "1440 x 720 DPI Microweave"
+msgstr ""
 
 #: src/main/print-escp2.c:3044
 msgid "1440 x 720 DPI Microweave Unidirectional"
-msgstr "1440 x 720 DPI Microweave jednosmerne"
+msgstr ""
 
 #: src/main/print-escp2.c:3046
 msgid "1440 x 720 DPI FOL"
@@ -413,19 +411,19 @@ msgstr "1440 x 720 DPI FOL"
 
 #: src/main/print-escp2.c:3048
 msgid "1440 x 720 DPI FOL Unidirectional"
-msgstr "1440 x 720 DPI FOL jednosmerne"
+msgstr "1440 x 720 DPI FOL Unidirectioneel"
 
 #: src/main/print-escp2.c:3050
 msgid "1440 x 720 DPI Four Pass"
-msgstr "1440 x 720 DPI ©tvorprechodová tlaè"
+msgstr ""
 
 #: src/main/print-escp2.c:3052
 msgid "1440 x 720 DPI Four Pass Unidirectional"
-msgstr "1440 x 720 DPI ©tvorprechodová jednosmerná tlaè"
+msgstr ""
 
 #: src/main/print-escp2.c:3058
 msgid "1440 x 720 DPI Highest Quality"
-msgstr "1440 x 720 DPI Najvy¹¹ia kvalita"
+msgstr "1440 x 720 DPI Hoogste kwaliteit"
 
 #: src/main/print-escp2.c:3061
 msgid "2880 x 720 DPI"
@@ -433,7 +431,7 @@ msgstr "2880 x 720 DPI"
 
 #: src/main/print-escp2.c:3063
 msgid "2880 x 720 DPI Unidirectional"
-msgstr "2880 x 720 DPI Jednosmerne"
+msgstr "2880 x 720 DPI Unidirectioneel"
 
 #.
 #. * Nothing thus far supports 1440 DPI vertical resolution
@@ -444,7 +442,7 @@ msgstr "1440 x 1440 DPI"
 
 #: src/main/print-escp2.c:3071
 msgid "1440 x 1440 DPI Highest Quality"
-msgstr "1440 x 1440 DPI Najvy¹¹ia kvalita"
+msgstr "1440 x 1440 DPI Hoogste Kwaliteit"
 
 #: src/main/print-escp2.c:3074
 msgid "2880 x 1440 DPI"
@@ -461,37 +459,37 @@ msgstr "1440 x 360 DPI"
 
 #: src/main/print-escp2.c:3084
 msgid "1440 x 360 DPI Unidirectional"
-msgstr "1440 x 360 DPI Jednosmerne"
+msgstr "1440 x 360 DPI Unidirectioneel"
 
 #: src/main/print-escp2.c:3086
 msgid "1440 x 360 DPI High Quality"
-msgstr "1440 x 360 DPI Vysoká kvalita"
+msgstr "1440 x 360 DPI Hoge kwaliteit"
 
 #: src/main/print-escp2.c:3088
 msgid "1440 x 360 DPI High Quality Uni"
-msgstr "1440 x 360 DPI Vysoká kvalita jed."
+msgstr ""
 
 #: src/main/print-escp2.c:3090
 msgid "1440 x 360 DPI Highest Quality"
-msgstr "1440 x 360 DPI Najvy¹¹ia kvalita"
+msgstr "1440 x 360 DPI Hoogste kwaliteit"
 
 #: src/main/print-escp2.c:3106
 msgid "Seven Color Enhanced"
-msgstr "Roz¹írený sedemfarebný"
+msgstr "Zeven kleuren verbeterd"
 
 #: src/main/print-escp2.c:3107
 msgid "Six Color Enhanced Composite"
-msgstr "Kompozitný roz¹írený ¹es»farebný"
+msgstr "Zes kleuren verbeterd composiet"
 
 #: src/main/print-escp2.c:3108 src/main/print-lexmark.c:629
 #: src/main/print-lexmark.c:709
 msgid "Six Color Photo"
-msgstr "Fotografický ¹es»farebný"
+msgstr "Zes kleuren foto"
 
 #: src/main/print-escp2.c:3109 src/main/print-lexmark.c:634
 #: src/main/print-lexmark.c:714
 msgid "Five Color Photo Composite"
-msgstr "Kompozitný fotografický pä»farebný"
+msgstr "Vijf kleuren foto composiet"
 
 #. output_type   ncolors used_colors   pass_length  v_top_head_offset
 #. *                                                        h_catridge_offset
@@ -500,21 +498,21 @@ msgstr "Kompozitný fotografický pä»farebný"
 #: src/main/print-escp2.c:3110 src/main/print-lexmark.c:619
 #: src/main/print-lexmark.c:699
 msgid "Four Color Standard"
-msgstr "©tandardný ¹tvorfarebný"
+msgstr "Vier kleuren standaard"
 
 #: src/main/print-escp2.c:3111 src/main/print-lexmark.c:624
 #: src/main/print-lexmark.c:704
 msgid "Three Color Composite"
-msgstr "Kompozitný trojfarebný"
+msgstr "Drie kleuren composiet"
 
 #: src/gimp/gimp_main_window.c:1616 src/main/print-escp2.c:3434
 #: src/main/print-pcl.c:200
 msgid "Standard"
-msgstr "©tandardný"
+msgstr "Standaard"
 
 #: src/main/print-escp2.c:3436
 msgid "Roll Feed"
-msgstr "Kotúèový podávaè"
+msgstr ""
 
 #. name                                                    hres vres softw v_pass overs unidir resid
 #: src/main/print-lexmark.c:595 src/main/print-lexmark.c:681
@@ -527,11 +525,11 @@ msgstr "600 DPI"
 
 #: src/main/print-lexmark.c:597 src/main/print-lexmark.c:683
 msgid "600 DPI high quality"
-msgstr "600 DPI Vysoká kvalita"
+msgstr "600 DPI Hoge kwaliteit"
 
 #: src/main/print-lexmark.c:598 src/main/print-lexmark.c:684
 msgid "600 DPI Unidirectional"
-msgstr "600 DPI Jednosmerne"
+msgstr "600 DPI unidirectioneel"
 
 #: src/main/print-lexmark.c:599 src/main/print-lexmark.c:685
 msgid "1200 DPI"
@@ -539,15 +537,15 @@ msgstr "1200 DPI"
 
 #: src/main/print-lexmark.c:600 src/main/print-lexmark.c:686
 msgid "1200 DPI high quality"
-msgstr "1200 DPI Vysoká kvalita"
+msgstr "1200 DPI hoge kwaliteit"
 
 #: src/main/print-lexmark.c:601 src/main/print-lexmark.c:687
 msgid "1200 DPI highest quality"
-msgstr "1200 DPI Najvy¹¹ia kvalita"
+msgstr "1200 DPI Hoogste kwaliteit"
 
 #: src/main/print-lexmark.c:602 src/main/print-lexmark.c:688
 msgid "1200 DPI  Unidirectional"
-msgstr "1200 DPI Jednosmerne"
+msgstr "1200 DPI Unidirectioneel"
 
 #: src/main/print-lexmark.c:603
 msgid "2400 DPI x 1200 DPI"
@@ -555,15 +553,15 @@ msgstr "2400 DPI x 1200 DPI"
 
 #: src/main/print-lexmark.c:604
 msgid "2400 DPI x 1200 DPI high quality"
-msgstr "2400 DPI x 1200 DPI Vysoká kvalita"
+msgstr ""
 
 #: src/main/print-lexmark.c:605
 msgid "2400 DPI x 1200 DPI highest quality"
-msgstr "2400 DPI x 1200 DPI Najvy¹¹ia kvalita"
+msgstr ""
 
 #: src/main/print-lexmark.c:607
 msgid "test print"
-msgstr "Test tlaèe"
+msgstr ""
 
 #. 11in x 17in
 #: src/main/print-pcl.c:110 src/main/print-util.c:530
@@ -588,7 +586,7 @@ msgstr "Tabloid"
 #. US Tabloid (11 x 17 in)
 #: src/main/print-pcl.c:114 src/main/print-pcl.c:201 src/main/print-util.c:548
 msgid "Manual"
-msgstr "Manuál"
+msgstr "Handmatig"
 
 #. US Manual/Statement (5.5 x 8.5 in)
 #: src/main/print-pcl.c:115
@@ -623,12 +621,12 @@ msgstr "B4 JIS"
 #. JIS B4 (257 x 364 mm).
 #: src/main/print-pcl.c:121 src/main/print-util.c:783
 msgid "Hagaki Card"
-msgstr "Hagaki karta"
+msgstr ""
 
 #. Japanese Hagaki Card (100 x 148 mm)
 #: src/main/print-pcl.c:122 src/main/print-util.c:785
 msgid "Oufuku Card"
-msgstr "Oufuku karta"
+msgstr ""
 
 #. Japanese Oufuku Card (148 x 200 mm)
 #: src/main/print-pcl.c:123 src/main/print-util.c:601
@@ -653,12 +651,12 @@ msgstr "3x5"
 #. US Index card (3 x 5 in)
 #: src/main/print-pcl.c:127
 msgid "Monarch"
-msgstr "Monarch"
+msgstr ""
 
 #. Monarch Envelope (3 7/8 x 7 1/2 in)
 #: src/main/print-pcl.c:128 src/main/print-util.c:793
 msgid "Commercial 10"
-msgstr "Commercial 10"
+msgstr ""
 
 #. US Commercial 10 Envelope (4.125 x 9.5 in) Portrait
 #: src/main/print-pcl.c:129 src/main/print-util.c:713
@@ -678,36 +676,36 @@ msgstr "C6"
 #. C6 envelope (114 x 162 mm)
 #: src/main/print-pcl.c:132 src/main/print-util.c:795
 msgid "A2 Invitation"
-msgstr "A2 pozvánka"
+msgstr ""
 
 #. US A2 Invitation envelope (4 3/8 x 5 3/4 in)
 #: src/main/print-pcl.c:133
 msgid "Long 3"
-msgstr "Long 3"
+msgstr ""
 
 #. Japanese Long Envelope #3 (120 x 235 mm)
 #: src/main/print-pcl.c:134
 msgid "Long 4"
-msgstr "Long 4"
+msgstr ""
 
 #. Japanese Long Envelope #4 (90 x 205 mm)
 #: src/main/print-pcl.c:135
 msgid "Kaku"
-msgstr "Kaku"
+msgstr ""
 
 #. Japanese Kaku Envelope (240 x 332.1 mm)
 #. *** MRS: this size not supported by print-util funcs! ***
 #: src/main/print-pcl.c:137
 msgid "HP Greeting Card"
-msgstr "HP pohµadnica"
+msgstr ""
 
 #: src/main/print-pcl.c:155
 msgid "Plain"
-msgstr "Jednoduchá"
+msgstr "Blank"
 
 #: src/main/print-pcl.c:156
 msgid "Bond"
-msgstr "Bond"
+msgstr ""
 
 #: src/main/print-pcl.c:157
 msgid "Premium"
@@ -715,56 +713,56 @@ msgstr "Premium"
 
 #: src/main/print-pcl.c:158
 msgid "Glossy Photo"
-msgstr "Lesklé foto"
+msgstr "Glanzend foto"
 
 #: src/main/print-pcl.c:159
 msgid "Transparency"
-msgstr "Priesvitné fólie"
+msgstr "Transparantie"
 
 #: src/main/print-pcl.c:160
 msgid "Quick-dry Photo"
-msgstr "Rýchloschnúce foto"
+msgstr "Sneldrogend foto"
 
 #: src/main/print-pcl.c:161
 msgid "Quick-dry Transparency"
-msgstr "Rýchloschnúce priesvit. fólie"
+msgstr "Sneldrogend transparant"
 
 #. {"Envelope", PCL_PAPERSOURCE_ENVELOPE},
 #: src/main/print-pcl.c:203
 msgid "Tray 1"
-msgstr "Zásobník 1"
+msgstr "Lade 1"
 
 #: src/main/print-pcl.c:204 src/main/print-pcl.c:210
 msgid "Tray 2"
-msgstr "Zásobník 2"
+msgstr "Lade 2"
 
 #: src/main/print-pcl.c:205
 msgid "Tray 3"
-msgstr "Zásobník 3"
+msgstr "Lade 3"
 
 #: src/main/print-pcl.c:206
 msgid "Tray 4"
-msgstr "Zásobník 4"
+msgstr "Lade 4"
 
 #: src/main/print-pcl.c:207
 msgid "Portable Sheet Feeder"
-msgstr "Prenosný podávaè papiera"
+msgstr ""
 
 #: src/main/print-pcl.c:208
 msgid "Desktop Sheet Feeder"
-msgstr "Stolový podávaè papiera"
+msgstr ""
 
 #: src/main/print-pcl.c:209
 msgid "Tray"
-msgstr "Zásobník"
+msgstr "Lade"
 
 #: src/main/print-pcl.c:211
 msgid "Optional Source"
-msgstr "Voliteµný zdroj"
+msgstr "Optionele Bron"
 
 #: src/main/print-pcl.c:212
 msgid "Autoselect"
-msgstr "Automatický výber"
+msgstr "Automatisch Selecteren"
 
 #: src/main/print-pcl.c:226
 msgid "150x150 DPI"
@@ -780,7 +778,7 @@ msgstr "600x300 DPI"
 
 #: src/main/print-pcl.c:229
 msgid "600x600 DPI monochrome"
-msgstr "600x600 DPI monochromaticky"
+msgstr "600x600 DPI monochrome"
 
 #: src/main/print-pcl.c:230
 msgid "600x600 DPI"
@@ -796,11 +794,11 @@ msgstr "2400x600 DPI"
 
 #: src/main/print-pcl.c:1565
 msgid "Color + Black Cartridges"
-msgstr "Farebná + èierna kazeta"
+msgstr "Kleur + Zwarte patronen"
 
 #: src/main/print-pcl.c:1566
 msgid "Color + Photo Cartridges"
-msgstr "Farebná + Foto kazeta"
+msgstr "Kleur + Foto patronen"
 
 #. Name of file or command to print to
 #: src/main/print-util.c:125 src/main/print-util.c:159
@@ -810,7 +808,7 @@ msgstr "ps2"
 
 #: src/main/print-util.c:538
 msgid "Epson 4x6 Photo Paper"
-msgstr "Epson 4x6 Foto papier"
+msgstr "Epson 4x6 Fotopapier"
 
 #: src/main/print-util.c:540
 msgid "5x7"
@@ -1175,12 +1173,12 @@ msgstr "ArchE"
 #.
 #: src/main/print-util.c:743
 msgid "American foolscap"
-msgstr "Americké rozmery"
+msgstr ""
 
 #. American foolscap
 #: src/main/print-util.c:745
 msgid "European foolscap"
-msgstr "Európske rozmery"
+msgstr ""
 
 #. European foolscap
 #.
@@ -1190,44 +1188,44 @@ msgstr "Európske rozmery"
 #.
 #: src/main/print-util.c:753
 msgid "Crown Quarto"
-msgstr "Crown Quarto"
+msgstr ""
 
 #. 189mm x 246mm
 #: src/main/print-util.c:755
 msgid "Large Crown Quarto"
-msgstr "Large Crown Quarto"
+msgstr ""
 
 #. 201mm x 258mm
 #: src/main/print-util.c:757
 msgid "Demy Quarto"
-msgstr "Demy Quarto"
+msgstr ""
 
 #. 219mm x 276mm
 #: src/main/print-util.c:759
 msgid "Royal Quarto"
-msgstr "Royal Quarto"
+msgstr ""
 
 #. 237mm x 312mm
 #. { "ISO A4",             595,
 #. 841, PAPERSIZE_METRIC, 0, 0, 0, 0 },    210mm x 297mm
 #: src/main/print-util.c:763
 msgid "Crown Octavo"
-msgstr "Crown Octavo"
+msgstr ""
 
 #. 123mm x 186mm
 #: src/main/print-util.c:765
 msgid "Large Crown Octavo"
-msgstr "Large Crown Octavo"
+msgstr ""
 
 #. 129mm x 198mm
 #: src/main/print-util.c:767
 msgid "Demy Octavo"
-msgstr "Demy Octavo"
+msgstr ""
 
 #. 138mm x 216mm
 #: src/main/print-util.c:769
 msgid "Royal Octavo"
-msgstr "Royal Octavo"
+msgstr ""
 
 #. 156mm x 234mm
 #. { N_ ("ISO A5"),             419,
@@ -1235,78 +1233,78 @@ msgstr "Royal Octavo"
 #. Paperback sizes in common usage
 #: src/main/print-util.c:775
 msgid "Small paperback"
-msgstr "Small paperback"
+msgstr ""
 
 #. 111mm x 178mm
 #: src/main/print-util.c:777
 msgid "Penguin small paperback"
-msgstr "Penguin small paperback"
+msgstr ""
 
 #. 111mm x 181mm
 #: src/main/print-util.c:779
 msgid "Penguin large paperback"
-msgstr "Penguin large paperback"
+msgstr ""
 
 #. 148 x 200 mm
 #: src/main/print-util.c:787
 msgid "Japanese long envelope #3"
-msgstr "Japonská dlhá obálka #3"
+msgstr ""
 
 #. Japanese long envelope #3
 #: src/main/print-util.c:789
 msgid "Japanese long envelope #4"
-msgstr "Japonská dlhá obálka #4"
+msgstr ""
 
 #. Japanese long envelope #4
 #: src/main/print-util.c:791
 msgid "Japanese Kaku envelope #4"
-msgstr "Japonská Kaku obálka #4"
+msgstr ""
 
 #. US A2 invitation
 #: src/main/print-util.c:797
 msgid "Custom"
-msgstr "Vlastný"
+msgstr "Eigen"
 
 #: src/main/print-util.c:800
 msgid "89 mm Roll Paper"
-msgstr "89 mm rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:802
 msgid "4 Inch Roll Paper"
-msgstr "4 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:804
 msgid "5 Inch Roll Paper"
-msgstr "5 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:806
 msgid "210 mm Roll Paper"
-msgstr "210 mm rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:808
 msgid "13 Inch Roll Paper"
-msgstr "13 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:810
 msgid "22 Inch Roll Paper"
-msgstr "22 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:812
 msgid "24 Inch Roll Paper"
-msgstr "24 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:814
 msgid "36 Inch Roll Paper"
-msgstr "36 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:816
 msgid "44 Inch Roll Paper"
-msgstr "44 palcová rolka papiera"
+msgstr ""
 
 #: src/main/print-util.c:1263 src/main/print-util.c:1272
 #, c-format
 msgid "%s is not a valid parameter of type %s\n"
-msgstr ""
+msgstr "%s is geen juiste parameter van type %s\n"
 
 #: src/main/print-util.c:1288
 #, c-format
@@ -1319,9 +1317,8 @@ msgid "%s out of range (value %d, min %d, max %d)\n"
 msgstr ""
 
 #: src/main/print-util.c:1329
-#, fuzzy
 msgid "Printer does not support color output\n"
-msgstr "Tlaèiareò %s nevy¾aduje zarovnanie farebnej hlavy.\n"
+msgstr ""
 
 #: src/main/print-util.c:1347
 msgid "Image size is not valid\n"
@@ -1347,58 +1344,58 @@ msgstr ""
 #.
 #: src/cups/genppd.c:455
 msgid "English"
-msgstr "Anglicky"
+msgstr "Engels"
 
 #. Specify PPD translation encoding e.g. ISOLatin1
 #: src/cups/genppd.c:457
 msgid "ISOLatin1"
-msgstr "ISOLatin1"
+msgstr ""
 
 #: src/cups/genppd.c:633
 msgid "Media Type"
-msgstr "Typ média"
+msgstr ""
 
 #: src/cups/genppd.c:659
 msgid "Media Source"
-msgstr "Zdroj média"
+msgstr ""
 
 #: src/cups/genppd.c:683
 msgid "Resolution"
-msgstr "Rozlí¹enie"
+msgstr "Resolutie"
 
 #.
 #. * Image types...
 #.
 #: src/cups/genppd.c:723
 msgid "Image Type"
-msgstr "Typ obrázku"
+msgstr "Beeldtype"
 
 #: src/cups/genppd.c:728 src/gimp/gimp_main_window.c:1314
 msgid "Line Art"
-msgstr "Èiarová grafika"
+msgstr ""
 
 #: src/cups/genppd.c:730 src/gimp/gimp_main_window.c:1328
 msgid "Solid Colors"
-msgstr "Jednoliate farby"
+msgstr ""
 
 #: src/cups/genppd.c:732 src/gimp/gimp_main_window.c:1343
 msgid "Photograph"
-msgstr "Fotografia"
+msgstr ""
 
 #.
 #. * Dithering algorithms...
 #.
 #: src/cups/genppd.c:740
 msgid "Dither Algorithm"
-msgstr "Algoritmus rozptylu"
+msgstr ""
 
 #: src/cups/genppd.c:759
 msgid "Ink Type"
-msgstr "Typ atramentu"
+msgstr ""
 
 #: src/escputil/escputil.c:64
 msgid "Escputil version "
-msgstr "Verzia Escputil "
+msgstr ""
 
 #: src/escputil/escputil.c:65
 msgid ""
@@ -1407,11 +1404,6 @@ msgid ""
 "This is free software, and you are welcome to redistribute it\n"
 "under certain conditions; type 'escputil -l' for details.\n"
 msgstr ""
-", Copyright (C) 2000-2001 Robert Krawitz\n"
-"Escputil prichádza bez AKÝCHKO¥VEK GARANCIÍ; detaily získate po napísaní "
-"'escputil -l'\n"
-"Toto je slobodný softvér a jeho redistribúcia je za istých podmienok\n"
-"vítaná; viac informácií získate po napísaní 'escputil -l'.\n"
 
 #: src/escputil/escputil.c:70
 msgid ""
@@ -1431,25 +1423,6 @@ msgid ""
 "along with this program; if not, write to the Free Software\n"
 "Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"
 msgstr ""
-"Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)\n"
-"\n"
-"Toto je iba orientaèný preklad licencie, ktorá platí v originálnom anglickom "
-"znení.\n"
-"\n"
-"Tento program je voµne ¹íøiteµný; mô¾ete ho redistribuova» a meni»\n"
-"v súlade so V¹eobecnou verejnou licenciou GNU publikovanou\n"
-"vo Free Software Foundation; buï licenciou verzie 2 alebo\n"
-"(podµa va¹ej voµby) akoukoµvek nov¹ou.\n"
-"\n"
-"Tento program je ¹írený v nádeji, ¾e bude u¾itoèný, av¹ak\n"
-"BEZ AKEJKO¥VEK ZÁRUKY; neposkytujú sa ani odvodené záruky\n"
-"PREDAJNOSTI alebo VHODNOSTI PRE URÈITÝ ÚÈEL.\n"
-"Ïal¹ie podrobnosti hµadajte vo V¹eobecnej verejnej licencii GNU.\n"
-"\n"
-"S týmto programom by ste mali získa» kópiu V¹eobecnej verejnej\n"
-"licencie GNU; ak tomu tak nie je, napí¹te do Free Software\n"
-"Foundation, Inc., 59 Temple Place - Suite 330, Boston,\n"
-"MA 02111-1307, USA.\n"
 
 #: src/escputil/escputil.c:110
 msgid ""
@@ -1493,52 +1466,6 @@ msgid ""
 "    -m|--model         Specify the precise printer model for head "
 "alignment.\n"
 msgstr ""
-"Pou¾itie: escputil [-c | -n | -a | -i | -o | -s | -d | -l | -M]\n"
-"                [-P tlaèiareò | -r zariadenie] [-u] [-q] [-m model]\n"
-"Vykoná údr¾bu tlaèiarní EPSON Stylus (R).\n"
-"Príklad: escputil --clean-head --printer stpex-na-druhom-poschodí\n"
-"         escputil --ink-level --new --raw-device /dev/lp0\n"
-"\n"
-"  Príkazy:\n"
-"    -c|--clean-head    Èistí tlaèovú hlavu.\n"
-"    -n|--nozzle-check  Vytlaèí testovaciu vzorku na otvory.\n"
-"                       ©pinavé alebo upchaté otvory budú zobrazené ako "
-"medzery\n"
-"                       vo vzorke. Ak uvidíte nejaké medzery, mali by ste\n"
-"                       oèisti» tlaèovú hlavu.\n"
-"    -a|--align-head    Zarovnanie tlaèovej hlavy.  UPOZORNENIE: Nesprávne\n"
-"                       pou¾itie tohoto nástroja bude ma» za následok nízku\n"
-"                       kvalitu tlaèe a/alebo po¹kodenie tlaèiarne.\n"
-"    -o|--align-color   Zarovnanie farebnej hlavy ( iba pre Stylus Color 480 "
-"a\n"
-"                       580 UPOZORNENIE: Nesprávne pou¾itie tohoto nástroja "
-"bude\n"
-"                       ma» za následok nízku kvalitu tlaèe a/alebo "
-"po¹kodenie\n"
-" \t\t\ttlaèiarne.\n"
-"    -s|--status        Informácie o stave tlaèiarne.\n"
-"    -i|--ink-level     Získanie o informácie o úrovni atramentu z "
-"tlaèiarne.\n"
-"\t\t\tToto vy¾aduje prístup èítanie/zápis na základné\n"
-"                       zariadenie tlaèiarne.\n"
-"    -d|--identify      Po¾iadavka na tlaèiareò o informácie o modely.\n"
-"                       Toto vy¾aduje prístup èítanie/zápis na základné\n"
-"                       zariadenie tlaèiarne.\n"
-"    -l|--license       Zobrazenie licencie/podmienok záruky tohoto "
-"programu.\n"
-"    -M|--list-models   Zoznam dostupných modelov tlaèiarní.\n"
-"    -h|--help          Zobrazí tieto informácie.\n"
-"\n"
-"  Voµby:\n"
-"    -P|--printer-name  Urèenie názvu tlaèiarne, s ktorou sa bude pracova».\n"
-"                       ©tandardne sa pou¾ije systémová tlaèiareò.\n"
-"    -r|--raw-device    Urèenie názvu zariadenia pre priamy zápis, ne¾ by sa\n"
-"                       mal pou¾i» tlaèová fronta.\n"
-"    -u|--new           Tlaèiareò je nová tlaèiareò (Stylus Color 740 alebo\n"
-"                       nov¹ia).\n"
-"    -q|--quiet         zakázanie nápisu.\n"
-"    -m|--model         Urèenie presného modelu tlaèiarne pre zarovnanie "
-"hlavy.\n"
 
 #: src/escputil/escputil.c:148
 msgid ""
@@ -1578,42 +1505,6 @@ msgid ""
 "    -q Suppress the banner.\n"
 "    -m Specify the precise printer model for head alignment.\n"
 msgstr ""
-"Pou¾itie: escputil [VO¥BA] [PRÍKAZ]\n"
-"Pou¾itie: escputil [-c | -n | -a | -i | -o | -s | -d | -l | -M]\n"
-"                [-P tlaèiareò | -r zariadenie] [-u] [-q] [-m model]\n"
-"Vykoná údr¾bu na tlaèiarni EPSON Stylus (R).\n"
-"Príklady: escputil -c -P stpex-na-druhom-poschodí\n"
-"          escputil -i -u -r /dev/lp0\n"
-"\n"
-"  Príkazy:\n"
-"    -c Èistí tlaèovú hlavu.\n"
-"    -n Vytlaèí testovaciu vzorku na otvory.\n"
-"          ©pinavé alebo upchaté otvory budú zobrazené ako medzery\n"
-"          vo vzorke. Ak uvidíte nejaké medzery, mali by ste oèisti»\n"
-"          tlaèovú hlavu.\n"
-"    -a Zarovnanie tlaèovej hlavy.  UPOZORNENIE: Nesprávne pou¾itie\n"
-"          tohoto nástroja bude ma» za následok nízku kvalitu tlaèe\n"
-"          a/alebo po¹kodenie tlaèiarne.\n"
-"    -o Zarovnanie farebnej hlavy ( iba pre Stylus Color 480 a 580\n"
-"          UPOZORNENIE: Nesprávne pou¾itie tohoto nástroja bude ma»\n"
-"          za následok nízku kvalitu tlaèe a/alebo po¹kodenie tlaèiarne.\n"
-"    -s Informácie o stave tlaèiarne.\n"
-"    -i Získanie o informácie o úrovni atramentu z tlaèiarne. Toto vy¾aduje\n"
-"          prístup na èítanie/zápis na základné zariadenie tlaèiarne.\n"
-"    -d Po¾iadavka na tlaèiareò o informácie o modely. Toto vy¾aduje prístup\n"
-"          èítanie/zápis na základné zariadenie tlaèiarne.\n"
-"    -l Zobrazenie licencie/podmienok záruky tohoto programu.\n"
-"    -M Zoznam dostupných modelov tlaèiarní.\n"
-"    -h Zobrazí tieto informácie.\n"
-"\n"
-"  Voµby:\n"
-"    -P Urèenie názvu tlaèiarne, s ktorou sa bude pracova».\n"
-"          ¹tandardne sa pou¾ije systémová tlaèiareò.\n"
-"    -r Urèenie názvu zariadenia pre priamy zápis, ne¾ by sa\n"
-"          mal pou¾i» tlaèová fronta.\n"
-"    -u Tlaèiareò je nová tlaèiareò (Stylus Color 740 alebo nov¹ia).\n"
-"    -q zakázanie nápisu.\n"
-"    -m Urèenie presného modelu tlaèiarne pre zarovnanie hlavy.\n"
 
 #: src/escputil/escputil.c:199
 msgid "Stylus C20sx"
@@ -1869,100 +1760,100 @@ msgstr "Stylus Scan 2500"
 
 #: src/escputil/escputil.c:348 src/escputil/escputil.c:357
 msgid "You may only specify one printer or raw device."
-msgstr "Mô¾ete ¹pecifikova» len jednu tlaèiareò alebo prvotné zariadenie."
+msgstr ""
 
 #: src/escputil/escputil.c:366
 msgid "You may only specify one printer model."
-msgstr "Je mo¾né zvoli» len jeden model tlaèiarne."
+msgstr "U mag maar een printermodel specificeren"
 
 #: src/escputil/escputil.c:386
 #, c-format
 msgid "Unknown option %c\n"
-msgstr "Neznáme nastavenie %c\n"
+msgstr "Onbekende optie %c\n"
 
 #: src/escputil/escputil.c:446
 #, c-format
 msgid "Cannot open device %s: %s\n"
-msgstr "Nie je mo¾né otvori» zariadenie %s: %s\n"
+msgstr ""
 
 #: src/escputil/escputil.c:469
 #, c-format
 msgid "Cannot print to printer %s with %s\n"
-msgstr "Na tlaèiarni %s s %s nie je mo¾né tlaèi» \n"
+msgstr "Kan niet printen op printer %s met %s\n"
 
 #: src/escputil/escputil.c:482 src/escputil/escputil.c:492
 msgid "Unable to send command to printer\n"
-msgstr "Nie je mo¾né posla» príkaz na tlaèiareò\n"
+msgstr "Kan de opdracht niet versturen naar de printer\n"
 
 #: src/escputil/escputil.c:585
 msgid "Cyan"
-msgstr "Azúrová"
+msgstr "Cyaan"
 
 #: src/escputil/escputil.c:586
 msgid "Magenta"
-msgstr "Purpurová"
+msgstr "Magenta"
 
 #: src/escputil/escputil.c:587
 msgid "Yellow"
-msgstr "®ltá"
+msgstr "Geel"
 
 #: src/escputil/escputil.c:588
 msgid "Light Cyan"
-msgstr "Jasná azúrová"
+msgstr ""
 
 #: src/escputil/escputil.c:589
 msgid "Light Magenta"
-msgstr "Jasná purpurová"
+msgstr ""
 
 #: src/escputil/escputil.c:603
 msgid "Obtaining ink levels requires using a raw device.\n"
-msgstr "Získanie úrovne atramentu vy¾aduje pou¾itie základného zariadenia.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:609 src/escputil/escputil.c:684
 #: src/escputil/escputil.c:727
 #, c-format
 msgid "Cannot open %s read/write: %s\n"
-msgstr "Nie je mo¾né otvori» %s pre èítanie/zápis: %s\n"
+msgstr "Kan %s niet openen lezen/schrijven: %s\n"
 
 #: src/escputil/escputil.c:618 src/escputil/escputil.c:695
 #: src/escputil/escputil.c:736
 #, c-format
 msgid "Cannot write to %s: %s\n"
-msgstr "Nie je mo¾né zapisova» do %s: %s\n"
+msgstr "Kan niet schrijven naar %s: %s\n"
 
 #: src/escputil/escputil.c:625 src/escputil/escputil.c:702
 #: src/escputil/escputil.c:743
 #, c-format
 msgid "Cannot read from %s: %s\n"
-msgstr "Nie je mo¾né èíta» z %s: %s\n"
+msgstr "Kan niet lezen van %s: %s\n"
 
 #: src/escputil/escputil.c:635
 msgid "Cannot parse output from printer\n"
-msgstr "Nie je mo¾né analyzova» výstup z tlaèiarne\n"
+msgstr ""
 
 #: src/escputil/escputil.c:639
 msgid "Ink color"
-msgstr "Farebný atrament"
+msgstr "Kleureninkt"
 
 #: src/escputil/escputil.c:639
 msgid "Percent remaining"
-msgstr "Zostávajúce percentá"
+msgstr "Overblijvend percentage"
 
 #: src/escputil/escputil.c:678
 msgid "Printer identification requires using a raw device.\n"
-msgstr "Identifikácia tlaèiarne vy¾aduje pou¾ívanie základného zariadenia.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:721
 msgid "Printer status requires using a raw device.\n"
-msgstr "Stav tlaèiarne vy¾aduje pou¾ívanie základného zariadenia.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:764
 msgid "Cleaning heads...\n"
-msgstr "Èistenie hláv...\n"
+msgstr "Bezig met het schoonmaken van de koppen..\n"
 
 #: src/escputil/escputil.c:773
 msgid "Running nozzle check, please ensure paper is in the printer.\n"
-msgstr "Spú¹»am kontrolu trysiek, uistite sa, ¾e v tlaèiarni je papier.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:777
 #, c-format
@@ -2002,42 +1893,33 @@ msgid ""
 "It is essential that you not turn your printer off during this procedure.\n"
 "\n"
 msgstr ""
-"Prosím, veµmi pozorne si preèítajte tieto in¹trukcie skôr, ako bude "
-"pokraèova».\n"
+"Leest u alstublieft deze instructies nauwkeurig door, voordat u verder "
+"gaat.\n"
 "\n"
-"Tento nástroj vám umo¾ní zarovna» tlaèovú hlavu atramentovej tlaèiarne\n"
-"Epson Stylus. Jeho nesprávne pou¾itie mô¾e spôsobi» zní¾enie kvality tlaèe\n"
-"a mô¾e po¹kodi» samotnú tlaèiareò. Tento nástroj nebol otestovaný\n"
-"spoloènos»ou Seiko Epson a je ponúknutý bez akejkoµvek záruky. Celé\n"
-"riziko za pou¾itie toho nástroja le¾í na vás.\n"
+"U kunt met deze applicatie de koppen van uw Epson Stylus inkjet\n"
+"printer uitlijnen. Onjuist gebruik van deze applicatie kan leiden tot\n"
+"verlies in kwaliteit en het kan zelfs uw printer beschadigen. Deze "
+"applicatie\n"
+"is niet gecontroleerd op fouten door Seiko Epson, en wordt geleverd zonder\n"
+"enige vorm van garantie. het gebruik is volledig op eigen risico.\n"
 "\n"
-"Bude vytlaèených %d testovacích vzoriek. V¹etky vzorky sú veµmi podobné.\n"
-"Vzorky obsahujú série zvislých èiar, ktoré sa budú prekrýva» Pod ka¾dým "
-"párom je èíslo\n"
-"od %d do %d.\n"
+"De applicatie print een aantal patronen. Elk patroon lijkt erg op de ander.\n"
+"Het patroon bestaat uit een serie paren van verticale lijnen die elkaar "
+"overlappen.\n"
+"Onder elk paar met lijnen staat een nummer tussen %d en %d.\n"
 "\n"
-"Keï si prezriete páry èiar, mali by ste vybra» taký pár èiar, ktorý je "
-"najlep¹ie\n"
-"zarovnaný. Veµmi pozorne si ich prezrite. Pre najkritickej¹ie rozhodovanie\n"
-"pou¾ite lupu alebo zväè¹ovacie sklíèko. Tie¾ vám odporúèame pou¾i» na tento\n"
-"test vysokokvalitný papier, aby sa èiary nerozpíjali na papieri, ale mali\n"
-"správny tvar. Pred napísaním èísla najlep¹ieho páru èiar, vlo¾te stanu spä»\n"
-"do tlaèiarne.\n"
+"Wanneer u de lijnen bekijkt, moet u zoeken naar het paar die het beste is "
+"uitgelijnd,\n"
+"met andere woorden, diegen die samen  de beste enkele lijn vormen.\n"
+"Het gebruik van een loep of vergrootglas wordt aangeraden voor de\n"
+"meest critische inspectie. Er wordt ook aangeraden om een goede kwaliteit\n"
+"papier te gebruiken, zodat de lijnen mooi strak zijn, en niet over het "
+"papier\n"
+"uitvloeien. Wanneer u het nummer heeft uitgekozen, plaats dan het papier "
+"weer\n"
+"terug erug in de printer voordat u het nummer intypt.\n"
 "\n"
-"Ka¾dá vzorka je podobná, ale posledné vzorky pou¾ívajú jemnej¹ie bodky\n"
-"pre kritickej¹ie zarovnanie. Musíte prejs» v¹etkými fázami zarovnávania,\n"
-"aby va¹a tlaèiareò bola správne zarovnaná.  Po absolvovaní v¹etkých fáz\n"
-"bude zarovnávacia vzorka vytlaèená e¹te raz. Mali by ste zisti», ¾e vzorka\n"
-"v strede (#%d z %d) je najlep¹ia zo v¹etkých,\n"
-"\n"
-"Po vytlaèení ïal¹ej vzorky vám bude ponúknutá mo¾nos» (s) - ulo¾i» výsledky\n"
-"do tlaèiarne, (r) - zopakova» proces, alebo (q) - ukonèi» bez ulo¾enia.\n"
-"Ukonèenie neobnoví pôvodné nastavenie, ale vypnutie a následné zapnutie\n"
-"tlaèiarne áno. Pokiaµ ukonèíte bez ulo¾enia, budete musie» zopakova» celý\n"
-"proces opä», ak budete chcie» svoje výsledky ulo¾i». Je dôle¾ité, aby ste "
-"poèas\n"
-"toho procesu nevypli tlaèiareò\n"
-"\n"
+"Elk patroon is gelijk, echter de latere patronen zijn gemaakt uit fijnen\n"
 
 #: src/escputil/escputil.c:812
 #, c-format
@@ -2074,56 +1956,20 @@ msgid ""
 "this procedure.\n"
 "\n"
 msgstr ""
-"Prosím, veµmi pozorne si preèítajte tieto in¹trukcie skôr, ako bude "
-"pokraèova».\n"
-"\n"
-"Tento nástroj vám umo¾ní zarovna» tlaèovú hlavu atramentovej tlaèiarne Epson "
-"Stylus.\n"
-"Jeho nesprávne pou¾itie mô¾e spôsobi» zní¾enie kvality tlaèe a mô¾e "
-"po¹kodi»\n"
-"samotnú tlaèiareò. Tento nástroj nebol otestovaný spoloènos»ou Seiko Epson\n"
-"a je ponúknutý bez akejkoµvek záruky. Celé riziko za pou¾itie toho nástroja\n"
-"le¾í na vás.\n"
-"\n"
-"Bude vytlaèená testovacia vzorka, ktorá bude obsahova» sériu párov zvislých\n"
-"èiar, ktoré **overlap. Pod ka¾dým párom èiar je èíslo od %d do %d.\n"
-"\n"
-"Keï si prezriete vzorky, mali by ste vybra» taký pár èiar, ktorý je "
-"najlep¹ie\n"
-"zarovnaný. Veµmi pozorne si ich prezrite. Pre najkritickej¹ie rozhodovanie\n"
-"pou¾ite lupu alebo zväè¹ovacie sklíèko. Tie¾ vám odporúèame pou¾i» na tento\n"
-"test vysokokvalitný papier, aby sa èiary nerozpíjali na papieri, ale mali\n"
-"správny tvar. Pred napísaním èísla najlep¹ieho páru èiar, vlo¾te stanu spä»\n"
-"do tlaèiarne.\n"
-"\n"
-"Zarovnávacia vzorka bude vytlaèená e¹te raz. V tomto prípade by najlep¹ím\n"
-"párom (#%d z %d) mal by» ten uprostred. Potom vám bude ponúknutá mo¾nos»\n"
-"(s) - ulo¾i» výsledky do tlaèiarne, (r) - zopakova» proces, alebo (q) - "
-"ukonèi»\n"
-"bez ulo¾enia.  Ukonèenie neobnoví pôvodné nastavenie, ale vypnutie a "
-"následné\n"
-"zapnutie tlaèiarne áno.\n"
-"Pokiaµ ukonèíte bez ulo¾enia, budete musie» zopakova» celý proces opä», ak\n"
-"budete chcie» svoje výsledky ulo¾i». Je dôle¾ité, aby ste poèas toho "
-"procesu \n"
-"nevypli tlaèiareò\n"
-"\n"
 
 #: src/escputil/escputil.c:856
 msgid "Unable to send command to the printer, exiting.\n"
-msgstr "Nie je mo¾né odosla» príkaz pre tlaèiareò, koniec.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:874
 msgid ""
 "Printer alignment must be done with a raw device or else\n"
 "the -m option must be used to specify a printer.\n"
 msgstr ""
-"Zarovnanie tlaèiarne musí by» vykonané so základného zariadením alebo\n"
-"pomocou voµby -m musíte urèi» tlaèiareò.\n"
 
 #: src/escputil/escputil.c:878
 msgid "Attempting to detect printer model..."
-msgstr "Pokú¹am sa zisti» model tlaèiarne..."
+msgstr ""
 
 #: src/escputil/escputil.c:883
 #, c-format
@@ -2131,8 +1977,6 @@ msgid ""
 "\n"
 "Cannot open %s read/write: %s\n"
 msgstr ""
-"\n"
-"Nie je mo¾né otvori» %s pre èítanie/zápis: %s\n"
 
 #: src/escputil/escputil.c:891
 #, c-format
@@ -2140,8 +1984,6 @@ msgid ""
 "\n"
 "Cannot write to %s: %s\n"
 msgstr ""
-"\n"
-"Nie je mo¾né zapisova» do %s: %s\n"
 
 #: src/escputil/escputil.c:897
 #, c-format
@@ -2149,8 +1991,6 @@ msgid ""
 "\n"
 "Cannot read from %s: %s\n"
 msgstr ""
-"\n"
-"Nie je mo¾né èíta» z %s: %s\n"
 
 #: src/escputil/escputil.c:910
 msgid ""
@@ -2158,14 +1998,11 @@ msgid ""
 "Cannot detect printer type.\n"
 "Please use -m to specify your printer model.\n"
 msgstr ""
-"\n"
-"Nie je mo¾né zisti» typ tlaèiarne.\n"
-"Pou¾ite prosím -m na urèenie modelu va¹ej tlaèiarne.\n"
 
 #: src/escputil/escputil.c:927
 #, c-format
 msgid "Printer model %s is not known.\n"
-msgstr "Neznámy typ tlaèiarne %s.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:938
 msgid ""
@@ -2177,45 +2014,33 @@ msgid ""
 "You will then be asked to confirm your choice.\n"
 "What do you want to do (s, q, r)?\n"
 msgstr ""
-"Preskúmajte výsledok tlaèe veµmi pozorne a uistite sa,\n"
-"¾e va¹a tlaèiareò má správne zarovnanie. Teraz mô¾ete:\n"
-"  (s) ulo¾i» výsledok do tlaèiarne,\n"
-"  (q) ukonèi» bez ulo¾enia výsledku, alebo\n"
-"  (r) zopakova» celý proces od zaèiatku.\n"
-"Potom bude po¾iadaný potvrdi» va¹u voµbu.\n"
-"Èo chcete spravi»? (s,q,r)?\n"
 
 #: src/escputil/escputil.c:946 src/escputil/escputil.c:953
 #: src/escputil/escputil.c:966 src/escputil/escputil.c:982
 #: src/escputil/escputil.c:1049 src/escputil/escputil.c:1190
 msgid "> "
-msgstr "> "
+msgstr ""
 
 #: src/escputil/escputil.c:951
 msgid ""
 "Please confirm by typing 'q' again that you wish to quit without saving:\n"
 msgstr ""
-"Potvrïte prosím opätovným stlaèením 'q', ¾e si ¾eláte ukonèi» bez ulo¾enia:\n"
 
 #: src/escputil/escputil.c:956
 msgid ""
 "OK, your printer is aligned, but the alignment has not been saved.\n"
 "If you wish to save the alignment, you must repeat this process.\n"
 msgstr ""
-"Vporiadku, va¹a tlaèiareò je  zarovnaná, ale zarovnanie nebolo ulo¾ené.\n"
-"Ak si ¾eláte ulo¾i» zarovnanie, musíte tento proces zopakova».\n"
 
 #: src/escputil/escputil.c:963
 msgid ""
 "Please confirm by typing 'r' again that you wish to repeat the\n"
 "alignment process:\n"
 msgstr ""
-"Opätovným stlaèení 'r' potvrïte, ¾e si prajete zopakova» proces "
-"zarovnávania:\n"
 
 #: src/escputil/escputil.c:969
 msgid "Repeating the alignment process.\n"
-msgstr "Opakujem proces zarovnávania.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:975
 msgid ""
@@ -2225,11 +2050,6 @@ msgid ""
 "Please confirm by typing 's' again that you wish to save the settings\n"
 "to your printer:\n"
 msgstr ""
-"Toto natrvalo zmení nastavenie va¹ej tlaèiarne.\n"
-"VAROVANIE: táto procedúra nebola odsúhlasená spoloènos»ou Seiko Epson\n"
-"a mô¾e po¹kodi» va¹u tlaèiareò. Pokraèova»?\n"
-"Potvrïte opätovným stlaèením 's', ¾e si prajete ulo¾i» nastavenie\n"
-"va¹ej tlaèiarne:\n"
 
 #: src/escputil/escputil.c:985
 msgid "About to save settings..."
@@ -2255,11 +2075,11 @@ msgstr ""
 
 #: src/escputil/escputil.c:1002
 msgid "Unrecognized command.\n"
-msgstr "Neznámi príkaz.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1005
 msgid "Final command was not confirmed.\n"
-msgstr "Závereèný príkaz nebol potvrdený.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1010
 #, c-format
@@ -2271,29 +2091,19 @@ msgid ""
 "Please place a sheet of paper in your printer to begin the head\n"
 "alignment procedure.\n"
 msgstr ""
-"Táto procedúra prepokladá, ¾e va¹a tlaèiareò je Epson %s.\n"
-"Ak toto nie je model va¹ej tlaèiarne, stlaète teraz prosím control-C\n"
-"a zvoµte vá¹ súèasný model tlaèiarne.\n"
-"\n"
-"Vlo¾te prosím hárok papiera do va¹ej tlaèiarne, aby sa mohla zaèa»\n"
-"procedúra zarovnávania hlavy.\n"
 
 #: src/escputil/escputil.c:1035 src/escputil/escputil.c:1057
 #: src/escputil/escputil.c:1100 src/escputil/escputil.c:1169
 #: src/escputil/escputil.c:1180
 msgid "Press enter to continue > "
-msgstr "Pre pokraèovanie stlaète enter > "
+msgstr ""
 
 #: src/escputil/escputil.c:1042
-#, fuzzy
 msgid ""
 "Please inspect the print, and choose the best pair of lines in each "
 "pattern.\n"
 "Type a pair number, '?' for help, or 'r' to repeat the procedure.\n"
 msgstr ""
-"Preskúmajte  pozorne výtlaèok a zvoµte najlep¹í pár èiar\n"
-"vo vzorke #%d a potom opätovne vlo¾te stranu do tlaèiarne.\n"
-"Stlaète èíslo páru, '?' pre pomoc alebo 'r' pre opakovanie vzorky.\n"
 
 #: src/escputil/escputil.c:1048
 #, c-format
@@ -2302,25 +2112,24 @@ msgstr ""
 
 #: src/escputil/escputil.c:1054 src/escputil/escputil.c:1099
 msgid "Please insert a fresh sheet of paper.\n"
-msgstr "Vlo¾te prosím nový hárok papiera.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1073 src/escputil/escputil.c:1209
 msgid "Number out of range!\n"
-msgstr "Èíslo je mimo rozsahu!\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1078 src/escputil/escputil.c:1214
 msgid "I cannot understand what you typed!\n"
-msgstr "Nedoká¾em pochopi», èo ste napísali!\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1084
 #, c-format
 msgid "The best pair of lines should be numbered between 1 and %d.\n"
-msgstr "Najlep¹í pár èiar by mal ma» èíslo z rozpätia 1 a %d.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1091
-#, fuzzy
 msgid "Attempting to set alignment..."
-msgstr "Pokú¹am sa zisti» model tlaèiarne..."
+msgstr ""
 
 #: src/escputil/escputil.c:1094
 msgid "succeeded.\n"
@@ -2368,57 +2177,17 @@ msgid ""
 "WARNING: THIS FUNCTION IS NOT YET TESTED!  It may not work, and it may\n"
 "damage your printer!\n"
 msgstr ""
-"Prosím, veµmi pozorne si preèítajte tieto in¹trukcie pred tým, ako bude "
-"pokraèova».\n"
-"\n"
-"Tento nástroj vám pomô¾e so zarovnávaním tlaèovej hlavy pre farebnú tlaè "
-"atramentovej tlaèiarne Epson Stylus.\n"
-"Jeho nesprávne pou¾itie mô¾e spôsobi» ní¾enie kvality tlaèe a mô¾e po¹kodi»\n"
-"samotnú tlaèiareò. Tento nástroj nebol odobrený spoloènos»ou Seiko Epson\n"
-"a je ponúknutý bez akejkoµvek záruky. Celé riziko za pou¾itie toho nástroja\n"
-"le¾í na vás.\n"
-"\n"
-"Nástroj vytlaèí %d pretlaè testovacích vzoriek na jeden kúsok papiera.\n"
-"Najprv sa vytlaèí jedna vzorka a papier bude vysunutý. Potom musíte ten "
-"istý\n"
-"papier vlo¾i» do tlaèiarne, aby sa naò vytlaèila ïal¹ia vzorka. Ka¾dá "
-"vzorka\n"
-"obsahuje sadu mo¾ností oèíslovaných od %d do %d.\n"
-"\n"
-"Keï si prezriete vzorky, mali by ste nájs» tú s najhlad¹ou textúrou "
-"(najmenej\n"
-"''zrnitou''). Mali by ste ich veµmi pozorne prezrie» a  vybra» tú "
-"najlep¹iu.\n"
-"Odporúèame vám pou¾i» papier pre tlaè vo foto kvalite alebo podobne "
-"vysokokvalitný\n"
-"typ papiera. Pokiaµ nenájdete hladkú vzorku, mali by ste test zopakova».\n"
-"\n"
-"Po preskúmaní mo¾ností a výbere pásky, vám budú ponúknuté tieto mo¾nosti:\n"
-"(s) - ulo¾i» výsledky do tlaèiarne, (r) - zopakova» proces, alebo (q) - "
-"ukonèi»\n"
-"bez ulo¾enia.  Ukonèenie neobnoví pôvodné nastavenie, ale vypnutie a "
-"následné\n"
-"zapnutie tlaèiarne áno.. Pokiaµ ukonèíte bez ulo¾enia, budete musie» "
-"zopakova»\n"
-"celý proces opä», ak budete chcie» svoje výsledky ulo¾i».\n"
-"Je dôle¾ité, aby ste poèas toho procesu nevypli tlaèiareò\n"
-"\n"
-"VAROVANIE: TÁTO FUNKCIA NIE JE E©TE OTESTOVANÁ!  Mo¾no nebude fungova» a "
-"mo¾no\n"
-"vám po¹kodí tlaèiareò!\n"
 
 #: src/escputil/escputil.c:1160
 #, c-format
 msgid "Printer %s does not require color head alignment.\n"
-msgstr "Tlaèiareò %s nevy¾aduje zarovnanie farebnej hlavy.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1178
 msgid ""
 "Please re-insert the same alignment sheet in the printer when it is\n"
 "finished printing.\n"
 msgstr ""
-"Opätovne vlo¾te prosím ten istý hárok papiera na zarovnanie\n"
-"do tlaèiarne po dokonèení tlaèenia.\n"
 
 #: src/escputil/escputil.c:1184
 msgid ""
@@ -2428,97 +2197,87 @@ msgid ""
 "best pattern, and repeat the procedure.\n"
 "Type a pattern number, or '?' for help.\n"
 msgstr ""
-"Preskúmajte zarovnanie papiera a urèite, ktorá vzorka je najhlad¹ia.\n"
-"Táto vzorka má najmenej ``zrniek''.\n"
-"Ak nemô¾ete nájs» hladkú vzorku, zvoµte prosím èíslo najlep¹ej vzorky\n"
-"a zopakujte túto procedúru.\n"
-"Vlo¾te èíslo vzorky, alebo '?' pre pomoc.\n"
 
 #: src/escputil/escputil.c:1220
 #, c-format
 msgid "The best pattern should be numbered between 1 and %d.\n"
-msgstr "Najlep¹ia vzorka by mala ma» èíslo od 1 po %d.\n"
+msgstr ""
 
 #: src/escputil/escputil.c:1264
 msgid "Error in input\n"
-msgstr "Chyba na vstupe\n"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:193
 msgid "Print Color Adjust"
-msgstr "Prispôsobenie farieb pre tlaè"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:197
 msgid "Set Defaults"
-msgstr "Nastavi» ¹tandardné"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:199
 msgid "Close"
-msgstr "Zatvori»"
+msgstr "Sluiten"
 
 #: src/gimp/gimp_color_window.c:230
 msgid "Image preview"
-msgstr "Náhµad obrázku"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:240
 msgid "Brightness:"
-msgstr "Jas:"
+msgstr "Helderheid:"
 
 #: src/gimp/gimp_color_window.c:248
 msgid ""
 "Set the brightness of the print.\n"
 "0 is solid black, 2 is solid white"
 msgstr ""
-"Nastavenie jasu tlaèe.\n"
-"0 je jednoliatu èiernu, 2 pre jednoliatu bielu"
 
 #: src/gimp/gimp_color_window.c:260
 msgid "Contrast:"
-msgstr "Kontrast:"
+msgstr "Contrast"
 
 #: src/gimp/gimp_color_window.c:268
 msgid "Set the contrast of the print"
-msgstr "Nastavi» kontrast tlaèe"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:279
 msgid "Cyan:"
-msgstr "Azúrová:"
+msgstr "Cyaan:"
 
 #: src/gimp/gimp_color_window.c:287
 msgid "Adjust the cyan balance of the print"
-msgstr "Prispôsobenie vyvá¾enie azúrovej farby pre tlaè"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:298
 msgid "Magenta:"
-msgstr "Purpurová:"
+msgstr "Magenta:"
 
 #: src/gimp/gimp_color_window.c:306
 msgid "Adjust the magenta balance of the print"
-msgstr "Prispôsobenie vyvá¾enie purpurovej farby pre tlaè"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:317
 msgid "Yellow:"
-msgstr "®ltá:"
+msgstr "Geel (Y):"
 
 #: src/gimp/gimp_color_window.c:325
 msgid "Adjust the yellow balance of the print"
-msgstr "Prispôsobenie vyvá¾enie ¾ltej farby pre tlaè"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:336
 msgid "Saturation:"
-msgstr "Sýtos»:"
+msgstr "Gekleurdheid:"
 
 #: src/gimp/gimp_color_window.c:344
 msgid ""
 "Adjust the saturation (color balance) of the print\n"
 "Use zero saturation to produce grayscale output using color and black inks"
 msgstr ""
-"Prispôsobenie sýtosti (farebného vyvá¾enia) tlaèe\n"
-"Pou¾ite nulu na vyprodukovanie výstupu v odtieòoch ¹edej s pou¾itím "
-"farebného a èierneho atramentu"
 
 #: src/gimp/gimp_color_window.c:357
 msgid "Density:"
-msgstr "Hustota:"
+msgstr "Densiteit:"
 
 #: src/gimp/gimp_color_window.c:365
 msgid ""
@@ -2526,13 +2285,10 @@ msgid ""
 "ink bleeds through the paper or smears; increase the density if black "
 "regions are not solid."
 msgstr ""
-"Nastavte hustotu (mno¾stvo atramentu) pre tlaè. Hustotu zní¾te, ak atrament "
-"teèie po papieri, alebo sa rozmazáva; zvý¹te hustotu, ak èierne oblasti sú "
-"jednoliate."
 
 #: src/gimp/gimp_color_window.c:379
 msgid "Gamma:"
-msgstr "Gama:"
+msgstr "Gamma:"
 
 #: src/gimp/gimp_color_window.c:387
 msgid ""
@@ -2540,13 +2296,10 @@ msgid ""
 "brighter print, while smaller values will produce a generally darker print. "
 "Black and white will remain the same, unlike with the brightness adjustment."
 msgstr ""
-"Nastavenie gamy pre tlaè. Vy¹¹ie hodnoty vyprodukujú v¹eobecne jasnej¹iu "
-"tlaè, kým ni¾¹ie hodnoty vyprodukujú tmav¹iu tlaè. Èierna a biela zostanú "
-"také isté na rozdiel od nastavovania jasu."
 
 #: src/gimp/gimp_color_window.c:403
 msgid "Dither Algorithm:"
-msgstr "Algoritmus rozptylu:"
+msgstr ""
 
 #: src/gimp/gimp_color_window.c:411
 msgid ""
@@ -2557,13 +2310,6 @@ msgid ""
 "art.\n"
 "Hybrid Floyd-Steinberg generally produces inferior output."
 msgstr ""
-"Zvoµte algoritmus rozptylu, ktorý sa pou¾ije pri tlaèi.\n"
-"Prispôsobiteµné mie¹anie roztylu v¹obecne poskytuje najlep¹í výsledok.\n"
-"Postupný rozptyl je rýchlej¹í a výsledná kvalita je podobná ako je na "
-"fotografiách.\n"
-"Rýchly a veµmi rýchly roztyl je podstatne rýchlej¹¹í a dobré výsledky "
-"poskytuje pre text a èiarovú grafiku.\n"
-"Mie¹aný Floyd-Steinbergov roztyl v¹eobecne poskytuje menej kvalitný výstup."
 
 #.
 #. * Create the main dialog
@@ -2571,40 +2317,40 @@ msgstr ""
 #: src/gimp/gimp_main_window.c:327
 #, c-format
 msgid "%s -- Print v%s"
-msgstr "%s -- Tlaè v%s"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:336
 msgid "About"
-msgstr "O programe"
+msgstr "Info"
 
 #: src/gimp/gimp_main_window.c:338
 msgid ""
 "Print and\n"
 "Save Settings"
 msgstr ""
-"Ulo¾i» nastavenia\n"
-"a vytlaèi»"
+"Afdrukken en\n"
+"instellingen opslaan"
 
 #: src/gimp/gimp_main_window.c:340
 msgid ""
 "Save\n"
 "Settings"
 msgstr ""
-"Ulo¾i»\n"
-"nastavenia"
+"Instellingen\n"
+"opslaan"
 
 #: src/gimp/gimp_main_window.c:342
 msgid "Print"
-msgstr "Tlaèi»"
+msgstr "Afdrukken"
 
 #: src/gimp/gimp_main_window.c:344 src/gimp/gimp_main_window.c:626
 #: src/gimp/gimp_main_window.c:795
 msgid "Cancel"
-msgstr "Storno"
+msgstr "Annuleren"
 
 #: src/gimp/gimp_main_window.c:383
 msgid "Preview"
-msgstr "Náhµad"
+msgstr "Voorbeeld"
 
 #: src/gimp/gimp_main_window.c:407
 msgid ""
@@ -2619,131 +2365,121 @@ msgid ""
 "If you click another button while dragging the mouse, the image will return "
 "to its original position."
 msgstr ""
-"Pozícia obrázku na strane.\n"
-"Kliknite a potiahnite primárne tlaèítko na pozíciu obrázku.\n"
-"Kliknite a potiahnite sekundárne tlaèítko pohybu obrázku s jemnej¹ou "
-"presnos»ou; ka¾dá jednotka pohybu posunie obrázok o jeden bod (1/72\")\n"
-"Kliknite a potiahnite so stredným tlaèítkom na pohyb v jednotkách veµkosti "
-"obrázku.\n"
-"Ak pri klikaní a »ahaní podr¾íte klávesu Shift obmedzíte pohyb obrázku iba "
-"na vodorovný a zvislý pohyb.\n"
-"Ak poèas »ahania obrázku my¹ou kliknete iným tlaèítkom, obrázok sa vráti na "
-"pôvodnú pozíciu."
 
 #: src/gimp/gimp_main_window.c:434
 msgid "Position"
-msgstr "Pozícia"
+msgstr "Positie"
 
 #: src/gimp/gimp_main_window.c:452
 msgid "Auto"
-msgstr "Automaticky"
+msgstr "Automatisch"
 
 #: src/gimp/gimp_main_window.c:454
 msgid "Portrait"
-msgstr "Na vý¹ku"
+msgstr "Portret"
 
 #: src/gimp/gimp_main_window.c:456
 msgid "Landscape"
-msgstr "Na ¹írku"
+msgstr "Landschap"
 
 #: src/gimp/gimp_main_window.c:458
 msgid "Upside down"
-msgstr "Hore nohami"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:460
 msgid "Seascape"
-msgstr "Na ¹írku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:464
 msgid ""
 "Select the orientation: portrait, landscape, upside down, or seascape "
 "(upside down landscape)"
 msgstr ""
-"Zvoµte orientáciu: na vý¹ku, na ¹írku, hore nohami, na ¹írku hore nohami "
 
 #: src/gimp/gimp_main_window.c:469
+#, fuzzy
 msgid "Orientation:"
-msgstr "Orientácia:"
+msgstr "Gekleurdheid:"
 
 #: src/gimp/gimp_main_window.c:483
 msgid "Left:"
-msgstr "¥avý:"
+msgstr "Links:"
 
 #: src/gimp/gimp_main_window.c:487
 msgid "Distance from the left of the paper to the image"
-msgstr "Vzdialenos» od µavého okraja papiera k obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:496
 msgid "Top:"
-msgstr "Horný:"
+msgstr "Boven:"
 
 #: src/gimp/gimp_main_window.c:500
 msgid "Distance from the top of the paper to the image"
-msgstr "Vzdialenos» od horného okraja papiera k obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:509
 msgid "Right:"
-msgstr "Pravý:"
+msgstr "Rechts:"
 
 #: src/gimp/gimp_main_window.c:513
 msgid "Distance from the left of the paper to the right of the image"
-msgstr "Vzdialenos» od µavého okraja papiera k pravému okraju obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:523
 msgid "Right Border:"
-msgstr "Pravý okraj:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:527
 msgid "Distance from the right of the paper to the image"
-msgstr "Vzdialenos» od pravého okraja papiera k obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:537
 msgid "Bottom:"
-msgstr "Dolný:"
+msgstr "Onder:"
 
 #: src/gimp/gimp_main_window.c:541
 msgid "Distance from the top of the paper to the bottom of the image"
-msgstr "Vzdialenos» od horného okraja papiera k dolnému okraju obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:551
 msgid "Bottom Border:"
-msgstr "Dolný okraj:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:555
 msgid "Distance from the bottom of the paper to the image"
-msgstr "Vzdialenos» od dolného okraja papiera k obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:572
 msgid "Center:"
-msgstr "Centrovanie:"
+msgstr "Midden X:"
 
 #: src/gimp/gimp_main_window.c:576
 msgid "Vertically"
-msgstr "Zvislo"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:581
 msgid "Center the image vertically on the paper"
-msgstr "Vycentrova» obrázok zvisle na papieri"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:587
 msgid "Both"
-msgstr "Oboje"
+msgstr "Beide"
 
 #: src/gimp/gimp_main_window.c:592
 msgid "Center the image on the paper"
-msgstr "Vycentrova» obrázok na papieri"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:599
 msgid "Horizontally"
-msgstr "Vodorovne"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:604
 msgid "Center the image horizontally on the paper"
-msgstr "Vycentrova» vodorovne obrázok na papieri"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:620
 msgid "Setup Printer"
-msgstr "Nastavi» tlaèiareò"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:624 src/gimp/gimp_main_window.c:793
 #: src/gimp/gimp_main_window.c:830
@@ -2755,37 +2491,37 @@ msgstr "OK"
 #.
 #: src/gimp/gimp_main_window.c:648 src/gimp/gimp_main_window.c:906
 msgid "Printer Model:"
-msgstr "Model tlaèiarne:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:660
 msgid "Select your printer model"
-msgstr "Vyberte model va¹ej tlaèiarne"
+msgstr ""
 
 #.
 #. * PPD file.
 #.
 #: src/gimp/gimp_main_window.c:698
 msgid "PPD File:"
-msgstr "PPD súbor:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:714
 msgid "Enter the correct PPD filename for your printer"
-msgstr "Vlo¾te správny PPD názov súboru pre va¹u tlaèiareò"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:717
 msgid "Browse"
-msgstr "Prechádza»"
+msgstr "Bladeren"
 
 #: src/gimp/gimp_main_window.c:723
 msgid "Choose the correct PPD filename for your printer"
-msgstr "Zvoµte správny PPD názov súboru pre va¹u tlaèiareò"
+msgstr ""
 
 #.
 #. * Print command.
 #.
 #: src/gimp/gimp_main_window.c:733
 msgid "Command:"
-msgstr "Príkaz:"
+msgstr "Opdracht:"
 
 #: src/gimp/gimp_main_window.c:746
 msgid ""
@@ -2793,43 +2529,40 @@ msgid ""
 "remove the `-l' or `-oraw' from the command string, or printing will "
 "probably fail!"
 msgstr ""
-"Vlo¾te správny príkaz pre tlaè na va¹ej tlaèiarni. Poznámka: Neodstráòte "
-"prosím z re»azca pre tlaè prepínaèe `-l' alebo `-oraw', lebo tlaè "
-"pravdepodobne nebude úspe¹ná!"
 
 #.
 #. * Output file selection dialog.
 #.
 #: src/gimp/gimp_main_window.c:755
 msgid "Print To File?"
-msgstr "Tlaèi» do súboru?"
+msgstr "Afdrukken Naar Bestand"
 
 #.
 #. * PPD file selection dialog.
 #.
 #: src/gimp/gimp_main_window.c:770
 msgid "PPD File?"
-msgstr "PPD súbor?"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:789
 msgid "Define New Printer"
-msgstr "Definovanie novej tlaèiarne"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:810 src/gimp/gimp_main_window.c:901
 msgid "Printer Name:"
-msgstr "Názov tlaèiarne:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:814
 msgid "Enter the name you wish to give this logical printer"
-msgstr "Vlo¾te oznaèenie, ktoré chcete da» tejto logickej tlaèiarni"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:826
 msgid "About Gimp-Print "
-msgstr "O Gimp-Print "
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:836
 msgid "Gimp-Print Version "
-msgstr "Verzia Gimp-Print"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:836
 msgid ""
@@ -2854,189 +2587,160 @@ msgid ""
 "along with this program; if not, write to the Free Software\n"
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 msgstr ""
-"\n"
-"\n"
-"Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-"a zvy¹ok vývojového tímu  Gimp-Print.\n"
-"\n"
-"Nav¹tívte prosím webovskú stánku http://gimp-print.sourceforge.net.\n"
-"\n"
-"Tento program je slobodný softvér; mô¾ete ho nedistribuova» a/alebo meni»\n"
-"v súlade so V¹eobecnou verejnou licenciou GNU publikovanou\n"
-"vo Free Software Foundation; èi u¾ verzie 2 alebo\n"
-"(podµa va¹ej voµby) akoukoµvek nov¹ou.\n"
-"\n"
-"Tento program je ¹írený v nádeji, ¾e bude u¾itoèný, av¹ak\n"
-"BEZ AKEJKO¥VEK ZÁRUKY; neposkytujú sa ani odvodené záruky\n"
-"PREDAJNOSTI alebo VHODNOSTI PRE URÈITÝ ÚÈEL.\n"
-"Ïal¹ie podrobnosti hµadajte vo V¹eobecnej verejnej licencii GNU.\n"
-"\n"
-"S týmto programom by ste mali získa» kópiu V¹eobecnej verejnej\n"
-"licencie GNU; ak tomu tak nie je, napí¹te do Free Software\n"
-"Foundation, Inc., 59 Temple Place - Suite 330, Boston,\n"
-"MA 02111-1307, USA.\n"
 
 #: src/gimp/gimp_main_window.c:884
 msgid "Printer Settings"
-msgstr "Nastavenie tlaèiarne"
+msgstr "Printerinstellingen"
 
 #: src/gimp/gimp_main_window.c:897
 msgid ""
 "Select the name of the printer (not the type, or model, of printer) that you "
 "wish to print to"
 msgstr ""
-"Zvoµte si názov tlaèiarne (nie typ alebo model tlaèiarne), na ktorej chcete "
-"tlaèi»"
 
 #.
 #. * Setup printer button
 #.
 #: src/gimp/gimp_main_window.c:917
 msgid "Setup Printer..."
-msgstr "Nastavenie tlaèiarne..."
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:919
 msgid ""
 "Choose the printer model, PPD file, and command that is used to print to "
 "this printer"
 msgstr ""
-"Voµba model tlaèiarne, PPD súboru a príkaz, ktorý sa pou¾íva pre tlaè na "
-"tejto tlaèiarni"
 
 #.
 #. * New printer button
 #.
 #: src/gimp/gimp_main_window.c:934
 msgid "New Printer..."
-msgstr "Nová tlaèiareò..."
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:936
 msgid ""
 "Define a new logical printer. This can be used to name a collection of "
 "settings that you wish to remember for future use."
 msgstr ""
-"Definovanie novej logickej tlaèiarne. Toto mô¾e by» pou¾ité na pomenovanie "
-"zbierky nastavení, ktoré si prajete zapamäta» a v budúcnosti pou¾íva»."
 
 #: src/gimp/gimp_main_window.c:957
 msgid "Size of paper that you wish to print to"
-msgstr "Veµkos» papiera, na ktorý chcete tlaèi»"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:960
 msgid "Media Size:"
-msgstr "Veµkos» média:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:969
 msgid "Dimensions:"
-msgstr "Rozmery:"
+msgstr "Afmetingen"
 
 #: src/gimp/gimp_main_window.c:972 src/gimp/gimp_main_window.c:1188
 msgid "Width:"
-msgstr "©írka:"
+msgstr "Breedte: "
 
 #: src/gimp/gimp_main_window.c:983
 msgid "Width of the paper that you wish to print to"
-msgstr "©írka papiera, na ktorý chcete tlaèi»"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:989 src/gimp/gimp_main_window.c:1201
 msgid "Height:"
-msgstr "Vý¹ka:"
+msgstr "Hoogte: "
 
 #: src/gimp/gimp_main_window.c:1000
 msgid "Height of the paper that you wish to print to"
-msgstr "Vý¹ka papiera, na ktorý chcete tlaèi»"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1016
 msgid "Type of media you're printing to"
-msgstr "Typ média na ktorý bude tlaèené"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1019
 msgid "Media Type:"
-msgstr "Typ média:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1032
 msgid "Source (input slot) of media you're printing to"
-msgstr "Zdroj (vstupné miesto) média, na ktoré tlaèíte"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1035
 msgid "Media Source:"
-msgstr "Zdroj média:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1048
 msgid "Type of ink in the printer"
-msgstr "Typ atramentu tlaèiarne"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1051
 msgid "Ink Type:"
-msgstr "Typ atramentu:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1064
 msgid "Resolution and quality of the print"
-msgstr "Rozlí¹enie a kvalita tlaèe"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1067
 msgid "Resolution:"
-msgstr "Rozlí¹enie:"
+msgstr "Resolutie:"
 
 #: src/gimp/gimp_main_window.c:1083
 msgid "Size"
-msgstr "Veµkos»"
+msgstr "Grootte"
 
 #: src/gimp/gimp_main_window.c:1103
 msgid "Scaling:"
-msgstr "Zmena:"
+msgstr "Schaldn"
 
 #: src/gimp/gimp_main_window.c:1109
 msgid "Set the scale (size) of the image"
-msgstr "Nastavi» zväè¹enie (veµkos») obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1142
 msgid ""
 "Select whether scaling is measured as percent of available page size or "
 "number of output dots per inch"
 msgstr ""
-"Zvoµte, èi zmena veµkosti bude vyjadrená ako percento dostupnej veµkosti "
-"stránky, alebo ako èíslo výstupného DPI"
 
 #: src/gimp/gimp_main_window.c:1147
 msgid "Percent"
-msgstr "Percentá"
+msgstr "Procent"
 
 #: src/gimp/gimp_main_window.c:1154
 msgid "Scale the print to the size of the page"
-msgstr "Zmeni» veµkos» tlaèe podµa rozmerov strany"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1160
 msgid "PPI"
-msgstr "PPI"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1166
 msgid "Scale the print to the number of dots per inch"
-msgstr "Zmeni» veµkos» tlaèe podµa poètu bodov na palec"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1192
 msgid "Set the width of the print"
-msgstr "Nastavi» ¹írku tlaèe"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1205
 msgid "Set the height of the print"
-msgstr "Nastavi» vý¹ku tlaèe"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1225
 msgid "Units:"
-msgstr "Jednotky:"
+msgstr "Eenheden"
 
 #: src/gimp/gimp_main_window.c:1230
 msgid "Select the base unit of measurement for printing"
-msgstr "Zvoli» základnú mernú jednotku pre tlaè"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1233
 msgid "Inch"
-msgstr "palce"
+msgstr "Duim"
 
 #: src/gimp/gimp_main_window.c:1240
 msgid "Set the base unit of measurement to inches"
-msgstr "Nastavi» palce ako základnú mernú jednotku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1246
 msgid "cm"
@@ -3044,7 +2748,7 @@ msgstr "cm"
 
 #: src/gimp/gimp_main_window.c:1252
 msgid "Set the base unit of measurement to centimetres"
-msgstr "Nastavi» centimetre ako základnú mernú jednotku"
+msgstr ""
 
 #.
 #. * The "image size" button
@@ -3054,98 +2758,93 @@ msgid ""
 "Use Original\n"
 "Image Size"
 msgstr ""
-"Pou¾i» pôvodnú\n"
-"veµkos» obrázka"
 
 #: src/gimp/gimp_main_window.c:1268
 msgid "Set the print size to the size of the image"
-msgstr "Nastavenie veµkosti tlaèe na veµkos» obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1292
 msgid "Image / Output Settings"
-msgstr "Obrázok / Výstupné nastavenia"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1305
 msgid "Image Type:"
-msgstr "Typ obrázku:"
+msgstr "Afbeeldingstype:"
 
 #: src/gimp/gimp_main_window.c:1310
 msgid "Optimize the output for the type of image being printed"
-msgstr "Optimalizova» výstup podµa typu tlaèeného obrázku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1321
 msgid "Fastest and brightest color for text and line art"
-msgstr "Najrýchlej¹ie a jasnej¹ie farby pre text a èiarovú grafiku"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1335
 msgid "Best for images dominated by regions of solid color"
-msgstr "Najlep¹ie pre obrázky s dominatnými oblas»ami jednej farby"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1351
 msgid ""
 "Slowest, but most accurate and smoothest color for continuous tone images "
 "and photographs"
 msgstr ""
-"Najpomal¹ie, ale najpresnej¹ie a najhlad¹ie farby pre plynulé odtiene "
-"obrázkov a fotografií"
 
 #: src/gimp/gimp_main_window.c:1377
 msgid "Output Type:"
-msgstr "Typ výstupu:"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1382
 msgid "Select the desired output type"
-msgstr "Zvoµte vytú¾ený typ výstupu"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1385
 msgid "Color"
-msgstr "Farebne"
+msgstr "Kleur"
 
 #: src/gimp/gimp_main_window.c:1391
 msgid "Color output"
-msgstr "Farebný výstup"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1396
 msgid "Grayscale"
-msgstr "V odtieòoch ¹edej"
+msgstr "Grijswaarden"
 
 #: src/gimp/gimp_main_window.c:1403
 msgid "Print in shades of gray using black ink"
-msgstr "Tlaèi» v odtieòoch ¹edej s pou¾itím èiernej farby"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1410
 msgid "Black and White"
-msgstr "Èiernobielo"
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1417
 msgid "Print in black and white (no color, and no shades of gray)"
-msgstr "Tlaèi» èiernou a bielou (bez farieb a bez odtieòov ¹edej)"
+msgstr ""
 
 #.
 #. *  Color adjust button
 #.
 #: src/gimp/gimp_main_window.c:1428
 msgid "Adjust Output..."
-msgstr "Prispôsobi» výstup..."
+msgstr ""
 
 #: src/gimp/gimp_main_window.c:1435
 msgid ""
 "Adjust color balance, brightness, contrast, saturation, and dither algorithm"
 msgstr ""
-"Nastavenie farebného vyvá¾enia, kontrastu, sýtosti a algoritmu rozptylu"
 
 #: src/gimp/print-image-gimp.c:318
 msgid "Printing..."
-msgstr "Tlaèím..."
+msgstr "Bezig met afdrukken..."
 
 #: src/gimp/print.c:166
 msgid "<Image>/File/Print..."
-msgstr "<Image>/Súbor/Tlaè..."
+msgstr ""
 
 #: src/gimp/print.c:734 src/gimp/print.c:735 src/gimp/print.c:833
 #: src/gimp/print.c:1184
 msgid "File"
-msgstr "Súbor"
+msgstr "Bestand"
 
 #: src/ghost/ijsgimpprint.c:135
 #, c-format
@@ -3176,14 +2875,14 @@ msgid "Printer must be specified with -sModel\n"
 msgstr ""
 
 #: src/ghost/ijsgimpprint.c:338
-#, fuzzy, c-format
+#, c-format
 msgid "Printer %s is not a known model\n"
-msgstr "Neznámy typ tlaèiarne %s.\n"
+msgstr ""
 
 #: src/ghost/ijsgimpprint.c:557
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown option %s\n"
-msgstr "Neznáme nastavenie %c\n"
+msgstr ""
 
 #: src/ghost/ijsgimpprint.c:704
 #, c-format
@@ -3201,14 +2900,14 @@ msgid "Unable to open file descriptor: %s\n"
 msgstr ""
 
 #: src/ghost/ijsgimpprint.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open %s: %s\n"
-msgstr "Nie je mo¾né otvori» zariadenie %s: %s\n"
+msgstr ""
 
 #: src/ghost/ijsgimpprint.c:851
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown printer %s\n"
-msgstr "Neznáme nastavenie %c\n"
+msgstr ""
 
 #: src/ghost/ijsgimpprint.c:882
 msgid "Bad parameters; cannot continue!\n"
@@ -3218,32 +2917,3 @@ msgstr ""
 #, c-format
 msgid "Get next row failed at %d\n"
 msgstr ""
-
-#~ msgid ""
-#~ "Please insert your alignment test page in the printer once more\n"
-#~ "for the final save of your alignment settings.  When the printer\n"
-#~ "feeds the page through, your settings have been saved.\n"
-#~ msgstr ""
-#~ "Vlo¾te e¹te raz prosím va¹u testovaciu stránku pre zarovnanie\n"
-#~ "tlaèiarne pre finálne ulo¾enie vá¹ho nastavenia zarovnávania.\n"
-#~ "Keï tlaèiareò po¹le papier von, va¹e nastavenie bude ulo¾ené.\n"
-
-#~ msgid ""
-#~ "Please inspect the print, and choose the best pair of lines\n"
-#~ "in pattern #%d, and then insert a fresh page in the input tray.\n"
-#~ "Type a pair number, '?' for help, or 'r' to retry this pattern.\n"
-#~ msgstr ""
-#~ "Preskúmajte prosím výtlaèok a vyberte najlep¹í pár èiar\n"
-#~ "zo vzorky #%d a potom vlo¾te èistú stranu do vstupného zásobníka.\n"
-#~ "Stlaète èíslo páru, '?' pre pomocníka alebo 'r' na opakovanie tejto "
-#~ "vzorky.\n"
-
-#~ msgid ""
-#~ "Aligning phase %d, and performing final test.\n"
-#~ "Please insert a fresh sheet of paper.\n"
-#~ msgstr ""
-#~ "Fáza zarovnávania %d a vykonáva sa závereèný test.\n"
-#~ "Vlo¾te prosím èistý papier.\n"
-
-#~ msgid "Aligning phase %d, and starting phase %d.\n"
-#~ msgstr "Fáza zarovnávania %d a zaèínam fázu %d.\n"
