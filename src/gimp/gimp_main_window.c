@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.63 2002/11/01 01:30:36 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.64 2002/11/02 01:51:59 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -156,6 +156,10 @@ static gint            print_height;	/* Printed height of image */
 static gint	       left, right;	        /* Imageable area */
 static gint            top, bottom;
 static gint	       paper_width, paper_height;	/* Physical width */
+static gint image_width;
+static gint image_height;
+gint image_true_width;
+gint image_true_height;
 
 static gint		num_media_sizes = 0;
 static stp_param_t	*media_sizes;

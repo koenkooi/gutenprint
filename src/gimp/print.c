@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.28 2002/11/01 01:31:05 rlk Exp $"
+ * "$Id: print.c,v 1.29 2002/11/02 01:51:59 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -89,10 +89,6 @@ stp_printer_t current_printer = 0;	/* Current printer index */
 gint32          image_ID;	        /* image ID */
 
 const char *image_filename;
-int image_width;
-int image_height;
-int image_true_width;
-int image_true_height;
 
 #define SAFE_FREE(x)				\
 do						\
@@ -1553,5 +1549,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.28 2002/11/01 01:31:05 rlk Exp $".
+ * End of "$Id: print.c,v 1.29 2002/11/02 01:51:59 rlk Exp $".
  */
