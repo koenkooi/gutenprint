@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.21 2001/10/13 13:48:43 rlk Exp $
+## $Id: Makefile.am,v 1.22 2001/10/13 23:04:55 andystewart Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -199,13 +199,13 @@ maintainer-clean-local:
 help:
 	@echo "  "
 	@echo "Supported targets in this Makefile:"
-	@echo "    docs    - creates PS, PDF, and HTML documentation files"
-	@echo "    ps      - creates PostScript documentation"
-	@echo "    pdf     - creates PDF documentation"
-	@echo "    html    - creates HTML documentation"
-	@echo "    clean   - deletes machine generated files, but not outputs"
+	@echo "    docs      - creates PS, PDF, and HTML documentation files"
+	@echo "    ps        - creates PostScript documentation"
+	@echo "    pdf       - creates PDF documentation"
+	@echo "    html      - creates HTML documentation"
+	@echo "    clean     - deletes machine generated files, but not outputs"
 	@echo "    veryclean - deletes output files in addition"
-	@echo "    help    - prints this help text"
+	@echo "    help      - prints this help text"
 	@echo "  "
 
 
