@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.4 2000/09/06 00:00:49 cpbs Exp $"
+ * "$Id: print-weave.c,v 1.5 2000/09/27 23:19:31 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -330,8 +330,10 @@ static void
 invert_map(int *map, int *stagger, int count, int oldfirstpass,
            int newfirstpass)
 {
-	int newmap[count], newstagger[count];
 	int i;
+	int *newmap, *newstagger;
+	newmap = malloc(count * sizeof(int));
+	newstagger = malloc(count * sizeof(int));
 
 	for (i = 0; i < count; i++) {
 		newmap[map[i] - oldfirstpass] = i + newfirstpass;
@@ -340,6 +342,8 @@ invert_map(int *map, int *stagger, int count, int oldfirstpass,
 
 	memcpy(map, newmap, count * sizeof(int));
 	memcpy(stagger, newstagger, count * sizeof(int));
+	free(newstagger);
+	free(newmap);
 }
 
 static void
