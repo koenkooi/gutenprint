@@ -48,7 +48,7 @@ that you would like covering, please let me know!
 
  -- Roger Leigh <roger@whinlatter.uklinux.net>
 
- $Id: README.maintaining,v 1.8 2001/10/27 17:16:37 rlk Exp $
+ $Id: README.maintaining,v 1.8.2.1 2004/04/19 00:01:48 rlk Exp $
 
 
 1. Integration of the autotools
@@ -559,3 +559,8 @@ gimp.m4 (in /usr/share/aclocal or equivalent) will be incorrect.  You
 should install the version of gimp.m4 from scripts/ prior to use.
 This should only be a problem when building from CVS; the configure
 script included in released versions will not have this problem.
+
+
+13. Updating PO files
+
+wget -r -np -nH --cut-dirs=3 --accept '.po' --cache=off http://www.iro.umontreal.ca/translation/maint/gimp-print/
