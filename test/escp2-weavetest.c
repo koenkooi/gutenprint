@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.3 2001/01/29 02:07:17 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.4 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -60,6 +60,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../lib/libprintut.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -152,14 +153,14 @@ main(int argc, char **argv)
   nrows = atoi(argv[6]);
   first_line = atoi(argv[7]);
   phys_lines = atoi(argv[8]);
-  passstarts = malloc(sizeof(int) * (nrows + physsep));
-  logpassstarts = malloc(sizeof(int) * (nrows + physsep));
-  passends = malloc(sizeof(int) * (nrows + physsep));
-  passcounts = malloc(sizeof(int) * (nrows + physsep));
+  passstarts = xmalloc(sizeof(int) * (nrows + physsep));
+  logpassstarts = xmalloc(sizeof(int) * (nrows + physsep));
+  passends = xmalloc(sizeof(int) * (nrows + physsep));
+  passcounts = xmalloc(sizeof(int) * (nrows + physsep));
   vmod = 2 * physsep * hpasses * vpasses * subpasses;
-  current_slot = malloc(sizeof(int) * vmod);
-  physpassstuff = malloc((nrows + physsep));
-  rowdetail = malloc((nrows + physsep) * physjets);
+  current_slot = xmalloc(sizeof(int) * vmod);
+  physpassstuff = xmalloc((nrows + physsep));
+  rowdetail = xmalloc((nrows + physsep) * physjets);
   memset(rowdetail, 0, (nrows + physsep) * physjets);
   memset(physpassstuff, -1, (nrows + physsep));
   memset(current_slot, 0, (sizeof(int) * vmod));

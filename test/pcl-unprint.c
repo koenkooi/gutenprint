@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $"
+ * "$Id: pcl-unprint.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -27,12 +27,13 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../lib/libprintut.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -1000,39 +1001,39 @@ int main(int argc, char *argv[])
  */
 
 		if (output_data.black_data_rows_per_row != 0) {
-		    output_data.black_bufs = malloc(output_data.black_data_rows_per_row * sizeof (char *));
+		    output_data.black_bufs = xmalloc(output_data.black_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.black_data_rows_per_row; i++) {
-			output_data.black_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.black_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 		if (output_data.cyan_data_rows_per_row != 0) {
-		    output_data.cyan_bufs = malloc(output_data.cyan_data_rows_per_row * sizeof (char *));
+		    output_data.cyan_bufs = xmalloc(output_data.cyan_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.cyan_data_rows_per_row; i++) {
-			output_data.cyan_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.cyan_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 		if (output_data.magenta_data_rows_per_row != 0) {
-		    output_data.magenta_bufs = malloc(output_data.magenta_data_rows_per_row * sizeof (char *));
+		    output_data.magenta_bufs = xmalloc(output_data.magenta_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.magenta_data_rows_per_row; i++) {
-			output_data.magenta_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.magenta_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 		if (output_data.yellow_data_rows_per_row != 0) {
-		    output_data.yellow_bufs = malloc(output_data.yellow_data_rows_per_row * sizeof (char *));
+		    output_data.yellow_bufs = xmalloc(output_data.yellow_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.yellow_data_rows_per_row; i++) {
-			output_data.yellow_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.yellow_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 		if (output_data.lcyan_data_rows_per_row != 0) {
-		    output_data.lcyan_bufs = malloc(output_data.lcyan_data_rows_per_row * sizeof (char *));
+		    output_data.lcyan_bufs = xmalloc(output_data.lcyan_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.lcyan_data_rows_per_row; i++) {
-			output_data.lcyan_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.lcyan_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 		if (output_data.lmagenta_data_rows_per_row != 0) {
-		    output_data.lmagenta_bufs = malloc(output_data.lmagenta_data_rows_per_row * sizeof (char *));
+		    output_data.lmagenta_bufs = xmalloc(output_data.lmagenta_data_rows_per_row * sizeof (char *));
 		    for (i=0; i < output_data.lmagenta_data_rows_per_row; i++) {
-			output_data.lmagenta_bufs[i] = malloc(MAX_DATA * sizeof (char));
+			output_data.lmagenta_bufs[i] = xmalloc(MAX_DATA * sizeof (char));
 		    }
 		}
 
@@ -1046,7 +1047,7 @@ int main(int argc, char *argv[])
 		    output_data.yellow_data_rows_per_row + output_data.lcyan_data_rows_per_row +
 		    output_data.lmagenta_data_rows_per_row;
 
-		received_rows = malloc(expected_data_rows_per_row * sizeof(char *));
+		received_rows = xmalloc(expected_data_rows_per_row * sizeof(char *));
 		j = 0;
 		for (i = 0; i < output_data.black_data_rows_per_row; i++)
 		    received_rows[j++] = output_data.black_bufs[i];

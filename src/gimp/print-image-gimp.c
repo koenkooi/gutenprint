@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
+ * "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -25,6 +25,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../../lib/libprintut.h"
 
 #include "print_gimp.h"
 
@@ -128,7 +129,7 @@ static stp_image_t theImage =
 stp_image_t *
 Image_GDrawable_new(GDrawable *drawable)
 {
-  Gimp_Image_t *i = malloc(sizeof(Gimp_Image_t));
+  Gimp_Image_t *i = xmalloc(sizeof(Gimp_Image_t));
   i->drawable = drawable;
   gimp_pixel_rgn_init(&(i->rgn), drawable, 0, 0,
                       drawable->width, drawable->height, FALSE, FALSE);
@@ -333,5 +334,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $".
  */

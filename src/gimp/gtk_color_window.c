@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
+ * "$Id: gtk_color_window.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -24,6 +24,8 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../../lib/libprintut.h"
+
 #include "print_gimp.h"
 
 #ifndef NEW_UI_ONLY

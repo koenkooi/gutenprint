@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
+ * "$Id: print.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -24,6 +24,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../../lib/libprintut.h"
 
 #include "print_gimp.h"
 
@@ -135,7 +136,7 @@ check_plist(int count)
   else if (current_plist_size == 0)
     {
       current_plist_size = count;
-      plist = malloc(current_plist_size * sizeof(stp_plist_t));
+      plist = xmalloc(current_plist_size * sizeof(stp_plist_t));
     }
   else
     {
@@ -883,7 +884,7 @@ printrc_load(void)
   if (home == NULL)
     filename=g_strdup("/.gimp/printrc");
   else
-    filename = malloc(strlen(home) + 15);
+    filename = xmalloc(strlen(home) + 15);
     sprintf(filename, "%s/.gimp/printrc", home);
 #else
   filename = gimp_personal_rc_file ("printrc");
@@ -1247,7 +1248,7 @@ printrc_save(void)
   if (home == NULL)
     filename=g_strdup("/.gimp/printrc");
   else
-    filename = malloc(strlen(home) + 15);
+    filename = xmalloc(strlen(home) + 15);
     sprintf(filename, "%s/.gimp/printrc", home);
 #else
   filename = gimp_personal_rc_file ("printrc");
@@ -1517,5 +1518,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $".
+ * End of "$Id: print.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $".
  */

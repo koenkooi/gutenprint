@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.1 2001/01/22 19:07:04 rleigh Exp $"
+ * "$Id: gimp_color_window.c,v 1.2 2001/02/02 01:25:33 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -25,6 +25,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "../../lib/libprintut.h"
 
 #include "print_gimp.h"
 
@@ -441,7 +442,7 @@ void
 gimp_build_dither_combo (void)
 {
   int i;
-  const char **vec = malloc(sizeof(const char *) *
+  const char **vec = xmalloc(sizeof(const char *) *
 			    stp_dither_algorithm_count());
   for (i = 0; i < stp_dither_algorithm_count(); i++)
     vec[i] = stp_dither_algorithm_name(i);
