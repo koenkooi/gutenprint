@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.103 2003/04/20 03:07:44 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.104 2003/05/09 23:21:36 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2655,12 +2655,18 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   privdata.do_blank = 0;
 #endif
 
-  stpi_dither_add_channel(v, black, ECOLOR_K, 0);
-  stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
-  stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
-  stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
-  stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
-  stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
+  if (black)
+    stpi_dither_add_channel(v, black, ECOLOR_K, 0);
+  if (cyan)
+    stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
+  if (lcyan)
+    stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
+  if (magenta)
+    stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
+  if (lmagenta)
+    stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
+  if (yellow)
+    stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
 
   for (y = 0; y < out_height; y ++)
