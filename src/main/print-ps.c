@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.17 2001/06/03 20:53:24 rlk Exp $"
+ * "$Id: print-ps.c,v 1.18 2001/06/05 22:53:28 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -379,7 +379,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   * Choose the correct color conversion function...
   */
 
-  colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, &nv);
+  colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 
  /*
   * Compute the output size...
