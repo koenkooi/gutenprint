@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.69.2.1 2000/08/03 00:48:12 rlk Exp $"
+ * "$Id: print-canon.c,v 1.69.2.2 2000/08/04 01:41:49 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -271,7 +271,9 @@ static canon_cap_t canon_get_model_capabilities(int model)
       return canon_model_capabilities[i];
     }
   }
+#ifdef DEBUG
   fprintf(stderr,"canon: model %d not found in capabilities list.\n",model);
+#endif
   return canon_model_capabilities[0];
 }
 
@@ -290,7 +292,9 @@ canon_media_type(const char *name, canon_cap_t caps)
   if (!strcmp(name,"Glossy Photo Cards"))    return 10;
   if (!strcmp(name,"Photo Paper Pro"))       return 11;
 
+#ifdef DEBUG
   fprintf(stderr,"canon: Unknown media type '%s' - reverting to plain\n",name);
+#endif
   return 1;
 }
 
@@ -301,7 +305,9 @@ canon_source_type(const char *name, canon_cap_t caps)
   if (!strcmp(name,"Manual with Pause"))    return 0;
   if (!strcmp(name,"Manual without Pause")) return 1;
 
+#ifdef DEBUG
   fprintf(stderr,"canon: Unknown source type '%s' - reverting to auto\n",name);
+#endif
   return 4;
 }
 
@@ -314,7 +320,9 @@ canon_printhead_type(const char *name, canon_cap_t caps)
   if (!strcmp(name,"Photo/Color")) return 3;
   if (!strcmp(name,"Photo"))       return 4;
 
+#ifdef DEBUG
   fprintf(stderr,"canon: Unknown head combo '%s' - reverting to black\n",name);
+#endif
   return 0;
 }
 
@@ -335,7 +343,9 @@ canon_size_type(const char *name, canon_cap_t caps)
 
   /* custom */
 
+#ifdef DEBUG
   fprintf(stderr,"canon: Unknown paper size '%s' - using custom\n",name);
+#endif
   return 0;
 }
 
@@ -479,8 +489,10 @@ canon_parameters(const printer_t *printer,	/* I - Printer model */
 	valptrs[c++]= c_strdup("1440x1440 DPI");
 
     } else {
+#ifdef DEBUG
       fprintf(stderr,"canon: unknown resolution multiplier for model %d\n",
 	      caps.model);
+#endif
       return 0;
     }
     *count= c;
@@ -571,9 +583,11 @@ canon_cmd(FILE *prn, /* I - the printer         */
     buffer = malloc(num);
     bufsize= num;
     if (!buffer) {
+#ifdef DEBUG
       fprintf(stderr,"\ncanon: *** buffer allocation failed...\n");
       fprintf(stderr,"canon: *** command 0x%02x with %d args dropped\n\n",
 	      cmd,num);
+#endif
       return;
     }
   }
@@ -593,7 +607,11 @@ canon_cmd(FILE *prn, /* I - the printer         */
   }
 }
 
+#ifdef DEBUG
 #define PUT(WHAT,VAL,RES) fprintf(stderr,"canon: "WHAT" is %04x =% 5d = %f\" = %f mm\n",(VAL),(VAL),(VAL)/(1.*RES),(VAL)/(RES/25.4))
+#else
+#define PUT(WHAT,VAL,RES) do {} while (0)
+#endif
 
 static void
 canon_init_printer(FILE *prn, canon_cap_t caps,
@@ -687,9 +705,11 @@ canon_init_printer(FILE *prn, canon_cap_t caps,
   }
 
   /*
+#ifdef DEBUG
   fprintf(stderr,"canon: printable size = %dx%d (%dx%d) %02x%02x %02x%02x\n",
 	  page_width,page_height,printable_width,printable_height,
 	  arg_70_1,arg_70_2,arg_70_3,arg_70_4);
+#endif
   */
 
   /* init printer */
@@ -867,13 +887,17 @@ canon_print(const printer_t *printer,		/* I - Model */
   */
 
   sscanf(resolution,"%dx%d",&xdpi,&ydpi);
+#ifdef DEBUG
   fprintf(stderr,"canon: resolution=%dx%d\n",xdpi,ydpi);
+#endif
 
   if (!strcmp(resolution+(strlen(resolution)-3),"DMT") &&
       (caps.features & CANON_CAP_DMT) &&
       nv.image_type != IMAGE_MONOCHROME) {
     use_dmt= 1;
+#ifdef DEBUG
     fprintf(stderr,"canon: using drop modulation technology\n");
+#endif
   }
 
  /*
@@ -942,11 +966,15 @@ canon_print(const printer_t *printer,		/* I - Model */
     delay_lm= 224;
     delay_ly= 0;
     delay_max= 336;
+#ifdef DEBUG
     fprintf(stderr,"canon: delay on!\n");
+#endif
   } else {
     delay_k= delay_c= delay_m= delay_y= delay_lc= delay_lm= delay_ly=0;
     delay_max=0;
+#ifdef DEBUG
     fprintf(stderr,"canon: delay off!\n");
+#endif
   }
 
  /*
@@ -961,7 +989,9 @@ canon_print(const printer_t *printer,		/* I - Model */
     buf_length= length;
   }
 
+#ifdef DEBUG
   fprintf(stderr,"canon: buflength is %d!\n",buf_length);
+#endif
 
   if (output_type == OUTPUT_GRAY) {
     black   = canon_alloc_buffer(buf_length*(delay_k+1));
@@ -994,6 +1024,7 @@ canon_print(const printer_t *printer,		/* I - Model */
       lyellow = NULL;
     }
   }
+#ifdef DEBUG
   fprintf(stderr,"canon: driver will use colors ");
   if (cyan)     fputc('C',stderr);
   if (lcyan)    fputc('c',stderr);
@@ -1003,6 +1034,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   if (lyellow)  fputc('y',stderr);
   if (black)    fputc('K',stderr);
   fprintf(stderr,"\n");
+#endif
 
   nv.density *= ydpi / xdpi;
   if (nv.density > 1.0)
@@ -1090,7 +1122,9 @@ canon_print(const printer_t *printer,		/* I - Model */
 		    yellow, lyellow, black);
       }
 
+#ifdef DEBUG
     /* fprintf(stderr,","); */
+#endif
 
     canon_write_line(prn, caps, ydpi,
 		     black,    delay_k,
@@ -1102,7 +1136,9 @@ canon_print(const printer_t *printer,		/* I - Model */
 		     lyellow,  delay_ly,
 		     length, out_width, left, use_dmt);
 
+#ifdef DEBUG
     /* fprintf(stderr,"!"); */
+#endif
 
     canon_advance_buffer(black,   buf_length,delay_k);
     canon_advance_buffer(cyan,    buf_length,delay_c);
@@ -1128,8 +1164,10 @@ canon_print(const printer_t *printer,		/* I - Model */
    */
 
   if (delay_max) {
+#ifdef DEBUG
     fprintf(stderr,"\ncanon: flushing %d possibly delayed buffers\n",
 	    delay_max);
+#endif
     for (y= 0; y<delay_max; y++) {
 
       canon_write_line(prn, caps, ydpi,
@@ -1142,7 +1180,9 @@ canon_print(const printer_t *printer,		/* I - Model */
 		       lyellow,  delay_ly,
 		       length, out_width, left, use_dmt);
 
+#ifdef DEBUG
       /* fprintf(stderr,"-"); */
+#endif
 
       canon_advance_buffer(black,   buf_length,delay_k);
       canon_advance_buffer(cyan,    buf_length,delay_c);
@@ -1403,7 +1443,9 @@ canon_write(FILE          *prn,		/* I - Print file or command */
   /* send packed empty lines if any */
 
   if (*empty) {
+#ifdef DEBUG
     /* fprintf(stderr,"<%d%c>",*empty,("CMYKcmy"[coloridx])); */
+#endif
     fwrite("\x1b\x28\x65\x02\x00", 5, 1, prn);
     fputc((*empty) >> 8 , prn);
     fputc((*empty) & 255, prn);
