@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.4 2003/05/04 04:26:05 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.5 2003/05/04 04:39:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -128,6 +128,7 @@ typedef struct
   int image_top;		/* First printed row (points) */
   int image_left;		/* Left edge of image (points) */
   int image_scaled_width;	/* Width of printed region (dots) */
+  int image_scaled_height;	/* Height of printed region (dots) */
 
   /* Transitory state */
   int printed_something;	/* Have we actually printed anything? */
@@ -1937,6 +1938,7 @@ setup_page(stp_vars_t v)
   pd->page_height = pd->page_bottom - pd->page_top;
   pd->image_top = stp_get_top(v) - pd->page_top;
   pd->image_height = stp_get_height(v);
+  pd->image_scaled_height = pd->image_height * pd->res->vres / 72;
 
   if (input_slot && input_slot->roll_feed_cut_flags)
     {
@@ -1952,8 +1954,8 @@ static int
 escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int errdiv  = stpi_image_height(image) / pd->image_height;
-  int errmod  = stpi_image_height(image) % pd->image_height;
+  int errdiv  = stpi_image_height(image) / pd->image_scaled_height;
+  int errmod  = stpi_image_height(image) % pd->image_scaled_height;
   int errval  = 0;
   int errlast = -1;
   int errline  = 0;
@@ -1962,12 +1964,12 @@ escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
   stpi_image_progress_init(image);
 
   QUANT(0);
-  for (y = 0; y < pd->image_height; y ++)
+  for (y = 0; y < pd->image_scaled_height; y ++)
     {
       int duplicate_line = 1;
       int zero_mask;
       if ((y & 63) == 0)
-	stpi_image_note_progress(image, y, pd->image_height);
+	stpi_image_note_progress(image, y, pd->image_scaled_height);
 
       if (errline != errlast)
 	{
@@ -1985,9 +1987,9 @@ escp2_print_data(stp_vars_t v, stp_image_t *image, unsigned short *out)
       QUANT(3);
       errval += errmod;
       errline += errdiv;
-      if (errval >= pd->image_height)
+      if (errval >= pd->image_scaled_height)
 	{
-	  errval -= pd->image_height;
+	  errval -= pd->image_scaled_height;
 	  errline ++;
 	}
       QUANT(4);
@@ -2017,8 +2019,8 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      pd->res->vertical_oversample,
      pd->channels_in_use,
      pd->bitwidth,
-     pd->image_width * pd->res->hres / 72,
-     pd->image_height * pd->res->vres / 72,
+     pd->image_scaled_width,
+     pd->image_scaled_height,
      pd->image_top * pd->res->vres / 72,
      (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72,
      pd->head_offset,
