@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.1.2.3 2003/05/16 02:13:09 rlk Exp $"
+ * "$Id: channel.c,v 1.1.2.4 2003/05/25 00:25:15 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -195,25 +195,62 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
       if (sc > 1)
 	{
 	  int k;
-	  int val = 65535;
+	  int val = 0;
+	  int next_breakpoint;
+	  double density = 1.0;
 	  c->lut = stpi_zalloc(sizeof(unsigned short) * sc * 65536);
+	  next_breakpoint = c->sc[0].value * 65535 * density / 2;
+	  if (next_breakpoint > 65535)
+	    next_breakpoint = 65535;
+	  stpi_erprintf("Current %d; Next breakpoint at %d\n",
+			val, next_breakpoint);
+	  while (val <= next_breakpoint)
+	    {
+	      int value = (int) ((double) val / c->sc[0].value);
+	      c->lut[val * sc] = value;
+	      val++;
+	    }
+
 	  for (k = 0; k < sc - 1; k++)
 	    {
-	      int next_breakpoint = c->sc[k + 1].value * 65536 / 2;
-	      int range = val - next_breakpoint;
-	      double upper = 1.0 / c->sc[k].value;
-	      double lower = 1.0 / c->sc[k + 1].value;
-	      for (; val >= next_breakpoint; val--)
+	      double this_val = c->sc[k].value;
+	      double next_val = c->sc[k + 1].value;
+	      double upper = 1.0;
+	      double lower = 1.0;
+	      int range;
+	      int base = val;
+	      next_breakpoint = (this_val + next_val) * 65535 * density / 2;
+	      if (next_breakpoint > 65535)
+		next_breakpoint = 65535;
+	      range = next_breakpoint - val;
+	      upper = 1.0 / next_val;
+	      lower = 1.0 / this_val;
+	      stpi_erprintf("Current %d t %f n %f u %f l %f; Next breakpoint at %d\n",
+			    val, this_val, next_val,
+			    upper, lower, next_breakpoint);
+	      while (val <= next_breakpoint)
 		{
-		  double where =
-		    ((double) val - next_breakpoint) / (double) range;
-		  c->lut[val * sc + k] = val * where * upper;
-		  c->lut[val * sc + k + 1] = val * (1.0 - where) * lower;
+		  double where = ((double) val - base) / (double) range;
+		  c->lut[val * sc + k + 1] = val * where * upper;
+		  c->lut[val * sc + k] = val * (1.0 - where) * lower;
+/*
+		  stpi_erprintf("Val %d where %f lut %d %f %d | %d %f %d\n",
+				val, where,
+				k + 1, upper, c->lut[val * sc + k + 1],
+				k, lower, c->lut[val * sc + k]);
+*/
+		  val++;
 		}
 	    }
-	  for (; val >= 0; val--)
+	  while (val <= 65535)
 	    {
-	      c->lut[val * sc + (sc - 1)] = val / c->sc[sc - 1].value;
+	      c->lut[val * sc + sc - 1] = val / c->sc[sc - 1].value;
+/*
+	      stpi_erprintf("Val %d lut %d %f %d\n",
+			    val, sc - 1, 1.0 / c->sc[sc - 1].value,
+			    c->lut[val * sc + (sc - 1)]);
+*/
+	      val++;
 	    }
 	}     
       cg->total_channels += c->subchannel_count;
@@ -250,14 +287,14 @@ stpi_channel_convert(stp_const_vars_t v)
 	  stpi_channel_t *c = &(cg->c[j]);
 	  int s_count = c->subchannel_count;
 	  if (s_count == 1)
-	    *(output++) = *(input++);
+	    *(output++) = *(input);
 	  else if (s_count > 1)
 	    {
 	      int k;
 	      for (k = 0; k < s_count; k++)
-		*(output++) = c->lut[*input * s_count + k];
-	      input++;
+		(*output++) = c->lut[((*input) * s_count) + k];
 	    }
+	  input++;
 	}
     }
 }
