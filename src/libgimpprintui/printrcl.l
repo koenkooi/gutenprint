@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.1.2.1 2003/02/08 18:21:49 rlk Exp $"
+ * "$Id: printrcl.l,v 1.1.2.2 2003/02/08 23:13:24 rlk Exp $"
  *
  *   printrc parser
  *
@@ -92,9 +92,9 @@ Boolean			DBG(pBOOLEAN); return pBOOLEAN;
 Curve			DBG(pCURVE); return pCURVE;
 
 {integer}		yylval.ival = atoi(yytext); DBG(tINT) return tINT;
-{boolean}		yylval.ival = atoi(yytext); DBG(tBOOLEAN) return tBOOLEAN;
 {float}			yylval.dval = strtod(yytext, NULL); DBG(tDOUBLE) return tDOUBLE;
 {string}		yylval.sval = q_strdup(yytext); DBG(tSTRING) return tSTRING;
+{boolean}		yylval.sval = g_strdup(yytext); DBG(tBOOLEAN) return tBOOLEAN;
 {word}			yylval.sval = g_strdup(yytext); DBG(tWORD) return tWORD;
 {printrc_hdr}		DBG(PRINTRC_HDR) return PRINTRC_HDR;
 {ws}			DBG(whitespace1) 	/* Skip blanks/tabs */

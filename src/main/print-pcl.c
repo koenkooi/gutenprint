@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.89 2003/01/26 02:38:14 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.89.2.1 2003/02/08 23:13:26 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2428,13 +2428,13 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
 			    stp_get_float_parameter(nv, "Density"));
     }
 
-  if (!stp_check_curve_parameter(nv, "HueMap"))
+  if (!stp_check_curve_parameter(nv, "HueMap", STP_PARAMETER_ACTIVE))
     {
       hue_adjustment = stp_curve_create_read_string(standard_hue_adjustment);
       stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
       stp_curve_free(hue_adjustment);
     }
-  if (!stp_check_curve_parameter(nv, "LumMap"))
+  if (!stp_check_curve_parameter(nv, "LumMap", STP_PARAMETER_ACTIVE))
     {
       lum_adjustment = stp_curve_create_read_string(standard_lum_adjustment);
       stp_curve_free(lum_adjustment);

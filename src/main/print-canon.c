@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.107 2003/01/26 02:38:14 rlk Exp $"
+ * "$Id: print-canon.c,v 1.107.2.1 2003/02/08 23:13:24 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2377,7 +2377,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   errlast = -1;
   errline  = 0;
 
-  if (!stp_check_curve_parameter(nv, "HueMap"))
+  if (!stp_check_curve_parameter(nv, "HueMap", STP_PARAMETER_ACTIVE))
     {
       hue_adjustment = stpi_read_and_compose_curves
 	(canon_hue_adjustment(model),
@@ -2385,7 +2385,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       stp_set_curve_parameter(nv, "HueMap", hue_adjustment);
       stp_curve_free(hue_adjustment);
     }
-  if (!stp_check_curve_parameter(nv, "LumMap"))
+  if (!stp_check_curve_parameter(nv, "LumMap", STP_PARAMETER_ACTIVE))
     {
       lum_adjustment = stpi_read_and_compose_curves
 	(canon_lum_adjustment(model),
@@ -2393,7 +2393,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
       stp_set_curve_parameter(nv, "LumMap", lum_adjustment);
       stp_curve_free(lum_adjustment);
     }
-  if (!stp_check_curve_parameter(nv, "SatMap"))
+  if (!stp_check_curve_parameter(nv, "SatMap", STP_PARAMETER_ACTIVE))
     {
       sat_adjustment = stpi_read_and_compose_curves
 	(canon_sat_adjustment(model),

@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.18.2.1 2003/02/08 18:21:49 rlk Exp $"
+ * "$Id: plist.c,v 1.18.2.2 2003/02/08 23:13:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -146,7 +146,7 @@ stpui_plist_copy(stpui_plist_t *vd, const stpui_plist_t *vs)
   if (vs == vd)
     return;
   stp_vars_copy(vd->v, vs->v);
-  vd->active = vs->active;
+/*  vd->active = vs->active; */
   vd->scaling = vs->scaling;
   vd->orientation = vs->orientation;
   vd->unit = vs->unit;
@@ -360,6 +360,7 @@ stpui_plist_t *
 stpui_plist_create(const char *name, const char *driver)
 {
   stpui_plist_t key;
+  stpui_plist_t *answer = NULL;
   memset(&key, 0, sizeof(key));
   stpui_printer_initialize(&key);
   key.invalid_mask = 0;
@@ -369,10 +370,13 @@ stpui_plist_create(const char *name, const char *driver)
     stpui_plist_set_name(&key, name);
   stp_set_driver(key.v, driver);
   if (stpui_plist_add(&key, 0))
-    return psearch(&key, stpui_plist, stpui_plist_count, sizeof(stpui_plist_t),
-		   (int (*)(const void *, const void *)) compare_printers);
-  else
-    return NULL;
+    answer = psearch(&key, stpui_plist, stpui_plist_count,
+		     sizeof(stpui_plist_t),
+		     (int (*)(const void *, const void *)) compare_printers);
+  free(key.name);
+  free(key.output_to);
+  stp_vars_free(key.v);
+  return answer;
 }
 
 int
@@ -797,41 +801,66 @@ stpui_printrc_save(void)
 	      switch (param->p_type)
 		{
 		case STP_PARAMETER_TYPE_STRING_LIST:
-		  if (stp_check_string_parameter(p->v, param->name))
-		    fprintf(fp, "Parameter %s String True \"%s\"\n",
+		  if (stp_check_string_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
+		    fprintf(fp, "Parameter %s String %s \"%s\"\n",
 			    param->name,
+			    ((stp_get_string_parameter_active
+			      (p->v, param->name) == STP_PARAMETER_ACTIVE) ?
+			     "True" : "False"),
 			    stp_get_string_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_FILE:
-		  if (stp_check_file_parameter(p->v, param->name))
-		    fprintf(fp, "Parameter %s File True \"%s\"\n", param->name,
+		  if (stp_check_file_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
+		    fprintf(fp, "Parameter %s File %s \"%s\"\n", param->name,
+			    ((stp_get_file_parameter_active
+			      (p->v, param->name) == STP_PARAMETER_ACTIVE) ?
+			     "True" : "False"),
 			    stp_get_file_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_DOUBLE:
-		  if (stp_check_float_parameter(p->v, param->name))
-		    fprintf(fp, "Parameter %s Double True %f\n", param->name,
+		  if (stp_check_float_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
+		    fprintf(fp, "Parameter %s Double %s %f\n", param->name,
+			    ((stp_get_float_parameter_active
+			      (p->v, param->name) == STP_PARAMETER_ACTIVE) ?
+			     "True" : "False"),
 			    stp_get_float_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_INT:
-		  if (stp_check_int_parameter(p->v, param->name))
-		    fprintf(fp, "Parameter %s Int True %d\n", param->name,
+		  if (stp_check_int_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
+		    fprintf(fp, "Parameter %s Int %s %d\n", param->name,
+			    ((stp_get_int_parameter_active
+			      (p->v, param->name) == STP_PARAMETER_ACTIVE) ?
+			     "True" : "False"),
 			    stp_get_int_parameter(p->v, param->name));
 		  break;
 		case STP_PARAMETER_TYPE_BOOLEAN:
-		  if (stp_check_boolean_parameter(p->v, param->name))
-		    fprintf(fp, "Parameter %s Boolean True %s\n", param->name,
+		  if (stp_check_boolean_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
+		    fprintf(fp, "Parameter %s Boolean %s %s\n", param->name,
+			    ((stp_get_boolean_parameter_active
+			      (p->v, param->name) == STP_PARAMETER_ACTIVE) ?
+			     "True" : "False"),
 			    (stp_get_boolean_parameter(p->v, param->name) ?
 			     "True" : "False"));
 		  break;
 		case STP_PARAMETER_TYPE_CURVE:
-		  if (stp_check_curve_parameter(p->v, param->name))
+		  if (stp_check_curve_parameter(p->v, param->name,
+						 STP_PARAMETER_INACTIVE))
 		    {
 		      const stp_curve_t curve =
 			stp_get_curve_parameter(p->v, param->name);
 		      if (curve)
 			{
-			  fprintf(fp, "Parameter %s Curve True \"",
-				  param->name);
+			  fprintf(fp, "Parameter %s Curve %s \"",
+				  param->name,
+				  ((stp_get_string_parameter_active
+				    (p->v, param->name) ==
+				    STP_PARAMETER_ACTIVE) ?
+				   "True" : "False"));
 			  stp_curve_print(fp, curve);
 			  fprintf(fp, "\"\n");
 			}
@@ -898,7 +927,6 @@ stpui_get_system_printers(void)
 
   check_plist(1);
   stpui_plist_count = 1;
-  stpui_printer_initialize(&stpui_plist[0]);
   stpui_plist[0].name = g_strdup(_("File"));
   stpui_plist[0].active = 1;
   stp_set_driver(stpui_plist[0].v, "ps2");
@@ -974,7 +1002,6 @@ stpui_get_system_printers(void)
 		  break;
 
 		check_plist(stpui_plist_count + 1);
-		stpui_printer_initialize(&stpui_plist[stpui_plist_count]);
 		stpui_plist_set_name(&(stpui_plist[stpui_plist_count]), line);
 #ifdef DEBUG
                 fprintf(stderr, "Adding new printer from lpc: <%s>\n",
@@ -1006,7 +1033,6 @@ stpui_get_system_printers(void)
 		if (printer_exists)
 		  break;
 		check_plist(stpui_plist_count + 1);
-		stpui_printer_initialize(&stpui_plist[stpui_plist_count]);
 		stpui_plist_set_name(&(stpui_plist[stpui_plist_count]), name);
 #ifdef DEBUG
                 fprintf(stderr, "Adding new printer from lpc: <%s>\n",
@@ -1308,5 +1334,5 @@ stpui_print(const stpui_plist_t *printer, stp_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.18.2.1 2003/02/08 18:21:49 rlk Exp $".
+ * End of "$Id: plist.c,v 1.18.2.2 2003/02/08 23:13:24 rlk Exp $".
  */

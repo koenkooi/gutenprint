@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.1.2.1 2003/02/08 18:21:49 rlk Exp $"
+ * "$Id: printrcy.y,v 1.1.2.2 2003/02/08 23:13:24 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -55,8 +55,8 @@ static stpui_plist_t *current_printer = NULL;
 %}
 
 %token <ival> tINT
-%token <ival> tBOOLEAN
 %token <dval> tDOUBLE
+%token <sval> tBOOLEAN
 %token <sval> tSTRING
 %token <sval> tWORD
 
@@ -86,11 +86,18 @@ static stpui_plist_t *current_printer = NULL;
 %%
 
 Printer: PRINTER tSTRING tSTRING
-	{ current_printer = stpui_plist_create($2, $3); }
+	{
+	  current_printer = stpui_plist_create($2, $3);
+	  g_free($2);
+	  g_free($3);
+	}
 ;
 
 Destination: DESTINATION tSTRING
-	{ stpui_plist_set_output_to(current_printer, $2); }
+	{
+	  stpui_plist_set_output_to(current_printer, $2);
+	  g_free($2);
+	}
 ;
 
 Scaling: SCALING tDOUBLE
@@ -131,30 +138,76 @@ Empty:
 Int_Param: tWORD pINT tBOOLEAN tINT
 	{
 	  stp_set_int_parameter(current_printer->v, $1, $4);
+	  if (strcmp($3, "False") == 0)
+	    stp_set_int_parameter_active(current_printer->v, $1,
+					 STP_PARAMETER_INACTIVE);
+	  else
+	    stp_set_int_parameter_active(current_printer->v, $1,
+					 STP_PARAMETER_ACTIVE);
+	  g_free($1);
+	  g_free($3);
 	}
 ;
 
 String_List_Param: tWORD pSTRING_LIST tBOOLEAN tSTRING
 	{
 	  stp_set_string_parameter(current_printer->v, $1, $4);
+	  if (strcmp($3, "False") == 0)
+	    stp_set_string_parameter_active(current_printer->v, $1,
+					    STP_PARAMETER_INACTIVE);
+	  else
+	    stp_set_string_parameter_active(current_printer->v, $1,
+					    STP_PARAMETER_ACTIVE);
+	  g_free($1);
+	  g_free($3);
+	  g_free($4);
 	}
 ;
 
 File_Param: tWORD pFILE tBOOLEAN tSTRING
 	{
 	  stp_set_file_parameter(current_printer->v, $1, $4);
+	  if (strcmp($3, "False") == 0)
+	    stp_set_file_parameter_active(current_printer->v, $1,
+					  STP_PARAMETER_INACTIVE);
+	  else
+	    stp_set_file_parameter_active(current_printer->v, $1,
+					  STP_PARAMETER_ACTIVE);
+	  g_free($1);
+	  g_free($3);
+	  g_free($4);
 	}
 ;
 
 Double_Param: tWORD pDOUBLE tBOOLEAN tDOUBLE
 	{
 	  stp_set_float_parameter(current_printer->v, $1, $4);
+	  if (strcmp($3, "False") == 0)
+	    stp_set_float_parameter_active(current_printer->v, $1,
+					   STP_PARAMETER_INACTIVE);
+	  else
+	    stp_set_float_parameter_active(current_printer->v, $1,
+					   STP_PARAMETER_ACTIVE);
+	  g_free($1);
+	  g_free($3);
 	}
 ;
 
 Boolean_Param: tWORD pBOOLEAN tBOOLEAN tBOOLEAN
 	{
-	  stp_set_boolean_parameter(current_printer->v, $1, $4);
+	  if (strcmp($4, "False") == 0)
+	    stp_set_boolean_parameter(current_printer->v, $1, 0);
+	  else
+	    stp_set_boolean_parameter(current_printer->v, $1, 1);
+	  if (strcmp($3, "False") == 0)
+	    stp_set_boolean_parameter_active(current_printer->v, $1,
+					     STP_PARAMETER_INACTIVE);
+	  else
+	    stp_set_boolean_parameter_active(current_printer->v, $1,
+					     STP_PARAMETER_ACTIVE);
+	  g_free($1);
+	  g_free($3);
+	  g_free($4);
 	}
 ;
 
@@ -164,8 +217,17 @@ Curve_Param: tWORD pCURVE tBOOLEAN tSTRING
 	  if (curve)
 	    {
 	      stp_set_curve_parameter(current_printer->v, $1, curve);
+	      if (strcmp($3, "False") == 0)
+		stp_set_curve_parameter_active(current_printer->v, $1,
+					       STP_PARAMETER_INACTIVE);
+	      else
+		stp_set_curve_parameter_active(current_printer->v, $1,
+					       STP_PARAMETER_ACTIVE);
 	      stp_curve_free(curve);
 	    }
+	  g_free($1);
+	  g_free($3);
+	  g_free($4);
 	}
 ;
 

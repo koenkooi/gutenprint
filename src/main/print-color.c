@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.56.2.1 2003/02/02 15:48:41 rlk Exp $"
+ * "$Id: print-color.c,v 1.56.2.2 2003/02/08 23:13:25 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1127,11 +1127,11 @@ compute_gcr_curve(const stp_vars_t vars)
   int step = 65535 / (lut->steps - 1); /* 1 or 257 */
   int i;
 
-  if (stp_check_float_parameter(vars, "GCRUpper"))
+  if (stp_check_float_parameter(vars, "GCRUpper", STP_PARAMETER_ACTIVE))
     k_upper = stp_get_float_parameter(vars, "GCRUpper");
-  if (stp_check_float_parameter(vars, "GCRLower"))
+  if (stp_check_float_parameter(vars, "GCRLower", STP_PARAMETER_ACTIVE))
     k_lower = stp_get_float_parameter(vars, "GCRLower");
-  if (stp_check_float_parameter(vars, "Black"))
+  if (stp_check_float_parameter(vars, "Black", STP_PARAMETER_ACTIVE))
     k_gamma = stp_get_float_parameter(vars, "Black");
   k_upper *= 65535;
   k_lower *= 65535;
@@ -1186,7 +1186,7 @@ generic_rgb_to_cmyk(const stp_vars_t vars,
 
   if (!lut->gcr_curve)
     {
-      if (stp_check_curve_parameter(vars, "GCRCurve"))
+      if (stp_check_curve_parameter(vars, "GCRCurve", STP_PARAMETER_ACTIVE))
 	lut->gcr_curve =
 	  stp_curve_create_copy(stp_get_curve_parameter(vars, "GCRCurve"));
       else

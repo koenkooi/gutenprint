@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18.2.6 2003/02/08 19:27:29 rlk Exp $"
+ * "$Id: panel.c,v 1.18.2.7 2003/02/08 23:13:24 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -287,7 +287,8 @@ static void
 build_a_combo(option_t *option)
 {
   if (option->fast_desc &&
-      option->fast_desc->p_type == STP_PARAMETER_TYPE_STRING_LIST)
+      option->fast_desc->p_type == STP_PARAMETER_TYPE_STRING_LIST &&
+      option->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL)
     {
       const gchar *val = stp_get_string_parameter(pv->v,
 						  option->fast_desc->name);
@@ -325,35 +326,37 @@ populate_options(const stp_vars_t v)
       for (i = 0; i < current_option_count; i++)
 	{
 	  option_t *opt = &(current_options[i]);
-	  switch (opt->fast_desc->p_type)
+	  if (opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL)
 	    {
-	    case STP_PARAMETER_TYPE_STRING_LIST:
-	      if (opt->info.list.combo)
+	      switch (opt->fast_desc->p_type)
 		{
-		  gtk_widget_destroy(opt->info.list.combo);
-		  gtk_widget_destroy(opt->info.list.label);
-		  if (opt->info.list.params)
-		    stp_string_list_free(opt->info.list.params);
-		  free(opt->info.list.default_val);
+		case STP_PARAMETER_TYPE_STRING_LIST:
+		  if (opt->info.list.combo)
+		    {
+		      gtk_widget_destroy(opt->info.list.combo);
+		      gtk_widget_destroy(opt->info.list.label);
+		      if (opt->info.list.params)
+			stp_string_list_free(opt->info.list.params);
+		      free(opt->info.list.default_val);
+		    }
+		  break;
+		case STP_PARAMETER_TYPE_DOUBLE:
+		  if (opt->info.flt.adjustment)
+		    {
+		      gtk_widget_destroy
+			(GTK_WIDGET
+			 (SCALE_ENTRY_SCALE(opt->info.flt.adjustment)));
+		      gtk_widget_destroy
+			(GTK_WIDGET
+			 (SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
+		      gtk_widget_destroy
+			(GTK_WIDGET
+			 (SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
+		    }
+		  break;
+		default:
+		  break;
 		}
-	      break;
-	    case STP_PARAMETER_TYPE_DOUBLE:
-	      if (opt->info.flt.adjustment)
-		{
-		  gtk_widget_destroy
-		    (GTK_WIDGET
-		     (SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
-		  gtk_widget_destroy
-		    (GTK_WIDGET
-		     (SCALE_ENTRY_SCALE(opt->info.flt.adjustment)));
-		  gtk_widget_destroy
-		    (GTK_WIDGET
-		     (SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
-/*	          gtk_object_destroy(GTK_OBJECT(opt->info.flt.adjustment)); */
-		}
-	      break;
-	    default:
-	      break;
 	    }
 	}
       free(current_options);
@@ -498,35 +501,38 @@ set_options_active(void)
     {
       option_t *opt = &(current_options[i]);
       const stp_parameter_t *desc = opt->fast_desc;
-      switch (desc->p_type)
+      if (desc->p_level <= MAXIMUM_PARAMETER_LEVEL)
 	{
-	case STP_PARAMETER_TYPE_STRING_LIST:
-	  build_a_combo(opt);
-	  break;
-	case STP_PARAMETER_TYPE_DOUBLE:
-	  if (opt->is_active)
+	  switch (desc->p_type)
 	    {
-	      GtkObject *adj = opt->info.flt.adjustment;
-	      if (adj)
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	      build_a_combo(opt);
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      if (opt->is_active)
 		{
-		  gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
-		  gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
-		  gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		  GtkObject *adj = opt->info.flt.adjustment;
+		  if (adj)
+		    {
+		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
+		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
+		      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		    }
 		}
-	    }
-	  else
-	    {
-	      GtkObject *adj = opt->info.flt.adjustment;
-	      if (adj)
+	      else
 		{
-		  gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
-		  gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
-		  gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		  GtkObject *adj = opt->info.flt.adjustment;
+		  if (adj)
+		    {
+		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
+		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
+		      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+		    }
 		}
+	      break;
+	    default:
+	      break;
 	    }
-	  break;
-	default:
-	  break;
 	}
     }
 }
@@ -1685,7 +1691,7 @@ plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
   if (i >= num_items)
     i = 0;
 
-  gtk_entry_set_text (entry, g_strdup (stp_string_list_param(items, i)->text));
+  gtk_entry_set_text (entry, stp_string_list_param(items, i)->text);
 
   gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, FALSE);
   gtk_widget_set_sensitive (combo, TRUE);
@@ -1816,6 +1822,7 @@ do_color_updates (void)
     {
       option_t *opt = &(current_options[i]);
       if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	  opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
 	  opt->info.flt.adjustment)
        	gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->info.flt.adjustment),
 				 stp_get_float_parameter
@@ -1871,10 +1878,16 @@ do_all_updates(void)
    * Now get option parameters.
    */
 
+  gtk_widget_hide(page_size_table);
+  gtk_widget_hide(printer_features_table);
+  gtk_widget_hide(color_adjustment_table);
   populate_options(pv->v);
   populate_option_table(page_size_table, STP_PARAMETER_CLASS_PAGE_SIZE);
   populate_option_table(printer_features_table, STP_PARAMETER_CLASS_FEATURE);
   populate_option_table(color_adjustment_table, STP_PARAMETER_CLASS_OUTPUT);
+  gtk_widget_show(page_size_table);
+  gtk_widget_show(printer_features_table);
+  gtk_widget_show(color_adjustment_table);
   set_options_active();
 
   do_color_updates ();
@@ -3117,6 +3130,7 @@ color_update (GtkAdjustment *adjustment)
     {
       option_t *opt = &(current_options[i]);
       if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	  opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
 	  opt->info.flt.adjustment &&
 	  adjustment == GTK_ADJUSTMENT(opt->info.flt.adjustment))
 	{
@@ -3140,6 +3154,7 @@ set_color_defaults (void)
     {
       option_t *opt = &(current_options[i]);
       if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	  opt->fast_desc->p_level <= MAXIMUM_PARAMETER_LEVEL &&
 	  opt->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
 	stp_set_float_parameter(pv->v, opt->fast_desc->name,
 				opt->info.flt.deflt);

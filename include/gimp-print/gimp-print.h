@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.23.2.2 2003/02/07 23:28:35 rlk Exp $
+ *  $Id: gimp-print.h,v 1.23.2.3 2003/02/08 23:13:23 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -241,6 +241,17 @@ typedef enum stp_parameter_level
   STP_PARAMETER_LEVEL_ADVANCED5,
   STP_PARAMETER_LEVEL_INVALID
 } stp_parameter_level_t;
+
+/*
+ * Whether a parameter is currently active (i. e. whether its value
+ * should be used by the driver or not).  All parameters default to being
+ * active unless explicitly "turned off".
+ */
+typedef enum stp_parameter_activity
+{
+  STP_PARAMETER_INACTIVE,
+  STP_PARAMETER_ACTIVE
+} stp_parameter_activity_t;
 
 /*
  * Curve code borrowed from GTK+, http://www.gtk.org/
@@ -543,7 +554,13 @@ extern void stp_set_default_string_parameter_n(stp_vars_t v,
 extern const char *stp_get_string_parameter(const stp_vars_t v,
 					    const char *param);
 extern void stp_clear_string_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_string_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_string_parameter_active(const stp_vars_t v,
+					    const char *param,
+					    stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_string_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_string_parameter(const stp_vars_t v, const char *param,
+				      stp_parameter_activity_t active);
 
 extern void stp_set_file_parameter(stp_vars_t v, const char *parameter,
 				   const char *value);
@@ -558,7 +575,13 @@ extern void stp_set_default_file_parameter_n(stp_vars_t v,
 extern const char *stp_get_file_parameter(const stp_vars_t v,
 					  const char *param);
 extern void stp_clear_file_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_file_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_file_parameter_active(const stp_vars_t v,
+					  const char *param,
+					  stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_file_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_file_parameter(const stp_vars_t v, const char *param,
+				    stp_parameter_activity_t active);
 
 extern void stp_set_float_parameter(stp_vars_t v, const char *parameter,
 				    double value);
@@ -568,7 +591,13 @@ extern void stp_set_default_float_parameter(stp_vars_t v,
 extern double stp_get_float_parameter(const stp_vars_t v,
 					    const char *param);
 extern void stp_clear_float_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_float_parameter(const stp_vars_t v, const char *param);
+extern stp_parameter_activity_t
+stp_get_float_parameter_active(const stp_vars_t v, const char *param);
+extern void stp_set_float_parameter_active(const stp_vars_t v,
+					 const char *param,
+					 stp_parameter_activity_t active);
+extern int stp_check_float_parameter(const stp_vars_t v, const char *param,
+				     stp_parameter_activity_t active);
 extern void stp_scale_float_parameter(const stp_vars_t v, const char *param,
 				      double scale);
 
@@ -580,7 +609,13 @@ extern void stp_set_default_int_parameter(stp_vars_t v,
 extern int stp_get_int_parameter(const stp_vars_t v,
 				 const char *param);
 extern void stp_clear_int_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_int_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_int_parameter_active(const stp_vars_t v,
+					 const char *param,
+					 stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_int_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_int_parameter(const stp_vars_t v, const char *param,
+				   stp_parameter_activity_t active);
 
 extern void stp_set_boolean_parameter(stp_vars_t v, const char *parameter,
 				      int value);
@@ -590,7 +625,13 @@ extern void stp_set_default_boolean_parameter(stp_vars_t v,
 extern int stp_get_boolean_parameter(const stp_vars_t v,
 				     const char *param);
 extern void stp_clear_boolean_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_boolean_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_boolean_parameter_active(const stp_vars_t v,
+					     const char *param,
+					     stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_boolean_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_boolean_parameter(const stp_vars_t v, const char *param,
+				       stp_parameter_activity_t active);
 
 extern void stp_set_curve_parameter(stp_vars_t v, const char *parameter,
 				    const stp_curve_t value);
@@ -600,7 +641,13 @@ extern void stp_set_default_curve_parameter(stp_vars_t v,
 extern const stp_curve_t stp_get_curve_parameter(const stp_vars_t v,
 						 const char *param);
 extern void stp_clear_curve_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_curve_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_curve_parameter_active(const stp_vars_t v,
+					   const char *param,
+					   stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_curve_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_curve_parameter(const stp_vars_t v, const char *param,
+				     stp_parameter_activity_t active);
 
 extern void stp_set_raw_parameter(stp_vars_t v, const char *parameter,
 				  const void *value, int bytes);
@@ -611,7 +658,13 @@ extern void stp_set_default_raw_parameter(stp_vars_t v,
 extern const stp_raw_t *stp_get_raw_parameter(const stp_vars_t v,
 					      const char *param);
 extern void stp_clear_raw_parameter(const stp_vars_t v, const char *param);
-extern int stp_check_raw_parameter(const stp_vars_t v, const char *param);
+extern void stp_set_raw_parameter_active(const stp_vars_t v,
+					 const char *param,
+					 stp_parameter_activity_t active);
+extern stp_parameter_activity_t
+stp_get_raw_parameter_active(const stp_vars_t v, const char *param);
+extern int stp_check_raw_parameter(const stp_vars_t v, const char *param,
+				   stp_parameter_activity_t active);
 
 
 
@@ -1012,5 +1065,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.23.2.2 2003/02/07 23:28:35 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.23.2.3 2003/02/08 23:13:23 rlk Exp $
  */
