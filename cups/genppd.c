@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.17 2001/01/15 20:49:50 rlk Exp $"
+ * "$Id: genppd.c,v 1.18 2001/01/16 12:50:06 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -53,15 +53,6 @@
 #include <cups/raster.h>
 
 #include "cups-print.h"
-
-
-/*
- * Printer definition data from cups-printers.c...
- */
-
-extern const stp_printer_t	printers[];
-extern const int	printer_count;
-
 
 /*
  * File handling stuff...
@@ -161,8 +152,6 @@ main(int  argc,			/* I - Number of command-line arguments */
 {
   int		i;		/* Looping var */
   char		*prefix;	/* Directory prefix for output */
-  const stp_printer_t *p;		/* Current printer */
-
 
   prefix = "ppd";
 
@@ -190,8 +179,8 @@ main(int  argc,			/* I - Number of command-line arguments */
     else
       usage();
 
-  for (i = printer_count, p = printers; i > 0; i --, p ++)
-    if (write_ppd(p, prefix))
+  for (i = 0; i < known_printers(); i++)
+    if (write_ppd(get_printer_by_index(i), prefix))
       return (1);
 
   return (0);
@@ -665,5 +654,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.17 2001/01/15 20:49:50 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.18 2001/01/16 12:50:06 rlk Exp $".
  */
