@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.79.2.2 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.79.2.3 2004/03/28 02:07:37 rlk Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -99,7 +99,6 @@ static stp_image_status_t Image_get_row(stp_image_t *image,
 					size_t byte_limit, int row);
 static int	Image_height(stp_image_t *image);
 static int	Image_width(stp_image_t *image);
-static int	Image_bpp(stp_image_t *image);
 static void	Image_conclude(stp_image_t *image);
 static void	Image_init(stp_image_t *image);
 
@@ -254,16 +253,28 @@ initialize_page(cups_image_t *cups, stp_const_vars_t default_settings)
   switch (cups->header.cupsColorSpace)
     {
     case CUPS_CSPACE_W :
+      stp_set_string_parameter(v, "PrintingMode", "BW");
       stp_set_string_parameter(v, "InputImageType", "Whitescale");
       break;
     case CUPS_CSPACE_K :
+      stp_set_string_parameter(v, "PrintingMode", "BW");
       stp_set_string_parameter(v, "InputImageType", "Grayscale");
       break;
     case CUPS_CSPACE_RGB :
+      stp_set_string_parameter(v, "PrintingMode", "Color");
       stp_set_string_parameter(v, "InputImageType", "RGB");
       break;
+    case CUPS_CSPACE_CMY :
+      stp_set_string_parameter(v, "PrintingMode", "Color");
+      stp_set_string_parameter(v, "InputImageType", "CMY");
+      break;
     case CUPS_CSPACE_CMYK :
+      stp_set_string_parameter(v, "PrintingMode", "Color");
       stp_set_string_parameter(v, "InputImageType", "CMYK");
+      break;
+    case CUPS_CSPACE_KCMY :
+      stp_set_string_parameter(v, "PrintingMode", "Color");
+      stp_set_string_parameter(v, "InputImageType", "KCMY");
       break;
     default :
       fprintf(stderr, "ERROR: Gimp-Print Bad colorspace %d!",
@@ -929,5 +940,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.79.2.2 2004/03/26 01:20:16 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.79.2.3 2004/03/28 02:07:37 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.89.2.1 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: genppd.c,v 1.89.2.2 2004/03/28 02:07:37 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1007,7 +1007,7 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 	       "/cupsColorOrder %d"
 	       "/cupsBitsPerColor 8>>setpagedevice\"\n",
            CUPS_CSPACE_W, CUPS_ORDER_CHUNKED);
-  gzprintf(fp, "*ColorModel Black/Black & White:\t\"<<"
+  gzprintf(fp, "*ColorModel Black/Inverted Grayscale:\t\"<<"
                "/cupsColorSpace %d"
 	       "/cupsColorOrder %d"
 	       "/cupsBitsPerColor 8>>setpagedevice\"\n",
@@ -1015,16 +1015,26 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
   if (printer_is_color)
   {
-    gzprintf(fp, "*ColorModel RGB/Color:\t\"<<"
+    gzprintf(fp, "*ColorModel RGB/RGB Color:\t\"<<"
                  "/cupsColorSpace %d"
 		 "/cupsColorOrder %d"
 		 "/cupsBitsPerColor 8>>setpagedevice\"\n",
              CUPS_CSPACE_RGB, CUPS_ORDER_CHUNKED);
-    gzprintf(fp, "*ColorModel CMYK/Raw CMYK:\t\"<<"
+    gzprintf(fp, "*ColorModel CMY/CMY Color:\t\"<<"
+                 "/cupsColorSpace %d"
+		 "/cupsColorOrder %d"
+		 "/cupsBitsPerColor 8>>setpagedevice\"\n",
+             CUPS_CSPACE_CMY, CUPS_ORDER_CHUNKED);
+    gzprintf(fp, "*ColorModel CMYK/CMYK:\t\"<<"
                  "/cupsColorSpace %d"
 		 "/cupsColorOrder %d"
 		 "/cupsBitsPerColor 8>>setpagedevice\"\n",
              CUPS_CSPACE_CMYK, CUPS_ORDER_CHUNKED);
+    gzprintf(fp, "*ColorModel KCMY/KCMY:\t\"<<"
+                 "/cupsColorSpace %d"
+		 "/cupsColorOrder %d"
+		 "/cupsBitsPerColor 8>>setpagedevice\"\n",
+             CUPS_CSPACE_KCMY, CUPS_ORDER_CHUNKED);
   }
 
   gzputs(fp, "*CloseUI: *ColorModel\n\n");
@@ -1512,5 +1522,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.89.2.1 2004/03/26 01:20:16 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.89.2.2 2004/03/28 02:07:37 rlk Exp $".
  */
