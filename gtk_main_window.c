@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.38 2000/06/29 22:59:07 cpbs Exp $"
+ * "$Id: gtk_main_window.c,v 1.39 2000/07/16 01:53:58 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1198,6 +1198,8 @@ static void gtk_scaling_callback(GtkWidget* widget) /* I - New value */
   }
   else if (widget == scaling_ppi)
   {
+    if (!(GTK_TOGGLE_BUTTON(scaling_ppi)->active))
+      return;
     GTK_ADJUSTMENT(scaling_adjustment)->lower = 36.0;
     GTK_ADJUSTMENT(scaling_adjustment)->upper = 1201.0;
     GTK_ADJUSTMENT(scaling_adjustment)->value = 72.0;
@@ -1207,6 +1209,8 @@ static void gtk_scaling_callback(GtkWidget* widget) /* I - New value */
   }
   else if (widget == scaling_percent)
   {
+    if (!(GTK_TOGGLE_BUTTON(scaling_percent)->active))
+      return;
     GTK_ADJUSTMENT(scaling_adjustment)->lower = 5.0;
     GTK_ADJUSTMENT(scaling_adjustment)->upper = 101.0;
     GTK_ADJUSTMENT(scaling_adjustment)->value = 100.0;
