@@ -84,7 +84,8 @@ typedef enum
   STP_PARAMETER_LEVEL_ADVANCED2,
   STP_PARAMETER_LEVEL_ADVANCED3,
   STP_PARAMETER_LEVEL_ADVANCED4,
-  STP_PARAMETER_LEVEL_INTERNAL,
+  STP_PARAMETER_LEVEL_INTERNAL,	/* Parameters used only within Gimp-Print */
+  STP_PARAMETER_LEVEL_EXTERNAL,	/* Parameters used only outside Gimp-Print */
   STP_PARAMETER_LEVEL_INVALID
 } stp_parameter_level_t;
 
@@ -547,5 +548,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.6 2004/03/26 01:20:15 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.7 2004/03/28 16:07:05 rlk Exp $".
  */
