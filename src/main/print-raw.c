@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.9 2003/01/05 23:06:33 rlk Exp $"
+ * "$Id: print-raw.c,v 1.10 2003/01/06 03:06:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -225,7 +225,10 @@ raw_print(const stp_vars_t v, stp_image_t *image)
 	  }
     }
 
-  out_channels = stp_color_init(nv, image, 65536);
+  if (bytes_per_channel == 1)
+    out_channels = stp_color_init(nv, image, 256);
+  else
+    out_channels = stp_color_init(nv, image, 65536);
 
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.8 2003/01/06 00:14:42 rlk Exp $
+ *  $Id: gimp-print.h,v 1.9 2003/01/06 03:06:34 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -324,7 +324,7 @@ typedef struct
   int is_mandatory;
   union				/* Limits on the values */
   {				/* the parameter may take */
-    stp_double_bound_t curve;
+    stp_curve_t curve;
     stp_double_bound_t dbl;
     stp_int_bound_t integer;
     stp_string_list_t  str;
@@ -992,5 +992,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.8 2003/01/06 00:14:42 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.9 2003/01/06 03:06:34 rlk Exp $
  */
