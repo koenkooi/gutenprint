@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.80 2002/12/21 23:45:21 rlk Exp $"
+ * "$Id: print-util.c,v 1.81 2002/12/26 23:26:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -189,7 +189,7 @@ stp_malloc (size_t size)
   if ((memptr = malloc (size)) == NULL)
     {
       fputs("Virtual memory exhausted.\n", stderr);
-      exit (EXIT_FAILURE);
+      stp_abort();
     }
   return (memptr);
 }
@@ -210,7 +210,7 @@ stp_realloc (void *ptr, size_t size)
   if (size > 0 && ((memptr = realloc (ptr, size)) == NULL))
     {
       fputs("Virtual memory exhausted.\n", stderr);
-      exit (EXIT_FAILURE);
+      stp_abort();
     }
   return (memptr);
 }
@@ -317,6 +317,11 @@ stp_read_and_compose_curves(const char *s1, const char *s2,
     return t2;
 }
 
+void
+stp_abort(void)
+{
+  abort();
+}
 
 #ifdef QUANTIFY
 unsigned quantify_counts[NUM_QUANTIFY_BUCKETS] = {0};

@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.16 2002/12/21 23:45:20 rlk Exp $"
+ * "$Id: curve.c,v 1.17 2002/12/26 23:26:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -86,7 +86,7 @@ check_curve(const stp_internal_curve_t *v)
   if (v->cookie != COOKIE_CURVE)
     {
       stp_erprintf("Bad curve!\n");
-      exit(2);
+      stp_abort();
     }
 }
 

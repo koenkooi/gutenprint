@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.39 2002/12/26 20:31:38 rlk Exp $"
+ * "$Id: print-ps.c,v 1.40 2002/12/26 23:26:06 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -584,7 +584,6 @@ ps_print(const stp_vars_t v, stp_image_t *image)
   }
   image->progress_conclude(image);
 
-  stp_free_lut(nv);
   stp_free(in);
   stp_free(out);
 

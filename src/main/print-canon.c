@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.88 2002/12/26 20:31:37 rlk Exp $"
+ * "$Id: print-canon.c,v 1.89 2002/12/26 23:26:05 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2419,7 +2419,6 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   * Cleanup...
   */
 
-  stp_free_lut(nv);
   stp_free(in);
   stp_free(out);
 

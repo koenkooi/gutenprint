@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.2 2002/11/22 02:16:59 rlk Exp $"
+ * "$Id: string-list.c,v 1.3 2002/12/26 23:26:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -42,7 +42,7 @@ check_param_list(const stp_internal_param_list_t *v)
   if (v->cookie != COOKIE_PARAM_LIST)
     {
       stp_erprintf("Bad string list!\n");
-      exit(2);
+      stp_abort();
     }
 }
 
