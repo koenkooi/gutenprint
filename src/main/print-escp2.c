@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.45 2001/04/03 00:15:20 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.46 2001/04/06 02:10:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3115,7 +3115,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   else
     dither = stp_init_dither(image_width, out_width, ydpi / xdpi, 1, nv);
 
-  stp_dither_set_black_levels(dither, 1.0, 1.0, 1.0);
+  for (i = 0; i <= NCOLORS; i++)
+    stp_dither_set_black_level(dither, i, 1.0);
   if (use_6color || use_7color)
     k_lower = .4 / bits + .1;
   else
