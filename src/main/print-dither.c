@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.41 2001/08/13 22:42:49 easysw Exp $"
+ * "$Id: print-dither.c,v 1.42 2001/09/02 13:30:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -28,7 +28,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 #include <limits.h>

@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.18 2001/06/03 18:35:03 rleigh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.19 2001/09/02 13:30:27 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -71,7 +71,7 @@
 #ifdef INCLUDE_GIMP_PRINT_H
 #include INCLUDE_GIMP_PRINT_H
 #else
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #endif
 #include <gimp-print-internal.h>
 

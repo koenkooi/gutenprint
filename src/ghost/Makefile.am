@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2001/07/06 18:04:43 rlk Exp $
+## $Id: Makefile.am,v 1.14 2001/09/02 13:30:26 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ all-local: $(ALL_LOCAL_DEPS)
 
 GHCODE = -e 's/print-printers.c/gdevstp-printers.c/' -e 's/^\\\#include "\(.*\)\.h"$$/\\\#include "gdevstp-\1.h"/' -e 's/^\\\#include <gimp-print\(.*\)\.h>$$/\\\#include "gdevstp-print\1.h"/'
 
-$(srcdir)/gdevstp-print.h: $(top_srcdir)/src/include/gimp-print.h
+$(srcdir)/gdevstp-print.h: $(top_srcdir)/include/gimp-print/gimp-print.h
 	sed $(GHCODE) $< > $(srcdir)/$@
 
 $(srcdir)/gdevstp-print-internal.h: $(top_srcdir)/src/main/gimp-print-internal.h

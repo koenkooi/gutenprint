@@ -1,5 +1,5 @@
 /*
- * "$Id: print-version.c,v 1.4 2001/06/30 13:30:46 rlk Exp $"
+ * "$Id: print-version.c,v 1.5 2001/09/02 13:30:27 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,7 +30,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 

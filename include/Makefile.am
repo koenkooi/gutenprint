@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2001/06/02 23:01:55 rleigh Exp $
+## $Id: Makefile.am,v 1.1 2001/09/02 13:30:26 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,17 +23,6 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+SUBDIRS = gimp-print
 
-## Data
-
-noinst_HEADERS = gimp-print-intl.h
-
-pkginclude_HEADERS = @GIMP_PRINT_H@
-
-EXTRA_HEADERS = gimp-print.h.in
-
-
-## Clean
-
-DISTCLEANFILES = gimp-print.h
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.65 2001/08/19 18:34:28 rlk Exp $"
+ * "$Id: print-canon.c,v 1.66 2001/09/02 13:30:27 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -42,7 +42,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <gimp-print.h>
+#include <gimp-print/gimp-print.h>
 #include <gimp-print-internal.h>
 #include <gimp-print-intl-internal.h>
 #include <string.h>

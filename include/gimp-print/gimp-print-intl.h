@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-intl.h,v 1.1 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: gimp-print-intl.h,v 1.1 2001/09/02 13:30:26 rlk Exp $"
  *
  *   I18N header file for the gimp-print.
  *
