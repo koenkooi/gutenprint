@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.7 2003/06/20 00:54:41 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.7.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -37,6 +37,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "module.h"
+#include "color.h"
 
 #ifdef __GNUC__
 #define inline __inline__
@@ -44,7 +45,7 @@
 
 typedef struct
 {
-  int color_model;
+  stpi_color_model_t color_model;
   int output_channels;
   const char *name;
 } ink_t;
@@ -66,7 +67,7 @@ static const olympus_printer_t olympus_model_capabilities[] =
 
 static const ink_t inks[] =
 {
-  { COLOR_MODEL_CMY, 3, "CMY" },
+  { STPI_COLOR_CMY, 3, "CMY" },
 };
 
 static const int ink_count = sizeof(inks) / sizeof(ink_t);
@@ -167,9 +168,9 @@ olympus_parameters(stp_const_vars_t v, const char *name,
     {
       description->bounds.str = stp_string_list_create();
       stp_string_list_add_string(description->bounds.str, "306x306",
-        "306x306 DPI"); 
+        "306x306 DPI");
       stp_string_list_add_string(description->bounds.str, "153x153",
-        "153x153 DPI"); 
+        "153x153 DPI");
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
     }
@@ -197,7 +198,7 @@ olympus_imageable_area(stp_const_vars_t v,
   int width, height;
   int model = stpi_get_model_id(v);
   stpi_default_media_size(v, &width, &height);
-  
+
   *left = olympus_model_capabilities[model].border_left;
   *top = olympus_model_capabilities[model].border_top;
   *right = width - olympus_model_capabilities[model].border_right;
@@ -264,7 +265,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
 
   /* page w/out borders in pixels (according to selected dpi) */
   int print_width, print_height;
-  
+
   unsigned char  copies = 1;
   unsigned short hi_speed = 1;
   char *l, layers[] = "YMC";
@@ -292,7 +293,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
     print_height - image_height: image_top);
   image_right  = image_left + image_width;
   image_bottom = image_top  + image_height;
-  
+
 /*
   stpi_eprintf(v, "paper        %d x %d\n"
 		"image        %d x %d\n"
@@ -313,7 +314,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
 		  page_bottom, page_top, page_bottom - page_top,
 		print_width, print_height,
 		xdpi, ydpi
-		);	
+		);
 */
 
   /* skip the job if image is not approximately the same size as output */
@@ -331,15 +332,11 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
       return 0;
     }
 
-  
-  stpi_set_output_color_model(nv, COLOR_MODEL_CMY);
-  
   if (ink_type)
     {
       for (i = 0; i < ink_count; i++)
 	if (strcmp(ink_type, inks[i].name) == 0)
 	  {
-	    stpi_set_output_color_model(nv, inks[i].color_model);
 	    ink_channels = inks[i].output_channels;
 	    break;
 	  }
@@ -349,7 +346,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   for (i = 0; i < ink_channels; i++)
     stpi_channel_add(nv, i, 0, 1.0);
 
-  out_channels = stpi_color_init(nv, image, 256);
+  out_channels = stpi_color_init(nv, image, 256, STPI_COLOR_CMY);
 
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {
@@ -366,7 +363,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   stpi_image_progress_init(image);
 
   zeros = stpi_zalloc(print_width+1);
-  
+
   /* printer init */
   stpi_zfwrite("\033\033\033C\033N", 1, 6, nv);
   stpi_putc(copies, nv);
@@ -378,8 +375,8 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   stpi_putc(xdpi & 0xff, nv);
   stpi_putc(ydpi >> 8, nv);
   stpi_putc(ydpi & 0xff, nv);
-  
-  
+
+
   l = layers;
   while (*l)
     {
@@ -387,7 +384,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
     /* old style - full 4MB prn file */
 #define MAX_PROGRESS (print_height)
     for (y = 0; y < print_height; y++)
-		  
+
 #else
     /*
      * new style - only used lines (mod 16)
@@ -413,7 +410,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
 	stpi_putc((print_width - 1) >> 8, nv);
 	stpi_putc((print_width - 1) & 0xff, nv);
 	}
-      
+
 
       if (y < image_top || y >= image_bottom)
         {
@@ -464,7 +461,7 @@ olympus_print(stp_const_vars_t v, stp_image_t *image)
   	char_out = (unsigned char *) real_out;
   	for (i = 0; i < image_width; i++)
   	  char_out[i] = real_out[i * ink_channels + (layers - l + 2)] / 257;
-  
+
 	stpi_zfwrite((char *) real_out, 1, image_width, nv);
 /* stpi_erprintf("data %d ", image_width); */
         if (image_right < print_width)

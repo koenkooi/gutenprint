@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.29 2003/07/22 12:22:55 rlk Exp $"
+ * "$Id: print-raw.c,v 1.29.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "module.h"
+#include "color.h"
 
 #ifdef __GNUC__
 #define inline __inline__
@@ -42,7 +43,7 @@
 
 typedef struct
 {
-  int color_model;
+  stpi_color_model_t color_model;
   int output_channels;
   int rotate_channels;
   const char *name;
@@ -65,12 +66,12 @@ static const raw_printer_t raw_model_capabilities[] =
 
 static const ink_t inks[] =
 {
-  { COLOR_MODEL_RGB, 3, 0, "RGB" },
-  { COLOR_MODEL_CMY, 3, 0, "CMY" },
-  { COLOR_MODEL_CMY, 4, 1, "CMYK" },
-  { COLOR_MODEL_CMY, 4, 0, "KCMY" },
-  { COLOR_MODEL_RGB, 1, 0, "RGBGray" },
-  { COLOR_MODEL_CMY, 1, 0, "CMYGray" },
+  { STPI_COLOR_RGB, 3, 0, "RGB" },
+  { STPI_COLOR_CMY, 3, 0, "CMY" },
+  { STPI_COLOR_CMYK, 4, 1, "CMYK" },
+  { STPI_COLOR_CMYK, 4, 0, "KCMY" },
+  { STPI_COLOR_WHITE, 1, 0, "RGBGray" },
+  { STPI_COLOR_GRAY, 1, 0, "CMYGray" },
 };
 
 static const int ink_count = sizeof(inks) / sizeof(ink_t);
@@ -179,6 +180,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
   int		status = 1;
   int bytes_per_channel = raw_model_capabilities[model].output_bits / 8;
   int ink_channels = 1;
+  stpi_color_model_t color_model = STPI_COLOR_GRAY;
   int rotate_output = 0;
   const char *ink_type = stp_get_string_parameter(nv, "InkType");
 
@@ -195,15 +197,14 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
       stp_vars_free(nv);
       return 0;
     }
-  stpi_set_output_color_model(nv, COLOR_MODEL_CMY);
   if (ink_type)
     {
       for (i = 0; i < ink_count; i++)
 	if (strcmp(ink_type, inks[i].name) == 0)
 	  {
-	    stpi_set_output_color_model(nv, inks[i].color_model);
 	    ink_channels = inks[i].output_channels;
 	    rotate_output = inks[i].rotate_channels;
+	    color_model = inks[i].color_model;
 	    break;
 	  }
     }
@@ -213,9 +214,9 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
     stpi_channel_add(nv, i, 0, 1.0);
 
   if (bytes_per_channel == 1)
-    out_channels = stpi_color_init(nv, image, 256);
+    out_channels = stpi_color_init(nv, image, 256, color_model);
   else
-    out_channels = stpi_color_init(nv, image, 65536);
+    out_channels = stpi_color_init(nv, image, 65536, color_model);
 
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.57 2003/07/19 21:52:25 rlk Exp $"
+ * "$Id: print-vars.c,v 1.57.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -71,8 +71,6 @@ typedef struct					/* Plug-in variables */
   char *driver;			/* Name of printer "driver" */
   char *color_conversion;       /* Color module in use */
   int	output_type;		/* Color or grayscale output */
-  int	input_color_model;	/* Color model for this device */
-  int	output_color_model;	/* Color model for this device */
   stp_job_mode_t job_mode;
   int	left;			/* Offset from left-upper corner, points */
   int	top;			/* ... */
@@ -98,9 +96,6 @@ static stpi_internal_vars_t default_vars =
 	NULL,		       	/* Name of printer "driver" */
 	NULL,                   /* Name of color module */
 	OUTPUT_COLOR,		/* Color or grayscale output */
-	1.0,			/* Application gamma placeholder */
-	COLOR_MODEL_RGB,	/* Input color model */
-	COLOR_MODEL_RGB,	/* Output color model */
 	STP_JOB_MODE_PAGE	/* Job mode */
 };
 
@@ -109,7 +104,7 @@ null_vars(void)
 {
   stpi_erprintf("Null stp_vars_t! Please report this bug.\n");
   stpi_abort();
-}  
+}
 
 static void
 bad_vars(void)
@@ -425,15 +420,12 @@ DEF_FUNCS(width, int, stp)
 DEF_FUNCS(height, int, stp)
 DEF_FUNCS(page_width, int, stp)
 DEF_FUNCS(page_height, int, stp)
-DEF_FUNCS(input_color_model, int, stp)
 DEF_FUNCS(page_number, int, stp)
 DEF_FUNCS(job_mode, stp_job_mode_t, stp)
 DEF_FUNCS(outdata, void *, stp)
 DEF_FUNCS(errdata, void *, stp)
 DEF_FUNCS(outfunc, stp_outfunc_t, stp)
 DEF_FUNCS(errfunc, stp_outfunc_t, stp)
-
-DEF_FUNCS(output_color_model, int, stpi)
 
 void
 stpi_set_verified(stp_vars_t vv, int val)
@@ -1269,8 +1261,6 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
   stp_set_height(vd, stp_get_height(vs));
   stp_set_page_width(vd, stp_get_page_width(vs));
   stp_set_page_height(vd, stp_get_page_height(vs));
-  stp_set_input_color_model(vd, stp_get_input_color_model(vd));
-  stpi_set_output_color_model(vd, stpi_get_output_color_model(vd));
   stp_set_outdata(vd, stp_get_outdata(vs));
   stp_set_errdata(vd, stp_get_errdata(vs));
   stp_set_outfunc(vd, stp_get_outfunc(vs));
@@ -1344,9 +1334,7 @@ stp_merge_printvars(stp_vars_t user, stp_const_vars_t print)
 	  stp_parameter_description_free(&desc);
 	}
     }
-  if (stp_get_output_type(print) == OUTPUT_GRAY &&
-      (stp_get_output_type(user) == OUTPUT_COLOR ||
-       stp_get_output_type(user) == OUTPUT_RAW_CMYK))
+  if (stp_get_output_type(print) == OUTPUT_GRAY)
     stp_set_output_type(user, OUTPUT_GRAY);
   stp_parameter_list_free(params);
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.129 2003/08/08 22:09:40 rlk Exp $"
+ * "$Id: print-canon.c,v 1.129.2.1 2003/08/18 23:31:18 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1322,7 +1322,7 @@ static const float_param_t float_parameters[] =
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1
     }, 0.0, 5.0, 1.0, 1
   },
-};    
+};
 
 static const int float_parameter_count =
 sizeof(float_parameters) / sizeof(const float_param_t);
@@ -2225,7 +2225,7 @@ canon_printfunc(stp_vars_t v)
   canon_write_line(v);
   for (i = 0; i < 7; i++)
     canon_advance_buffer(pd->cols[i], pd->buf_length, pd->delay[i]);
-  
+
 }
 
 static double
@@ -2289,8 +2289,7 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   unsigned	zero_mask;
   int           bits= 1;
   int           image_height,
-                image_width,
-                image_bpp;
+		image_width;
   int           res_code;
   int           use_6color= 0;
   double        k_upper, k_lower;
@@ -2320,7 +2319,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
   */
 
   stpi_image_init(image);
-  image_bpp = stpi_image_bpp(image);
 
   /* force grayscale if image is grayscale
    *                 or single black cartridge installed
@@ -2334,7 +2332,6 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
 
   if (output_type == OUTPUT_GRAY)
     colormode = COLOR_MONOCHROME;
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
  /*
   * Figure out the output resolution...
@@ -2616,7 +2613,12 @@ canon_do_print(stp_vars_t v, stp_image_t *image)
       stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
-  out_channels = stpi_color_init(v, image, 65536);
+  if (output_type == OUTPUT_GRAY)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_GRAY);
+  else if (privdata.cols[0])
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMYK);
+  else
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMY);
   stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
 
   privdata.emptylines = 0;

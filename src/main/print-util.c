@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.99 2003/07/24 23:16:52 rlk Exp $"
+ * "$Id: print-util.c,v 1.99.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -117,7 +117,7 @@ stpi_catprintf(char **strp, const char *format, ...)
   stpi_free(result1);
   *strp = result2;
 }
-  
+
 
 void
 stpi_zfwrite(const char *buf, size_t bytes, size_t nitems, stp_const_vars_t v)

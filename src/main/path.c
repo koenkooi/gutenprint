@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.8 2003/07/22 12:22:54 rlk Exp $"
+ * "$Id: path.c,v 1.8.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -111,7 +111,7 @@ stpi_path_check(const struct dirent *module) /* File to check */
   namelen = strlen(filename);
   /* make sure we can take off suffix (e.g. .la)
      and still have a sane filename */
-  if (namelen >= strlen(path_check_suffix) + 1) 
+  if (namelen >= strlen(path_check_suffix) + 1)
     {
       if (!stat (filename, &modstat))
 	{

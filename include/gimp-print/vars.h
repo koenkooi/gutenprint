@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $"
+ * "$Id: vars.h,v 1.2.2.1 2003/08/18 23:31:18 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -36,13 +36,6 @@ extern "C" {
 
 #define OUTPUT_GRAY             0       /* Grayscale output */
 #define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_RAW_CMYK         2       /* Raw CMYK output */
-#define OUTPUT_RAW_PRINTER	3	/* Printer-specific raw output */
-
-#define COLOR_MODEL_RGB         0
-#define COLOR_MODEL_CMY         1
-#define NCOLOR_MODELS           2
-
 
 typedef enum
 {
@@ -249,20 +242,6 @@ extern int stp_get_page_height(stp_const_vars_t v);
  */
 extern void stp_set_output_type(stp_vars_t v, int val);
 extern int stp_get_output_type(stp_const_vars_t v);
-
-/*
- * Input color model refers to how the data is being sent to the
- * driver library; the default is RGB.  Output color model refers to
- * the characteristics of the device; the default is CMYK.  The output
- * color model is set by the printer driver and cannot be overridden.
- * It is provided to permit applications to generate previews using
- * the color machinery in Gimp-Print.  If this is done, normally
- * the output color model will be RGB.
- *
- * This is subject to change.
- */
-extern void stp_set_input_color_model(stp_vars_t v, int val);
-extern int stp_get_input_color_model(stp_const_vars_t v);
 
 /*
  * These functions are used to print output and diagnostic information
@@ -571,5 +550,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.2 2003/07/12 20:56:33 rleigh Exp $".
+ * End of "$Id: vars.h,v 1.2.2.1 2003/08/18 23:31:18 rlk Exp $".
  */

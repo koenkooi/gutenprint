@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.13 2003/07/12 21:27:30 rlk Exp $"
+ * "$Id: color.h,v 1.13.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -40,10 +40,20 @@ extern "C" {
 
 #include <gimp-print/color.h>
 
+typedef enum
+{
+  STPI_COLOR_GRAY,
+  STPI_COLOR_WHITE,
+  STPI_COLOR_RGB,
+  STPI_COLOR_CMY,
+  STPI_COLOR_CMYK,
+  STPI_COLOR_RAW
+} stpi_color_model_t;
 
 typedef struct
 {
-  int (*init)(stp_vars_t v, stp_image_t *image, size_t steps);
+  int (*init)(stp_vars_t v, stp_image_t *image, size_t steps,
+	      stpi_color_model_t color_model);
   int (*get_row)(stp_const_vars_t v, stp_image_t *image,
 		 int row, unsigned *zero_mask);
   stp_parameter_list_t (*list_parameters)(stp_const_vars_t v);
@@ -67,7 +77,8 @@ typedef struct stpi_internal_color
  * Initialize the color machinery.  Return value is the number
  * of columns of output
  */
-extern int stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps);
+extern int stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps,
+			   stpi_color_model_t color_model);
 
 /*
  * Acquire input and perform color conversion.  Return value

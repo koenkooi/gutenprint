@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.285 2003/08/08 22:09:40 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.285.2.1 2003/08/18 23:31:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -620,7 +620,7 @@ using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
 	return 0;
     }
   return 0;
-}    
+}
 
 static int
 compute_internal_resid(int hres, int vres)
@@ -644,7 +644,7 @@ compute_internal_resid(int hres, int vres)
 	return i - 1;
     }
   return RES_N - 1;
-}  
+}
 
 static int
 compute_resid(const res_t *res)
@@ -716,7 +716,7 @@ verify_resolution_by_paper_type(stp_const_vars_t v, const res_t *res)
 	    return 0;
 	  break;
 	case PAPER_PHOTO:
-	  if (res->vres < 360 || 
+	  if (res->vres < 360 ||
 	      (res->hres < 720 && res->hres < escp2_max_hres(v)))
 	    return 0;
 	  break;
@@ -909,7 +909,7 @@ set_density_parameter(stp_const_vars_t v,
     description->is_active = 1;
   else
     description->is_active = 0;
-}  
+}
 
 static void
 set_gray_transition_parameter(stp_const_vars_t v,
@@ -986,7 +986,7 @@ find_default_resolution(stp_const_vars_t v, int desired_hres, int desired_vres,
 	    return res[i];
 	  i++;
 	}
-    }    
+    }
 #endif
   return NULL;
 }
@@ -1049,7 +1049,7 @@ escp2_parameters(stp_const_vars_t v, const char *name,
       stp_string_list_add_string(description->bounds.str, "Auto",
 				 _("Automatic Setting Control"));
       description->deflt.str = "None"; /* so CUPS and Foomatic don't break */
-    }      
+    }
   else if (strcmp(name, "PageSize") == 0)
     {
       int papersizes = stp_known_papersizes();
@@ -1456,7 +1456,8 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
    */
   for (i = 0; i < ninktypes; i++)
     if (inks->inknames[i]->inkset == INKSET_EXTENDED &&
-	inks->inknames[i]->channel_set->channel_count * 2 == stpi_image_bpp(image))
+	(inks->inknames[i]->channel_set->channel_count ==
+	 stpi_image_channels(image)))
       {
 	stpi_dprintf(STPI_DBG_INK, v, "Changing ink type from %s to %s\n",
 		     stp_get_string_parameter(v, "InkType") ?
@@ -1467,7 +1468,7 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
       }
   stpi_eprintf
     (v, _("This printer does not support raw printer output at depth %d\n"),
-     stpi_image_bpp(image) / 2);
+     stpi_image_channels(image));
   return 0;
 }
 
@@ -2078,9 +2079,13 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      PACKFUNC,
      COMPUTEFUNC);
 
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
   adjust_print_quality(v, image);
-  out_channels = stpi_color_init(v, image, 65536);
+  if (stp_get_output_type(v) == OUTPUT_GRAY)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_GRAY);
+  else if (pd->inkname->channel_set->channels[ECOLOR_K])
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMYK);
+  else
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMY);
 
   stpi_dither_init(v, image, pd->image_scaled_width, pd->res->hres,
 		   pd->res->vres);

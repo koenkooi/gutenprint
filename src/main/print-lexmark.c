@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.129 2003/08/08 22:09:41 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.129.2.1 2003/08/18 23:31:19 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -378,7 +378,7 @@ static const float_param_t float_parameters[] =
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1
     }, 0.0, 5.0, 1.0, 1
   },
-};    
+};
 
 static const int float_parameter_count =
 sizeof(float_parameters) / sizeof(const float_param_t);
@@ -1586,8 +1586,7 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
     errlast;	/* Last raster line loaded */
   unsigned      zero_mask;
   int           image_height,
-                image_width,
-                image_bpp;
+		image_width;
   int           use_dmt = 0;
   int pass_length=0;              /* count of inkjets for one pass */
   int add_top_offset=0;              /* additional top offset */
@@ -1656,7 +1655,6 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
   */
 
   stpi_image_init(image);
-  image_bpp = stpi_image_bpp(image);
 
 
   source= lexmark_source_type(media_source,caps);
@@ -1671,18 +1669,15 @@ lexmark_do_print(stp_vars_t v, stp_image_t *image)
       output_type = OUTPUT_GRAY;
       stp_set_output_type(v, OUTPUT_GRAY);
     }
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
   /*
    * Choose the correct color conversion function...
    */
 
-
   ncolors = ink_parameter->ncolors;
   printMode = ink_parameter->used_colors;
   pass_length = ink_parameter->pass_length;
   add_top_offset = ink_parameter->v_top_head_offset;
-
 
   /*
    * Figure out the output resolution...
@@ -2068,7 +2063,12 @@ densityDivisor /= 1.2;
       stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
-  out_channels = stpi_color_init(v, image, 65536);
+  if (output_type == OUTPUT_GRAY)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_GRAY);
+  else if (cols.p.k)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMYK);
+  else
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMY);
 
   /* calculate the memory we need for one line of the printer image (hopefully we are right) */
 #ifdef DEBUG

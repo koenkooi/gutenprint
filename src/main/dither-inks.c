@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.18 2003/06/13 11:37:39 rlk Exp $"
+ * "$Id: dither-inks.c,v 1.18.4.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -102,7 +102,7 @@ stpi_dither_channel_destroy(stpi_dither_channel_t *channel)
   SAFE_FREE(channel->shade.et_dis);
   stpi_dither_matrix_destroy(&(channel->pick));
   stpi_dither_matrix_destroy(&(channel->dithermat));
-}  
+}
 
 static void
 initialize_channel(stp_vars_t v, int channel, int subchannel)
@@ -134,7 +134,7 @@ insert_subchannel(stp_vars_t v, stpi_dither_t *d, int channel, int subchannel)
   stpi_dither_channel_t *nc =
     stpi_malloc(sizeof(stpi_dither_channel_t) *
 		(d->total_channel_count + increment));
-      
+
   if (d->channel)
     {
       /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.27 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: print-papers.c,v 1.27.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -303,7 +303,7 @@ stpi_xml_process_paper(mxml_node_t *paper) /* The paper node */
       if (prop->type == MXML_ELEMENT)
 	{
 	  const char *prop_name = prop->value.element.name;
-      
+
 	  if (!strcmp(prop_name, "description"))
 	    {
 	      outpaper->text = stpi_strdup(stpi_mxmlElementGetAttr(prop, "value"));

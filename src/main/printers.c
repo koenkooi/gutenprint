@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.59 2003/07/18 21:56:07 rlk Exp $"
+ * "$Id: printers.c,v 1.59.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -94,7 +94,7 @@ null_printer(void)
 {
   stpi_erprintf("Null stp_printer_t! Please report this bug.\n");
   stpi_abort();
-}  
+}
 
 static void
 bad_printer(void)
@@ -587,10 +587,6 @@ stpi_verify_printer_params(stp_vars_t v)
   errbuf.data = NULL;
   errbuf.bytes = 0;
 
-  /*
-   * Note that in raw CMYK mode the user is responsible for not sending
-   * color output to black & white printers!
-   */
   if (stp_get_output_type(printvars) == OUTPUT_GRAY &&
       stp_get_output_type(v) == OUTPUT_COLOR)
     {
@@ -652,9 +648,7 @@ stpi_verify_printer_params(stp_vars_t v)
       stpi_eprintf(v, _("Image is too long for the page\n"));
     }
 
-  CHECK_INT_RANGE(v, output_type, 0, OUTPUT_RAW_PRINTER);
-  CHECK_INT_RANGE(v, input_color_model, 0, NCOLOR_MODELS - 1);
-  CHECK_INT_RANGE_INTERNAL(v, output_color_model, 0, NCOLOR_MODELS - 1);
+  CHECK_INT_RANGE(v, output_type, 0, OUTPUT_COLOR);
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
   CHECK_INT_RANGE(v, job_mode, STP_JOB_MODE_PAGE, STP_JOB_MODE_JOB);
 

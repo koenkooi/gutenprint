@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.1 2003/06/03 20:17:35 rleigh Exp $"
+ * "$Id: color.c,v 1.1.4.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -192,11 +192,12 @@ stpi_get_color_by_colorfuncs(stpi_colorfuncs_t *colorfuncs)
 int
 stpi_color_init(stp_vars_t v,
 		stp_image_t *image,
-		size_t steps)
+		size_t steps,
+		stpi_color_model_t color_model)
 {
   const stpi_colorfuncs_t *colorfuncs =
     stpi_get_colorfuncs(stp_get_color_by_name(stp_get_color_conversion(v)));
-  return colorfuncs->init(v, image, steps);
+  return colorfuncs->init(v, image, steps, color_model);
 }
 
 int

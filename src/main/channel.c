@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.6 2003/07/12 21:27:30 rlk Exp $"
+ * "$Id: channel.c,v 1.6.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -52,8 +52,11 @@ typedef struct
 typedef struct
 {
   unsigned subchannel_count;
+  unsigned start_channel;
   stpi_subchannel_t *sc;
   unsigned short *lut;
+  unsigned total_ink;
+  unsigned input_ink;
 } stpi_channel_t;
 
 typedef struct
@@ -138,7 +141,7 @@ get_channel(stp_vars_t v, unsigned channel, unsigned subchannel)
     return NULL;
   return &(cg->c[channel].sc[subchannel]);
 }
-  
+
 void
 stpi_channel_add(stp_vars_t v, unsigned channel, unsigned subchannel,
 		 double value)
@@ -150,7 +153,7 @@ stpi_channel_add(stp_vars_t v, unsigned channel, unsigned subchannel,
     {
       cg = stpi_zalloc(sizeof(stpi_channel_group_t));
       stpi_allocate_component_data(v, "Channel", NULL, stpi_channel_free, cg);
-    }				   
+    }
   if (channel >= cg->channel_count)
     {
       unsigned oc = cg->channel_count;
@@ -242,7 +245,7 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
     {
       cg = stpi_zalloc(sizeof(stpi_channel_group_t));
       stpi_allocate_component_data(v, "Channel", NULL, stpi_channel_free, cg);
-    }				   
+    }
   if (cg->initialized)
     return;
   cg->initialized = 1;
@@ -251,6 +254,7 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
     {
       stpi_channel_t *c = &(cg->c[i]);
       int sc = c->subchannel_count;
+      c->start_channel = cg->total_channels;
       if (sc > 1)
 	{
 	  int val = 0;
@@ -296,7 +300,7 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
 	      c->lut[val * sc] = val / c->sc[sc - 1].value;
 	      val++;
 	    }
-	}     
+	}
       cg->total_channels += c->subchannel_count;
       for (j = 0; j < c->subchannel_count; j++)
 	cg->max_density += 65535 * c->sc[j].density;
@@ -373,6 +377,7 @@ limit_ink(stp_const_vars_t v)
   int retval = 0;
   stpi_channel_group_t *cg =
     ((stpi_channel_group_t *) stpi_get_component_data(v, "Channel"));
+  int needs_splitting = input_needs_splitting(v);
   unsigned short *ptr = cg->data;
   if (cg->ink_limit == 0 || cg->ink_limit >= cg->max_density)
     return 0;
@@ -382,12 +387,36 @@ limit_ink(stp_const_vars_t v)
       if (total_ink > cg->ink_limit) /* Need to limit ink? */
 	{
 	  int j;
+	  double ratio = (double) cg->ink_limit / (double) total_ink;
+#if 0
+	  if (needs_splitting)
+	    {
+	      for (j = 0; j < cg->channel_count; j++)
+		{
+		  stpi_channel_t *c = &(cg->c[j]);
+		  int s_count = c->subchannel_count;
+		  c->total_ink = 0;
+		  c->input_ink = 0;
+		  if (s_count >= 1)
+		    {
+		      ink k;
+		      for (k = 0; k < c->subchannel_count; k++)
+			{
+			  stpi_subchannel_t *sc = &(c->sc[k]);
+			  c->total_ink += ptr[c->start_channel + k];
+			  c->input_ink +=
+			    ptr[c->start_channel + k] * sc->density;
+			}
+		    }
+		}
+	    }
+#endif
 	  /*
 	   * FIXME we probably should first try to convert light ink to dark
 	   */
-	  double ratio = (double) cg->ink_limit / (double) total_ink;
 	  for (j = 0; j < cg->total_channels; j++)
 	    ptr[j] *= ratio;
+	good:
 	  retval = 1;
 	}
       ptr += cg->total_channels;
@@ -459,7 +488,7 @@ stpi_channel_convert(stp_const_vars_t v, unsigned *zero_mask)
 		if (scan_channel(output, cg->width, cg->total_channels) == 0)
 		  *zero_mask |= 1 << physical_channel;
 	      }
-	      
+
 	    physical_channel++;
 	  }
     }

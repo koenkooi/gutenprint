@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.118 2003/08/08 22:09:42 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.118.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1889,8 +1889,7 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 		errlast;	/* Last raster line loaded */
   unsigned	zero_mask;
   int           image_height,
-                image_width,
-                image_bpp;
+		image_width;
   const pcl_cap_t *caps;		/* Printer capabilities */
   int		planes = 3;	/* # of output planes */
   int		pcl_media_size, /* PCL media size code */
@@ -1919,7 +1918,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
   stpi_image_init(image);
   image_height = stpi_image_height(image);
   image_width = stpi_image_width(image);
-  image_bpp = stpi_image_bpp(image);
 
  /*
   * Figure out the output resolution...
@@ -1960,7 +1958,6 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       output_type = OUTPUT_GRAY;
       stp_set_output_type(v, OUTPUT_GRAY);
     }
-  stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
   privdata.do_cret = (xdpi >= 300 &&
 	     ((caps->color_type & PCL_COLOR_CMYK4) == PCL_COLOR_CMYK4));
@@ -2402,7 +2399,12 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
       stp_set_output_type(v, OUTPUT_RAW_CMYK);
     }
 
-  out_channels = stpi_color_init(v, image, 65536);
+  if (output_type == OUTPUT_GRAY)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_GRAY);
+  else if (black)
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMYK);
+  else
+    out_channels = stpi_color_init(v, image, 65536, STPI_COLOR_CMY);
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;

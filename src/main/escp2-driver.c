@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.10 2003/08/06 01:42:31 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.10.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -100,8 +100,6 @@ print_debug_params(stp_vars_t v)
   print_remote_int_param(v, "Top", stp_get_top(v));
   print_remote_int_param(v, "Page Width", stp_get_page_width(v));
   print_remote_int_param(v, "Page Height", stp_get_page_height(v));
-  print_remote_int_param(v, "Input Model", stp_get_input_color_model(v));
-  print_remote_int_param(v, "Output Model", stpi_get_output_color_model(v));
   print_remote_int_param(v, "Model", stpi_get_model_id(v));
   print_remote_int_param(v, "Ydpi", pd->res->vres);
   print_remote_int_param(v, "Xdpi", pd->res->hres);
@@ -482,7 +480,7 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int nlines)
 	ncolor |= (subchannel << 4);
       stpi_send_command(v, "\033i", "ccchh", ncolor, COMPRESSION,
 			pd->bitwidth, nwidth, nlines);
-    }    
+    }
   else
     {
       int ygap = 3600 / pd->vertical_units;

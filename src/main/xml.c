@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.25 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: xml.c,v 1.25.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -110,7 +110,7 @@ stpi_xml_preinit(void)
       stpi_list_set_freefunc(stpi_xml_registry, xml_registry_freefunc);
       stpi_list_set_namefunc(stpi_xml_registry, xml_registry_namefunc);
     }
-}    
+}
 
 /*
  * Call before using any of the static functions in this file.  All

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.25 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.25.2.1 2003/08/18 23:31:19 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -525,7 +525,7 @@ stpi_xml_dither_cache_set(int x, int y, const char *filename)
 static int
 stpi_xml_process_dither_matrix(mxml_node_t *dm,     /* The dither matrix node */
 			       const char *file)  /* Source file */
-			       
+
 {
   const char *value;
   int x = -1;
@@ -687,7 +687,7 @@ stpi_find_standard_dither_array(int x_aspect, int y_aspect)
     x_aspect += 1;		/* so cheat */
   if (y_aspect == 3)
     y_aspect += 1;
-  
+
   divisor = gcd(x_aspect, y_aspect);
   x_aspect /= divisor;
   y_aspect /= divisor;

@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.4 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: mxml-file.c,v 1.4.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -61,7 +61,7 @@ static int		mxml_write_node(mxml_node_t *node, void *p,
 					int (*putc_cb)(int, void *));
 static int		mxml_write_string(const char *s, void *p,
 					  int (*putc_cb)(int, void *));
-static int		mxml_write_ws(mxml_node_t *node, void *p, 
+static int		mxml_write_ws(mxml_node_t *node, void *p,
 			              int (*cb)(mxml_node_t *, int), int ws,
 				      int col, int (*putc_cb)(int, void *));
 
@@ -392,7 +392,7 @@ mxml_load_data(mxml_node_t *top,	/* I - Top node */
         default : /* Should never happen... */
 	    node = NULL;
 	    break;
-      }	  
+      }
 
       if (*bufptr)
       {
@@ -1110,7 +1110,7 @@ mxml_write_node(mxml_node_t *node,	/* I - Node to write */
 	      return (-1);
             if ((*putc_cb)('\"', p) < 0)
 	      return (-1);
-	    
+
             col += strlen(attr->name) + strlen(attr->value) + 3;
 	  }
 
@@ -1432,5 +1432,5 @@ mxml_write_ws(mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.4 2003/07/23 01:51:27 rlk Exp $".
+ * End of "$Id: mxml-file.c,v 1.4.2.1 2003/08/18 23:29:20 rlk Exp $".
  */

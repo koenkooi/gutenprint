@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.39 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: curve.c,v 1.39.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1393,7 +1393,7 @@ curve_whitespace_callback(mxml_node_t *node, int where)
     return 0;
 }
 
-    
+
 
 int
 stp_curve_write(FILE *file, stp_const_curve_t curve)  /* The curve */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.92 2003/08/08 22:09:40 rlk Exp $"
+ * "$Id: print-color.c,v 1.92.2.1 2003/08/18 23:31:19 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -53,7 +53,10 @@ typedef struct
 {
   unsigned steps;
   unsigned char *in_data;
-  int image_bpp;
+  stp_image_type_t image_type;
+  stpi_color_model_t color_model;
+  int image_bits_per_channel;
+  int image_channels;
   int image_width;
   int out_channels;
   int channels_are_initialized;
@@ -690,7 +693,7 @@ lookup_rgb(lut_t *lut, unsigned short *rgbout,
  */
 
 static unsigned
-rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in, unsigned short *out)
+rgb8_to_rgb(stp_const_vars_t vars, const unsigned char *in, unsigned short *out)
 {
   int i;
   double isat = 1.0;
@@ -765,7 +768,7 @@ rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in, unsigned short *out)
 	  nz1 |= o1;
 	  nz2 |= o2;
 	}
-      in += lut->image_bpp;
+      in += 3;
       out += 3;
     }
   return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);
@@ -776,8 +779,8 @@ rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in, unsigned short *out)
  */
 
 static unsigned
-gray_to_rgb(stp_const_vars_t vars, const unsigned char *in,
-	    unsigned short *out)
+gray8_to_rgb(stp_const_vars_t vars, const unsigned char *in,
+	     unsigned short *out)
 {
   int i;
   int i0 = -1;
@@ -823,7 +826,7 @@ gray_to_rgb(stp_const_vars_t vars, const unsigned char *in,
 	  nz1 |= o1;
 	  nz2 |= o2;
 	}
-      in += lut->image_bpp;
+      in++;
       out += 3;
     }
   return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);
@@ -835,8 +838,8 @@ gray_to_rgb(stp_const_vars_t vars, const unsigned char *in,
  */
 
 static unsigned
-fast_rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in,
-		unsigned short *out)
+fast_rgb8_to_rgb(stp_const_vars_t vars, const unsigned char *in,
+		 unsigned short *out)
 {
   int i;
   int i0 = -1;
@@ -890,7 +893,7 @@ fast_rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in,
 	  nz1 |= o1;
 	  nz2 |= o2;
 	}
-      in += lut->image_bpp;
+      in++;
       out += 3;
     }
   return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);
@@ -901,8 +904,8 @@ fast_rgb_to_rgb(stp_const_vars_t vars, const unsigned char *in,
  */
 
 static unsigned
-fast_gray_to_rgb(stp_const_vars_t vars, const unsigned char *in,
-		 unsigned short *out)
+fast_gray8_to_rgb(stp_const_vars_t vars, const unsigned char *in,
+		  unsigned short *out)
 {
   int i;
   int i0 = -1;
@@ -946,7 +949,7 @@ fast_gray_to_rgb(stp_const_vars_t vars, const unsigned char *in,
 	  nz1 |= o1;
 	  nz2 |= o2;
 	}
-      in += lut->image_bpp;
+      in++;
       out += 3;
     }
   return (nz0 ? 1 : 0) +  (nz1 ? 2 : 0) +  (nz2 ? 4 : 0);
@@ -1117,10 +1120,10 @@ name##_to_kcmy(stp_const_vars_t vars, const unsigned char *in,		\
   return generic_rgb_to_kcmy(vars, lut->cmy_tmp, out);			\
 }
 
-RGB_TO_KCMY_FUNC(gray)
-RGB_TO_KCMY_FUNC(fast_gray)
-RGB_TO_KCMY_FUNC(rgb)
-RGB_TO_KCMY_FUNC(fast_rgb)
+RGB_TO_KCMY_FUNC(gray8)
+RGB_TO_KCMY_FUNC(fast_gray8)
+RGB_TO_KCMY_FUNC(rgb8)
+RGB_TO_KCMY_FUNC(fast_rgb8)
 
 static unsigned
 gray_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
@@ -1272,7 +1275,7 @@ cmyk_to_kcmy_line_art(stp_const_vars_t vars, const unsigned char *in,
 	}
     }
   return z;
-}      
+}
 
 static unsigned
 gray_to_rgb_line_art(stp_const_vars_t vars, const unsigned char *in,
@@ -1519,7 +1522,7 @@ cmyk_to_gray_line_art(stp_const_vars_t vars, const unsigned char *in,
     }
   return z;
 }
-      
+
 
 static unsigned
 cmyk_8_to_kcmy(stp_const_vars_t vars, const unsigned char *in,
@@ -1574,7 +1577,7 @@ cmyk_8_to_gray(stp_const_vars_t vars, const unsigned char *in,
   int i;
   int j;
   int nz[4];
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color")); 
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
 
   memset(nz, 0, sizeof(nz));
   if (!lut->cmyk_lut)
@@ -1603,23 +1606,21 @@ raw_to_raw(stp_const_vars_t vars, const unsigned char *in,
   int j;
   unsigned retval = 0;
   int nz[32];
-  int colors;
   const unsigned short *usin = (const unsigned short *) in;
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  colors = lut->image_bpp / 2;
 
   memset(nz, 0, sizeof(nz));
   for (i = 0; i < lut->image_width; i++)
     {
-      for (j = 0; j < colors; j++)
+      for (j = 0; j < lut->image_channels; j++)
 	{
 	  nz[j] |= usin[j];
 	  out[j] = usin[j];
 	}
-      usin += colors;
-      out += colors;
+      usin += lut->image_channels;
+      out += lut->image_channels;
     }
-  for (j = 0; j < colors; j++)
+  for (j = 0; j < lut->image_channels; j++)
     if (nz[j] == 0)
       retval |= (1 << j);
   return retval;
@@ -1691,13 +1692,14 @@ stpi_color_traditional_get_row(stp_const_vars_t v,
 			       unsigned *zero_mask)
 {
   const lut_t *lut = (const lut_t *)(stpi_get_component_data(v, "Color"));
+  int bytes_to_get = ((lut->image_channels * lut->image_bits_per_channel *
+		       lut->image_width) + 7) / 8;
   unsigned zero;
-  if (stpi_image_get_row(image, lut->in_data,
-			 lut->image_width * lut->image_bpp, row)
+  if (stpi_image_get_row(image, lut->in_data, bytes_to_get, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
   if (!lut->channels_are_initialized)
-    initialize_channels((stp_vars_t)v, image);
+    initialize_channels((stp_vars_t) v, image);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
   if (zero_mask)
     *zero_mask = zero;
@@ -1724,8 +1726,10 @@ allocate_lut(void)
   ret->sat_map = NULL;
   ret->gcr_curve = NULL;
   ret->steps = 0;
-  ret->image_bpp = 0;
+  ret->image_bits_per_channel = 0;
+  ret->image_channels = 0;
   ret->image_width = 0;
+  ret->out_channels = 0;
   ret->in_data = NULL;
   ret->colorfunc = NULL;
   ret->cmy_tmp = NULL;
@@ -1756,11 +1760,15 @@ copy_lut(void *vlut)
     dest->gcr_curve = stp_curve_create_copy(src->gcr_curve);
   dest->steps = src->steps;
   dest->colorfunc = src->colorfunc;
-  dest->image_bpp = src->image_bpp;
+  dest->image_bits_per_channel = src->image_bits_per_channel;
+  dest->image_channels = src->image_channels;
+  dest->out_channels = src->out_channels;
   dest->image_width = src->image_width;
   dest->cmy_tmp = NULL;		/* Don't copy working storage */
   if (src->in_data)
-    dest->in_data = stpi_malloc(src->image_width * src->image_bpp);
+    dest->in_data =
+      stpi_malloc(((src->image_width * src->image_bits_per_channel *
+		    src->image_channels) + 7) / 8);
   else
     dest->in_data = NULL;
   return dest;
@@ -1952,8 +1960,17 @@ compute_one_lut(stp_curve_t lut_curve, stp_const_curve_t curve,
   }
 }
 
+#if 0
 static void
-stpi_compute_lut(stp_vars_t v, size_t steps)
+stpi_compute_lut(stp_vars_t v, size_t steps, stpi_color_model_t color_model)
+{
+  lut_t *lut = allocate_lut();
+  stpi_allocate_component_data(v, "Color", copy_lut, free_lut, lut);
+}
+#endif
+
+static void
+stpi_compute_lut(stp_vars_t v, size_t steps, stpi_color_model_t color_model)
 {
   stp_const_curve_t hue = NULL;
   stp_const_curve_t lum = NULL;
@@ -2081,19 +2098,24 @@ break
 static int
 stpi_color_traditional_init(stp_vars_t v,
 			    stp_image_t *image,
-			    size_t steps)
+			    size_t steps,
+			    stpi_color_model_t color_model)
 {
   const char *image_type = stp_get_string_parameter(v, "ImageType");
   const char *color_correction = stp_get_string_parameter(v, "ColorCorrection");
   int itype = 0;
-  int image_bpp = stpi_image_bpp(image);
+  stp_image_type_t stp_image_type = stpi_image_type(image);
+  int image_channels = stpi_image_channels(image);
+  int image_bits_per_channel = stpi_image_bits_per_channel(image);
   lut_t *lut;
   if (steps != 256 && steps != 65536)
     return -1;
 
-  stpi_compute_lut(v, steps);
+  stpi_compute_lut(v, steps, color_model);
   lut = (lut_t *)(stpi_get_component_data(v, "Color"));
-  lut->image_bpp = image_bpp;
+  lut->image_channels = image_channels;
+  lut->image_bits_per_channel = image_bits_per_channel;
+  lut->image_type = stp_image_type;
   lut->image_width = stpi_image_width(image);
   if (image_type && strcmp(image_type, "None") != 0)
     {
@@ -2169,7 +2191,7 @@ stpi_color_traditional_init(stp_vars_t v,
 	    default:
 	      SET_NULL_COLORFUNC;
 	      SET_COLORFUNC(NULL);
-	    }	      
+	    }
 	  break;
 	case 8:
 	  switch (itype)
@@ -2184,7 +2206,7 @@ stpi_color_traditional_init(stp_vars_t v,
 	    default:
 	      SET_NULL_COLORFUNC;
 	      SET_COLORFUNC(NULL);
-	    }	      
+	    }
 	  break;
 	default:
 	  SET_NULL_COLORFUNC;

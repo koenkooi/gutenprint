@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.69 2003/07/22 12:22:55 rlk Exp $"
+ * "$Id: print-ps.c,v 1.69.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -352,8 +352,7 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
     int		order;
   }		commands[4];
   int           image_height,
-                image_width,
-                image_bpp;
+		image_width;
   stp_vars_t	nv = stp_vars_create_copy(v);
   if (!resolution)
     resolution = "";
@@ -376,7 +375,6 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
   */
 
   stpi_image_init(image);
-  image_bpp = stpi_image_bpp(image);
 
  /*
   * Compute the output size...
@@ -560,7 +558,10 @@ ps_print(stp_const_vars_t v, stp_image_t *image)
       stpi_channel_add(nv, 2, 0, 1.0);
     }
 
-  out_channels = stpi_color_init(nv, image, 256);
+  if (output_type == OUTPUT_COLOR)
+    out_channels = stpi_color_init(nv, image, 256, STPI_COLOR_RGB);
+  else
+    out_channels = stpi_color_init(nv, image, 256, STPI_COLOR_WHITE);
 
   if (model == 0)
   {

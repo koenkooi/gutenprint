@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.9 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: sequence.c,v 1.9.2.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -424,7 +424,7 @@ stpi_sequence_create_from_xmltree(mxml_node_t *da)
 			"read aborted: too little data "
 			"(n=%d, needed %d)\n", i, point_count);
 	  goto error;
-	}	
+	}
     }
 
   return ret;

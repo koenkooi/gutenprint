@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-node.c,v 1.4 2003/07/23 01:51:27 rlk Exp $"
+ * "$Id: mxml-node.c,v 1.4.2.1 2003/08/18 23:29:20 rlk Exp $"
  *
  * Node support code for mini-XML, a small XML-like file parsing library.
  *
@@ -379,7 +379,7 @@ stpi_mxmlNewReal(mxml_node_t *parent,	/* I - Parent node or MXML_NO_PARENT */
  * list. The constant MXML_NO_PARENT can be used to specify that the new
  * text node has no parent. The whitespace parameter is used to specify
  * whether leading whitespace is present before the node. The text
- * string must be nul-terminated and is copied into the new node.  
+ * string must be nul-terminated and is copied into the new node.
  */
 
 mxml_node_t *				/* O - New node */
@@ -490,5 +490,5 @@ mxml_new(mxml_node_t *parent,		/* I - Parent node */
 
 
 /*
- * End of "$Id: mxml-node.c,v 1.4 2003/07/23 01:51:27 rlk Exp $".
+ * End of "$Id: mxml-node.c,v 1.4.2.1 2003/08/18 23:29:20 rlk Exp $".
  */

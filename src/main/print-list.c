@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.13 2003/06/01 16:07:05 rlk Exp $"
+ * "$Id: print-list.c,v 1.13.4.1 2003/08/18 23:31:20 rlk Exp $"
  *
  *   libgimpprint list functions.  A doubly-linked list
  *   implementation, with callbacks for freeing, sorting, and
@@ -68,7 +68,7 @@ typedef struct stpi_internal_list_head
   char *long_name_cache;
   struct stpi_internal_list_node *long_name_cache_node;
 } stpi_internal_list_head_t;
-  
+
 static void
 set_name_cache(stpi_internal_list_head_t *lh,
 	       const char *name,
@@ -81,7 +81,7 @@ set_name_cache(stpi_internal_list_head_t *lh,
     lh->name_cache = stpi_strdup(name);
   lh->name_cache_node = cache;
 }
-  
+
 static void
 set_long_name_cache(stpi_internal_list_head_t *lh,
 		    const char *long_name,
@@ -117,7 +117,7 @@ null_list(void)
 {
   stpi_erprintf("Null stpi_list_t! Please report this bug.\n");
   stpi_abort();
-}  
+}
 
 static void
 bad_list(void)
@@ -380,7 +380,7 @@ stpi_list_get_item_by_name(const stpi_list_t *list, const char *name)
       if (strcmp(name, lh->name_cache) == 0 &&
 	  strcmp(name, lh->namefunc(ln->data)) == 0)
 	return (stpi_list_item_t *) ln;
-      
+
       /* If not, check the next item in case we're searching the list */
       ln = ln->next;
       if (ln)
@@ -450,7 +450,7 @@ stpi_list_get_item_by_long_name(const stpi_list_t *list, const char *long_name)
       if (strcmp(long_name, lh->long_name_cache) == 0 &&
 	  strcmp(long_name, lh->long_namefunc(ln->data)) == 0)
 	return (stpi_list_item_t *) ln;
-      
+
       /* If not, check the next item in case we're searching the list */
       ln = ln->next;
       if (ln)
