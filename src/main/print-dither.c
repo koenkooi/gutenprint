@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.9 2001/02/11 18:10:54 rlk Exp $"
+ * "$Id: print-dither.c,v 1.10 2001/02/18 16:21:18 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2700,6 +2700,7 @@ stp_dither_cmyk_ed(const unsigned short  *rgb,	/* I - RGB pixels */
       QUANT(7);
 
       k = USMIN(c, USMIN(m, y));
+      bk = 0;
 
       /*
        * At this point we've computed the basic CMYK separations.
