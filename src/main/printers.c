@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.25 2003/01/10 04:57:59 rlk Exp $"
+ * "$Id: printers.c,v 1.26 2003/01/11 01:32:59 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -348,7 +348,10 @@ verify_string_param(const stp_vars_t v, const char *parameter,
       return answer;
     }
   else
-    return 1;
+    {
+      stp_string_list_free(desc->bounds.str);
+      return 1;
+    }
 }
 
 static int
@@ -422,6 +425,8 @@ verify_curve_param(const stp_vars_t v, const char *parameter,
 	    }
 	}
     }
+  if (desc->bounds.curve)
+    stp_curve_destroy(desc->bounds.curve);
   return answer;
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.43 2003/01/09 03:05:03 rlk Exp $"
+ * "$Id: print-color.c,v 1.44 2003/01/11 01:32:58 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1942,7 +1942,8 @@ stp_color_describe_parameter(const stp_vars_t v, const char *name,
 	    {
 	    case STP_PARAMETER_TYPE_CURVE:
 	      description->deflt.curve = *(param->defval);
-	      description->bounds.curve = *(param->defval);
+	      description->bounds.curve =
+		stp_curve_allocate_copy(*(param->defval));
 	      break;
 	    default:
 	      break;

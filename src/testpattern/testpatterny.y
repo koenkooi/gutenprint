@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.7 2002/11/22 02:16:59 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.8 2003/01/11 01:32:57 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -143,7 +143,7 @@ ink_limit: INK_LIMIT tDOUBLE
 	{ ink_limit = $2; }
 ;
 printer: PRINTER tSTRING
-	{ printer = c_strdup($2); }
+	{ printer = $2; }
 ;
 parameter: PARAMETER tSTRING tSTRING
 	{ stp_set_string_parameter(tv, $2, $3); }

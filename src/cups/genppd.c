@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.55 2003/01/05 23:06:23 rlk Exp $"
+ * "$Id: genppd.c,v 1.56 2003/01/11 01:32:57 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -350,6 +350,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
 	      return (1);
 	    }
 	}
+      free(models);
     }
   else
     {
@@ -363,6 +364,16 @@ main(int  argc,			    /* I - Number of command-line arguments */
     }
   if (!verbose)
     fprintf(stderr, " done.\n");
+  if (langs)
+    {
+      char **langs_tmp = langs;
+      while (*langs_tmp)
+	{
+	  free(*langs_tmp);
+	  langs_tmp++;
+	}
+      free(langs);
+    }
 
   return (0);
 }
@@ -862,10 +873,9 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
                opt->name, opt->text, opt->name);
     }
 
-    stp_string_list_free(desc.bounds.str);
-
     gzputs(fp, "*CloseUI: *MediaType\n\n");
   }
+  stp_string_list_free(desc.bounds.str);
 
  /*
   * Input slots...
@@ -887,10 +897,9 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
                opt->name, opt->text, opt->name);
     }
 
-    stp_string_list_free(desc.bounds.str);
-
     gzputs(fp, "*CloseUI: *InputSlot\n\n");
   }
+  stp_string_list_free(desc.bounds.str);
 
  /*
   * Resolutions...
@@ -995,10 +1004,9 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 		 opt->name, opt->text, opt->name);
       }
 
-      stp_string_list_free(desc.bounds.str);
-
       gzputs(fp, "*CloseUI: *stpInkType\n\n");
     }
+    stp_string_list_free(desc.bounds.str);
 
    /*
     * Advanced STP options...
@@ -1078,5 +1086,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.55 2003/01/05 23:06:23 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.56 2003/01/11 01:32:57 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.3 2003/01/07 18:34:51 rleigh Exp $"
+ * "$Id: xml.c,v 1.4 2003/01/11 01:32:59 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -89,6 +89,7 @@ int stp_xml_init(void)
   stp_path_split(dir_list, getenv("STP_DATA_PATH"));
   stp_path_split(dir_list, PKGXMLDATADIR);
   file_list = stp_path_search(dir_list, ".xml");
+  stp_list_destroy(dir_list);
 
   /* Parse each XML file */
   item = stp_list_get_start(file_list);
@@ -101,6 +102,7 @@ int stp_xml_init(void)
       stp_xml_parse_file((const char *) stp_list_item_get_data(item));
       item = stp_list_item_next(item);
     }
+  stp_list_destroy(file_list);
 
   /* Restore libXML memory functions to their previous state */
   xmlMemSetup (xml_free_func,
@@ -362,8 +364,10 @@ stp_xml_process_printer(xmlNodePtr printer,           /* The printer node */
 
   outprinter->cookie = COOKIE_PRINTER;
 
-  stp_set_driver(outprinter->printvars,
-		 (const char *) xmlGetProp(printer, (const xmlChar *) "driver"));
+  stmp = xmlGetProp(printer, (const xmlChar *) "driver");
+  stp_set_driver(outprinter->printvars, (const char *) stmp);
+  xmlFree(stmp);
+    
   outprinter->long_name =
     (char *) xmlGetProp(printer, (const xmlChar *) "name");
   outprinter->family = stp_strdup((const char *) family);
