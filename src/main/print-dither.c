@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.115 2003/01/14 00:23:42 rlk Exp $"
+ * "$Id: print-dither.c,v 1.115.2.1 2003/01/14 01:43:54 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -144,8 +144,6 @@ typedef struct dither_channel
 				/* to the matrix value. */
   int k_level;			/* Amount of each ink (in 64ths) required */
 				/* to create equivalent black */
-  int darkness;			/* Perceived "darkness" of each ink, */
-				/* in 64ths, to calculate CMY-K transitions */
   int nlevels;
   unsigned bit_max;
   unsigned signif_bits;
@@ -180,13 +178,8 @@ typedef struct dither
   int dst_width;		/* Output width */
 
   int density;			/* Desired density, 0-1.0 (scaled 0-65535) */
-  int black_density;		/* Desired density, 0-1.0 (scaled 0-65535) */
-  int k_lower;			/* Transition range (lower/upper) for CMY */
-  int k_upper;			/* vs. K */
   int density2;			/* Density * 2 */
   int densityh;			/* Density / 2 */
-  unsigned dlb_range;
-  unsigned bound_range;
 
   int spread;			/* With Floyd-Steinberg, how widely the */
   int spread_mask;		/* error is distributed.  This should be */
@@ -236,11 +229,6 @@ typedef struct dither
 typedef void ditherfunc_t(const unsigned short *, int, struct dither *, int, int);
 
 static ditherfunc_t
-  stp_dither_cmyk_fast,
-  stp_dither_cmyk_very_fast,
-  stp_dither_cmyk_ordered,
-  stp_dither_cmyk_ed,
-  stp_dither_cmyk_et,
   stp_dither_raw_cmyk_fast,
   stp_dither_raw_cmyk_very_fast,
   stp_dither_raw_cmyk_ordered,
@@ -280,6 +268,15 @@ static const unsigned sq2[] =
 static const stp_parameter_t dither_parameters[] =
 {
   {
+    "Density", N_("Density"),
+    N_("Adjust the density (amount of ink) of the print. "
+       "Reduce the density if the ink bleeds through the "
+       "paper or smears; increase the density if black "
+       "regions are not solid."),
+    STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1
+  },
+  {
     "DitherAlgorithm", N_("Dither Algorithm"),
     N_("Choose the dither algorithm to be used.\n"
        "Adaptive Hybrid usually produces the best all-around quality.\n"
@@ -316,7 +313,7 @@ stp_dither_describe_parameter(const stp_vars_t v, const char *name,
   description->deflt.str = NULL;
   if (strcmp(name, "DitherAlgorithm") == 0)
     {
-      stp_fill_parameter_settings(description, &(dither_parameters[0]));
+      stp_fill_parameter_settings(description, &(dither_parameters[1]));
       description->bounds.str = stp_string_list_allocate();
       for (i = 0; i < num_dither_algos; i++)
 	{
@@ -326,6 +323,13 @@ stp_dither_describe_parameter(const stp_vars_t v, const char *name,
 	}
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
+    }
+  else if (strcmp(name, "Density") == 0)
+    {
+      stp_fill_parameter_settings(description, &(dither_parameters[0]));
+      description->bounds.dbl.upper = 2.0;
+      description->bounds.dbl.lower = 0.1;
+      description->deflt.dbl = 1.0;
     }
 }
 
@@ -409,7 +413,7 @@ stp_dither_data_allocate(void)
 
 void
 stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
-		unsigned channel, unsigned subchannel)
+		       unsigned channel, unsigned subchannel)
 {
   stp_dither_channel_t *chan;
   if (channel >= d->channel_count)
@@ -502,23 +506,6 @@ stp_set_dither_function(dither_t *d, int image_bpp)
 	  RETURN_DITHERFUNC(stp_dither_raw_ed, d->v);
 	}
       break;
-    case OUTPUT_COLOR:
-      d->n_channels = 4;
-      d->n_input_channels = 3;
-      switch (d->dither_type)
-	{
-	case D_FAST:
-	  RETURN_DITHERFUNC(stp_dither_cmyk_fast, d->v);
-	case D_VERY_FAST:
-	  RETURN_DITHERFUNC(stp_dither_cmyk_very_fast, d->v);
-	case D_ORDERED:
-	  RETURN_DITHERFUNC(stp_dither_cmyk_ordered, d->v);
-	case D_EVENTONE:
-	  RETURN_DITHERFUNC(stp_dither_cmyk_et, d->v);
-	default:
-	  RETURN_DITHERFUNC(stp_dither_cmyk_ed, d->v);
-	}
-      break;
     case OUTPUT_RAW_CMYK:
       d->n_channels = 4;
       d->n_input_channels = 4;
@@ -540,7 +527,7 @@ stp_set_dither_function(dither_t *d, int image_bpp)
   RETURN_DITHERFUNC(NULL, d->v);
 }
 
-void *
+void
 stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 		int xdpi, int ydpi)
 {
@@ -643,18 +630,13 @@ stp_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   d->dst_width = out_width;
 
   stp_dither_set_ink_spread(d, 13);
-  stp_dither_set_black_lower(d, .4);
-  stp_dither_set_black_upper(d, .7);
   for (i = 0; i <= d->n_channels; i++)
     {
       stp_dither_set_black_level(d, i, 1.0);
       stp_dither_set_randomizer(d, i, 1.0);
     }
-  stp_dither_set_ink_darkness(d, ECOLOR_C, 2);
-  stp_dither_set_ink_darkness(d, ECOLOR_M, 2);
-  stp_dither_set_ink_darkness(d, ECOLOR_Y, 1);
   stp_dither_set_density(d, 1.0);
-  return d;
+  stp_set_dither_data(v, d);
 }
 
 static void
@@ -689,21 +671,21 @@ postinit_matrix(dither_t *d, int x_shear, int y_shear)
 }
 
 void
-stp_dither_set_iterated_matrix(void *vd, size_t edge, size_t iterations,
+stp_dither_set_iterated_matrix(stp_vars_t v, size_t edge, size_t iterations,
 			       const unsigned *data, int prescaled,
 			       int x_shear, int y_shear)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   preinit_matrix(d);
   stp_dither_matrix_iterated_init(&(d->dither_matrix), edge, iterations, data);
   postinit_matrix(d, x_shear, y_shear);
 }
 
 void
-stp_dither_set_matrix(void *vd, const stp_dither_matrix_t *matrix,
+stp_dither_set_matrix(stp_vars_t v, const stp_dither_matrix_t *matrix,
 		      int transposed, int x_shear, int y_shear)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int x = transposed ? matrix->y : matrix->x;
   int y = transposed ? matrix->x : matrix->y;
   preinit_matrix(d);
@@ -719,18 +701,18 @@ stp_dither_set_matrix(void *vd, const stp_dither_matrix_t *matrix,
 }
 
 void
-stp_dither_set_matrix_from_curve(void *vd, const stp_curve_t curve)
+stp_dither_set_matrix_from_curve(stp_vars_t v, const stp_curve_t curve)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   preinit_matrix(d);
   stp_dither_matrix_init_from_curve(&(d->dither_matrix), curve);
   postinit_matrix(d, 0, 0);
 }
 
 void
-stp_dither_set_transition(void *vd, double exponent)
+stp_dither_set_transition(stp_vars_t v, double exponent)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   unsigned rc = 1 + (unsigned) ceil(sqrt(PHYSICAL_CHANNEL_COUNT(d)));
   int i, j;
   int color = 0;
@@ -765,63 +747,33 @@ stp_dither_set_transition(void *vd, double exponent)
 }
 
 void
-stp_dither_set_density(void *vd, double density)
+stp_dither_set_density(stp_vars_t v, double density)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (density > 1)
     density = 1;
   else if (density < 0)
     density = 0;
-  d->k_upper = d->k_upper * density;
-  d->k_lower = d->k_lower * density;
   d->density = (int) ((65535 * density) + .5);
   d->density2 = 2 * d->density;
   d->densityh = d->density / 2;
-  d->dlb_range = d->density - d->k_lower;
-  d->bound_range = d->k_upper - d->k_lower;
   d->d_cutoff = d->density / 16;
   d->adaptive_limit = d->density * d->adaptive_input;
-  stp_dither_set_black_density(vd, density);
 }
 
 void
-stp_dither_set_black_density(void *vd, double density)
+stp_dither_set_adaptive_limit(stp_vars_t v, double limit)
 {
-  dither_t *d = (dither_t *) vd;
-  if (density > 1)
-    density = 1;
-  else if (density < 0)
-    density = 0;
-  d->black_density = (int) ((65535 * density) + .5);
-}
-
-void
-stp_dither_set_adaptive_limit(void *vd, double limit)
-{
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   d->adaptive_input = limit;
   d->adaptive_input_set = 1;
   d->adaptive_limit = d->density * limit;
 }
 
 void
-stp_dither_set_black_lower(void *vd, double k_lower)
+stp_dither_set_ink_spread(stp_vars_t v, int spread)
 {
-  dither_t *d = (dither_t *) vd;
-  d->k_lower = (int) (k_lower * 65535);
-}
-
-void
-stp_dither_set_black_upper(void *vd, double k_upper)
-{
-  dither_t *d = (dither_t *) vd;
-  d->k_upper = (int) (k_upper * 65535);
-}
-
-void
-stp_dither_set_ink_spread(void *vd, int spread)
-{
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   SAFE_FREE(d->offset0_table);
   SAFE_FREE(d->offset1_table);
   if (spread >= 16)
@@ -847,36 +799,18 @@ stp_dither_set_ink_spread(void *vd, int spread)
 }
 
 void
-stp_dither_set_black_level(void *vd, int i, double v)
+stp_dither_set_randomizer(stp_vars_t v, int i, double v)
 {
-  dither_t *d = (dither_t *) vd;
-  if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d))
-    return;
-  PHYSICAL_CHANNEL(d, i).k_level = (int) v * 64;
-}
-
-void
-stp_dither_set_randomizer(void *vd, int i, double v)
-{
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d))
     return;
   PHYSICAL_CHANNEL(d, i).randomizer = v * 65535;
 }
 
 void
-stp_dither_set_ink_darkness(void *vd, int i, double v)
+stp_dither_set_light_ink(stp_vars_t v, int i, double v, double density)
 {
-  dither_t *d = (dither_t *) vd;
-  if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d))
-    return;
-  PHYSICAL_CHANNEL(d, i).darkness = (int) (v * 64);
-}
-
-void
-stp_dither_set_light_ink(void *vd, int i, double v, double density)
-{
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   stp_dither_range_simple_t range[2];
   if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d) || v <= 0 || v > 1)
     return;
@@ -888,7 +822,7 @@ stp_dither_set_light_ink(void *vd, int i, double v, double density)
   range[1].subchannel = 0;
   range[1].value = 1;
   range[1].dot_size = 1;
-  stp_dither_set_ranges(vd, i, 2, range, density);
+  stp_dither_set_ranges(v, i, 2, range, density);
 }
 
 static void
@@ -1095,8 +1029,10 @@ stp_dither_set_generic_ranges_full(dither_t *d, dither_channel_t *s,
 	}
       s->ranges[j].lower = &s->ink_list[2*j];
       s->ranges[j].upper = &s->ink_list[2*j+1];
-      s->ranges[j].range_span = s->ranges[j].upper->range - s->ranges[j].lower->range;
-      s->ranges[j].value_span = s->ranges[j].upper->value - s->ranges[j].lower->value;
+      s->ranges[j].range_span =
+	s->ranges[j].upper->range - s->ranges[j].lower->range;
+      s->ranges[j].value_span =
+	s->ranges[j].upper->value - s->ranges[j].lower->value;
       j++;
     }
   s->ink_list[2*j] = s->ink_list[2*(j-1)+1];
@@ -1105,25 +1041,26 @@ stp_dither_set_generic_ranges_full(dither_t *d, dither_channel_t *s,
   s->ink_list[2*j+1].value = 65535;	/* ??? Is this correct ??? */
   s->ranges[j].lower = &s->ink_list[2*j];
   s->ranges[j].upper = &s->ink_list[2*j+1];
-  s->ranges[j].range_span = s->ranges[j].upper->range - s->ranges[j].lower->range;
+  s->ranges[j].range_span =
+    s->ranges[j].upper->range - s->ranges[j].lower->range;
   s->ranges[j].value_span = 0;
   s->nlevels = j+1;
   stp_dither_finalize_ranges(d, s);
 }
 
 void
-stp_dither_set_ranges(void *vd, int color, int nlevels,
+stp_dither_set_ranges(stp_vars_t v, int color, int nlevels,
 		      const stp_dither_range_simple_t *ranges, double density)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (color < 0 || color >= PHYSICAL_CHANNEL_COUNT(d))
     return;
-  stp_dither_set_generic_ranges(d, &(PHYSICAL_CHANNEL(d, color)), nlevels,
+  stp_dither_set_generic_ranges(v, &(PHYSICAL_CHANNEL(d, color)), nlevels,
 				ranges, density);
 }
 
 void
-stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
+stp_dither_set_ranges_simple(stp_vars_t v, int color, int nlevels,
 			     const double *levels, double density)
 {
   stp_dither_range_simple_t *r =
@@ -1136,27 +1073,27 @@ stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
       r[i].value = levels[i];
       r[i].subchannel = 0;
     }
-  stp_dither_set_ranges(vd, color, nlevels, r, density);
+  stp_dither_set_ranges(v, color, nlevels, r, density);
   stp_free(r);
 }
 
 void
-stp_dither_set_ranges_full(void *vd, int color, int nlevels,
+stp_dither_set_ranges_full(stp_vars_t v, int color, int nlevels,
 			   const stp_dither_range_full_t *ranges,
 			   double density)
 {
-  dither_t *d = (dither_t *) vd;
-  stp_dither_set_generic_ranges_full(d, &(PHYSICAL_CHANNEL(d, color)), nlevels,
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
+  stp_dither_set_generic_ranges_full(v, &(PHYSICAL_CHANNEL(d, color)), nlevels,
 				     ranges, density);
 }
 
 void
-stp_dither_set_shades(void *vd, int color, int nshades,
+stp_dither_set_shades(stp_vars_t v, int color, int nshades,
 		      const stp_shade_t *shades, double density)
 {
   int i, j;
 
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   dither_channel_t *dc = &(PHYSICAL_CHANNEL(d, color));
 
   if (dc->shades) {
@@ -1203,11 +1140,12 @@ stp_dither_set_shades(void *vd, int color, int nshades,
 
 
 void
-stp_dither_free(void *vd)
+stp_dither_free(stp_vars_t v)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int i;
   int j;
+  stp_set_dither_data(v, NULL);
   for (j = 0; j < PHYSICAL_CHANNEL_COUNT(d); j++)
     {
       SAFE_FREE(PHYSICAL_CHANNEL(d, j).vals);
@@ -1247,9 +1185,9 @@ stp_dither_free(void *vd)
 }
 
 int
-stp_dither_get_first_position(void *vd, int color, int subchannel)
+stp_dither_get_first_position(stp_vars_t v, int color, int subchannel)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (color < 0 || color >= PHYSICAL_CHANNEL_COUNT(d))
     return -1;
   if (subchannel < 0 || subchannel >= PHYSICAL_CHANNEL(d, color).subchannels)
@@ -1258,9 +1196,9 @@ stp_dither_get_first_position(void *vd, int color, int subchannel)
 }
 
 int
-stp_dither_get_last_position(void *vd, int color, int subchannel)
+stp_dither_get_last_position(stp_vars_t v, int color, int subchannel)
 {
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   if (color < 0 || color >= PHYSICAL_CHANNEL_COUNT(d))
     return -1;
   if (subchannel < 0 || subchannel >= PHYSICAL_CHANNEL(d, color).subchannels)
@@ -1852,118 +1790,6 @@ print_color_fast(const dither_t *d, dither_channel_t *dc, int x, int y,
     }
 }
 
-static inline void
-update_cmyk(dither_t *d)
-{
-  int ak;
-  int i;
-  int kdarkness = 0;
-  unsigned ks, kl;
-  int ub, lb;
-  int ok;
-  int bk;
-  unsigned density;
-  int k = CHANNEL(d, ECOLOR_K).o;
-
-  ub = d->k_upper;
-  lb = d->k_lower;
-  density = d->density;
-
-  /*
-   * Calculate total ink amount.
-   * If there is a lot of ink, black gets added sooner. Saves ink
-   * and with a lot of ink the black doesn't show as speckles.
-   *
-   * k already contains the grey contained in CMY.
-   * First we find out if the color is darker than the K amount
-   * suggests, and we look up where is value is between
-   * lowerbound and density:
-   */
-
-  for (i = 1; i < CHANNEL_COUNT(d); i++)
-    kdarkness += CHANNEL(d, i).o * CHANNEL(d, i).darkness / 64;
-  kdarkness -= d->density2;
-
-  if (kdarkness > (k + k + k))
-    ok = kdarkness / 3;
-  else
-    ok = k;
-  if (ok <= lb)
-    kl = 0;
-  else if (ok >= density)
-    kl = density;
-  else
-    kl = (unsigned) ( ok - lb ) * density / d->dlb_range;
-
-  /*
-   * We have a second value, ks, that will be the scaler.
-   * ks is initially showing where the original black
-   * amount is between upper and lower bounds:
-   */
-
-  if (k >= ub)
-    ks = density;
-  else if (k <= lb)
-    ks = 0;
-  else
-    ks = (unsigned) (k - lb) * density / d->bound_range;
-
-  /*
-   * ks is then processed by a second order function that produces
-   * an S curve: 2ks - ks^2. This is then multiplied by the
-   * darkness value in kl. If we think this is too complex the
-   * following line can be tried instead:
-   * ak = ks;
-   */
-  ak = ks;
-  if (kl == 0 || ak == 0)
-    k = 0;
-  else if (ak == density)
-    k = kl;
-  else
-    k = (unsigned) kl * (unsigned) ak / density;
-  ok = k;
-  bk = k;
-  if (bk > 0 && density != d->black_density)
-    bk = (unsigned) bk * (unsigned) d->black_density / density;
-  if (bk > 65535)
-    bk = 65535;
-
-  if (k && ak && ok > 0)
-    {
-      int i;
-      /*
-       * Because black is always fairly neutral, we do not have to
-       * calculate the amount to take out of CMY. The result will
-       * be a bit dark but that is OK. If things are okay CMY
-       * cannot go negative here - unless extra K is added in the
-       * previous block. We multiply by ak to prevent taking out
-       * too much. This prevents dark areas from becoming very
-       * dull.
-       */
-
-      if (ak == density)
-	ok = k;
-      else
-	ok = (unsigned) k * (unsigned) ak / density;
-
-      for (i = 1; i < CHANNEL_COUNT(d); i++)
-	{
-	  if (CHANNEL(d, i).k_level == 64)
-	    CHANNEL(d, i).v -= ok;
-	  else
-	    CHANNEL(d, i).v -= (ok * CHANNEL(d, i).k_level) >> 6;
-	  if (CHANNEL(d, i).v < 0)
-	    CHANNEL(d, i).v = 0;
-	}
-    }
-  else
-    for (i = 1; i < CHANNEL_COUNT(d); i++)
-      CHANNEL(d, i).v = CHANNEL(d, i).o;
-  CHANNEL(d, ECOLOR_K).b = bk;
-  CHANNEL(d, ECOLOR_K).v = k;
-}
-
 static int
 shared_ed_initializer(dither_t *d,
 		      int row,
@@ -2323,494 +2149,6 @@ found_segment:
   }
 }
 
-/*
- * Dithering functions!
- *
- * Documentation moved to README.dither
- */
-
-static void
-stp_dither_cmyk_fast(const unsigned short  *cmy,
-		     int           row,
-		     dither_t 	    *d,
-		     int	       duplicate_line,
-		     int		  zero_mask)
-{
-  int		x,
-		length;
-  unsigned char	bit;
-  int i;
-
-  int dst_width = d->dst_width;
-  int xerror, xstep, xmod;
-
-  if (d->n_ghost_channels)
-    {
-      stp_dither_raw_fast(cmy, row, d, duplicate_line, zero_mask);
-      return;
-    }
-
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
-    return;
-
-  length = (d->dst_width + 7) / 8;
-
-  bit = 128;
-  xstep  = 3 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = 0;
-  x = 0;
-
-  QUANT(14);
-  for (; x != dst_width; x++)
-    {
-      int nonzero = 0;
-      nonzero |= CHANNEL(d, ECOLOR_C).v = cmy[0];
-      nonzero |= CHANNEL(d, ECOLOR_M).v = cmy[1];
-      nonzero |= CHANNEL(d, ECOLOR_Y).v = cmy[2];
-      CHANNEL(d, ECOLOR_C).o = cmy[0];
-      CHANNEL(d, ECOLOR_M).o = cmy[1];
-      CHANNEL(d, ECOLOR_Y).o = cmy[2];
-
-      if (nonzero)
-	{
-	  int ok;
-	  unsigned lb = d->k_lower;
-	  unsigned ub = d->k_upper;
-	  int k = compute_black(d);
-	  if (k < lb)
-	    k = 0;
-	  else if (k < ub)
-	    k = (k - lb) * ub / d->bound_range;
-	  for (i = 1; i < CHANNEL_COUNT(d); i++)
-	    CHANNEL(d, i).v -= k;
-	  ok = k;
-	  if (ok > 0 && d->density != d->black_density)
-	    ok = (unsigned) ok * (unsigned) d->black_density / d->density;
-	  if (ok > 65535)
-	    ok = 65535;
-	  QUANT(15);
-	  CHANNEL(d, ECOLOR_K).v = k;
-	  CHANNEL(d, ECOLOR_K).o = ok;
-
-	  for (i = 0; i < CHANNEL_COUNT(d); i++)
-	    print_color_fast(d, &(CHANNEL(d, i)), x, row, bit, length);
-	  QUANT(16);
-	}
-      ADVANCE_UNIDIRECTIONAL(d, bit, cmy, 3, xerror, xstep, xmod);
-      QUANT(17);
-    }
-}
-
-static void
-stp_dither_cmyk_very_fast(const unsigned short  *cmy,
-			  int           row,
-			  dither_t 	    *d,
-			  int	       duplicate_line,
-			  int		  zero_mask)
-{
-  int		x,
-		length;
-  unsigned char	bit;
-  int i;
-
-  int dst_width = d->dst_width;
-  int xerror, xstep, xmod;
-
-  if (d->n_ghost_channels)
-    {
-      stp_dither_raw_very_fast(cmy, row, d, duplicate_line, zero_mask);
-      return;
-    }
-
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
-    return;
-
-  for (i = 0; i < CHANNEL_COUNT(d); i++)
-    if (!(CHANNEL(d, i).very_fast))
-      {
-	stp_dither_cmyk_fast(cmy, row, d, duplicate_line, zero_mask);
-	return;
-      }
-
-  length = (d->dst_width + 7) / 8;
-
-  bit = 128;
-  xstep  = 3 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = 0;
-  x = 0;
-
-  QUANT(14);
-  for (; x != dst_width; x++)
-    {
-      int nonzero = 0;
-      nonzero |= CHANNEL(d, ECOLOR_C).v = cmy[0];
-      nonzero |= CHANNEL(d, ECOLOR_M).v = cmy[1];
-      nonzero |= CHANNEL(d, ECOLOR_Y).v = cmy[2];
-
-      if (nonzero)
-	{
-	  int k = compute_black(d);
-	  for (i = 1; i < CHANNEL_COUNT(d); i++)
-	    CHANNEL(d, i).v -= k;
-	  QUANT(15);
-	  CHANNEL(d, ECOLOR_K).v = k;
-
-	  for (i = 0; i < CHANNEL_COUNT(d); i++)
-	    {
-	      dither_channel_t *dc = &(CHANNEL(d, i));
-	      if (dc->v > ditherpoint_fast(d, &(dc->dithermat), x))
-		{
-		  set_row_ends(dc, x, 0);
-		  dc->ptrs[0][d->ptr_offset] |= bit;
-		}
-	    }
-	  QUANT(16);
-	}
-      ADVANCE_UNIDIRECTIONAL(d, bit, cmy, 3, xerror, xstep, xmod);
-      QUANT(17);
-    }
-}
-
-static void
-stp_dither_cmyk_ordered(const unsigned short  *cmy,
-			int           row,
-			dither_t 	    *d,
-			int		  duplicate_line,
-			int		  zero_mask)
-{
-  int		x,
-		length;
-  unsigned char	bit;
-  int i;
-
-  int		terminate;
-  int xerror, xstep, xmod;
-
-  if (d->n_ghost_channels)
-    {
-      stp_dither_raw_ordered(cmy, row, d, duplicate_line, zero_mask);
-      return;
-    }
-
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
-    return;
-
-  length = (d->dst_width + 7) / 8;
-
-  bit = 128;
-  xstep  = 3 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = 0;
-  x = 0;
-  terminate = d->dst_width;
-
-  QUANT(6);
-  for (; x != terminate; x ++)
-    {
-      int nonzero = 0;
-      int printed_black = 0;
-      CHANNEL(d, ECOLOR_C).v = cmy[0];
-      CHANNEL(d, ECOLOR_M).v = cmy[1];
-      CHANNEL(d, ECOLOR_Y).v = cmy[2];
-      for (i = 0; i < CHANNEL_COUNT(d); i++)
-	nonzero |= CHANNEL(d, i).o = CHANNEL(d, i).v;
-
-      if (nonzero)
-	{
-	  QUANT(7);
-
-	  CHANNEL(d, ECOLOR_K).o = CHANNEL(d, ECOLOR_K).v = compute_black(d);
-
-	  if (CHANNEL(d, ECOLOR_K).v > 0)
-	    update_cmyk(d);
-
-	  QUANT(9);
-
-	  if (d->density != d->black_density)
-	    CHANNEL(d, ECOLOR_K).v =
-	      CHANNEL(d, ECOLOR_K).v * d->black_density / d->density;
-
-	  for (i = 0; i < CHANNEL_COUNT(d); i++)
-	    {
-	      int tmp = print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit,
-					    length, printed_black);
-	      if (i == ECOLOR_K && d->density <= 45000)
-		printed_black = CHANNEL(d, i).v - tmp;
-	    }
-	  QUANT(12);
-	}
-      ADVANCE_UNIDIRECTIONAL(d, bit, cmy, 3, xerror, xstep, xmod);
-      QUANT(13);
-  }
-}
-
-static void
-stp_dither_cmyk_ed(const unsigned short  *cmy,
-		   int           row,
-		   dither_t 	    *d,
-		   int		  duplicate_line,
-		   int		  zero_mask)
-{
-  int		x,
-	        length;
-  unsigned char	bit;
-  int		i;
-  int		*ndither;
-  int		***error;
-
-  int		terminate;
-  int		direction = row & 1 ? 1 : -1;
-  int xerror, xstep, xmod;
-
-  if (d->n_ghost_channels)
-    {
-      stp_dither_raw_ed(cmy, row, d, duplicate_line, zero_mask);
-      return;
-    }
-
-  length = (d->dst_width + 7) / 8;
-  if (!shared_ed_initializer(d, row, duplicate_line, zero_mask, length,
-			     direction, &error, &ndither))
-    return;
-
-  x = (direction == 1) ? 0 : d->dst_width - 1;
-  bit = 1 << (7 - (x & 7));
-  xstep  = 3 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = (xmod * x) % d->dst_width;
-  terminate = (direction == 1) ? d->dst_width : -1;
-
-  if (direction == -1)
-    cmy += (3 * (d->src_width - 1));
-
-  QUANT(6);
-  for (; x != terminate; x += direction)
-    {
-      int nonzero = 0;
-      int printed_black = 0;
-      CHANNEL(d, ECOLOR_C).v = cmy[0];
-      CHANNEL(d, ECOLOR_M).v = cmy[1];
-      CHANNEL(d, ECOLOR_Y).v = cmy[2];
-      for (i = 0; i < CHANNEL_COUNT(d); i++)
-	nonzero |= (CHANNEL(d, i).o = CHANNEL(d, i).v);
-
-      if (nonzero)
-	{
-	  QUANT(7);
-
-	  CHANNEL(d, ECOLOR_K).v = compute_black(d);
-	  CHANNEL(d, ECOLOR_K).o = CHANNEL(d, ECOLOR_K).v;
-	  CHANNEL(d, ECOLOR_K).b = 0;
-
-	  /*
-	   * At this point we've computed the basic CMYK separations.
-	   * Now we adjust the levels of each to improve the print quality.
-	   */
-
-	  if (CHANNEL(d, ECOLOR_K).v > 0)
-	    update_cmyk(d);
-
-	  for (i = 1; i < CHANNEL_COUNT(d); i++)
-	    CHANNEL(d, i).b = CHANNEL(d, i).v;
-
-	  QUANT(8);
-	  /*
-	   * We've done all of the cmyk separations at this point.
-	   * Now to do the dithering.
-	   *
-	   * At this point:
-	   *
-	   * bk = Amount of black printed with black ink
-	   * ak = Adjusted "raw" K value
-	   * k = raw K value derived from CMY
-	   * oc, om, oy = raw CMY values assuming no K component
-	   * c, m, y = CMY values adjusted for the presence of K
-	   *
-	   * The main reason for this rather elaborate setup, where we have
-	   * 8 channels at this point, is to handle variable intensities
-	   * (in particular light and dark variants) of inks. Very dark regions
-	   * with slight color tints should be printed with dark inks, not with
-	   * the light inks that would be implied by the small amount of
-	   * remnant CMY.
-	   *
-	   * It's quite likely that for simple four-color printers ordinary
-	   * CMYK separations would work.  It's possible that they would work
-	   * for variable dot sizes, too.
-	   */
-
-	  QUANT(9);
-
-	  if (d->density != d->black_density)
-	    CHANNEL(d, ECOLOR_K).v =
-	      CHANNEL(d, ECOLOR_K).v * d->black_density / d->density;
-
-	  CHANNEL(d, ECOLOR_K).o = CHANNEL(d, ECOLOR_K).b;
-
-	  for (i = 0; i < CHANNEL_COUNT(d); i++)
-	    {
-	      int tmp;
-	      CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
-	      tmp = print_color(d, &(CHANNEL(d, i)), x, row, bit, length,
-				printed_black, d->dither_type);
-	      if (i == ECOLOR_K && d->density <= 45000)
-		printed_black = CHANNEL(d, i).v - tmp;
-	      CHANNEL(d, i).v = tmp;
-	    }
-	}
-      else
-	for (i = 0; i < CHANNEL_COUNT(d); i++)
-	  CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
-
-      QUANT(11);
-      for (i = 0; i < CHANNEL_COUNT(d); i++)
-	ndither[i] = update_dither(d, i, d->src_width,
-				   direction, error[i][0], error[i][1]);
-
-      QUANT(12);
-      ADVANCE_BIDIRECTIONAL(d, bit, cmy, direction, 3, xerror, xstep, xmod, error,
-			    CHANNEL_COUNT(d), d->error_rows);
-      QUANT(13);
-    }
-  shared_ed_deinitializer(d, error, ndither);
-  if (direction == -1)
-    reverse_row_ends(d);
-}
-
-/* This code uses the Eventone dither algorithm. This is described
- * at the website http://www.artofcode.com/eventone/
- * This algorithm is covered by US Patents 5,055,942 and 5,917,614
- * and was invented by Raph Levien <raph@acm.org>
- * It was made available to be used free of charge in open source
- * code.
- */
-
-static void
-stp_dither_cmyk_et(const unsigned short  *cmy,
-		   int           row,
-		   dither_t 	 *d,
-		   int		 duplicate_line,
-		   int		 zero_mask)
-{
-  static const int diff_factors[] = {1, 10, 16, 23, 32};
-
-  int		x,
-	        length;
-  unsigned char	bit;
-  int		i;
-
-  int		terminate;
-  int		direction;
-  int		xerror, xstep, xmod;
-  int		aspect = d->y_aspect / d->x_aspect;
-  int		diff_factor;
-  int		range;
-
-  if (d->n_ghost_channels)
-    {
-      stp_dither_raw_et(cmy, row, d, duplicate_line, zero_mask);
-      return;
-    }
-
-  if (!CHANNEL(d,0).shades) {
-    stp_dither_cmyk_ed(cmy, row, d, duplicate_line, zero_mask);
-    return;
-  }
-
-  if (!et_initializer(d, duplicate_line, zero_mask)) return;
-
-  if (aspect >= 4) { aspect = 4; }
-  else if (aspect >= 2) { aspect = 2; }
-  else aspect = 1;
-
-  diff_factor = diff_factors[aspect];
-  length = (d->dst_width + 7) / 8;
-
-  if (row & 1) {
-    direction = 1;
-    x = 0;
-    terminate = d->dst_width;
-    d->ptr_offset = 0;
-  } else {
-    direction = -1;
-    x = d->dst_width - 1;
-    terminate = -1;
-    d->ptr_offset = length - 1;
-    cmy += 3 * (d->src_width - 1);
-  }
-  bit = 1 << (7 - (x & 7));
-  xstep  = 3 * (d->src_width / d->dst_width);
-  xmod   = d->src_width % d->dst_width;
-  xerror = (xmod * x) % d->dst_width;
-
-  for (; x != terminate; x += direction) {
-
-    for (i=1; i < CHANNEL_COUNT(d); i++) {
-      CHANNEL(d, i).o =
-      CHANNEL(d, i).v = cmy[i-1];
-    }
-
-    CHANNEL(d, ECOLOR_K).v =
-    CHANNEL(d, ECOLOR_K).o = compute_black(d);
-    if (CHANNEL(d, ECOLOR_K).v > 0) {
-      update_cmyk(d);				/* Adjust .v in CMY and K */
-    }
-
-    /* At this point, the CMYK separation has been done */
-    /* And the results are in CHANNEL(d, i).v */
-
-    range = 0;
-
-    for (i = 0; i < CHANNEL_COUNT(d); i++) {
-      int inkspot;
-      shade_segment_t *sp;
-      dither_channel_t *dc = &CHANNEL(d, i);
-      ink_defn_t *inkp;
-      ink_defn_t lower, upper;
-
-      advance_eventone_pre(dc, d->eventone, x);
-
-      /* Split data into sub-channels */
-      /* And incorporate error data from previous line */
-      sp =  split_shades(dc, x, &inkspot);
-
-      /* Find which are the two candidate dot sizes */
-      range += find_segment(sp, d->eventone, inkspot, sp->base, &lower, &upper);
-
-      /* Determine whether to print the larger or smaller dot */
-      inkp = &lower;
-      if (range >= 32768) {
-        range -= 65536;
-        inkp = &upper;
-      }
-
-      /* Adjust the error to reflect the dot choice */
-      if (inkp->bits) {
-        sp->value -= 2 * inkp->range;
-        sp->dis = d->eventone->d_sq;
-
-        set_row_ends(dc, x, sp->subchannel);
-
-        /* Do the printing */
-        print_subc(d, dc, inkp, sp->subchannel, bit, length);
-      }
-
-      /* Spread the error around to the adjacent dots */
-      diffuse_error(dc, d->eventone, diff_factor, x, direction);
-    }
-    if (direction == 1)
-      ADVANCE_UNIDIRECTIONAL(d, bit, cmy, 3, xerror, xstep, xmod);
-    else
-      ADVANCE_REVERSE(d, bit, cmy, 3, xerror, xstep, xmod);
-  }
-  if (direction == -1)
-    reverse_row_ends(d);
-}
-
 static void
 stp_dither_raw_cmyk_fast(const unsigned short  *cmyk,
 			 int           row,
@@ -3063,7 +2401,7 @@ stp_dither_raw_cmyk_ed(const unsigned short  *cmyk,
  * at the website http://www.artofcode.com/eventone/
  * This algorithm is covered by US Patents 5,055,942 and 5,917,614
  * and was invented by Raph Levien <raph@acm.org>
- * It was made available to be used free of charge in open source
+ * It was made available to be used free of charge in GPL-licensed
  * code.
  */
 
@@ -3486,13 +2824,13 @@ stp_dither_raw_et(const unsigned short  *raw,
 void
 stp_dither(const unsigned short  *input,
 	   int           row,
-	   void 	  *vd,
+	   void 	  *stp_get_dither_data(v),
 	   stp_dither_data_t *dt,
 	   int		  duplicate_line,
 	   int		  zero_mask)
 {
   int i, j;
-  dither_t *d = (dither_t *) vd;
+  dither_t *d = (dither_t *) stp_get_dither_data(v);
   int ghost_channels = 0;
   for (i = 0; i < PHYSICAL_CHANNEL_COUNT(d); i++)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.25 2003/01/12 22:38:33 rlk Exp $"
+ * "$Id: print-vars.c,v 1.25.4.1 2003/01/14 01:43:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -64,6 +64,9 @@ typedef struct					/* Plug-in variables */
   void  *driver_data;		/* Private data of the family driver module */
   void	*(*copy_driver_data_func)(const stp_vars_t);
   void	(*destroy_driver_data_func)(stp_vars_t);
+  void  *dither_data;		/* Private data of the family dither module */
+  void	*(*copy_dither_data_func)(const stp_vars_t);
+  void	(*destroy_dither_data_func)(stp_vars_t);
   void (*outfunc)(void *data, const char *buffer, size_t bytes);
   void *outdata;
   void (*errfunc)(void *data, const char *buffer, size_t bytes);
@@ -242,6 +245,8 @@ stp_vars_free(stp_vars_t vv)
     (*stp_get_destroy_color_data_func(vv))(vv);
   if (stp_get_destroy_driver_data_func(vv))
     (*stp_get_destroy_driver_data_func(vv))(vv);
+  if (stp_get_destroy_dither_data_func(vv))
+    (*stp_get_destroy_dither_data_func(vv))(vv);
   for (i = 0; i < STP_PARAMETER_TYPE_INVALID; i++)
     stp_list_destroy(v->params[i]);
   SAFE_FREE(v->driver);
@@ -319,6 +324,9 @@ DEF_FUNCS(destroy_color_data_func, destroy_data_func_t, )
 DEF_FUNCS(driver_data, void *, )
 DEF_FUNCS(copy_driver_data_func, copy_data_func_t, )
 DEF_FUNCS(destroy_driver_data_func, destroy_data_func_t, )
+DEF_FUNCS(dither_data, void *, )
+DEF_FUNCS(copy_dither_data_func, copy_data_func_t, )
+DEF_FUNCS(destroy_dither_data_func, destroy_data_func_t, )
 DEF_FUNCS(outfunc, stp_outfunc_t, )
 DEF_FUNCS(errfunc, stp_outfunc_t, )
 
@@ -408,6 +416,12 @@ stp_set_string_parameter(stp_vars_t v, const char *parameter,
   stp_set_verified(v, 0);
 }
 
+void
+stp_clear_string_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_set_string_parameter(v, parameter, NULL);
+}
+
 const char *
 stp_get_string_parameter(const stp_vars_t v, const char *parameter)
 {
@@ -432,6 +446,12 @@ stp_set_raw_parameter(stp_vars_t v, const char *parameter,
   stp_list_t *list = vv->params[STP_PARAMETER_TYPE_RAW];
   set_raw_parameter(list, parameter, value, bytes, STP_PARAMETER_TYPE_RAW);
   stp_set_verified(v, 0);
+}
+
+void
+stp_clear_raw_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_set_raw_parameter(v, parameter, NULL, 0);
 }
 
 const stp_raw_t *
@@ -473,6 +493,12 @@ stp_set_file_parameter_n(stp_vars_t v, const char *parameter,
   set_raw_parameter(list, parameter, value, byte_count,
 		    STP_PARAMETER_TYPE_FILE);
   stp_set_verified(v, 0);
+}
+
+void
+stp_clear_file_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_set_file_parameter(v, parameter, NULL);
 }
 
 const char *
@@ -520,6 +546,12 @@ stp_set_curve_parameter(stp_vars_t v, const char *parameter,
   stp_set_verified(v, 0);
 }
 
+void
+stp_clear_curve_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_set_curve_parameter(v, parameter, NULL);
+}
+
 const stp_curve_t
 stp_get_curve_parameter(const stp_vars_t v, const char *parameter)
 {
@@ -555,6 +587,17 @@ stp_set_int_parameter(stp_vars_t v, const char *parameter, int ival)
       stp_list_item_create(list, NULL, val);
     }
   val->value.ival = ival;
+  stp_set_verified(v, 0);
+}
+
+void
+stp_clear_int_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
+  stp_list_t *list = vv->params[STP_PARAMETER_TYPE_INT];
+  stp_list_item_t *item = stp_list_get_item_by_name(list, parameter);
+  if (item)
+    stp_list_item_destroy(list, item);
   stp_set_verified(v, 0);
 }
 
@@ -599,6 +642,17 @@ stp_set_boolean_parameter(stp_vars_t v, const char *parameter, int ival)
   stp_set_verified(v, 0);
 }
 
+void
+stp_clear_boolean_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
+  stp_list_t *list = vv->params[STP_PARAMETER_TYPE_BOOLEAN];
+  stp_list_item_t *item = stp_list_get_item_by_name(list, parameter);
+  if (item)
+    stp_list_item_destroy(list, item);
+  stp_set_verified(v, 0);
+}
+
 const int
 stp_get_boolean_parameter(const stp_vars_t v, const char *parameter)
 {
@@ -634,6 +688,17 @@ stp_set_float_parameter(stp_vars_t v, const char *parameter, double dval)
       stp_list_item_create(list, NULL, val);
     }
   val->value.dval = dval;
+  stp_set_verified(v, 0);
+}
+
+void
+stp_clear_float_parameter(stp_vars_t v, const char *parameter)
+{
+  stp_internal_vars_t *vv = (stp_internal_vars_t *)v;
+  stp_list_t *list = vv->params[STP_PARAMETER_TYPE_FLOAT];
+  stp_list_item_t *item = stp_list_get_item_by_name(list, parameter);
+  if (item)
+    stp_list_item_destroy(list, item);
   stp_set_verified(v, 0);
 }
 
@@ -748,6 +813,10 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
     stp_set_driver_data(vd, (stp_get_copy_driver_data_func(vs))(vs));
   else
     stp_set_driver_data(vd, stp_get_driver_data(vs));
+  if (stp_get_copy_dither_data_func(vs))
+    stp_set_dither_data(vd, (stp_get_copy_dither_data_func(vs))(vs));
+  else
+    stp_set_dither_data(vd, stp_get_dither_data(vs));
   if (stp_get_copy_color_data_func(vs))
     stp_set_color_data(vd, (stp_get_copy_color_data_func(vs))(vs));
   else
@@ -759,6 +828,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
     }
 
   stp_set_copy_driver_data_func(vd, stp_get_copy_driver_data_func(vs));
+  stp_set_copy_dither_data_func(vd, stp_get_copy_dither_data_func(vs));
   stp_set_copy_color_data_func(vd, stp_get_copy_color_data_func(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));
   stp_set_output_type(vd, stp_get_output_type(vs));

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.6 2003/01/08 09:00:22 mtomlinson Exp $"
+ * "$Id: dither.h,v 1.6.4.1 2003/01/14 01:43:54 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -151,52 +151,47 @@ extern void
 stp_dither_describe_parameter(const stp_vars_t v, const char *name,
 			      stp_parameter_t *description);
 
-extern void *	stp_dither_init(stp_vars_t v, stp_image_t *image,
-				int out_width, int xdpi, int ydpi);
-extern void	stp_dither_set_iterated_matrix(void *vd, size_t edge,
-					       size_t iterations,
-					       const unsigned *data,
-					       int prescaled,
-					       int x_shear, int y_shear);
-extern void	stp_dither_set_matrix(void *vd, const stp_dither_matrix_t *mat,
-				      int transpose, int x_shear, int y_shear);
-extern void	stp_dither_set_matrix_from_curve(void *vd,
-						 const stp_curve_t curve);
-extern void	stp_dither_set_transition(void *vd, double);
-extern void	stp_dither_set_density(void *vd, double);
-extern void	stp_dither_set_black_density(void *vd, double);
-extern void 	stp_dither_set_black_lower(void *vd, double);
-extern void 	stp_dither_set_black_upper(void *vd, double);
-extern void	stp_dither_set_black_level(void *vd, int color, double);
-extern void 	stp_dither_set_randomizer(void *vd, int color, double);
-extern void 	stp_dither_set_ink_darkness(void *vd, int color, double);
-extern void 	stp_dither_set_light_ink(void *vd, int color, double, double);
-extern void	stp_dither_set_ranges(void *vd, int color, int nlevels,
-				      const stp_dither_range_simple_t *ranges,
-				      double density);
-extern void	stp_dither_set_ranges_full(void *vd, int color, int nlevels,
-					   const stp_dither_range_full_t *ranges,
-					   double density);
-extern void	stp_dither_set_ranges_simple(void *vd, int color, int nlevels,
-					     const double *levels,
-					     double density);
-extern void	stp_dither_set_ink_spread(void *vd, int spread);
-extern void	stp_dither_set_adaptive_limit(void *vd, double limit);
-extern int	stp_dither_get_first_position(void *vd, int color,int subchan);
-extern int	stp_dither_get_last_position(void *vd, int color, int subchan);
-extern void	stp_dither_set_shades(void *vd, int color, int nshades,
-				      const stp_shade_t *shades, double density);
+extern void stp_dither_init(stp_vars_t v, stp_image_t *image,
+			    int out_width, int xdpi, int ydpi);
+extern void stp_dither_set_iterated_matrix(stp_vars_t v, size_t edge,
+					   size_t iterations,
+					   const unsigned *data,
+					   int prescaled,
+					   int x_shear, int y_shear);
+extern void stp_dither_set_matrix(stp_vars_t v, const stp_dither_matrix_t *mat,
+				  int transpose, int x_shear, int y_shear);
+extern void stp_dither_set_matrix_from_curve(stp_vars_t v,
+					     const stp_curve_t curve);
+extern void stp_dither_set_transition(stp_vars_t v, double);
+extern void stp_dither_set_density(stp_vars_t v, double);
+extern void stp_dither_set_randomizer(stp_vars_t v, int color, double);
+extern void stp_dither_set_light_ink(stp_vars_t v, int color, double, double);
+extern void stp_dither_set_ranges(stp_vars_t v, int color, int nlevels,
+				  const stp_dither_range_simple_t *ranges,
+				  double density);
+extern void stp_dither_set_ranges_full(stp_vars_t v, int color, int nlevels,
+				       const stp_dither_range_full_t *ranges,
+				       double density);
+extern void stp_dither_set_ranges_simple(stp_vars_t v, int color, int nlevels,
+					 const double *levels,
+					 double density);
+extern void stp_dither_set_ink_spread(stp_vars_t v, int spread);
+extern void stp_dither_set_adaptive_limit(stp_vars_t v, double limit);
+extern int stp_dither_get_first_position(stp_vars_t v, int color, int subchan);
+extern int stp_dither_get_last_position(stp_vars_t v, int color, int subchan);
+extern void stp_dither_set_shades(stp_vars_t v, int color, int nshades,
+				  const stp_shade_t *shades, double density);
 
-extern void	stp_dither_free(void *);
+extern void stp_dither_free(stp_vars_t v);
 
 extern stp_dither_data_t *stp_dither_data_allocate(void);
-extern void	stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
-				unsigned channel, unsigned subchannel);
-extern void	stp_dither_data_free(stp_dither_data_t *d);
+extern void stp_dither_add_channel(stp_dither_data_t *d, unsigned char *data,
+				   unsigned channel, unsigned subchannel);
+extern void stp_dither_data_free(stp_dither_data_t *d);
 
-extern void	stp_dither(const unsigned short *, int, void *,
-			   stp_dither_data_t *, int duplicate_line,
-			   int zero_mask);
+extern void stp_dither(const unsigned short *, int, void *,
+		       stp_dither_data_t *, int duplicate_line,
+		       int zero_mask);
 
 
 #ifdef __cplusplus
@@ -205,5 +200,5 @@ extern void	stp_dither(const unsigned short *, int, void *,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.6 2003/01/08 09:00:22 mtomlinson Exp $".
+ * End of "$Id: dither.h,v 1.6.4.1 2003/01/14 01:43:54 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.15 2003/01/14 00:23:40 rlk Exp $
+ *  $Id: gimp-print.h,v 1.15.2.1 2003/01/14 01:43:54 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -539,6 +539,14 @@ extern const stp_curve_t stp_get_curve_parameter(const stp_vars_t v,
 extern const stp_raw_t *stp_get_raw_parameter(const stp_vars_t v,
 					      const char *param);
 
+extern int stp_clear_string_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_file_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_float_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_int_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_boolean_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_curve_parameter(const stp_vars_t v, const char *param);
+extern int stp_clear_raw_parameter(const stp_vars_t v, const char *param);
+
 extern int stp_check_string_parameter(const stp_vars_t v, const char *param);
 extern int stp_check_file_parameter(const stp_vars_t v, const char *param);
 extern int stp_check_float_parameter(const stp_vars_t v, const char *param);
@@ -989,5 +997,5 @@ extern const char * stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.15 2003/01/14 00:23:40 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.15.2.1 2003/01/14 01:43:54 rlk Exp $
  */
