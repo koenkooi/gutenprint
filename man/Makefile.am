@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6.6.1 2002/10/09 17:25:59 rleigh Exp $
+## $Id: Makefile.am,v 1.6.6.2 2002/11/11 21:20:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,14 +26,28 @@ MAINT_CHARSET = latin1
 
 ## Data
 
-# Conditional installation of manpages is currently broken in automake...
+# Conditional installation of manpages is currently broken in automake 1.4
 
-man_MANS = cups-calibrate.8 escputil.1 gimpprint.3 gimpprint-config.1 ijsgimpprint.1
+man_MANS = \
+	cups-calibrate.8 \
+	escputil.1 \
+	gimpprint.3 \
+	gimpprint-config.1 \
+	gimpprint-color.7 \
+	gimpprint-dithers.7 \
+	gimpprint-imagetypes.7 \
+	gimpprint-inktypes.7 \
+	gimpprint-mediasizes.7 \
+	gimpprint-mediasources.7 \
+	gimpprint-mediatypes.7 \
+	gimpprint-models.7 \
+	gimpprint-resolutions.7 \
+	ijsgimpprint.1
 
 
 ## Clean
 
-DISTCLEANFILES = cups-calibrate.8 escputil.1 gimpprint.3 gimpprint-config.1 ijsgimpprint.1
+DISTCLEANFILES = $(man_MANS)
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = $(man_MANS)
+# EXTRA_DIST = $(man_MANS)
