@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.1.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: printers.c,v 1.1.2.2 2002/10/21 01:47:09 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -35,41 +35,20 @@
 #include <math.h>
 #include <limits.h>
 #include <string.h>
-#include "printer.h"
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
-
-/*
- * The list of printers has been moved to printers.c
- */
-#include "print-printers.c"
-
-int
-stp_known_printers(void)
-{
-  return printer_count;
-}
-
-const stp_printer_t
-stp_get_printer_by_index(int idx)
-{
-  if (idx < 0 || idx >= printer_count)
-    return NULL;
-  return (stp_printer_t) &(printers[idx]);
-}
 
 const stp_printer_t
 stp_get_printer_by_long_name(const char *long_name)
 {
-  const stp_internal_printer_t *val = &(printers[0]);
   int i;
   if (!long_name)
     return NULL;
   for (i = 0; i < stp_known_printers(); i++)
     {
-      if (!strcmp(val->long_name, long_name))
-	return (stp_printer_t) val;
-      val++;
+      const stp_printer_t val = stp_get_printer_by_index(i);
+      if (!strcmp(stp_printer_get_long_name(val), long_name))
+	return val;
     }
   return NULL;
 }
@@ -77,15 +56,14 @@ stp_get_printer_by_long_name(const char *long_name)
 const stp_printer_t
 stp_get_printer_by_driver(const char *driver)
 {
-  const stp_internal_printer_t *val = &(printers[0]);
   int i;
   if (!driver)
     return NULL;
   for (i = 0; i < stp_known_printers(); i++)
     {
-      if (!strcmp(val->driver, driver))
-	return (stp_printer_t) val;
-      val++;
+      const stp_printer_t val = stp_get_printer_by_index(i);
+      if (!strcmp(stp_printer_get_driver(val), driver))
+	return val;
     }
   return NULL;
 }
@@ -94,49 +72,13 @@ int
 stp_get_printer_index_by_driver(const char *driver)
 {
   int idx = 0;
-  const stp_internal_printer_t *val = &(printers[0]);
   if (!driver)
     return -1;
   for (idx = 0; idx < stp_known_printers(); idx++)
     {
-      if (!strcmp(val->driver, driver))
+      const stp_printer_t val = stp_get_printer_by_index(idx);
+      if (!strcmp(stp_printer_get_driver(val), driver))
 	return idx;
-      val++;
     }
   return -1;
-}
-
-const char *
-stp_printer_get_long_name(const stp_printer_t p)
-{
-  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return val->long_name;
-}
-
-const char *
-stp_printer_get_driver(const stp_printer_t p)
-{
-  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return val->driver;
-}
-
-int
-stp_printer_get_model(const stp_printer_t p)
-{
-  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return val->model;
-}
-
-const stp_printfuncs_t *
-stp_printer_get_printfuncs(const stp_printer_t p)
-{
-  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return val->printfuncs;
-}
-
-const stp_vars_t
-stp_printer_get_printvars(const stp_printer_t p)
-{
-  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;
-  return (stp_vars_t) &(val->printvars);
 }

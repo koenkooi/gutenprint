@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.34.4.1 2002/10/21 01:15:31 rlk Exp $
+## $Id: Makefile.am,v 1.34.4.2 2002/10/21 01:47:09 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,8 @@ libgimpprint_la_SOURCES = \
 	print-version.c \
 	print-dither-matrices.c \
 	print-dither.h \
-	printers.c
+	printers.c \
+	print-printers.c \
 	quickmatrix257.h \
 	ran.367.179.h \
 	ran.509.131.h \
@@ -79,8 +80,6 @@ pkgconfigdata_DATA = gimpprint.pc
 
 
 ## Rules
-
-print-util.lo: print-printers.c $(srcdir)/print-util.c
 
 print-printers.c: ../printdef/printdef $(srcdir)/printers.xml
 	../printdef/printdef < $(srcdir)/printers.xml > print-printers.c

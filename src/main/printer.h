@@ -1,5 +1,5 @@
 /*
- * "$Id: printer.h,v 1.1.2.1 2002/10/21 01:15:31 rlk Exp $"
+ * "$Id: printer.h,v 1.1.2.2 2002/10/21 01:47:09 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -20,6 +20,8 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+#include <sys/types.h>
 
 typedef struct stp_internal_option
 {
