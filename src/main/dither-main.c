@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.45 2004/05/07 19:20:30 rleigh Exp $"
+ * "$Id: dither-main.c,v 1.46 2004/06/06 16:19:26 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -89,7 +89,7 @@ static const stp_parameter_t dither_parameters[] =
        "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
        "Hybrid Floyd-Steinberg generally produces inferior output."),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-    STP_PARAMETER_LEVEL_ADVANCED2, 1, 1, -1, 1, 0
+    STP_PARAMETER_LEVEL_ADVANCED, 1, 1, -1, 1, 0
   },
 };
 
