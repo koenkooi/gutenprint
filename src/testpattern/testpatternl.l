@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.5 2002/11/03 20:26:48 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.6 2003/06/01 23:02:12 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -83,6 +83,7 @@ pattern			DBG(PATTERN) return PATTERN;
 xpattern		DBG(XPATTERN) return XPATTERN;
 image			DBG(IMAGE) return IMAGE;
 extended		DBG(EXTENDED) return EXTENDED;
+grid			DBG(GRID) return GRID;
 
 {integer}		yylval.ival = atoi(yytext); DBG(tINT) return tINT;
 {float}			yylval.dval = strtod(yytext, NULL); DBG(tDOUBLE) return tDOUBLE;

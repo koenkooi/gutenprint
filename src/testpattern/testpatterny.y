@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.10 2003/05/09 23:26:34 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.11 2003/06/01 23:02:12 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -82,6 +82,7 @@ static int yyerror( const char *s )
 %token XPATTERN
 %token EXTENDED
 %token IMAGE
+%token GRID
 
 %start Thing
 
@@ -231,6 +232,14 @@ xpattern: XPATTERN tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE tDOUBLE
 	}
 ;
 
+grid: GRID tINT
+	{
+	  testpattern_t *t = get_next_testpattern();
+	  t->t = E_GRID;
+	  t->d.g.ticks = $2;
+	}
+;
+
 image: IMAGE tINT tINT
 	{
 	  testpattern_t *t = get_next_testpattern();
@@ -257,7 +266,7 @@ Rule:   global_k_level | global_c_level | global_m_level | global_y_level
 	| top | left | hsize | vsize | blackline | extended
 ;
 
-A_Pattern: pattern | xpattern
+A_Pattern: pattern | xpattern | grid
 ;
 
 Patterns: Patterns A_Pattern | Empty

@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.6 2003/05/05 00:36:04 rlk Exp $"
+ * "$Id: testpattern.h,v 1.7 2003/06/01 23:02:12 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -33,7 +33,8 @@ typedef struct
   enum {
     E_PATTERN,
     E_XPATTERN,
-    E_IMAGE
+    E_IMAGE,
+    E_GRID
   } t;
   union {
     struct {
@@ -68,6 +69,9 @@ typedef struct
       double lower;
       double upper;
     } p;
+    struct {
+      int ticks;
+    } g;
     struct {
       int x;
       int y;
