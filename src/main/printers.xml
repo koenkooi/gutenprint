@@ -1,7 +1,7 @@
 # pseudo-XML description of printers known to the Print plugin
 # This file was originally generated.  It should be edited by hand.
 
-# "$Id: printers.xml,v 1.50.2.3 2002/08/14 12:32:43 rlk Exp $"
+# "$Id: printers.xml,v 1.50.2.4 2002/08/15 01:49:03 rlk Exp $"
 
 <printer name="PostScript Level 1" driver="ps">
 <color>
@@ -221,9 +221,9 @@
 <language value=escp2>
 </printer>
 
-<printer name="EPSON Stylus C40SX" driver="escp2-c40sx">
+<printer name="EPSON Stylus C20UX" driver="escp2-c20ux">
 <color>
-<model value=43>
+<model value=42>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -231,9 +231,9 @@
 <language value=escp2>
 </printer>
 
-<printer name="EPSON Stylus C20UX" driver="escp2-c20ux">
+<printer name="EPSON Stylus C40SX" driver="escp2-c40sx">
 <color>
-<model value=42>
+<model value=43>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -253,7 +253,7 @@
 
 <printer name="EPSON Stylus C41SX" driver="escp2-c41sx">
 <color>
-<model value=43>
+<model value=54>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -263,7 +263,7 @@
 
 <printer name="EPSON Stylus C41UX" driver="escp2-c41ux">
 <color>
-<model value=43>
+<model value=54>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -273,7 +273,7 @@
 
 <printer name="EPSON Stylus C42SX" driver="escp2-c42sx">
 <color>
-<model value=43>
+<model value=54>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
@@ -283,7 +283,7 @@
 
 <printer name="EPSON Stylus C42UX" driver="escp2-c42ux">
 <color>
-<model value=43>
+<model value=54>
 <gamma value=0.585>
 <density value=1.0>
 <magenta value=0.95>
