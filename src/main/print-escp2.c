@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.180.2.2 2002/07/21 19:46:29 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.180.2.3 2002/07/22 01:23:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -345,17 +345,10 @@ verify_papersize(const stp_papersize_t pt, int model, const stp_vars_t v)
 static int
 verify_inktype(const escp2_inkname_t *inks, int model, const stp_vars_t v)
 {
-#if 0
-  int channels_limit = NCOLORS;
-  if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
-    channels_limit = escp2_physical_channels(model, v);
-  if (inks->channel_limit > channels_limit)
+  if (inks->inkset == INKSET_EXTENDED)
     return 0;
   else
     return 1;
-#else
-  return 1;
-#endif
 }
 
 /*
@@ -1204,13 +1197,32 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 
   image_bpp = image->bpp(image);
 
-  if (output_type == OUTPUT_RAW_PRINTER &&
-      image_bpp != 2 * escp2_physical_channels(model, nv))
+  if (output_type == OUTPUT_RAW_PRINTER)
     {
-      stp_eprintf(nv, _("Image depth must equal the number of ink channels (%d)\n"),
-		  escp2_physical_channels(model, nv));
-      return;
+      const inklist_t *inks = escp2_inklist(model, v);
+      int ninktypes = inks->n_inks;
+      int i;
+      int found = 0;
+      /*
+       * If we're using raw printer output, we dummy up the appropriate inkset.
+       */
+      for (i = 0; i < ninktypes; i++)
+	if (inks->inknames[i]->inkset == INKSET_EXTENDED &&
+	    inks->inknames[i]->channel_limit * 2 == image_bpp)
+	  {
+	    stp_eprintf(nv, "Changing ink type from %s to %s\n",
+			stp_get_ink_type(nv), inks->inknames[i]->name);
+	    stp_set_ink_type(nv, inks->inknames[i]->name);
+	    found = 1;
+	    break;
+	  }
+      if (!found)
+	{
+	  stp_eprintf(nv, _("This printer does not support raw printer output\n"));
+	  return;
+	}
     }
+
 
   privdata.undersample = 1;
   privdata.initial_vertical_offset = 0;
@@ -1332,8 +1344,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   if (res->softweave)
     {
       horizontal_passes = xdpi / physical_xdpi;
-      if ((output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME) &&
-	  channels_in_use == 1 &&
+      if (channels_in_use == 1 &&
 	  (ydpi >= (escp2_base_separation(model, nv) /
 		    escp2_black_nozzle_separation(model, nv))) &&
 	  (escp2_max_black_resolution(model, nv) < 0 ||

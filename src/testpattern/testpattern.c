@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.7.2.1 2002/07/21 19:46:30 rlk Exp $"
+ * "$Id: testpattern.c,v 1.7.2.2 2002/07/22 01:23:09 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -492,7 +492,11 @@ fill_colors(unsigned short *data, size_t len, size_t scount, testpattern_t *p)
 	      data += 4;
 	      break;
 	    case 1:
-	      data[3] = kk;
+	      data[0] = kk;
+	      break;
+	    case 2:
+	      data[0] = kk;
+	      data[1] = 0;
 	      break;
 	    case 4:
 	      data[0] = kk;
@@ -591,7 +595,11 @@ fill_colors_extended(unsigned short *data, size_t len,
 	  switch (global_ink_depth)
 	    {
 	    case 1:
-	      data[3] = kk;
+	      data[0] = kk;
+	      break;
+	    case 2:
+	      data[0] = kk;
+	      data[1] = lkk;
 	      break;
 	    case 4:
 	      data[0] = kk;

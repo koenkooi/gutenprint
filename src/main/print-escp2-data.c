@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.2 2002/07/21 19:46:29 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.3 2002/07/22 01:23:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -791,6 +791,7 @@ static const escp2_variable_inkset_t extended_inks =
   NULL,
   NULL,
   NULL,
+  NULL,
   NULL
 };
 
@@ -813,6 +814,7 @@ static const escp2_variable_inkset_t escp2_multishot_standard_inks =
 
 static const escp2_variable_inkset_t escp2_multishot_extended_inks =
 {
+  &standard_multishot_ink,
   &standard_multishot_ink,
   &standard_multishot_ink,
   &standard_multishot_ink,
@@ -869,6 +871,7 @@ static const escp2_variable_inkset_t escp2_6pl_extended_inks =
   &standard_6pl_ink,
   &standard_6pl_ink,
   &standard_6pl_ink,
+  &standard_6pl_ink,
   &standard_6pl_ink
 };
 
@@ -915,6 +918,7 @@ static const escp2_variable_inkset_t escp2_6pl_1440_standard_inks =
 
 static const escp2_variable_inkset_t escp2_6pl_1440_extended_inks =
 {
+  &standard_6pl_1440_ink,
   &standard_6pl_1440_ink,
   &standard_6pl_1440_ink,
   &standard_6pl_1440_ink,
@@ -988,6 +992,7 @@ static const escp2_variable_inkset_t escp2_4pl_extended_inks =
   &standard_4pl_ink,
   &standard_4pl_ink,
   &standard_4pl_ink,
+  &standard_4pl_ink,
   &standard_4pl_ink
 };
 
@@ -1017,6 +1022,7 @@ static const escp2_variable_inkset_t escp2_4pl_2880_standard_inks =
 
 static const escp2_variable_inkset_t escp2_4pl_2880_extended_inks =
 {
+  &standard_4pl_2880_ink,
   &standard_4pl_2880_ink,
   &standard_4pl_2880_ink,
   &standard_4pl_2880_ink,
@@ -1117,6 +1123,7 @@ static const escp2_variable_inkset_t escp2_2pl_2880_standard_inks =
 
 static const escp2_variable_inkset_t escp2_2pl_2880_extended_inks =
 {
+  &standard_2pl_2880_ink,
   &standard_2pl_2880_ink,
   &standard_2pl_2880_ink,
   &standard_2pl_2880_ink,
@@ -1275,6 +1282,7 @@ static const escp2_variable_inkset_t escp2_6pl_pigment_standard_inks =
 
 static const escp2_variable_inkset_t escp2_6pl_pigment_extended_inks =
 {
+  &standard_6pl_pigment_ink,
   &standard_6pl_pigment_ink,
   &standard_6pl_pigment_ink,
   &standard_6pl_pigment_ink,
@@ -1647,7 +1655,17 @@ static const escp2_variable_inklist_t variable_680_4pl_inks =
     &piezo_4pl_2880_quadtone_inks,
     &piezo_4pl_2880_quadtone_inks,
   },
-  { NULL, },
+  {
+    &escp2_680_multishot_standard_inks,
+    &escp2_680_multishot_standard_inks,
+    &escp2_680_multishot_standard_inks,
+    &escp2_680_multishot_standard_inks,
+    &escp2_680_6pl_standard_inks,
+    &escp2_4pl_standard_inks,
+    &escp2_4pl_2880_standard_inks,
+    &escp2_4pl_2880_standard_inks,
+    &escp2_4pl_2880_standard_inks,
+  },
 };
 
 static const escp2_variable_inklist_t variable_3pl_inks =
@@ -1677,7 +1695,17 @@ static const escp2_variable_inklist_t variable_3pl_inks =
     &piezo_3pl_2880_quadtone_inks,
     &piezo_3pl_2880_quadtone_inks,
   },
-  { NULL, },
+  {
+    &escp2_multishot_standard_inks,
+    &escp2_multishot_standard_inks,
+    &escp2_6pl_standard_980_inks,
+    &escp2_6pl_standard_980_inks,
+    &escp2_3pl_standard_inks,
+    &escp2_3pl_1440_standard_inks,
+    &escp2_3pl_1440_standard_inks,
+    &escp2_3pl_2880_standard_inks,
+    &escp2_3pl_2880_standard_inks,
+  },
 };
 
 static const escp2_variable_inklist_t variable_2pl_inks =
@@ -1767,7 +1795,17 @@ static const escp2_variable_inklist_t variable_pigment_inks =
     &piezo_pigment_quadtone_inks,
     &piezo_pigment_quadtone_inks
   },
-  { NULL, },
+  {
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks,
+    &escp2_pigment_standard_inks
+  },
 };
 
 static const escp2_variable_inklist_t variable_4pl_pigment_inks =
@@ -1847,7 +1885,17 @@ static const escp2_variable_inklist_t variable_3pl_pigment_inks =
     &piezo_3pl_pigment_2880_quadtone_inks,
     &piezo_3pl_pigment_2880_quadtone_inks,
   },
-  { NULL, },
+  {
+    &escp2_economy_pigment_standard_inks,
+    &escp2_economy_pigment_standard_inks,
+    &escp2_multishot_pigment_standard_inks,
+    &escp2_multishot_pigment_standard_inks,
+    &escp2_6pl_pigment_standard_inks,
+    &escp2_3pl_pigment_standard_inks,
+    &escp2_3pl_pigment_2880_standard_inks,
+    &escp2_3pl_pigment_2880_standard_inks,
+    &escp2_3pl_pigment_2880_standard_inks,
+  },
 };
 
 static const escp2_variable_inklist_t spro10000_inks =
@@ -2147,17 +2195,6 @@ static const escp2_inkname_t six_color_photo_inkset =
   }
 };
 
-static const escp2_inkname_t six_color_extended_inkset =
-{
-  "PhysicalCcMmYK", N_ ("Six Color Raw"), 1, INKSET_EXTENDED, .5, 1.0, 6,
-  standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
-  {
-    &photo_black_channels, &standard_cyan_channels, &extended_cyan_channels,
-    &standard_magenta_channels, &extended_magenta_channels,
-    &photo_yellow_channels
-  }
-};
-
 static const escp2_inkname_t five_color_photo_composite_inkset =
 {
   "PhotoCMY", N_ ("Five Color Photo Composite"), 1, INKSET_CcMmYK, 0, 0, 4,
@@ -2198,14 +2235,73 @@ static const escp2_inkname_t seven_color_photo_inkset =
   }
 };
 
-static const escp2_inkname_t seven_color_extended_inkset =
+static const escp2_inkname_t one_color_extended_inkset =
 {
-  "PhysicalCcMmYKk", N_ ("Seven Color Raw"), 1, INKSET_EXTENDED, .5, 1.0, 7,
-  standard_lum_adjustment, standard_hue_adjustment, standard_sat_adjustment,
+  "PhysicalBlack", N_ ("One Color Raw"), 0, INKSET_EXTENDED, 0, 0, 1,
+  NULL, NULL, NULL,
+  {
+    &standard_black_channels
+  }
+};
+
+static const escp2_inkname_t two_color_extended_inkset =
+{
+  "PhysicalBlack2", N_ ("Two Color Raw"), 1, INKSET_EXTENDED, 0, 0, 2,
+  NULL, NULL, NULL,
+  {
+    &photo_black_channels, &extended_black_channels,
+  }
+};
+
+static const escp2_inkname_t four_color_extended_inkset =
+{
+  "PhysicalCMYK", N_ ("Four Color Raw"), 1, INKSET_EXTENDED, 0, 0, 4,
+  NULL, NULL, NULL,
+  {
+    &standard_black_channels, &standard_cyan_channels,
+    &standard_magenta_channels, &standard_yellow_channels
+  }
+};
+
+static const escp2_inkname_t x80_four_color_extended_inkset =
+{
+  "PhysicalCMYK", N_ ("Four Color Raw"), 1, INKSET_EXTENDED, 0, 0, 4,
+  NULL, NULL, NULL,
+  {
+    &x80_black_channels, &x80_cyan_channels,
+    &x80_magenta_channels, &x80_yellow_channels
+  }
+};
+
+static const escp2_inkname_t c80_four_color_extended_inkset =
+{
+  "PhysicalCMYK", N_ ("Four Color Raw"), 1, INKSET_EXTENDED, 0, 0, 4,
+  NULL, NULL, NULL,
+  {
+    &c80_black_channels, &c80_cyan_channels,
+    &c80_magenta_channels, &c80_yellow_channels
+  }
+};
+
+static const escp2_inkname_t six_color_extended_inkset =
+{
+  "PhysicalCcMmYK", N_ ("Six Color Raw"), 1, INKSET_EXTENDED, 0, 0, 6,
+  NULL, NULL, NULL,
   {
     &photo_black_channels, &standard_cyan_channels, &extended_cyan_channels,
     &standard_magenta_channels, &extended_magenta_channels,
     &photo_yellow_channels
+  }
+};
+
+static const escp2_inkname_t seven_color_extended_inkset =
+{
+  "PhysicalCcMmYKk", N_ ("Seven Color Raw"), 1, INKSET_EXTENDED, 0, 0, 7,
+  NULL, NULL, NULL,
+  {
+    &photo_black_channels, &extended_black_channels, &standard_cyan_channels,
+    &extended_cyan_channels, &standard_magenta_channels,
+    &extended_magenta_channels, &photo_yellow_channels
   }
 };
 
@@ -2246,7 +2342,9 @@ static const escp2_inkname_t *const standard_ink_types[] =
 {
   &four_color_standard_inkset,
   &three_color_composite_inkset,
-  &piezo_quadtone_inkset
+  &piezo_quadtone_inkset,
+  &one_color_extended_inkset,
+  &four_color_extended_inkset
 };
 
 DECLARE_INKLIST(standard);
@@ -2255,7 +2353,9 @@ static const escp2_inkname_t *const c80_ink_types[] =
 {
   &c80_four_color_standard_inkset,
   &c80_three_color_composite_inkset,
-  &c80_piezo_quadtone_inkset
+  &c80_piezo_quadtone_inkset,
+  &one_color_extended_inkset,
+  &c80_four_color_extended_inkset
 };
 
 DECLARE_INKLIST(c80);
@@ -2264,6 +2364,8 @@ static const escp2_inkname_t *const x80_ink_types[] =
 {
   &x80_four_color_standard_inkset,
   &x80_three_color_composite_inkset,
+  &one_color_extended_inkset,
+  &x80_four_color_extended_inkset
 };
 
 DECLARE_INKLIST(x80);
@@ -2275,6 +2377,8 @@ static const escp2_inkname_t *const photo_ink_types[] =
   &four_color_standard_inkset,
   &three_color_composite_inkset,
   &piezo_quadtone_inkset,
+  &one_color_extended_inkset,
+  &four_color_extended_inkset,
   &six_color_extended_inkset,
 };
 
@@ -2287,6 +2391,9 @@ static const escp2_inkname_t *const photo7_japan_ink_types[] =
   &four_color_standard_inkset,
   &three_color_composite_inkset,
   &piezo_quadtone_inkset,
+  &one_color_extended_inkset,
+  &four_color_extended_inkset,
+  &six_color_extended_inkset,
   &seven_color_extended_inkset,
 };
 
@@ -2299,6 +2406,10 @@ static const escp2_inkname_t *const photo7_ink_types[] =
   &five_color_photo_composite_inkset,
   &four_color_standard_inkset,
   &three_color_composite_inkset,
+  &one_color_extended_inkset,
+  &two_color_extended_inkset,
+  &four_color_extended_inkset,
+  &six_color_extended_inkset,
   &seven_color_extended_inkset,
 };
 

@@ -3,16 +3,16 @@
 # Printer/driver settings. Please see src/ghost/README for appropriate
 # values for each of these settings
 # Printer model
-printer escp2-820
-extended 6
+printer escp2-2200
+extended 7
 # Resolution, or print quality
-resolution 720sw
+resolution 720swuni
 # Media source (if appropriate for your printer)
 #media_source Standard
 # Media type (what kind of paper)
 media_type Plain
 # ink_type
-ink_type PhysicalCcMmYK
+ink_type CMYK
 # Paper size
 media_size Letter
 # Dither algorithm
@@ -23,9 +23,9 @@ dither_algorithm Adaptive
 
 # Placement settings
 # Horizontal size, as fraction of paper width (defaults to 1.0)
-hsize 0.5
+hsize 0.08
 # Vertical size, as fraction of paper width (defaults to 1.0)
-vsize 0.5
+vsize 0.08
 # Left margin, as fraction of paper width (defaults to 0)
 left 0.0
 # Top margin, as fraction of paper width (defaults to 0)
@@ -37,7 +37,7 @@ top 0.0
 # to compute the effective gamma and conversion values.  All of these
 # default to 1.0.
 # Gamma value applied to all inks
-gamma 1.0
+gamma 2.0
 # Additional gamma correction applied to cyan, magenta, yellow, and black inks
 c_gamma 1.0
 lc_gamma 1.0
@@ -74,14 +74,44 @@ levels 256
 #  0) White band
 pattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 0.0  0.0 0.0
 #  1) C sweep
-xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0   0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
 #  2) M sweep
-xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0   0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
 #  3) Y sweep
-xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0   0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0
 #  4) K sweep
-xpattern 0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0   0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+xpattern 0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
 #  5) c sweep
-xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0   0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
 #  6) m sweep
-xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0   0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0
+#  7) k sweep
+xpattern 0.0 0.0 1.0  0.0 1.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+#  8) CM (blue) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.0 1.0
+#  9) CY (green) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0
+#  10) MY (red) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.5 1.0
+#  11) cY (yellow-green) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0
+#  12) cY (light green) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.75 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.25 1.0
+#  13) mY (orange) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.5 1.0
+#  14) mY (light red) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.75 1.0  0.0 0.25 1.0
+#  15) cm (light blue) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0  0.0 0.5 1.0  0.0 0.0 1.0
+#  16) CMY (gray) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.33 1.0  0.0 0.0 1.0  0.0 0.33 1.0  0.0 0.0 1.0  0.0 0.33 1.0
+#  17) cmY sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.33 1.0  0.0 0.0 1.0  0.0 0.33 1.0  0.0 0.33 1.0
+#  18) cmY (light gray) sweep
+xpattern 0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.43 1.0  0.0 0.0 1.0  0.0 0.43 1.0  0.0 0.14 1.0
+#  19) CMYK sweep
+xpattern 0.0 0.25 1.0  0.0 0.0 1.0  0.0 0.25 1.0  0.0 0.0 1.0  0.0 0.25 1.0  0.0 0.0 1.0  0.0 0.25 1.0
+#  20) cmYk sweep
+xpattern 0.0 0.0 1.0  0.0 0.29 1.0  0.0 0.0 1.0  0.0 0.29 1.0  0.0 0.0 1.0  0.0 0.29 1.0  0.0 0.14 1.0
+#  21) cmYK sweep
+xpattern 0.0 0.125 1.0  0.0 0.0 1.0  0.0 0.0 1.0  0.0 0.375 1.0  0.0 0.0 1.0  0.0 0.375 1.0  0.0 0.125 1.0
