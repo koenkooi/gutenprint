@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.75 2003/06/03 20:17:35 rleigh Exp $
+## $Id: Makefile.am,v 1.76 2003/06/04 00:04:38 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -84,14 +84,14 @@ print_raw_la_LDFLAGS = -module -avoid-version
 
 lib_LTLIBRARIES = libgimpprint.la
 
-module_SOURCES = \
-	$(color_traditional_la_SOURCES)
-	$(print_canon_la_SOURCES) \
-	$(print_escp2_la_SOURCES) \
-	$(print_lexmark_la_SOURCES) \
-	$(print_pcl_la_SOURCES) \
-	$(print_ps_la_SOURCES) \
-	$(print_olympus_la_SOURCES) \
+module_SOURCES =				\
+	$(color_traditional_la_SOURCES)		\
+	$(print_canon_la_SOURCES)		\
+	$(print_escp2_la_SOURCES)		\
+	$(print_lexmark_la_SOURCES)		\
+	$(print_pcl_la_SOURCES)			\
+	$(print_ps_la_SOURCES)			\
+	$(print_olympus_la_SOURCES)		\
 	$(print_raw_la_SOURCES)
 
 if !BUILD_MODULES
