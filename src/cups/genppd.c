@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.105 2005/04/05 01:21:32 rlk Exp $"
+ * "$Id: genppd.c,v 1.106 2005/04/05 01:22:38 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -891,6 +891,7 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
   gzputs(fp, "*Product:	\"(AFPL Ghostscript)\"\n");
   gzputs(fp, "*Product:	\"(GNU Ghostscript)\"\n");
   gzputs(fp, "*Product:	\"(ESP Ghostscript)\"\n");
+  gzputs(fp, "*Product:	\"(GPL Ghostscript)\"\n");
 
  /*
   * The ModelName attribute now provides the long name rather than the
@@ -1695,5 +1696,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.105 2005/04/05 01:21:32 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.106 2005/04/05 01:22:38 rlk Exp $".
  */
