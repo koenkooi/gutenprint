@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.39.2.14 2003/09/21 02:39:03 rlk Exp $"
+ * "$Id: escputil.c,v 1.39.2.15 2003/10/16 11:52:12 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -282,6 +282,14 @@ stp_printer_t printer_list[] =
   { "10000",	N_("Stylus Pro 10000"),	3,	15,	0,	0,	0 },
   { "scan2000",	N_("Stylus Scan 2000"),	3,	15,	0,	0,	0 },
   { "scan2500",	N_("Stylus Scan 2500"),	3,	15,	0,	0,	0 },
+  { "CX3100",	N_("Stylus CX-3100"),	4,	15,	0,	1,	7 },
+  { "CX3200",	N_("Stylus CX-3200"),	4,	15,	0,	1,	7 },
+  { "CX5100",	N_("Stylus CX-5100"),	4,	15,	0,	1,	7 },
+  { "CX5200",	N_("Stylus CX-5200"),	4,	15,	0,	1,	7 },
+  { "CX6300",	N_("Stylus CX-6300"),	4,	15,	0,	1,	7 },
+  { "CX6400",	N_("Stylus CX-6400"),	4,	15,	0,	1,	7 },
+  { "CX8300",	N_("Stylus CX-8300"),	4,	15,	0,	1,	7 },
+  { "CX8400",	N_("Stylus CX-8400"),	4,	15,	0,	1,	7 },
   { NULL,	NULL,			0,	0,	0,	0,	0 },
 };
 
