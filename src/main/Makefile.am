@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.62 2003/01/20 22:19:07 rlk Exp $
+## $Id: Makefile.am,v 1.63 2003/01/26 22:57:01 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,11 @@ canon_la_LDFLAGS = -module -avoid-version
 escp2_la_SOURCES = \
 	print-escp2.c \
 	print-escp2.h \
-	print-escp2-data.c
+	print-escp2-data.c \
+	escp2-channels.c \
+	escp2-inks.c \
+	escp2-papers.c \
+	escp2-resolutions.c
 escp2_la_LDFLAGS = -module -avoid-version
 
 lexmark_la_SOURCES = print-lexmark.c
@@ -66,8 +70,16 @@ raw_la_LDFLAGS = -module -avoid-version
 
 lib_LTLIBRARIES = libgimpprint.la
 
+module_SOURCES = \
+	$(canon_la_SOURCES) \
+	$(escp2_la_SOURCES) \
+	$(lexmark_la_SOURCES) \
+	$(pcl_la_SOURCES) \
+	$(ps_la_SOURCES) \
+	$(raw_la_SOURCES)
+
 if !BUILD_MODULES
-libgimpprint_modules = $(EXTRA_libgimpprint_la_SOURCES)
+libgimpprint_modules = $(module_SOURCES)
 endif
 
 libgimpprint_la_SOURCES = \
@@ -110,17 +122,6 @@ libgimpprint_la_SOURCES = \
 	xml.c \
 	xml.h \
 	$(libgimpprint_modules)
-
-EXTRA_libgimpprint_la_SOURCES = \
-	print-canon.c \
-	print-escp2.c \
-	print-escp2.h \
-	print-escp2-data.c \
-	print-lexmark.c \
-	print-pcl.c \
-	print-ps.c \
-	print-raw.c
-
 
 libgimpprint_la_LIBADD = $(GIMPPRINT_LIBDEPS)
 # Uncommment to build an unversioned library (version in soname)
