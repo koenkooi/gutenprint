@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoepson.c,v 1.2 2000/07/30 01:17:42 easysw Exp $"
+ * "$Id: rastertoepson.c,v 1.3 2000/07/31 01:46:34 easysw Exp $"
  *
  *   EPSON ESC/P2 raster filter for the CUPS driver development kit.
  *
@@ -487,10 +487,16 @@ StartPage(const ppd_file_t         *ppd,	/* I - PPD file */
       density *= 3.3;
     if (BitPlanes == 2 && header->HWResolution[0] == 720)
       density /= 1.5;
-    if (header->cupsMediaType == 1)
-      density *= 0.8;
+
+    fprintf(stderr, "DEBUG: raw density = %.4f\n", density);
+
     if (density > 1.0)
       density = 1.0;
+
+    if (header->cupsMediaType == 1)
+      density *= 0.5;
+
+    fprintf(stderr, "DEBUG: capped density = %.4f\n", density);
 
     Dither = init_dither(header->cupsWidth, header->cupsWidth, 1, 1,
                          header->OutputType);
@@ -1669,5 +1675,5 @@ main(int  argc,		/* I - Number of command-line arguments */
 
 
 /*
- * End of "$Id: rastertoepson.c,v 1.2 2000/07/30 01:17:42 easysw Exp $".
+ * End of "$Id: rastertoepson.c,v 1.3 2000/07/31 01:46:34 easysw Exp $".
  */
