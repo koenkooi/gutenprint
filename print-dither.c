@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.53 2000/06/01 01:44:59 rlk Exp $"
+ * "$Id: print-dither.c,v 1.53.2.1 2000/06/03 01:21:10 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -349,21 +349,24 @@ init_dither(int in_width, int out_width, vars_t *v)
   dither_set_black_upper(d, .7);
   dither_set_black_levels(d, 1.0, 1.0, 1.0);
   dither_set_randomizers(d, 1.0, 1.0, 1.0, 1.0);
-  dither_set_ink_darkness(d, .4, .3, .2);
-  dither_set_density(d, 1.0);
+  dither_set_ink_darkness(d, .6, .3, .2);
+  dither_set_density(d, 1, 1.0);
   return d;
 }  
 
 void
-dither_set_density(void *vd, double density)
+dither_set_density(void *vd, int oversampling, double dither_density)
 {
+  double density = dither_density/oversampling;
   dither_t *d = (dither_t *) vd;
   if (density > 1)
     density = 1;
   else if (density < 0)
     density = 0;
-  d->k_upper = d->k_upper * density;
-  d->k_lower = d->k_lower * density;
+  dither_density /= 1+(oversampling-1)/2;
+  d->oversampling = oversampling;
+  d->k_upper = d->k_upper * dither_density;
+  d->k_lower = d->k_lower * dither_density;
   d->density = (int) ((65536 * density) + .5);
   d->d_cutoff = d->density / 16;
   d->adaptive_limit = d->density / d->adaptive_divisor;
@@ -1076,7 +1079,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
   int dither_type = d->dither_type;
   int dither_value = adjusted;
   if ((adjusted <= 0 && !(dither_type & D_ADAPTIVE_BASE)) ||
-      base <= 0 || density <= 0)
+      base <= 0 || density <= 0 || *ink_budget==0)
     return adjusted;
   if (density > 65536)
     density = 65536;
@@ -1095,7 +1098,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
       unsigned rangepoint;
       unsigned virtual_value;
       unsigned vmatrix;
-      if (density <= dd->range_l)
+      if (density <= dd->range_l  || *ink_budget < dd->dot_size_h
+					  || *ink_budget < dd->dot_size_l)
 	continue;
 
       /*
@@ -1144,6 +1148,8 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
       else
 	rangepoint =
 	  ((unsigned) (density - dd->range_l)) * 65536 / dd->range_span;
+      if (rangepoint > 65536)
+	rangepoint = 65536;
 
       /*
        * Compute the virtual dot size that we're going to print.
@@ -1295,16 +1301,19 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 	  /*
 	   * Lay down all of the bits in the pixel.
 	   */
-	  if (!dontprint && *ink_budget >= dot_size)
+	  if (bits)
 	    {
-	      for (j = 1; j <= bits; j += j, tptr += length)
+	      if (!dontprint)
 		{
-		  if (j & bits)
-		    tptr[0] |= bit;
+		  for (j = 1; j <= bits; j += j, tptr += length)
+		    {
+		      if (j & bits)
+			tptr[0] |= bit;
+		    }
+		  *ink_budget -= dot_size;
 		}
-	      *ink_budget -= dot_size;
+	      adjusted -= v;
 	    }
-	  adjusted -= v;
 	}
       return adjusted;
     }
@@ -1402,6 +1411,7 @@ dither_black(unsigned short   *gray,		/* I - Grayscale pixels */
   int direction = row & 1 ? 1 : -1;
   int odb = d->spread;
   int odb_mask = (1 << odb) - 1;
+  int ink_budget = 0;
 
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
@@ -1435,7 +1445,10 @@ dither_black(unsigned short   *gray,		/* I - Grayscale pixels */
 	 kerror0 += direction,
 	 kerror1 += direction)
   {
-    unsigned ink_budget = d->ink_limit;
+
+    if (ink_budget)
+      ink_budget=1;
+    ink_budget += d->ink_limit;
 
     k = 65535 - *gray;
     ok = k;
@@ -1519,6 +1532,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
   int		odb = d->spread;
   int		odb_mask = (1 << odb) - 1;
   int		first_color = row % 3;
+  int		ink_budget = 0;
 
   bit = (direction == 1) ? 128 : 1 << (7 - ((d->dst_width - 1) & 7));
   x = (direction == 1) ? 0 : d->dst_width - 1;
@@ -1612,7 +1626,10 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       int tk;
       int printed_black = 0;
       int omd, oyd, ocd;
-      int ink_budget = d->ink_limit;
+      int PRINTED;
+      if (ink_budget)
+	ink_budget=1;
+      ink_budget += d->ink_limit;
 
       /*
        * First compute the standard CMYK separation color values...
@@ -1746,44 +1763,77 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       UPDATE_COLOR(c);
       UPDATE_COLOR(m);
       UPDATE_COLOR(y);
-
       ocd = oc * d->c_darkness;
-      omd = om * d->m_darkness;
-      oyd = oy * d->y_darkness;
+      ocd += om * d->m_darkness;
+      ocd += oy * d->y_darkness;
+      omd = ocd/d->m_darkness;
+      oyd = ocd/d->y_darkness;
+      ocd = ocd/d->c_darkness;
+      first_color = ECOLOR_Y;
+      if (c > m && c > y)
+	first_color = ECOLOR_C;
+      else
+	if (m>y) first_color = ECOLOR_M;
+      PRINTED=0;
+      switch (first_color)
+	{
+	case ECOLOR_C:
+	ECC:
+	if (!(PRINTED&4))
+	  {
+	    c = print_color(d, &(d->c_dither), oc, ocd,
+			    c, x, row, cptr, lcptr, bit, length, 0, 1,
+			    d->c_randomizer, printed_black, &ink_budget);
+	    PRINTED |= 4;
+	  }
+	switch(PRINTED)
+	  {
+	  case 4:
+	    if (m>y) goto ECM;
+	    else goto ECY;
+	  case 5: goto ECM;
+	  case 6: goto ECY;
+	  }
+	break;
 
-      /*
-       * Uh oh spaghetti-o!
-       *
-       * It has been determined experimentally that inlining print_color
-       * saves a substantial amount of time.  However, expanding this out
-       * as a switch drastically increases the code volume by about 10 KB.
-       * The solution for now (until we do this properly, via an array)
-       * is to use this ugly code.
-       */
+	case ECOLOR_Y: 
+	ECY:
+	if(!(PRINTED&1))
+	  {
+	    y = print_color(d, &(d->y_dither), oy, oyd,
+			    y, x, row, yptr, lyptr, bit, length, 1, 1,
+			    d->y_randomizer, printed_black, &ink_budget);
+	    PRINTED |= 1;
+	  }
+	switch(PRINTED)
+	  {
+	  case 1:
+	    if (m>c) goto ECM;
+	    else goto ECC;
+	  case 3: goto ECC;
+	  case 5: goto ECM;
+	  }
+	break;
 
-      if (first_color == ECOLOR_M)
-	goto ecm;
-      else if (first_color == ECOLOR_Y)
-	goto ecy;
-    ecc:
-      c = print_color(d, &(d->c_dither), oc, oc /* + ((omd + oyd) >> 7) */,
-		      c, x, row, cptr, lcptr, bit, length, 0, 1,
-		      d->c_randomizer, printed_black, &ink_budget);
-      if (first_color == ECOLOR_M)
-	goto out;
-    ecm:
-      m = print_color(d, &(d->m_dither), om, om /* + ((ocd + oyd) >> 7) */,
-		      m, x, row, mptr, lmptr, bit, length, 1, 0,
-		      d->m_randomizer, printed_black, &ink_budget);
-      if (first_color == ECOLOR_Y)
-	goto out;
-    ecy:
-      y = print_color(d, &(d->y_dither), oy, oy /* + ((ocd + omd) >> 7) */,
-		      y, x, row, yptr, lyptr, bit, length, 1, 1,
-		      d->y_randomizer, printed_black, &ink_budget);
-      if (first_color != ECOLOR_C)
-	goto ecc;
-    out:
+	case ECOLOR_M:
+	ECM:
+	if(!(PRINTED&2))
+	  {
+	    m = print_color(d, &(d->m_dither), om, omd,
+			    m, x, row, mptr, lmptr, bit, length, 1, 0,
+			    d->m_randomizer, printed_black, &ink_budget);
+	    PRINTED |= 2;
+	  }
+	switch(PRINTED)
+	  {
+	  case 2:
+	    if (c>y) goto ECC;
+	    else goto ECY;
+	  case 3: goto ECC;
+	  case 6: goto ECY;
+	  }
+	break;
+	}
 
       if (!(d->dither_type & D_ORDERED_BASE))
 	{

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.155 2000/06/02 11:52:00 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.155.2.1 2000/06/03 01:21:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -935,6 +935,8 @@ escp2_print(const printer_t *printer,		/* I - Model */
   int		separation_rows = escp2_separation_rows(model);
   int		use_glossy_film = 0;
   int		ink_spread;
+  int		oversample;
+  double	dither_density;
   vars_t	nv;
 
   memcpy(&nv, v, sizeof(vars_t));
@@ -1233,10 +1235,13 @@ escp2_print(const printer_t *printer,		/* I - Model */
   * Output the page, rotating as necessary...
   */
 
-  nv.density = nv.density * printer->printvars.density /
-    (horizontal_passes * vertical_subsample);
+  oversample = real_horizontal_passes * vertical_subsample;
+  dither_density = nv.density * printer->printvars.density;
+  nv.density = dither_density / oversample;
+  if(dither_density > 1 )
+    dither_density = 1;
   if (bits == 2)
-    nv.density *= 3.3;
+    nv.density *= 1.6;
   if (nv.density > 1.0)
     nv.density = 1.0;
   nv.saturation *= printer->printvars.saturation;
@@ -1259,6 +1264,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     dither_set_adaptive_divisor(dither, 8);
   else
     dither_set_adaptive_divisor(dither, 2);
+
+  dither_set_max_ink(dither, 3, 3.0/oversample);
+
   if (bits == 2)
     {
       int dsize = (sizeof(variable_dither_ranges) /
@@ -1267,10 +1275,24 @@ escp2_print(const printer_t *printer,		/* I - Model */
       dither_set_k_ranges_simple(dither, 3, dot_sizes, nv.density);
       if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
 	{
-	  dither_set_c_ranges(dither, dsize, variable_dither_ranges,
-			      nv.density);
-	  dither_set_m_ranges(dither, dsize, variable_dither_ranges,
-			      nv.density);
+	  dither_set_k_ranges_full(dither, 3, stp870_k_dither_ranges,
+				   dither_density);
+	  dither_set_y_ranges_full(dither, 3, stp870_y_dither_ranges,
+				   dither_density);
+	  if (oversample > 1)
+	    {
+	      dither_set_c_ranges_full(dither, 7, stp870_c1_dither_ranges,
+				       dither_density);
+	      dither_set_m_ranges_full(dither, 7, stp870_m1_dither_ranges,
+				       dither_density);
+	    }
+	  else
+	    {
+	      dither_set_c_ranges_full(dither, 5, stp870_c2_dither_ranges,
+				       dither_density);
+	      dither_set_m_ranges_full(dither, 5, stp870_m2_dither_ranges,
+				       dither_density);
+	    }
 	}
       else
 	{	
@@ -1298,7 +1320,7 @@ escp2_print(const printer_t *printer,		/* I - Model */
       dither_set_ink_spread(dither, ink_spread);
       break;
     }	    
-  dither_set_density(dither, nv.density);
+  dither_set_density(dither, oversample, dither_density);
 
   if (landscape)
   {
