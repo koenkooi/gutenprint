@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.79 2003/08/30 23:27:21 rlk Exp $"
+   "$Id: printers.xml,v 1.80 2003/09/15 14:20:16 m0m Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1422,6 +1422,10 @@
       <printer name="CANON CP100" driver="canon-cp100">
         <color value="true"/>
         <model value="1000"/>
+      </printer>
+      <printer name="SONY UP-DP10" driver="sony-updp10">
+        <color value="true"/>
+        <model value="2000"/>
       </printer>
     </family>
     <family name="raw">
