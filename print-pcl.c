@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.53 2000/06/04 15:34:00 cpbs Exp $"
+ * "$Id: print-pcl.c,v 1.54 2000/06/10 20:51:38 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1697,6 +1697,11 @@ pcl_print(const printer_t *printer,		/* I - Model */
     if (do_6color)
       dither_set_light_inks(dither, .25, .25, 0.0, nv.density);
 
+  if (xdpi > ydpi)
+    dither_set_aspect_ratio(dither, 1, xdpi / ydpi);
+  else if (ydpi > xdpi)
+    dither_set_aspect_ratio(dither, ydpi / xdpi, 1);
+			  
   switch (nv.image_type)
     {
     case IMAGE_LINE_ART:

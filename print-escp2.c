@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.158 2000/06/08 00:57:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.159 2000/06/10 20:51:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1279,7 +1279,12 @@ escp2_print(const printer_t *printer,		/* I - Model */
 	}
     }
   else if (escp2_has_cap(model, MODEL_6COLOR_MASK, MODEL_6COLOR_YES))
-    dither_set_light_inks(dither, .25, .25, 0.0, nv.density);
+    dither_set_light_inks(dither, .33, .33, 0.0, nv.density);
+  if (xdpi > ydpi)
+    dither_set_aspect_ratio(dither, 1, xdpi / ydpi);
+  else if (ydpi > xdpi)
+    dither_set_aspect_ratio(dither, ydpi / xdpi, 1);
+			  
 
   switch (nv.image_type)
     {
