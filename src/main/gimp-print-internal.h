@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.57 2002/11/03 20:26:47 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.58 2002/11/05 02:45:45 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -231,9 +231,8 @@ typedef struct stp_dither_matrix
 
 typedef struct
 {
-  stp_param_t *(*parameters)(const stp_printer_t printer,
-			     const stp_vars_t v,
-                             const char *name, int *count);
+  stp_param_list_t (*parameters)(const stp_printer_t printer,
+				 const stp_vars_t v, const char *name);
   void  (*media_size)(const stp_printer_t printer, const stp_vars_t v,
                       int *width, int *height);
   void  (*imageable_area)(const stp_printer_t printer,
@@ -269,7 +268,7 @@ extern void	stp_default_media_size(const stp_printer_t printer,
 				       int *height);
 extern const stp_printfuncs_t *stp_printer_get_printfuncs(const stp_printer_t p);
 
-extern stp_param_t *stp_dither_algorithms(int *count);
+extern void stp_dither_algorithms(stp_param_list_t);
 extern const char *stp_get_default_dither_algorithm(void);
 
 extern void *	stp_init_dither(int in_width, int out_width, int bpp,
@@ -539,5 +538,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.57 2002/11/03 20:26:47 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.58 2002/11/05 02:45:45 rlk Exp $".
  */

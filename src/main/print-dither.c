@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.100 2002/11/03 20:26:47 rlk Exp $"
+ * "$Id: print-dither.c,v 1.101 2002/11/05 02:45:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -267,26 +267,13 @@ static const unsigned sq2[] =
   3, 1
 };
 
-static char *
-c_strdup(const char *s)
-{
-  char *ret = stp_malloc(strlen(s) + 1);
-  strcpy(ret, s);
-  return ret;
-}
-
-stp_param_t *
-stp_dither_algorithms(int *count)
+void
+stp_dither_algorithms(stp_param_list_t valptrs)
 {
   int i;
-  stp_param_t *valptrs = stp_malloc(sizeof(stp_param_t) * num_dither_algos);
   for (i = 0; i < num_dither_algos; i++)
-    {
-      valptrs[i].name = c_strdup(dither_algos[i].name);
-      valptrs[i].text = c_strdup(_(dither_algos[i].text));
-    }
-  *count = num_dither_algos;
-  return valptrs;
+    stp_param_list_add_param(valptrs, dither_algos[i].name,
+			     _(dither_algos[i].text));
 }
 
 const char *

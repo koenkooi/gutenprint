@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.19 2002/11/03 20:26:48 rlk Exp $"
+ * "$Id: testdither.c,v 1.20 2002/11/05 02:45:46 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -145,12 +145,11 @@ main(int  argc,				/* I - Number of command-line arguments */
   int		write_image;		/* Write the image to disk? */
   FILE		*fp = NULL;		/* PPM/PGM output file */
   char		filename[1024];		/* Name of file */
-  int		count;
   stp_vars_t	v = stp_allocate_vars();		/* Dither variables */
   /* Arbitrary printer, so we can get dither algorithms */
   stp_printer_t p = stp_get_printer_by_driver("escp2-ex");
-  stp_param_t	*params = stp_printer_get_parameters(p, v, "DitherAlgorithm",
-						     &count);
+  stp_param_list_t params = stp_printer_get_parameters(p, v,"DitherAlgorithm");
+  int		count = stp_param_list_count(params);
   static const char	*dither_types[] =	/* Different dithering modes */
 		{
 		  "gray",
@@ -226,8 +225,8 @@ main(int  argc,				/* I - Number of command-line arguments */
     }
 
     for (j = 0; j < count; j ++)
-      if (strcmp(argv[i], params[j].name) == 0)
-	dither_name = params[j].name;
+      if (strcmp(argv[i], stp_param_list_param(params, j)->name) == 0)
+	dither_name = stp_param_list_param(params, j)->name;
 
     printf("Unknown option \"%s\" ignored!\n", argv[i]);
   }
@@ -866,5 +865,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.19 2002/11/03 20:26:48 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.20 2002/11/05 02:45:46 rlk Exp $".
  */
