@@ -1,5 +1,5 @@
 /*
- * "$Id: paper.h,v 1.3 2004/04/25 12:17:49 rleigh Exp $"
+ * "$Id: paper.h,v 1.4 2004/05/07 19:20:23 rleigh Exp $"
  *
  *   libgimpprint paper functions.
  *
@@ -118,7 +118,7 @@ extern const stp_papersize_t *stp_get_papersize_by_size(int length,
  */
 extern const stp_papersize_t *stp_get_papersize_by_index(int idx);
 
-extern void stp_default_media_size(stp_const_vars_t v,
+extern void stp_default_media_size(const stp_vars_t *v,
 				   int *width, int *height);
 
 /** @} */
@@ -129,5 +129,5 @@ extern void stp_default_media_size(stp_const_vars_t v,
 
 #endif /* GIMP_PRINT_PAPER_H */
 /*
- * End of "$Id: paper.h,v 1.3 2004/04/25 12:17:49 rleigh Exp $".
+ * End of "$Id: paper.h,v 1.4 2004/05/07 19:20:23 rleigh Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.7 2004/02/07 18:05:32 rlk Exp $"
+ * "$Id: printers.c,v 1.8 2004/05/07 19:20:25 rleigh Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -39,7 +39,7 @@ main(int argc, char **argv)
   stp_init();
   for (i = 0; i < stp_printer_model_count(); i++)
     {
-      stp_const_printer_t p = stp_get_printer_by_index(i);
+      const stp_printer_t *p = stp_get_printer_by_index(i);
       printf("$printer_name{'%s'} = '%s';\n", stp_printer_get_driver(p),
 	     stp_printer_get_long_name(p));
       printf("$printer_make{'%s'} = '%s';\n", stp_printer_get_driver(p),

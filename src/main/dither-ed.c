@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.16 2004/04/27 23:23:46 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.17 2004/05/07 19:20:29 rleigh Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -399,7 +399,7 @@ shared_ed_deinitializer(stpi_dither_t *d,
 }
 
 void
-stpi_dither_ed(stp_vars_t v,
+stpi_dither_ed(stp_vars_t *v,
 	       int row,
 	       const unsigned short *raw,
 	       int duplicate_line,

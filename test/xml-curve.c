@@ -1,5 +1,5 @@
 /*
- * "$Id: xml-curve.c,v 1.4 2004/04/13 23:54:46 rlk Exp $"
+ * "$Id: xml-curve.c,v 1.5 2004/05/07 19:20:34 rleigh Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -29,7 +29,7 @@
 
 int main(int argc, char *argv[])
 {
-  stp_curve_t curve;
+  stp_curve_t *curve;
 
   if (argc != 2)
     {

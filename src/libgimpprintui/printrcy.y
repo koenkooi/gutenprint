@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.10 2004/04/13 23:54:44 rlk Exp $"
+ * "$Id: printrcy.y,v 1.11 2004/05/07 19:20:27 rleigh Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -233,7 +233,7 @@ Boolean_Param: tWORD pBOOLEAN tBOOLEAN tBOOLEAN
 
 Curve_Param: tWORD pCURVE tBOOLEAN tSTRING
 	{
-	  stp_curve_t curve = stp_curve_create_from_string($4);
+	  stp_curve_t *curve = stp_curve_create_from_string($4);
 	  if (curve)
 	    {
 	      stp_set_curve_parameter(current_printer->v, $1, curve);

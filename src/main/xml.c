@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.31 2004/04/27 23:24:09 rlk Exp $"
+ * "$Id: xml.c,v 1.32 2004/05/07 19:20:34 rleigh Exp $"
  *
  *   XML parser - process gimp-print XML data with mxml.
  *
@@ -49,9 +49,9 @@ typedef struct
   stp_xml_parse_func parse_func;
 } stpi_xml_parse_registry;
 
-static stp_list_t stpi_xml_registry;
+static stp_list_t *stpi_xml_registry;
 
-static stp_list_t stpi_xml_preloads;
+static stp_list_t *stpi_xml_preloads;
 
 static const char *
 xml_registry_namefunc(const void *item)

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.38 2004/04/27 23:23:46 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.39 2004/05/07 19:20:29 rleigh Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -383,7 +383,7 @@ print_ink(stpi_dither_t *d, unsigned char *tptr, const stpi_ink_defn_t *ink,
 }
 
 void
-stpi_dither_et(stp_vars_t v,
+stpi_dither_et(stp_vars_t *v,
 	       int row,
 	       const unsigned short *raw,
 	       int duplicate_line,
@@ -496,7 +496,7 @@ stpi_dither_et(stp_vars_t v,
 }
 
 void
-stpi_dither_ut(stp_vars_t v,
+stpi_dither_ut(stp_vars_t *v,
 	       int row,
 	       const unsigned short *raw,
 	       int duplicate_line,

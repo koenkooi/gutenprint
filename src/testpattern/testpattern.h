@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.13 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: testpattern.h,v 1.14 2004/05/07 19:20:34 rleigh Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -61,7 +61,7 @@ typedef struct
  */
 #define YY_ALWAYS_INTERACTIVE 1
 
-extern stp_vars_t global_vars;
+extern stp_vars_t *global_vars;
 extern double global_levels[];
 extern double global_gammas[];
 extern double global_gamma;

@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.h,v 1.3 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: generic-options.h,v 1.4 2004/05/07 19:20:30 rleigh Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -58,9 +58,9 @@ extern const stpi_job_mode_t *stpi_get_job_mode_by_index(int idx);
 
 extern const stpi_job_mode_t *stpi_get_job_mode_by_name(const char *job_mode);
 
-extern stp_parameter_list_t stp_list_generic_parameters(stp_const_vars_t v);
+extern stp_parameter_list_t stp_list_generic_parameters(const stp_vars_t *v);
 
-extern void stpi_describe_generic_parameter(stp_const_vars_t v,
+extern void stpi_describe_generic_parameter(const stp_vars_t *v,
 					   const char *name,
 					   stp_parameter_t *description);
 

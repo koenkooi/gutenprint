@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.c,v 1.5 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: bit-ops.c,v 1.6 2004/05/07 19:20:28 rleigh Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -803,7 +803,7 @@ find_first_and_last(const unsigned char *line, int length,
 }
 
 int
-stp_pack_uncompressed(stp_vars_t v,
+stp_pack_uncompressed(stp_vars_t *v,
 		      const unsigned char *line,
 		      int length,
 		      unsigned char *comp_buf,
@@ -821,7 +821,7 @@ stp_pack_uncompressed(stp_vars_t v,
 }
 
 int
-stp_pack_tiff(stp_vars_t v,
+stp_pack_tiff(stp_vars_t *v,
 	      const unsigned char *line,
 	      int length,
 	      unsigned char *comp_buf,

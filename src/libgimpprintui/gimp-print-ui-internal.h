@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.13 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.14 2004/05/07 19:20:27 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -74,8 +74,8 @@ typedef struct
   GtkWidget *dialog;
   GtkWidget *gamma_curve;
   const char *help_text;
-  stp_curve_t current;
-  stp_const_curve_t deflt;
+  stp_curve_t *current;
+  const stp_curve_t *deflt;
   gboolean is_visible;
 } curve_option_t;
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-very-fast.c,v 1.13 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: dither-very-fast.c,v 1.14 2004/05/07 19:20:30 rleigh Exp $"
  *
  *   Very fast dither algorithm
  *
@@ -57,7 +57,7 @@ print_color_very_fast(const stpi_dither_t *d, stpi_dither_channel_t *dc,
 }
 
 void
-stpi_dither_very_fast(stp_vars_t v,
+stpi_dither_very_fast(stp_vars_t *v,
 		      int row,
 		      const unsigned short *raw,
 		      int duplicate_line,

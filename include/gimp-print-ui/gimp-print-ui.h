@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui.h,v 1.2 2004/03/28 21:17:37 rlk Exp $"
+ * "$Id: gimp-print-ui.h,v 1.3 2004/05/07 19:20:23 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -65,7 +65,7 @@ typedef struct		/**** Printer List ****/
   int		unit;	  /* Units for preview area 0=Inch 1=Metric */
   int		auto_size_roll_feed_paper;
   int		invalid_mask;
-  stp_vars_t	v;
+  stp_vars_t	*v;
 } stpui_plist_t;
 
 typedef struct stpui_image

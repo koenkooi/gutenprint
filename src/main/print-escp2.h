@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.80 2004/04/27 23:23:52 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.81 2004/05/07 19:20:32 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -656,11 +656,11 @@ typedef struct
 
 } escp2_privdata_t;
 
-extern void stpi_escp2_init_printer(stp_vars_t v);
-extern void stpi_escp2_deinit_printer(stp_vars_t v);
-extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
+extern void stpi_escp2_init_printer(stp_vars_t *v);
+extern void stpi_escp2_deinit_printer(stp_vars_t *v);
+extern void stpi_escp2_flush_pass(stp_vars_t *v, int passno,
 				  int vertical_subpass);
-extern void stpi_escp2_terminate_page(stp_vars_t v);
+extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #ifdef TEST_UNCOMPRESSED
 #define COMPRESSION (0)
@@ -676,5 +676,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.80 2004/04/27 23:23:52 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.81 2004/05/07 19:20:32 rleigh Exp $".
  */

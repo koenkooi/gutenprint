@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.38 2004/04/13 23:54:46 rlk Exp $"
+ * "$Id: testpattern.c,v 1.39 2004/05/07 19:20:34 rleigh Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -61,7 +61,7 @@ static stp_image_t theImage =
   Image_conclude,
   NULL
 };
-stp_vars_t global_vars;
+stp_vars_t *global_vars;
 
 double global_levels[STP_CHANNEL_LIMIT];
 double global_gammas[STP_CHANNEL_LIMIT];
@@ -221,8 +221,8 @@ initialize_global_parameters(void)
 static int
 do_print(void)
 {
-  stp_vars_t v;
-  stp_const_printer_t the_printer;
+  stp_vars_t *v;
+  const stp_printer_t *the_printer;
   int left, right, top, bottom;
   int x, y;
   int width, height;

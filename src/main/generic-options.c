@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.6 2004/04/25 12:17:51 rleigh Exp $"
+ * "$Id: generic-options.c,v 1.7 2004/05/07 19:20:30 rleigh Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -178,7 +178,7 @@ stpi_get_job_mode_by_name(const char *job_mode)
 }
 
 stp_parameter_list_t
-stp_list_generic_parameters(stp_const_vars_t v)
+stp_list_generic_parameters(const stp_vars_t *v)
 {
   stp_parameter_list_t *ret = stp_parameter_list_create();
   int i;
@@ -188,7 +188,7 @@ stp_list_generic_parameters(stp_const_vars_t v)
 }
 
 void
-stpi_describe_generic_parameter(stp_const_vars_t v, const char *name,
+stpi_describe_generic_parameter(const stp_vars_t *v, const char *name,
 				stp_parameter_t *description)
 {
   int		i;
