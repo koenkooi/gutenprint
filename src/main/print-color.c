@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.27.2.2 2002/07/21 19:46:28 rlk Exp $"
+ * "$Id: print-color.c,v 1.27.2.3 2002/07/23 02:45:55 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1755,7 +1755,7 @@ cmyk_8_to_cmyk(const stp_vars_t vars,
   static double print_gamma = -1.0;
 
 
-  (void) memset(nz, 0, sizeof(nz));
+  memset(nz, 0, sizeof(nz));
   if (density != stp_get_density(vars) ||
       print_gamma != stp_get_gamma(vars))
   {
@@ -1812,7 +1812,7 @@ raw_to_raw(const stp_vars_t vars,
   const unsigned short *srawin = (const unsigned short *) rawin;
   colors = bpp / 2;
 
-  (void) memset(nz, 0, sizeof(nz));
+  memset(nz, 0, sizeof(nz));
   for (i = 0; i < width; i++)
     {
       for (j = 0; j < colors; j++)
@@ -1849,7 +1849,7 @@ cmyk_to_cmyk(const stp_vars_t vars,
   int nz[4];
   const unsigned short *scmykin = (const unsigned short *) cmykin;
 
-  (void) memset(nz, 0, sizeof(nz));
+  memset(nz, 0, sizeof(nz));
   for (i = 0; i < width; i++)
     {
       for (j = 0; j < 4; j++)
