@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.103 2001/07/15 16:28:21 rleigh Exp $
+## $Id: Makefile.am,v 1.104 2001/07/21 14:14:27 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
-SUBDIRS = doc intl lib man src test po
+SUBDIRS = doc intl lib man src test po samples
 
 if MAINTAINER_MODE
 MAINT_MODE = true
