@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45.2.12 2003/12/24 12:40:47 rlk Exp $
+## $Id: Makefile.am,v 1.45.2.13 2005/02/03 22:00:12 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -191,7 +191,7 @@ ppd-nonls: genppd
 	for language in C ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
-	 ./genppd --prefix=ppd/$$language ; \
+	  LANGUAGE=$$language ./genppd --prefix=ppd/$$language ; \
 	done
 
 ppd-nls: genppd
