@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.148 2004/05/30 01:26:16 rlk Exp $"
+ * "$Id: print-canon.c,v 1.149 2004/07/31 01:50:11 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -259,8 +259,8 @@ static const stp_dotsize_t single_dotsize[] =
 
 static const stp_shade_t canon_Cc_1bit_shades[] =
 {
-  SHADE(0.25, single_dotsize),
   SHADE(1.0, single_dotsize),
+  SHADE(0.25, single_dotsize),
 };
 
 DECLARE_INK(canon_Cc_1bit, 0.75);
@@ -272,8 +272,8 @@ DECLARE_INK(canon_Cc_1bit, 0.75);
 
 static const stp_shade_t canon_Mm_1bit_shades[] =
 {
-  SHADE(0.26, single_dotsize),
   SHADE(1.0, single_dotsize),
+  SHADE(0.26, single_dotsize),
 };
 
 DECLARE_INK(canon_Mm_1bit, 0.75);
@@ -302,8 +302,8 @@ DECLARE_INK(canon_X_2bit, 1.0);
  */
 static const stp_shade_t canon_Xx_2bit_shades[] =
 {
-  SHADE(0.33, two_bit_dotsize),
   SHADE(1.0, two_bit_dotsize),
+  SHADE(0.33, two_bit_dotsize),
 };
 
 DECLARE_INK(canon_Xx_2bit, 1.0);
@@ -342,8 +342,8 @@ DECLARE_INK(canon_X_3bit, 1.0);
  */
 static const stp_shade_t canon_Xx_3bit_shades[] =
 {
-  SHADE(0.33, three_bit_dotsize),
   SHADE(1.0, three_bit_dotsize),
+  SHADE(0.33, three_bit_dotsize),
 };
 
 DECLARE_INK(canon_Xx_3bit, 1.0);
