@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.54 2002/01/04 20:21:10 mtomlinson Exp $"
+ * "$Id: print-dither.c,v 1.55 2002/01/04 21:04:27 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2281,7 +2281,7 @@ stp_dither_cmy_ed(const unsigned short  *cmy,
 
   x = (direction == 1) ? 0 : d->dst_width - 1;
   bit = 1 << (7 - (x & 7));
-  xstep  = 4 * (d->src_width / d->dst_width);
+  xstep  = 3 * (d->src_width / d->dst_width);
   xmod   = d->src_width % d->dst_width;
   xerror = (xmod * x) % d->dst_width;
   terminate = (direction == 1) ? d->dst_width : -1;
@@ -2572,7 +2572,7 @@ stp_dither_cmyk_ed(const unsigned short  *cmy,
 
   x = (direction == 1) ? 0 : d->dst_width - 1;
   bit = 1 << (7 - (x & 7));
-  xstep  = 4 * (d->src_width / d->dst_width);
+  xstep  = 3 * (d->src_width / d->dst_width);
   xmod   = d->src_width % d->dst_width;
   xerror = (xmod * x) % d->dst_width;
   terminate = (direction == 1) ? d->dst_width : -1;
