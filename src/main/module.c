@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.12 2003/05/22 15:51:26 m0m Exp $"
+ * "$Id: module.c,v 1.13 2003/05/23 00:15:03 rlk Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -77,6 +77,7 @@ static stpi_module_t *static_modules[] =
     &pcl_LTX_stpi_module_data,
     &lexmark_LTX_stpi_module_data,
     &raw_LTX_stpi_module_data,
+    &olympus_LTX_stpi_module_data,
     NULL
   };
 #endif
