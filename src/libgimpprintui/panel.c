@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.30 2003/03/16 21:00:30 rlk Exp $"
+ * "$Id: panel.c,v 1.31 2003/03/16 21:39:45 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2398,9 +2398,11 @@ do_color_updates (void)
 	  switch (opt->fast_desc->p_type)
 	    {
 	    case STP_PARAMETER_TYPE_DOUBLE:
-	      gtk_adjustment_set_value
-		(GTK_ADJUSTMENT(opt->info.flt.adjustment),
-		 stp_get_float_parameter(pv->v, opt->fast_desc->name));
+	      if (stp_check_float_parameter(pv->v, opt->fast_desc->name,
+					    STP_PARAMETER_INACTIVE))
+		gtk_adjustment_set_value
+		  (GTK_ADJUSTMENT(opt->info.flt.adjustment),
+		   stp_get_float_parameter(pv->v, opt->fast_desc->name));
 	      if (stp_check_float_parameter(pv->v, opt->fast_desc->name,
 					    STP_PARAMETER_ACTIVE) ||
 		  opt->fast_desc->is_mandatory)
