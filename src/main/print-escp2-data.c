@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.41 2002/07/08 11:12:57 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.42 2002/07/14 22:10:59 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1972,7 +1972,7 @@ static const escp2_inkname_t seven_color_photo_inkset =
 
 static const escp2_inkname_t piezo_quadtone_inkset =
 {
-  "PiezoQuadtone", N_ ("Piezography (TM) Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
+  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
   NULL, NULL, NULL,
   {
     &quadtone_channels, NULL, NULL, NULL
@@ -1981,7 +1981,7 @@ static const escp2_inkname_t piezo_quadtone_inkset =
 
 static const escp2_inkname_t c80_piezo_quadtone_inkset =
 {
-  "PiezoQuadtone", N_ ("Piezography (TM) Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
+  "Quadtone", N_ ("Quadtone"), 0, INKSET_PIEZO_QUADTONE, 0, 0,
   NULL, NULL, NULL,
   {
     &c80_quadtone_channels, NULL, NULL, NULL
