@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.35 2001/07/18 01:43:51 rlk Exp $"
+ * "$Id: print-util.c,v 1.36 2001/08/04 16:47:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1456,6 +1456,23 @@ stp_dprintf(unsigned long level, const stp_vars_t v, const char *format, ...)
       bytes = vasprintf(&result, format, args);
       va_end(args);
       (stp_get_errfunc(v))((void *)(stp_get_errdata(v)), result, bytes);
+      free(result);
+    }
+}
+
+void
+stp_deprintf(unsigned long level, const char *format, ...)
+{
+  va_list args;
+  int bytes;
+  char *result;
+  init_stp_debug();
+  if (level & stp_debug_level)
+    {
+      va_start(args, format);
+      bytes = vasprintf(&result, format, args);
+      va_end(args);
+      stp_erprintf("%s", result);
       free(result);
     }
 }

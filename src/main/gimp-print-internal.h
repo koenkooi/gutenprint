@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.39 2001/08/04 13:56:15 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.40 2001/08/04 16:47:57 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -443,6 +443,7 @@ extern void stp_erprintf(const char *format, ...);
 #define STP_DBG_ROWS		0x200
 extern void stp_dprintf(unsigned long level, const stp_vars_t v,
 			const char *format, ...);
+extern void stp_deprintf(unsigned long level, const char *format, ...);
 
 extern void *stp_malloc (size_t);
 extern void stp_free(void *ptr);
@@ -510,5 +511,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.39 2001/08/04 13:56:15 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.40 2001/08/04 16:47:57 rlk Exp $".
  */
