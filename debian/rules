@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.4 2001/03/02 18:52:59 sharkey Exp $
+# $Id: rules,v 1.2.2.5 2001/03/02 22:04:15 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -11,7 +11,7 @@ export DH_COMPAT=2
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-UPSTREAM_VERSION = 4.1.4
+UPSTREAM_VERSION = $(shell dpkg-parsechangelog | grep ^Version | sed "s/.* //" | sed "s/-[^-]*//")
 
 # Set LD_LIBRARY_PATH for dh_shlibdeps
 LD_LIBRARY_PATH = $(shell pwd)/debian/libgimpprint$(UPSTREAM_VERSION)/usr/lib
