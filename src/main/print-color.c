@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.1 2004/02/16 23:47:06 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.2 2004/03/09 03:00:25 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -97,6 +97,22 @@ static const float_param_t float_parameters[] =
       N_("Color correction to be applied"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED, 1, 1, -1, 1
+    }, 0.0, 0.0, 0.0, 0
+  },
+  {
+    {
+      "ChannelBitDepth", N_("Channel Bit Depth"), N_("Core Parameter"),
+      N_("Bit depth per channel"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+    }, 0.0, 0.0, 0.0, 0
+  },
+  {
+    {
+      "InputImageType", N_("Input Image Type"), N_("Core Parameter"),
+      N_("Input image type"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
     }, 0.0, 0.0, 0.0, 0
   },
   {
@@ -2266,6 +2282,7 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
   initialize_standard_curves();
   if (name == NULL)
     return;
+      
   for (i = 0; i < float_parameter_count; i++)
     {
       const float_param_t *param = &(float_parameters[i]);
@@ -2321,7 +2338,34 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		    (description->bounds.str, "Uncorrected", _("Uncorrected"));
 		  stp_string_list_add_string
 		    (description->bounds.str, "Raw", _("Raw"));
-		  description->deflt.str = "None";
+		  description->deflt.str =
+		    stp_string_list_param(description->bounds.str, 0)->name;
+		}
+	      if (strcmp(name, "ChannelBitDepth") == 0)
+		{
+		  description->bounds.str = stp_string_list_create();
+		  stp_string_list_add_string(description->bounds.str, "8", "8");
+		  stp_string_list_add_string(description->bounds.str, "16", "16");
+		  description->deflt.str =
+		    stp_string_list_param(description->bounds.str, 0)->name;
+		}
+	      else if (strcmp(name, "InputImageType") == 0)
+		{
+		  description->bounds.str = stp_string_list_create();
+		  stp_string_list_add_string(description->bounds.str,
+					     "Grayscale", "Grayscale");
+		  stp_string_list_add_string(description->bounds.str,
+					     "Whitescale", "Whitescale");
+		  stp_string_list_add_string(description->bounds.str,
+					     "RGB", "RGB");
+		  stp_string_list_add_string(description->bounds.str,
+					     "CMY", "CMY");
+		  stp_string_list_add_string(description->bounds.str,
+					     "CMYK", "CMYK");
+		  stp_string_list_add_string(description->bounds.str,
+					     "KCMY", "KCMY");
+		  description->deflt.str =
+		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
 	      break;
 	    default:

@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.3.4.1 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: generic-options.c,v 1.3.4.2 2004/03/09 03:00:25 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -60,12 +60,6 @@ static const stp_parameter_t the_parameters[] =
   {
     "ImageType", N_("Image Type"), N_("Basic Image Adjustment"),
     N_("Type of image being printed"),
-    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 0
-  },
-  {
-    "PrintingMode", N_("Printing Mode"), N_("Basic Image Adjustment"),
-    N_("Printing Output Mode"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 0
   },
@@ -192,12 +186,6 @@ stpi_describe_generic_parameter(stp_const_vars_t v, const char *name,
 				     itype->text);
 	}
       description->deflt.str = "TextGraphics";
-    }
-  if (strcmp(name, "PrintingMode") == 0)
-    {
-      stpi_erprintf(_("Generic PrintingMode should never be used.  "
-		      "Please report this to gimp-print-devel@sourceforge.net.\n"));
-      stpi_abort();
     }
 }
 

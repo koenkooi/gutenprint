@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.2 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.3 2004/03/09 03:00:26 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -81,6 +81,12 @@ static const stp_parameter_t the_parameters[] =
     "InkType", N_("Ink Type"), N_("Advanced Printer Setup"),
     N_("Type of ink in the printer"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+  },
+  {
+    "PrintingMode", N_("Printing Mode"), N_("Core Parameter"),
+    N_("Printing Output Mode"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
 };

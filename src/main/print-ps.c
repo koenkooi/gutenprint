@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.71.4.3 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-ps.c,v 1.71.4.4 2004/03/09 03:00:26 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -97,6 +97,12 @@ static const stp_parameter_t the_parameters[] =
     "PPDFile", N_("PPDFile"), N_("Basic Printer Setup"),
     N_("PPD File"),
     STP_PARAMETER_TYPE_FILE, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+  },
+  {
+    "PrintingMode", N_("Printing Mode"), N_("Core Parameter"),
+    N_("Printing Output Mode"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
 };

@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.3.4.3 2004/03/05 02:57:54 rlk Exp $"
+ * "$Id: vars.h,v 1.3.4.4 2004/03/09 03:00:25 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -33,19 +33,6 @@ extern "C" {
 /*
  * Constants...
  */
-
-#if 0
-typedef enum
-{
-  STP_IMAGE_INVALID,
-  STP_IMAGE_GRAYSCALE,
-  STP_IMAGE_WHITESCALE,
-  STP_IMAGE_RGB,
-  STP_IMAGE_CMY,
-  STP_IMAGE_CMYK,
-  STP_IMAGE_RAW
-} stp_image_type_t;
-#endif
 
 typedef enum
 {
@@ -89,6 +76,7 @@ typedef enum
   STP_PARAMETER_CLASS_FEATURE,	/* Printer feature */
   STP_PARAMETER_CLASS_OUTPUT,	/* Output control */
   STP_PARAMETER_CLASS_PAGE_SIZE, /* Special for specifying page size */
+  STP_PARAMETER_CLASS_CORE,	/* Core Gimp-Print parameter */
   STP_PARAMETER_CLASS_INVALID
 } stp_parameter_class_t;
 
@@ -177,7 +165,7 @@ typedef struct
     stp_curve_t curve;
     stp_double_bound_t dbl;
     stp_int_bound_t integer;
-    stp_string_list_t  str;
+    stp_string_list_t str;
     stp_array_t array;
   } bounds;
   union				/* Default value of the parameter */
@@ -590,5 +578,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.3 2004/03/05 02:57:54 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.4 2004/03/09 03:00:25 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.3 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.4 2004/03/09 03:00:25 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -228,6 +228,18 @@ static const stp_parameter_t the_parameters[] =
     N_("Ink Channels"),
     STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_INTERNAL, 0, 0, -1, 0
+  },
+  {
+    "PrintingMode", N_("Printing Mode"), N_("Core Parameter"),
+    N_("Printing Output Mode"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+  },
+  {
+    "RawChannels", N_("Raw Channels"), N_("Core Parameter"),
+    N_("Raw Channel Count"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+    STP_PARAMETER_LEVEL_BASIC, 0, 1, -1, 1
   },
   PARAMETER_INT(max_hres),
   PARAMETER_INT(max_vres),
@@ -1452,6 +1464,29 @@ escp2_parameters(stp_const_vars_t v, const char *name,
 	(description->bounds.str, "Raw", _("Raw"));
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
+    }
+  else if (strcmp(name, "RawChannels") == 0)
+    {
+      const inklist_t *inks = escp2_inklist(v);
+      int ninktypes = inks->n_inks;
+      description->bounds.str = stp_string_list_create();
+      if (ninktypes > 1)
+	{
+	  stp_string_list_add_string(description->bounds.str, "None", "None");
+	  for (i = 0; i < ninktypes; i++)
+	    if (inks->inknames[i]->inkset == INKSET_EXTENDED)
+	      {
+		char tmpstr[32];
+		(void) snprintf(tmpstr, 32, "%d",
+				inks->inknames[i]->channel_set->channel_count);
+		stp_string_list_add_string(description->bounds.str,
+					   tmpstr, tmpstr);
+	      }
+	  description->deflt.str =
+	    stp_string_list_param(description->bounds.str, 0)->name;
+	}
+      if (ninktypes <= 1)
+	description->is_active = 0;
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.137.4.2 2004/03/01 03:07:44 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.137.4.3 2004/03/09 03:00:26 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -298,6 +298,12 @@ static const stp_parameter_t the_parameters[] =
     N_("Ink Channels"),
     STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_INTERNAL, 0, 0, -1, 0
+  },
+  {
+    "PrintingMode", N_("Printing Mode"), N_("Core Parameter"),
+    N_("Printing Output Mode"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+    STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
 };
 
