@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.97 2000/11/25 03:45:27 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.98 2000/11/26 20:32:45 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1129,7 +1129,7 @@ static double hue_adjustment[49] =
   0.55,
   0.6,
   0.65,				/* B */
-  0.88,
+  0.78,
   0.9,
   1.08,
   1.25,
