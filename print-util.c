@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.94 2000/06/12 01:38:50 cpbs Exp $"
+ * "$Id: print-util.c,v 1.95 2000/06/15 11:50:58 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -192,7 +192,7 @@ calc_hsv_to_rgb(unsigned short *rgb, double h, double s, double v)
   rgb[0] = h*65535;
   rgb[1] = s*65535;
   rgb[2] = v*65535;
-  
+
 }
 
 
@@ -255,7 +255,7 @@ indexed_to_gray(unsigned char *indexed,		/* I - Indexed pixels */
     gray_cmap[i] = (cmap[0] * LUM_RED +
 		    cmap[1] * LUM_GREEN +
 		    cmap[2] * LUM_BLUE) / 100;
-  
+
   while (width > 0)
     {
       if (bpp == 1)
@@ -819,7 +819,7 @@ choose_colorfunc(int output_type,
       else
 	return indexed_to_gray;
     }
-}  
+}
 
 void
 compute_page_parameters(int page_right,	/* I */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.97 2000/06/12 01:30:52 cpbs Exp $"
+ * "$Id: print.c,v 1.98 2000/06/15 11:50:58 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -352,13 +352,13 @@ run (char   *name,		/* I - Name of print program. */
     image_filename = strrchr(image_filename, '/') + 1;
 
 #ifndef GIMP_1_0
-  /*  eventually export the image */ 
+  /*  eventually export the image */
   switch (run_mode)
     {
     case RUN_INTERACTIVE:
     case RUN_WITH_LAST_VALS:
       gimp_ui_init ("print", TRUE);
-      export = gimp_export_image (&image_ID, &drawable_ID, "Print", 
+      export = gimp_export_image (&image_ID, &drawable_ID, "Print",
 				  (CAN_HANDLE_RGB |
 				   CAN_HANDLE_GRAY |
 				   CAN_HANDLE_INDEXED |
@@ -921,7 +921,7 @@ printrc_load(void)
       GET_OPTIONAL_STRING_PARAM(ink_type);
       GET_OPTIONAL_INT_PARAM(image_type);
       GET_OPTIONAL_STRING_PARAM(dither_algorithm);
-	  
+
 /*
  * The format of the list is the File printer followed by a qsort'ed list
  * of system printers. So, if we want to update the file printer, it is
@@ -1096,7 +1096,7 @@ get_system_printers(void)
   if ((pfile = popen(LPC_COMMAND " status < /dev/null", "r")) != NULL)
   {
     while (fgets(line, sizeof(line), pfile) != NULL)
-      if (strchr(line, ':') != NULL && line[0] != ' ' && 
+      if (strchr(line, ':') != NULL && line[0] != ' ' &&
 	  line[0] != '\t' && strncmp(line,"Press RETURN to continue",24))
       {
 	check_plist(plist_count + 1);
@@ -1166,5 +1166,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.97 2000/06/12 01:30:52 cpbs Exp $".
+ * End of "$Id: print.c,v 1.98 2000/06/15 11:50:58 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.6 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.7 2000/06/15 11:50:57 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -73,7 +73,7 @@ gimp_create_color_adjust_window (void)
 {
   GtkWidget *dialog;
   GtkWidget *table;
- 
+
   gimp_color_adjust_dialog = dialog =
     gimp_dialog_new (_("Print Color Adjust"), "print",
 		     gimp_plugin_help_func, "filters/print.html",
