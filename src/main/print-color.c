@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.8 2004/03/20 21:52:56 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.9 2004/03/20 22:02:19 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -65,6 +65,25 @@ typedef enum
 #define CHANNEL_G		0x040
 #define CHANNEL_B		0x080
 #define CHANNEL_RAW             0x100
+
+typedef struct
+{
+  unsigned channel_id;
+  const char *gamma_name;
+  const char *curve_name;
+} channel_param_t;
+
+static const channel_param_t channel_params[] =
+{
+  { CHANNEL_K, "Black",   "BlackCurve"   },
+  { CHANNEL_C, "Cyan",    "CyanCurve"    },
+  { CHANNEL_M, "Magenta", "MagentaCurve" },
+  { CHANNEL_Y, "Yellow",  "YellowCurve"  },
+  { CHANNEL_W, "White",   "WhiteCurve"   },
+  { CHANNEL_R, "Red",     "RedCurve"     },
+  { CHANNEL_G, "Green",   "GreenCurve"   },
+  { CHANNEL_B, "Blue",    "BlueCurve"    },
+};
 
 #define CHANNEL_NONE   (0)
 #define CHANNEL_RGB    (CHANNEL_R | CHANNEL_G | CHANNEL_B)
@@ -144,17 +163,18 @@ typedef struct
   const char *name;
   const char *text;
   color_correction_enum_t correction;
+  int correct_hsl;
 } color_correction_t;
 
 static const color_correction_t color_corrections[] =
 {
-  { "None",        N_("Default"),       COLOR_CORRECTION_ACCURATE    },
-  { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE    },
-  { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT      },
-  { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED },
-  { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD   },
-  { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY     },
-  { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW         },
+  { "None",        N_("Default"),       COLOR_CORRECTION_ACCURATE,    1 },
+  { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE,    1 },
+  { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT,      1 },
+  { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED, 0 },
+  { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
+  { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
+  { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
 };
 
 static const int color_correction_count =
@@ -2516,12 +2536,14 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 	      strcmp(stp_get_string_parameter(v, "ImageType"), "None") != 0 &&
 	      description->p_level > STP_PARAMETER_LEVEL_BASIC)
 	    description->is_active = 0;
-	  if (param->hsl_only &&
-	      stp_check_string_parameter(v, "ColorCorrection",
-					 STP_PARAMETER_DEFAULTED) &&
-	      strcmp(stp_get_string_parameter(v, "ColorCorrection"),
-		     "Uncorrected") == 0)
-	    description->is_active = 0;
+	  else if (param->hsl_only)
+	    {
+	      const color_correction_t *correction =
+		(get_color_correction
+		 (stp_get_string_parameter (v, "ColorCorrection")));
+	      if (correction && !correction->correct_hsl)
+		description->is_active = 0;
+	    }
 	  switch (param->param.p_type)
 	    {
 	    case STP_PARAMETER_TYPE_CURVE:
