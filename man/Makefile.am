@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2002/03/23 11:49:08 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2002/06/09 17:33:58 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,7 @@ if BUILD_ESCPUTIL
 ESCPUTIL_MAN = escputil.1
 endif
 
-if BUILD_LIBGIMPPRINT
 MAIN_MAN = gimpprint.3 gimpprint-config.1
-endif
 
 man_MANS = $(CUPS_MAN) $(ESCPUTIL_MAN) $(MAIN_MAN)
 

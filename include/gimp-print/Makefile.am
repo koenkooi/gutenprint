@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2002/03/23 11:49:08 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2002/06/09 17:35:18 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,7 @@ MAINT_CHARSET = latin1
 
 noinst_HEADERS = gimp-print-intl.h gimp-print-intl-internal.h
 
-if BUILD_LIBGIMPPRINT
 pkginclude_HEADERS = gimp-print.h
-endif
 
 
 ## Clean
