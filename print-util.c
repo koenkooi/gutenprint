@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.136 2000/09/08 18:35:55 easysw Exp $"
+ * "$Id: print-util.c,v 1.137 2000/09/09 20:03:41 easysw Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1745,7 +1745,12 @@ compute_page_parameters(int page_right,	/* I */
    * Calculate width/height...
    */
 
-  if (scaling < 0.0)
+  if (scaling == 0.0)
+    {
+      *out_width  = *page_width;
+      *out_height = *page_height;
+    }
+  else if (scaling < 0.0)
     {
       /*
        * Scale to pixels per inch...

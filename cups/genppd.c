@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.3 2000/09/08 18:35:55 easysw Exp $"
+ * "$Id: genppd.c,v 1.4 2000/09/09 20:03:41 easysw Exp $"
  *
  *   PPD file generation program for the CUPS driver development kit.
  *
@@ -392,7 +392,7 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
              left, bottom, right, top);
   }
 
-  gzputs(fp, "*DefaultPageDimension: " DEFAULT_SIZE "\n");
+  gzputs(fp, "*DefaultPaperDimension: " DEFAULT_SIZE "\n");
 
   for (i = 0; i < num_opts; i ++)
   {
@@ -409,9 +409,9 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
         break;
 
     if (j)
-      gzprintf(fp, "*PageDimension %s", size->name);
+      gzprintf(fp, "*PaperDimension %s", size->name);
     else
-      gzprintf(fp, "*PageDimension w%dh%d", width, length);
+      gzprintf(fp, "*PaperDimension w%dh%d", width, length);
 
     gzprintf(fp, "/%s:\t\"%d %d\"\n", opts[i], width, length);
   }
@@ -542,7 +542,7 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
 
     if (i == 0)
     {
-      gzprintf(fp, "*DefaultResolution %d", xdpi);
+      gzprintf(fp, "*DefaultResolution: %d", xdpi);
       if (xdpi != ydpi)
 	gzprintf(fp, "x%d", ydpi);
       gzprintf(fp, "%s\n", qnames[j]);
@@ -621,5 +621,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.3 2000/09/08 18:35:55 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.4 2000/09/09 20:03:41 easysw Exp $".
  */
