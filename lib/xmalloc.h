@@ -1,5 +1,5 @@
 /*
- * $Id: xmalloc.h,v 1.3 2001/02/02 01:25:32 rleigh Exp $
+ * $Id: xmalloc.h,v 1.4 2001/08/08 22:16:07 rleigh Exp $
  * gimp-print memory allocation functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -36,7 +36,7 @@ extern void *xmalloc (size_t);
 extern void *xrealloc (void *, size_t);
 #endif
 #ifndef HAVE_XCALLOC
-extern void*xcalloc (size_t count, size_t size);
+extern void *xcalloc (size_t count, size_t size);
 #endif
 
 

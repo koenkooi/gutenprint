@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.20 2001/07/26 19:16:09 rleigh Exp $
+# $Id: rules,v 1.21 2001/08/08 22:16:07 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -162,5 +162,4 @@ scripts/install-sh:
 
 configure.in.in:
 
-binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install NEWS
