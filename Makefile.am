@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.106 2001/08/03 22:26:17 rlk Exp $
+## $Id: Makefile.am,v 1.107 2001/08/10 22:50:36 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ install-cups: all
 install-ghost: all
 	$(MAKE) -C src/ghost install
 
-## +-+-+-+-+ YES-GIMP +-+-+-+-+
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
 install-gimp: all
 	$(MAKE) -C src/gimp install
 
@@ -132,8 +132,8 @@ CLEANSCRIPTS = \
 CLEANFILES = .gimp-dist .noupdate
 MAINTAINERCLEANFILES = ABOUT-NLS INSTALL aclocal.m4 config.h.in configure Makefile.in stamp-h.in $(addprefix scripts/, $(CLEANSCRIPTS))
 
-## +-+-+-+-+ NO-GIMP +-+-+-+-+
+## @-@-@-@-@ NO-GIMP @-@-@-@-@
 .PHONY: gimp-dist install-cups install-ghost snapshot ChangeLog
-## +-+-+-+-+ YES-GIMP +-+-+-+-+
+## @-@-@-@-@ YES-GIMP @-@-@-@-@
 
 .PHONY: install-gimp html
