@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2001/01/24 18:27:04 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2001/01/24 19:03:40 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,7 @@ endif
 	@for p in $(cups_filter) ; do \
 		$(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(libdir)/$(PACKAGE)/filter/ ; \
 	done
-	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/model
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/$(PACKAGE)/model
 	cd ppd ; \
 	for ppdfile in * ; do \
 	  $(INSTALL_DATA) $$ppdfile $(DESTDIR)$(datadir)/$(PACKAGE)/model/ ; \
