@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.162 2000/06/13 01:59:48 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.163 2000/06/15 01:05:48 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -207,7 +207,7 @@ static simple_dither_range_t variable_dither_ranges[] =
   { 0.074, 0x1, 0, 1 },
   { 0.111, 0x2, 0, 2 },
   { 0.222, 0x3, 0, 3 },
-  { 0.333, 0x1, 1, 1 },
+/*  { 0.333, 0x1, 1, 1 }, */
   { 0.5,   0x2, 1, 2 },
   { 1.0,   0x3, 1, 3 }
 };
