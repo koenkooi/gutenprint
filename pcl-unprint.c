@@ -1,5 +1,5 @@
 /*
- * "$Id: pclunprint.c,v 1.1 2000/02/15 22:06:38 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.1 2000/02/17 01:02:13 rlk Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -26,7 +26,7 @@
 #include<stdio.h>
 #include<ctype.h>
 
-static char *id="@(#) $Id: pclunprint.c,v 1.1 2000/02/15 22:06:38 davehill Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.1 2000/02/17 01:02:13 rlk Exp $";
 
 FILE *read_fd,*write_fd;
 char read_buffer[1024];
@@ -583,12 +583,15 @@ int main(int argc,char *argv[]){
 /*
  * Revision History:
  *
- *   $Log: pclunprint.c,v $
+ *   $Log: pcl-unprint.c,v $
+ *   Revision 1.1  2000/02/17 01:02:13  rlk
+ *   Rename various programs
+ *
  *   Revision 1.1  2000/02/15 22:06:38  davehill
  *   Initial version. Only works for mono 2 level uncompressed output
  *   (i.e. Deskjet 500)
  *
  *
- * End of "$Id: pclunprint.c,v 1.1 2000/02/15 22:06:38 davehill Exp $"
+ * End of "$Id: pcl-unprint.c,v 1.1 2000/02/17 01:02:13 rlk Exp $"
  */
 
