@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.1 2003/05/06 11:21:32 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.2 2003/05/07 02:22:08 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -171,6 +171,11 @@ print_debug_params(stp_vars_t v)
 	  if (stp_check_int_parameter(v, p->name, STP_PARAMETER_DEFAULTED))
 	    print_remote_int_param(v, p->name,
 				   stp_get_int_parameter(v, p->name));
+	  break;
+	case STP_PARAMETER_TYPE_BOOLEAN:
+	  if (stp_check_boolean_parameter(v, p->name, STP_PARAMETER_DEFAULTED))
+	    print_remote_int_param(v, p->name,
+				   stp_get_boolean_parameter(v, p->name));
 	  break;
 	case STP_PARAMETER_TYPE_STRING_LIST:
 	  if (stp_check_string_parameter(v, p->name, STP_PARAMETER_DEFAULTED))
