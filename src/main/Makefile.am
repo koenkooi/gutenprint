@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.32 2002/03/23 11:49:08 rleigh Exp $
+## $Id: Makefile.am,v 1.33 2002/03/27 01:37:17 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -100,4 +100,4 @@ CLEANFILES = print-printers.c
 DISTCLEANFILES = gimpprint-config gimpprint-config.in gimpprint.pc gimpprint.pc.in gimpprint.m4
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = gimpprint.m4.top gimpprint.m4.bot printers.xml
+EXTRA_DIST = gimpprint.m4.top printers.xml
