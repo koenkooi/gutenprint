@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.25 2002/11/02 16:08:24 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.26 2002/11/02 16:17:04 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -280,8 +280,8 @@ create_color_adjust_window (void)
    */
 
   event_box = gtk_event_box_new ();
-  table_attach_aligned(GTK_TABLE (table), 0, 9, _("Dither Algorithm:"),
-		       1.0, 0.5, event_box, 1, TRUE);
+  table_attach_aligned(GTK_TABLE (table), 0, color_option_count + 1,
+		       _("Dither Algorithm:"), 1.0, 0.5, event_box, 1, TRUE);
 
   dither_algo_combo = gtk_combo_new ();
   gtk_container_add (GTK_CONTAINER(event_box), dither_algo_combo);
