@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.21 2001/05/01 20:31:57 rleigh Exp $"
+ * "$Id: print-util.c,v 1.22 2001/05/09 10:47:47 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -385,7 +385,7 @@ void
 stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
 {
   const stp_internal_vars_t *src = (const stp_internal_vars_t *)vs;
-  stp_internal_vars_t *dest = (stp_internal_vars_t *)dest;
+  stp_internal_vars_t *dest = (stp_internal_vars_t *)vd;
   stp_internal_option_t *opt = (stp_internal_option_t *) src->options;
   stp_internal_option_t *popt = NULL;
   if (opt)
