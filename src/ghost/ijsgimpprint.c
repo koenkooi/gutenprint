@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.44.4.2 2004/03/26 03:04:36 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.44.4.3 2004/03/28 02:23:54 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -119,6 +119,7 @@ image_init(IMAGE *img, IjsPageHeader *ph)
       stp_parameter_t desc;
       STP_DEBUG(fprintf(stderr, "output monochrome\n"));
       stp_set_string_parameter(img->v, "InputImageType", "Whitescale");
+      stp_set_string_parameter(img->v, "PrintingMode", "BW");
       stp_describe_parameter(img->v, "Contrast", &desc);
       if (desc.p_type == STP_PARAMETER_TYPE_DOUBLE)
 	stp_set_float_parameter(img->v, "Contrast", desc.bounds.dbl.upper);
@@ -131,6 +132,7 @@ image_init(IMAGE *img, IjsPageHeader *ph)
     {
       STP_DEBUG(fprintf(stderr, "output gray\n"));
       stp_set_string_parameter(img->v, "InputImageType", "Whitescale");
+      stp_set_string_parameter(img->v, "PrintingMode", "BW");
       img->monochrome_flag = 0;
       /* 8-bit greyscale */
     }
@@ -139,6 +141,7 @@ image_init(IMAGE *img, IjsPageHeader *ph)
     {
       STP_DEBUG(fprintf(stderr, "output color\n"));
       stp_set_string_parameter(img->v, "InputImageType", "RGB");
+      stp_set_string_parameter(img->v, "PrintingMode", "Color");
       img->monochrome_flag = 0;
       /* 24-bit colour */
     }
@@ -147,6 +150,7 @@ image_init(IMAGE *img, IjsPageHeader *ph)
     {
       STP_DEBUG(fprintf(stderr, "output CMYK\n"));
       stp_set_string_parameter(img->v, "InputImageType", "CMYK");
+      stp_set_string_parameter(img->v, "PrintingMode", "Color");
       img->monochrome_flag = 0;
       /* 32-bit CMYK colour */
     }
