@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.h,v 1.2 2005/03/22 12:29:02 rlk Exp $"
+ * "$Id: channel.h,v 1.3 2005/03/26 23:32:42 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -53,6 +53,8 @@ extern void stp_channel_set_density_adjustment(stp_vars_t *v,
 					       int color, int subchannel,
 					       double adjustment);
 extern void stp_channel_set_ink_limit(stp_vars_t *v, double limit);
+extern void stp_channel_set_multi_channel_lower_limit(stp_vars_t *v,
+						      double limit);
 extern void stp_channel_set_cutoff_adjustment(stp_vars_t *v,
 					      int color, int subchannel,
 					      double adjustment);
