@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.9 2001/02/14 02:15:28 rlk Exp $"
+ * "$Id: print-canon.c,v 1.10 2001/02/17 22:27:31 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -923,6 +923,19 @@ static canon_cap_t canon_model_capabilities[] =
   { /* Canon BJC 6200 */
     6200,
     618, 936,      /* 8.58" x 13 " */
+    180, 1440, 720, 2,
+    11, 9, 10, 18,
+    CANON_INK_CMYK | CANON_INK_CcMmYK,
+    CANON_SLOT_ASF1 | CANON_SLOT_MAN1,
+    CANON_CAP_DMT | CANON_CAP_CMD6d | CANON_CAP_CMD70,
+    { -1, 1, 0, 0, -1, -1 },
+    {  0, 1.8, 1, .5, 0, 0 },
+    &variable_6pl_6color_inks
+  },
+
+  { /* Canon BJC 6500 */
+    6500,
+    11*72, 17*72,
     180, 1440, 720, 2,
     11, 9, 10, 18,
     CANON_INK_CMYK | CANON_INK_CcMmYK,
