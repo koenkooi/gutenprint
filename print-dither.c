@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.19.2.1 2000/04/11 01:53:06 rlk Exp $"
+ * "$Id: print-dither.c,v 1.19.2.2 2000/04/12 02:27:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -293,7 +293,7 @@ dither_set_ranges(dither_color_t *s, int nlevels,
   if (i == nlevels - 1)
     s->ranges[0].range_h = 65536;
   else
-    s->ranges[0].range_h = ranges[0].value * 65536.0 * density / 2;
+    s->ranges[0].range_h = ranges[0].value * 65536.0 * density;
   if (s->ranges[0].range_h > 65536)
     s->ranges[0].range_h = 65536;
   s->ranges[0].value_h = ranges[0].value * 65536.0;
@@ -1156,7 +1156,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       if (y > 65535)
 	y = 65535;
       k = bk;
-      tk = print_color(d, &(d->k_dither), ok, k, x, row, kptr, NULL, bit,
+      tk = print_color(d, &(d->k_dither), bk, k, x, row, kptr, NULL, bit,
 		       length);
       if (tk != k)
 	printed_black = 1;
@@ -1187,11 +1187,11 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
     if (!printed_black)
       {
-	c = print_color(d, &(d->c_dither), (oc / 2 + density / 4), c,
+	c = print_color(d, &(d->c_dither), (oc / 2 + density / 4), oc,
 			row, x, cptr, lcptr, bit, length);
-	m = print_color(d, &(d->m_dither), (om / 2 + density / 4), m,
+	m = print_color(d, &(d->m_dither), (om / 2 + density / 4), om,
 			(x + 15), (row + 15), mptr, lmptr, bit, length);
-	y = print_color(d, &(d->y_dither), (oy / 2 + density / 4), y,
+	y = print_color(d, &(d->y_dither), (oy / 2 + density / 4), oy,
 			(row + 15), (x + 15), yptr, lyptr, bit, length);
       }
 
@@ -1212,6 +1212,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.19.2.2  2000/04/12 02:27:57  rlk
+ *   some improvement
+ *
  *   Revision 1.19.2.1  2000/04/11 01:53:06  rlk
  *   Yet another dither hack
  *
@@ -1262,5 +1265,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.19.2.1 2000/04/11 01:53:06 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.19.2.2 2000/04/12 02:27:57 rlk Exp $".
  */
