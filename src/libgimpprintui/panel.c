@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.38 2003/05/07 00:17:08 rlk Exp $"
+ * "$Id: panel.c,v 1.39 2003/05/08 02:22:55 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -4100,8 +4100,6 @@ set_color_defaults (void)
 	    case STP_PARAMETER_TYPE_BOOLEAN:
 	      active =
 		stp_get_boolean_parameter_active(pv->v, opt->fast_desc->name);
-	      fprintf(stderr, "Setting boolean %s to %d\n",
-		      opt->fast_desc->name, opt->info.bool.deflt);
 	      stp_set_boolean_parameter(pv->v, opt->fast_desc->name,
 					opt->info.bool.deflt);
 	      stp_set_boolean_parameter_active(pv->v, opt->fast_desc->name,
@@ -4110,8 +4108,6 @@ set_color_defaults (void)
 	    case STP_PARAMETER_TYPE_STRING_LIST:
 	      active =
 		stp_get_string_parameter_active(pv->v, opt->fast_desc->name);
-	      fprintf(stderr, "Setting string %s to %s\n",
-		      opt->fast_desc->name, opt->info.list.default_val);
 	      stp_set_string_parameter(pv->v, opt->fast_desc->name,
 				       opt->info.list.default_val);
 	      stp_set_string_parameter_active(pv->v, opt->fast_desc->name,
