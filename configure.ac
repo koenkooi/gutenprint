@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.66 2003/06/07 21:06:55 rlk Exp $
+dnl $Id: configure.ac,v 1.67 2003/06/08 15:53:41 rlk Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.66 $)
+AC_REVISION($Revision: 1.67 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -235,10 +235,9 @@ STP_ARG_WITH([foomatic3],
              [BUILD_FOOMATIC_3],
              [(automatic)])
 
-AM_PATH_GLIB(1.2.0)
 AC_PATH_PROG(IJS_CONFIG, ijs-config)
 
-if test -z "${IJS_CONFIG}" -o -z "${GLIB_LIBS}"  ; then
+if test -z "${IJS_CONFIG}"  ; then
   BUILD_GHOSTSCRIPT="no"
 else
   BUILD_GHOSTSCRIPT="yes"
@@ -437,9 +436,6 @@ dnl ijs checks
 if test x${BUILD_GHOSTSCRIPT} = xyes ; then
   if test -z "$IJS_CONFIG" ; then
     AC_MSG_ERROR(Cannot find ijs-config; please ensure Ghostscript 6.53 or above is installed);
-  fi
-  if test -z "$GLIB_LIBS" ; then
-    AC_MSG_ERROR(Cannot find GLib; please ensure that GLib 1.2 or above is installed);
   fi
   IJS_CFLAGS=`$IJS_CONFIG --cflags`
   IJS_LIBS=`$IJS_CONFIG --libs`
