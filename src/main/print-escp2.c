@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255 2003/04/20 22:56:05 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.1 2003/04/28 02:39:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -58,7 +58,6 @@
 #define OP_JOB_END   4
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define BYTE(expr, byteno) (((expr) >> (8 * byteno)) & 0xff)
 
 static void flush_pass(stp_vars_t v, int passno, int vertical_subpass);
 static void escp2_describe_resolution(stp_const_vars_t v, int *x, int *y);
@@ -81,53 +80,53 @@ static const res_t *escp2_find_resolution(stp_const_vars_t v,
 
 typedef struct
 {
-  int undersample;
-  int denominator;
-  int initial_vertical_offset;
+  int nozzles;
   int min_nozzles;
-  int printed_something;
-  int last_color;
-  int hoffset;
-  int width;
-  int ydpi;
-  int xdpi;
-  int physical_xdpi;
-  int last_pass_offset;
-  int jets;
-  int bitwidth;
-  int ncolors;
-  int horizontal_weave;
-  const physical_subchannel_t **channels;
-} escp2_privdata_t;
+  int nozzle_separation;
+  int adjusted_nozzle_separation;
+  int *head_offset;
+  int max_head_offset;
 
-typedef struct escp2_init
-{
-  int ydpi;
-  int xdpi;
-  int physical_xdpi;
+  int bitwidth;
+  int channel_limit;
+  int channels_in_use;
+  int denominator;
+  int drop_size;
+  int height;
+  int hoffset;
+  int horizontal_passes;
+  int horizontal_weave;
+  int initial_vertical_offset;
+  int ink_resid;
+  int last_color;
+  int last_pass_offset;
+  int ncolors;
+  int page_left;
+  int page_right;
+  int page_bottom;
+  int page_top;
   int page_true_height;
   int page_width;
-  int page_top;
-  int page_bottom;
-  int nozzles;
-  int nozzle_separation;
-  int horizontal_passes;
-  int bits;
-  int drop_size;
-  int ink_resid;
-  int initial_vertical_offset;
-  int total_channels;
-  int use_black_parameters;
-  int channel_limit;
-  int use_fast_360;
+  int page_height;
+  int physical_xdpi;
+  int physical_ydpi;
   int print_op;
-  int rescale_density;
+  int printed_something;
+  int total_channels;
+  int undersample;
   int unidirectional;
+  int use_black_parameters;
+  int use_fast_360;
+  int width;
+  int xdpi;
+  int ydpi;
+  int image_top;
+  int image_left;
+  const physical_subchannel_t **channels;
   const res_t *res;
   const escp2_inkname_t *inkname;
   const input_slot_t *input_slot;
-  stp_vars_t v;
-} escp2_init_t;
+} escp2_privdata_t;
 
 #define PARAMETER_INT(s)				\
 {							\
@@ -868,9 +867,8 @@ escp2_describe_resolution(stp_const_vars_t v, int *x, int *y)
 }
 
 static void
-escp2_reset_printer(const escp2_init_t *init)
+escp2_reset_printer(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
   /*
    * Magic initialization string that's needed to take printer out of
    * packet mode.
@@ -883,7 +881,7 @@ escp2_reset_printer(const escp2_init_t *init)
 }
 
 static void
-print_remote_param(stp_const_vars_t v, const char *param, const char *value)
+print_remote_param(stp_vars_t v, const char *param, const char *value)
 {
   stpi_send_command(v, "\033(R", "bcscs", '\0', param, ':',
 		    value ? value : "NULL");
@@ -891,7 +889,7 @@ print_remote_param(stp_const_vars_t v, const char *param, const char *value)
 }
 
 static void
-print_remote_int_param(stp_const_vars_t v, const char *param, int value)
+print_remote_int_param(stp_vars_t v, const char *param, int value)
 {
   char buf[64];
   (void) snprintf(buf, 64, "%d", value);
@@ -899,7 +897,7 @@ print_remote_int_param(stp_const_vars_t v, const char *param, int value)
 }
 
 static void
-print_remote_float_param(stp_const_vars_t v, const char *param, double value)
+print_remote_float_param(stp_vars_t v, const char *param, double value)
 {
   char buf[64];
   (void) snprintf(buf, 64, "%f", value);
@@ -907,9 +905,10 @@ print_remote_float_param(stp_const_vars_t v, const char *param, double value)
 }
 
 static void
-print_debug_params(const escp2_init_t *init)
+print_debug_params(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   stp_parameter_list_t params = stp_get_parameter_list(v);
   int count = stp_parameter_list_count(params);
   int i;
@@ -925,33 +924,33 @@ print_debug_params(const escp2_init_t *init)
   print_remote_int_param(v, "Input Model", stp_get_input_color_model(v));
   print_remote_int_param(v, "Output Model", stpi_get_output_color_model(v));
   print_remote_int_param(v, "Model", stpi_get_model_id(v));
-  print_remote_int_param(v, "Ydpi", init->ydpi);
-  print_remote_int_param(v, "Xdpi", init->xdpi);
-  print_remote_int_param(v, "Physical_xdpi", init->physical_xdpi);
-  print_remote_int_param(v, "Use_softweave", init->res->softweave);
-  print_remote_int_param(v, "Use_microweave", init->res->microweave);
-  print_remote_int_param(v, "Page_true_height", init->page_true_height);
-  print_remote_int_param(v, "Page_width", init->page_width);
-  print_remote_int_param(v, "Page_top", init->page_top);
-  print_remote_int_param(v, "Page_bottom", init->page_bottom);
-  print_remote_int_param(v, "Nozzles", init->nozzles);
-  print_remote_int_param(v, "Nozzle_separation", init->nozzle_separation);
-  print_remote_int_param(v, "Horizontal_passes", init->horizontal_passes);
-  print_remote_int_param(v, "Vertical_passes", init->res->vertical_passes);
-  print_remote_int_param(v, "Vertical_oversample", init->res->vertical_oversample);
-  print_remote_int_param(v, "Bits", init->bits);
-  print_remote_int_param(v, "Unidirectional", init->unidirectional);
-  print_remote_int_param(v, "Resid", init->res->resid);
-  print_remote_int_param(v, "Drop Size", init->drop_size);
-  print_remote_int_param(v, "Initial_vertical_offset", init->initial_vertical_offset);
-  print_remote_int_param(v, "Total_channels", init->total_channels);
-  print_remote_int_param(v, "Use_black_parameters", init->use_black_parameters);
-  print_remote_int_param(v, "Channel_limit", init->channel_limit);
-  print_remote_int_param(v, "Use_fast_360", init->use_fast_360);
-  print_remote_param(v, "Ink name", init->inkname->name);
-  print_remote_int_param(v, "  is_color", init->inkname->is_color);
-  print_remote_int_param(v, "  channels", init->inkname->channel_limit);
-  print_remote_int_param(v, "  inkset", init->inkname->inkset);
+  print_remote_int_param(v, "Ydpi", pd->ydpi);
+  print_remote_int_param(v, "Xdpi", pd->xdpi);
+  print_remote_int_param(v, "Physical_xdpi", pd->physical_xdpi);
+  print_remote_int_param(v, "Use_softweave", pd->res->softweave);
+  print_remote_int_param(v, "Use_microweave", pd->res->microweave);
+  print_remote_int_param(v, "Page_true_height", pd->page_true_height);
+  print_remote_int_param(v, "Page_width", pd->page_width);
+  print_remote_int_param(v, "Page_top", pd->page_top);
+  print_remote_int_param(v, "Page_bottom", pd->page_bottom);
+  print_remote_int_param(v, "Nozzles", pd->nozzles);
+  print_remote_int_param(v, "Nozzle_separation", pd->nozzle_separation);
+  print_remote_int_param(v, "Horizontal_passes", pd->horizontal_passes);
+  print_remote_int_param(v, "Vertical_passes", pd->res->vertical_passes);
+  print_remote_int_param(v, "Vertical_oversample", pd->res->vertical_oversample);
+  print_remote_int_param(v, "Bits", pd->bitwidth);
+  print_remote_int_param(v, "Unidirectional", pd->unidirectional);
+  print_remote_int_param(v, "Resid", pd->res->resid);
+  print_remote_int_param(v, "Drop Size", pd->drop_size);
+  print_remote_int_param(v, "Initial_vertical_offset", pd->initial_vertical_offset);
+  print_remote_int_param(v, "Total_channels", pd->total_channels);
+  print_remote_int_param(v, "Use_black_parameters", pd->use_black_parameters);
+  print_remote_int_param(v, "Channel_limit", pd->channel_limit);
+  print_remote_int_param(v, "Use_fast_360", pd->use_fast_360);
+  print_remote_param(v, "Ink name", pd->inkname->name);
+  print_remote_int_param(v, "  is_color", pd->inkname->is_color);
+  print_remote_int_param(v, "  channels", pd->inkname->channel_limit);
+  print_remote_int_param(v, "  inkset", pd->inkname->inkset);
   for (i = 0; i < count; i++)
     {
       const stp_parameter_t *p = stp_parameter_list_param(params, i);
@@ -990,14 +989,15 @@ print_debug_params(const escp2_init_t *init)
 }
 
 static void
-escp2_set_remote_sequence(const escp2_init_t *init)
+escp2_set_remote_sequence(stp_vars_t v)
 {
   /* Magic remote mode commands, whatever they do */
-  stp_const_vars_t v = init->v;
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
 
   if (stpi_debug_level & STPI_DBG_MARK_FILE)
-    print_debug_params(init);
-  if (escp2_has_advanced_command_set(v) || init->input_slot)
+    print_debug_params(v);
+  if (escp2_has_advanced_command_set(v) || pd->input_slot)
     {
       int feed_sequence = 0;
       const paper_t *p = get_media_type(v);
@@ -1024,14 +1024,14 @@ escp2_set_remote_sequence(const escp2_init_t *init)
 	  if (stp_get_boolean_parameter(v, "FullBleed"))
 	    stpi_send_command(v, "FP", "bch", 0, 0xffb0);
 	}
-      if (init->input_slot)
+      if (pd->input_slot)
 	{
 	  int divisor = escp2_base_separation(v) / 360;
-	  int height = init->page_true_height * 5 / divisor;
-	  if (init->input_slot->init_sequence.bytes)
-	    stpi_zfwrite(init->input_slot->init_sequence.data,
-			 init->input_slot->init_sequence.bytes, 1, v);
-	  switch (init->input_slot->roll_feed_cut_flags)
+	  int height = pd->page_true_height * 5 / divisor;
+	  if (pd->input_slot->init_sequence.bytes)
+	    stpi_zfwrite(pd->input_slot->init_sequence.data,
+			 pd->input_slot->init_sequence.bytes, 1, v);
+	  switch (pd->input_slot->roll_feed_cut_flags)
 	    {
 	    case ROLL_FEED_CUT_ALL:
 	      stpi_send_command(v, "JS", "bh", 0);
@@ -1054,50 +1054,55 @@ escp2_set_remote_sequence(const escp2_init_t *init)
 }
 
 static void
-escp2_set_graphics_mode(const escp2_init_t *init)
+escp2_set_graphics_mode(stp_vars_t v)
 {
-  stpi_send_command(init->v, "\033(G", "bc", 1);
+  stpi_send_command(v, "\033(G", "bc", 1);
 }
 
 static void
-escp2_set_resolution(const escp2_init_t *init)
+escp2_set_resolution(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  if (escp2_use_extended_commands(v, init->res->softweave))
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  if (escp2_use_extended_commands(v, pd->res->softweave))
     {
       int hres = escp2_max_hres(v);
-      stpi_send_command(v, "\033(U", "bccch", hres / init->ydpi,
-			hres / init->ydpi, hres / init->xdpi, hres);
+      stpi_send_command(v, "\033(U", "bccch", hres / pd->ydpi,
+			hres / pd->ydpi, hres / pd->xdpi, hres);
     }
   else
-    stpi_send_command(v, "\033(U", "bc", 3600 / init->ydpi);
+    stpi_send_command(v, "\033(U", "bc", 3600 / pd->ydpi);
 }
 
 static void
-escp2_set_color(const escp2_init_t *init)
+escp2_set_color(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  if (init->use_fast_360)
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  if (pd->use_fast_360)
     stpi_send_command(v, "\033(K", "bcc", 0, 3);
   else if (escp2_has_cap(v, MODEL_GRAYMODE, MODEL_GRAYMODE_YES))
     stpi_send_command(v, "\033(K", "bcc", 0,
-		      (init->use_black_parameters ? 1 : 2));
+		      (pd->use_black_parameters ? 1 : 2));
 }
 
 static void
-escp2_set_microweave(const escp2_init_t *init)
+escp2_set_microweave(stp_vars_t v)
 {
-  stpi_send_command(init->v, "\033(i", "bc", init->res->microweave);
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  stpi_send_command(v, "\033(i", "bc", pd->res->microweave);
 }
 
 static void
-escp2_set_printhead_speed(const escp2_init_t *init)
+escp2_set_printhead_speed(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  if (init->unidirectional)
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  if (pd->unidirectional)
     {
       stpi_send_command(v, "\033U", "c", 1);
-      if (init->xdpi > escp2_base_resolution(v))
+      if (pd->xdpi > escp2_base_resolution(v))
 	stpi_send_command(v, "\033(s", "bc", 2);
     }
   else
@@ -1105,33 +1110,37 @@ escp2_set_printhead_speed(const escp2_init_t *init)
 }
 
 static void
-escp2_set_dot_size(const escp2_init_t *init)
+escp2_set_dot_size(stp_vars_t v)
 {
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   /* Dot size */
-  if (init->drop_size >= 0)
-    stpi_send_command(init->v, "\033(e", "bcc", 0, init->drop_size);
+  if (pd->drop_size >= 0)
+    stpi_send_command(v, "\033(e", "bcc", 0, pd->drop_size);
 }
 
 static void
-escp2_set_page_height(const escp2_init_t *init)
+escp2_set_page_height(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  int l = init->ydpi * init->page_true_height / 72;
-  if (escp2_use_extended_commands(v, init->res->softweave))
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  int l = pd->ydpi * pd->page_true_height / 72;
+  if (escp2_use_extended_commands(v, pd->res->softweave))
     stpi_send_command(v, "\033(C", "bl", l);
   else
     stpi_send_command(v, "\033(C", "bh", l);
 }
 
 static void
-escp2_set_margins(const escp2_init_t *init)
+escp2_set_margins(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  int bot = init->ydpi * init->page_bottom / 72;
-  int top = init->ydpi * init->page_top / 72;
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  int bot = pd->ydpi * pd->page_bottom / 72;
+  int top = pd->ydpi * pd->page_top / 72;
 
-  top += init->initial_vertical_offset;
-  if (escp2_use_extended_commands(v, init->res->softweave) &&
+  top += pd->initial_vertical_offset;
+  if (escp2_use_extended_commands(v, pd->res->softweave) &&
       (escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_2000)||
        escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO)))
     stpi_send_command(v, "\033(c", "bll", top, bot);
@@ -1140,41 +1149,43 @@ escp2_set_margins(const escp2_init_t *init)
 }
 
 static void
-escp2_set_form_factor(const escp2_init_t *init)
+escp2_set_form_factor(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   if (escp2_has_advanced_command_set(v))
     {
-      int w = init->page_width * init->ydpi / 72;
-      int h = init->page_true_height * init->ydpi / 72;
+      int w = pd->page_width * pd->ydpi / 72;
+      int h = pd->page_true_height * pd->ydpi / 72;
 
       if (stp_get_boolean_parameter(v, "FullBleed"))
 	/* Make the page 160/360" wider for full bleed printing. */
 	/* Per the Epson manual, the margin should be expanded by 80/360" */
 	/* so we need to do this on the left and the right */
-	w += 320 * init->xdpi / 720;
+	w += 320 * pd->xdpi / 720;
 
       stpi_send_command(v, "\033(S", "bll", w, h);
     }
 }
 
 static void
-escp2_set_printhead_resolution(const escp2_init_t *init)
+escp2_set_printhead_resolution(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
-  if (escp2_use_extended_commands(v, init->res->softweave))
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
+  if (escp2_use_extended_commands(v, pd->res->softweave))
     {
       int xres;
       int yres;
       int scale = escp2_resolution_scale(v);
 
-      xres = scale / init->physical_xdpi;
+      xres = scale / pd->physical_xdpi;
 
       if (escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) &&
-	  !init->res->softweave)
-	yres = scale / init->ydpi;
+	  !pd->res->softweave)
+	yres = scale / pd->ydpi;
       else
-	yres = (init->nozzle_separation * scale / escp2_base_separation(v));
+	yres = (pd->nozzle_separation * scale / escp2_base_separation(v));
 
       /* Magic resolution cookie */
       stpi_send_command(v, "\033(D", "bhcc", scale, yres, xres);
@@ -1182,34 +1193,35 @@ escp2_set_printhead_resolution(const escp2_init_t *init)
 }
 
 static void
-escp2_init_printer(const escp2_init_t *init)
+escp2_init_printer(stp_vars_t v)
 {
-  escp2_reset_printer(init);
-  escp2_set_remote_sequence(init);
-  escp2_set_graphics_mode(init);
-  escp2_set_resolution(init);
-  escp2_set_color(init);
-  escp2_set_microweave(init);
-  escp2_set_printhead_speed(init);
-  escp2_set_dot_size(init);
-  escp2_set_printhead_resolution(init);
-  escp2_set_page_height(init);
-  escp2_set_margins(init);
-  escp2_set_form_factor(init);
+  escp2_reset_printer(v);
+  escp2_set_remote_sequence(v);
+  escp2_set_graphics_mode(v);
+  escp2_set_resolution(v);
+  escp2_set_color(v);
+  escp2_set_microweave(v);
+  escp2_set_printhead_speed(v);
+  escp2_set_dot_size(v);
+  escp2_set_printhead_resolution(v);
+  escp2_set_page_height(v);
+  escp2_set_margins(v);
+  escp2_set_form_factor(v);
 }
 
 static void
-escp2_deinit_printer(const escp2_init_t *init)
+escp2_deinit_printer(stp_vars_t v)
 {
-  stp_const_vars_t v = init->v;
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   stpi_puts("\033@", v);	/* ESC/P2 reset */
-  if (escp2_has_advanced_command_set(v) || init->input_slot)
+  if (escp2_has_advanced_command_set(v) || pd->input_slot)
     {
       const stp_raw_t *deinit = escp2_postinit_remote_sequence(v);
       stpi_send_command(v, "\033(R", "bcs", 0, "REMOTE1");
-      if (init->input_slot && init->input_slot->deinit_sequence.bytes)
-	stpi_zfwrite(init->input_slot->deinit_sequence.data,
-		     init->input_slot->deinit_sequence.bytes, 1, v);
+      if (pd->input_slot && pd->input_slot->deinit_sequence.bytes)
+	stpi_zfwrite(pd->input_slot->deinit_sequence.data,
+		     pd->input_slot->deinit_sequence.bytes, 1, v);
       /* Load settings from NVRAM */
       stpi_send_command(v, "LD", "b");
 
@@ -1248,20 +1260,22 @@ set_raw_ink_type(stp_vars_t v, stp_image_t *image)
 }
 
 static void
-adjust_density_and_ink_type(escp2_init_t *init, stp_image_t *image)
+adjust_density_and_ink_type(stp_vars_t v, stp_image_t *image)
 {
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   const paper_t *pt;
   double paper_density = .8;
-  stp_vars_t v = init->v;
   pt = get_media_type(v);
   if (pt)
     paper_density = pt->base_density;
 
-  if (init->rescale_density)
+  if (stp_get_output_type(v) != OUTPUT_RAW_CMYK &&
+      stp_get_output_type(v) != OUTPUT_RAW_PRINTER)
     stp_scale_float_parameter
-      (v, "Density", paper_density * escp2_density(v, init->res->resid));
-  init->drop_size = escp2_ink_type(v, init->res->resid);
-  init->ink_resid = init->res->resid;
+      (v, "Density", paper_density * escp2_density(v, pd->res->resid));
+  pd->drop_size = escp2_ink_type(v, pd->res->resid);
+  pd->ink_resid = pd->res->resid;
 
   /*
    * If density is greater than 1, try to find the dot size from a lower
@@ -1279,7 +1293,7 @@ adjust_density_and_ink_type(escp2_init_t *init, stp_image_t *image)
       else
 	{
 	  double density = stp_get_float_parameter(v, "Density");
-	  int resid = init->res->resid;
+	  int resid = pd->res->resid;
 	  int xresid = resid;
 	  double xdensity = density;
 	  while (density > 1.0 && resid >= RES_360)
@@ -1313,8 +1327,8 @@ adjust_density_and_ink_type(escp2_init_t *init, stp_image_t *image)
 		  resid = tresid;
 		}
 	    }
-	  init->drop_size = escp2_ink_type(v, resid);
-	  init->ink_resid = resid;
+	  pd->drop_size = escp2_ink_type(v, resid);
+	  pd->ink_resid = resid;
 	  if (density > 1.0)
 	    density = 1.0;
 	  stp_set_float_parameter(v, "Density", density);
@@ -1323,22 +1337,23 @@ adjust_density_and_ink_type(escp2_init_t *init, stp_image_t *image)
 }
 
 static int
-adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
+adjust_print_quality(stp_vars_t v, stp_image_t *image)
 {
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   int cols;
   stp_curve_t   lum_adjustment = NULL;
   stp_curve_t   sat_adjustment = NULL;
   stp_curve_t   hue_adjustment = NULL;
   const paper_t *pt;
-  stp_vars_t v = init->v;
   double k_upper, k_lower;
   double paper_k_upper;
   /*
    * Compute the LUT.  For now, it's 8 bit, but that may eventually
    * sometimes change.
    */
-  k_lower = init->inkname->k_lower;
-  k_upper = init->inkname->k_upper;
+  k_lower = pd->inkname->k_lower;
+  k_upper = pd->inkname->k_upper;
 
   pt = get_media_type(v);
   if (pt)
@@ -1346,7 +1361,7 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
       k_lower *= pt->k_lower_scale;
       paper_k_upper = pt->k_upper;
       k_upper *= pt->k_upper;
-      if (init->total_channels >= 5)
+      if (pd->total_channels >= 5)
 	{
 	  stp_scale_float_parameter(v, "Cyan", pt->p_cyan);
 	  stp_scale_float_parameter(v, "Magenta", pt->p_magenta);
@@ -1376,7 +1391,7 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
   if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE))
     {
       hue_adjustment = stpi_read_and_compose_curves
-	(init->inkname->hue_adjustment, pt ? pt->hue_adjustment : NULL,
+	(pd->inkname->hue_adjustment, pt ? pt->hue_adjustment : NULL,
 	 STP_CURVE_COMPOSE_ADD);
       stp_set_curve_parameter(v, "HueMap", hue_adjustment);
       stp_set_curve_parameter_active(v, "HueMap", STP_PARAMETER_ACTIVE);
@@ -1385,7 +1400,7 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
   if (!stp_check_curve_parameter(v, "SatMap", STP_PARAMETER_ACTIVE))
     {
       sat_adjustment = stpi_read_and_compose_curves
-	(init->inkname->sat_adjustment, pt ? pt->sat_adjustment : NULL,
+	(pd->inkname->sat_adjustment, pt ? pt->sat_adjustment : NULL,
 	 STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(v, "SatMap", sat_adjustment);
       stp_set_curve_parameter_active(v, "SatMap", STP_PARAMETER_ACTIVE);
@@ -1394,7 +1409,7 @@ adjust_print_quality(const escp2_init_t *init, stp_image_t *image)
   if (!stp_check_curve_parameter(v, "LumMap", STP_PARAMETER_ACTIVE))
     {
       lum_adjustment = stpi_read_and_compose_curves
-	(init->inkname->lum_adjustment, pt ? pt->lum_adjustment : NULL,
+	(pd->inkname->lum_adjustment, pt ? pt->lum_adjustment : NULL,
 	 STP_CURVE_COMPOSE_MULTIPLY);
       stp_set_curve_parameter(v, "LumMap", lum_adjustment);
       stp_set_curve_parameter_active(v, "LumMap", STP_PARAMETER_ACTIVE);
@@ -1452,31 +1467,32 @@ compute_channel_count(const escp2_inkname_t *ink_type,
 }
 
 static void
-setup_inks(const escp2_init_t *init)
+setup_inks(stp_vars_t v)
 {
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   int i;
   const escp2_variable_inkset_t *inks;
-  stp_vars_t v = init->v;
   const paper_t *pt;
   double paper_k_upper = 0.5;
 
   pt = get_media_type(v);
   if (pt)
     paper_k_upper = pt->k_upper;
-  inks = escp2_inks(v, init->ink_resid, init->inkname->inkset);
+  inks = escp2_inks(v, pd->ink_resid, pd->inkname->inkset);
   if (inks)
     {
       stpi_init_debug_messages(v);
-      for (i = 0; i < init->channel_limit; i++)
+      for (i = 0; i < pd->channel_limit; i++)
 	{
 	  const escp2_variable_ink_t *ink = (*inks)[i];
 	  if (ink)
 	    {
-	      const char *param = init->inkname->channel_parameter_names[i];
+	      const char *param = pd->inkname->channel_parameter_names[i];
 	      double userval = 1.0;
-	      if (param && stp_check_float_parameter(init->v, param,
+	      if (param && stp_check_float_parameter(v, param,
 						     STP_PARAMETER_ACTIVE))
-		userval = stp_get_float_parameter(init->v, param);
+		userval = stp_get_float_parameter(v, param);
 	      stpi_dither_set_ranges(v, i, ink->numranges, ink->range,
 				     ink->density * paper_k_upper * userval);
 
@@ -1514,11 +1530,12 @@ setup_head_offset(stp_vars_t v,
 static int
 setup_ink_types(stp_vars_t v,
 		const escp2_inkname_t *ink_type,
-		escp2_privdata_t *privdata,
 		unsigned char **cols,
 		int channel_limit,
 		int line_length)
 {
+  escp2_privdata_t *pd =
+    (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   int i;
   int channels_in_use = 0;
   for (i = 0; i < channel_limit; i++)
@@ -1530,7 +1547,7 @@ setup_ink_types(stp_vars_t v,
 	  for (j = 0; j < channel->n_subchannels; j++)
 	    {
 	      cols[channels_in_use] = stpi_zalloc(line_length);
-	      privdata->channels[channels_in_use] = &(channel->channels[j]);
+	      pd->channels[channels_in_use] = &(channel->channels[j]);
 	      stpi_dither_add_channel(v, cols[channels_in_use], i, j);
 	      channels_in_use++;
 	    }
@@ -1538,6 +1555,27 @@ setup_ink_types(stp_vars_t v,
     }
   return channels_in_use;
 }
+
+static const input_slot_t *
+setup_input_slot(stp_vars_t v)
+{
+  int i;
+  const char *input_slot = stp_get_string_parameter(v, "InputSlot");
+  if (input_slot && strlen(input_slot) > 0)
+    {
+      const input_slot_list_t *slots = escp2_input_slots(v);
+      for (i = 0; i < slots->n_input_slots; i++)
+	{
+	  if (slots->slots[i].name &&
+	      strcmp(input_slot, slots->slots[i].name) == 0)
+	    {
+	      return &(slots->slots[i]);
+	      break;
+	    }
+	}
+    }
+  return NULL;
+}  
 
 static int
 escp2_print_data(stp_vars_t v, stp_image_t *image, int height, int width,
@@ -1595,44 +1633,13 @@ escp2_print_data(stp_vars_t v, stp_image_t *image, int height, int width,
 static int
 escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
 {
-  int		top = stp_get_top(v);
-  int		left = stp_get_left(v);
   int		status = 1;
 
   int		i;
-
-  const res_t	*res;
-  int		resid;
-  int		xdpi;
-  int		ydpi;	/* Resolution */
-  int		physical_ydpi;
-  int		physical_xdpi;
-  int		undersample;
-
   int		n;		/* Output number */
-  unsigned short *out;	/* Output pixels (16-bit) */
-  int		page_left;	/* Left margin of page */
-  int		page_right;	/* Right margin of page */
-  int		page_top;	/* Top of page */
-  int		page_bottom;	/* Bottom of page */
-  int		page_width;	/* Width of page */
-  int		page_height;	/* Height of page */
-  int		page_true_height;	/* True height of page */
 
-  int		nozzles;
-  int		nozzle_separation;
-  int		horizontal_passes;
-
-  escp2_init_t	init;
   int		max_vres;
-  int 		*head_offset;
-  int 		max_head_offset;
-  escp2_privdata_t privdata;
-  const escp2_inkname_t *ink_type;
-  int 		total_channels;
-  int 		channels_in_use;
-  int 		channel_limit;
-  const char *input_slot = stp_get_string_parameter(v, "InputSlot");
+  escp2_privdata_t pd;
   const char *direction = stp_get_string_parameter(v, "PrintingDirection");
 
   if (!stp_verify(v))
@@ -1646,305 +1653,248 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
       !set_raw_ink_type(v, image))
     return 0;
 
-  if (stp_get_output_type(v) == OUTPUT_RAW_CMYK ||
-      stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
-    init.rescale_density = 0;
-  else
-    init.rescale_density = 1;
+  pd.printed_something = 0;
+  pd.last_color = -1;
+  pd.last_pass_offset = 0;
+  stpi_allocate_component_data(v, "Driver", NULL, NULL, &pd);
 
-  privdata.undersample = 1;
-  privdata.denominator = 1;
-  privdata.initial_vertical_offset = 0;
-  privdata.printed_something = 0;
-  privdata.last_color = -1;
-  privdata.last_pass_offset = 0;
-  stpi_allocate_component_data(v, "Driver", NULL, NULL, &privdata);
-
-  ink_type = get_inktype(v);
-  total_channels = count_channels(ink_type);
-  if (stp_get_output_type(v) != OUTPUT_RAW_PRINTER && !(ink_type->is_color))
+  pd.inkname = get_inktype(v);
+  pd.total_channels = count_channels(pd.inkname);
+  if (stp_get_output_type(v) != OUTPUT_RAW_PRINTER && !(pd.inkname->is_color))
     stp_set_output_type(v, OUTPUT_GRAY);
-  if (stp_get_output_type(v) == OUTPUT_COLOR && ink_type->channels[0] != NULL)
+  if (stp_get_output_type(v) == OUTPUT_COLOR && pd.inkname->channels[0] != NULL)
     stp_set_output_type(v, OUTPUT_RAW_CMYK);
 
   /*
    * Figure out the output resolution...
    */
-  res = escp2_find_resolution(v, stp_get_string_parameter(v, "Resolution"));
-  if (res->softweave)
+  pd.res = escp2_find_resolution(v, stp_get_string_parameter(v, "Resolution"));
+  if (pd.res->softweave)
     max_vres = escp2_max_vres(v);
   else
     max_vres = escp2_base_resolution(v);
-  xdpi = res->hres;
-  ydpi = res->vres;
-  resid = res->resid;
-  undersample = res->vertical_undersample;
-  privdata.undersample = res->vertical_undersample;
-  privdata.denominator = res->vertical_denominator;
+  pd.xdpi = pd.res->hres;
+  pd.ydpi = pd.res->vres;
+  pd.undersample = pd.res->vertical_undersample;
+  pd.denominator = pd.res->vertical_denominator;
 
-  physical_xdpi = escp2_base_res(v, res->resid);
-  if (physical_xdpi > xdpi)
-    physical_xdpi = xdpi;
+  pd.physical_xdpi = escp2_base_res(v, pd.res->resid);
+  if (pd.physical_xdpi > pd.xdpi)
+    pd.physical_xdpi = pd.xdpi;
 
-  physical_ydpi = ydpi;
-  if (ydpi > max_vres)
-    physical_ydpi = max_vres;
+  pd.physical_ydpi = pd.ydpi;
+  if (pd.ydpi > max_vres)
+    pd.physical_ydpi = max_vres;
 
   if (direction && strcmp(direction, "Unidirectional") == 0)
-    init.unidirectional = 1;
+    pd.unidirectional = 1;
   else if (direction && strcmp(direction, "Bidirectional") == 0)
-    init.unidirectional = 0;
-  else if (xdpi >= 720 && ydpi >= 720)
-    init.unidirectional = 1;
+    pd.unidirectional = 0;
+  else if (pd.xdpi >= 720 && pd.ydpi >= 720)
+    pd.unidirectional = 1;
   else
-    init.unidirectional = 0;
+    pd.unidirectional = 0;
 
-  internal_imageable_area(v, 0, &page_left, &page_right,
-			  &page_bottom, &page_top);
-  left -= page_left;
-  top -= page_top;
-  page_width = page_right - page_left;
-  page_height = page_bottom - page_top;
+  internal_imageable_area(v, 0, &pd.page_left, &pd.page_right,
+			  &pd.page_bottom, &pd.page_top);
+  pd.page_width = pd.page_right - pd.page_left;
+  pd.page_height = pd.page_bottom - pd.page_top;
 
-  stpi_default_media_size(v, &n, &page_true_height);
+  pd.image_left = stp_get_left(v) - pd.page_left;
+  pd.image_left = pd.physical_ydpi * pd.undersample * pd.image_left / 72 /
+    pd.res->vertical_denominator;
 
-  left = physical_ydpi * undersample * left / 72 / res->vertical_denominator;
+  pd.image_top = stp_get_top(v) - pd.page_top;
+
+  stpi_default_media_size(v, &n, &(pd.page_true_height));
 
   /*
    * Set up the output channels
    */
-  head_offset = stpi_zalloc(sizeof(int) * total_channels);
+  pd.head_offset = stpi_zalloc(sizeof(int) * pd.total_channels);
 
-  memset(head_offset, 0, sizeof(head_offset));
+  memset(pd.head_offset, 0, sizeof(pd.head_offset));
   if (stp_get_output_type(v) == OUTPUT_RAW_PRINTER)
-    channel_limit = escp2_physical_channels(v);
+    pd.channel_limit = escp2_physical_channels(v);
   else if (stp_get_output_type(v) == OUTPUT_GRAY)
-    channel_limit = 1;
+    pd.channel_limit = 1;
   else
-    channel_limit = NCOLORS;
+    pd.channel_limit = NCOLORS;
 
-  channels_in_use = compute_channel_count(ink_type, channel_limit);
-  if (channels_in_use == 0)
+  pd.channels_in_use = compute_channel_count(pd.inkname, pd.channel_limit);
+  if (pd.channels_in_use == 0)
     {
-      ink_type = &default_black_ink;
-      channels_in_use = compute_channel_count(ink_type, channel_limit);
+      pd.inkname = &default_black_ink;
+      pd.channels_in_use = compute_channel_count(pd.inkname, pd.channel_limit);
     }
-  setup_head_offset(v, ink_type, head_offset, channel_limit);
-  if (channels_in_use == 1)
-    head_offset[0] = 0;
+  setup_head_offset(v, pd.inkname, pd.head_offset, pd.channel_limit);
+  if (pd.channels_in_use == 1)
+    pd.head_offset[0] = 0;
   if (escp2_has_cap(v, MODEL_FAST_360, MODEL_FAST_360_YES) &&
-      (ink_type->inkset == INKSET_CMYK || channels_in_use == 1) &&
-      xdpi == physical_xdpi && ydpi == 360)
-    init.use_fast_360 = 1;
+      (pd.inkname->inkset == INKSET_CMYK || pd.channels_in_use == 1) &&
+      pd.xdpi == pd.physical_xdpi && pd.ydpi == 360)
+    pd.use_fast_360 = 1;
   else
-    init.use_fast_360 = 0;
+    pd.use_fast_360 = 0;
 
   /*
    * Set up the printer-specific parameters (weaving)
    */
-  if (res->softweave)
+  if (pd.res->softweave)
     {
-      horizontal_passes = xdpi / physical_xdpi;
-      if (channels_in_use == 1 &&
-	  (ydpi >=
+      pd.horizontal_passes = pd.res->hres / pd.physical_xdpi;
+      if (pd.channels_in_use == 1 &&
+	  (pd.res->vres >=
 	   (escp2_base_separation(v) / escp2_black_nozzle_separation(v))) &&
 	  (escp2_max_black_resolution(v) < 0 ||
-	   ydpi <= escp2_max_black_resolution(v)) &&
+	   pd.res->vres <= escp2_max_black_resolution(v)) &&
 	  escp2_black_nozzles(v))
-	init.use_black_parameters = 1;
+	pd.use_black_parameters = 1;
       else
-	init.use_black_parameters = 0;
-      if (init.use_fast_360)
+	pd.use_black_parameters = 0;
+      if (pd.use_fast_360)
 	{
-	  nozzles = escp2_fast_nozzles(v);
-	  nozzle_separation = escp2_fast_nozzle_separation(v);
-	  privdata.min_nozzles = escp2_min_fast_nozzles(v);
+	  pd.nozzles = escp2_fast_nozzles(v);
+	  pd.nozzle_separation = escp2_fast_nozzle_separation(v);
+	  pd.min_nozzles = escp2_min_fast_nozzles(v);
 	}
-      else if (init.use_black_parameters)
+      else if (pd.use_black_parameters)
 	{
-	  nozzles = escp2_black_nozzles(v);
-	  nozzle_separation = escp2_black_nozzle_separation(v);
-	  privdata.min_nozzles = escp2_min_black_nozzles(v);
+	  pd.nozzles = escp2_black_nozzles(v);
+	  pd.nozzle_separation = escp2_black_nozzle_separation(v);
+	  pd.min_nozzles = escp2_min_black_nozzles(v);
 	}
       else
 	{
-	  nozzles = escp2_nozzles(v);
-	  nozzle_separation = escp2_nozzle_separation(v);
-	  privdata.min_nozzles = escp2_min_nozzles(v);
+	  pd.nozzles = escp2_nozzles(v);
+	  pd.nozzle_separation = escp2_nozzle_separation(v);
+	  pd.min_nozzles = escp2_min_nozzles(v);
 	}
-      init.nozzle_separation = nozzle_separation;
-      nozzle_separation = nozzle_separation * ydpi / escp2_base_separation(v);
+      pd.adjusted_nozzle_separation =
+	pd.nozzle_separation * pd.res->vres / escp2_base_separation(v);
     }
   else
     {
-      horizontal_passes = xdpi / escp2_base_resolution(v);
-      nozzles = 1;
-      privdata.min_nozzles = 1;
-      nozzle_separation = 1;
-      init.nozzle_separation = nozzle_separation;
-      init.use_black_parameters = 0;
+      pd.horizontal_passes = pd.res->hres / escp2_base_resolution(v);
+      pd.nozzles = 1;
+      pd.min_nozzles = 1;
+      pd.adjusted_nozzle_separation = 1;
+      pd.use_black_parameters = 0;
     }
-  init.nozzles = nozzles;
-  privdata.jets = nozzles;
 
-  if (horizontal_passes == 0)
-    horizontal_passes = 1;
+  if (pd.horizontal_passes == 0)
+    pd.horizontal_passes = 1;
 
-  max_head_offset = 0;
-  if (channels_in_use > 1)
-    for (i = 0; i < total_channels; i++)
+  pd.max_head_offset = 0;
+  if (pd.channels_in_use > 1)
+    for (i = 0; i < pd.total_channels; i++)
       {
-	head_offset[i] = head_offset[i] * ydpi / escp2_base_separation(v);
-	if (head_offset[i] > max_head_offset)
-	  max_head_offset = head_offset[i];
+	pd.head_offset[i] = pd.head_offset[i] * pd.ydpi /escp2_base_separation(v);
+	if (pd.head_offset[i] > pd.max_head_offset)
+	  pd.max_head_offset = pd.head_offset[i];
       }
 
-  /*
-   * Send ESC/P2 initialization commands...
-   */
-  init.v = v;
-  init.ydpi = ydpi * undersample;
-  if (init.ydpi > escp2_max_vres(v))
-    init.ydpi = escp2_max_vres(v);
-  init.xdpi = xdpi;
-  init.physical_xdpi = physical_xdpi;
-  init.res = res;
-  init.page_true_height = page_true_height;
-  init.page_width = page_width;
-  init.page_top = page_top;
-  if (stp_get_output_type(v) == OUTPUT_GRAY && channels_in_use == 1)
-    {
-      if (init.use_black_parameters)
-	init.initial_vertical_offset =
-	  escp2_black_initial_vertical_offset(v) * init.ydpi /
-	  escp2_base_separation(v);
-      else
-	init.initial_vertical_offset = head_offset[0] +
-	  (escp2_initial_vertical_offset(v) *
-	   init.ydpi / escp2_base_separation(v));
-    }
+  if (stp_get_output_type(v) == OUTPUT_GRAY && pd.channels_in_use == 1 &&
+      pd.use_black_parameters)
+    pd.initial_vertical_offset =
+      escp2_black_initial_vertical_offset(v) * pd.ydpi * pd.undersample /
+      escp2_base_separation(v);
   else
-    init.initial_vertical_offset =
-      escp2_initial_vertical_offset(v) * init.ydpi / escp2_base_separation(v);
+    pd.initial_vertical_offset = pd.head_offset[0] +
+      (escp2_initial_vertical_offset(v) *
+       pd.ydpi * pd.undersample / escp2_base_separation(v));
 
   /* adjust bottom margin for a 480 like head configuration */
-  init.page_bottom = page_bottom - max_head_offset * 72 / ydpi;
-  if ((max_head_offset * 72 % ydpi) != 0)
-    init.page_bottom -= 1;
-  if (init.page_bottom < 0)
-    init.page_bottom = 0;
+  pd.page_bottom -= pd.max_head_offset * 72 / pd.ydpi;
+  if ((pd.max_head_offset * 72 % pd.ydpi) != 0)
+    pd.page_bottom -= 1;
+  if (pd.page_bottom < 0)
+    pd.page_bottom = 0;
 
-  init.horizontal_passes = horizontal_passes;
-  init.bits = escp2_bits(v, init.res->resid);
-  privdata.bitwidth = init.bits;
-  init.inkname = ink_type;
-  init.total_channels = total_channels;
-  init.channel_limit = channel_limit;
+  pd.bitwidth = escp2_bits(v, pd.res->resid);
 
-  init.input_slot = NULL;
-  if (input_slot && strlen(input_slot) > 0)
+  pd.input_slot = setup_input_slot(v);
+  if (pd.input_slot && pd.input_slot->roll_feed_cut_flags)
     {
-      const input_slot_list_t *slots = escp2_input_slots(v);
-      for (i = 0; i < slots->n_input_slots; i++)
-	{
-	  if (slots->slots[i].name &&
-	      strcmp(input_slot, slots->slots[i].name) == 0)
-	    {
-	      init.input_slot = &(slots->slots[i]);
-	      break;
-	    }
-	}
-    }
-  if (init.input_slot && init.input_slot->roll_feed_cut_flags)
-    {
-      init.page_true_height += 4; /* Empirically-determined constants */
-      init.page_top += 2;
-      init.page_bottom += 2;
-      top += 2;
-      page_height += 2;
+      pd.page_true_height += 4; /* Empirically-determined constants */
+      pd.page_top += 2;
+      pd.page_bottom += 2;
+      pd.image_top += 2;
+      pd.page_height += 2;
     }
 
-  adjust_density_and_ink_type(&init, image);
+  adjust_density_and_ink_type(v, image);
   if (print_op & OP_JOB_START)
-    escp2_init_printer(&init);
+    escp2_init_printer(v);
   if (print_op & OP_JOB_PRINT)
     {
-      int out_width;		/* Width of image on page */
-      int out_height;		/* Height of image on page */
+      unsigned short *out;	/* Output pixels (16-bit) */
       int out_channels;		/* Output bytes per pixel */
-      int length;		/* Length of raster data */
+      int line_width;
       unsigned char **cols =
-	stpi_zalloc(sizeof(unsigned char *) * total_channels);
+	stpi_zalloc(sizeof(unsigned char *) * pd.total_channels);
 
-      privdata.channels =
-	stpi_zalloc(sizeof(physical_subchannel_t *) * total_channels);
+      pd.channels =
+	stpi_zalloc(sizeof(physical_subchannel_t *) * pd.total_channels);
 
       /*
        * Compute the output size...
        */
-      out_width = stp_get_width(v);
-      out_height = stp_get_height(v);
+      pd.width = stp_get_width(v) * pd.xdpi / 72;
+      pd.height = stp_get_height(v) * pd.ydpi / 72;
 
       /*
        * Convert image size to printer resolution...
        */
-
-      out_width  = xdpi * out_width / 72;
-      out_height = ydpi * out_height / 72;
-      length = (out_width + 7) / 8;
-      privdata.hoffset = left;
-      privdata.xdpi = xdpi;
-      privdata.physical_xdpi = physical_xdpi;
-      privdata.ydpi = ydpi;
-      privdata.width = out_width;
-      privdata.ncolors = total_channels;
-      privdata.horizontal_weave = horizontal_passes;
+      line_width = (pd.width + 7) / 8;
+      pd.hoffset = pd.image_left;
+      pd.ncolors = pd.total_channels;
+      pd.horizontal_weave = pd.horizontal_passes;
 
       /*
        * Allocate memory for the raster data...
        */
 
-      stpi_initialize_weave(v, nozzles, nozzle_separation,
-			    horizontal_passes, res->vertical_passes,
-			    res->vertical_oversample, total_channels,
-			    init.bits, out_width, out_height,
-			    top * physical_ydpi / 72,
-			    (page_height * physical_ydpi / 72 +
-			     escp2_extra_feed(v) * physical_ydpi /
+      stpi_initialize_weave(v, pd.nozzles, pd.adjusted_nozzle_separation,
+			    pd.horizontal_passes, pd.res->vertical_passes,
+			    pd.res->vertical_oversample, pd.total_channels,
+			    pd.bitwidth, pd.width, pd.height,
+			    pd.image_top * pd.physical_ydpi / 72,
+			    (pd.page_height * pd.physical_ydpi / 72 +
+			     escp2_extra_feed(v) * pd.physical_ydpi /
 			     escp2_base_resolution(v)),
-			    1, head_offset, flush_pass,
+			    STPI_WEAVE_ZIGZAG, pd.head_offset, flush_pass,
 			    FILLFUNC, PACKFUNC, COMPUTEFUNC);
 
       stpi_set_output_color_model(v, COLOR_MODEL_CMY);
 
-      out_channels = adjust_print_quality(&init, image);
-      stpi_dither_init(v, image, out_width, xdpi, ydpi);
-      channels_in_use =
-	setup_ink_types(v, ink_type, &privdata, cols,
-			channel_limit, length * init.bits);
-      setup_inks(&init);
+      out_channels = adjust_print_quality(v, image);
+      stpi_dither_init(v, image, pd.width, pd.xdpi, pd.ydpi);
+      setup_ink_types(v, pd.inkname, cols, pd.channel_limit,
+		      line_width * pd.bitwidth);
+      setup_inks(v);
 
       out = stpi_malloc(stpi_image_width(image) * out_channels * 2);
 
-      status = escp2_print_data(v, image, out_height, length, out, cols);
+      status = escp2_print_data(v, image, pd.height, line_width, out, cols);
 
       /*
        * Cleanup...
        */
       stpi_free(out);
-      if (!privdata.printed_something)
+      if (!pd.printed_something)
 	stpi_send_command(v, "\n", "");
       stpi_send_command(v, "\f", "");	/* Eject page */
-      for (i = 0; i < total_channels; i++)
+      for (i = 0; i < pd.total_channels; i++)
 	if (cols[i])
 	  stpi_free((unsigned char *) cols[i]);
       stpi_free(cols);
-      stpi_free(privdata.channels);
+      stpi_free(pd.channels);
     }
   if (print_op & OP_JOB_END)
-    escp2_deinit_printer(&init);
+    escp2_deinit_printer(v);
 
-  stpi_free(head_offset);
+  stpi_free(pd.head_offset);
 
 #ifdef QUANTIFY
   print_timers(v);
@@ -2015,7 +1965,7 @@ set_vertical_position(stp_vars_t v, stpi_pass_t *pass)
     {
       advance += pd->initial_vertical_offset;
       pd->initial_vertical_offset = 0;
-      if (escp2_use_extended_commands(v, pd->jets > 1))
+      if (escp2_use_extended_commands(v, pd->nozzles > 1))
 	stpi_send_command(v, "\033(v", "bl", advance);
       else
 	stpi_send_command(v, "\033(v", "bh", advance);
@@ -2029,7 +1979,7 @@ set_color(stp_vars_t v, stpi_pass_t *pass, int color)
   escp2_privdata_t *pd =
     (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   if (pd->last_color != color &&
-      ! escp2_use_extended_commands(v, pd->jets > 1))
+      ! escp2_use_extended_commands(v, pd->nozzles > 1))
     {
       int ncolor = pd->channels[color]->color;
       int density = pd->channels[color]->density;
@@ -2080,7 +2030,7 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int lwidth,
   escp2_privdata_t *pd =
     (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
   if (!escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) &&
-      pd->jets == 1 && pd->bitwidth == 1)
+      pd->nozzles == 1 && pd->bitwidth == 1)
     {
       int ygap = 3600 / ydpi;
       int xgap = 3600 / xdpi;
@@ -2105,7 +2055,6 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int lwidth,
     }
   else
     {
-      escp2_privdata_t *pd = (escp2_privdata_t *) stpi_get_component_data(v, "Driver");
       int ncolor = pd->channels[color]->color;
       int nwidth = pd->bitwidth * ((lwidth + 7) / 8);
       if (pd->channels[color]->density >= 0)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.95 2003/04/15 02:24:56 rlk Exp $"
+ * "$Id: print-util.c,v 1.95.2.1 2003/04/28 02:39:35 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -376,7 +376,7 @@ fill_buffer_writefunc(void *priv, const char *buffer, size_t bytes)
 }
 
 void
-stpi_init_debug_messages(stp_const_vars_t v)
+stpi_init_debug_messages(stp_vars_t v)
 {
   int verified_flag = stpi_get_verified(v);
   debug_msgbuf_t *msgbuf = stpi_malloc(sizeof(debug_msgbuf_t));
@@ -390,7 +390,7 @@ stpi_init_debug_messages(stp_const_vars_t v)
 }
 
 void
-stpi_flush_debug_messages(stp_const_vars_t v)
+stpi_flush_debug_messages(stp_vars_t v)
 {
   int verified_flag = stpi_get_verified(v);
   debug_msgbuf_t *msgbuf = (debug_msgbuf_t *)stp_get_errdata(v);

@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.5 2002/11/03 20:26:47 rlk Exp $"
+ * "$Id: testpattern.h,v 1.5.14.1 2003/04/28 02:39:36 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -116,8 +116,6 @@ typedef union yylv {
   double dval;
   char *sval;
 } YYSTYPE;
-
-extern YYSTYPE yylval;
 
 #include "testpatterny.h"
 

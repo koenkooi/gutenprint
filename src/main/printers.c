@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.49 2003/04/15 02:24:58 rlk Exp $"
+ * "$Id: printers.c,v 1.49.2.1 2003/04/28 02:39:35 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -644,9 +644,9 @@ stpi_verify_printer_params(stp_const_vars_t v)
   nparams = stp_parameter_list_count(params);
   for (i = 0; i < nparams; i++)
     {
-      const stp_parameter_t *p = stp_parameter_list_param(params, i);
-      if (p->p_class != STP_PARAMETER_CLASS_PAGE_SIZE && p->is_active)
-	answer &= verify_param(v, p->name);
+      const stp_parameter_t *param = stp_parameter_list_param(params, i);
+      if (param->p_class != STP_PARAMETER_CLASS_PAGE_SIZE && param->is_active)
+	answer &= verify_param(v, param->name);
     }
   stp_parameter_list_free(params);
   stp_set_errfunc((stp_vars_t) v, ofunc);
