@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.3 2004/03/05 02:57:55 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.4 2004/03/13 17:58:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -408,7 +408,8 @@ stp_start_job(stp_const_vars_t v, stp_image_t *image)
 {
   const stpi_printfuncs_t *printfuncs =
     stpi_get_printfuncs(stp_get_printer(v));
-  if (stp_get_job_mode(v) == STP_JOB_MODE_PAGE)
+  if (!stp_get_string_parameter(v, "JobMode") ||
+      strcmp(stp_get_string_parameter(v, "JobMode"), "Page") == 0)
     return 1;
   if (printfuncs->start_job)
     return (printfuncs->start_job)(v, image);
@@ -421,7 +422,8 @@ stp_end_job(stp_const_vars_t v, stp_image_t *image)
 {
   const stpi_printfuncs_t *printfuncs =
     stpi_get_printfuncs(stp_get_printer(v));
-  if (stp_get_job_mode(v) == STP_JOB_MODE_PAGE)
+  if (!stp_get_string_parameter(v, "JobMode") ||
+      strcmp(stp_get_string_parameter(v, "JobMode"), "Page") == 0)
     return 1;
   if (printfuncs->end_job)
     return (printfuncs->end_job)(v, image);
@@ -431,9 +433,9 @@ stp_end_job(stp_const_vars_t v, stp_image_t *image)
 
 static int
 verify_string_param(stp_const_vars_t v, const char *parameter,
-		    stp_parameter_t *desc)
+		    stp_parameter_t *desc, int quiet)
 {
-  int answer = 1;
+  stpi_parameter_verify_t answer = PARAMETER_OK;
   if (desc->is_mandatory ||
       stp_check_string_parameter(v, parameter, STP_PARAMETER_ACTIVE))
     {
@@ -443,15 +445,16 @@ verify_string_param(stp_const_vars_t v, const char *parameter,
       int i;
       if (vptr)
 	count = stp_string_list_count(vptr);
-      answer = 0;
+      answer = PARAMETER_BAD;
       if (checkval == NULL)
 	{
 	  if (count == 0)
-	    answer = 1;
+	    answer = PARAMETER_OK;
 	  else
 	    {
-	      stpi_eprintf(v, _("Value must be set for %s\n"), parameter);
-	      answer = 0;
+	      if (!quiet)
+		stpi_eprintf(v, _("Value must be set for %s\n"), parameter);
+	      answer = PARAMETER_BAD;
 	    }
 	}
       else if (count > 0)
@@ -459,15 +462,15 @@ verify_string_param(stp_const_vars_t v, const char *parameter,
 	  for (i = 0; i < count; i++)
 	    if (!strcmp(checkval, stp_string_list_param(vptr, i)->name))
 	      {
-		answer = 1;
+		answer = PARAMETER_OK;
 		break;
 	      }
-	  if (!answer)
+	  if (!answer && !quiet)
 	    stpi_eprintf(v, _("`%s' is not a valid %s\n"), checkval, parameter);
 	}
       else if (strlen(checkval) == 0)
-	answer = 1;
-      else
+	answer = PARAMETER_OK;
+      else if (!quiet)
 	stpi_eprintf(v, _("`%s' is not a valid %s\n"), checkval, parameter);
     }
   stp_parameter_description_free(desc);
@@ -476,7 +479,7 @@ verify_string_param(stp_const_vars_t v, const char *parameter,
 
 static int
 verify_double_param(stp_const_vars_t v, const char *parameter,
-		    stp_parameter_t *desc)
+		    stp_parameter_t *desc, int quiet)
 {
   if (desc->is_mandatory ||
       stp_check_float_parameter(v, parameter, STP_PARAMETER_ACTIVE))
@@ -485,18 +488,19 @@ verify_double_param(stp_const_vars_t v, const char *parameter,
       if (checkval < desc->bounds.dbl.lower ||
 	  checkval > desc->bounds.dbl.upper)
 	{
-	  stpi_eprintf(v, _("%s must be between %f and %f (is %f)\n"),
-		      parameter, desc->bounds.dbl.lower,
-		      desc->bounds.dbl.upper, checkval);
-	  return 0;
+	  if (!quiet)
+	    stpi_eprintf(v, _("%s must be between %f and %f (is %f)\n"),
+			 parameter, desc->bounds.dbl.lower,
+			 desc->bounds.dbl.upper, checkval);
+	  return PARAMETER_BAD;
 	}
     }
-  return 1;
+  return PARAMETER_OK;
 }
 
 static int
 verify_int_param(stp_const_vars_t v, const char *parameter,
-		 stp_parameter_t *desc)
+		 stp_parameter_t *desc, int quiet)
 {
   if (desc->is_mandatory ||
       stp_check_int_parameter(v, parameter, STP_PARAMETER_ACTIVE))
@@ -505,22 +509,23 @@ verify_int_param(stp_const_vars_t v, const char *parameter,
       if (checkval < desc->bounds.integer.lower ||
 	  checkval > desc->bounds.integer.upper)
 	{
-	  stpi_eprintf(v, _("%s must be between %d and %d (is %d)\n"),
-		      parameter, desc->bounds.integer.lower,
-		      desc->bounds.integer.upper, checkval);
+	  if (!quiet)
+	    stpi_eprintf(v, _("%s must be between %d and %d (is %d)\n"),
+			 parameter, desc->bounds.integer.lower,
+			 desc->bounds.integer.upper, checkval);
 	  stp_parameter_description_free(desc);
-	  return 0;
+	  return PARAMETER_BAD;
 	}
     }
   stp_parameter_description_free(desc);
-  return 1;
+  return PARAMETER_OK;
 }
 
 static int
 verify_curve_param(stp_const_vars_t v, const char *parameter,
-		    stp_parameter_t *desc)
+		    stp_parameter_t *desc, int quiet)
 {
-  int answer = 1;
+  stpi_parameter_verify_t answer = 1;
   if (desc->bounds.curve &&
       (desc->is_mandatory ||
        stp_check_curve_parameter(v, parameter, STP_PARAMETER_ACTIVE)))
@@ -534,19 +539,21 @@ verify_curve_param(stp_const_vars_t v, const char *parameter,
 	  stp_curve_get_bounds(desc->bounds.curve, &l1, &u1);
 	  if (u0 > u1 || l0 < l1)
 	    {
-	      stpi_eprintf(v, _("%s bounds must be between %f and %f\n"),
-			  parameter, l1, u1);
-	      answer = 0;
+	      if (!quiet)
+		stpi_eprintf(v, _("%s bounds must be between %f and %f\n"),
+			     parameter, l1, u1);
+	      answer = PARAMETER_BAD;
 	    }
 	  if (stp_curve_get_wrap(checkval) !=
 	      stp_curve_get_wrap(desc->bounds.curve))
 	    {
-	      stpi_eprintf(v, _("%s wrap mode must be %s\n"),
-			  parameter,
-			  (stp_curve_get_wrap(desc->bounds.curve) ==
-			   STP_CURVE_WRAP_NONE) ?
-			  _("no wrap") : _("wrap around"));
-	      answer = 0;
+	      if (!quiet)
+		stpi_eprintf(v, _("%s wrap mode must be %s\n"),
+			     parameter,
+			     (stp_curve_get_wrap(desc->bounds.curve) ==
+			      STP_CURVE_WRAP_NONE) ?
+			     _("no wrap") : _("wrap around"));
+	      answer = PARAMETER_BAD;
 	    }
 	}
     }
@@ -554,36 +561,38 @@ verify_curve_param(stp_const_vars_t v, const char *parameter,
   return answer;
 }
 
-static int
-verify_param(stp_const_vars_t v, const char *parameter)
+stpi_parameter_verify_t
+stpi_verify_parameter(stp_const_vars_t v, const char *parameter,
+		      int quiet)
 {
   stp_parameter_t desc;
   stp_describe_parameter(v, parameter, &desc);
   if (!desc.is_active)
     {
       stp_parameter_description_free(&desc);
-      return 1;
+      return PARAMETER_INACTIVE;
     }
   switch (desc.p_type)
     {
     case STP_PARAMETER_TYPE_STRING_LIST:
-      return verify_string_param(v, parameter, &desc);
+      return verify_string_param(v, parameter, &desc, quiet);
     case STP_PARAMETER_TYPE_DOUBLE:
-      return verify_double_param(v, parameter, &desc);
+      return verify_double_param(v, parameter, &desc, quiet);
     case STP_PARAMETER_TYPE_INT:
-      return verify_int_param(v, parameter, &desc);
+      return verify_int_param(v, parameter, &desc, quiet);
     case STP_PARAMETER_TYPE_CURVE:
-      return verify_curve_param(v, parameter, &desc);
+      return verify_curve_param(v, parameter, &desc, quiet);
     case STP_PARAMETER_TYPE_RAW:
     case STP_PARAMETER_TYPE_FILE:
       stp_parameter_description_free(&desc);
-      return 1;			/* No way to verify this here */
+      return PARAMETER_OK;		/* No way to verify this here */
     case STP_PARAMETER_TYPE_BOOLEAN:
       stp_parameter_description_free(&desc);
-      return 1;			/* Booleans always OK */
+      return PARAMETER_OK;		/* Booleans always OK */
     default:
-      stpi_eprintf(v, _("Unknown type parameter %s (%d)\n"),
-		  parameter, desc.p_type);
+      if (!quiet)
+	stpi_eprintf(v, _("Unknown type parameter %s (%d)\n"),
+		     parameter, desc.p_type);
       stp_parameter_description_free(&desc);
       return 0;
     }
@@ -652,7 +661,7 @@ stpi_verify_printer_params(stp_vars_t v)
 
   if (pagesize && strlen(pagesize) > 0)
     {
-      answer &= verify_param(v, "PageSize");
+      answer &= stpi_verify_parameter(v, "PageSize", 0);
     }
   else
     {
@@ -663,7 +672,7 @@ stpi_verify_printer_params(stp_vars_t v)
 	  stp_get_page_width(v) <= min_width || stp_get_page_width(v) > width)
 	{
 	  answer = 0;
-	  stpi_eprintf(v, _("Image size is not valid\n"));
+	  stpi_eprintf(v, _("Page size is not valid\n"));
 	}
     }
 
@@ -706,7 +715,6 @@ stpi_verify_printer_params(stp_vars_t v)
     }
 
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
-  CHECK_INT_RANGE(v, job_mode, STP_JOB_MODE_PAGE, STP_JOB_MODE_JOB);
   CHECK_INT_RANGE(v, image_channels, 0, STP_CHANNEL_LIMIT - 1);
 
   if (stp_get_image_channel_depth(v) != 8 &&
@@ -722,9 +730,9 @@ stpi_verify_printer_params(stp_vars_t v)
   for (i = 0; i < nparams; i++)
     {
       const stp_parameter_t *param = stp_parameter_list_param(params, i);
-      if (param->p_class != STP_PARAMETER_CLASS_PAGE_SIZE &&
+      if (strcmp(param->name, "PageSize") != 0 &&
 	  param->is_active && param->verify_this_parameter)
-	answer &= verify_param(v, param->name);
+	answer &= stpi_verify_parameter(v, param->name, 0);
     }
   stp_parameter_list_free(params);
   stp_set_errfunc((stp_vars_t) v, ofunc);

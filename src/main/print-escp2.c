@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.5 2004/03/11 03:37:55 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.6 2004/03/13 17:58:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -125,7 +125,7 @@ static const stp_parameter_t the_parameters[] =
   {
     "PageSize", N_("Page Size"), N_("Basic Printer Setup"),
     N_("Size of the paper being printed to"),
-    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {
@@ -2536,7 +2536,8 @@ escp2_print(stp_const_vars_t v, stp_image_t *image)
   stp_vars_t nv = stp_vars_create_copy(v);
   int op = OP_JOB_PRINT;
   int status;
-  if (stp_get_job_mode(v) == STP_JOB_MODE_PAGE)
+  if (!stp_get_string_parameter(v, "JobMode") ||
+      strcmp(stp_get_string_parameter(v, "JobMode"), "Page") == 0)
     op = OP_JOB_START | OP_JOB_PRINT | OP_JOB_END;
   stpi_prune_inactive_options(nv);
   status = escp2_do_print(nv, image, op);

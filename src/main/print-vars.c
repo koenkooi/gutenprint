@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.62.4.3 2004/03/05 02:57:55 rlk Exp $"
+ * "$Id: print-vars.c,v 1.62.4.4 2004/03/13 17:58:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -70,9 +70,6 @@ typedef struct					/* Plug-in variables */
   int	cookie;
   char *driver;			/* Name of printer "driver" */
   char *color_conversion;       /* Color module in use */
-  stp_job_mode_t job_mode;
-  int   image_channel_depth;
-  int   image_channels;
   int	left;			/* Offset from left-upper corner, points */
   int	top;			/* ... */
   int	width;			/* Width of the image, points */
@@ -94,11 +91,6 @@ static int standard_vars_initialized = 0;
 static stpi_internal_vars_t default_vars =
 {
 	COOKIE_VARS,
-	NULL,		       	/* Name of printer "driver" */
-	NULL,                   /* Name of color module */
-	STP_JOB_MODE_PAGE,	/* Job mode */
-	8,			/* Channel bit depth */
-	0			/* Channel count */
 };
 
 static void
@@ -438,9 +430,6 @@ DEF_FUNCS(height, int, stp)
 DEF_FUNCS(page_width, int, stp)
 DEF_FUNCS(page_height, int, stp)
 DEF_FUNCS(page_number, int, stp)
-DEF_FUNCS(job_mode, stp_job_mode_t, stp)
-DEF_FUNCS(image_channel_depth, int, stp)
-DEF_FUNCS(image_channels, int, stp)
 DEF_FUNCS(outdata, void *, stp)
 DEF_FUNCS(errdata, void *, stp)
 DEF_FUNCS(outfunc, stp_outfunc_t, stp)
@@ -1273,9 +1262,6 @@ stp_vars_copy(stp_vars_t vd, stp_const_vars_t vs)
     return;
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_color_conversion(vd, stp_get_color_conversion(vs));
-  stp_set_job_mode(vd, stp_get_job_mode(vs));
-  stp_set_image_channel_depth(vd, stp_get_image_channel_depth(vs));
-  stp_set_image_channels(vd, stp_get_image_channels(vs));
   stp_set_left(vd, stp_get_left(vs));
   stp_set_top(vd, stp_get_top(vs));
   stp_set_width(vd, stp_get_width(vs));

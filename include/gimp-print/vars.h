@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.3.4.4 2004/03/09 03:00:25 rlk Exp $"
+ * "$id: vars.h,v 1.3.4.4 2004/03/09 03:00:25 rlk Exp $"
  *
  *   libgimpprint stp_vars_t core functions.
  *
@@ -33,12 +33,6 @@ extern "C" {
 /*
  * Constants...
  */
-
-typedef enum
-{
-  STP_JOB_MODE_PAGE,
-  STP_JOB_MODE_JOB
-} stp_job_mode_t;
 
 /*
  * Opaque representation of printer setttings.
@@ -75,7 +69,6 @@ typedef enum
 {
   STP_PARAMETER_CLASS_FEATURE,	/* Printer feature */
   STP_PARAMETER_CLASS_OUTPUT,	/* Output control */
-  STP_PARAMETER_CLASS_PAGE_SIZE, /* Special for specifying page size */
   STP_PARAMETER_CLASS_CORE,	/* Core Gimp-Print parameter */
   STP_PARAMETER_CLASS_INVALID
 } stp_parameter_class_t;
@@ -232,14 +225,6 @@ extern int stp_get_width(stp_const_vars_t v);
 extern void stp_set_height(stp_vars_t v, int val);
 extern int stp_get_height(stp_const_vars_t v);
 
-#if 0
-/*
- * Set/get the type of the image
- */
-extern void stp_set_image_type(stp_vars_t v, stp_image_type_t val);
-extern stp_image_type_t stp_get_image_type(stp_const_vars_t v);
-#endif
-
 /*
  * Set/get the number of channels.  Only needed if the image type
  * does not define the number of channels.
@@ -256,9 +241,6 @@ extern int stp_get_image_channel_depth(stp_const_vars_t v);
 /*
  * Set/get job properties
  */
-extern void stp_set_job_mode(stp_vars_t, stp_job_mode_t);
-extern stp_job_mode_t stp_get_job_mode(stp_const_vars_t);
-
 extern void stp_set_page_number(stp_vars_t, int);
 extern int stp_get_page_number(stp_const_vars_t);
 
@@ -578,5 +560,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.4 2004/03/09 03:00:25 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.5 2004/03/13 17:58:02 rlk Exp $".
  */

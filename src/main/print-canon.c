@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.140.2.5 2004/03/11 03:37:55 rlk Exp $"
+ * "$Id: print-canon.c,v 1.140.2.6 2004/03/13 17:58:04 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1222,7 +1222,7 @@ static const stp_parameter_t the_parameters[] =
   {
     "PageSize", N_("Page Size"), N_("Basic Printer Setup"),
     N_("Size of the paper being printed to"),
-    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {

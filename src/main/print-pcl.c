@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.125.4.5 2004/03/11 03:37:56 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.125.4.6 2004/03/13 17:58:06 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1115,7 +1115,7 @@ static const stp_parameter_t the_parameters[] =
   {
     "PageSize", N_("Page Size"), N_("Basic Printer Setup"),
     N_("Size of the paper being printed to"),
-    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
   },
   {

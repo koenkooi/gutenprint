@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.15.14.2 2004/03/05 02:57:55 rlk Exp $"
+ * "$Id: vars.h,v 1.15.14.3 2004/03/13 17:58:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -35,6 +35,13 @@ extern "C" {
 typedef void *(*stpi_copy_data_func_t)(void *);
 typedef void (*stpi_free_data_func_t)(void *);
 
+typedef enum
+{
+  PARAMETER_BAD,
+  PARAMETER_OK,
+  PARAMETER_INACTIVE
+} stpi_parameter_verify_t;
+
 extern void stpi_allocate_component_data(stp_vars_t v,
 					 const char *name,
 					 stpi_copy_data_func_t copyfunc,
@@ -43,15 +50,13 @@ extern void stpi_allocate_component_data(stp_vars_t v,
 extern void stpi_destroy_component_data(stp_vars_t v, const char *name);
 extern void *stpi_get_component_data(stp_const_vars_t v, const char *name);
 
+extern stpi_parameter_verify_t stpi_verify_parameter(stp_const_vars_t v,
+						     const char *parameter,
+						     int quiet);
 extern int stpi_get_verified(stp_const_vars_t);
 extern void stpi_set_verified(stp_vars_t, int value);
 
 extern void stpi_copy_options(stp_vars_t vd, stp_const_vars_t vs);
-
-#if 0
-extern void stpi_set_output_type(stp_vars_t v, stp_output_type_t val);
-extern stp_output_type_t stpi_get_output_type(stp_const_vars_t v);
-#endif
 
 extern void
 stpi_fill_parameter_settings(stp_parameter_t *desc,
@@ -59,5 +64,5 @@ stpi_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GIMP_PRINT_INTERNAL_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.15.14.2 2004/03/05 02:57:55 rlk Exp $".
+ * End of "$Id: vars.h,v 1.15.14.3 2004/03/13 17:58:06 rlk Exp $".
  */
