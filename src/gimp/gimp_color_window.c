@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.31 2002/11/05 23:48:16 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.32 2002/11/06 03:34:46 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -208,10 +208,11 @@ create_color_adjust_window (void)
 		     NULL);
 
   table = gtk_table_new (1, 1, FALSE);
+  gtk_container_set_resize_mode(GTK_CONTAINER(table), GTK_RESIZE_IMMEDIATE);
   gtk_container_set_border_width (GTK_CONTAINER (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 4);
   gtk_table_set_row_spacings (GTK_TABLE (table), 2);
-  gtk_table_set_row_spacing (GTK_TABLE (table), 8, 6);
+/*  gtk_table_set_row_spacing (GTK_TABLE (table), 8, 6); */
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (color_adjust_dialog)->vbox),
 		      table, FALSE, FALSE, 0);
   gtk_widget_show (table);
