@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/06/08 01:23:43 rlk Exp $
+## $Id: Makefile.am,v 1.13 2001/07/06 18:04:43 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,8 @@ EXTRA_DIST = \
 	Makefile.am \
 	README \
 	README.bsd \
-	contrib.mak.addon \
+	contrib.mak.addon.in \
+	contrib.mak.addon.old \
 	debian-patch \
 	debian-patch-stp \
 	devs.mak.addon-5.10 \

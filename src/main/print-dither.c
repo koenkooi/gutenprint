@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.37 2001/07/05 23:17:49 rlk Exp $"
+ * "$Id: print-dither.c,v 1.38 2001/07/06 18:04:43 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -33,6 +33,7 @@
 #include <gimp-print-intl-internal.h>
 #include <limits.h>
 #include <math.h>
+#include <string.h>
 
 #ifdef __GNUC__
 #define inline __inline__

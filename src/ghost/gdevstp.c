@@ -25,13 +25,17 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.8 2001/05/20 22:10:20 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.9 2001/07/06 18:04:43 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
 #include "gsparam.h"
 
+#ifdef DISABLE_NLS
 #include "gdevstp-print.h"
+#else
+#include <gimp-print/gimp-print.h>
+#endif
 
 /* internal debugging output ? */
 
