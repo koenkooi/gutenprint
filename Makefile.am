@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.127 2002/03/23 11:50:01 rleigh Exp $
+## $Id: Makefile.am,v 1.128 2002/04/03 17:23:21 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -75,6 +75,8 @@ dist-hook:
 	    done \
 	  fi \
 	done
+# Remove configure.in (libtool bug workaround)
+	$(RM) $(distdir)/configure.in
 # Create debian/control
 	DEBIAN_VERSION=`grep "(" debian/changelog | head -1l | sed "s/^[^(]*(//" | sed "s/).*$$//"` ; \
 	UPSTREAM_VERSION=`echo $$DEBIAN_VERSION | sed "s/-[^-]*$$//"` ; \
