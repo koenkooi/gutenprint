@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.85 2002/05/19 04:38:50 mtomlinson Exp $"
+ * "$Id: print-dither.c,v 1.86 2002/05/28 07:15:35 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2771,7 +2771,6 @@ stp_dither_cmy_et(const unsigned short  *cmy,
 
 	base = CHANNEL(d, i).b;
 	value = ndither[i] + base;
-	if (i != ECOLOR_K) value += CHANNEL(d, ECOLOR_K).v;
 	if (value < 0) value = 0;				/* Dither can make this value negative */
 	
         find_segment(d, &CHANNEL(d, i), p->maxdot_wet - p->wetness, value, &p->dr);
