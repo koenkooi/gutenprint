@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.47 2001/08/23 01:29:21 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.48 2001/08/30 23:18:01 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1263,7 +1263,7 @@ create_image_settings_frame(void)
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
-  adjust_color_button = gtk_button_new_with_label (_("Adjust Color..."));
+  adjust_color_button = gtk_button_new_with_label (_("Adjust Output..."));
   gtk_tooltips_set_tip(tooltips, adjust_color_button,
 		       "Adjust color balance, brightness, contrast, "
 		       "saturation, and dither algorithm",
