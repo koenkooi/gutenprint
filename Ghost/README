@@ -152,39 +152,88 @@ Color Balancing Values: (min,max,default)
 Printer Model Selection:
 ------- ----- ----------
 
--dModel=xx
+-sModel=name
 
-0   Stylus Color
-1   Stylus Color Pro/Pro XL/400/500
-2   Stylus Color 1500
-3   Stylus Color 600
-4   Stylus Color 800
-5   Stylus Color 850
-6   Stylus Color 1520
-7   Stylus Photo 700
-8   Stylus Photo EX
-9   Stylus Photo
-10  Stylus Color 440/460
-11  Stylus Color 640
-12  Stylus Color 740
-13  Stylus Color 900
-14  Stylus Photo 750
-15  Stylus Photo 1200
-16  Stylus Color 860
-17  Stylus Color 1160
-18  Stylus Color 660/670
-19  Stylus Color 760
-20  Stylus Photo 720
-21  Stylus Color 480
-22  Stylus Photo 870
-23  Stylus Photo 1270
-24  Stylus Color 3000
+ps			PostScript Level 1
+ps2			PostScript Level 2
+pcl-340			HP DeskJet 340
+pcl-400			HP DeskJet 400
+pcl-500			HP DeskJet 500
+pcl-520			HP DeskJet 520
+pcl-501			HP DeskJet 500C
+pcl-540			HP DeskJet 540C
+pcl-550			HP DeskJet 550C, 560C
+pcl-600			HP DeskJet 600/600C
+pcl-601			HP DeskJet 600 series
+pcl-690			HP DeskJet 690 series
+pcl-800			HP DeskJet 800 series
+pcl-900			HP DeskJet 900 series
+pcl-1100		HP DeskJet 1100C
+pcl-1120		HP DeskJet 1120C
+pcl-1220		HP DeskJet, 1220C
+pcl-1200		HP DeskJet 1200C
+pcl-1600		HP DeskJet 1600C
+pcl-2000		HP DeskJet 2000 series
+pcl-2500		HP DeskJet 2500 series
+pcl-2			HP LaserJet II series
+pcl-3			HP LaserJet III series
+pcl-4			HP LaserJet 4 series
+pcl-4v			HP LaserJet 4V, 4Si
+pcl-5			HP LaserJet 5 series
+pcl-5si			HP LaserJet 5Si
+pcl-6			HP LaserJet 6 series
+escp2			EPSON Stylus Color
+escp2-pro		EPSON Stylus Color Pro
+escp2-pro-xl		EPSON Stylus Color Pro XL
+escp2-400		EPSON Stylus Color 400
+escp2-440		EPSON Stylus Color 440
+escp2-460		EPSON Stylus Color 460
+escp2-480		EPSON Stylus Color 480
+escp2-500		EPSON Stylus Color 500
+escp2-600		EPSON Stylus Color 600
+escp2-640		EPSON Stylus Color 640
+escp2-660		EPSON Stylus Color 660
+escp2-670		EPSON Stylus Color 670
+escp2-740		EPSON Stylus Color 740
+escp2-760		EPSON Stylus Color 760
+escp2-800		EPSON Stylus Color 800
+escp2-850		EPSON Stylus Color 850
+escp2-860		EPSON Stylus Color 860
+escp2-900		EPSON Stylus Color 900
+escp2-1160		EPSON Stylus Color 1160
+escp2-1500		EPSON Stylus Color 1500
+escp2-1520		EPSON Stylus Color 1520
+escp2-3000		EPSON Stylus Color 3000
+escp2-photo		EPSON Stylus Photo
+escp2-700		EPSON Stylus Photo 700
+escp2-ex		EPSON Stylus Photo EX
+escp2-720		EPSON Stylus Photo 720
+escp2-750		EPSON Stylus Photo 750
+escp2-870		EPSON Stylus Photo 870
+escp2-1200		EPSON Stylus Photo 1200
+escp2-1270		EPSON Stylus Photo 1270
+bjc-1000		CANON BJC 1000
+bjc-2000		CANON BJC 2000
+bjc-3000		CANON BJC 3000
+bjc-4300		CANON BJC 4300
+bjc-4400		CANON BJC 4400 photo
+bjc-6000		CANON BJC 6000
+bjc-6100		CANON BJC 6100
+bjc-7000		CANON BJC 7000
+bjc-7100		CANON BJC 7100
+bjc-8200		CANON BJC 8200
+lexmark-4076		Lexmark 4076
 
-Most or all of these printers are fully functional.
+Most or all of the Epson Stylus printers are fully functional.  The
+others vary.
 
 
 Print Resolution Selection:
 ----- ---------- ----------
+
+The meaning of this is model-specific.
+
+For Epson Stylus printers:
 
 -dQuality=x
 
@@ -230,6 +279,41 @@ cause clogging, due to ink pooling in the print head.  If your printer
 is capable of non-Microweave modes, there is seldom any advantage to
 be had from using Microweave.
 
+
+For PCL printers (including Hewlett-Packard and Lexmark):
+
+0  150 DPI
+1  300 DPI
+2  600 x 300 DPI
+3  600 DPI (monochrome)
+4  600 DPI
+5  1200 DPI
+6  2400 DPI
+
+
+For Canon printers:
+
+0  300x300 DPI
+1  300x300 DPI w/ DMT
+2  600x600 DPI
+3  600x600 DPI w/ DMT
+4  1200x600 DPI
+5  1200x1200 DPI
+6  180x180 DPI
+7  360x360 DPI
+8  360x360 DPI w/ DMT
+9  720x360 DPI
+10 720x720 DPI
+11 1440x720 DPI
+12 1440x1440 DPI
+
+
+For Postscript printers:
+
+0  default
+
+
+
 Dithering Algorithms:
 --------- -----------
 
@@ -267,13 +351,36 @@ Currently supported Media Selection:
 Ink Types
 --- -----
 
+This is printer type specific.  The option names are case sensitive.
+Not all ink types are supported on all printers.
+
+-sInkType='ink type'
+
+
+For Epson printers:
+
 Six color printers can print using four color inks or all six colors.
 Six color mode is recommended for photographs.  Four color mode may be
 useful when printing text with embedded graphics to reduce ink
 consumption.
 
--sInkType='Six Color Photo'
--sInkType='Four Color Standard'
+'Six Color Photo'
+'Four Color Standard'
+
+
+For Canon printers:
+
+'Black'
+'Color'
+'Black/Color'
+'Photo/Color'
+'Photo'
+
+
+For PCL (Hewlett-Packard and Lexmark) printers:
+
+'Color + Black Cartridges'
+'Color + Photo Cartridges'
 
 
 Image type (to optimize the dither):
@@ -291,24 +398,24 @@ For mixed documents, options 0 or 1 will probably work best.  Option 0
 will dither faster and yield sharper text, but images will be
 grainier.  Option 1 will yield smoother images, but text will not be
 as sharp and the dither process will be slower.  Option 2 will yield
-the best natural images, but text may be noticeably fuzzy.  Option 3
-is very fast and accurate, but should not be used if there are any
-tones other than pure black and white.
+the best natural images, but is quite slow.  Option 3 is very fast and
+accurate, but should not be used if there are any tones other than
+pure black and white.
 
 
 Examples:
 ---------
 
 Example 1 (print charts to file, color, 360 dpi):
-gs -sDEVICE=stp -dModel=8 -dDensity=0.7 -dGamma=1.5 -dSaturation=0.9 \
+gs -sDEVICE=stp -sModel=escp2-ex -dDensity=1.6 -dGamma=1.5 -dSaturation=0.9 \
    -dBrightness=40 -dImageType=1 -sOutputFile=itsyourchoice.prn foo.ps
 
 Example 2 (print color photograph to /dev/lp0 at maximum quality):
-gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -dModel=6 -dDensity=0.8 -r1440 \
+gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -sModel=escp2-870 -dDensity=0.8 -r1440 \
    -dQuality=6 -dImageType=2 -sOutputFile=/dev/lp0 foo.ps
 
 Example 3 (print pure black text to stdout)
-gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -dModel=6 -dDensity=0.8 -r720 \
+gs -q -dSAFER -dNOPAUSE -sDEVICE=stp -sModel=escp2-660 -dDensity=0.8 -r720 \
    -dQuality=2 -dImageType=3 -sOutputFile=- foo.ps
 
 

@@ -1,8 +1,6 @@
 /*
 
-  Stylus Photo Printer driver for ghostscript
-
-  -uses escp2-driver from gimp print plugin V3.0.3
+  stp driver for ghostscript
 
   -gs frontend derived from gdevbmp and gdevcdj
 
@@ -27,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.28 2000/07/14 23:54:43 cpbs Exp $ */
+/*$Id: gdevstp.c,v 1.28.2.1 2000/08/03 00:48:12 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -70,39 +68,21 @@ prn_device(stpm_procs, "stp",
 	   0, 0, 0, 0,		/* margins */
 	   24, stp_print_page);
 
-
-/* grab resolution list from escp2 driver */
-#ifndef res_t
-typedef struct {
-  const char name[65];
-  int hres;
-  int vres;
-  int softweave;
-  int horizontal_passes;
-  int vertical_passes;
-  int vertical_subsample;
-} res_t;
-#endif
-
 /* private data structure */
 typedef struct {
   int resnr;
   int topoffset;   /* top offset in pixels */
   int bottom;
-  int model;
   int algnr;			/* Algorithm */
   vars_t v;
 } privdata_t;
-
-/* in gdevstp-escp2.c */
-extern const char *escp2_resname(int);
 
 /* global variables, RO for subfunctions */
 private uint stp_raster;
 private byte *stp_row;
 private gx_device_printer *stp_pdev;
-static privdata_t stp_data =
-{ 0, 0, 0, 0, 0,
+private privdata_t stp_data =
+{ 0, 0, 0, 0,
   {
     "",				/* output_to */
     "",				/* driver */
@@ -142,7 +122,7 @@ static privdata_t stp_data =
 ***********************************************************************/
 
 #ifdef DRV_DEBUG
-static void
+private void
 stp_dbg(const char *msg, const privdata_t *stp_data)
 {
   fprintf(stderr,"%s Settings: r: %d  g: %d  b: %d\n",
@@ -151,14 +131,14 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
   fprintf(stderr, "Ink type %s\n", stp_data->v.ink_type);
 
   fprintf(stderr,"Settings: model: %d  bright: %d  contrast: %d\n",
-	  stp_data->model, stp_data->v.brightness, stp_data->v.contrast);
+	  stp_data->v.model, stp_data->v.brightness, stp_data->v.contrast);
 
   fprintf(stderr,"Settings: Gamma: %f  Saturation: %f  Density: %f\n",
 	  stp_data->v.gamma, stp_data->v.saturation, stp_data->v.density);
 }
 #endif
 
-static void
+private void
 stp_print_dbg(const char *msg, gx_device_printer *pdev,
 	      const privdata_t *stp_data)
 {
@@ -171,7 +151,7 @@ stp_print_dbg(const char *msg, gx_device_printer *pdev,
 #endif
 }
 
-static void
+private void
 stp_print_debug(const char *msg, gx_device *pdev,
 		const privdata_t *stp_data)
 {
@@ -185,27 +165,12 @@ stp_print_debug(const char *msg, gx_device *pdev,
 }
 
 
-/*----------- Write out a in escp2 format. ---------------*/
-private const printer_t * get_escp2_printer_by_model(int model)
-{
-  int i;
-
-  /* Ugh */
-  for (i = 0; i < known_printers(); i++)
-    {
-      const printer_t *printer = get_printer_by_index(i);
-      if (printer->model == model &&
-	  printer->print == escp2_print)
-	return printer;
-    }
-  fprintf(stderr, "Unknown printer model\n");
-  return NULL;
-}
-
-private int stp_print_page(gx_device_printer * pdev, FILE * file)
+private int 
+stp_print_page(gx_device_printer * pdev, FILE * file)
 {
   int code;			/* return code */
   const printer_t *printer = NULL;
+  const char *resname;
 
   stp_print_dbg("stp_print_page", pdev, &stp_data);
   code = 0;
@@ -220,13 +185,18 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
   fprintf(stderr,"1 step done!");
 #endif
 
-  printer = get_escp2_printer_by_model(stp_data.model); /* 6 = Stylus Photo  */
+  printer = get_printer_by_driver(stp_data.v.driver);
   if (printer == NULL) {
     code = 1;
     return code;
   }
+  resname = (*printer->resname)(stp_data.resnr);
+  if (resname == NULL) {
+    code = 1;
+    return code;
+  }
 
-  strcpy(stp_data.v.resolution, escp2_resname(stp_data.resnr));
+  strcpy(stp_data.v.resolution, resname);
   strcpy(stp_data.v.dither_algorithm, dither_algo_names[stp_data.algnr]);
 
   stp_data.v.scaling = -pdev->x_pixels_per_inch; /* resolution of image */
@@ -236,11 +206,11 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
 
   stp_data.topoffset = 0;
   stp_data.v.cmap = NULL;
-  escp2_print(printer,	/* I - Model */
-	      1,		/* I - Number of copies */
-	      file,		/* I - File to print to */
-	      NULL,		/* I - Image to print (dummy) */
-	      &stp_data.v);	/* vars_t * */
+  (*printer->print)(printer,		/* I - Model */
+		    1,			/* I - Number of copies */
+		    file,		/* I - File to print to */
+		    NULL,		/* I - Image to print (dummy) */
+		    &stp_data.v);	/* vars_t * */
 
   gs_free_object(pdev->memory, stp_row, "stp row buffer");
   stp_row = NULL;
@@ -278,17 +248,20 @@ stp_map_16m_color_rgb(gx_device * dev, gx_color_index color,
  * for maximum quality out of the photo printer
 */
 /* Yeah, I could have used a list for the options but... */
-private int stp_get_params(gx_device *pdev, gs_param_list *plist)
+private int 
+stp_get_params(gx_device *pdev, gs_param_list *plist)
 {
   int code;
   gs_param_string pmedia;
   gs_param_string pinktype;
+  gs_param_string pmodel;
 
   stp_print_debug("stp_get_params(0)", pdev, &stp_data);
   code = gdev_prn_get_params(pdev, plist);
   stp_print_debug("stp_get_params(1)", pdev, &stp_data);
   param_string_from_string(pmedia, stp_data.v.media_size);
   param_string_from_string(pinktype, stp_data.v.ink_type);
+  param_string_from_string(pmodel, stp_data.v.driver);
 
   if ( code < 0 ||
        (code = param_write_int(plist, "Red", &stp_data.v.red)) < 0 ||
@@ -297,7 +270,7 @@ private int stp_get_params(gx_device *pdev, gs_param_list *plist)
        (code = param_write_int(plist, "Brightness", &stp_data.v.brightness)) < 0 ||
        (code = param_write_int(plist, "Contrast", &stp_data.v.contrast)) < 0 ||
        (code = param_write_int(plist, "Color", &stp_data.v.output_type)) < 0 ||
-       (code = param_write_int(plist, "Model", &stp_data.model)) < 0 ||
+       (code = param_write_string(plist, "Model", &pinktype)) < 0 ||
        (code = param_write_int(plist, "Quality", &stp_data.resnr)) < 0 ||
        (code = param_write_int(plist, "Dither", &stp_data.algnr)) < 0 ||
        (code = param_write_int(plist, "ImageType", &stp_data.v.image_type)) < 0 ||
@@ -314,16 +287,17 @@ private int stp_get_params(gx_device *pdev, gs_param_list *plist)
 
 /* Put parameters. */
 /* Yeah, I could have used a list for the options but... */
-private int stp_put_params(gx_device *pdev, gs_param_list *plist)
+private int 
+stp_put_params(gx_device *pdev, gs_param_list *plist)
 {
   gs_param_string pmedia;
   gs_param_string pinktype;
+  gs_param_string pmodel;
   int red    = stp_data.v.red;
   int green  = stp_data.v.green;
   int blue   = stp_data.v.blue;
   int bright = stp_data.v.brightness;
   int cont   = stp_data.v.contrast;
-  int model  = stp_data.model;
   int color  = stp_data.v.output_type;
   int qual   = stp_data.resnr;
   int algo   = stp_data.algnr;
@@ -336,6 +310,7 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
 
   stp_print_debug("stp_put_params", pdev, &stp_data);
 
+  param_string_from_string(pmodel, stp_data.v.driver);
   param_string_from_string(pmedia, stp_data.v.media_size);
   param_string_from_string(pinktype, stp_data.v.ink_type);
 
@@ -345,8 +320,7 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   code = stp_put_param_int(plist, "Brightness", &bright, 0, 400, code);
   code = stp_put_param_int(plist, "Contrast", &cont, 25, 400, code);
   code = stp_put_param_int(plist, "Color", &color, 0, 1, code);
-  code = stp_put_param_int(plist, "Model", &model, 0, 24, code);
-  code = stp_put_param_int(plist, "Quality", &qual, 0, 9, code);
+  code = stp_put_param_int(plist, "Quality", &qual, 0, 20, code);
   code = stp_put_param_int(plist, "ImageType", &itype, 0, 3, code);
   code = stp_put_param_int(plist, "Dither", &algo, 0, num_dither_algos, code);
   code = stp_put_param_float(plist, "Gamma", &gamma, 0.1, 3., code);
@@ -375,11 +349,11 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   stp_data.v.blue = blue;
   stp_data.v.brightness = bright;
   stp_data.v.contrast = cont;
-  stp_data.model = model;
   stp_data.v.output_type = color;
   stp_data.resnr = qual;
   stp_data.algnr = algo;
   stp_data.v.image_type = itype;
+  strcpy(stp_data.v.driver, pmodel.data);
   strcpy(stp_data.v.media_size, pmedia.data);
   strcpy(stp_data.v.ink_type, pinktype.data);
   stp_data.v.gamma = gamma;
@@ -404,12 +378,13 @@ private int stp_put_params(gx_device *pdev, gs_param_list *plist)
   return code;
 }
 
-private int stp_put_param_int(gs_param_list *plist,
-                                 gs_param_name pname,
-                                 int *pvalue,
-                                 int minval,
-                                 int maxval,
-                                 int ecode)
+private int 
+stp_put_param_int(gs_param_list *plist,
+		  gs_param_name pname,
+		  int *pvalue,
+		  int minval,
+		  int maxval,
+		  int ecode)
 {
   int code, value;
 
@@ -433,12 +408,13 @@ private int stp_put_param_int(gs_param_list *plist,
     }
 }
 
-private int stp_put_param_float(gs_param_list *plist,
-                                   gs_param_name pname,
-                                   float *pvalue,
-                                   float minval,
-                                   float maxval,
-                                   int ecode)
+private int
+stp_put_param_float(gs_param_list *plist,
+		    gs_param_name pname,
+		    float *pvalue,
+		    float minval,
+		    float maxval,
+		    int ecode)
 {
   int code;
   float value;
@@ -470,26 +446,26 @@ stp_open(gx_device *pdev)
   float st[4];
   int left,right,bottom,top,width,length;
   char none[5];
-  const printer_t *printer = get_escp2_printer_by_model(stp_data.model);
+  const printer_t *printer = get_printer_by_driver(stp_data.v.driver);
   if (!printer)
     return (-1);
 
   stp_print_debug("stp_open", pdev, &stp_data);
   strcpy(none,"");
 
-  default_media_size(printer,
-                     none,
-                     stp_data.v.media_size,
-                     &width,
-                     &length);
+  (*printer->media_size)(printer,
+			 none,
+			 stp_data.v.media_size,
+			 &width,
+			 &length);
 
-  escp2_imageable_area(printer,		/* I - Printer model */
-                       none,		/* I - PPD file (not used) */
-                       stp_data.v.media_size,	/* I - Media size */
-                       &left,		/* O - Left position in points */
-                       &right,		/* O - Right position in points */
-                       &bottom,		/* O - Bottom position in points */
-                       &top);		/* O - Top position in points */
+  (*printer->imageable_area)(printer,	/* I - Printer model */
+			     none,	/* I - PPD file (not used) */
+			     stp_data.v.media_size,	/* I - Media size */
+			     &left,	/* O - Left position in points */
+			     &right,	/* O - Right position in points */
+			     &bottom,	/* O - Bottom position in points */
+			     &top);	/* O - Top position in points */
 
   st[1] = (float)bottom / 72;        /* bottom margin */
   st[3] = (float)(length-top) / 72;  /* top margin    */
@@ -508,11 +484,12 @@ stp_open(gx_device *pdev)
 }
 
 /***********************************************************************
-* escp2 driver function callback routines                              *
+* driver function callback routines                                    *
 ***********************************************************************/
 
 /* get one row of the image */
-void Image_get_row(Image image, unsigned char *data, int row)
+void 
+Image_get_row(Image image, unsigned char *data, int row)
 {
   if (stp_pdev->x_pixels_per_inch == stp_pdev->y_pixels_per_inch)
     gdev_prn_copy_scan_lines(stp_pdev, stp_data.topoffset+row,
@@ -538,13 +515,15 @@ void Image_get_row(Image image, unsigned char *data, int row)
 }
 
 /* return bpp of picture (24 here) */
-int Image_bpp(Image image)
+int 
+Image_bpp(Image image)
 {
   return 3;
 }
 
 /* return width of picture */
-int Image_width(Image image)
+int
+Image_width(Image image)
 {
   return stp_pdev->width;
 }
@@ -556,7 +535,8 @@ int Image_width(Image image)
   input
 
 */
-int Image_height(Image image)
+int
+Image_height(Image image)
 {
   float tmp,tmp2;
 
@@ -577,23 +557,33 @@ int Image_height(Image image)
   return (int)tmp2;
 }
 
-void Image_rotate_ccw(Image img)
+void
+Image_rotate_ccw(Image img)
 {
  /* dummy function, Landscape printing unsupported atm */
 }
 
-void Image_init(Image image)
+void
+Image_init(Image image)
 {
  /* dummy function */
 }
 
-void Image_progress_init(Image image)
+void
+Image_progress_init(Image image)
 {
  /* dummy function */
 }
 
 /* progress display */
-void Image_note_progress(Image image, double current, double total)
+void
+Image_note_progress(Image image, double current, double total)
 {
  /* dummy function */
+}
+
+const char *
+Image_get_appname(Image image)
+{
+  return "GhostScript/stp";
 }

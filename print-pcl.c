@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.66 2000/08/02 17:24:18 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.66.2.1 2000/08/03 00:48:12 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -227,6 +227,15 @@ const static pcl_t pcl_resolutions[] =
     {"2400x1200 DPI", PCL_RES_2400_1200},
 };
 #define NUM_RESOLUTIONS		(sizeof(pcl_resolutions) / sizeof (pcl_t))
+
+const char *
+pcl_resname(int resolution)
+{
+  if (resolution < 0 || resolution >= NUM_RESOLUTIONS)
+    return NULL;
+  else
+    return pcl_resolutions[resolution].pcl_name;
+}
 
 /*
  * Printer capability data

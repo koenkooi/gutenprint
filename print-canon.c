@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.69 2000/08/02 00:59:36 rlk Exp $"
+ * "$Id: print-canon.c,v 1.69.2.1 2000/08/03 00:48:12 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -345,6 +345,35 @@ c_strdup(const char *s)
   char *ret = malloc(strlen(s) + 1);
   strcpy(ret, s);
   return ret;
+}
+
+static char *
+canon_resolutions[] =
+{
+  "300x300 DPI",
+  "300x300 DPI w/ DMT",
+  "600x600 DPI",
+  "600x600 DPI w/ DMT",
+  "1200x600 DPI",
+  "1200x1200 DPI",
+  "180x180 DPI",
+  "360x360 DPI",
+  "360x360 DPI w/ DMT",
+  "720x360 DPI",
+  "720x720 DPI",
+  "1440x720 DPI",
+  "1440x1440 DPI",
+  NULL
+};
+
+const char *
+canon_resname(int resolution)
+{
+  if (resolution < 0 ||
+      resolution >= ((sizeof(canon_resolutions) / sizeof(char *)) - 1))
+    return NULL;
+  else
+    return canon_resolutions[resolution];
 }
 
 /*

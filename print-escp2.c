@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.198 2000/08/02 00:59:36 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.198.2.1 2000/08/03 00:48:12 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -525,7 +525,6 @@ static const ink_t escp2_inklist[] = {
   { "MIS Six Tone Monochrome", 0, 0, 1, NULL, mis_sixtone_ranges }
 };
 
-#ifdef ESCP2_GHOST
 const char *
 escp2_resname(int resolution)
 {
@@ -535,7 +534,6 @@ escp2_resname(int resolution)
   else
     return escp2_reslist[resolution].name;
 }
-#endif
 
 static int
 escp2_has_cap(int model, model_featureset_t featureset,
