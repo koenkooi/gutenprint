@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.6 2000/09/10 15:57:09 easysw Exp $"
+ * "$Id: genppd.c,v 1.7 2000/09/10 16:11:50 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -458,14 +458,14 @@ write_ppd(const printer_t *p,		/* I - Printer driver */
   gzprintf(fp, "*ColorModel Gray/Grayscale:\t\"<<"
                "/cupsColorSpace %d"
 	       "/cupsColorOrder %d"
-	       "/cupsBitsPerColor 8>>\"\n",
+	       "/cupsBitsPerColor 8>>setpagedevice\"\n",
            CUPS_CSPACE_W, CUPS_ORDER_CHUNKED);
 
   if (p->printvars.output_type == OUTPUT_COLOR)
     gzprintf(fp, "*ColorModel RGB/Color:\t\"<<"
                  "/cupsColorSpace %d"
 		 "/cupsColorOrder %d"
-		 "/cupsBitsPerColor 8>>\"\n",
+		 "/cupsBitsPerColor 8>>setpagedevice\"\n",
              CUPS_CSPACE_RGB, CUPS_ORDER_CHUNKED);
 
   gzputs(fp, "*CloseUI: *ColorModel\n");
@@ -662,5 +662,5 @@ void Image_note_progress(Image image, double current, double total) {}
 void Image_progress_conclude(Image image) {}
 
 /*
- * End of "$Id: genppd.c,v 1.6 2000/09/10 15:57:09 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.7 2000/09/10 16:11:50 easysw Exp $".
  */
