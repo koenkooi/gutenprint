@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45.2.4 2002/05/15 23:19:35 rleigh Exp $
+## $Id: Makefile.am,v 1.45.2.5 2002/05/18 15:18:36 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,7 @@ endif
 
 if BUILD_TRANSLATED_PPDS
 PPD_NLS = $(PPD_NLS_1)
+LINGUAS = ALL_LINGUAS
 endif
 
 if USE_NLS
@@ -103,7 +104,7 @@ endif
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkinstalldirs) $(DESTDIR)$(cups_modeldir); \
-	  for language in C $(ALL_LINGUAS) ; do \
+	  for language in C $(LINGUAS) ; do \
 	    echo "Installing $$language locale PPD files..." ; \
 	    $(mkinstalldirs) $(DESTDIR)$(cups_modeldir)/$$language ; \
 	    for ppdfile in ppd/$$language/* ; do \
@@ -114,7 +115,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  for language in C $(ALL_LINGUAS) ; do \
+	  for language in C $(LINGUAS) ; do \
 	    echo "Removing $$language locale PPD files..." ; \
 	    for ppdfile in ppd/$$language/* ; do \
 	      if test -f "$(DESTDIR)$(cups_modeldir)/$$language/`basename $$ppdfile`" ; then \
@@ -188,7 +189,7 @@ ppd-nls: genppd
 	cd $(top_builddir)/po ; \
 	$(MAKE) ; \
 	$(MAKE) DESTDIR= prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
-	for language in $(ALL_LINGUAS) ; do \
+	for language in $(LINGUAS) ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
 	  LANGUAGE=$$language ./genppd --prefix=ppd/$$language --catalog=`pwd`/catalog/share/locale ; \
