@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.14.2.1 2000/01/15 14:33:02 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.14.2.2 2000/02/24 00:18:27 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.14.2.2  2000/02/24 00:18:27  rlk
+ *   3.0.9 fixes
+ *
  *   Revision 1.14.2.1  2000/01/15 14:33:02  rlk
  *   PCL and Gimp 1.0 patches from Dave Hill
  *
@@ -624,11 +627,13 @@ pcl_print(int       model,		/* I - Model */
 
     x    = top;
     top  = left;
-    left = x;
+    left = page_width - x - out_width;
   }
 
   if (left < 0)
     left = (page_width - out_width) / 2 + page_left;
+  else
+    left = left + page_left;
 
   if (top < 0)
     top  = (page_height + out_height) / 2 + page_bottom;
@@ -1193,5 +1198,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.14.2.1 2000/01/15 14:33:02 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.14.2.2 2000/02/24 00:18:27 rlk Exp $".
  */
