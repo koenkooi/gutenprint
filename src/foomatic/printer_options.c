@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.2.2.6 2002/05/25 18:30:43 sharkey Exp $"
+ * "$Id: printer_options.c,v 1.2.2.7 2002/05/25 18:57:27 sharkey Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
