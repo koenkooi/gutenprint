@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.50 2001/09/08 12:33:26 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.51 2001/09/22 13:01:23 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1257,7 +1257,7 @@ create_image_settings_frame(void)
    *  Color adjust button
    */
 
-  label = gtk_label_new (_(""));
+  label = gtk_label_new ("");
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
@@ -1278,7 +1278,7 @@ create_image_settings_frame(void)
    * Output type toggles.
    */
 
-  label = gtk_label_new (_(""));
+  label = gtk_label_new ("");
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
