@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.25.2.3 2001/02/21 03:04:56 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.25.2.4 2001/02/22 02:42:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1872,7 +1872,7 @@ static const paper_t escp2_paper_list[] = {
   { N_ ("Transparencies"), 3, 0, 1.0, 1.0, .999 },
   { N_ ("Envelopes"), 4, 0, .5, .25, .5 },
   { N_ ("Back Light Film"), 6, 0, 1.0, 1.0, .999 },
-  { N_ ("Matte Paper"), 7, 0, 1.0, 1.0, .9 },
+  { N_ ("Matte Paper"), 7, 0, .85, 1.0, .999 },
   { N_ ("Inkjet Paper"), 7, 0, .78, .25, .6 },
   { N_ ("Photo Quality Inkjet Paper"), 7, 0, 1, 1.0, .999 },
   { N_ ("Photo Paper"), 8, 0, 1, 1.0, .9 },
