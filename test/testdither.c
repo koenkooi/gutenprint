@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.33.4.2 2003/05/22 01:15:39 rlk Exp $"
+ * "$Id: testdither.c,v 1.33.4.3 2003/05/25 03:23:50 rlk Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -312,6 +312,27 @@ main(int  argc,				/* I - Number of command-line arguments */
 
   stpi_dither_init(v, &theImage, IMAGE_WIDTH, 1, 1);
 
+ /*
+  * Now dither the "page"...
+  */
+
+  switch (stpi_dither_type)
+    {
+    case DITHER_PHOTO:
+    case DITHER_PHOTO_CMYK :
+      stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
+      stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
+      /* FALLTHROUGH */
+    case DITHER_COLOR:
+    case DITHER_CMYK :
+      stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
+      stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
+      stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
+      /* FALLTHROUGH */
+    case DITHER_GRAY:
+      stpi_dither_add_channel(v, black, ECOLOR_K, 0);
+    }
+
   if (stpi_dither_type == DITHER_PHOTO)
     stp_set_float_parameter(v, "GCRLower", 0.4 / dither_bits + 0.1);
   else
@@ -402,27 +423,6 @@ main(int  argc,				/* I - Number of command-line arguments */
 	}
       else
 	perror("Create");
-    }
-
- /*
-  * Now dither the "page"...
-  */
-
-  switch (stpi_dither_type)
-    {
-    case DITHER_PHOTO:
-    case DITHER_PHOTO_CMYK :
-      stpi_dither_add_channel(v, lcyan, ECOLOR_C, 1);
-      stpi_dither_add_channel(v, lmagenta, ECOLOR_M, 1);
-      /* FALLTHROUGH */
-    case DITHER_COLOR:
-    case DITHER_CMYK :
-      stpi_dither_add_channel(v, cyan, ECOLOR_C, 0);
-      stpi_dither_add_channel(v, magenta, ECOLOR_M, 0);
-      stpi_dither_add_channel(v, yellow, ECOLOR_Y, 0);
-      /* FALLTHROUGH */
-    case DITHER_GRAY:
-      stpi_dither_add_channel(v, black, ECOLOR_K, 0);
     }
 
   (void) gettimeofday(&tv1, NULL);
@@ -894,5 +894,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.33.4.2 2003/05/22 01:15:39 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.33.4.3 2003/05/25 03:23:50 rlk Exp $".
  */
