@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.104 2001/07/21 14:14:27 rlk Exp $
+## $Id: Makefile.am,v 1.105 2001/07/29 20:55:48 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -79,12 +79,15 @@ dist-hook:
 	  rm -rf $(distdir)/debian $(distdir)/scripts $(distdir)/test ; \
 	  rm -rf $(distdir)/ABOUT-NLS $(distdir)/INSTALL $(distdir)/aclocal.m4 $(distdir)/config.h.in $(distdir)/configure $(distdir)/stamp-h.in ; \
 	  find $(distdir) -name Makefile.in -print | xargs --no-run-if-empty rm ; \
+	  cd $(distdir) ; \
+	  patch -p1 < ../scripts/gimp-patch ; \
+	  cd .. ; \
 	  rm -f .gimp-dist ; \
 	fi
 
 gimp-dist:
 	touch .gimp-dist
-	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-GIMP-CVS-DIST
+	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-GIMP-DIST
 
 install-gimp: all
 	$(MAKE) -C src/gimp install
