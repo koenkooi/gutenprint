@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.87 2002/11/09 16:25:23 cpbs Exp $"
+ * "$Id: gimp_main_window.c,v 1.87.2.1 2002/11/10 01:24:33 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -234,11 +234,11 @@ static unit_t units[] =
       72.0, NULL, "%.2f" },
     { N_("cm"), N_("Set the base unit of measurement to centimetres"),
       72.0 / 2.54, NULL, "%.2f" },
-    { N_("Points"), N_("Set the base unit of measurement to points"),
+    { N_("Points"), N_("Set the base unit of measurement to points (1/72\")"),
       1.0, NULL, "%.0f" },
     { N_("mm"), N_("Set the base unit of measurement to millimetres"),
       72.0 / 25.4, NULL, "%.1f" },
-    { N_("Pica"), N_("Set the base unit of measurement to picas"),
+    { N_("Pica"), N_("Set the base unit of measurement to picas (1/12\")"),
       72.0 / 12.0, NULL, "%.1f" },
   };
 static const gint unit_count = sizeof(units) / sizeof(unit_t);

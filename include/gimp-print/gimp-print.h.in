@@ -1,5 +1,5 @@
-/*
- *  $Id: gimp-print.h.in,v 1.16 2002/11/05 02:45:44 rlk Exp $
+/*		-*- Mode: C -*-
+ *  $Id: gimp-print.h.in,v 1.16.2.1 2002/11/10 01:24:33 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -56,10 +56,12 @@ extern "C" {
 #define GIMPPRINT_CURRENT_INTERFACE   (@GIMPPRINT_CURRENT_INTERFACE@)
 #define GIMPPRINT_BINARY_AGE          (@GIMPPRINT_BINARY_AGE@)
 #define GIMPPRINT_INTERFACE_AGE       (@GIMPPRINT_INTERFACE_AGE@)
-#define GIMPPRINT_CHECK_VERSION(major,minor,micro) \
-  (GIMPPRINT_MAJOR_VERSION >  (major) || \
-  (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION > (minor)) || \
-  (GIMPPRINT_MAJOR_VERSION == (major) && GIMPPRINT_MINOR_VERSION == (minor) && \
+#define GIMPPRINT_CHECK_VERSION(major,minor,micro)	\
+  (GIMPPRINT_MAJOR_VERSION >  (major) ||		\
+  (GIMPPRINT_MAJOR_VERSION == (major) &&		\
+   GIMPPRINT_MINOR_VERSION > (minor)) ||		\
+  (GIMPPRINT_MAJOR_VERSION == (major) &&		\
+   GIMPPRINT_MINOR_VERSION == (minor) &&		\
    GIMPPRINT_MICRO_VERSION >= (micro)))
 
 extern const unsigned int gimpprint_major_version;
@@ -71,7 +73,6 @@ extern const unsigned int gimpprint_interface_age;
 extern const char* stp_check_version(unsigned int required_major,
 				     unsigned int required_minor,
 				     unsigned int required_micro);
-
 
 /*
  * Constants...
@@ -91,36 +92,6 @@ extern const char* stp_check_version(unsigned int required_major,
 #define COLOR_MODEL_RGB         0
 #define COLOR_MODEL_CMY         1
 #define NCOLOR_MODELS           2
-
-/*
- * Printer driver control structure.  See "print.c" for the actual list...
- */
-
-typedef enum stp_papersize_unit
-{
-  PAPERSIZE_ENGLISH,
-  PAPERSIZE_METRIC
-} stp_papersize_unit_t;
-
-typedef enum stp_image_status
-{
-  STP_IMAGE_OK,
-  STP_IMAGE_ABORT
-} stp_image_status_t;
-
-typedef enum stp_parameter_type
-{
-  STP_PARAMETER_TYPE_INVALID,
-  STP_PARAMETER_TYPE_ENUM_STRING
-} stp_parameter_type_t;
-
-typedef enum stp_parameter_class
-{
-  STP_PARAMETER_CLASS_INVALID,
-  STP_PARAMETER_CLASS_FEATURE,
-  STP_PARAMETER_CLASS_OUTPUT,
-  STP_PARAMETER_CLASS_PAGE_SIZE
-} stp_parameter_class_t;
 
 /*
  * Abstract data type for interfacing with the image creation program
@@ -181,6 +152,12 @@ typedef enum stp_parameter_class
  * output).
  */
 
+typedef enum stp_image_status
+{
+  STP_IMAGE_OK,
+  STP_IMAGE_ABORT
+} stp_image_status_t;
+
 typedef struct stp_image
 {
   void (*init)(struct stp_image *image);
@@ -198,17 +175,103 @@ typedef struct stp_image
 } stp_image_t;
 
 typedef void *stp_printer_t;
+
 typedef void *stp_vars_t;
+
+typedef enum stp_papersize_unit
+{
+  PAPERSIZE_ENGLISH,
+  PAPERSIZE_METRIC
+} stp_papersize_unit_t;
+
 typedef void *stp_papersize_t;
-  
+
+typedef enum stp_parameter_type
+{
+  STP_PARAMETER_TYPE_INVALID,
+  STP_PARAMETER_TYPE_STRING_LIST,
+  STP_PARAMETER_TYPE_DOUBLE,
+  STP_PARAMETER_TYPE_CURVE,
+  STP_PARAMETER_TYPE_FILE,
+  STP_PARAMETER_TYPE_RAW
+} stp_parameter_type_t;
+
+typedef enum stp_parameter_class
+{
+  STP_PARAMETER_CLASS_INVALID,
+  STP_PARAMETER_CLASS_FEATURE,
+  STP_PARAMETER_CLASS_OUTPUT,
+  STP_PARAMETER_CLASS_PAGE_SIZE
+} stp_parameter_class_t;
+
+typedef enum stp_parameter_level
+{
+  STP_PARAMETER_LEVEL_INVALID,
+  STP_PARAMETER_LEVEL_BASIC,
+  STP_PARAMETER_LEVEL_ADVANCED
+} stp_parameter_level_t;
+
+typedef struct
+{
+  char *name;
+  char *text;
+  char *help;
+  stp_parameter_type_t type;
+  stp_parameter_class_t class;
+  stp_parameter_level_t level;
+} stp_parameter_t;
 
 typedef struct
 {
   const char	*name,	/* Option name */
 		*text;	/* Human-readable (translated) text */
-} stp_param_t;
+} stp_param_string_t;
 
-typedef void *stp_param_list_t;
+typedef double stp_param_double_t;
+
+typedef struct
+{
+  size_t count;
+  double *value;
+} stp_param_curve_t;
+
+typedef char *stp_param_file_t;
+
+typedef struct
+{
+  size_t bytes;
+  void *data;
+} stp_param_raw_t;
+
+typedef void *stp_param_string_list_t;
+
+typedef struct
+{
+  double lower;
+  double upper;
+} stp_param_double_bound_t;
+
+typedef struct
+{
+  stp_parameter_type_t type;
+  stp_parameter_class_t class;
+  stp_parameter_level_t level;
+  union
+  {
+    stp_param_double_bound_t double_bounds;
+    stp_param_double_bound_t curve_bounds;
+    stp_param_string_list_t  string_list;
+  } restrictions;
+} stp_parameter_description_t;
+
+typedef union
+{
+  char *str;
+  stp_param_curve_t *curve;
+  stp_param_raw_t *raw;
+  stp_param_double_t dbl;
+} stp_parameter_value_t;
+
 
 typedef void (*stp_outfunc_t) (void *data, const char *buffer, size_t bytes);
 
@@ -251,18 +314,14 @@ typedef void (*stp_outfunc_t) (void *data, const char *buffer, size_t bytes);
  *       roll feed, and the like.
  */
 
-extern stp_param_list_t
-stp_printer_get_parameters(const stp_printer_t printer,
-			   const stp_vars_t v,
-			   const char *name);
+extern stp_parameter_description_t *stp_get_parameters(const stp_vars_t v,
+						       const char *name);
 
 /*
  * Return the default value for the specified parameter.
  */
-extern const char *
-stp_printer_get_default_parameter(const stp_printer_t printer,
-				  const stp_vars_t v,
-				  const char *name);
+extern const stp_parameter_value_t *
+stp_get_default_parameter(const stp_vars_t v, const char *name);
 
 /*
  * Retrieve the media size of the media type set in V, expressed in units
@@ -272,11 +331,7 @@ stp_printer_get_default_parameter(const stp_printer_t printer,
  * In this case, the size limit should be used to determine maximum and
  * minimum values permitted.
  */
-extern void
-stp_printer_get_media_size(const stp_printer_t printer,
-			   const stp_vars_t v,
-			   int *width,
-			   int *height);
+extern void stp_get_media_size(const stp_vars_t v, int *width, int *height);
 
 /*
  * Retrieve the boundaries of the printable area of the page.  In combination
@@ -295,33 +350,20 @@ stp_printer_get_media_size(const stp_printer_t printer,
  * If the media size stored in V is invalid, the return value
  * will be indeterminate.  It is up to the user to specify legal values.
  */
-extern void
-stp_printer_get_imageable_area(const stp_printer_t printer,
-			       const stp_vars_t v,
-			       int *left,
-			       int *right,
-			       int *bottom,
-			       int *top);
+extern void stp_get_imageable_area(const stp_vars_t v, int *left, int *right,
+				   int *bottom, int *top);
 
 /*
  * Retrieve the minimum and maximum size limits for custom media sizes.
  */
 extern void
-stp_printer_get_size_limit(const stp_printer_t printer,
-			   const stp_vars_t v,
-			   int *max_width,
-			   int *max_height,
-			   int *min_width,
-			   int *min_height);
+stp_get_size_limit(const stp_vars_t v, int *max_width, int *max_height,
+		   int *min_width, int *min_height);
 
 /*
  * Retrieve the printing resolution of the resolution stored in V.
  */
-extern void
-stp_printer_describe_resolution(const stp_printer_t printer,
-				const stp_vars_t v,
-				int *x,
-				int *y);
+extern void stp_describe_resolution(const stp_vars_t v, int *x, int *y);
 
 /*
  * Verify that the parameters stored in V are consistent with those allowed
@@ -329,18 +371,13 @@ stp_printer_describe_resolution(const stp_printer_t printer,
  * so will result in printing failing.  Status of 0 represents failure;
  * status of 1 represents success; other status values are reserved.
  */
-extern int
-stp_printer_verify(const stp_printer_t printer,
-		   const stp_vars_t v);
+extern int stp_verify(const stp_vars_t v);
 
 /*
  * Print the image.  Return value of 0 represents failure; status of 1
  * represents success; status of 2 represents abort requested by the driver.
  */
-extern int
-stp_print(const stp_printer_t printer,
-	  const stp_vars_t v,
-	  stp_image_t *image);
+extern int stp_print(const stp_vars_t v, stp_image_t *image);
 
 /*
  * stp_init() must be called prior to any other use of the library.
@@ -378,26 +415,24 @@ extern void stp_free_vars(stp_vars_t v);
 extern void stp_set_driver(stp_vars_t v, const char *val);
 extern void stp_set_driver_n(stp_vars_t v, const char *val, int bytes);
 
-extern const char **stp_printer_list_parameters(const stp_printer_t printer,
-						const stp_vars_t v,
-						int *count);
+extern const char **stp_list_parameters(const stp_vars_t v, int *count);
 
-extern stp_parameter_class_t
-stp_printer_parameter_class(const stp_printer_t printer,
-			    const stp_vars_t v,
-			    const char *parameter_name);
+extern stp_parameter_class_t stp_parameter_class(const stp_vars_t v,
+						 const char *parameter_name);
 
-extern stp_parameter_type_t
-stp_printer_parameter_type(const stp_printer_t printer,
-			   const stp_vars_t v,
-			   const char *parameter_name);
+extern stp_parameter_type_t stp_parameter_type(const stp_vars_t v,
+					       const char *parameter_name);
+
+extern stp_parameter_level_t stp_parameter_level(const stp_vars_t v,
+						 const char *parameter_name);
 
 extern void stp_set_parameter(stp_vars_t v, const char *parameter,
-			      const char *value);
-extern void stp_set_ppd_file(stp_vars_t v, const char *val);
+			      const stp_parameter_value_t value);
 
-extern void stp_set_parameter_n(stp_vars_t v, const char *parameter,
-				const char *value, int bytes);
+extern void stp_set_string_parameter_n(stp_vars_t v, const char *parameter,
+				       const char *value, int bytes);
+
+extern void stp_set_ppd_file(stp_vars_t v, const char *val);
 extern void stp_set_ppd_file_n(stp_vars_t v, const char *val, int bytes);
 
 /*
@@ -425,22 +460,6 @@ extern void stp_set_page_height(stp_vars_t v, int val);
 extern void stp_set_input_color_model(stp_vars_t v, int val);
 extern void stp_set_output_color_model(stp_vars_t v, int val);
 
-extern void stp_set_brightness(stp_vars_t v, float val);
-extern void stp_set_gamma(stp_vars_t v, float val);
-extern void stp_set_contrast(stp_vars_t v, float val);
-extern void stp_set_cyan(stp_vars_t v, float val);
-extern void stp_set_magenta(stp_vars_t v, float val);
-extern void stp_set_yellow(stp_vars_t v, float val);
-extern void stp_set_saturation(stp_vars_t v, float val);
-extern void stp_set_density(stp_vars_t v, float val);
-
-/*
- * Application gamma is used to initially correct the input data
- * for the application's characteristics.  This cannot be done by the
- * application (except in 16-bit CMYK mode) without losing data.
- */
-extern void stp_set_app_gamma(stp_vars_t v, float val);
-
 /*
  * Please see the source in print-color.c for an explanation of this.
  */
@@ -463,7 +482,8 @@ extern void stp_set_errdata(stp_vars_t v, void * val);
 
 extern const char * stp_get_driver(const stp_vars_t v);
 
-extern const char * stp_get_parameter(const stp_vars_t v, const char *param);
+extern stp_parameter_value_t stp_get_parameter(const stp_vars_t v,
+					       const char *param);
 extern const char * stp_get_ppd_file(const stp_vars_t v);
 
 extern int stp_get_output_type(const stp_vars_t v);
@@ -476,15 +496,6 @@ extern int stp_get_page_width(const stp_vars_t v);
 extern int stp_get_page_height(const stp_vars_t v);
 extern int stp_get_input_color_model(const stp_vars_t v);
 extern int stp_get_output_color_model(const stp_vars_t v);
-extern float stp_get_brightness(const stp_vars_t v);
-extern float stp_get_gamma(const stp_vars_t v);
-extern float stp_get_contrast(const stp_vars_t v);
-extern float stp_get_cyan(const stp_vars_t v);
-extern float stp_get_magenta(const stp_vars_t v);
-extern float stp_get_yellow(const stp_vars_t v);
-extern float stp_get_saturation(const stp_vars_t v);
-extern float stp_get_density(const stp_vars_t v);
-extern float stp_get_app_gamma(const stp_vars_t v);
 extern void * stp_get_lut(const stp_vars_t v);
 extern stp_outfunc_t stp_get_outfunc(const stp_vars_t v);
 extern stp_outfunc_t stp_get_errfunc(const stp_vars_t v);
@@ -552,5 +563,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.16 2002/11/05 02:45:44 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.16.2.1 2002/11/10 01:24:33 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: vars.h,v 1.2 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: vars.h,v 1.2.2.1 2002/11/10 01:24:33 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -25,6 +25,7 @@
 
 typedef struct stp_internal_option
 {
+  int	cookie;
   char *name;
   size_t length;
   char *data;
@@ -34,6 +35,7 @@ typedef struct stp_internal_option
 
 typedef struct					/* Plug-in variables */
 {
+  int	cookie;
   const char	*driver,		/* Name of printer "driver" */
 	*ppd_file,		/* PPD file */
         *resolution,		/* Resolution */

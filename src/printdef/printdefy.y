@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.10 2002/11/01 03:33:39 rlk Exp $"
+ * "$Id: printdefy.y,v 1.10.2.1 2002/11/10 01:24:33 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "printdef.h"
+#define COOKIE_PRINTER  0x0722922c
 
 extern int mylineno;
 stp_printer_t thePrinter;
@@ -69,6 +70,7 @@ void
 output_the_printer(void)
 {
   printf("  {\n");
+  printf("    %s,\n", COOKIE_PRINTER);
   printf("    %s,\n", thePrinter.printvars.output_to);
   printf("    %s,\n", thePrinter.printvars.driver);
   printf("    %d,\n", thePrinter.model);
@@ -215,6 +217,7 @@ main(int argc, char **argv)
   printf("\n");
   printf("typedef struct stp_internal_printer\n");
   printf("{\n");
+  printf("  int        cookie;		/* Magic number */\n");
   printf("  const char *long_name,	/* Long name for UI */\n");
   printf("             *driver;	/* Short name for printrc file */\n");
   printf("  int        model;			/* Model number */\n");
@@ -242,10 +245,21 @@ main(int argc, char **argv)
   printf("  return (stp_printer_t) &(stp_printer_list[idx]);\n");
   printf("}\n");
   printf("\n");
+  printf("static void\n");
+  printf("check_printer(const stp_internal_printer_t *printer)\n");
+  printf("{\n");
+  printf("  if (val->cookie != COOKIE_PRINTER)\n");
+  printf("    {\n");
+  printf("      stp_erprintf(\"Bad stp_printer_t!\n\")");
+  printf("      exit(2)\n");
+  printf("    }\n");
+  printf("}\n");
+  printf("\n");
   printf("const char *\n");
   printf("stp_printer_get_long_name(const stp_printer_t p)\n");
   printf("{\n");
   printf("  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;\n");
+  printf("  check_printer(val)\n");
   printf("  return val->long_name;\n");
   printf("}\n");
   printf("\n");
@@ -253,6 +267,7 @@ main(int argc, char **argv)
   printf("stp_printer_get_driver(const stp_printer_t p)\n");
   printf("{\n");
   printf("  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;\n");
+  printf("  check_printer(val)\n");
   printf("  return val->driver;\n");
   printf("}\n");
   printf("\n");
@@ -260,6 +275,7 @@ main(int argc, char **argv)
   printf("stp_printer_get_model(const stp_printer_t p)\n");
   printf("{\n");
   printf("  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;\n");
+  printf("  check_printer(val)\n");
   printf("  return val->model;\n");
   printf("}\n");
   printf("\n");
@@ -267,6 +283,7 @@ main(int argc, char **argv)
   printf("stp_printer_get_printfuncs(const stp_printer_t p)\n");
   printf("{\n");
   printf("  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;\n");
+  printf("  check_printer(val)\n");
   printf("  return val->printfuncs;\n");
   printf("}\n");
   printf("\n");
@@ -274,6 +291,7 @@ main(int argc, char **argv)
   printf("stp_printer_get_printvars(const stp_printer_t p)\n");
   printf("{\n");
   printf("  const stp_internal_printer_t *val = (const stp_internal_printer_t *) p;\n");
+  printf("  check_printer(val)\n");
   printf("  return (stp_vars_t) &(val->printvars);\n");
   printf("}\n");
   return retval;

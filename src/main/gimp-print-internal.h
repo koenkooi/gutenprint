@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.58 2002/11/05 02:45:45 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.58.2.1 2002/11/10 01:24:33 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -49,6 +49,11 @@
 #define ECOLOR_LY 6
 #define NCOLORS (4)
 #define MAX_WEAVE (8)
+
+#define COOKIE_VARS 	  0x1a18376c
+#define COOKIE_OPTION     0x3ab27f93
+#define COOKIE_PARAM_LIST 0x96cf0387
+
 
 typedef struct
 {
@@ -231,8 +236,9 @@ typedef struct stp_dither_matrix
 
 typedef struct
 {
-  stp_param_list_t (*parameters)(const stp_printer_t printer,
-				 const stp_vars_t v, const char *name);
+  stp_parameter_description_t (*parameters)(const stp_printer_t printer,
+					    const stp_vars_t v,
+					    const char *name);
   void  (*media_size)(const stp_printer_t printer, const stp_vars_t v,
                       int *width, int *height);
   void  (*imageable_area)(const stp_printer_t printer,
@@ -538,5 +544,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.58 2002/11/05 02:45:45 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.58.2.1 2002/11/10 01:24:33 rlk Exp $".
  */

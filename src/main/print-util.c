@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.77 2002/11/05 02:45:46 rlk Exp $"
+ * "$Id: print-util.c,v 1.77.2.1 2002/11/10 01:24:33 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -223,11 +223,21 @@ stp_free(void *ptr)
 
 typedef struct
 {
+  int cookie;
   size_t count;
   size_t active_count;
   stp_param_t *list;
 } stp_internal_param_list_t;
 
+static void
+check_param_list(const stp_internal_param_list_t *v)
+{
+  if (v->cookie != COOKIE_PARAM_LIST)
+    {
+      stp_erprintf("Bad stp_vars_t!\n");
+      exit(2);
+    }
+}
 static char *
 c_strdup(const char *s)
 {
@@ -239,7 +249,9 @@ c_strdup(const char *s)
 stp_param_list_t
 stp_param_list_allocate(void)
 {
-  return (stp_param_list_t) stp_zalloc(sizeof(stp_internal_param_list_t));
+  stp_internal_param_list *ret = stp_zalloc(sizeof(stp_internal_param_list_t));
+  ret->cookie = COOKIE_PARAM_LIST;
+  return (stp_param_list_t) ret;
 }
 
 void
@@ -247,6 +259,7 @@ stp_param_list_free(stp_param_list_t list)
 {
   stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
   size_t i = 0;
+  chec_param_list(ilist);
   while (i < ilist->active_count)
     {
       stp_free((void *) (ilist->list[i].name));
@@ -262,6 +275,7 @@ stp_param_t *
 stp_param_list_param(const stp_param_list_t list, size_t element)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
+  chec_param_list(ilist);
   if (element >= ilist->active_count)
     return NULL;
   else
@@ -272,6 +286,7 @@ size_t
 stp_param_list_count(const stp_param_list_t list)
 {
   const stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
+  chec_param_list(ilist);
   return ilist->active_count;
 }
 
@@ -307,6 +322,7 @@ stp_param_list_add_param(stp_param_list_t list,
 			 const char *name, const char *text)
 {
   stp_internal_param_list_t *ilist = (stp_internal_param_list_t *) list;
+  check_param_list(ilist);
   if (ilist->count == 0)
     {
       ilist->list = stp_zalloc(sizeof(stp_param_t));
