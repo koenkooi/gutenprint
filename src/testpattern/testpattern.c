@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.23 2003/01/20 22:25:50 rlk Exp $"
+ * "$Id: testpattern.c,v 1.24 2003/02/22 18:48:19 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -197,7 +197,7 @@ main(int argc, char **argv)
   int c;
   stp_vars_t v;
   stp_printer_t the_printer;
-  stp_papersize_t pt;
+  const stp_papersize_t *pt;
   int left, right, top, bottom;
   int x, y;
   int width, height;
