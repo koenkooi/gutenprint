@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.l,v 1.1 2000/03/05 03:59:49 rlk Exp $"
+ * "$Id: printdefl.l,v 1.1 2000/03/05 19:51:24 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -43,7 +43,7 @@ int mylineno = 1;
 
 digit		[0-9]
 integer		[-+]?{digit}+
-float		[-+]?{digit}+(\.{digit})?([eE][-+]?{digit}+)?
+float		[-+]?{digit}+(\.{digit}+)?([eE][-+]?{digit}+)?
 class		[a-zA-Z][a-zA-Z0-9_]+
 string		[\"][^\"]+[\"]
 ws		[ \t]+
