@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.68 2000/02/11 01:03:36 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.69 2000/02/11 02:19:13 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.69  2000/02/11 02:19:13  rlk
+ *   Remove apparently spurious flush command
+ *
  *   Revision 1.68  2000/02/11 01:03:36  rlk
  *   Fix Epson left margin
  *
@@ -2288,7 +2291,6 @@ flush_pass(escp2_softweave_t *sw, int passno, int model, int width,
       fwrite(bufs[0].v[j], lineoffs[0].v[j], 1, prn);
       putc('\r', prn);
     }
-  fwrite("\033\006", 2, 1, prn);
   sw->last_pass = pass->pass;
   pass->pass = -1;
 }
@@ -2732,5 +2734,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.68 2000/02/11 01:03:36 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.69 2000/02/11 02:19:13 rlk Exp $".
  */
