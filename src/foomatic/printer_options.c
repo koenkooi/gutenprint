@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.3 2001/06/03 20:53:24 rlk Exp $"
+ * "$Id: printer_options.c,v 1.4 2001/07/15 00:20:25 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -78,21 +78,32 @@ main(int argc, char **argv)
 	}
       if (tcount > 0)
 	{
+	  printf("$defaults{'%s'}{'%s'} = '%s';\n",
+		 stp_printer_get_driver(p), "Dither",
+		 stp_dither_algorithm_name(0));
+	  for (k = 0; k < stp_dither_algorithm_count(); k++)
+	    printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
+		   stp_printer_get_driver(p), "Dither",
+		   stp_dither_algorithm_name(k));
 	  if (stp_get_output_type(pv) == OUTPUT_COLOR)
 	    {
 	      printf("$defaults{'%s'}{'%s'} = '%s';\n",
-		     stp_printer_get_driver(p), "Greyscale", "Color");
+		     stp_printer_get_driver(p), "OutputType", "Color");
 	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Greyscale", "Color");
+		     stp_printer_get_driver(p), "OutputType", "Color");
 	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Greyscale", "Greyscale");
+		     stp_printer_get_driver(p), "OutputType", "Grayscale");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
+		     stp_printer_get_driver(p), "OutputType", "BlackAndWhite");
 	    }
 	  else
 	    {
 	      printf("$defaults{'%s'}{'%s'} = '%s';\n",
-		     stp_printer_get_driver(p), "Greyscale", "Greyscale");
+		     stp_printer_get_driver(p), "OutputType", "Grayscale");
 	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
-		     stp_printer_get_driver(p), "Greyscale", "Greyscale");
+		     stp_printer_get_driver(p), "OutputType", "Grayscale");
+	      printf("$stpdata{'%s'}{'%s'}{'%s'} = 1;\n",
+		     stp_printer_get_driver(p), "OutputType", "BlackAndWhite");
 	    }
 	}
     }
