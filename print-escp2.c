@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.63 2000/02/08 00:29:18 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.64 2000/02/08 11:54:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.64  2000/02/08 11:54:39  rlk
+ *   Remove spurious init string
+ *
  *   Revision 1.63  2000/02/08 00:29:18  rlk
  *   Is the separation really 6 lines for the 740?  That's very unusual.
  *   Usually it's 8 lines.  But we shall see...
@@ -737,8 +740,10 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi,
    * Hack that seems to be necessary for these silly things to print.
    * No, I don't know what it means. -- rlk
    */
+#if 0
   if (escp2_has_cap(model, MODEL_VARIABLE_DOT_MASK, MODEL_VARIABLE_4))
     fprintf(prn, "\033\001@EJL 1284.4\n@EJL     \n");
+#endif
 
   fputs("\033@", prn); 				/* ESC/P2 reset */
 
@@ -2707,5 +2712,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.63 2000/02/08 00:29:18 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.64 2000/02/08 11:54:39 rlk Exp $".
  */
