@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.80 2000/02/16 00:59:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.81 2000/02/16 12:11:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.81  2000/02/16 12:11:18  rlk
+ *   narrow-carriage printers can print 14" long, not just 11"
+ *
  *   Revision 1.80  2000/02/16 00:59:19  rlk
  *   1) Use correct convert functions (canon, escp2, pcl, ps).
  *
@@ -730,7 +733,7 @@ escp2_parameters(int  model,		/* I - Printer model */
       else
 	{
 	  width_limit = 17 * 72 / 2; /* 8.5" */
-	  length_limit = 11 * 72;
+	  length_limit = 14 * 72;
 	}
       for (i = 0; i < known_papersizes(); i++)
 	{
@@ -2879,5 +2882,5 @@ escp2_write_weave(void *        vsw,
 #endif
 
 /*
- * End of "$Id: print-escp2.c,v 1.80 2000/02/16 00:59:19 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.81 2000/02/16 12:11:18 rlk Exp $".
  */
