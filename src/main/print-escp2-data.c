@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.49.2.8 2002/08/13 00:01:01 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.49.2.9 2002/08/14 02:36:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3898,7 +3898,7 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
   {
     (MODEL_VARIABLE_YES | MODEL_COMMAND_PRO | MODEL_GRAYMODE_YES |
      MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO),
-    96, 1, 2, 96, 1, 2, 7,
+    96, 1, 2, 192, 1, 1, 7,
     360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
     INCH(13), INCH(1200), INCH(2), INCH(4),
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -3934,6 +3934,62 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     c4pl_pigment_dotsizes, c4pl_pigment_densities, &variable_4pl_pigment_inks,
     &standard_paper_list, pro_reslist, &photo7_inklist,
     stp950_bits, pro_base_res, &roll_feed_input_slot_list,
+    &new_init_sequence, &je_deinit_sequence
+  },
+  /* 50: Stylus Photo 960 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO),
+    96, 1, 2, 192, 1, 1, 6,
+    360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 190, 0, 0, 0,
+    c2pl_dotsizes, c2pl_densities, &variable_2pl_inks,
+    &sp950_paper_list, standard_reslist, &photo_inklist,
+    stp950_bits, stp950_base_res, &default_input_slot_list,
+    &new_init_sequence, &je_deinit_sequence
+  },
+  /* 51: Stylus Photo 830 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO),
+    48, 1, 3, 48, 1, 3, 6,
+    360, 720, 720, 14400, -1, 2880, 1440, 90, 90,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 55, 0, 0, 0,
+    c4pl_dotsizes, c4pl_densities, &variable_4pl_inks,
+    &sp780_paper_list, standard_reslist, &photo_inklist,
+    variable_bits, variable_base_res, &default_input_slot_list,
+    &new_init_sequence, &je_deinit_sequence
+  },
+  /* 52: Stylus Photo 915/925 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO),
+    48, 1, 3, 48, 1, 3, 6,
+    360, 720, 720, 14400, -1, 2880, 1440, 90, 90,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 55, 0, 0, 0,
+    c4pl_dotsizes, c4pl_densities, &variable_4pl_inks,
+    &standard_paper_list, standard_reslist, &photo_inklist,
+    variable_bits, variable_base_res, &roll_feed_input_slot_list,
+    &new_init_sequence, &je_deinit_sequence
+  },
+  /* 53: Stylus Color C62 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_ROLLFEED_NO | MODEL_XZEROMARGIN_NO | MODEL_VACUUM_NO),
+    48, 1, 3, 144, 1, 1, 4,
+    360, 720, 720, 14400, -1, 2880, 1440, 90, 90,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
+    9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 0, 0, 9, 9, 0, 0,
+    0, 1, 0, 0, 0, 0, 0,
+    c4pl_dotsizes, c4pl_densities, &variable_4pl_inks,
+    &standard_paper_list, standard_reslist, &standard_inklist,
+    variable_bits, variable_base_res, &default_input_slot_list,
     &new_init_sequence, &je_deinit_sequence
   },
 };
