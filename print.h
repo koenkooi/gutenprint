@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.88 2000/09/15 05:13:12 anikin Exp $"
+ * "$Id: print.h,v 1.89 2000/09/15 23:22:59 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -43,9 +43,6 @@
 /*
  * Include necessary header files...
  */
-#ifndef HAVE_UNISTD_H
-#define HAVE_UNISTD_H
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,9 +50,6 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 /*
  * Constants...
@@ -454,5 +448,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.88 2000/09/15 05:13:12 anikin Exp $".
+ * End of "$Id: print.h,v 1.89 2000/09/15 23:22:59 rlk Exp $".
  */
