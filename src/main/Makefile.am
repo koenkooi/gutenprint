@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.72 2003/05/26 01:03:56 rlk Exp $
+## $Id: Makefile.am,v 1.73 2003/05/29 21:44:38 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -157,15 +157,15 @@ pkgxmldata_DATA = \
 all-local: xmli18n-tmp.h
 
 
-xmli18n-tmp.h:  papers.xml printers.xml
+xmli18n-tmp.h:  $(srcdir)/papers.xml $(srcdir)/printers.xml
 # Pull out translatable strings from XML files.  This is crude, but
 # works for now.
 	sed -e '/description.*value/!d' \
 	  -e 's/.*description.*value="\([^"]*\)".*/N_("\1");/' \
-	  < papers.xml > $@;
+	  < $(srcdir)/papers.xml > $@;
 	sed -e '/printer.*name/!d' \
 	  -e 's/.*printer.*name="\([^"]*\)".*/N_("\1");/' \
-	  < printers.xml >> $@;
+	  < $(srcdir)/printers.xml >> $@;
 
 dist-hook: xmli18n-tmp.h
 # xmli18n-tmp.h is needed by po/POTFILES.in at dist time
