@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.27 2002/06/19 11:25:30 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.28 2002/06/21 00:57:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2215,6 +2215,19 @@ static const res_t pro_reslist[] =
     2880, 720,  0,  3, 1, 1, 0, 1, 1, RES_2880_720_M },
   { "2880x720fourpuni", N_("2880 x 720 DPI Four Pass Unidirectional"),
     2880, 720,  0,  3, 1, 1, 1, 1, 1, RES_2880_720_M },
+
+  { "1440x1440mw",       N_("1440 x 1440 DPI Microweave"),
+    1440, 1440,  0,  1, 1, 1, 0, 1, 1, RES_1440_1440_M },
+  { "1440x1440mwuni",    N_("1440 x 1440 DPI Microweave Unidirectional"),
+    1440, 1440,  0,  1, 1, 1, 1, 1, 1, RES_1440_1440_M },
+  { "1440x1440fol",      N_("1440 x 1440 DPI FOL"),
+    1440, 1440,  0,  2, 1, 1, 0, 1, 1, RES_1440_1440_M },
+  { "1440x1440foluni",   N_("1440 x 1440 DPI FOL Unidirectional"),
+    1440, 1440,  0,  2, 1, 1, 1, 1, 1, RES_1440_1440_M },
+  { "1440x1440fourp",    N_("1440 x 1440 DPI Four Pass"),
+    1440, 1440,  0,  3, 1, 1, 0, 1, 1, RES_1440_1440_M },
+  { "1440x1440fourpuni", N_("1440 x 1440 DPI Four Pass Unidirectional"),
+    1440, 1440,  0,  3, 1, 1, 1, 1, 1, RES_1440_1440_M },
 
   { "2880x1440mw",       N_("2880 x 1440 DPI Microweave"),
     2880, 1440,  0,  1, 1, 1, 0, 1, 1, RES_2880_1440_M },
