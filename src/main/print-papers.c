@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.4 2002/10/28 00:52:17 rlk Exp $"
+ * "$Id: print-papers.c,v 1.4.4.1 2002/11/03 00:10:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -531,7 +531,7 @@ stp_default_media_size(const stp_printer_t printer,
   else
     {
       const stp_papersize_t papersize =
-	stp_get_papersize_by_name(stp_get_media_size(v));
+	stp_get_papersize_by_name(stp_get_parameter(v, "PageSize"));
       if (!papersize)
 	{
 	  *width = 1;

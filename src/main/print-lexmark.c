@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.80 2002/11/01 01:32:04 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.80.4.1 2002/11/03 00:10:00 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1141,7 +1141,7 @@ static void
 lexmark_describe_resolution(const stp_printer_t printer, const stp_vars_t v,
 			    int *x, int *y)
 {
-  const char *resolution = stp_get_resolution(v);
+  const char *resolution = stp_get_parameter(v, "Resolution");
   const lexmark_res_t *res = lexmark_get_resolution_para(printer, resolution);
 
   if (res)
@@ -1267,6 +1267,20 @@ lexmark_parameters(const stp_printer_t printer,
     *count = 3;
     p = media_sources;
   }
+  else if (strcmp(name, "DitherAlgorithm") == 0)
+    {
+      if (stp_dither_algorithm_count() > 0)
+	{
+	  valptrs = stp_malloc(sizeof(stp_param_t) *
+			       stp_dither_algorithm_count());
+	  for (i = 0; i < stp_dither_algorithm_count(); i++)
+	    {
+	      valptrs[*count].name = c_strdup(stp_dither_algorithm_name(i));
+	      valptrs[*count].text = c_strdup(stp_dither_algorithm_text(i));
+	      (*count)++;
+	    }
+	}
+    }      
   else
     return (NULL);
 
@@ -1342,6 +1356,10 @@ lexmark_default_parameters(const stp_printer_t printer,
   {
     return (media_sources[0].name);
   }
+  else if (strcmp(name, "DitherAlgorithm") == 0)
+    {
+      return stp_dither_algorithm_name(0);
+    }
   else
     return (NULL);
 }
@@ -1683,11 +1701,11 @@ lexmark_print(const stp_printer_t printer,
 
   const unsigned char *cmap   = stp_get_cmap(v);
   int		model         = stp_printer_get_model(printer);
-  const char	*resolution   = stp_get_resolution(v);
-  const char	*media_type   = stp_get_media_type(v);
-  const char	*media_source = stp_get_media_source(v);
+  const char	*resolution   = stp_get_parameter(v, "Resolution");
+  const char	*media_type   = stp_get_parameter(v, "MediaType");
+  const char	*media_source = stp_get_parameter(v, "InputSlot");
   int 		output_type   = stp_get_output_type(v);
-  const char	*ink_type     = stp_get_ink_type(v);
+  const char	*ink_type     = stp_get_parameter(v, "InkType");
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
   stp_vars_t	nv            = stp_allocate_copy(v);

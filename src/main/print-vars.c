@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.5 2002/11/01 03:25:44 rlk Exp $"
+ * "$Id: print-vars.c,v 1.5.4.1 2002/11/03 00:10:00 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -202,8 +202,8 @@ stp_free_vars(stp_vars_t vv)
   stp_free(v);
 }
 
-#define DEF_STRING_FUNCS(s)				\
-void							\
+#define DEF_STRING_FUNCS(s, t)				\
+t void							\
 stp_set_##s(stp_vars_t vv, const char *val)		\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -214,7 +214,7 @@ stp_set_##s(stp_vars_t vv, const char *val)		\
   v->verified = 0;					\
 }							\
 							\
-void							\
+t void							\
 stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -225,7 +225,7 @@ stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
   v->verified = 0;					\
 }							\
 							\
-const char *						\
+t const char *						\
 stp_get_##s(const stp_vars_t vv)			\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -248,14 +248,14 @@ stp_get_##s(const stp_vars_t vv)			\
   return v->s;						\
 }
 
-DEF_STRING_FUNCS(driver)
-DEF_STRING_FUNCS(ppd_file)
-DEF_STRING_FUNCS(resolution)
-DEF_STRING_FUNCS(media_size)
-DEF_STRING_FUNCS(media_type)
-DEF_STRING_FUNCS(media_source)
-DEF_STRING_FUNCS(ink_type)
-DEF_STRING_FUNCS(dither_algorithm)
+DEF_STRING_FUNCS(driver, )
+DEF_STRING_FUNCS(ppd_file, )
+DEF_STRING_FUNCS(resolution, static)
+DEF_STRING_FUNCS(media_size, static)
+DEF_STRING_FUNCS(media_type, static)
+DEF_STRING_FUNCS(media_source, static)
+DEF_STRING_FUNCS(ink_type, static)
+DEF_STRING_FUNCS(dither_algorithm, static)
 DEF_FUNCS(output_type, int)
 DEF_FUNCS(left, int)
 DEF_FUNCS(top, int)
@@ -330,6 +330,49 @@ stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
           popt = nopt;
         }
     }
+}
+
+void
+stp_set_parameter_n(stp_vars_t v, const char *parameter,
+		    const char *value, int bytes)
+{
+  if      (strcmp(parameter, "Resolution"))
+    stp_set_resolution_n(v, value, bytes);
+  else if (strcmp(parameter, "PageSize"))
+    stp_set_media_size_n(v, value, bytes);
+  else if (strcmp(parameter, "MediaType"))
+    stp_set_media_type_n(v, value, bytes);
+  else if (strcmp(parameter, "InputSlot"))
+    stp_set_media_source_n(v, value, bytes);
+  else if (strcmp(parameter, "InkType"))
+    stp_set_ink_type_n(v, value, bytes);
+  else if (strcmp(parameter, "DitherAlgorithm"))
+    stp_set_dither_algorithm_n(v, value, bytes);
+}
+
+const char *
+stp_get_parameter(const stp_vars_t v, const char *parameter)
+{
+  if      (strcmp(parameter, "Resolution"))
+    return stp_get_resolution(v);
+  else if (strcmp(parameter, "PageSize"))
+    return stp_get_media_size(v);
+  else if (strcmp(parameter, "MediaType"))
+    return stp_get_media_type(v);
+  else if (strcmp(parameter, "InputSlot"))
+    return stp_get_media_source(v);
+  else if (strcmp(parameter, "InkType"))
+    return stp_get_ink_type(v);
+  else if (strcmp(parameter, "DitherAlgorithm"))
+    return stp_get_dither_algorithm(v);
+  else
+    return NULL;
+}
+
+void
+stp_set_parameter(stp_vars_t v, const char *parameter, const char *value)
+{
+  stp_set_parameter_n(v, parameter, value, strlen(value));
 }
 
 void

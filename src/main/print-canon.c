@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.81 2002/11/02 00:22:32 rlk Exp $"
+ * "$Id: print-canon.c,v 1.81.4.1 2002/11/03 00:10:00 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1585,7 +1585,7 @@ static void
 canon_describe_resolution(const stp_printer_t printer, const stp_vars_t v,
 			  int *x, int *y)
 {
-  const char *resolution = stp_get_resolution(v);
+  const char *resolution = stp_get_parameter(v, "Resolution");
   *x = -1;
   *y = -1;
   sscanf(resolution, "%dx%d", x, y);
@@ -1739,6 +1739,20 @@ canon_parameters(const stp_printer_t printer,
       valptrs[i].text = c_strdup(_(p[i].text));
     }
   }
+  else if (strcmp(name, "DitherAlgorithm") == 0)
+    {
+      if (stp_dither_algorithm_count() > 0)
+	{
+	  valptrs = stp_malloc(sizeof(stp_param_t) *
+			       stp_dither_algorithm_count());
+	  for (i = 0; i < stp_dither_algorithm_count(); i++)
+	    {
+	      valptrs[*count].name = c_strdup(stp_dither_algorithm_name(i));
+	      valptrs[*count].text = c_strdup(stp_dither_algorithm_text(i));
+	      (*count)++;
+	    }
+	}
+    }      
   else
     return (NULL);
 
@@ -1824,6 +1838,10 @@ canon_default_parameters(const stp_printer_t printer,
   {
     return (media_sources[0].name);
   }
+  else if (strcmp(name, "DitherAlgorithm") == 0)
+    {
+      return stp_dither_algorithm_name(0);
+    }
   else
     return (NULL);
 }
@@ -2256,10 +2274,10 @@ canon_print(const stp_printer_t printer,
   int		status = 1;
   const unsigned char *cmap = stp_get_cmap(v);
   int		model = stp_printer_get_model(printer);
-  const char	*resolution = stp_get_resolution(v);
-  const char	*media_source = stp_get_media_source(v);
+  const char	*resolution = stp_get_parameter(v, "Resolution");
+  const char	*media_source = stp_get_parameter(v, "InputSlot");
   int 		output_type = stp_get_output_type(v);
-  const char	*ink_type = stp_get_ink_type(v);
+  const char	*ink_type = stp_get_parameter(v, "InkType");
   int		top = stp_get_top(v);
   int		left = stp_get_left(v);
   int		y;		/* Looping vars */
@@ -2412,7 +2430,7 @@ canon_print(const stp_printer_t printer,
   PUT("top     ",top,72);
   PUT("left    ",left,72);
 
-  pt = get_media_type(stp_get_media_type(nv));
+  pt = get_media_type(stp_get_parameter(nv, "MediaType"));
 
   init.caps = caps;
   init.output_type = output_type;
