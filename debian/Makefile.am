@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.8 2003/10/01 20:28:15 rleigh Exp $
+## $Id: Makefile.am,v 1.9 2004/05/23 11:47:31 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -51,11 +51,10 @@ EXTRA_DIST = \
 	ijsgimpprint.install \
 	libgimpprint-dev.docs \
 	libgimpprint-dev.install \
-	libgimpprint-doc.doc-base.in \
+	libgimpprint-doc.doc-base.developer.in \
+	libgimpprint-doc.doc-base.reference.in \
 	libgimpprint-doc.install.in \
 	libgimpprint.install.in \
-        libgimpprintui-dev.install \
-        libgimpprintui.install \
 	README.building \
 	README.Debian \
 	rules
