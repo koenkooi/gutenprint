@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.87 2004/09/17 18:38:16 rleigh Exp $
+## $Id: Makefile.am,v 1.88 2004/10/26 22:04:12 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -151,7 +151,7 @@ libgutenprint_version = -release $(GUTENPRINT_VERSION)
 # Uncomment to build a versioned library
 #libgutenprint_version = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 libgutenprint_la_LDFLAGS = $(libgutenprint_version) \
-	-rpath $(libdir)
+	-rpath $(libdir) -no-undefined
 # libtool currently needs a patch for symbol export to work correctly
 # using a linker version script.
 #	-export-symbols $(srcdir)/libgutenprint.sym
