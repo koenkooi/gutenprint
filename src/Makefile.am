@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2003/04/27 22:15:56 rleigh Exp $
+## $Id: Makefile.am,v 1.17 2004/06/22 18:52:14 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,10 @@ include $(top_srcdir)/scripts/global.mk
 SUBDIRS = 					\
 	main					\
 	libgimpprintui				\
+	libgimpprintui2				\
 	escputil				\
 	gimp					\
+	gimp2					\
 	cups					\
 	foomatic				\
 	ghost					\
