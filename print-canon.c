@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.21 2000/02/10 02:46:25 rlk Exp $"
+ * "$Id: print-canon.c,v 1.22 2000/02/13 03:14:26 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.22  2000/02/13 03:14:26  rlk
+ *   Bit of an oops here about printer models; also start on print-gray-using-color mode for better quality
+ *
  *   Revision 1.21  2000/02/10 02:46:25  rlk
  *   initialization
  *
@@ -808,10 +811,10 @@ canon_print(int       model,		/* I - Model */
    *                 or single black cartridge installed
    */
 
-  if ((image_bpp < 3 && cmap == NULL) || 
-      (printhead==0) || 
-      (caps.inks==CANON_INK_K))
+  if (printhead == 0 || caps.inks == CANON_INK_K)
     output_type = OUTPUT_GRAY;
+  else if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
+    output_type = OUTPUT_GRAY_COLOR;
 
   /*
    * Choose the correct color conversion function...
@@ -822,6 +825,15 @@ canon_print(int       model,		/* I - Model */
 
     if (image_bpp >= 3)
       colorfunc = rgb_to_rgb;
+    else
+      colorfunc = indexed_to_rgb;
+  }
+  else if (output_type == OUTPUT_GRAY_COLOR)
+  {
+    out_bpp = 3;
+
+    if (image_bpp >= 3)
+      colorfunc = gray_to_rgb;
     else
       colorfunc = indexed_to_rgb;
   } else {
@@ -1564,5 +1576,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-canon.c,v 1.21 2000/02/10 02:46:25 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.22 2000/02/13 03:14:26 rlk Exp $".
  */

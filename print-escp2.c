@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.73 2000/02/13 02:01:38 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.74 2000/02/13 03:14:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.74  2000/02/13 03:14:26  rlk
+ *   Bit of an oops here about printer models; also start on print-gray-using-color mode for better quality
+ *
  *   Revision 1.73  2000/02/13 02:01:38  rlk
  *   Build a Ghostscript driver!  No idea if it works yet...
  *
@@ -1061,8 +1064,8 @@ escp2_print(int       model,		/* I - Model */
   * Choose the correct color conversion function...
   */
 
-  if (image_bpp < 3 && cmap == NULL)
-    output_type = OUTPUT_GRAY;		/* Force grayscale output */
+  if (image_bpp < 3 && cmap == NULL && output_type == OUTPUT_COLOR)
+    output_type = OUTPUT_GRAY_COLOR;	/* Force grayscale output */
 
   if (output_type == OUTPUT_COLOR)
   {
@@ -1070,6 +1073,15 @@ escp2_print(int       model,		/* I - Model */
 
     if (image_bpp >= 3)
       colorfunc = rgb_to_rgb;
+    else
+      colorfunc = indexed_to_rgb;
+  }
+  else if (output_type == OUTPUT_GRAY_COLOR)
+  {
+    out_bpp = 3;
+
+    if (image_bpp >= 3)
+      colorfunc = gray_to_rgb;
     else
       colorfunc = indexed_to_rgb;
   }
@@ -2755,5 +2767,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.73 2000/02/13 02:01:38 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.74 2000/02/13 03:14:26 rlk Exp $".
  */
