@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.117 2004/11/02 22:46:00 rleigh Exp $
+dnl $Id: configure.ac,v 1.118 2004/11/28 15:58:24 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.117 $)
+AC_REVISION($Revision: 1.118 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -588,7 +588,7 @@ dnl Compiler flags
 if test x$ac_compiler_gnu = "xyes"; then
   STP_ADD_COMPILER_ARGS([-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -Werror-implicit-function-declaration -Winline -finline-limit=1048576],, [GNUCFLAGS])
   if test x${USE_MAINTAINER_MODE} = xyes ; then
-    STP_ADD_COMPILER_ARGS([-pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls], GNUCFLAGS)
+    STP_ADD_COMPILER_ARGS([-pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls],, [GNUCFLAGS])
   fi
 else
   if test x$ENABLE_DEBUG = xyes ; then
