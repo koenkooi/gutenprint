@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.52 2003/10/24 01:27:06 rlk Exp $"
+ * "$Id: panel.c,v 1.53 2003/10/26 00:42:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1289,15 +1289,15 @@ create_positioning_frame (void)
   box = gtk_hbox_new (TRUE, 4);
   stpui_table_attach_aligned (GTK_TABLE (table), 0, 7, _("Center:"), 0.5, 0.5,
 			      box, 5, TRUE);
-  recenter_vertical_button = create_positioning_button
-    (box, INVALID_TOP, _("Vertical"),
-     _("Center the image vertically on the paper"));
-  recenter_button = create_positioning_button
-    (box, INVALID_LEFT | INVALID_TOP, _("Both"),
-     _("Center the image on the paper"));
   recenter_horizontal_button = create_positioning_button
     (box, INVALID_LEFT, _("Horizontal"),
      _("Center the image horizontally on the paper"));
+  recenter_button = create_positioning_button
+    (box, INVALID_LEFT | INVALID_TOP, _("Both"),
+     _("Center the image on the paper"));
+  recenter_vertical_button = create_positioning_button
+    (box, INVALID_TOP, _("Vertical"),
+     _("Center the image vertically on the paper"));
 }
 
 static void
