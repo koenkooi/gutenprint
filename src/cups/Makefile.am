@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17.2.7 2001/09/14 01:26:35 sharkey Exp $
+## $Id: Makefile.am,v 1.17.2.8 2001/09/14 02:39:52 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -134,15 +134,15 @@ ppd-stamp: genppd
 	-rm -rf ppd
 	-mkdir ppd
 	-mkdir ppd/de
-	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/de --language de
+	env LD_PRELOAD="" ./genppd --prefix ppd/de --language de
 	-mkdir ppd/en
-	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/en --language en
+	env LD_PRELOAD="" ./genppd --prefix ppd/en --language en
 	-mkdir ppd/es
-	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/es --language es
+	env LD_PRELOAD="" ./genppd --prefix ppd/es --language es
 	-mkdir ppd/fr
-	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/fr --language fr
+	env LD_PRELOAD="" ./genppd --prefix ppd/fr --language fr
 	-mkdir ppd/it
-	env LD_PRELOAD="" ./genppd ./genppd --prefix ppd/it --language it
+	env LD_PRELOAD="" ./genppd --prefix ppd/it --language it
 	touch ppd-stamp
 
 $(LIBGIMPPRINT_LIBS):
