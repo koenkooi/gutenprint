@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.72 2003/12/25 19:31:53 rlk Exp $
+## $Id: Makefile.am,v 1.73 2004/02/08 23:20:51 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ cupsexec_filter_PROGRAMS = rastertogimpprint.@GIMPPRINT_MAJOR_VERSION@.@GIMPPRIN
 endif
 
 if BUILD_GENPPD_STATIC
-STATIC_LDOPTS=-static
+STATIC_LDOPTS=-static -export-dynamic
 endif
 
 cups_calibrate_SOURCES = cups-calibrate.c
