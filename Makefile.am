@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.86 2001/01/30 22:29:01 rleigh Exp $
+## $Id: Makefile.am,v 1.87 2001/02/07 02:38:56 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ ChangeLog:
 	@cd $(top_srcdir) ; \
 	if test -d CVS -a ! -f .noupdate ; then \
 	  echo "Updating ChangeLog from CVS" ; \
-	  cvs log | perl scripts/mkchlog > ChangeLog.tmp ; \
+	  cvs log -N | perl scripts/mkchlog > ChangeLog.tmp ; \
 	  mv ChangeLog.tmp ChangeLog ; \
 	else \
 	  echo "This is not a CVS version of gimp-print, or .noupdate found!" ; \
