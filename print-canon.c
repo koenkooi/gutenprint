@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.59 2000/06/20 01:28:10 rlk Exp $"
+ * "$Id: print-canon.c,v 1.60 2000/06/20 22:32:51 cpbs Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -30,7 +30,7 @@
  *
  * Revision History:
  *
- * See ChangeLog
+ *   See ChangeLog
  */
 
 

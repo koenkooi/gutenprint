@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.32 2000/06/20 01:28:10 rlk Exp $"
+ * "$Id: print-ps.c,v 1.33 2000/06/20 22:32:51 cpbs Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -31,8 +31,8 @@
  *   ps_ascii85()        - Print binary data as a series of base-85 numbers.
  *
  * Revision History:
- * See bottom
  *
+ *   See ChangeLog
  */
 
 #include "print.h"

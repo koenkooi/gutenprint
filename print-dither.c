@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.65 2000/06/18 15:36:23 rlk Exp $"
+ * "$Id: print-dither.c,v 1.66 2000/06/20 22:32:51 cpbs Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -22,7 +22,7 @@
  *
  * Revision History:
  *
- * See bottom
+ *   See ChangeLog
  */
 
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.98 2000/06/20 18:57:53 cpbs Exp $"
+ * "$Id: print-util.c,v 1.99 2000/06/20 22:32:51 cpbs Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -31,7 +31,7 @@
  *
  * Revision History:
  *
- * See bottom
+ *   See ChangeLog
  */
 
 /* #define PRINT_DEBUG */

@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.13 2000/06/15 11:50:57 rlk Exp $"
+ * "$Id: pcl-unprint.c,v 1.14 2000/06/20 22:32:51 cpbs Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -20,7 +20,8 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * Revision History:
- *	(at bottom)
+ *
+ *   See ChangeLog
  */
 
 #include<stdio.h>
@@ -28,7 +29,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.13 2000/06/15 11:50:57 rlk Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.14 2000/06/20 22:32:51 cpbs Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.167 2000/06/20 01:28:10 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.168 2000/06/20 22:32:51 cpbs Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -30,7 +30,7 @@
  *
  * Revision History:
  *
- * See bottom of file
+ *   See ChangeLog
  */
 
 /*
