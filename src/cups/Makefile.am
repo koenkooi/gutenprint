@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.76 2004/05/09 16:06:06 rleigh Exp $
+## $Id: Makefile.am,v 1.77 2004/07/24 01:40:51 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ pkgdata_DATA = $(CUPS_PKG)
 pkgsysconf_DATA = $(CUPS_CONF)
 
 if BUILD_CUPS_PPDS
-INSTALL_DATA_LOCAL_DEPS = ppd
+INSTALL_DATA_LOCAL_DEPS = ppd-stamp
 endif
 
 if BUILD_TRANSLATED_CUPS_PPDS
