@@ -1,5 +1,5 @@
 /*
- * "$Id: list.h,v 1.1 2002/11/13 22:42:26 rleigh Exp $"
+ * "$Id: list.h,v 1.2 2002/11/18 22:55:19 rleigh Exp $"
  *
  *   libgimpprint list functions.
  *
@@ -24,6 +24,13 @@
  * This file must include only standard C header files.  The core code must
  * compile on generic platforms that don't support glib, gimp, gimpprint, etc.
  */
+
+#ifndef GIMP_PRINT_INTERNAL_LIST_H
+#define GIMP_PRINT_INTERNAL_LIST_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 struct stp_internal_list_node;
@@ -54,3 +61,8 @@ typedef struct stp_internal_list_head
 } stp_internal_list_head_t;
 
 
+#ifdef __cplusplus
+  }
+#endif
+
+#endif /* GIMP_PRINT_INTERNAL_LIST_H */
