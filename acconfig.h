@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.5 2001/02/09 18:20:22 rleigh Exp $
+ * $Id: acconfig.h,v 1.6 2001/02/13 02:17:37 rlk Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -47,6 +47,7 @@
 #undef HAVE_ASPRINTF
 #undef HAVE_GETOPT_LONG
 #undef HAVE_RANDOM
+#undef HAVE_POLL
 #undef HAVE_STPCPY
 /* Define for use of ioctl(2) system call */
 #undef USE_IOCTL

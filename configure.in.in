@@ -1,4 +1,4 @@
-dnl $Id: configure.in.in,v 1.9 2001/02/12 18:50:01 rleigh Exp $
+dnl $Id: configure.in.in,v 1.10 2001/02/13 02:17:37 rlk Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -373,6 +373,7 @@ AC_FUNC_ALLOCA
 dnl [commented out while I find a memcmp.c for lib/] AC_FUNC_MEMCMP
 dnl GNU libc memcmp.c is too glibc-dependent to include.
 AC_CHECK_FUNC(random, AC_DEFINE(HAVE_RANDOM))
+AC_CHECK_FUNC(poll, AC_DEFINE(HAVE_POLL))
 dnl The following is used to build a "utility library" in lib/
 AC_REPLACE_FUNCS(vasprintf xgetcwd xmalloc)
 AC_CHECK_FUNC(asprintf,
