@@ -1,5 +1,5 @@
 /*
- * "$Id: patched-print-dither.c,v 1.2 2000/05/19 18:53:12 ttonino Exp $"
+ * "$Id: patched-print-dither.c,v 1.3 2000/05/19 21:04:09 ttonino Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1608,6 +1608,8 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
     
 	  if (bk > 0)
 	    {
+	      if ( bk >= 32000 )
+	        bk = 32000;
 	      bk = bk * bk / 65536;
 	      c -= (d->k_clevel * bk) /128;
 	      m -= (d->k_mlevel * bk) /128;
