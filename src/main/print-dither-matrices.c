@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.19 2003/04/15 02:24:54 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.20 2003/04/16 00:04:15 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -701,6 +701,15 @@ stpi_find_standard_dither_array(int x_aspect, int y_aspect)
   stp_array_t answer;
   int divisor = gcd(x_aspect, y_aspect);
 
+  x_aspect /= divisor;
+  y_aspect /= divisor;
+
+  if (x_aspect == 3)		/* We don't have x3 matrices */
+    x_aspect += 1;		/* so cheat */
+  if (y_aspect == 3)
+    y_aspect += 1;
+  
+  divisor = gcd(x_aspect, y_aspect);
   x_aspect /= divisor;
   y_aspect /= divisor;
 
