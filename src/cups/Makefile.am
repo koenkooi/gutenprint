@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2001/01/24 13:02:18 rlk Exp $
+## $Id: Makefile.am,v 1.7 2001/01/24 18:27:04 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,7 @@ cups_filter = rastertoprinter commandtoepson commandtocanon
 
 if CUPS_INSTALL
 install-data-local: ppd
+endif
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/$(PACKAGE)/backend
@@ -78,7 +79,6 @@ install-data-local: ppd
 	$(mkinstalldirs) $(DESTDIR)/$(sysconfdir)
 	$(mkinstalldirs) $(DESTDIR)/$(sysconfdir)/$(PACKAGE)
 	$(INSTALL_DATA) command.types $(DESTDIR)/$(sysconfdir)/$(PACKAGE)/command.types
-endif
 
 ## Rules
 
