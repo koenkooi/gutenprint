@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.44 2003/10/10 02:54:06 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.45 2003/10/19 00:19:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -556,9 +556,9 @@ DECLARE_PAPER_ADJUSTMENTS(sp960);
 
 static const paper_adjustment_t ultrachrome_photo_adjustments[] =
 {
-  { "Plain", 0.615, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
+  { "Plain", 0.86, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
-  { "PlainFast", 0.615, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
+  { "PlainFast", 0.86, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
   { "Postcard", 0.83, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
@@ -566,7 +566,7 @@ static const paper_adjustment_t ultrachrome_photo_adjustments[] =
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
   { "Transparency", 1.00, .75, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
-  { "Envelope", 0.615, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
+  { "Envelope", 0.86, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
   { "BackFilm", 1.00, .75, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
@@ -596,7 +596,7 @@ static const paper_adjustment_t ultrachrome_photo_adjustments[] =
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj  },
   { "ColorLife", 0.85, 1.0, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
-  { "Other", 0.615, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
+  { "Other", 0.86, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1,
     ultra_photo_hue_adj, ultra_photo_lum_adj, ultra_photo_sat_adj },
 };
 
@@ -604,17 +604,17 @@ DECLARE_PAPER_ADJUSTMENTS(ultrachrome_photo);
 
 static const paper_adjustment_t ultrachrome_matte_adjustments[] =
 {
-  { "Plain", 0.615, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1.2,
+  { "Plain", 0.86, .1, 1, 0, .999, 1, 1, 1, 1, 1, 1.2,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
-  { "PlainFast", 0.615, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1.2,
+  { "PlainFast", 0.86, .2, 1, 0, .999, 1, 1, 1, 1, 1, 1.2,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
-  { "Postcard", 0.83, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1.2,
+  { "Postcard", 0.86, .2, 1, 0, .999, 1, 1, 1, 1, 1, 1.2,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
   { "GlossyFilm", 1.00, 1.0, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
   { "Transparency", 1.00, .75, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
-  { "Envelope", 0.615, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1.2,
+  { "Envelope", 0.86, .2, 1, 0, .999, 1, 1, 1, 1, 1, 1.2,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
   { "BackFilm", 1.00, .75, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
@@ -644,7 +644,7 @@ static const paper_adjustment_t ultrachrome_matte_adjustments[] =
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj  },
   { "ColorLife", 1.00, 1.0, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
-  { "Other", 0.615, .5, 1, 0, 1.25, 1, 1, 1, 1, 1, 1,
+  { "Other", 0.86, .2, 1, 0, .999, 1, 1, 1, 1, 1, 1,
     ultra_matte_hue_adj, ultra_matte_lum_adj, ultra_matte_sat_adj },
 };
 
