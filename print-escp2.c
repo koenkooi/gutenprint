@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.181 2000/07/10 00:08:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.182 2000/07/12 01:11:37 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1215,9 +1215,6 @@ escp2_print(const printer_t *printer,		/* I - Model */
     bits = 2;
   else
     bits = 1;
-
-  if (!use_softweave)
-    use_6color = 0;
 
  /*
   * Let the user know what we're doing...

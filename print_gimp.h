@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.21 2000/06/21 00:38:45 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.22 2000/07/12 01:11:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -40,7 +40,7 @@
  * All Gimp-specific code is in this file.
  */
 
-#define PLUG_IN_VERSION		"3.1.7 - 17 Jun 2000"
+#define PLUG_IN_VERSION		"3.1.8 - 11 Jul 2000"
 #define PLUG_IN_NAME		"Print"
 
 /*
