@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.14 2003/03/30 12:52:39 rleigh Exp $"
+ * "$Id: print-dither-matrices.c,v 1.15 2003/04/05 23:29:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -76,25 +76,7 @@ stpi_find_standard_dither_array(int x_aspect, int y_aspect)
   answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
   if (answer)
     return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
-  if (answer)
-    return answer;
-  answer = stpi_xml_get_dither_array(x_aspect, y_aspect);
+  answer = stpi_xml_get_dither_array(y_aspect, x_aspect);
   if (answer)
     return answer;
   return NULL;
