@@ -1,5 +1,5 @@
 .\" t
-.\" $Id: gimpprint-models.7.in,v 1.7 2004/07/09 22:32:31 m0m Exp $
+.\" $Id: gimpprint-models.7.in,v 1.8 2004/07/22 13:45:47 m0m Exp $
 .\" Copyright (C) 2000 Roger Leigh <rleigh@debian.org>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -210,6 +210,7 @@ lexmark\-z43	Lexmark Z43
 lexmark\-z52	Lexmark Z52
 lexmark\-z53	Lexmark Z53
 olympus\-p10	Olympus P10
+olympus\-p200	Olympus P200
 olympus\-p300	Olympus P300
 olympus\-p400	Olympus P400
 olympus\-p440	Olympus P440
