@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.29 2000/02/23 15:37:11 gandy Exp $ */
+/* $Id: unprint.c,v 1.30 2000/02/23 17:43:22 gandy Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?
@@ -914,7 +914,7 @@ void parse_canon(FILE *fp_r){
 	 break;
        default:
 	 fprintf(stderr,"Error: unsupported color type 0x%02x.\n",*buf);
-	 exit(-1);
+	 /* exit(-1); */
        }
        pstate.current_color= currentcolor;
        m= rle_decode(buf+1,sh-1,256*256-1);
