@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.46 2003/05/26 01:03:59 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.47 2003/05/28 11:57:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -88,8 +88,10 @@ typedef double escp2_densities_t[RES_N];
 typedef struct escp2_variable_ink
 {
   double darkness;
-  const stpi_shade_t *shades;
+  const double *shades;
   int numshades;
+  const double *dotsizes;
+  int numdotsizes;
 } escp2_variable_ink_t;
 
 typedef const escp2_variable_ink_t *escp2_variable_inkset_t[PHYSICAL_CHANNEL_LIMIT];
@@ -187,10 +189,6 @@ typedef struct
   int softweave;
   int microweave;
   int vertical_passes;
-  int vertical_oversample;
-  int vertical_undersample;
-  int vertical_denominator;
-  int resid;
 } res_t;
 
 typedef struct
@@ -337,7 +335,7 @@ typedef struct escp2_printer
   const escp2_variable_inklist_t *inks; /* Choices of inks for this printer */
   const paperlist_t *paperlist;
 /*****************************************************************************/
-  const res_t *reslist;
+  const res_t *const *reslist;
   const inklist_t *inklist;
 /*****************************************************************************/
   const int *bits;
@@ -376,18 +374,18 @@ extern const paperlist_t stpi_escp2_sp780_paper_list;
 extern const paperlist_t stpi_escp2_sp950_paper_list;
 extern const paperlist_t stpi_escp2_standard_paper_list;
 
-extern const res_t stpi_escp2_superfine_reslist[];
-extern const res_t stpi_escp2_no_microweave_reslist[];
-extern const res_t stpi_escp2_pro_reslist[];
-extern const res_t stpi_escp2_sp5000_reslist[];
-extern const res_t stpi_escp2_standard_reslist[];
-extern const res_t stpi_escp2_720dpi_reslist[];
-extern const res_t stpi_escp2_720dpi_soft_reslist[];
-extern const res_t stpi_escp2_1440dpi_reslist[];
-extern const res_t stpi_escp2_g3_reslist[];
-extern const res_t stpi_escp2_sc500_reslist[];
-extern const res_t stpi_escp2_sc640_reslist[];
-extern const res_t stpi_escp2_sc660_reslist[];
+extern const res_t *const stpi_escp2_superfine_reslist[];
+extern const res_t *const stpi_escp2_no_microweave_reslist[];
+extern const res_t *const stpi_escp2_pro_reslist[];
+extern const res_t *const stpi_escp2_sp5000_reslist[];
+extern const res_t *const stpi_escp2_standard_reslist[];
+extern const res_t *const stpi_escp2_720dpi_reslist[];
+extern const res_t *const stpi_escp2_720dpi_soft_reslist[];
+extern const res_t *const stpi_escp2_1440dpi_reslist[];
+extern const res_t *const stpi_escp2_g3_reslist[];
+extern const res_t *const stpi_escp2_sc500_reslist[];
+extern const res_t *const stpi_escp2_sc640_reslist[];
+extern const res_t *const stpi_escp2_sc660_reslist[];
 
 typedef struct
 {
@@ -490,5 +488,5 @@ extern void stpi_escp2_flush_pass(stp_vars_t v, int passno,
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.46 2003/05/26 01:03:59 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.47 2003/05/28 11:57:31 rlk Exp $".
  */

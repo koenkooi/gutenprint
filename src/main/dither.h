@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.18 2003/05/26 01:03:57 rlk Exp $"
+ * "$Id: dither.h,v 1.19 2003/05/28 11:57:29 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -162,8 +162,14 @@ extern int stpi_dither_get_first_position(stp_vars_t v, int color, int subchan);
 extern int stpi_dither_get_last_position(stp_vars_t v, int color, int subchan);
 extern void stpi_dither_set_inks_simple(stp_vars_t v, int color, int nlevels,
 					const double *levels, double density);
-extern void stpi_dither_set_inks(stp_vars_t v, int color, int nshades,
-				 const stpi_shade_t *shades, double density);
+extern void stpi_dither_set_inks_full(stp_vars_t v, int color, int nshades,
+				      const stpi_shade_t *shades,
+				      double density);
+extern void stpi_dither_set_inks(stp_vars_t v, int color,
+				 double density,
+				 int nshades, const double *svalues,
+				 int ndotsizes, const double *dvalues);
+
 
 extern void stpi_dither_add_channel(stp_vars_t v, unsigned char *data,
 				    unsigned channel, unsigned subchannel);
@@ -190,5 +196,5 @@ extern void stpi_dither_internal(stp_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.18 2003/05/26 01:03:57 rlk Exp $".
+ * End of "$Id: dither.h,v 1.19 2003/05/28 11:57:29 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.51 2003/05/10 14:50:16 rlk Exp $"
+ * "$Id: printers.c,v 1.52 2003/05/28 11:57:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -547,7 +547,7 @@ fill_buffer_writefunc(void *priv, const char *buffer, size_t bytes)
 }
 
 int
-stpi_verify_printer_params(stp_const_vars_t v)
+stpi_verify_printer_params(stp_vars_t v)
 {
   errbuf_t errbuf;
   stp_outfunc_t ofunc = stp_get_errfunc(v);

@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.34 2003/05/05 00:36:02 rlk Exp $
+ *  $Id: gimp-print.h,v 1.35 2003/05/28 11:57:28 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -283,7 +283,7 @@ typedef const void *stp_const_string_list_t;
 typedef struct
 {
   size_t bytes;
-  void *data;
+  const void *data;
 } stp_raw_t;
 
 typedef struct
@@ -821,5 +821,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.34 2003/05/05 00:36:02 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.35 2003/05/28 11:57:28 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.105 2003/05/26 01:04:00 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.106 2003/05/28 11:57:31 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2676,8 +2676,8 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
       if (privdata.do_6color)			/* Photo for 69x */
 	{
-	  stpi_dither_set_inks(v, ECOLOR_C, 6, variable_shades, density);
-	  stpi_dither_set_inks(v, ECOLOR_M, 6, variable_shades, density);
+	  stpi_dither_set_inks_full(v, ECOLOR_C, 6, variable_shades, density);
+	  stpi_dither_set_inks_full(v, ECOLOR_M, 6, variable_shades, density);
 	}
       else
 	{
@@ -2689,8 +2689,8 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
     {
       /* Set light inks for 6 colour printers.
 	 Numbers copied from print-escp2.c */
-      stpi_dither_set_inks(v, ECOLOR_C, 2, photo_dither_shades, density);
-      stpi_dither_set_inks(v, ECOLOR_M, 2, photo_dither_shades, density);
+      stpi_dither_set_inks_full(v, ECOLOR_C, 2, photo_dither_shades, density);
+      stpi_dither_set_inks_full(v, ECOLOR_M, 2, photo_dither_shades, density);
     }
   if (black)
     stpi_dither_set_density_adjustment(v, ECOLOR_K, 0,

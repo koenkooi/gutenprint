@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.121 2003/05/26 01:03:57 rlk Exp $"
+ * "$Id: print-canon.c,v 1.122 2003/05/28 11:57:29 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2222,8 +2222,8 @@ set_ink_ranges(stp_vars_t v, const canon_variable_ink_t *ink, int color,
 {
   if (!ink)
     return;
-  stpi_dither_set_inks(v, color, ink->numshades, ink->shades,
-		       ink->density * stp_get_float_parameter(v, "Density"));
+  stpi_dither_set_inks_full(v, color, ink->numshades, ink->shades,
+			    ink->density * stp_get_float_parameter(v, "Density"));
   stpi_dither_set_density_adjustment
     (v, color, 1, (get_double_param(v, channel_param) *
 		   get_double_param(v, subchannel_param) *
