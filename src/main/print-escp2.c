@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.56 2001/05/06 22:01:44 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.57 2001/05/09 01:31:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -974,21 +974,21 @@ static const double standard_sat_adjustment[49] =
 static const double standard_lum_adjustment[49] =
 {
   0.50,				/* C */
-  0.55,
   0.6,
-  0.65,
   0.7,
-  0.69,
-  0.68,
-  0.67,
-  0.65,				/* B */
-  0.68,
-  0.74,
   0.8,
+  0.9,
   0.86,
-  1.0,
-  1.2,
-  1.5,
+  0.82,
+  0.79,
+  0.78,				/* B */
+  0.8,
+  0.87,
+  0.95,
+  1.05,
+  1.15,
+  1.3,
+  1.6,
   1.9,				/* M */
   1.85,
   1.8,
