@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $"
+ * "$Id: printers.h,v 1.2 2004/02/07 18:05:31 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -56,6 +56,7 @@ extern int stp_get_printer_index_by_driver(const char *driver);
 extern const char *stp_printer_get_long_name(stp_const_printer_t p);
 extern const char *stp_printer_get_driver(stp_const_printer_t p);
 extern const char *stp_printer_get_family(stp_const_printer_t p);
+extern const char *stp_printer_get_manufacturer(stp_const_printer_t p);
 extern int stp_printer_get_model(stp_const_printer_t p);
 extern stp_const_vars_t stp_printer_get_defaults(stp_const_printer_t p);
 extern void stp_set_printer_defaults(stp_vars_t, stp_const_printer_t);
@@ -81,5 +82,5 @@ extern int stp_end_job(stp_const_vars_t, stp_image_t *image);
 
 #endif /* __GIMP_PRINT_PRINTERS_H__ */
 /*
- * End of "$Id: printers.h,v 1.1 2003/06/29 14:41:54 rleigh Exp $".
+ * End of "$Id: printers.h,v 1.2 2004/02/07 18:05:31 rlk Exp $".
  */

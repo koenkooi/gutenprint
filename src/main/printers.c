@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.60 2003/10/20 02:39:32 rlk Exp $"
+ * "$Id: printers.c,v 1.61 2004/02/07 18:05:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -58,6 +58,7 @@ typedef struct stpi_internal_printer
   const char *driver;
   char       *long_name;        /* Long name for UI */
   char       *family;           /* Printer family */
+  char	     *manufacturer;	/* Printer manufacturer */
   int        model;             /* Model number */
   const stpi_printfuncs_t *printfuncs;
   stp_vars_t printvars;
@@ -180,6 +181,13 @@ stp_printer_get_family(stp_const_printer_t p)
 {
   const stpi_internal_printer_t *val = get_printer(p);
   return val->family;
+}
+
+const char *
+stp_printer_get_manufacturer(stp_const_printer_t p)
+{
+  const stpi_internal_printer_t *val = get_printer(p);
+  return val->manufacturer;
 }
 
 int
@@ -826,6 +834,7 @@ stp_printer_create_from_xmltree(mxml_node_t *printer, /* The printer node */
   stp_set_driver(outprinter->printvars, (const char *) stmp);
 
   outprinter->long_name = stpi_strdup(stpi_mxmlElementGetAttr(printer, "name"));
+  outprinter->manufacturer = stpi_strdup(stpi_mxmlElementGetAttr(printer, "manufacturer"));
   outprinter->family = stpi_strdup((const char *) family);
 
   if (stp_get_driver(outprinter->printvars))
