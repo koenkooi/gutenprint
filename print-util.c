@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.150 2000/10/12 03:08:39 easysw Exp $"
+ * "$Id: print-util.c,v 1.151 2000/11/18 13:39:11 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -293,8 +293,10 @@ update_cmyk(unsigned short *rgb)
   int y = 65535 - rgb[2];
   int nc, nm, ny;
   int k;
+#if 0
   if (c == m && c == y)
     return;
+#endif
   k = FMIN(FMIN(c, m), y);
 
   /*
