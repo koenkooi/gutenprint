@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.91 2000/10/20 07:23:50 gandy Exp $"
+ * "$Id: print-canon.c,v 1.89.2.1 2000/10/24 07:05:12 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -116,17 +116,6 @@ static canon_cap_t canon_model_capabilities[] =
 
   /* tested models */
 
-
-  { /* Canon BJ 30 */
-    30,
-    9.5*72, 14*72,
-    360, 360, 2,
-    11, 9, 10, 18,
-    CANON_INK_K,
-    CANON_SLOT_ASF1,
-    CANON_CAP_CMD61
-  },
-
   { /* Canon BJC 4300 */
     4300,
     618, 936,      /* 8.58" x 13 " */
@@ -149,16 +138,6 @@ static canon_cap_t canon_model_capabilities[] =
 
   { /* Canon BJC 6000 */
     6000,
-    618, 936,      /* 8.58" x 13 " */
-    1440, 720, 2,
-    11, 9, 10, 18,
-    CANON_INK_CMYK | CANON_INK_CcMmYK,
-    CANON_SLOT_ASF1 | CANON_SLOT_MAN1,
-    CANON_CAP_DMT
-  },
-
-  { /* Canon BJC 6200 */
-    6200,
     618, 936,      /* 8.58" x 13 " */
     1440, 720, 2,
     11, 9, 10, 18,
@@ -983,7 +962,7 @@ canon_print(const printer_t *printer,		/* I - Model */
   PUT("out_height", out_height,ydpi);
   */
 
-  left = ydpi * left / 72;
+  left = xdpi * left / 72;
 
   PUT("leftskip",left,xdpi);
 
