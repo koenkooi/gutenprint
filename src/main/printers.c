@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.71.6.3 2004/07/24 00:58:40 rlk Exp $"
+ * "$Id: printers.c,v 1.71.6.4 2004/08/04 11:17:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1018,8 +1018,13 @@ stp_driver_create_from_xmltree(stp_mxml_node_t *driver, /* The driver node */
 	}
       return outdriver;
     }
-  stp_free(outdriver);
-  return NULL;
+  else
+    {
+      stp_erprintf("stp_driver_create_from_xmltree: build printer %s failed %d %p\n",
+		   outdriver->driver, found_driver, printfuncs);
+      stp_free(outdriver);
+      return NULL;
+    }
 }
 
 static stp_printer_t *
