@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.92 2000/11/18 20:29:55 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.93 2000/11/18 20:31:30 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1915,6 +1915,11 @@ pcl_print(const printer_t *printer,		/* I - Model */
   dither_set_black_lower(dither, .4);
   dither_set_black_upper(dither, .999);
 #endif
+
+/* For the CRET mode of the 840 series, the density has to be corrected */
+
+  if (do_cretb)
+    nv.density /= 2;
 
   if (do_cret)				/* 4-level printing for 800/1120 */
     {
