@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.46 2000/12/03 18:40:11 rlk Exp $"
+ * "$Id: print-ps.c,v 1.47 2000/12/10 00:36:00 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -227,6 +227,19 @@ const char *
 ps_default_resolution(const printer_t *printer)
 {
   return "default";
+}
+
+/*
+ * This is really bogus...
+ */
+void
+ps_describe_resolution(const printer_t *printer,
+			const char *resolution, int *x, int *y)
+{
+  *x = -1;
+  *y = -1;
+  sscanf(resolution, "%dx%d", x, y);
+  return;
 }
 
 /*

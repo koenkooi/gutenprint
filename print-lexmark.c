@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.8 2000/12/03 18:40:11 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.9 2000/12/10 00:36:00 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -468,6 +468,16 @@ lexmark_default_resolution(const printer_t *printer)
   else
     return "180x180 DPI";
 }
+
+void
+lexmark_describe_resolution(const printer_t *printer,
+			    const char *resolution, int *x, int *y)
+{
+  *x = -1;
+  *y = -1;
+  sscanf(resolution, "%dx%d", x, y);
+  return;
+}	  
 
 /*
  * 'lexmark_parameters()' - Return the parameter values for the given parameter.

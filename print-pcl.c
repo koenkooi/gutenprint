@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.100 2000/12/04 01:05:05 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.101 2000/12/10 00:36:00 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -223,6 +223,23 @@ const char *
 pcl_default_resolution(const printer_t *printer)
 {
   return pcl_resolutions[0].pcl_name;
+}
+
+void
+pcl_describe_resolution(const printer_t *printer,
+			const char *resolution, int *x, int *y)
+{
+  int i;
+  for (i = 0; i < NUM_RESOLUTIONS; i++)
+    {
+      if (!strcmp(resolution, pcl_resolutions[i].pcl_name))
+	{
+	  sscanf(resolution, "%dx%d", x, y);
+	  return;
+	}
+    }
+  *x = -1;
+  *y = -1;
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.101 2000/12/03 18:40:10 rlk Exp $"
+ * "$Id: print-canon.c,v 1.102 2000/12/10 00:35:59 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1355,6 +1355,16 @@ canon_default_resolution(const printer_t *printer)
     return "150x150 DPI";
   else
     return "180x180 DPI";
+}
+
+void
+canon_describe_resolution(const printer_t *printer,
+			const char *resolution, int *x, int *y)
+{
+  *x = -1;
+  *y = -1;
+  sscanf(resolution, "%dx%d", x, y);
+  return;
 }
 
 /*

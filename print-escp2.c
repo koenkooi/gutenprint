@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.277 2000/12/09 15:47:47 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.278 2000/12/10 00:35:59 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2036,6 +2036,29 @@ escp2_default_resolution(const printer_t *printer)
       res++;
     }
   return NULL;
+}
+
+void
+escp2_describe_resolution(const printer_t *printer,
+			  const char *resolution, int *x, int *y)
+{
+  const res_t *res = &(escp2_reslist[0]);
+  while (res->hres)
+    {
+      if (escp2_ink_type(printer->model, res->hres, res->vres, !res->softweave)
+	  != -1 &&
+	  res->vres <= escp2_max_vres(printer->model) &&
+	  res->hres <= escp2_max_hres(printer->model) &&
+	  !strcmp(resolution, res->name))
+	{
+	  *x = res->hres;
+	  *y = res->vres;
+	  return;
+	}
+      res++;
+    }
+  *x = -1;
+  *y = -1;
 }
 
 static void
