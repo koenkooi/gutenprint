@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45 2001/11/18 00:05:17 rlk Exp $
+## $Id: Makefile.am,v 1.45.2.1 2002/01/05 00:26:25 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -153,6 +153,8 @@ refresh-data-local: ppd
 
 install-data-hook:
 # Remove unused directories in install tree
+	-@echo 'Expect a number of "rmdir: Directory not empty" warnings'
+	-@echo 'These messages are harmless and should be ignored.'
 	-rmdir $(DESTDIR)$(cups_modeldir)
 	-rmdir $(DESTDIR)$(pkgdatadir)
 	-rmdir $(DESTDIR)$(cupsexec_backenddir)
