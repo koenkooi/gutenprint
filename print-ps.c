@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.42 2000/09/07 20:03:24 cpbs Exp $"
+ * "$Id: print-ps.c,v 1.43 2000/09/12 13:06:04 easysw Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -237,11 +237,11 @@ ps_print(const printer_t *printer,		/* I - Model (Level 1 or 2) */
 {
   unsigned char *cmap = v->cmap;
   int		model = printer->model;
-  char 		*ppd_file = v->ppd_file;
-  char 		*resolution = v->resolution;
-  char 		*media_size = v->media_size;
-  char 		*media_type = v->media_type;
-  char 		*media_source = v->media_source;
+  const char	*ppd_file = v->ppd_file;
+  const char	*resolution = v->resolution;
+  const char	*media_size = v->media_size;
+  const char	*media_type = v->media_type;
+  const char	*media_source = v->media_source;
   int 		output_type = v->output_type;
   int		orientation = v->orientation;
   double 	scaling = v->scaling;

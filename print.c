@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.115 2000/09/10 15:05:28 easysw Exp $"
+ * "$Id: print.c,v 1.116 2000/09/12 13:06:04 easysw Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -327,7 +327,7 @@ run (char   *name,		/* I - Name of print program. */
    */
 
   current_printer = get_printer_by_index (0);
-  run_mode = param[0].data.d_int32;
+  run_mode = (GRunModeType)param[0].data.d_int32;
 
   values = g_new (GParam, 1);
 
@@ -690,6 +690,8 @@ run (char   *name,		/* I - Name of print program. */
 #ifndef GIMP_1_0
   if (export == EXPORT_EXPORT)
     gimp_image_delete (image_ID);
+#else
+  ; /* MRS: empty statement to suppress compiler warning */
 #endif
 }
 
@@ -1228,5 +1230,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.115 2000/09/10 15:05:28 easysw Exp $".
+ * End of "$Id: print.c,v 1.116 2000/09/12 13:06:04 easysw Exp $".
  */
