@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.13 2004/03/27 22:08:16 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.14 2004/03/27 23:56:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1793,6 +1793,7 @@ set_raw_ink_type(stp_vars_t v)
 		     stp_get_string_parameter(v, "InkType") : "NULL",
 		     inks->inknames[i]->name);
 	stp_set_string_parameter(v, "InkType", inks->inknames[i]->name);
+	stp_set_int_parameter(v, "STPIRawChannels", count->count);
 	return 1;
       }
   stpi_eprintf
@@ -2039,9 +2040,12 @@ setup_head_offset(stp_vars_t v)
   escp2_privdata_t *pd = get_privdata(v);
   int i;
   int channel_id = 0;
+  int channel_limit = pd->logical_channels;
   const escp2_inkname_t *ink_type = pd->inkname;
   pd->head_offset = stpi_zalloc(sizeof(int) * pd->channels_in_use);
-  for (i = 0; i < pd->logical_channels; i++)
+  if (pd->channels_in_use < pd->logical_channels)
+    channel_limit = pd->channels_in_use;
+  for (i = 0; i < channel_limit; i++)
     {
       const ink_channel_t *channel = ink_type->channel_set->channels[i];
       if (channel)
@@ -2261,8 +2265,9 @@ setup_head_parameters(stp_vars_t v)
    * Set up the output channels
    */
   if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0)
-    pd->logical_channels = escp2_physical_channels(v);
-  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
+    pd->logical_channels = pd->inkname->channel_set->channel_count;
+      
+  else if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
     pd->logical_channels = 1;
   else
     pd->logical_channels = NCOLORS;

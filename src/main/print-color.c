@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.41 2004/03/27 22:07:29 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.42 2004/03/27 23:56:01 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -136,38 +136,38 @@ sizeof(channel_params) / sizeof(channel_param_t);
 
 static const channel_param_t raw_channel_params[] =
 {
-  { 0,  "GammaCh0",  "CurveCh0"  },
-  { 1,  "GammaCh1",  "CurveCh1"  },
-  { 2,  "GammaCh2",  "CurveCh2"  },
-  { 3,  "GammaCh3",  "CurveCh3"  },
-  { 4,  "GammaCh4",  "CurveCh4"  },
-  { 5,  "GammaCh5",  "CurveCh5"  },
-  { 6,  "GammaCh6",  "CurveCh6"  },
-  { 7,  "GammaCh7",  "CurveCh7"  },
-  { 8,  "GammaCh8",  "CurveCh8"  },
-  { 9,  "GammaCh9",  "CurveCh9"  },
-  { 10, "GammaCh10", "CurveCh10" },
-  { 11, "GammaCh11", "CurveCh11" },
-  { 12, "GammaCh12", "CurveCh12" },
-  { 13, "GammaCh13", "CurveCh13" },
-  { 14, "GammaCh14", "CurveCh14" },
-  { 15, "GammaCh15", "CurveCh15" },
-  { 16, "GammaCh16", "CurveCh16" },
-  { 17, "GammaCh17", "CurveCh17" },
-  { 18, "GammaCh18", "CurveCh18" },
-  { 19, "GammaCh19", "CurveCh19" },
-  { 20, "GammaCh20", "CurveCh20" },
-  { 21, "GammaCh21", "CurveCh21" },
-  { 22, "GammaCh22", "CurveCh22" },
-  { 23, "GammaCh23", "CurveCh23" },
-  { 24, "GammaCh24", "CurveCh24" },
-  { 25, "GammaCh25", "CurveCh25" },
-  { 26, "GammaCh26", "CurveCh26" },
-  { 27, "GammaCh27", "CurveCh27" },
-  { 28, "GammaCh28", "CurveCh28" },
-  { 29, "GammaCh29", "CurveCh29" },
-  { 30, "GammaCh30", "CurveCh30" },
-  { 31, "GammaCh31", "CurveCh31" },
+  { 0,  "GammaCh0",  "CurveCh0",  "GammaCh0",  "CurveCh0"  },
+  { 1,  "GammaCh1",  "CurveCh1",  "GammaCh1",  "CurveCh1"  },
+  { 2,  "GammaCh2",  "CurveCh2",  "GammaCh2",  "CurveCh2"  },
+  { 3,  "GammaCh3",  "CurveCh3",  "GammaCh3",  "CurveCh3"  },
+  { 4,  "GammaCh4",  "CurveCh4",  "GammaCh4",  "CurveCh4"  },
+  { 5,  "GammaCh5",  "CurveCh5",  "GammaCh5",  "CurveCh5"  },
+  { 6,  "GammaCh6",  "CurveCh6",  "GammaCh6",  "CurveCh6"  },
+  { 7,  "GammaCh7",  "CurveCh7",  "GammaCh7",  "CurveCh7"  },
+  { 8,  "GammaCh8",  "CurveCh8",  "GammaCh8",  "CurveCh8"  },
+  { 9,  "GammaCh9",  "CurveCh9",  "GammaCh9",  "CurveCh9"  },
+  { 10, "GammaCh10", "CurveCh10", "GammaCh10", "CurveCh10" },
+  { 11, "GammaCh11", "CurveCh11", "GammaCh11", "CurveCh11" },
+  { 12, "GammaCh12", "CurveCh12", "GammaCh12", "CurveCh12" },
+  { 13, "GammaCh13", "CurveCh13", "GammaCh13", "CurveCh13" },
+  { 14, "GammaCh14", "CurveCh14", "GammaCh14", "CurveCh14" },
+  { 15, "GammaCh15", "CurveCh15", "GammaCh15", "CurveCh15" },
+  { 16, "GammaCh16", "CurveCh16", "GammaCh16", "CurveCh16" },
+  { 17, "GammaCh17", "CurveCh17", "GammaCh17", "CurveCh17" },
+  { 18, "GammaCh18", "CurveCh18", "GammaCh18", "CurveCh18" },
+  { 19, "GammaCh19", "CurveCh19", "GammaCh19", "CurveCh19" },
+  { 20, "GammaCh20", "CurveCh20", "GammaCh20", "CurveCh20" },
+  { 21, "GammaCh21", "CurveCh21", "GammaCh21", "CurveCh21" },
+  { 22, "GammaCh22", "CurveCh22", "GammaCh22", "CurveCh22" },
+  { 23, "GammaCh23", "CurveCh23", "GammaCh23", "CurveCh23" },
+  { 24, "GammaCh24", "CurveCh24", "GammaCh24", "CurveCh24" },
+  { 25, "GammaCh25", "CurveCh25", "GammaCh25", "CurveCh25" },
+  { 26, "GammaCh26", "CurveCh26", "GammaCh26", "CurveCh26" },
+  { 27, "GammaCh27", "CurveCh27", "GammaCh27", "CurveCh27" },
+  { 28, "GammaCh28", "CurveCh28", "GammaCh28", "CurveCh28" },
+  { 29, "GammaCh29", "CurveCh29", "GammaCh29", "CurveCh29" },
+  { 30, "GammaCh30", "CurveCh30", "GammaCh30", "CurveCh30" },
+  { 31, "GammaCh31", "CurveCh31", "GammaCh31", "CurveCh31" },
 };
 
 static const int raw_channel_param_count =
@@ -3553,7 +3553,8 @@ stpi_compute_lut(stp_vars_t v)
 
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      if (lut->output_color_description->channel_count < 1)
+      if (lut->output_color_description->channel_count < 1 &&
+	  i < lut->out_channels)
 	setup_channel(v, i, &(raw_channel_params[i]));
       else if (i < channel_param_count &&
 	       lut->output_color_description->channels & (1 << i))

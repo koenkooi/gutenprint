@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.7 2004/03/27 02:45:01 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.8 2004/03/27 23:56:03 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -249,7 +249,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {
-      stpi_eprintf(nv, _("Internal error!  Output channels or input channels must be 1\n"));
+      stpi_eprintf(nv, "Internal error!  Output channels or input channels must be 1\n");
       stp_vars_free(nv);
       return 0;
     }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.33.4.5 2004/03/26 02:02:53 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.33.4.6 2004/03/27 23:56:03 rlk Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1287,7 +1287,7 @@ olympus_do_print(stp_vars_t v, stp_image_t *image)
 #if 0
   if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
     {
-      stpi_eprintf(v, _("Internal error!  Output channels or input channels must be 1\n"));
+      stpi_eprintf(v, "Internal error!  Output channels or input channels must be 1\n");
       return 0;
     }
 #endif
