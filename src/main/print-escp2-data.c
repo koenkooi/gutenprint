@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.115 2003/06/15 02:33:39 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.116 2003/06/20 03:05:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -416,7 +416,7 @@ static const quality_t standard_qualities[] =
   { "High",        N_("High"),         0, 0, 0, 0, 720, 720 },
   { "Photo",       N_("Photo"),        0, 0, 1440, 720, 1440, 720 },
   { "HighPhoto",   N_("Super Photo"),  0, 0, 2880, 2880, 2880, 1440 },
-  { "Best",        N_("Ultra Photo"),  0, 0, 2880, 2880, -1, -1 },
+  { "Best",        N_("Ultra Photo"),  0, 0, 2880, 2880, 2880, 2880 },
   { "Best",        N_("Best"),         720, 360, 0, 0, -1, -1 },
 };
 
