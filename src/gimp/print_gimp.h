@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.13 2001/06/12 01:32:45 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.14 2001/07/01 13:19:33 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -64,6 +64,9 @@ typedef struct		/**** Printer List ****/
   char	name[128];		/* Name of printer */
   stp_vars_t v;
 } gp_plist_t;
+
+#define THUMBNAIL_MAXW	(128)
+#define THUMBNAIL_MAXH	(128)
 
 extern gint    thumbnail_w, thumbnail_h, thumbnail_bpp;
 extern guchar *thumbnail_data;
