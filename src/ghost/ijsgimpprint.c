@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.38 2003/02/22 18:50:32 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.39 2003/03/19 00:15:10 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -366,7 +366,7 @@ list_all_parameters(void)
       if (cs.offset != param_length)
 	{
 	  fprintf(stderr, "Bad string length %ud != %ud!\n", cs.offset,
-		  param_length);
+		  (unsigned int) param_length);
 	  exit(1);
 	}
       param_string[param_length - 1] = '\0';
@@ -575,8 +575,8 @@ gimp_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
       code = gimp_parse_wxh(vbuf, strlen(vbuf), &w, &h);
       if (code == 0)
 	{
-	  int al = (w * 72);
-	  int ah = (h * 72);
+	  int al = (w * 72) + .5;
+	  int ah = (h * 72) + .5;
 	  STP_DEBUG(fprintf(stderr, "left top %f %f %d %d %s\n",
 			    w * 72, h * 72, al, ah, vbuf));
 	  if (al >= 0)
