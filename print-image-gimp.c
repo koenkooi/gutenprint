@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.3 2000/06/20 22:47:54 cpbs Exp $"
+ * "$Id: print-image-gimp.c,v 1.4 2000/07/23 02:29:39 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -246,16 +246,17 @@ void
 Image_get_row(Image image, unsigned char *data, int row)
 {
   Gimp_Image_t *i = (Gimp_Image_t *) image;
+  gint w = i->drawable->width;
   if (i->columns)
     gimp_pixel_rgn_get_col(&(i->rgn), data,
-                           i->oy + row * i->increment, i->ox, i->w);
+                           i->oy + row * i->increment, i->ox, w);
   else
     gimp_pixel_rgn_get_row(&(i->rgn), data,
-                           i->ox, i->oy + row * i->increment, i->w);
+                           i->ox, i->oy + row * i->increment, w);
   if (i->mirror) {
     /* Flip row -- probably inefficiently */
     int f, l, b = i->drawable->bpp;
-    for (f = 0, l = i->w - 1; f < l; f++, l--) {
+    for (f = 0, l = w - 1; f < l; f++, l--) {
       int c;
       unsigned char tmp;
       for (c = 0; c < b; c++) {
@@ -288,5 +289,5 @@ Image_get_appname(Image image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.3 2000/06/20 22:47:54 cpbs Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.4 2000/07/23 02:29:39 rlk Exp $".
  */
