@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.10 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.11 2001/02/03 18:15:37 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -513,8 +513,6 @@ lexmark_source_type(const char *name, lexmark_cap_t caps)
 static int
 lexmark_printhead_type(const char *name, lexmark_cap_t caps)
 {
-  const stp_vars_t *dbfFile; 
-
   if (!strcmp(name,_("Black")))       return 0;
   if (!strcmp(name,_("Color")))       return 1;
   if (!strcmp(name,_("Black/Color"))) return 2;
@@ -1167,8 +1165,6 @@ lexmark_print(const stp_printer_t *printer,		/* I - Model */
   double k_lower, k_upper;
   int  physical_xdpi = 0;
   int  physical_ydpi = 0;
-  void *weaveparm;		/* Weave calculation parameter block */
-
 
   memcpy(&nv, v, sizeof(stp_vars_t));
 
