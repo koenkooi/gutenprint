@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdconfig.in,v 1.7 2004/03/16 00:15:49 rleigh Exp $
+# $Id: cups-genppdconfig.in,v 1.8 2004/03/28 21:17:37 rlk Exp $
 # A user-friendly dialog-based wrapper for cups-genppd(8).
 # Copyright (C) 2002 Roger Leigh <rleigh@debian.org>
 #

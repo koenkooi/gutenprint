@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.12 2003/06/05 23:27:43 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.13 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -106,7 +106,7 @@ typedef struct
 {
   const char *name;
   const char *help;
-  gint value;
+  const char *value;
   GtkWidget *button;
 } radio_group_t;
 

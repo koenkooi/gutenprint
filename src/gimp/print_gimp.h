@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.42 2003/11/20 00:30:53 rleigh Exp $"
+ * "$Id: print_gimp.h,v 1.43 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -50,6 +50,6 @@
 #endif
 
 /* How to create an Image wrapping a Gimp drawable */
-extern stp_image_t *Image_GimpDrawable_new(GimpDrawable *drawable, int);
+extern stpui_image_t *Image_GimpDrawable_new(GimpDrawable *drawable, gint32);
 
 #endif  /* __PRINT_GIMP_H__ */

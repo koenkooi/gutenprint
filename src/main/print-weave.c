@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.56 2003/11/20 01:56:55 rlk Exp $"
+ * "$Id: print-weave.c,v 1.57 2004/03/28 21:17:38 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1164,7 +1164,8 @@ weave_parameters_by_row(stp_const_vars_t v, int row,
    * Conceptually, this does not modify the softweave state.  We cache
    * the results, but this cache is considered hidden.
    */
-  const stpi_softweave_t *wsw = (const stpi_softweave_t *)sw;
+  stpi_softweave_t *wsw =
+    (stpi_softweave_t *) stpi_get_component_data(v, "Weave");
   vertical_subpass /= sw->repeat_count;
 
   if (sw->rcache == row && sw->vcache == vertical_subpass)
@@ -1173,8 +1174,8 @@ weave_parameters_by_row(stp_const_vars_t v, int row,
       w->pass = (w->pass * sw->repeat_count) + sub_repeat_count;
       return;
     }
-  ((stpi_softweave_t *) wsw)->rcache = row;
-  ((stpi_softweave_t *) wsw)->vcache = vertical_subpass;
+  wsw->rcache = row;
+  wsw->vcache = vertical_subpass;
 
   w->row = row;
   stpi_calculate_row_parameters(sw->weaveparm, row, vertical_subpass,

@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.12 2003/05/31 04:07:23 rlk Exp $"
+ * "$Id: string-list.c,v 1.13 2004/03/28 21:17:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -41,14 +41,14 @@ free_list_element(void *item)
 static const char *
 namefunc(const void *item)
 {
-  stp_param_string_t *string = (stp_param_string_t *) (item);
+  const stp_param_string_t *string = (const stp_param_string_t *) (item);
   return string->name;
 }
 
 static void *
 copyfunc(const void *item)
 {
-  stp_param_string_t *string = (stp_param_string_t *) (item);
+  const stp_param_string_t *string = (const stp_param_string_t *) (item);
   stp_param_string_t *new_string = stpi_malloc(sizeof(stp_param_string_t));
   new_string->name = stpi_strdup(string->name);
   new_string->text = stpi_strdup(string->text);
@@ -58,7 +58,7 @@ copyfunc(const void *item)
 static const char *
 long_namefunc(const void *item)
 {
-  stp_param_string_t *string = (stp_param_string_t *) (item);
+  const stp_param_string_t *string = (const stp_param_string_t *) (item);
   return string->text;
 }
 
@@ -120,7 +120,7 @@ stp_string_list_add_string(stp_string_list_t list,
 }
 
 int
-stp_string_list_is_present(stp_string_list_t list, const char *value)
+stp_string_list_is_present(stp_const_string_list_t list, const char *value)
 {
   if (list && value)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.10 2004/03/14 05:29:46 tillkamppeter Exp $"
+ * "$Id: printer_margins.c,v 1.11 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -46,10 +46,20 @@ main(int argc, char **argv) {
       stp_vars_create_copy(stp_printer_get_defaults(p));
     stp_parameter_t desc;
     int num_opts;
+    int printer_is_color = 0;
     const stp_param_string_t *opt;
     int width, height, bottom, left, top, right;
     if (strcmp(family, "ps") == 0 || strcmp(family, "raw") == 0)
       continue;
+    stp_describe_parameter(pv, "PrintingMode", &desc);
+    if (stp_string_list_is_present(desc.bounds.str, "Color"))
+      printer_is_color = 1;
+    stp_parameter_description_free(&desc);
+    if (printer_is_color)
+      stp_set_string_parameter(pv, "PrintingMode", "Color");
+    else
+      stp_set_string_parameter(pv, "PrintingMode", "BW");
+    stp_set_string_parameter(pv, "ChannelBitDepth", "8");
     printf("# Printer model %s, long name `%s'\n", driver,
 	   stp_printer_get_long_name(p));
     stp_describe_parameter(pv, "PageSize", &desc);

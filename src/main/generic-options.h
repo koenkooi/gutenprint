@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.h,v 1.1 2003/07/19 21:52:25 rlk Exp $"
+ * "$Id: generic-options.h,v 1.2 2004/03/28 21:17:38 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -34,6 +34,12 @@ typedef struct
   const char *text;
 } stpi_image_type_t;
 
+typedef struct
+{
+  const char *name;
+  const char *text;
+} stpi_job_mode_t;
+
 extern int stpi_get_qualities_count(void);
 
 extern const stpi_quality_t *stpi_get_quality_by_index(int idx);
@@ -45,6 +51,12 @@ extern int stpi_get_image_types_count(void);
 extern const stpi_image_type_t *stpi_get_image_type_by_index(int idx);
 
 extern const stpi_image_type_t *stpi_get_image_type_by_name(const char *image_type);
+
+extern int stpi_get_job_modes_count(void);
+
+extern const stpi_job_mode_t *stpi_get_job_mode_by_index(int idx);
+
+extern const stpi_job_mode_t *stpi_get_job_mode_by_name(const char *job_mode);
 
 extern stp_parameter_list_t stpi_list_generic_parameters(stp_const_vars_t v);
 

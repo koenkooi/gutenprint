@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.4 2003/11/20 00:30:53 rleigh Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.5 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -41,16 +41,12 @@ typedef struct
 } thumbnail_image_t;
 
 static const char *Thumbnail_get_appname(stp_image_t *image);
-static void Thumbnail_progress_conclude(stp_image_t *image);
-static void Thumbnail_note_progress(stp_image_t *image,
-				    double current, double total);
-static void Thumbnail_progress_init(stp_image_t *image);
+static void Thumbnail_conclude(stp_image_t *image);
 static stp_image_status_t Thumbnail_get_row(stp_image_t *image,
 					    unsigned char *data,
 					    size_t byte_limit, int row);
 static int Thumbnail_height(stp_image_t *image);
 static int Thumbnail_width(stp_image_t *image);
-static int Thumbnail_bpp(stp_image_t *image);
 static void Thumbnail_reset(stp_image_t *image);
 static void Thumbnail_init(stp_image_t *image);
 
@@ -58,14 +54,11 @@ static stp_image_t theImage =
 {
   Thumbnail_init,
   Thumbnail_reset,
-  Thumbnail_bpp,
   Thumbnail_width,
   Thumbnail_height,
   Thumbnail_get_row,
   Thumbnail_get_appname,
-  Thumbnail_progress_init,
-  Thumbnail_note_progress,
-  Thumbnail_progress_conclude,
+  Thumbnail_conclude,
   NULL
 };
 
@@ -84,13 +77,6 @@ stpui_image_thumbnail_new(const guchar *data, gint w, gint h, gint bpp)
 
   theImage.reset(&theImage);
   return &theImage;
-}
-
-static int
-Thumbnail_bpp(stp_image_t *image)
-{
-  thumbnail_image_t *im = (thumbnail_image_t *) (image->rep);
-  return im->bpp;
 }
 
 static int
@@ -129,17 +115,7 @@ Thumbnail_reset(stp_image_t *image)
 }
 
 static void
-Thumbnail_progress_init(stp_image_t *image)
-{
-}
-
-static void
-Thumbnail_note_progress(stp_image_t *image, double current, double total)
-{
-}
-
-static void
-Thumbnail_progress_conclude(stp_image_t *image)
+Thumbnail_conclude(stp_image_t *image)
 {
 }
 
@@ -151,5 +127,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.4 2003/11/20 00:30:53 rleigh Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.5 2004/03/28 21:17:37 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.4 2004/02/08 23:37:16 rleigh Exp $"
+ * "$Id: color.c,v 1.5 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -199,7 +199,7 @@ stpi_color_init(stp_vars_t v,
 }
 
 int
-stpi_color_get_row(stp_const_vars_t v,
+stpi_color_get_row(stp_vars_t v,
 		   stp_image_t *image,
 		   int row,
 		   unsigned *zero_mask)

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.77 2004/03/22 02:53:53 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.78 2004/03/28 21:17:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -583,7 +583,6 @@ typedef struct
   int drop_size;		/* ID of the drop size we're using */
   int ink_resid;		/* Array index for the drop set we're using */
   const escp2_inkname_t *inkname; /* Description of the ink set */
-  int rescale_density;		/* Do we want to rescale the density? */
 
   /* Ink channels */
   int logical_channels;		/* Number of logical ink channels (e.g.CMYK) */
@@ -677,5 +676,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.77 2004/03/22 02:53:53 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.78 2004/03/28 21:17:38 rlk Exp $".
  */

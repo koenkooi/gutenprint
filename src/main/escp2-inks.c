@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.29 2004/02/28 04:27:02 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.30 2004/03/28 21:17:37 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *

@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.3 2003/03/12 01:30:17 rlk Exp $"
+ * "$Id: image.h,v 1.4 2004/03/28 21:17:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -30,27 +30,15 @@ extern "C" {
 
 extern void stpi_image_init(stp_image_t *image);
 extern void stpi_image_reset(stp_image_t *image);
-extern int stpi_image_bpp(stp_image_t *image);
 extern int stpi_image_width(stp_image_t *image);
 extern int stpi_image_height(stp_image_t *image);
 extern stp_image_status_t stpi_image_get_row(stp_image_t *image,
 					     unsigned char *data,
 					     size_t limit, int row);
 extern const char *stpi_image_get_appname(stp_image_t *image);
-extern void stpi_image_progress_init(stp_image_t *image);
-extern void stpi_image_note_progress(stp_image_t *image,
-				     double current, double total);
-extern void stpi_image_progress_conclude(stp_image_t *image);
-extern void stpi_image_transpose(stp_image_t *image);
-extern void stpi_image_hflip(stp_image_t *image);
-extern void stpi_image_vflip(stp_image_t *image);
-extern void stpi_image_rotate_ccw(stp_image_t *image);
-extern void stpi_image_rotate_cw(stp_image_t *image);
-extern void stpi_image_rotate_180(stp_image_t *image);
-extern void stpi_image_crop(stp_image_t *image, int left, int top,
-			    int right, int bottom);
+extern void stpi_image_conclude(stp_image_t *image);
 
 #endif /* GIMP_PRINT_INTERNAL_IMAGE_H */
 /*
- * End of "$Id: image.h,v 1.3 2003/03/12 01:30:17 rlk Exp $".
+ * End of "$Id: image.h,v 1.4 2004/03/28 21:17:38 rlk Exp $".
  */
