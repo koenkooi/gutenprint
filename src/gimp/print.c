@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.21 2001/08/28 22:57:55 rlk Exp $"
+ * "$Id: print.c,v 1.22 2001/09/08 17:17:34 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -158,6 +158,8 @@ query (void)
   static gchar *copy  = "Copyright 1997-2000 by Michael Sweet and Robert Krawitz";
   static gchar *types = "RGB*,GRAY*,INDEXED*";
 
+  gimp_plugin_domain_register (PACKAGE, PACKAGE_LOCALE_DIR);
+
   gimp_install_procedure ("file_print_gimp",
 			  blurb, help, auth, copy,
 			  PLUG_IN_VERSION,
@@ -253,7 +255,7 @@ run (char   *name,		/* I - Name of print program. */
 #ifdef INIT_I18N_UI
   INIT_I18N_UI();
 #else
-  INIT_LOCALE ("gimp-print");
+  INIT_LOCALE (PACKAGE);
 #endif
 
   vars = stp_allocate_copy(stp_default_settings());
@@ -1313,5 +1315,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.21 2001/08/28 22:57:55 rlk Exp $".
+ * End of "$Id: print.c,v 1.22 2001/09/08 17:17:34 rleigh Exp $".
  */
