@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2003/01/01 21:06:10 rleigh Exp $
+## $Id: Makefile.am,v 1.14 2003/03/29 19:24:55 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -66,4 +66,5 @@ endif
 
 MAINTAINERCLEANFILES = Makefile.in testpatternl.c testpatterny.c testpatterny.h
 
-EXTRA_DIST =  testpatterny.h $(pkgdata_DATA)
+EXTRA_DIST =  testpatterny.h $(pkgdata_DATA) run-testpattern
+
