@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.55.2.1 2000/06/03 01:21:10 rlk Exp $"
+ * "$Id: print.h,v 1.55.2.2 2000/06/13 23:40:53 jmv Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -145,13 +145,23 @@ typedef struct
  */
 typedef void *Image;
 
+/* For how to create an Image wrapping a Gimp drawable, see print_gimp.h */
+
 extern void Image_init(Image image);
-extern int Image_bpp(Image image);
-extern int Image_width(Image image);
-extern int Image_height(Image image);
-extern const char *Image_get_pluginname(Image image);
+extern void Image_transpose(Image image);
+extern void Image_hflip(Image image);
+extern void Image_vflip(Image image);
+extern void Image_crop(Image image, int left, int top, int right, int bottom);
+extern void Image_rotate_ccw(Image image);
+extern void Image_rotate_cw(Image image);
+extern void Image_rotate_180(Image image);
+extern int  Image_bpp(Image image);
+extern int  Image_width(Image image);
+extern int  Image_height(Image image);
 extern void Image_get_col(Image image, unsigned char *data, int column);
 extern void Image_get_row(Image image, unsigned char *data, int row);
+
+extern const char *Image_get_pluginname(Image image);
 extern void Image_progress_init(Image image);
 extern void Image_note_progress(Image image, double current, double total);
 
@@ -212,6 +222,8 @@ typedef struct
  */
 
 extern void *	init_dither(int in_width, int out_width, vars_t *vars);
+extern void	dither_set_aspect_ratio(void *vd, int horizontal,
+					int vertical);
 extern void	dither_set_density(void *vd, int, double);
 extern void 	dither_set_black_lower(void *vd, double);
 extern void 	dither_set_black_upper(void *vd, double);
@@ -372,8 +384,15 @@ extern int			get_printer_index_by_driver(const char *);
 
 extern int			num_dither_algos;
 extern char			*dither_algo_names[];
+convert_t choose_colorfunc(int, int, const unsigned char *, int *);
+void
+compute_page_parameters(int page_right, int page_left, int page_top,
+			int page_bottom, int scaling, int image_width,
+			int image_height, Image image, int *orientation,
+			int *page_width, int *page_height, int *out_width,
+			int *out_height, int *left, int *top);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.55.2.1 2000/06/03 01:21:10 rlk Exp $".
+ * End of "$Id: print.h,v 1.55.2.2 2000/06/13 23:40:53 jmv Exp $".
  */
