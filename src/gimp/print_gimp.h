@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.35 2002/12/21 23:45:20 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.36 2002/12/24 21:04:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -141,7 +141,7 @@ extern void set_image_resolution(gdouble xres, gdouble yres);
 extern guchar *get_thumbnail_data(gint *width, gint *height, gint *bpp);
 
 /* How to create an Image wrapping a Gimp drawable */
-extern stp_image_t *Image_GimpDrawable_new(GimpDrawable *drawable);
+extern stp_image_t *Image_GimpDrawable_new(GimpDrawable *drawable, int);
 extern void Image_transpose(stp_image_t *image);
 extern void Image_hflip(stp_image_t *image);
 extern void Image_vflip(stp_image_t *image);

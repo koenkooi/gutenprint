@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.23 2002/12/08 20:35:59 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.24 2002/12/24 21:04:23 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -885,7 +885,6 @@ main (int argc, char **argv)
       img.bytes_left = img.total_bytes;
 
       stp_set_float_parameter(img.v, "AppGamma", 1.7);
-      stp_set_cmap(img.v, NULL);
       stp_set_output_type(img.v, img.output_type); 
       stp_get_media_size(img.v, &w, &h);
       stp_get_imageable_area(img.v, &l, &r, &b, &t);
