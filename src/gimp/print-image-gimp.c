@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.10 2003/01/05 23:06:25 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.11 2003/01/20 22:25:48 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -403,7 +403,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	    }
 	}
     }
-  return STP_IMAGE_OK;
+  return STP_IMAGE_STATUS_OK;
 }
 
 static void
@@ -453,5 +453,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.10 2003/01/05 23:06:25 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.11 2003/01/20 22:25:48 rlk Exp $".
  */

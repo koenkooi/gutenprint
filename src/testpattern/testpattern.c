@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.22 2003/01/20 21:04:59 rlk Exp $"
+ * "$Id: testpattern.c,v 1.23 2003/01/20 22:25:50 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -677,7 +677,7 @@ Image_get_row(stp_image_t *image, unsigned char *data,
       if (total_read != t->d.i.x * depth * 2)
 	{
 	  fprintf(stderr, "Read failed!\n");
-	  return STP_IMAGE_ABORT;
+	  return STP_IMAGE_STATUS_ABORT;
 	}
     }
   else
@@ -722,7 +722,7 @@ Image_get_row(stp_image_t *image, unsigned char *data,
 	    }
 	}
     }
-  return STP_IMAGE_OK;
+  return STP_IMAGE_STATUS_OK;
 }
 
 static int

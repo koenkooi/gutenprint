@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.22 2003/01/20 21:04:33 rlk Exp $"
+ * "$Id: printer_options.c,v 1.23 2003/01/20 22:25:48 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -91,7 +91,7 @@ main(int argc, char **argv)
 			}
 		    }
 		}
-	      stp_free_parameter_description(&desc);
+	      stp_parameter_description_free(&desc);
 	    }
 	  tcount += count;
 	}

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.58 2003/01/20 21:04:32 rlk Exp $"
+ * "$Id: genppd.c,v 1.59 2003/01/20 22:25:47 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -810,7 +810,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
     gzputs(fp, "*ParamCustomPageSize Orientation:  5 int 0 0\n\n");
   }
 
-  stp_free_parameter_description(&desc);
+  stp_parameter_description_free(&desc);
   if (the_papers)
     free(the_papers);
 
@@ -875,7 +875,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
     gzputs(fp, "*CloseUI: *MediaType\n\n");
   }
-  stp_free_parameter_description(&desc);
+  stp_parameter_description_free(&desc);
 
  /*
   * Input slots...
@@ -899,7 +899,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
     gzputs(fp, "*CloseUI: *InputSlot\n\n");
   }
-  stp_free_parameter_description(&desc);
+  stp_parameter_description_free(&desc);
 
  /*
   * Resolutions...
@@ -933,7 +933,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
              opt->name, opt->text, xdpi, ydpi, i);
   }
 
-  stp_free_parameter_description(&desc);
+  stp_parameter_description_free(&desc);
 
   gzputs(fp, "*CloseUI: *Resolution\n\n");
 
@@ -977,7 +977,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
       gzprintf(fp, "*stpDither %s/%s: \"<</cupsRowStep %d>>setpagedevice\"\n",
 	       opt->name, opt->text, i);
     }
-    stp_free_parameter_description(&desc);
+    stp_parameter_description_free(&desc);
 
     gzputs(fp, "*CloseUI: *stpDither\n\n");
 
@@ -1006,7 +1006,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
       gzputs(fp, "*CloseUI: *stpInkType\n\n");
     }
-    stp_free_parameter_description(&desc);
+    stp_parameter_description_free(&desc);
 
    /*
     * Advanced STP options...
@@ -1086,5 +1086,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.58 2003/01/20 21:04:32 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.59 2003/01/20 22:25:47 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-thumbnail.c,v 1.2 2003/01/01 02:44:59 rlk Exp $"
+ * "$Id: print-image-thumbnail.c,v 1.3 2003/01/20 22:25:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -114,7 +114,7 @@ Thumbnail_get_row(stp_image_t *image, unsigned char *data,
   thumbnail_image_t *im = (thumbnail_image_t *) (image->rep);
   const guchar *where = im->data + (row * im->w * im->bpp);
   memcpy(data, where, im->w * im->bpp);
-  return STP_IMAGE_OK;
+  return STP_IMAGE_STATUS_OK;
 }
 
 static void
@@ -151,5 +151,5 @@ Thumbnail_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-thumbnail.c,v 1.2 2003/01/01 02:44:59 rlk Exp $".
+ * End of "$Id: print-image-thumbnail.c,v 1.3 2003/01/20 22:25:49 rlk Exp $".
  */

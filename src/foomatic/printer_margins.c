@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.6 2003/01/20 21:04:33 rlk Exp $"
+ * "$Id: printer_margins.c,v 1.7 2003/01/20 22:25:48 rlk Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -93,7 +93,7 @@ main(int argc, char **argv) {
       printf("  'height' => '%d'\n", height);
       printf("};\n");
     }
-    stp_free_parameter_description(&desc);
+    stp_parameter_description_free(&desc);
     stp_vars_free(pv);
   }
   return 0;
