@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.4 2002/01/25 01:59:05 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.5 2002/01/25 02:00:10 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -708,6 +708,9 @@ main (int argc, char **argv)
       ijs_server_done(img.ctx);
       return 1;
     }
+  stp_set_top(img.v, 0);
+  stp_set_left(img.v, 0);
+  stp_set_orientation(img.v, ORIENT_PORTRAIT);
 
   /* Error messages to stderr. */
   stp_set_errfunc(img.v, gimp_outfunc);
