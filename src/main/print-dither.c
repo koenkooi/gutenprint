@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.13.2.1 2001/03/05 22:51:20 rlk Exp $"
+ * "$Id: print-dither.c,v 1.13.2.2 2001/03/06 03:09:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -112,8 +112,6 @@ typedef struct dither_segment
   unsigned value_span;		/* Span of values */
   unsigned dot_size_l;		/* Size of lower dot */
   unsigned dot_size_h;		/* Size of upper dot */
-  char isdark_l;		/* Is lower value dark ink? */
-  char isdark_h;		/* Is upper value dark ink? */
 } dither_segment_t;
 
 typedef struct dither_color
@@ -931,7 +929,6 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
   s->ranges[0].range_l = 0;
   s->ranges[0].value_l = ranges[0].value * 65536.0;
   s->ranges[0].bits_l = ranges[0].bit_pattern;
-  s->ranges[0].isdark_l = ranges[0].is_dark;
   s->ranges[0].dot_size_l = ranges[0].dot_size;
   if (nlevels == 1)
     s->ranges[0].range_h = 65536;
@@ -945,7 +942,6 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
   s->ranges[0].bits_h = ranges[0].bit_pattern;
   if (ranges[0].bit_pattern > s->bit_max)
     s->bit_max = ranges[0].bit_pattern;
-  s->ranges[0].isdark_h = ranges[0].is_dark;
   s->ranges[0].dot_size_h = ranges[0].dot_size;
   s->ranges[0].range_span = s->ranges[0].range_h;
   s->ranges[0].value_span = 0;
@@ -957,7 +953,6 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
 	  s->ranges[l].range_l = s->ranges[i].range_h;
 	  s->ranges[l].value_l = s->ranges[i].value_h;
 	  s->ranges[l].bits_l = s->ranges[i].bits_h;
-	  s->ranges[l].isdark_l = s->ranges[i].isdark_h;
 	  s->ranges[l].dot_size_l = s->ranges[i].dot_size_h;
 	  if (i == nlevels - 1)
 	    s->ranges[l].range_h = 65536;
@@ -972,7 +967,6 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
 	  s->ranges[l].bits_h = ranges[l].bit_pattern;
 	  if (ranges[l].bit_pattern > s->bit_max)
 	    s->bit_max = ranges[l].bit_pattern;
-	  s->ranges[l].isdark_h = ranges[l].is_dark;
 	  s->ranges[l].dot_size_h = ranges[l].dot_size;
 	  s->ranges[l].range_span =
 	    s->ranges[l].range_h - s->ranges[l].range_l;
@@ -983,12 +977,10 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
       s->ranges[i].range_l = s->ranges[i - 1].range_h;
       s->ranges[i].value_l = s->ranges[i - 1].value_h;
       s->ranges[i].bits_l = s->ranges[i - 1].bits_h;
-      s->ranges[i].isdark_l = s->ranges[i - 1].isdark_h;
       s->ranges[i].dot_size_l = s->ranges[i - 1].dot_size_h;
       s->ranges[i].range_h = 65536;
       s->ranges[i].value_h = s->ranges[i].value_l;
       s->ranges[i].bits_h = s->ranges[i].bits_l;
-      s->ranges[i].isdark_h = s->ranges[i].isdark_l;
       s->ranges[i].dot_size_h = s->ranges[i].dot_size_l;
       s->ranges[i].range_span = s->ranges[i].range_h - s->ranges[i].range_l;
       s->ranges[i].value_span = s->ranges[i].value_h - s->ranges[i].value_l;
@@ -1006,9 +998,8 @@ stp_dither_set_generic_ranges(dither_color_t *s, int nlevels,
       fprintf(stderr, "    level %d value_l %d value_h %d range_l %d range_h %d\n",
 	      i, s->ranges[i].value_l, s->ranges[i].value_h,
 	      s->ranges[i].range_l, s->ranges[i].range_h);
-      fprintf(stderr, "       bits_l %d bits_h %d isdark_l %d isdark_h %d\n",
-	      s->ranges[i].bits_l, s->ranges[i].bits_h,
-	      s->ranges[i].isdark_l, s->ranges[i].isdark_h);
+      fprintf(stderr, "       bits_l %d bits_h %d\n",
+	      s->ranges[i].bits_l, s->ranges[i].bits_h);
       fprintf(stderr, "       rangespan %d valuespan %d\n",
 	      s->ranges[i].range_span, s->ranges[i].value_span);
     }
@@ -1033,8 +1024,9 @@ stp_dither_set_generic_ranges_full(dither_color_t *s, int nlevels,
 #ifdef VERBOSE
   fprintf(stderr, "stp_dither_set_ranges nlevels %d density %f\n", nlevels, density);
   for (i = 0; i < nlevels; i++)
-    fprintf(stderr, "  level %d value: low %f high %f pattern low %x high %x is_dark low %d high %d\n", i,
-	    ranges[i].value_l, ranges[i].value_h, ranges[i].bits_l, ranges[i].bits_h,ranges[i].isdark_l, ranges[i].isdark_h);
+    fprintf(stderr,"  level %d value: low %f high %f pattern low %x high %x\n",
+	    i, ranges[i].value_l, ranges[i].value_h,
+	    ranges[i].bits_l, ranges[i].bits_h);
 #endif
   for(i=j=0; i < nlevels; i++) {
     if (ranges[i].bits_h > s->bit_max)
@@ -1051,8 +1043,6 @@ stp_dither_set_generic_ranges_full(dither_color_t *s, int nlevels,
     s->ranges[j].range_h = s->ranges[j].value_h*density;
     s->ranges[j].bits_l = ranges[i].bits_l;
     s->ranges[j].bits_h = ranges[i].bits_h;
-    s->ranges[j].isdark_l = ranges[i].isdark_l;
-    s->ranges[j].isdark_h = ranges[i].isdark_h;
     s->ranges[j].range_span = s->ranges[j].range_h-s->ranges[j].range_l;
     s->ranges[j].value_span = s->ranges[j].value_h-s->ranges[j].value_l;
 	j++;
@@ -1060,12 +1050,10 @@ stp_dither_set_generic_ranges_full(dither_color_t *s, int nlevels,
   s->ranges[j].range_l = s->ranges[j - 1].range_h;
   s->ranges[j].value_l = s->ranges[j - 1].value_h;
   s->ranges[j].bits_l = s->ranges[j - 1].bits_h;
-  s->ranges[j].isdark_l = s->ranges[j - 1].isdark_h;
   s->ranges[j].dot_size_l = s->ranges[j - 1].dot_size_h;
   s->ranges[j].range_h = 65535;
   s->ranges[j].value_h = 65535;
   s->ranges[j].bits_h = s->ranges[j].bits_l;
-  s->ranges[j].isdark_h = s->ranges[j].isdark_l;
   s->ranges[j].dot_size_h = s->ranges[j].dot_size_l;
   s->ranges[j].range_span = s->ranges[j].range_h - s->ranges[j].range_l;
   s->ranges[j].value_span = 0;
@@ -1083,9 +1071,8 @@ stp_dither_set_generic_ranges_full(dither_color_t *s, int nlevels,
       fprintf(stderr, "    level %d value_l %d value_h %d range_l %d range_h %d\n",
 	      i, s->ranges[i].value_l, s->ranges[i].value_h,
 	      s->ranges[i].range_l, s->ranges[i].range_h);
-      fprintf(stderr, "       bits_l %d bits_h %d isdark_l %d isdark_h %d\n",
-	      s->ranges[i].bits_l, s->ranges[i].bits_h,
-	      s->ranges[i].isdark_l, s->ranges[i].isdark_h);
+      fprintf(stderr, "       bits_l %d bits_h %d",
+	      s->ranges[i].bits_l, s->ranges[i].bits_h);
       fprintf(stderr, "       rangespan %d valuespan %d\n",
 	      s->ranges[i].range_span, s->ranges[i].value_span);
     }
@@ -1287,7 +1274,7 @@ update_dither(int r, int o, int width, int odb, int odb_mask,
 
 static inline int
 print_color(dither_t *d, dither_color_t *rv, int base, int density,
-	    int adjusted, int x, int y, unsigned char *c, unsigned char *lc,
+	    int adjusted, int x, int y, unsigned char *c,
 	    unsigned char bit, int height, unsigned randomizer, int dontprint,
 	    int *ink_budget, dither_matrix_t *pick_matrix,
 	    dither_matrix_t *dither_matrix, int dither_type)
@@ -1297,7 +1284,6 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
   unsigned vmatrix;
   int i;
   int j;
-  int isdark;
   unsigned char *tptr;
   unsigned bits;
   unsigned v;
@@ -1355,8 +1341,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
        * We scale the input linearly against the top and bottom of the
        * range.
        */
-      if (dd->range_span == 0 ||
-	  (dd->value_span == 0 && dd->isdark_l == dd->isdark_h))
+      if (dd->range_span == 0 || dd->value_span == 0)
 	rangepoint = 32768;
       else
 	rangepoint =
@@ -1461,28 +1446,25 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
        */
       if (dither_value >= vmatrix)
 	{
-	  if (dd->isdark_h == dd->isdark_l && dd->bits_h == dd->bits_l)
+	  if (dd->bits_h == dd->bits_l)
 	    {
-	      isdark = dd->isdark_h;
 	      bits = dd->bits_h;
 	      v = dd->value_h;
 	      dot_size = dd->dot_size_h;
 	    }
 	  else if (rangepoint >= ditherpoint(d, pick_matrix, x))
 	    {
-	      isdark = dd->isdark_h;
 	      bits = dd->bits_h;
 	      v = dd->value_h;
 	      dot_size = dd->dot_size_h;
 	    }
 	  else
 	    {
-	      isdark = dd->isdark_l;
 	      bits = dd->bits_l;
 	      v = dd->value_l;
 	      dot_size = dd->dot_size_l;
 	    }
-	  tptr = isdark ? c : lc;
+	  tptr = c
 
 	  /*
 	   * Lay down all of the bits in the pixel.
@@ -1510,7 +1492,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int density,
 static inline void
 print_color_fast(dither_t *d, dither_color_t *rv, int base,
 		 int adjusted, int x, int y, unsigned char *c,
-		 unsigned char *lc, unsigned char bit, int height,
+		 unsigned char bit, int height,
 		 dither_matrix_t *dither_matrix, int very_fast)
 {
   int i;
@@ -1551,7 +1533,7 @@ print_color_fast(dither_t *d, dither_color_t *rv, int base,
       if (adjusted >= vmatrix)
 	{
 	  bits = dd->bits_h;
-	  tptr = dd->isdark_h ? c : lc;
+	  tptr = c;
 
 	  /*
 	   * Lay down all of the bits in the pixel.
@@ -1724,7 +1706,7 @@ stp_dither_black_fast(const unsigned short  *input,
   int dst_width = d->dst_width;
   int dither_very_fast = 0;
   int nonzero;
-  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
+  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1)
     dither_very_fast = 1;
 
   bit = 128;
@@ -2128,9 +2110,6 @@ stp_dither_cmyk_fast(const unsigned short  *input,
     		*cptr,		/* Current cyan pixel */
     		*mptr,		/* Current magenta pixel */
     		*yptr,		/* Current yellow pixel */
-    		*lmptr,		/* Current light magenta pixel */
-    		*lcptr,		/* Current light cyan pixel */
-    		*lyptr,		/* Current light yellow pixel */
     		*kptr;		/* Current black pixel */
   dither_t	*d = (dither_t *) vd;
   const unsigned short *cline = get_valueline(d, ECOLOR_C);
@@ -2153,26 +2132,20 @@ stp_dither_cmyk_fast(const unsigned short  *input,
   int ydither_very_fast = 0;
   int kdither_very_fast = 0;
 
-  if (cd->nlevels == 1 && cd->ranges[0].bits_h == 1 && cd->ranges[0].isdark_h)
+  if (cd->nlevels == 1 && cd->ranges[0].bits_h == 1)
     cdither_very_fast = 1;
-  if (md->nlevels == 1 && md->ranges[0].bits_h == 1 && md->ranges[0].isdark_h)
+  if (md->nlevels == 1 && md->ranges[0].bits_h == 1)
     mdither_very_fast = 1;
-  if (yd->nlevels == 1 && yd->ranges[0].bits_h == 1 && yd->ranges[0].isdark_h)
+  if (yd->nlevels == 1 && yd->ranges[0].bits_h == 1)
     ydither_very_fast = 1;
-  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1 && kd->ranges[0].isdark_h)
+  if (kd->nlevels == 1 && kd->ranges[0].bits_h == 1)
     kdither_very_fast = 1;
 
   height = (d->dst_width + 7) / 8;
 
   memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  if (lcyan)
-    memset(lcyan, 0, height * d->dither[ECOLOR_C].signif_bits);
   memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  if (lmagenta)
-    memset(lmagenta, 0, height * d->dither[ECOLOR_M].signif_bits);
   memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
-  if (lyellow)
-    memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   /*
@@ -2207,9 +2180,6 @@ stp_dither_cmyk_fast(const unsigned short  *input,
   cptr = cyan;
   mptr = magenta;
   yptr = yellow;
-  lcptr = lcyan;
-  lmptr = lmagenta;
-  lyptr = lyellow;
   kptr = black;
 
   k = 0;			/* Shut up the compiler */
@@ -2261,11 +2231,11 @@ stp_dither_cmyk_fast(const unsigned short  *input,
 	  if (black)
 	    print_color_fast(d, kd, ok, k, x, row, kptr, NULL, bit, height,
 			     kdither, kdither_very_fast);
-	  print_color_fast(d, cd, oc, c, x, row, cptr, lcptr, bit, height,
+	  print_color_fast(d, cd, oc, c, x, row, cptr, bit, height,
 			   cdither, cdither_very_fast);
-	  print_color_fast(d, md, om, m, x, row, mptr, lmptr, bit, height,
+	  print_color_fast(d, md, om, m, x, row, mptr, bit, height,
 			   mdither, mdither_very_fast);
-	  print_color_fast(d, yd, oy, y, x, row, yptr, lyptr, bit, height,
+	  print_color_fast(d, yd, oy, y, x, row, yptr, bit, height,
 			   ydither, ydither_very_fast);
 	  QUANT(16);
 	}
@@ -2278,11 +2248,8 @@ stp_dither_cmyk_fast(const unsigned short  *input,
       if (bit == 0)
 	{
 	  cptr ++;
-	  lcptr ++;
 	  mptr ++;
-	  lmptr ++;
 	  yptr ++;
-	  lyptr ++;
 	  kptr ++;
 	  bit       = 128;
 	}
@@ -2309,9 +2276,6 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
 		*cptr,		/* Current cyan pixel */
 		*mptr,		/* Current magenta pixel */
 		*yptr,		/* Current yellow pixel */
-		*lmptr,		/* Current light magenta pixel */
-		*lcptr,		/* Current light cyan pixel */
-		*lyptr,		/* Current light yellow pixel */
 		*kptr;		/* Current black pixel */
   int		bk = 0;
   dither_t	*d = (dither_t *) vd;
@@ -2329,14 +2293,8 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
   height = (d->dst_width + 7) / 8;
 
   memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  if (lcyan)
-    memset(lcyan, 0, height * d->dither[ECOLOR_C].signif_bits);
   memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  if (lmagenta)
-    memset(lmagenta, 0, height * d->dither[ECOLOR_M].signif_bits);
   memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
-  if (lyellow)
-    memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   /*
@@ -2362,9 +2320,6 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
   cptr = cyan;
   mptr = magenta;
   yptr = yellow;
-  lcptr = lcyan;
-  lmptr = lmagenta;
-  lyptr = lyellow;
   kptr = black;
 
   for (i = 0; i < NCOLORS; i++)
@@ -2480,21 +2435,21 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
       else if (first_color == ECOLOR_Y)
 	goto ecy;
     ecc:
-      print_color(d, &(d->dither[ECOLOR_C]), oc, oc, c, x, row, cptr, lcptr,
+      print_color(d, &(d->dither[ECOLOR_C]), oc, oc, c, x, row, cptr,
 		  bit, height, d->randomizer[ECOLOR_C], printed_black,
 		  &ink_budget, &(d->pick[ECOLOR_C]), &(d->dithermat[ECOLOR_C]),
 		  d->dither_type);
       if (first_color == ECOLOR_M)
 	goto out;
     ecm:
-      print_color(d, &(d->dither[ECOLOR_M]), om, om, m, x, row, mptr, lmptr,
+      print_color(d, &(d->dither[ECOLOR_M]), om, om, m, x, row, mptr,
 		  bit, height, d->randomizer[ECOLOR_M], printed_black,
 		  &ink_budget, &(d->pick[ECOLOR_M]), &(d->dithermat[ECOLOR_M]),
 		  d->dither_type);
       if (first_color == ECOLOR_Y)
 	goto out;
     ecy:
-      print_color(d, &(d->dither[ECOLOR_Y]), oy, oy, y, x, row, yptr, lyptr,
+      print_color(d, &(d->dither[ECOLOR_Y]), oy, oy, y, x, row, yptr,
 		  bit, height, d->randomizer[ECOLOR_Y], printed_black,
 		  &ink_budget, &(d->pick[ECOLOR_Y]), &(d->dithermat[ECOLOR_Y]),
 		  d->dither_type);
@@ -2513,11 +2468,8 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
       if (bit == 0)
 	{
 	  cptr ++;
-	  lcptr ++;
 	  mptr ++;
-	  lmptr ++;
 	  yptr ++;
-	  lyptr ++;
 	  kptr ++;
 	  bit       = 128;
 	}
@@ -2548,9 +2500,6 @@ stp_dither_cmyk_ed(const unsigned short  *input,
     		*cptr,		/* Current cyan pixel */
     		*mptr,		/* Current magenta pixel */
     		*yptr,		/* Current yellow pixel */
-    		*lmptr,		/* Current light magenta pixel */
-    		*lcptr,		/* Current light cyan pixel */
-    		*lyptr,		/* Current light yellow pixel */
     		*kptr;		/* Current black pixel */
   int		i, j;
   int		ndither[NCOLORS];
@@ -2573,14 +2522,8 @@ stp_dither_cmyk_ed(const unsigned short  *input,
   height = (d->dst_width + 7) / 8;
 
   memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  if (lcyan)
-    memset(lcyan, 0, height * d->dither[ECOLOR_C].signif_bits);
   memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  if (lmagenta)
-    memset(lmagenta, 0, height * d->dither[ECOLOR_M].signif_bits);
   memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
-  if (lyellow)
-    memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   /*
@@ -2630,9 +2573,6 @@ stp_dither_cmyk_ed(const unsigned short  *input,
   cptr = cyan;
   mptr = magenta;
   yptr = yellow;
-  lcptr = lcyan;
-  lmptr = lmagenta;
-  lyptr = lyellow;
   kptr = black;
   if (direction == -1)
     {
@@ -2642,11 +2582,8 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	    error[i][j] += d->dst_width - 1;
 	}
       cptr = cyan + height - 1;
-      lcptr = lcyan + height - 1;
       mptr = magenta + height - 1;
-      lmptr = lmagenta + height - 1;
       yptr = yellow + height - 1;
-      lyptr = lyellow + height - 1;
       kptr = black + height - 1;
       first_color = (first_color + d->dst_width - 1) % 3;
     }
@@ -2777,7 +2714,7 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	goto ecy;
     ecc:
       c = print_color(d, &(d->dither[ECOLOR_C]), oc, oc,
-		      c, x, row, cptr, lcptr, bit, height,
+		      c, x, row, cptr, bit, height,
 		      d->randomizer[ECOLOR_C], printed_black, &ink_budget,
 		      &(d->pick[ECOLOR_C]), &(d->dithermat[ECOLOR_C]),
 		      d->dither_type);
@@ -2785,7 +2722,7 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	goto out;
     ecm:
       m = print_color(d, &(d->dither[ECOLOR_M]), om, om,
-		      m, x, row, mptr, lmptr, bit, height,
+		      m, x, row, mptr, bit, height,
 		      d->randomizer[ECOLOR_M], printed_black, &ink_budget,
 		      &(d->pick[ECOLOR_M]), &(d->dithermat[ECOLOR_M]),
 		      d->dither_type);
@@ -2793,7 +2730,7 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	goto out;
     ecy:
       y = print_color(d, &(d->dither[ECOLOR_Y]), oy, oy,
-		      y, x, row, yptr, lyptr, bit, height,
+		      y, x, row, yptr, bit, height,
 		      d->randomizer[ECOLOR_Y], printed_black, &ink_budget,
 		      &(d->pick[ECOLOR_Y]), &(d->dithermat[ECOLOR_Y]),
 		      d->dither_type);
@@ -2826,11 +2763,8 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	  if (bit == 0)
 	    {
 	      cptr ++;
-	      lcptr ++;
 	      mptr ++;
-	      lmptr ++;
 	      yptr ++;
-	      lyptr ++;
 	      kptr ++;
 	      bit       = 128;
 	    }
@@ -2843,11 +2777,8 @@ stp_dither_cmyk_ed(const unsigned short  *input,
 	  if (bit == 128)
 	    {
 	      cptr --;
-	      lcptr --;
 	      mptr --;
-	      lmptr --;
 	      yptr --;
-	      lyptr --;
 	      kptr --;
 	      bit       = 1;
 	    }

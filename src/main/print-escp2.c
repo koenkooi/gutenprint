@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.37.2.1 2001/03/05 22:51:20 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.37.2.2 2001/03/06 03:09:32 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -217,8 +217,8 @@ typedef const escp2_variable_inkset_t *escp2_variable_inklist_t[INKTYPE_N][INKSE
 
 static const stp_simple_dither_range_t photo_cyan_dither_ranges[] =
 {
-  { 0.27, 0x1, 0, 1 },
-  { 1.0,  0x1, 1, 1 }
+  { 0.27, 0x1, 1 },
+  { 1.0,  0x2, 1 }
 };
 
 static const escp2_variable_ink_t photo_cyan_ink =
@@ -230,8 +230,8 @@ static const escp2_variable_ink_t photo_cyan_ink =
 
 static const stp_simple_dither_range_t photo_magenta_dither_ranges[] =
 {
-  { 0.35, 0x1, 0, 1 },
-  { 1.0,  0x1, 1, 1 }
+  { 0.35, 0x1, 1 },
+  { 1.0,  0x2, 1 }
 };
 
 static const escp2_variable_ink_t photo_magenta_ink =
@@ -244,12 +244,12 @@ static const escp2_variable_ink_t photo_magenta_ink =
 
 static const stp_simple_dither_range_t photo_6pl_dither_ranges[] =
 {
-  { 0.15,  0x1, 0, 1 },
-  { 0.227, 0x2, 0, 2 },
-/*  { 0.333, 0x3, 0, 3 }, */
-  { 0.45,  0x1, 1, 1 },
-  { 0.68,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.15,  0x1, 1 },
+  { 0.227, 0x2, 2 },
+/*  { 0.333, 0x3, 3 }, */
+  { 0.45,  0x4, 1 },
+  { 0.68,  0x8, 2 },
+  { 1.0,   0xc, 3 }
 };
 
 static const escp2_variable_ink_t photo_6pl_ink =
@@ -262,9 +262,9 @@ static const escp2_variable_ink_t photo_6pl_ink =
 
 static const stp_simple_dither_range_t photo_6pl_1440_dither_ranges[] =
 {
-  { 0.30,  0x1, 0, 1 },
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 }
+  { 0.30,  0x1, 1 },
+  { 0.90,  0x4, 1 },
+  { 1.36,  0x8, 2 }
 };
 
 static const escp2_variable_ink_t photo_6pl_1440_ink =
@@ -277,10 +277,10 @@ static const escp2_variable_ink_t photo_6pl_1440_ink =
 
 static const stp_simple_dither_range_t photo_pigment_dither_ranges[] =
 { /* MRS: Not calibrated! */
-  { 0.15,  0x1, 0, 1 },
-  { 0.227, 0x2, 0, 2 },
-  { 0.5,   0x1, 1, 1 },
-  { 1.0,   0x2, 1, 2 }
+  { 0.15,  0x1, 1 },
+  { 0.227, 0x2, 2 },
+  { 0.5,   0x4, 1 },
+  { 1.0,   0x8, 2 }
 };
 
 static const escp2_variable_ink_t photo_pigment_ink =
@@ -293,9 +293,9 @@ static const escp2_variable_ink_t photo_pigment_ink =
 
 static const stp_simple_dither_range_t photo_4pl_dither_ranges[] =
 {
-  { 0.22,  0x1, 0, 1 },
-  { 0.661, 0x1, 1, 1 },
-  { 1.00,  0x2, 1, 2 }
+  { 0.22,  0x1, 1 },
+  { 0.661, 0x4, 1 },
+  { 1.00,  0x8, 2 }
 };
 
 static const escp2_variable_ink_t photo_4pl_ink =
@@ -307,9 +307,9 @@ static const escp2_variable_ink_t photo_4pl_ink =
 
 static const stp_simple_dither_range_t photo_4pl_1440_dither_ranges[] =
 {
-  { 0.30,  0x1, 0, 1 },
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 }
+  { 0.30,  0x1, 1 },
+  { 0.90,  0x4, 1 },
+  { 1.36,  0x8, 2 }
 };
 
 static const escp2_variable_ink_t photo_4pl_1440_ink =
@@ -322,9 +322,9 @@ static const escp2_variable_ink_t photo_4pl_1440_ink =
 
 static const stp_simple_dither_range_t standard_6pl_dither_ranges[] =
 {
-  { 0.45,  0x1, 1, 1 },
-  { 0.68,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.45,  0x1, 1 },
+  { 0.68,  0x2, 2 },
+  { 1.0,   0x3, 3 }
 };
 
 static const escp2_variable_ink_t standard_6pl_ink =
@@ -337,9 +337,9 @@ static const escp2_variable_ink_t standard_6pl_ink =
 
 static stp_simple_dither_range_t standard_980_6pl_dither_ranges[] =
 {
-  { 0.40,  0x1, 1, 1 },
-  { 0.675,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.40,  0x1, 1 },
+  { 0.675, 0x2, 2 },
+  { 1.0,   0x3, 3 }
 };
 
 static escp2_variable_ink_t standard_980_6pl_ink =
@@ -352,8 +352,8 @@ static escp2_variable_ink_t standard_980_6pl_ink =
 
 static const stp_simple_dither_range_t standard_6pl_1440_dither_ranges[] =
 {
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 }
+  { 0.90,  0x1, 1 },
+  { 1.36,  0x2, 2 }
 };
 
 static const escp2_variable_ink_t standard_6pl_1440_ink =
@@ -366,8 +366,8 @@ static const escp2_variable_ink_t standard_6pl_1440_ink =
 
 static const stp_simple_dither_range_t standard_pigment_dither_ranges[] =
 { /* MRS: Not calibrated! */
-  { 0.55,  0x1, 1, 1 },
-  { 1.0,   0x2, 1, 2 }
+  { 0.55,  0x1, 1 },
+  { 1.0,   0x2, 2 }
 };
 
 static const escp2_variable_ink_t standard_pigment_ink =
@@ -380,8 +380,8 @@ static const escp2_variable_ink_t standard_pigment_ink =
 
 static const stp_simple_dither_range_t standard_4pl_dither_ranges[] =
 {
-  { 0.661, 0x1, 1, 1 },
-  { 1.00,  0x2, 1, 2 }
+  { 0.661, 0x1, 1 },
+  { 1.00,  0x2, 2 }
 };
 
 static const escp2_variable_ink_t standard_4pl_ink =
@@ -393,8 +393,8 @@ static const escp2_variable_ink_t standard_4pl_ink =
 
 static const stp_simple_dither_range_t standard_4pl_1440_dither_ranges[] =
 {
-  { 0.90,  0x1, 1, 1 },
-  { 1.36,  0x2, 1, 2 },
+  { 0.90,  0x1, 1 },
+  { 1.36,  0x2, 2 },
 };
 
 static const escp2_variable_ink_t standard_4pl_1440_ink =
@@ -407,9 +407,9 @@ static const escp2_variable_ink_t standard_4pl_1440_ink =
 
 static const stp_simple_dither_range_t standard_3pl_dither_ranges[] =
 {
-  { 0.25,  0x1, 1, 1 },
-  { 0.61,  0x2, 1, 2 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.25,  0x1, 1 },
+  { 0.61,  0x2, 2 },
+  { 1.0,   0x3, 3 }
 };
 
 static const escp2_variable_ink_t standard_3pl_ink =
@@ -422,8 +422,8 @@ static const escp2_variable_ink_t standard_3pl_ink =
 
 static const stp_simple_dither_range_t standard_3pl_1440_dither_ranges[] =
 {
-  { 0.39, 0x1, 1, 1 },
-  { 1.0,  0x2, 1, 2 }
+  { 0.39, 0x1, 1 },
+  { 1.0,  0x2, 2 }
 };
 
 static const escp2_variable_ink_t standard_3pl_1440_ink =
@@ -436,8 +436,8 @@ static const escp2_variable_ink_t standard_3pl_1440_ink =
 
 static const stp_simple_dither_range_t standard_3pl_2880_dither_ranges[] =
 {
-  { 1.0,   0x1, 1, 1 },
-  { 3.0,   0x2, 1, 2 }
+  { 1.0,  0x1, 1 },
+  { 3.0,  0x2, 2 }
 };
 
 static const escp2_variable_ink_t standard_3pl_2880_ink =
@@ -450,13 +450,13 @@ static const escp2_variable_ink_t standard_3pl_2880_ink =
 
 static const stp_simple_dither_range_t photo_multishot_dither_ranges[] =
 {
-  { 0.1097, 0x1, 0, 1 },
-  { 0.227,  0x2, 0, 2 },
-/*  { 0.333, 0x3, 0, 3 }, */
-  { 0.28,   0x1, 1, 1 },
-  { 0.58,   0x2, 1, 2 },
-  { 0.85,   0x3, 1, 3 },
-  { 1.0,    0x3, 1, 3 }
+  { 0.1097, 0x1, 1 },
+  { 0.227,  0x2, 2 },
+/*  { 0.333, 0x3, 3 }, */
+  { 0.28,   0x4, 1 },
+  { 0.58,   0x8, 2 },
+  { 0.85,   0xc, 3 },
+  { 1.0,    0xc, 3 }
 };
 
 static const escp2_variable_ink_t photo_multishot_ink =
@@ -469,10 +469,10 @@ static const escp2_variable_ink_t photo_multishot_ink =
 
 static const stp_simple_dither_range_t standard_multishot_dither_ranges[] =
 {
-  { 0.28,  0x1, 1, 1 },
-  { 0.58,  0x2, 1, 2 },
-  { 0.85,  0x3, 1, 3 },
-  { 1.0,   0x3, 1, 3 }
+  { 0.28,  0x1, 1 },
+  { 0.58,  0x2, 2 },
+  { 0.85,  0x3, 3 },
+  { 1.0,   0x3, 3 }
 };
 
 static const escp2_variable_ink_t standard_multishot_ink =
@@ -2781,14 +2781,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   int		i;
   int		n;		/* Output number */
   unsigned short *out;	/* Output pixels (16-bit) */
-  unsigned char	*in,		/* Input pixels */
-		*black = NULL,	/* Black bitmap data */
-		*cyan = NULL,	/* Cyan bitmap data */
-		*magenta = NULL, /* Magenta bitmap data */
-		*yellow = NULL,	/* Yellow bitmap data */
-		*lcyan  = NULL,	/* Light cyan bitmap data */
-		*lmagenta = NULL, /* Light magenta bitmap data */
-		*dyellow = NULL; /* Dark Yellow bitmap data */
+  unsigned char *out_bits[NCOLORS];
+  unsigned char	*in;
   int		page_left,	/* Left margin of page */
 		page_right,	/* Right margin of page */
 		page_top,	/* Top of page */
@@ -3079,36 +3073,54 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 
   length = (out_width + 7) / 8;
 
-  if (output_type == OUTPUT_GRAY)
-  {
-    black   = xzmalloc(length * bits);
-  }
-  else
-  {
-    cyan    = xzmalloc(length * bits);
-    magenta = xzmalloc(length * bits);
-    yellow  = xzmalloc(length * bits);
+  for (i = 0; i < NCOLORS; i++)
+    out_bits[i] = NULL;
 
-    if (escp2_has_cap(model, MODEL_HASBLACK, MODEL_HASBLACK_YES, nv))
-      black = xzmalloc(length * bits);
-    switch (colormode)
-      {
-      case COLOR_CCMMYYK:
-	dyellow = xzmalloc(length * bits);
-      case COLOR_CCMMYK:
-	lcyan = xzmalloc(length * bits);
-	lmagenta = xzmalloc(length * bits);
-      default:
-	break;
+  if (output_type == OUTPUT_GRAY)
+    {
+      cols[0]   = xzmalloc(length * bits);
+      out_bits[ECOLOR_K] = cols[0];
     }
-  }
-  cols[0] = black;
-  cols[1] = magenta;
-  cols[2] = cyan;
-  cols[3] = yellow;
-  cols[4] = lmagenta;
-  cols[5] = lcyan;
-  cols[6] = dyellow;
+  else
+    {
+      if (ncolors == 4)
+	{
+	  cols[2] = xzmalloc(length * bits);
+	  out_bits[ECOLOR_C] = cols[2];
+	  cols[1] = xzmalloc(length * bits);
+	  out_bits[ECOLOR_M] = cols[1];
+	  cols[3]= xzmalloc(length * bits);
+	  out_bits[ECOLOR_Y] = cols[3];
+	}
+      else if (ncolors == 6)
+	{
+	  cols[5] = xzmalloc(length * bits * 2);
+	  cols[2] = cols[5] + length * bits;
+	  out_bits[ECOLOR_C] = cols[5];
+	  cols[4] = xzmalloc(length * bits * 2);
+	  cols[1] = cols[4] + length * bits;
+	  out_bits[ECOLOR_M] = cols[4];
+	  cols[3]= xzmalloc(length * bits);
+	  out_bits[ECOLOR_Y] = cols[3];
+	}
+      else
+	{
+	  cols[5] = xzmalloc(length * bits * 2);
+	  cols[2] = cols[5] + length * bits;
+	  out_bits[ECOLOR_C] = cols[5];
+	  cols[4] = xzmalloc(length * bits * 2);
+	  cols[1] = cols[4] + length * bits;
+	  out_bits[ECOLOR_M] = cols[4];
+	  cols[6] = xzmalloc(length * bits * 2);
+	  cols[3] = cols[6] + length * bits;
+	  out_bits[ECOLOR_Y] = cols[6];
+	}
+      if (escp2_has_cap(model, MODEL_HASBLACK, MODEL_HASBLACK_YES, nv))
+	{
+	  cols[0]   = xzmalloc(length * bits);
+	  out_bits[ECOLOR_K] = cols[0];
+	}
+    }
 
   in  = xmalloc(image_width * image_bpp);
   out = xmalloc(image_width * out_bpp * 2);
@@ -3149,8 +3161,7 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
     }
     QUANT(1);
 
-    stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
-	       yellow, dyellow, black, duplicate_line);
+    stp_dither(out, y, dither, ncolors == 1 ? 1 : 4, duplicate_line, out_bits);
     QUANT(2);
 
     stp_write_weave(weave, length, ydpi, model, out_width, left,
@@ -3181,20 +3192,9 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   free(out);
   stp_destroy_weave(weave);
 
-  if (black != NULL)
-    free(black);
-  if (cyan != NULL)
-    free(cyan);
-  if (magenta != NULL)
-    free(magenta);
-  if (yellow != NULL)
-    free(yellow);
-  if (lcyan != NULL)
-    free(lcyan);
-  if (lmagenta != NULL)
-    free(lmagenta);
-  if (dyellow != NULL)
-    free(dyellow);
+  for (i = 0; i < ncolors; i++)
+    if (out_bits[i])
+      free(out_bits[i]);
 
 #ifdef QUANTIFY
   print_timers(nv);

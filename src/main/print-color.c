@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.7.2.1 2001/03/05 22:51:20 rlk Exp $"
+ * "$Id: print-color.c,v 1.7.2.2 2001/03/06 03:09:32 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -63,46 +63,46 @@ typedef struct
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 
 static inline void
-calc_rgb_to_hsl(unsigned short *rgb, double *hue, double *sat,
+calc_cmy_to_hsl(stp_color_output_t *cmy, int i, double *hue, double *sat,
 		double *lightness)
 {
-  double red, green, blue;
+  double cyan, magenta, yellow;
   double h, s, l;
   double min, max;
   double delta;
   int maxval;
 
-  red   = rgb[0] / 65535.0;
-  green = rgb[1] / 65535.0;
-  blue  = rgb[2] / 65535.0;
+  cyan   = cmy->c[i] / 65535.0;
+  magenta = cmy->m[i] / 65535.0;
+  yellow  = cmy->y[i] / 65535.0;
 
-  if (red > green)
+  if (cyan > magenta)
     {
-      if (red > blue)
+      if (cyan > yellow)
 	{
-	  max = red;
+	  max = cyan;
 	  maxval = 0;
 	}
       else
 	{
-	  max = blue;
+	  max = yellow;
 	  maxval = 2;
 	}
-      min = FMIN(green, blue);
+      min = FMIN(magenta, yellow);
     }
   else
     {
-      if (green > blue)
+      if (magenta > yellow)
 	{
-	  max = green;
+	  max = magenta;
 	  maxval = 1;
 	}
       else
 	{
-	  max = blue;
+	  max = yellow;
 	  maxval = 2;
 	}
-      min = FMIN(red, blue);
+      min = FMIN(cyan, yellow);
     }
 
   l = (max + min) / 2.0;
@@ -121,11 +121,11 @@ calc_rgb_to_hsl(unsigned short *rgb, double *hue, double *sat,
 	s = delta / (2 - max - min);
 
       if (maxval == 0)
-	h = (green - blue) / delta;
+	h = (magenta - yellow) / delta;
       else if (maxval == 1)
-	h = 2 + (blue - red) / delta;
+	h = 2 + (yellow - cyan) / delta;
       else
-	h = 4 + (red - green) / delta;
+	h = 4 + (cyan - magenta) / delta;
 
       if (h < 0.0)
 	h += 6.0;
@@ -156,7 +156,7 @@ hsl_value(double n1, double n2, double hue)
 }
 
 static inline void
-calc_hsl_to_cmy(unsigned short *rgb, double h, double s, double l)
+calc_hsl_to_cmy(stp_color_output_t *cmy, int i, double h, double s, double l)
 {
   if (s < .0000001)
     {
@@ -164,9 +164,9 @@ calc_hsl_to_cmy(unsigned short *rgb, double h, double s, double l)
 	l = 1;
       else if (l < 0)
 	l = 0;
-      rgb[0] = l * 65535;
-      rgb[1] = l * 65535;
-      rgb[2] = l * 65535;
+      cmy->c[i] = l * 65535;
+      cmy->m[i] = l * 65535;
+      cmy->y[i] = l * 65535;
     }
   else
     {
@@ -180,18 +180,18 @@ calc_hsl_to_cmy(unsigned short *rgb, double h, double s, double l)
       else
 	m2 = l + s - (l * s);
       m1 = (l * 2) - m2;
-      rgb[0] = 65535 * hsl_value(m1, m2, h1);
-      rgb[1] = 65535 * hsl_value(m1, m2, h);
-      rgb[2] = 65535 * hsl_value(m1, m2, h2);
+      cmy->c[i] = 65535 * hsl_value(m1, m2, h1);
+      cmy->m[i] = 65535 * hsl_value(m1, m2, h);
+      cmy->y[i] = 65535 * hsl_value(m1, m2, h2);
     }
 }
 
 static inline void
-update_cmyk(unsigned short *rgb)
+update_cmyk(unsigned short *cmy, int i)
 {
-  int c = rgb[0];
-  int m = rgb[1];
-  int y = rgb[2];
+  int c = cmy->c[i];
+  int m = cmy->m[i];
+  int y = cmy->y[i];
   int nc, nm, ny;
   int k;
   if (c == m && c == y)
@@ -226,9 +226,9 @@ update_cmyk(unsigned short *rgb)
   if (ny > 65535)
     ny = 65535;
 
-  rgb[0] = nc;
-  rgb[1] = nm;
-  rgb[2] = ny;
+  cmy->c[i] = nc;
+  cmy->m[i] = nm;
+  cmy->y[i] = ny;
 }
 
 /*
@@ -806,7 +806,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 	  if ((compute_saturation) &&
 	      (out->c[i] != out->m[i] || out->c[i] != out->y[i]))
 	    {
-	      calc_rgb_to_hsl(rgbout, &h, &s, &v);
+	      calc_cmy_to_hsl(out, i, &h, &s, &v);
 	      if (ssat < 1)
 		s *= ssat;
 	      else
@@ -817,9 +817,9 @@ rgb_to_cmy(const unsigned char	*rgbin,
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(rgbout, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, v);
 	    }
-	  update_cmyk(rgbout);	/* Fiddle with the INPUT */
+	  update_cmyk(out, i);	/* Fiddle with the INPUT */
 	  out->c[i] = lookup_value(out->c[i], lut->steps,
 				   lut->red, lut->shiftval,
 				   lut->bin_size, lut->bin_shift);
@@ -832,7 +832,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 	  if ((split_saturation || hue_map || lum_map || sat_map) &&
 	      (out->c[i] != out->m[i] || out->c[i] != out->y[i]))
 	    {
-	      calc_rgb_to_hsl(rgbout, &h, &s, &v);
+	      calc_rgb_to_hsl(out, i, &h, &s, &v);
 	      if (split_saturation)
 		{
 		  if (ssat < 1)
@@ -893,7 +893,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 			}
 		    }
 		}
-	      calc_hsl_to_cmy(rgbout, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, v);
 	    }
 	  if (ld < 65536)
 	    {
@@ -1084,7 +1084,7 @@ fast_indexed_to_cmy(const unsigned char *indexed,
 	{
 	  if (saturation != 1.0)
 	    {
-	      calc_rgb_to_hsl(rgb, &h, &s, &v);
+	      calc_rgb_to_hsl(out, i, &h, &s, &v);
 	      if (saturation < 1)
 		s *= saturation;
 	      else if (saturation > 1)
@@ -1095,7 +1095,7 @@ fast_indexed_to_cmy(const unsigned char *indexed,
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(rgb, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, v);
 	    }
 	  if (density != 1.0)
 	    {
@@ -1140,8 +1140,9 @@ fast_rgb_to_cmy(const unsigned char *rgbin,
   lut_t *lut = (lut_t *)(stp_get_lut(vars));
   int use_previous = 0;
   double isat = 1.0;
-  if (stp_get_saturation(vars) > 1)
-    isat = 1.0 / stp_get_saturation(vars);
+  double saturation = stp_get_saturation(vars);
+  if (saturation > 1)
+    isat = 1.0 / saturation;
   int i = 0;
   while (width > 0)
     {
@@ -1189,20 +1190,20 @@ fast_rgb_to_cmy(const unsigned char *rgbin,
 	}
       else
 	{
-	  if (stp_get_saturation(vars) != 1.0)
+	  if (saturation != 1.0)
 	    {
-	      calc_rgb_to_hsl(rgbout, &h, &s, &v);
-	      if (stp_get_saturation(vars) < 1)
-		s *= stp_get_saturation(vars);
-	      else if (stp_get_saturation(vars) > 1)
+	      calc_rgb_to_out(rgbout, &h, &s, &v);
+	      if (saturation < 1)
+		s *= saturation;
+	      else if (saturation > 1)
 		{
-		  double s1 = s * stp_get_saturation(vars);
+		  double s1 = s * saturation;
 		  double s2 = 1.0 - ((1.0 - s) * isat);
 		  s = FMIN(s1, s2);
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(rgbout, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, v);
 	    }
 	  if (density != 1.0)
 	    {
