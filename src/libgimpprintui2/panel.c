@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.3 2004/07/24 14:36:11 rleigh Exp $"
+ * "$Id: panel.c,v 1.4 2004/07/31 17:18:47 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -4267,6 +4267,7 @@ do_preview_thumbnail (void)
 static gboolean
 idle_preview_thumbnail(gpointer data)
 {
+  set_orientation(pv->orientation);
   do_preview_thumbnail();
   thumbnail_update_pending = FALSE;
   return FALSE;
