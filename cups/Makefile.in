@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1 2000/06/18 16:15:25 easysw Exp $"
+# "$Id: Makefile.in,v 1.2 2000/06/18 20:29:56 easysw Exp $"
 #
 #   Makefile for the CUPS driver development kit.
 #
@@ -52,7 +52,7 @@ PREFIX	=	@prefix@
 # Files...
 #
 
-TARGETS	=	calibrate commandtoepson.o epson epson.dep genppd \
+TARGETS	=	calibrate commandtoepson epson epson.dep genppd \
 		rastertoepson
 OBJS	=	calibrate.o commandtoepson.o epson.o genppd.o rastertoepson.o
 
@@ -154,5 +154,5 @@ rastertoepson:	rastertoepson.o
 
 
 #
-# End of "$Id: Makefile.in,v 1.1 2000/06/18 16:15:25 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.2 2000/06/18 20:29:56 easysw Exp $".
 #

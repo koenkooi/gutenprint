@@ -1,5 +1,5 @@
 /*
- * "$Id: commandtoepson.c,v 1.2 2000/06/18 18:33:28 easysw Exp $"
+ * "$Id: commandtoepson.c,v 1.3 2000/06/18 20:29:56 easysw Exp $"
  *
  *   EPSON ESC/P2 command filter for the CUPS driver development kit.
  *
@@ -141,7 +141,7 @@ main(int  argc,		/* I - Number of command-line arguments */
 
       pwrite("DT\003\000\000", 5);
       putchar(phase & 255);
-      purchar(phase >> 8);
+      putchar(phase >> 8);
     }
     else if (strncasecmp(lineptr, "PrintSelfTestPrint", 18) == 0)
     {
@@ -203,5 +203,5 @@ main(int  argc,		/* I - Number of command-line arguments */
 
 
 /*
- * End of "$Id: commandtoepson.c,v 1.2 2000/06/18 18:33:28 easysw Exp $".
+ * End of "$Id: commandtoepson.c,v 1.3 2000/06/18 20:29:56 easysw Exp $".
  */
