@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.70 2003/06/20 00:54:40 rlk Exp $"
+ * "$Id: genppd.c,v 1.71 2003/06/20 12:42:41 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -131,6 +131,7 @@ const char *special_options[] =
   "MediaType",
   "InputSlot",
   "Resolution",
+  "OutputOrder",
   NULL
 };
 
@@ -1068,6 +1069,11 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
   gzputs(fp, "*CloseUI: *Resolution\n\n");
 
+  stp_describe_parameter(v, "OutputOrder", &desc);
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+    gzprintf(fp, "*DefaultOutputOrder: %s\n\n", desc.deflt.str);
+  stp_parameter_description_free(&desc);
+
   param_list = stp_get_parameter_list(v);
 
   for (j = 0; j <= STP_PARAMETER_CLASS_OUTPUT; j++)
@@ -1215,5 +1221,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.70 2003/06/20 00:54:40 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.71 2003/06/20 12:42:41 rlk Exp $".
  */
