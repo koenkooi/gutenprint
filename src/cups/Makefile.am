@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.47 2002/03/23 11:49:08 rleigh Exp $
+## $Id: Makefile.am,v 1.48 2002/03/30 13:50:07 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ epson_SOURCES = epson.c
 epson_LDADD = $(CUPS_LIBS)
 
 genppd_SOURCES = genppd.c
-genppd_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
+genppd_LDADD = $(CUPS_LIBS) $(GENPPD_LIBS) $(LIBGIMPPRINT_LIBS)
 genppd_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 rastertoprinter_SOURCES = rastertoprinter.c
