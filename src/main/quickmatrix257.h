@@ -1,5 +1,5 @@
 /*
- * "$Id: quickmatrix257.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: quickmatrix257.h,v 1.4 2002/11/22 02:16:58 rlk Exp $"
  *
  *   Square dither matrix file for the gimp-print plugin.
  *
@@ -19,10 +19,6 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
-#ifndef GIMP_PRINT_INTERNAL_QUICKMATRIX257_H
-#define GIMP_PRINT_INTERNAL_QUICKMATRIX257_H
-
 
     0, 59688, 17885, 33107, 58234, 12934, 35793, 44835,  5911, 41622, 17122,
 47448, 37402, 13125, 45769,  3041, 64479,  7193, 26025, 48883, 23186,  8596,
@@ -6030,8 +6026,6 @@
  8755, 34843, 52152, 11139, 36390, 23208, 49729, 16233, 40306, 65203, 26388,
 51929, 32157,  7154, 46084, 14871
 
-
-#endif /* GIMP_PRINT_INTERNAL_QUICKMATRIX257_H */
 /*
- * End of "$Id: quickmatrix257.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: quickmatrix257.h,v 1.4 2002/11/22 02:16:58 rlk Exp $".
  */

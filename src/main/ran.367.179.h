@@ -1,5 +1,5 @@
 /*
- * "$Id: ran.367.179.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: ran.367.179.h,v 1.4 2002/11/22 02:16:58 rlk Exp $"
  *
  *   2:1 square dither matrix file for the gimp-print plugin.
  *
@@ -19,10 +19,6 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
-#ifndef GIMP_PRINT_INTERNAL_RAN_367_179_H
-#define GIMP_PRINT_INTERNAL_RAN_367_179_H
-
 
     0, 48162, 37632, 16984, 50697, 28820,  7846, 64425, 37420, 20029, 52759,
 13180, 46778, 30985,   650, 57324, 27274, 16466, 55035, 36671,  6899, 45453,
@@ -5999,7 +5995,6 @@
 46495
 
 
-#endif /* GIMP_PRINT_INTERNAL_RAN_367_179_H */
 /*
- * End of "$Id: ran.367.179.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: ran.367.179.h,v 1.4 2002/11/22 02:16:58 rlk Exp $".
  */

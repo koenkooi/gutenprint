@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.6 2002/11/03 20:26:48 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.7 2002/11/22 02:16:59 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -146,7 +146,7 @@ printer: PRINTER tSTRING
 	{ printer = c_strdup($2); }
 ;
 parameter: PARAMETER tSTRING tSTRING
-	{ stp_set_parameter(tv, $2, $3); }
+	{ stp_set_string_parameter(tv, $2, $3); }
 ;
 density: DENSITY tDOUBLE
 	{ density = $2; }

@@ -1,5 +1,5 @@
 /*
- * "$Id: ran.509.131.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: ran.509.131.h,v 1.4 2002/11/22 02:16:58 rlk Exp $"
  *
  *   Square dither matrix file for the gimp-print plugin.
  *
@@ -20,9 +20,6 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
-#ifndef GIMP_PRINT_INTERNAL_RAN_509_131_H
-#define GIMP_PRINT_INTERNAL_RAN_509_131_H
 
     0, 54481, 28629, 16669, 50007, 36603,  8133, 60381, 20398, 30495, 48890,
 10730, 62798, 23970, 40322,  2802, 54344, 21688, 38442, 10209, 56353, 25482,
@@ -6088,7 +6085,6 @@
 63169, 36469, 15603, 51896, 31165,  7372, 58087, 24664
 
 
-#endif /* GIMP_PRINT_INTERNAL_RAN_509_131_H */
 /*
- * End of "$Id: ran.509.131.h,v 1.3 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: ran.509.131.h,v 1.4 2002/11/22 02:16:58 rlk Exp $".
  */

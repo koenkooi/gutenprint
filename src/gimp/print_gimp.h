@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.30 2002/11/05 02:45:45 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.31 2002/11/22 02:16:58 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -109,7 +109,7 @@ extern int add_printer(const gp_plist_t *key, int add_only);
 extern void initialize_printer(gp_plist_t *printer);
 extern void update_adjusted_thumbnail (void);
 extern void plist_build_combo         (GtkWidget     *combo,
-				       stp_param_list_t items,
+				       stp_string_list_t items,
 				       const gchar   *cur_item,
 				       const gchar	  *def_value,
 				       GtkSignalFunc callback,

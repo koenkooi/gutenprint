@@ -1,5 +1,5 @@
 /*
- * "$Id: printdef.c,v 1.1 2002/11/19 23:03:27 rleigh Exp $"
+ * "$Id: printdef.c,v 1.2 2002/11/22 02:16:59 rlk Exp $"
  *
  *   printdef XML parser - process gimp-print XML data with libxml2.
  *
@@ -143,11 +143,13 @@ void output_start(void)
 void output_printer(stp_printdef_printer_t *printer)
 {
   fprintf(stdout, "  {\n");
+  fprintf(stdout, "    COOKIE_PRINTER,\n");
   fprintf(stdout, "    \"%s\",\n", printer->long_name);
   fprintf(stdout, "    \"%s\",\n", printer->driver);
   fprintf(stdout, "    %d,\n", printer->model);
   fprintf(stdout, "    &stp_%s_printfuncs,\n", printer->family);
   fprintf(stdout, "    {\n");
+  fprintf(stdout, "      COOKIE_VARS,\n");
   fprintf(stdout, "      \"%s\",\n", printer->printvars.driver);   /* driver */
   fprintf(stdout, "      \"\",\n");      /* ppd_file */
   fprintf(stdout, "      \"\",\n");      /* resolution */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.1 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: dither.h,v 1.2 2002/11/22 02:16:58 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -124,7 +124,7 @@ typedef struct
 } stp_dither_data_t;
 
 
-extern void stp_dither_algorithms(stp_param_list_t);
+extern void stp_dither_algorithms(stp_string_list_t);
 extern const char *stp_get_default_dither_algorithm(void);
 
 extern void *	stp_init_dither(int in_width, int out_width, int bpp,
@@ -178,5 +178,5 @@ extern void	stp_dither(const unsigned short *, int, void *,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.1 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: dither.h,v 1.2 2002/11/22 02:16:58 rlk Exp $".
  */

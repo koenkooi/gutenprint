@@ -1,5 +1,5 @@
 /*
- * "$Id: papers.h,v 1.1 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: papers.h,v 1.2 2002/11/22 02:16:58 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -42,9 +42,8 @@ extern "C" {
 #endif
 
 
-extern void	stp_default_media_size(const stp_printer_t printer,
-				       const stp_vars_t v, int *width,
-				       int *height);
+extern void stp_default_media_size(const stp_vars_t v,
+				   int *width, int *height);
 
 
 #ifdef __cplusplus
@@ -53,5 +52,5 @@ extern void	stp_default_media_size(const stp_printer_t printer,
 
 #endif /* GIMP_PRINT_INTERNAL_PAPERS_H */
 /*
- * End of "$Id: papers.h,v 1.1 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: papers.h,v 1.2 2002/11/22 02:16:58 rlk Exp $".
  */

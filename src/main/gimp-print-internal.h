@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.59 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.60 2002/11/22 02:16:58 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -38,6 +38,12 @@ extern "C" {
 #endif
 
 
+#define COOKIE_VARS      0x1a18376c
+#define COOKIE_OPTION     0x3ab27f93
+#define COOKIE_PARAM_LIST 0x96cf0387
+#define COOKIE_PRINTER  0x0722922c
+
+
 #include "dither.h"
 #include "dither-matrices.h"
 #include "list.h"
@@ -54,5 +60,5 @@ extern "C" {
 
 #endif /* GIMP_PRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.59 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.60 2002/11/22 02:16:58 rlk Exp $".
  */
