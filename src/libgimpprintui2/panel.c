@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.4 2004/07/31 17:18:47 rlk Exp $"
+ * "$Id: panel.c,v 1.5 2004/07/31 17:47:59 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -4180,6 +4180,11 @@ do_preview_thumbnail (void)
       paper_display_height - (paper_display_top - printable_display_top);
   if (need_exposure)
     {
+      if (!frame_valid)
+	{
+	  gdk_window_clear (preview->widget.window);
+	  frame_valid = TRUE;
+	}
       /* draw paper frame */
       gdk_draw_rectangle (preview->widget.window, gc, 0,
 			  paper_display_left, paper_display_top,
