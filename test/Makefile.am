@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.18 2001/06/02 23:31:03 rleigh Exp $
+## $Id: Makefile.am,v 1.19 2001/06/03 18:35:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ MAINT_CHARSET = latin1
 
 ## Variables
 
-AM_CFLAGS = @MAINTAINER_CFLAGS@
+AM_CFLAGS = $(GNUCFLAGS)
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS) $(LIBGIMPPRINT_CFLAGS) -I$(top_srcdir)/src/main
 LIBS = @LIBS@ ../lib/libprintut.la $(INTLLIBS) ../lib/libprintut.la
 
@@ -61,7 +61,7 @@ $(LIBGIMPPRINT_LIBS):
 
 ## Clean
 
-CLEANFILES = $(EXTRA_PROGRAMS)
+CLEANFILES = $(EXTRA_PROGRAMS) mixed-color-1bit.ppm
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest

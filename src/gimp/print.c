@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.15 2001/06/01 02:48:32 rlk Exp $"
+ * "$Id: print.c,v 1.16 2001/06/03 18:35:03 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -47,10 +47,10 @@
  * Local functions...
  */
 
-static void	printrc_load(void);
-void	        printrc_save(void);
-static int	compare_printers(gp_plist_t *p1, gp_plist_t *p2);
-static void	get_system_printers(void);
+static void	printrc_load (void);
+void		printrc_save (void);
+static int	compare_printers (gp_plist_t *p1, gp_plist_t *p2);
+static void	get_system_printers (void);
 
 static void	query (void);
 static void	run (char *, int, GimpParam *, int *, GimpParam **);
@@ -1367,5 +1367,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.15 2001/06/01 02:48:32 rlk Exp $".
+ * End of "$Id: print.c,v 1.16 2001/06/03 18:35:03 rleigh Exp $".
  */

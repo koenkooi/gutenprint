@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.3 2001/04/21 11:22:04 davehill Exp $"
+ * "$Id: pcl-unprint.c,v 1.4 2001/06/03 18:35:03 rleigh Exp $"
  *
  *   pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -33,7 +33,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.3 2001/04/21 11:22:04 davehill Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.4 2001/06/03 18:35:03 rleigh Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -193,6 +193,17 @@ commands_t pcl_commands[] =
 /* Resolution */
 	{ "*t", 'R', 0, PCL_RESOLUTION, "Resolution" },
    };
+
+int pcl_find_command (void);
+void fill_buffer (void);
+void pcl_read_command (void);
+void write_grey (output_t *output, image_t *image);
+void write_colour (output_t *output, image_t *image);
+int decode_tiff (char *in_buffer, int data_height, char *decode_buf,
+                 int maxlen);
+void pcl_reset (image_t *i);
+int depth_to_rows (int depth);
+
 
 /*
  * pcl_find_command(). Search the commands table for the command.

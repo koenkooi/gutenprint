@@ -1,4 +1,4 @@
-/* $Id: bjc-unprint.c,v 1.3 2001/03/21 23:55:15 gandy Exp $ */
+/* $Id: bjc-unprint.c,v 1.4 2001/06/03 18:35:03 rleigh Exp $ */
 /*
  * Convert BJC-printjobs to xbm files, one for each color channel
  *
@@ -65,6 +65,24 @@ typedef struct bitimage_t_ {
   int xmin;
   int xmax;
 } bitimage_t;
+
+bitimage_t *bitimage_new (void);
+int last_bit (unsigned char i);
+int first_bit (unsigned char i);
+void rle_info (const unsigned char *inbuf, int n, int *first, int *last,
+               int *width, int *length);
+int rle_decode (unsigned char *inbuf, int n, unsigned char *outbuf, int max);
+scanline_t* scanline_new (void);
+scanline_t *scanline_store (scanline_t *line, int y, unsigned char *buf,
+                            int size);
+bitimage_t *scanlines2bitimage (scanline_t *slimg);
+char conv (char i);
+void save2xbm (const char *filename,char col, bitimage_t *img,
+               int xmin, int ymin, int xmax, int ymax);
+int nextcmd (FILE *infile, unsigned char *inbuff, int *cnt);
+int process(FILE *infile, scanline_t *sf[7], int *xmin_, int *xmax_,
+            int *ymin_, int *ymax_);
+
 
 bitimage_t *bitimage_new(void)
 {

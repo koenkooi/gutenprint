@@ -1,6 +1,6 @@
 /*
  * acconfig.h:
- * $Id: acconfig.h,v 1.10 2001/03/09 21:23:35 rleigh Exp $
+ * $Id: acconfig.h,v 1.11 2001/06/03 18:35:02 rleigh Exp $
  * Extra definitions for autoheader
  * Copyright (C) 2000  Roger Leigh
  *
@@ -29,14 +29,8 @@
 /* Package release date*/
 #undef RELEASE_DATE
 
-/* Library versioning */
-/*#undef GIMPPRINT_MAJOR_VERSION
-#undef GIMPPRINT_MINOR_VERSION
-#undef GIMPPRINT_MICRO_VERSION
-#undef GIMPPRINT_CURRENT_INTERFACE
-#undef GIMPPRINT_INTERFACE_AGE
-#undef GIMPPRINT_BINARY_AGE
-#undef GIMPPRINT_VERSION*/
+/* Enable maintainer-specific code */
+#undef GIMP_PRINT_MAINT
 
 /* CUPS data directory */
 #undef CUPS_DATADIR
