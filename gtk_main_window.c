@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.6 2000/04/13 19:05:07 davehill Exp $"
+ * "$Id: gtk_main_window.c,v 1.7 2000/04/15 11:16:17 mitsch Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -32,11 +32,7 @@
 #include "print.h"
 #include "print_gimp.h"
 
-#ifdef GIMP_1_0
-
-#define N_(x) x
-#define _(x) x
-#define gettext(x) x
+#include "print-intl.h"
 
 /*
  * Constants for GUI...
@@ -2121,5 +2117,3 @@ static void gtk_show_adjust_button_callback(GtkWidget * w)
 {
     gtk_widget_show(gtk_color_adjust_dialog);
 }
-
-#endif
