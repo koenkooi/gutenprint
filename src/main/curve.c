@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.15.2.1 2002/12/05 02:25:17 rlk Exp $"
+ * "$Id: curve.c,v 1.15.2.2 2002/12/05 02:55:21 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -121,9 +121,8 @@ do						\
 } while (0)
 
 static void
-clear_curve_data(stp_internal_curve_t *curve)
+invalidate_auxiliary_data(stp_internal_curve_t *curve)
 {
-  SAFE_FREE(curve->data);
   SAFE_FREE(curve->interval);
   SAFE_FREE(curve->long_data);
   SAFE_FREE(curve->ulong_data);
@@ -131,10 +130,17 @@ clear_curve_data(stp_internal_curve_t *curve)
   SAFE_FREE(curve->uint_data);
   SAFE_FREE(curve->short_data);
   SAFE_FREE(curve->ushort_data);
+}
+
+static void
+clear_curve_data(stp_internal_curve_t *curve)
+{
+  SAFE_FREE(curve->data);
   curve->point_count = 0;
   curve->real_point_count = 0;
   curve->recompute_interval = 0;
   curve->recompute_range = 0;
+  invalidate_auxiliary_data(curve);
 }
 
 static void
@@ -318,20 +324,20 @@ stp_curve_copy(stp_curve_t dest, const stp_curve_t source)
   check_curve(idest);
   check_curve(isource);
   curve_dtor(dest);
-  (void) memcpy(idest, isource, sizeof(stp_internal_curve_t));
+  idest->cookie = isource->cookie;
+  idest->curve_type = isource->curve_type;
+  idest->point_count = isource->point_count;
+  idest->real_point_count = isource->real_point_count;
+  idest->wrap_mode = isource->wrap_mode;
+  idest->gamma = isource->gamma;
   if (isource->data)
     {
       idest->data = stp_malloc(sizeof(double) * (isource->real_point_count));
       (void) memcpy(idest->data, isource->data,
 		    (sizeof(double) * (isource->real_point_count)));
     }
-  if (isource->interval)
-    {
-      idest->interval =
-	stp_malloc(sizeof(double) * (isource->real_point_count - 1));
-      (void) memcpy(idest->interval, isource->interval,
-		    (sizeof(double) * (isource->real_point_count - 1)));
-    }
+  idest->recompute_interval = 1;
+  idest->recompute_range = 1;
 }
 
 stp_curve_t
@@ -548,6 +554,8 @@ stp_curve_set_subrange(stp_curve_t curve, const stp_curve_t range,
   ndata = (double *) stp_curve_get_data(curve, &ncount);
   icurve->recompute_interval = 1;
   icurve->recompute_range = 1;
+  icurve->gamma = 0.0;
+  invalidate_auxiliary_data(icurve);
   memcpy(ndata + start, data, count * sizeof(double));
   return 1;
 }
@@ -570,7 +578,7 @@ stp_curve_set_point(stp_curve_t curve, size_t where, double data)
   icurve->data[where] = data;
   if (where == 0 && icurve->wrap_mode == STP_CURVE_WRAP_AROUND)
       icurve->data[icurve->point_count] = data;
-  icurve->recompute_interval = 1;
+  invalidate_auxiliary_data(icurve);
   return 1;
 }
 
@@ -671,6 +679,7 @@ stp_curve_rescale(stp_curve_t curve, double scale,
       stp_free(tmp);
       icurve->recompute_range = 1;
       icurve->recompute_interval = 1;
+      invalidate_auxiliary_data(icurve);
     }
   return 1;
 }
@@ -1065,6 +1074,8 @@ stp_curve_resample(stp_curve_t curve, size_t points)
   set_curve_points(icurve, points);
   icurve->data = new_vec;
   icurve->recompute_interval = 1;
+  icurve->recompute_range = 1;
+  invalidate_auxiliary_data(icurve);
   return 1;
 }
 

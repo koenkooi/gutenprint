@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.7.2.1 2002/12/05 02:25:17 rlk Exp $"
+ * "$Id: curve.c,v 1.7.2.2 2002/12/05 02:55:21 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -250,9 +250,6 @@ main(int argc, char **argv)
       printf("compose with different wrap mode should fail!\n");
       global_error_count++;
     }
-  else
-    stp_curve_print(stdout, curve3);
-  fprintf(stdout, "\n");
   if (!stp_curve_read_string(linear_curve_1, curve1))
     {
       fprintf(stderr, "stp_curve_read_string failed\n");
