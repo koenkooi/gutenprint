@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.80.2.1 2002/11/03 14:49:50 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.80.2.2 2002/11/03 20:01:52 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1749,7 +1749,9 @@ plist_callback (GtkWidget *widget,
       default_parameter =
 	stp_printer_get_default_parameter(current_printer, pv->v,option->name);
       if (stp_get_parameter(pv->v, option->name)[0] == '\0')
-	(stp_set_parameter)(pv->v, option->name, default_parameter);
+	stp_set_parameter(pv->v, option->name, default_parameter);
+      else if (option->params == NULL)
+	stp_set_parameter(pv->v, option->name, NULL);
       plist_build_combo(option->combo, option->count, option->params,
 			stp_get_parameter(pv->v, option->name),
 			default_parameter, combo_callback,

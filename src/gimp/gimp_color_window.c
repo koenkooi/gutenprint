@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.28.2.1 2002/11/03 00:10:00 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.28.2.2 2002/11/03 20:01:52 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -114,13 +114,19 @@ build_dither_combo (void)
   int count;
   stp_param_t *vec = stp_printer_get_parameters(current_printer, pv->v,
 						"DitherAlgorithm", &count);
+  const char *default_parameter =
+    stp_printer_get_default_parameter(current_printer, pv->v,
+				      "DitherAlgorithm");
+  if (stp_get_parameter(pv->v, "DitherAlgorithm")[0] == '\0')
+    stp_set_parameter(pv->v, "DitherAlgorithm", default_parameter);
+  else if (count == 0)
+    stp_set_parameter(pv->v, "DitherAlgorithm", NULL);
 
   plist_build_combo (dither_algo_combo,
 		     count,
 		     vec,
 		     stp_get_parameter (pv->v, "DitherAlgorithm"),
-		     stp_printer_get_default_parameter(current_printer, pv->v,
-						       "DitherAlgorithm"),
+		     default_parameter,
 		     &dither_algo_callback,
 		     &dither_algo_callback_id,
 		     NULL);
