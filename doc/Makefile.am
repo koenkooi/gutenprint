@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/08/19 18:34:28 rlk Exp $
+## $Id: Makefile.am,v 1.13 2001/09/16 19:27:49 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,11 +30,14 @@ DOCS = \
  FAQ.html \
  README.maintaining \
  docbook.css \
- print-color.png \
- print-main.png \
- print-setup.png \
  print.html \
  print.sgml
+
+IMAGES = \
+ print-color.png \
+ print-main.png \
+ print-setup.png
+   
 
 
 ## Data
@@ -112,6 +115,6 @@ maintainer-clean-local:
 
 MAINTAINERCLEANFILES = Makefile.in html-stamp
 
-EXTRA_DIST = $(DOCS) html-stamp
+EXTRA_DIST = $(DOCS) $(IMAGES) html-stamp
 
 .PHONY: html
