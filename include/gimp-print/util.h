@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.8 2004/05/16 22:11:45 rlk Exp $"
+ * "$Id: util.h,v 1.9 2004/05/30 01:26:15 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -66,7 +66,8 @@ extern int stp_init(void);
 extern const char *stp_set_output_codeset(const char *codeset);
 
 extern stp_curve_t *stp_read_and_compose_curves(const char *s1, const char *s2,
-						stp_curve_compose_t comp);
+						stp_curve_compose_t comp,
+						size_t piecewise_point_count);
 extern void stp_abort(void);
 
 /*
@@ -158,5 +159,5 @@ extern char *stp_strdup(const char *s);
 
 #endif /* GIMP_PRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.8 2004/05/16 22:11:45 rlk Exp $".
+ * End of "$Id: util.h,v 1.9 2004/05/30 01:26:15 rlk Exp $".
  */

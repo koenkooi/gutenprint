@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.h,v 1.12 2004/05/16 22:11:44 rlk Exp $"
+ * "$Id: curve.h,v 1.13 2004/05/30 01:26:15 rlk Exp $"
  *
  *   libgimpprint curve functions.
  *
@@ -580,8 +580,7 @@ extern int stp_curve_resample(stp_curve_t *curve, size_t points);
  * @param scale the scaling factor.
  * @param mode the composition mode.
  * @param bounds_mode the bounds exceeding mode.
- * @returns FALSE if this would exceed floating point limits or if the
- * curve is a piecewise curve.
+ * @returns FALSE if this would exceed floating point limits
  */
 extern int stp_curve_rescale(stp_curve_t *curve, double scale,
 			     stp_curve_compose_t mode,
@@ -683,5 +682,5 @@ extern int stp_curve_compose(stp_curve_t **retval,
 
 #endif /* GIMP_PRINT_CURVE_H */
 /*
- * End of "$Id: curve.h,v 1.12 2004/05/16 22:11:44 rlk Exp $".
+ * End of "$Id: curve.h,v 1.13 2004/05/30 01:26:15 rlk Exp $".
  */
