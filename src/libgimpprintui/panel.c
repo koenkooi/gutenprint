@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.57 2004/02/08 22:31:12 rlk Exp $"
+ * "$Id: panel.c,v 1.57.2.1 2004/03/26 01:20:16 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -264,9 +264,9 @@ static const gint unit_count = sizeof(units) / sizeof(unit_t);
 
 static radio_group_t output_types[] =
   {
-    { N_("Color"), N_("Color output"), OUTPUT_COLOR, NULL },
+    { N_("Color"), N_("Color output"), "Color", NULL },
     { N_("Grayscale"),
-      N_("Print in shades of gray using black ink"), OUTPUT_GRAY, NULL }
+      N_("Print in shades of gray using black ink"), "BW", NULL }
   };
 
 static const gint output_type_count = (sizeof(output_types) /
@@ -651,8 +651,7 @@ build_a_combo(option_t *option)
 	       ! stp_string_list_is_present(option->info.list.params, val))
 	stp_set_string_parameter(pv->v, option->fast_desc->name,
 				 option->info.list.default_val);
-      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE &&
-	  strcmp(option->fast_desc->name, "PageSize") == 0)
+      if (strcmp(option->fast_desc->name, "PageSize") == 0)
 	build_page_size_combo(option);
       else
 	plist_build_combo(option->info.list.combo, option->info.list.label,
@@ -662,8 +661,7 @@ build_a_combo(option_t *option)
 						   option->fast_desc->name),
 			  option->info.list.default_val, combo_callback,
 			  &(option->info.list.callback_id), NULL, option);
-      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE &&
-	  strcmp(option->fast_desc->name, "PageSize") == 0)
+      if (strcmp(option->fast_desc->name, "PageSize") == 0)
 	set_media_size
 	  (stp_get_string_parameter(pv->v, option->fast_desc->name));
     }
@@ -808,7 +806,13 @@ populate_option_table(GtkWidget *table, int p_class)
   for (i = 0; i < current_option_count; i++)
     {
       const stp_parameter_t *desc = current_options[i].fast_desc;
-      if (desc->p_class == p_class)
+      /*
+       * Specialize the core parameters (page size is the only one we want)
+       * Yuck.
+       */
+      if (desc->p_class == p_class &&
+	  (desc->p_class != STP_PARAMETER_CLASS_CORE ||
+	   strcmp(desc->name, "PageSize") == 0))
 	{
 	  switch (desc->p_type)
 	    {
@@ -2536,8 +2540,7 @@ do_color_updates (void)
 		set_curve_active(opt, FALSE, TRUE);
 	      break;
 	    case STP_PARAMETER_TYPE_STRING_LIST:
-	      if (opt->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE &&
-		  strcmp(opt->fast_desc->name, "PageSize") == 0)
+	      if (strcmp(opt->fast_desc->name, "PageSize") == 0)
 		build_page_size_combo(opt);
 	      else if (stp_check_string_parameter(pv->v, opt->fast_desc->name,
 						  STP_PARAMETER_INACTIVE))
@@ -2583,7 +2586,7 @@ update_options(void)
   gtk_widget_hide(printer_features_table);
   gtk_widget_hide(color_adjustment_table);
   populate_options(pv->v);
-  populate_option_table(page_size_table, STP_PARAMETER_CLASS_PAGE_SIZE);
+  populate_option_table(page_size_table, STP_PARAMETER_CLASS_CORE);
   populate_option_table(printer_features_table, STP_PARAMETER_CLASS_FEATURE);
   populate_option_table(color_adjustment_table, STP_PARAMETER_CLASS_OUTPUT);
   gtk_widget_show(page_size_table);
@@ -2630,7 +2633,9 @@ do_all_updates(void)
 
   for (i = 0; i < output_type_count; i++)
     {
-      if (output_types[i].value == stp_get_output_type(pv->v))
+      if (stp_get_string_parameter(pv->v, "PrintingMode") &&
+	  strcmp(output_types[i].value,
+		 stp_get_string_parameter(pv->v, "PrintingMode")))
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_types[i].button),
 				     TRUE);
     }
@@ -2692,6 +2697,7 @@ plist_callback (GtkWidget *widget,
 		gpointer   data)
 {
   gint         i;
+  stp_parameter_t desc;
 
   suppress_preview_update++;
   invalidate_frame ();
@@ -2724,8 +2730,9 @@ plist_callback (GtkWidget *widget,
   if (strcmp(stp_get_driver(pv->v), ""))
     tmp_printer = stp_get_printer(pv->v);
 
-  if (stp_get_output_type (stp_printer_get_defaults(tmp_printer)) ==
-      OUTPUT_COLOR)
+  stp_describe_parameter(pv->v, "PrintingMode", &desc);
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST &&
+      strcmp(desc.deflt.str, "Color") == 0)
     {
       gtk_widget_set_sensitive (output_types[0].button, TRUE);
     }
@@ -2737,6 +2744,7 @@ plist_callback (GtkWidget *widget,
 	  (GTK_TOGGLE_BUTTON (output_types[1].button), TRUE);
       gtk_widget_set_sensitive (output_types[0].button, FALSE);
     }
+  stp_parameter_description_free(&desc);
   do_all_updates();
 
   setup_update ();
@@ -2937,8 +2945,7 @@ combo_callback(GtkWidget *widget, gpointer data)
       invalidate_frame();
       invalidate_preview_thumbnail();
       stp_set_string_parameter(pv->v, option->fast_desc->name, new_value);
-      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE &&
-	  strcmp(option->fast_desc->name, "PageSize") == 0)
+      if (strcmp(option->fast_desc->name, "PageSize") == 0)
 	set_media_size(new_value);
       g_idle_add(refresh_all_options, (gpointer) &refresh_all_options);
       if (option->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
@@ -2975,11 +2982,11 @@ output_type_callback (GtkWidget *widget,
 
   if (GTK_TOGGLE_BUTTON (widget)->active)
     {
-      if ((gint) data == OUTPUT_GRAY)
+      if (strcmp((const char *) data, "BW"))
 	gtk_widget_hide(output_color_vbox);
       else
 	gtk_widget_show(output_color_vbox);
-      stp_set_output_type (pv->v, (gint) data);
+      stp_set_string_parameter(pv->v, "PrintingMode", (const char *) data);
       invalidate_preview_thumbnail ();
       update_adjusted_thumbnail ();
       set_options_active(NULL);
@@ -3495,7 +3502,7 @@ redraw_color_swatch (void)
 	  cmap = gtk_widget_get_colormap (GTK_WIDGET(swatch));
 	}
 
-      if (stp_get_output_type(pv->v) == OUTPUT_GRAY)
+      if (strcmp(stp_get_string_parameter(pv->v, "PrintingMode"), "BW") == 0)
 	gdk_draw_gray_image(swatch->widget.window, gc, 0, 0,
 			    thumbnail_w, thumbnail_h, GDK_RGB_DITHER_NORMAL,
 			    adjusted_thumbnail_data, thumbnail_w);
@@ -3521,7 +3528,7 @@ initialize_thumbnail(void)
       thumbnail_h = thumbnail_hinth;
       internal_thumbnail_data =
 	(stpui_get_thumbnail_func()) (stpui_get_thumbnail_data(), &thumbnail_w,
-				      &thumbnail_h, &thumbnail_bpp, 0);
+				      &thumbnail_h, 0);
       if (adjusted_thumbnail_data)
 	g_free(adjusted_thumbnail_data);
       if (preview_thumbnail_data)
@@ -3614,9 +3621,7 @@ compute_thumbnail(stp_const_vars_t v)
   stp_set_outdata(nv, &priv);
   stp_set_errfunc(nv, stpui_get_errfunc());
   stp_set_errdata(nv, stpui_get_errdata());
-  if (stp_get_output_type(nv) == OUTPUT_COLOR)
-    stp_set_output_type(nv, OUTPUT_RAW_CMYK);
-  if (stp_get_output_type(nv) == OUTPUT_GRAY)
+  if (strcmp(stp_get_string_parameter(nv, "PrintingMode"), "BW") == 0)
     {
       priv.bpp = 1;
       stp_set_string_parameter(nv, "InkType", "RGBGray");
@@ -3649,7 +3654,11 @@ set_thumbnail_orientation(void)
 {
   gint           x, y;
   gint preview_limit = (thumbnail_h * thumbnail_w) - 1;
-  gint bpp = stp_get_output_type(pv->v) == OUTPUT_GRAY ? 1 : 3;
+  gint bpp;
+  if (strcmp(stp_get_string_parameter(pv->v, "PrintingMode"), "BW") == 0)
+    bpp = 1;
+  else
+    bpp = 3;
   switch (physical_orientation)
     {
     case ORIENT_PORTRAIT:
@@ -3718,7 +3727,9 @@ create_valid_preview(guchar **preview_data)
 {
   if (adjusted_thumbnail_data)
     {
-      gint bpp = stp_get_output_type(pv->v) == OUTPUT_GRAY ? 1 : 3;
+      gint bpp =
+	(strcmp(stp_get_string_parameter(pv->v, "PrintingMode"), "BW") == 0) ?
+	1 : 3;
       gint v_denominator = preview_h > 1 ? preview_h - 1 : 1;
       gint v_numerator = (preview_thumbnail_h - 1) % v_denominator;
       gint v_whole = (preview_thumbnail_h - 1) / v_denominator;
@@ -3943,7 +3954,7 @@ do_preview_thumbnail (void)
   if (!preview_valid)
     gdk_draw_rectangle (preview->widget.window, gc, 1,
 			preview_x, preview_y, preview_w, preview_h);
-  else if (stp_get_output_type(pv->v) == OUTPUT_GRAY)
+  else if (strcmp(stp_get_string_parameter(pv->v, "PrintingMode"), "BW") == 0)
     gdk_draw_gray_image (preview->widget.window, gc,
 			 preview_x, preview_y, preview_w, preview_h,
 			 GDK_RGB_DITHER_NORMAL, preview_data, preview_w);

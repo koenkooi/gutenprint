@@ -1,5 +1,5 @@
 /*
- * "$Id: print-image-gimp.c,v 1.11.16.2 2004/02/22 04:05:46 rlk Exp $"
+ * "$Id: print-image-gimp.c,v 1.11.16.3 2004/03/26 01:20:16 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -90,20 +90,16 @@ typedef struct
   guchar *cmap;
   guchar *alpha_table;
   guchar *tmp;
+  gint initialized;
 } Gimp_Image_t;
 
 static const char *Image_get_appname(stp_image_t *image);
-static void Image_progress_conclude(stp_image_t *image);
-static void Image_note_progress(stp_image_t *image,
-				double current, double total);
-static void Image_progress_init(stp_image_t *image);
+static void Image_conclude(stp_image_t *image);
 static stp_image_status_t Image_get_row(stp_image_t *image,
 					unsigned char *data,
 					size_t byte_limit, int row);
 static int Image_height(stp_image_t *image);
 static int Image_width(stp_image_t *image);
-static int Image_bpp(stp_image_t *image);
-static int Image_bit_depth(stp_image_t *image);
 static void Image_reset(stp_image_t *image);
 static void Image_init(stp_image_t *image);
 
@@ -126,7 +122,7 @@ static stpui_image_t theImage =
     Image_get_appname,
     Image_conclude,
     NULL,
-  }
+  },
   Image_transpose,
   Image_hflip,
   Image_vflip,
@@ -163,8 +159,9 @@ Image_GimpDrawable_new(GimpDrawable *drawable, gint32 image_ID)
                       drawable->width, drawable->height, FALSE, FALSE);
   im->image_ID = image_ID;
   im->base_type = gimp_image_base_type(image_ID);
-  theImage.rep = im;
-  theImage.reset(&theImage);
+  im->initialized = 0;
+  theImage.im.rep = im;
+  theImage.im.reset(&(theImage.im));
   switch (im->base_type)
     {
     case GIMP_INDEXED:
@@ -203,19 +200,6 @@ Image_reset(stp_image_t *image)
 }
 
 static int
-Image_bpp(stp_image_t *image)
-{
-  Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
-  return im->real_bpp;
-}
-
-static int
-Image_bit_depth(stp_image_t *image)
-{
-  return 8;
-}
-
-static int
 Image_width(stp_image_t *image)
 {
   Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
@@ -235,6 +219,24 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 {
   Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
   guchar *inter;
+  if (!im->initialized)
+    {
+      gimp_progress_init(_("Printing..."));
+      switch (im->base_type)
+	{
+	case GIMP_INDEXED:
+	  im->tmp = xmalloc(im->drawable->bpp * im->w);
+	  break;
+	case GIMP_GRAY:
+	  if (im->drawable->bpp == 2)
+	    im->tmp = xmalloc(im->drawable->bpp * im->w);
+	  break;
+	case GIMP_RGB:
+	  if (im->drawable->bpp == 4)
+	    im->tmp = xmalloc(im->drawable->bpp * im->w);
+	  break;
+	}
+    }    
   if (im->tmp)
     inter = im->tmp;
   else
@@ -306,6 +308,7 @@ Image_get_row(stp_image_t *image, unsigned char *data, size_t byte_limit,
 	    }
 	}
     }
+  gimp_progress_update((double) row / (double) im->h);
   return STP_IMAGE_STATUS_OK;
 }
 
@@ -414,34 +417,7 @@ Image_rotate_180(stpui_image_t *image)
 }
 
 static void
-Image_progress_init(stp_image_t *image)
-{
-  Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
-  gimp_progress_init(_("Printing..."));
-  switch (im->base_type)
-    {
-    case GIMP_INDEXED:
-      im->tmp = xmalloc(im->drawable->bpp * im->w);
-      break;
-    case GIMP_GRAY:
-      if (im->drawable->bpp == 2)
-	im->tmp = xmalloc(im->drawable->bpp * im->w);
-      break;
-    case GIMP_RGB:
-      if (im->drawable->bpp == 4)
-	im->tmp = xmalloc(im->drawable->bpp * im->w);
-      break;
-    }
-}
-
-static void
-Image_note_progress(stp_image_t *image, double current, double total)
-{
-  gimp_progress_update(current / total);
-}
-
-static void
-Image_progress_conclude(stp_image_t *image)
+Image_conclude(stp_image_t *image)
 {
   Gimp_Image_t *im = (Gimp_Image_t *) (image->rep);
   gimp_progress_update(1);
@@ -460,5 +436,5 @@ Image_get_appname(stp_image_t *image)
 }
 
 /*
- * End of "$Id: print-image-gimp.c,v 1.11.16.2 2004/02/22 04:05:46 rlk Exp $".
+ * End of "$Id: print-image-gimp.c,v 1.11.16.3 2004/03/26 01:20:16 rlk Exp $".
  */

@@ -226,19 +226,6 @@ extern void stp_set_height(stp_vars_t v, int val);
 extern int stp_get_height(stp_const_vars_t v);
 
 /*
- * Set/get the number of channels.  Only needed if the image type
- * does not define the number of channels.
- */
-extern void stp_set_image_channels(stp_vars_t v, int val);
-extern int stp_get_image_channels(stp_const_vars_t v);
-
-/*
- * Set/get the depth in bits of each channel.  Currently must be 8 or 16.
- */
-extern void stp_set_image_channel_depth(stp_vars_t v, int bits);
-extern int stp_get_image_channel_depth(stp_const_vars_t v);
-
-/*
  * Set/get job properties
  */
 extern void stp_set_page_number(stp_vars_t, int);
@@ -560,5 +547,5 @@ extern stp_const_vars_t stp_default_settings(void);
 
 #endif /* __GIMP_PRINT_VARS_H__ */
 /*
- * End of "$Id: vars.h,v 1.3.4.5 2004/03/13 17:58:02 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.4.6 2004/03/26 01:20:15 rlk Exp $".
  */

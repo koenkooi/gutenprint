@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.61.2.5 2004/03/20 21:38:41 rlk Exp $"
+ * "$Id: printers.c,v 1.61.2.6 2004/03/26 01:20:16 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -723,15 +723,6 @@ stpi_verify_printer_params(stp_vars_t v)
     }
 
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
-  CHECK_INT_RANGE(v, image_channels, 0, STP_CHANNEL_LIMIT - 1);
-
-  if (stp_get_image_channel_depth(v) != 8 &&
-      stp_get_image_channel_depth(v) != 16)
-    {
-      answer = 0;
-      stpi_eprintf(v, _("%s out of range (value %d, must be 8 or 16)"),
-		   "image_channel_depth", stp_get_image_channel_depth(v));
-    }
 
   params = stp_get_parameter_list(v);
   nparams = stp_parameter_list_count(params);

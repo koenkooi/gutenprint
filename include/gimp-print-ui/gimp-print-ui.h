@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui.h,v 1.1.4.1 2004/02/22 04:05:46 rlk Exp $"
+ * "$Id: gimp-print-ui.h,v 1.1.4.2 2004/03/26 01:20:15 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -68,7 +68,7 @@ typedef struct		/**** Printer List ****/
   stp_vars_t	v;
 } stpui_plist_t;
 
-typedef struct
+typedef struct stpui_image
 {
   stp_image_t im;
   void (*transpose)(struct stpui_image *image);
@@ -112,7 +112,8 @@ extern gint stpui_do_print_dialog (void);
 extern gint stpui_compute_orientation(void);
 extern void stpui_set_image_dimensions(gint width, gint height);
 extern void stpui_set_image_resolution(gdouble xres, gdouble yres);
-extern void stpui_set_image_type(stp_image_type_t *image_type);
+extern void stpui_set_image_type(const char *image_type);
+extern void stpui_set_image_raw_channels(gint channels);
 extern void stpui_set_image_channel_depth(gint bit_depth);
 
 typedef guchar *(*get_thumbnail_func_t)(void *data, gint *width, gint *height,

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.7 2004/03/20 21:38:40 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.8 2004/03/26 01:20:16 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -68,6 +68,51 @@ static const escp2_printer_attr_t escp2_printer_attrs[] =
   { "send_zero_advance",       10, 1 },
   { "supports_ink_change",     11, 1 },
 };
+
+typedef struct
+{
+  unsigned count;
+  const char *name;
+} channel_count_t;
+
+static const channel_count_t escp2_channel_counts[] =
+{
+  { 1,  "1" },
+  { 2,  "2" },
+  { 3,  "3" },
+  { 4,  "4" },
+  { 5,  "5" },
+  { 6,  "6" },
+  { 7,  "7" },
+  { 8,  "8" },
+  { 9,  "9" },
+  { 10, "10" },
+  { 11, "11" },
+  { 12, "12" },
+  { 13, "13" },
+  { 14, "14" },
+  { 15, "15" },
+  { 16, "16" },
+  { 17, "17" },
+  { 18, "18" },
+  { 19, "19" },
+  { 20, "20" },
+  { 21, "21" },
+  { 22, "22" },
+  { 23, "23" },
+  { 24, "24" },
+  { 25, "25" },
+  { 26, "26" },
+  { 27, "27" },
+  { 28, "28" },
+  { 29, "29" },
+  { 30, "30" },
+  { 31, "31" },
+  { 32, "32" },
+};
+
+static int escp2_channel_counts_count =
+sizeof(escp2_channel_counts) / sizeof(channel_count_t);
 
 static const double ink_darknesses[] =
 {
@@ -555,6 +600,26 @@ DEF_COMPOSITE_ACCESSOR(reslist, const res_t *const *)
 DEF_COMPOSITE_ACCESSOR(inkgroup, const inkgroup_t *)
 DEF_COMPOSITE_ACCESSOR(input_slots, const input_slot_list_t *)
 DEF_COMPOSITE_ACCESSOR(quality_list, const quality_list_t *)
+
+static const channel_count_t *
+get_channel_count_by_name(const char *name)
+{
+  int i;
+  for (i = 0; i < escp2_channel_counts_count; i++)
+    if (strcmp(name, escp2_channel_counts[i].name) == 0)
+      return &(escp2_channel_counts[i]);
+  return NULL;
+}
+
+static const channel_count_t *
+get_channel_count_by_number(unsigned count)
+{
+  int i;
+  for (i = 0; i < escp2_channel_counts_count; i++)
+    if (count == escp2_channel_counts[i].count)
+      return &(escp2_channel_counts[i]);
+  return NULL;
+}
 
 static int
 escp2_ink_type(stp_const_vars_t v, int resid)
@@ -1476,11 +1541,11 @@ escp2_parameters(stp_const_vars_t v, const char *name,
 	  for (i = 0; i < ninktypes; i++)
 	    if (inks->inknames[i]->inkset == INKSET_EXTENDED)
 	      {
-		char tmpstr[32];
-		(void) snprintf(tmpstr, 32, "%d",
-				inks->inknames[i]->channel_set->channel_count);
+		const channel_count_t *ch =
+		  (get_channel_count_by_number
+		   (inks->inknames[i]->channel_set->channel_count));
 		stp_string_list_add_string(description->bounds.str,
-					   tmpstr, tmpstr);
+					   ch->name, ch->name);
 	      }
 	  description->deflt.str =
 	    stp_string_list_param(description->bounds.str, 0)->name;
@@ -1695,13 +1760,20 @@ set_raw_ink_type(stp_vars_t v)
   const inklist_t *inks = escp2_inklist(v);
   int ninktypes = inks->n_inks;
   int i;
+  const char *channel_name = stp_get_string_parameter(v, "RawChannels");
+  const channel_count_t *count;
+  if (!channel_name)
+    return 0;
+  count = get_channel_count_by_name(channel_name);
+  if (!count)
+    return 0;
+    
   /*
    * If we're using raw printer output, we dummy up the appropriate inkset.
    */
   for (i = 0; i < ninktypes; i++)
     if (inks->inknames[i]->inkset == INKSET_EXTENDED &&
-	(inks->inknames[i]->channel_set->channel_count ==
-	 stp_get_image_channels(v)))
+	(inks->inknames[i]->channel_set->channel_count == count->count))
       {
 	stpi_dprintf(STPI_DBG_INK, v, "Changing ink type from %s to %s\n",
 		     stp_get_string_parameter(v, "InkType") ?
@@ -1712,7 +1784,7 @@ set_raw_ink_type(stp_vars_t v)
       }
   stpi_eprintf
     (v, _("This printer does not support raw printer output at depth %d\n"),
-     stp_get_image_channels(v));
+     count->count);
   return 0;
 }
 
