@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.91 2000/11/12 15:44:21 rwisi Exp $"
+ * "$Id: print.h,v 1.92 2000/11/19 00:53:35 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -190,8 +190,14 @@ typedef struct printer
   vars_t printvars;
 } printer_t;
 
+/*
+ * hue_map is an array of 25 doubles representing the mapping of hue
+ * from (0..6) to (0..6) in increments of .25.  The hue_map is in CMY space,
+ * so hue=0 is cyan.
+ */
 typedef void (*convert_t)(unsigned char *in, unsigned short *out, int width,
-			  int bpp, unsigned char *cmap, const vars_t *vars);
+			  int bpp, unsigned char *cmap, const vars_t *vars,
+			  const double *hue_map);
 
 typedef struct
 {
@@ -451,5 +457,5 @@ extern void  print_timers(void );
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.91 2000/11/12 15:44:21 rwisi Exp $".
+ * End of "$Id: print.h,v 1.92 2000/11/19 00:53:35 rlk Exp $".
  */
