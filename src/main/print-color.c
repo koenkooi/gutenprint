@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.99 2003/09/29 00:48:14 rlk Exp $"
+ * "$Id: print-color.c,v 1.100 2003/09/29 03:06:28 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -991,7 +991,7 @@ compute_gcr_curve(stp_const_vars_t vars)
 	  double g1 = pow(where, i_k_gamma);
 	  double g2 = 1.0 - pow(1.0 - where, k_gamma);
 	  double value = (g1 > g2 ? g1 : g2);
-	  tmp_data[i] = 65535.0 * lut->steps * value / (double) (lut->steps - 1);
+	  tmp_data[i] = 65535.0 * k_upper * value / (double) (lut->steps - 1);
 	  tmp_data[i] = floor(tmp_data[i] + .5);
 	}
       for (i = ceil(k_upper); i < lut->steps; i ++)
