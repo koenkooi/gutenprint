@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27 2001/09/17 20:37:57 rleigh Exp $
+## $Id: Makefile.am,v 1.28 2001/10/15 19:30:43 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -58,6 +58,11 @@ testdither_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 $(LIBGIMPPRINT_LIBS):
 	cd ../src/main ; \
 	$(MAKE)
+
+
+## Rules
+
+run-weavetest: escp2-weavetest
 
 
 ## Clean
