@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.108 2000/08/28 03:09:58 rlk Exp $"
+ * "$Id: print.c,v 1.109 2000/08/29 11:57:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -58,7 +58,11 @@
 
 #include "print-intl.h"
 
-#ifdef GIMP_1_0
+/*
+ * Note that older versions of gimp 1.1 have the compatibility cruft
+ * stuff partially fixed
+ */
+#if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0)
 #ifndef GIMP_PDB_STRING
 #define GIMP_PDB_STRING PARAM_STRING
 #endif
@@ -1242,5 +1246,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.108 2000/08/28 03:09:58 rlk Exp $".
+ * End of "$Id: print.c,v 1.109 2000/08/29 11:57:49 rlk Exp $".
  */
