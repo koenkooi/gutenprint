@@ -1,7 +1,8 @@
 gimp-print (4.1.5-2) unstable; urgency=low
 
   * Clean up build process so that things work even if some scripts
-    don't have execute permissions, Closes #89283, I hope...
+    don't have execute permissions, complicate things a bit by using
+    funky building script, Closes #89283, I hope...
 
  -- Eric Sharkey <sharkey@debian.org>  Thu, 15 Mar 2001 21:54:52 -0500
 
