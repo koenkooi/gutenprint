@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.39.2.10 2003/01/24 02:52:17 rlk Exp $"
+ * "$Id: escputil.c,v 1.39.2.11 2003/01/28 13:12:59 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -204,6 +204,7 @@ stp_printer_t printer_list[] =
   { "C41ux",	N_("Stylus C41ux"),	3,	15,	0,	2,	9 },
   { "C42sx",	N_("Stylus C42sx"),	3,	15,	0,	2,	9 },
   { "C42ux",	N_("Stylus C42ux"),	3,	15,	0,	2,	9 },
+  { "C50",	N_("Stylus C50"),	3,	15,	0,	2,	9 },
   { "C60",	N_("Stylus C60"),	3,	15,	0,	0,	0 },
   { "C61",	N_("Stylus C61"),	3,	15,	0,	0,	0 },
   { "C62",	N_("Stylus C62"),	3,	15,	0,	0,	0 },
