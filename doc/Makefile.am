@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1.2.7 2001/11/18 15:40:34 sharkey Exp $
+## $Id: Makefile.am,v 1.1.2.8 2002/02/17 04:12:14 sharkey Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,7 @@ gimpprint.dvi: $(EPS_IMAGES) $(addprefix $(srcdir)/,$(gimpprint_TEXINFOS) $(info
 	$(TEXI2DVI) $(TEXI2DVIFLAGS) $(srcdir)/gimpprint.texi
 
 %.eps: %.png
-	  $(CONVERT) $< EPS2:$@
+	  $(CONVERT) $< EPS:$@
 
 html: html-stamp
 	cd users_guide; $(MAKE) html
