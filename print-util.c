@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.105 2000/07/06 12:29:38 rlk Exp $"
+ * "$Id: print-util.c,v 1.106 2000/07/20 01:20:47 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -984,8 +984,20 @@ compute_page_parameters(int page_right,	/* I */
        * Scale by percent...
        */
 
-      *out_width  = *page_width * scaling / 100.0;
-      *out_height = *out_width * image_height / image_width;
+      /*
+       * Decide which orientation gives the proper fit
+       * If we ask for 50%, we do not want to exceed that
+       * in either dimension!
+       */
+
+      int twidth0 = *page_width * scaling / 100.0;
+      int theight0 = twidth0 * image_height / image_width;
+      int theight1 = *page_height * scaling / 100.0;
+      int twidth1 = theight1 * image_width / image_height;
+
+      *out_width = FMIN(twidth0, twidth1);
+      *out_height = FMIN(theight0, theight1);
+
       if (*out_height > *page_height)
 	{
 	  *out_height = *page_height * scaling / 100.0;
