@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/03/24 03:18:11 rlk Exp $
+## $Id: Makefile.am,v 1.3 2001/03/24 03:27:31 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ printer_options_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 $(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../../src/main
 
-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
+EXTRA_DIST = foomatic-printermap foomatic-templates/*.xml
 CLEANFILES = $(noinst_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
 
