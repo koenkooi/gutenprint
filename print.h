@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.75 2000/08/23 02:07:56 rlk Exp $"
+ * "$Id: print.h,v 1.76 2000/08/28 03:09:58 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -104,17 +104,17 @@ typedef struct					/* Plug-in variables */
 	media_source[64],	/* Media source */
 	ink_type[64],		/* Ink or cartridge */
 	dither_algorithm[64];	/* Dithering algorithm */
-  int	brightness;		/* Output brightness */
+  float	brightness;		/* Output brightness */
   float	scaling;		/* Scaling, percent of printable area */
   int	orientation,		/* Orientation - 0 = port., 1 = land.,
 				   -1 = auto */
 	left,			/* Offset from lower-lefthand corner, points */
 	top;			/* ... */
   float gamma;                  /* Gamma */
-  int   contrast,		/* Output Contrast */
-	red,			/* Output red level */
-	green,			/* Output green level */
-	blue;			/* Output blue level */
+  float contrast,		/* Output Contrast */
+	cyan,			/* Output red level */
+	magenta,		/* Output green level */
+	yellow;			/* Output blue level */
   int	linear;			/* Linear density (mostly for testing!) */
   float	saturation;		/* Output saturation */
   float	density;		/* Maximum output density */
@@ -399,8 +399,11 @@ compute_page_parameters(int page_right, int page_left, int page_top,
 
 extern int
 verify_printer_params(const printer_t *, const vars_t *);
+extern const vars_t *print_default_settings(void);
+extern const vars_t *print_maximum_settings(void);
+extern const vars_t *print_minimum_settings(void);
 
 #endif /* PRINT_HEADER */
 /*
- * End of "$Id: print.h,v 1.75 2000/08/23 02:07:56 rlk Exp $".
+ * End of "$Id: print.h,v 1.76 2000/08/28 03:09:58 rlk Exp $".
  */
