@@ -5,7 +5,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.64 2002/12/27 02:21:42 rlk Exp $"
+   "$Id: printers.xml,v 1.65 2002/12/27 18:02:55 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1271,7 +1271,11 @@
       </printer>
     </family>
     <family name="raw">
-      <printer name="RAW DATA" driver="raw-data">
+      <printer name="RAW DATA 16 bit" driver="raw-data-16">
+        <color value="true"/>
+        <model value="0"/>
+      </printer>
+      <printer name="RAW DATA 8 bit" driver="raw-data-8">
         <color value="true"/>
         <model value="1"/>
       </printer>

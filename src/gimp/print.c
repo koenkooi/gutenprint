@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.36 2002/12/24 21:04:24 rlk Exp $"
+ * "$Id: print.c,v 1.37 2002/12/27 18:02:54 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -316,7 +316,6 @@ run (char   *name,		/* I - Name of print program. */
   GimpDrawable	*drawable;	/* Drawable for image */
   GimpRunModeType	 run_mode;	/* Current run mode */
   FILE		*prn = NULL;	/* Print file/command */
-  int		 ncolors;	/* Number of colors in colormap */
   GimpParam	*values;	/* Return values */
   gint32         drawable_ID;   /* drawable ID */
   GimpExportReturnType export = GIMP_EXPORT_CANCEL;    /* return value of gimp_export_image() */
@@ -1443,5 +1442,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.36 2002/12/24 21:04:24 rlk Exp $".
+ * End of "$Id: print.c,v 1.37 2002/12/27 18:02:54 rlk Exp $".
  */

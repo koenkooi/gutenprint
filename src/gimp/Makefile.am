@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.24 2002/09/13 08:25:29 rleigh Exp $
+## $Id: Makefile.am,v 1.25 2002/12/27 18:02:54 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ endif
 
 print_SOURCES = \
 	print-image-gimp.c \
+	print-image-thumbnail.c \
 	print-intl.h \
 	print.c \
 	gimp_color_window.c \

@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.36 2002/12/24 21:04:24 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.37 2002/12/27 18:02:55 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -150,5 +150,9 @@ extern void Image_crop(stp_image_t *image, int left, int top,
 extern void Image_rotate_ccw(stp_image_t *image);
 extern void Image_rotate_cw(stp_image_t *image);
 extern void Image_rotate_180(stp_image_t *image);
+
+/* Thumbnails -- keep it simple! */
+
+stp_image_t *Image_Thumbnail_new(const guchar *data, gint w, gint h, gint bpp);
 
 #endif  /* __PRINT_GIMP_H__ */
