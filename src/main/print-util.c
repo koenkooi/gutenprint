@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.8.4.1 2001/03/05 17:44:22 sharkey Exp $"
+ * "$Id: print-util.c,v 1.8.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -70,6 +70,8 @@ typedef struct					/* Plug-in variables */
   float app_gamma;		/* Application gamma */
   int	page_width;		/* Width of page in points */
   int	page_height;		/* Height of page in points */
+  int	input_color_model;	/* Color model for this device */
+  int	output_color_model;	/* Color model for this device */
   void  *lut;			/* Look-up table */
   void  *driver_data;		/* Private data of the driver */
   unsigned char *cmap;		/* Color map */
@@ -93,6 +95,10 @@ typedef struct
   const char *name;
   unsigned width;
   unsigned height;
+  unsigned top;
+  unsigned left;
+  unsigned bottom;
+  unsigned right;
   stp_papersize_unit_t paper_unit;
 } stp_internal_papersize_t;
 
@@ -125,7 +131,9 @@ static const stp_internal_vars_t default_vars =
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	COLOR_MODEL_RGB,		/* Input color model */
+	COLOR_MODEL_RGB		/* Output color model */
 };
 
 static const stp_internal_vars_t min_vars =
@@ -157,7 +165,9 @@ static const stp_internal_vars_t min_vars =
 	0,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	0,			/* Input color model */
+	0			/* Output color model */
 };
 
 static const stp_internal_vars_t max_vars =
@@ -171,7 +181,7 @@ static const stp_internal_vars_t max_vars =
 	"",			/* Source of output media */
 	"",			/* Ink type */
 	"",			/* Dither algorithm */
-	1,			/* Color or grayscale output */
+	OUTPUT_RAW_CMYK,	/* Color or grayscale output */
 	2.0,			/* Output brightness */
 	100.0,			/* Scaling (100% means entire printable area, */
 				/*          -XXX means scale by PPI) */
@@ -189,13 +199,15 @@ static const stp_internal_vars_t max_vars =
 	1,			/* Unit 0=Inch */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
-	0			/* Page height */
+	0,			/* Page height */
+	NCOLOR_MODELS - 1,	/* Input color model */
+	NCOLOR_MODELS - 1	/* Output color model */
 };
 
 stp_vars_t
 stp_allocate_vars()
 {
-  void *retval = xmalloc(sizeof(stp_internal_vars_t));
+  void *retval = stp_malloc(sizeof(stp_internal_vars_t));
   memset(retval, 0, sizeof(stp_internal_vars_t));
   stp_copy_vars(retval, (const stp_vars_t) &default_vars);
   return (retval);
@@ -215,13 +227,13 @@ c_strdup(const char *s)
   char *ret;
   if (!s)
     {
-      ret = xmalloc(1);
+      ret = stp_malloc(1);
       ret[0] = 0;
       return ret;
     }
   else
     {
-      ret = xmalloc(strlen(s) + 1);
+      ret = stp_malloc(strlen(s) + 1);
       strcpy(ret, s);
       return ret;
     }
@@ -233,13 +245,13 @@ c_strndup(const char *s, int n)
   char *ret;
   if (!s || n < 0)
     {
-      ret = xmalloc(1);
+      ret = stp_malloc(1);
       ret[0] = 0;
       return ret;
     }
   else
     {
-      ret = xmalloc(n + 1);
+      ret = stp_malloc(n + 1);
       strncpy(ret, s, n);
       ret[n] = 0;
       return ret;
@@ -321,6 +333,8 @@ DEF_FUNCS(image_type, int);
 DEF_FUNCS(unit, int);
 DEF_FUNCS(page_width, int);
 DEF_FUNCS(page_height, int);
+DEF_FUNCS(input_color_model, int);
+DEF_FUNCS(output_color_model, int);
 DEF_FUNCS(brightness, float);
 DEF_FUNCS(scaling, float);
 DEF_FUNCS(gamma, float);
@@ -336,6 +350,8 @@ DEF_FUNCS(outdata, void *);
 DEF_FUNCS(errdata, void *);
 DEF_FUNCS(driver_data, void *);
 DEF_FUNCS(cmap, unsigned char *);
+DEF_FUNCS(outfunc, stp_outfunc_t);
+DEF_FUNCS(errfunc, stp_outfunc_t);
 
 void
 stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
@@ -344,6 +360,7 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
     return;
   stp_set_output_to(vd, stp_get_output_to(vs));
   stp_set_driver(vd, stp_get_driver(vs));
+  stp_set_driver_data(vd, stp_get_driver_data(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));
   stp_set_resolution(vd, stp_get_resolution(vs));
   stp_set_media_size(vd, stp_get_media_size(vs));
@@ -369,6 +386,8 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_saturation(vd, stp_get_saturation(vs));
   stp_set_density(vd, stp_get_density(vs));
   stp_set_app_gamma(vd, stp_get_app_gamma(vs));
+  stp_set_input_color_model(vd, stp_get_input_color_model(vd));
+  stp_set_output_color_model(vd, stp_get_output_color_model(vd));
   stp_set_lut(vd, stp_get_lut(vs));
   stp_set_outdata(vd, stp_get_outdata(vs));
   stp_set_errdata(vd, stp_get_errdata(vs));
@@ -383,34 +402,6 @@ stp_allocate_copy(const stp_vars_t vs)
   stp_vars_t vd = stp_allocate_vars();
   stp_copy_vars(vd, vs);
   return (vd);
-}
-
-void
-stp_set_outfunc(stp_vars_t vv, stp_outfunc_t outfunc)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
-  v->outfunc = outfunc;
-}
-
-stp_outfunc_t
-stp_get_outfunc(const stp_vars_t vv)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
-  return (v->outfunc);
-}
-
-void
-stp_set_errfunc(stp_vars_t vv, stp_outfunc_t errfunc)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
-  v->errfunc = errfunc;
-}
-
-stp_outfunc_t
-stp_get_errfunc(const stp_vars_t vv)
-{
-  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;
-  return (v->errfunc);
 }
 
 #define ICLAMP(value)						\
@@ -456,34 +447,34 @@ stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
 static const stp_internal_papersize_t paper_sizes[] =
 {
   /* Common imperial page sizes */
-  { N_ ("Letter"),   612,  792, PAPERSIZE_ENGLISH },	/* 8.5in x 11in */
-  { N_ ("Legal"),    612, 1008, PAPERSIZE_ENGLISH },	/* 8.5in x 14in */
-  { N_ ("Tabloid"),  792, 1224, PAPERSIZE_ENGLISH },	/*  11in x 17in */
-  { N_ ("Executive"), 522, 756, PAPERSIZE_ENGLISH },	/* 7.25 * 10.5in */
-  { N_ ("Postcard"), 283,  416, PAPERSIZE_ENGLISH },	/* 100mm x 147mm */
-  { N_ ("3x5"),	216,  360, PAPERSIZE_ENGLISH },
-  { N_ ("4x6"),      288,  432, PAPERSIZE_ENGLISH },
-  { N_ ("Epson 4x6 Photo Paper"), 324, 495, PAPERSIZE_ENGLISH },
-  { N_ ("5x7"),      360,  504, PAPERSIZE_ENGLISH },
-  { N_ ("5x8"),      360,  576, PAPERSIZE_ENGLISH },
-  { N_ ("HalfLetter"), 396, 612, PAPERSIZE_ENGLISH },
-  { N_ ("6x8"),      432,  576, PAPERSIZE_ENGLISH },
-  { N_ ("8x10"),     576,  720, PAPERSIZE_ENGLISH },
-  { N_ ("Manual"),   396,  612, PAPERSIZE_ENGLISH },	/* 5.5in x 8.5in */
-  { N_ ("12x18"),    864, 1296, PAPERSIZE_ENGLISH },
-  { N_ ("13x19"),    936, 1368, PAPERSIZE_ENGLISH },
-  { N_ ("Super B"),  936, 1368, PAPERSIZE_ENGLISH },	/* Apparently 13x19. */
+  { N_ ("Letter"),   612,  792, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 8.5in x 11in */
+  { N_ ("Legal"),    612, 1008, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 8.5in x 14in */
+  { N_ ("Tabloid"),  792, 1224, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/*  11in x 17in */
+  { N_ ("Executive"), 522, 756, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 7.25 * 10.5in */
+  { N_ ("Postcard"), 283,  416, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 100mm x 147mm */
+  { N_ ("3x5"),	216,  360, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("4x6"),      288,  432, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("Epson 4x6 Photo Paper"), 324, 495, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("5x7"),      360,  504, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("5x8"),      360,  576, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("HalfLetter"), 396, 612, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("6x8"),      432,  576, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("8x10"),     576,  720, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("Manual"),   396,  612, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 5.5in x 8.5in */
+  { N_ ("12x18"),    864, 1296, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("13x19"),    936, 1368, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("Super B"),  936, 1368, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* Apparently 13x19. */
 
   /* Other common photographic paper sizes */
-  { N_ ("8x12"),	576,  864, PAPERSIZE_ENGLISH }, /* Sometimes used for 35 mm */
-  { N_ ("11x14"),    792, 1008, PAPERSIZE_ENGLISH },
-  { N_ ("16x20"),   1152, 1440, PAPERSIZE_ENGLISH },
-  { N_ ("16x24"),   1152, 1728, PAPERSIZE_ENGLISH }, /* 20x24 for 35 mm */
-  { N_ ("20x24"),   1440, 1728, PAPERSIZE_ENGLISH },
-  { N_ ("20x30"),   1440, 2160, PAPERSIZE_ENGLISH },	/* 24x30 for 35 mm */
-  { N_ ("24x30"),   1728, 2160, PAPERSIZE_ENGLISH },
-  { N_ ("24x36"),   1728, 2592, PAPERSIZE_ENGLISH }, /* Sometimes used for 35 mm */
-  { N_ ("30x40"),   2160, 2880, PAPERSIZE_ENGLISH },
+  { N_ ("8x12"),	576,  864, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* Sometimes used for 35 mm */
+  { N_ ("11x14"),    792, 1008, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("16x20"),   1152, 1440, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("16x24"),   1152, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* 20x24 for 35 mm */
+  { N_ ("20x24"),   1440, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("20x30"),   1440, 2160, 0, 0, 0, 0, PAPERSIZE_ENGLISH },	/* 24x30 for 35 mm */
+  { N_ ("24x30"),   1728, 2160, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("24x36"),   1728, 2592, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* Sometimes used for 35 mm */
+  { N_ ("30x40"),   2160, 2880, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
   /* International Paper Sizes (mostly taken from BS4000:1968) */
 
@@ -495,133 +486,133 @@ static const stp_internal_papersize_t paper_sizes[] =
    * millimetre.  Thus, A0 is 841mm x 1189mm.  Every other A
    * size is obtained by doubling or halving another A size.
    */
-  { N_ ("4A"),       4768, 6749, PAPERSIZE_METRIC },	/* 1682mm x 2378mm */
-  { N_ ("2A"),       3370, 4768, PAPERSIZE_METRIC },	/* 1189mm x 1682mm */
-  { N_ ("A0"),       2384, 3370, PAPERSIZE_METRIC },	/*  841mm x 1189mm */
-  { N_ ("A1"),       1684, 2384, PAPERSIZE_METRIC },	/*  594mm x  841mm */
-  { N_ ("A2"),       1191, 1684, PAPERSIZE_METRIC },	/*  420mm x  594mm */
-  { N_ ("A3"),        842, 1191, PAPERSIZE_METRIC },	/*  297mm x  420mm */
-  { N_ ("A4"),        595,  842, PAPERSIZE_METRIC },	/*  210mm x  297mm */
-  { N_ ("A5"),        420,  595, PAPERSIZE_METRIC },	/*  148mm x  210mm */
-  { N_ ("A6"),        297,  420, PAPERSIZE_METRIC },	/*  105mm x  148mm */
-  { N_ ("A7"),        210,  297, PAPERSIZE_METRIC },	/*   74mm x  105mm */
-  { N_ ("A8"),        148,  210, PAPERSIZE_METRIC },	/*   52mm x   74mm */
-  { N_ ("A9"),        105,  148, PAPERSIZE_METRIC },	/*   37mm x   52mm */
-  { N_ ("A10"),        73,  105, PAPERSIZE_METRIC },	/*   26mm x   37mm */
+  { N_ ("4A"),       4768, 6749, 0, 0, 0, 0, PAPERSIZE_METRIC },	/* 1682mm x 2378mm */
+  { N_ ("2A"),       3370, 4768, 0, 0, 0, 0, PAPERSIZE_METRIC },	/* 1189mm x 1682mm */
+  { N_ ("A0"),       2384, 3370, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  841mm x 1189mm */
+  { N_ ("A1"),       1684, 2384, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  594mm x  841mm */
+  { N_ ("A2"),       1191, 1684, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  420mm x  594mm */
+  { N_ ("A3"),        842, 1191, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  297mm x  420mm */
+  { N_ ("A4"),        595,  842, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  210mm x  297mm */
+  { N_ ("A5"),        420,  595, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  148mm x  210mm */
+  { N_ ("A6"),        297,  420, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  105mm x  148mm */
+  { N_ ("A7"),        210,  297, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   74mm x  105mm */
+  { N_ ("A8"),        148,  210, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   52mm x   74mm */
+  { N_ ("A9"),        105,  148, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   37mm x   52mm */
+  { N_ ("A10"),        73,  105, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   26mm x   37mm */
 
   /*
    * Stock sizes for normal trims.
    * Allowance for trim is 3 millimetres.
    */
-  { N_ ("RA0"),      2437, 3458, PAPERSIZE_METRIC },	/*  860mm x 1220mm */
-  { N_ ("RA1"),      1729, 2437, PAPERSIZE_METRIC },	/*  610mm x  860mm */
-  { N_ ("RA2"),      1218, 1729, PAPERSIZE_METRIC },	/*  430mm x  610mm */
-  { N_ ("RA3"),       864, 1218, PAPERSIZE_METRIC },	/*  305mm x  430mm */
-  { N_ ("RA4"),       609,  864, PAPERSIZE_METRIC },	/*  215mm x  305mm */
+  { N_ ("RA0"),      2437, 3458, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  860mm x 1220mm */
+  { N_ ("RA1"),      1729, 2437, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  610mm x  860mm */
+  { N_ ("RA2"),      1218, 1729, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  430mm x  610mm */
+  { N_ ("RA3"),       864, 1218, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  305mm x  430mm */
+  { N_ ("RA4"),       609,  864, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  215mm x  305mm */
 
   /*
    * Stock sizes for bled work or extra trims.
    */
-  { N_ ("SRA0"),     2551, 3628, PAPERSIZE_METRIC },	/*  900mm x 1280mm */
-  { N_ ("SRA1"),     1814, 2551, PAPERSIZE_METRIC },	/*  640mm x  900mm */
-  { N_ ("SRA2"),     1275, 1814, PAPERSIZE_METRIC },	/*  450mm x  640mm */
-  { N_ ("SRA3"),      907, 1275, PAPERSIZE_METRIC },	/*  320mm x  450mm */
-  { N_ ("SRA4"),      637,  907, PAPERSIZE_METRIC },	/*  225mm x  320mm */
+  { N_ ("SRA0"),     2551, 3628, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  900mm x 1280mm */
+  { N_ ("SRA1"),     1814, 2551, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  640mm x  900mm */
+  { N_ ("SRA2"),     1275, 1814, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  450mm x  640mm */
+  { N_ ("SRA3"),      907, 1275, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  320mm x  450mm */
+  { N_ ("SRA4"),      637,  907, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  225mm x  320mm */
 
   /*
    * "B" series: Posters, wall charts and similar items.
    */
-  { N_ ("4B ISO"),   5669, 8016, PAPERSIZE_METRIC },	/* 2000mm x 2828mm */
-  { N_ ("2B ISO"),   4008, 5669, PAPERSIZE_METRIC },	/* 1414mm x 2000mm */
-  { N_ ("B0 ISO"),   2834, 4008, PAPERSIZE_METRIC },	/* 1000mm x 1414mm */
-  { N_ ("B1 ISO"),   2004, 2834, PAPERSIZE_METRIC },	/*  707mm x 1000mm */
-  { N_ ("B2 ISO"),   1417, 2004, PAPERSIZE_METRIC },	/*  500mm x  707mm */
-  { N_ ("B3 ISO"),   1000, 1417, PAPERSIZE_METRIC },	/*  353mm x  500mm */
-  { N_ ("B4 ISO"),    708, 1000, PAPERSIZE_METRIC },	/*  250mm x  353mm */
-  { N_ ("B5 ISO"),    498,  708, PAPERSIZE_METRIC },	/*  176mm x  250mm */
-  { N_ ("B6 ISO"),    354,  498, PAPERSIZE_METRIC },	/*  125mm x  176mm */
-  { N_ ("B7 ISO"),    249,  354, PAPERSIZE_METRIC },	/*   88mm x  125mm */
-  { N_ ("B8 ISO"),    175,  249, PAPERSIZE_METRIC },	/*   62mm x   88mm */
-  { N_ ("B9 ISO"),    124,  175, PAPERSIZE_METRIC },	/*   44mm x   62mm */
-  { N_ ("B10 ISO"),    87,  124, PAPERSIZE_METRIC },	/*   31mm x   44mm */
+  { N_ ("4B ISO"),   5669, 8016, 0, 0, 0, 0, PAPERSIZE_METRIC },	/* 2000mm x 2828mm */
+  { N_ ("2B ISO"),   4008, 5669, 0, 0, 0, 0, PAPERSIZE_METRIC },	/* 1414mm x 2000mm */
+  { N_ ("B0 ISO"),   2834, 4008, 0, 0, 0, 0, PAPERSIZE_METRIC },	/* 1000mm x 1414mm */
+  { N_ ("B1 ISO"),   2004, 2834, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  707mm x 1000mm */
+  { N_ ("B2 ISO"),   1417, 2004, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  500mm x  707mm */
+  { N_ ("B3 ISO"),   1000, 1417, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  353mm x  500mm */
+  { N_ ("B4 ISO"),    708, 1000, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  250mm x  353mm */
+  { N_ ("B5 ISO"),    498,  708, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  176mm x  250mm */
+  { N_ ("B6 ISO"),    354,  498, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  125mm x  176mm */
+  { N_ ("B7 ISO"),    249,  354, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   88mm x  125mm */
+  { N_ ("B8 ISO"),    175,  249, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   62mm x   88mm */
+  { N_ ("B9 ISO"),    124,  175, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   44mm x   62mm */
+  { N_ ("B10 ISO"),    87,  124, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   31mm x   44mm */
 
-  { N_ ("B0 JIS"),   2919, 4127, PAPERSIZE_METRIC },
-  { N_ ("B1 JIS"),   2063, 2919, PAPERSIZE_METRIC },
-  { N_ ("B2 JIS"),   1459, 2063, PAPERSIZE_METRIC },
-  { N_ ("B3 JIS"),   1029, 1459, PAPERSIZE_METRIC },
-  { N_ ("B4 JIS"),    727, 1029, PAPERSIZE_METRIC },
-  { N_ ("B5 JIS"),    518,  727, PAPERSIZE_METRIC },
-  { N_ ("B6 JIS"),    362,  518, PAPERSIZE_METRIC },
-  { N_ ("B7 JIS"),    257,  362, PAPERSIZE_METRIC },
-  { N_ ("B8 JIS"),    180,  257, PAPERSIZE_METRIC },
-  { N_ ("B9 JIS"),    127,  180, PAPERSIZE_METRIC },
-  { N_ ("B10 JIS"),    90,  127, PAPERSIZE_METRIC },
+  { N_ ("B0 JIS"),   2919, 4127, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B1 JIS"),   2063, 2919, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B2 JIS"),   1459, 2063, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B3 JIS"),   1029, 1459, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B4 JIS"),    727, 1029, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B5 JIS"),    518,  727, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B6 JIS"),    362,  518, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B7 JIS"),    257,  362, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B8 JIS"),    180,  257, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B9 JIS"),    127,  180, 0, 0, 0, 0, PAPERSIZE_METRIC },
+  { N_ ("B10 JIS"),    90,  127, 0, 0, 0, 0, PAPERSIZE_METRIC },
 
   /*
    * "C" series: Envelopes or folders suitable for A size stationery.
    */
-  { N_ ("C0"),       2599, 3676, PAPERSIZE_METRIC },	/*  917mm x 1297mm */
-  { N_ ("C1"),       1836, 2599, PAPERSIZE_METRIC },	/*  648mm x  917mm */
-  { N_ ("C2"),       1298, 1836, PAPERSIZE_METRIC },	/*  458mm x  648mm */
-  { N_ ("C3"),        918, 1298, PAPERSIZE_METRIC },	/*  324mm x  458mm */
-  { N_ ("C4"),        649,  918, PAPERSIZE_METRIC },	/*  229mm x  324mm */
-  { N_ ("C5"),        459,  649, PAPERSIZE_METRIC },	/*  162mm x  229mm */
-  { N_ ("B6-C4"),     354,  918, PAPERSIZE_METRIC },	/*  125mm x  324mm */
-  { N_ ("C6"),        323,  459, PAPERSIZE_METRIC },	/*  114mm x  162mm */
-  { N_ ("DL"),        311,  623, PAPERSIZE_METRIC },	/*  110mm x  220mm */
-  { N_ ("C7-6"),      229,  459, PAPERSIZE_METRIC },	/*   81mm x  162mm */
-  { N_ ("C7"),        229,  323, PAPERSIZE_METRIC },	/*   81mm x  114mm */
-  { N_ ("C8"),        161,  229, PAPERSIZE_METRIC },	/*   57mm x   81mm */
-  { N_ ("C9"),        113,  161, PAPERSIZE_METRIC },	/*   40mm x   57mm */
-  { N_ ("C10"),        79,  113, PAPERSIZE_METRIC },	/*   28mm x   40mm */
+  { N_ ("C0"),       2599, 3676, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  917mm x 1297mm */
+  { N_ ("C1"),       1836, 2599, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  648mm x  917mm */
+  { N_ ("C2"),       1298, 1836, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  458mm x  648mm */
+  { N_ ("C3"),        918, 1298, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  324mm x  458mm */
+  { N_ ("C4"),        649,  918, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  229mm x  324mm */
+  { N_ ("C5"),        459,  649, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  162mm x  229mm */
+  { N_ ("B6-C4"),     354,  918, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  125mm x  324mm */
+  { N_ ("C6"),        323,  459, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  114mm x  162mm */
+  { N_ ("DL"),        311,  623, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*  110mm x  220mm */
+  { N_ ("C7-6"),      229,  459, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   81mm x  162mm */
+  { N_ ("C7"),        229,  323, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   81mm x  114mm */
+  { N_ ("C8"),        161,  229, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   57mm x   81mm */
+  { N_ ("C9"),        113,  161, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   40mm x   57mm */
+  { N_ ("C10"),        79,  113, 0, 0, 0, 0, PAPERSIZE_METRIC },	/*   28mm x   40mm */
 
   /*
    * US CAD standard paper sizes
    */
-  { N_ ("ArchA"),	 648,  864, PAPERSIZE_ENGLISH },
-  { N_ ("ArchB"),	 864, 1296, PAPERSIZE_ENGLISH },
-  { N_ ("ArchC"),	1296, 1728, PAPERSIZE_ENGLISH },
-  { N_ ("ArchD"),	1728, 2592, PAPERSIZE_ENGLISH },
-  { N_ ("ArchE"),	2592, 3456, PAPERSIZE_ENGLISH },
+  { N_ ("ArchA"),	 648,  864, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("ArchB"),	 864, 1296, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("ArchC"),	1296, 1728, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("ArchD"),	1728, 2592, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("ArchE"),	2592, 3456, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
   /*
    * Foolscap
    */
-  { N_ ("flsa"),	 612,  936, PAPERSIZE_ENGLISH }, /* American foolscap */
-  { N_ ("flse"),	 648,  936, PAPERSIZE_ENGLISH }, /* European foolscap */
+  { N_ ("flsa"),	 612,  936, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* American foolscap */
+  { N_ ("flse"),	 648,  936, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* European foolscap */
 
   /*
    * Sizes for book production
    * The BPIF and the Publishers Association jointly recommend ten
    * standard metric sizes for case-bound titles as follows:
    */
-  { N_ ("Crown Quarto"),       535,  697, PAPERSIZE_METRIC }, /* 189mm x 246mm */
-  { N_ ("Large Crown Quarto"), 569,  731, PAPERSIZE_METRIC }, /* 201mm x 258mm */
-  { N_ ("Demy Quarto"),        620,  782, PAPERSIZE_METRIC }, /* 219mm x 276mm */
-  { N_ ("Royal Quarto"),       671,  884, PAPERSIZE_METRIC }, /* 237mm x 312mm */
-/*{ "ISO A4",             595,  841, PAPERSIZE_METRIC },    210mm x 297mm */
-  { N_ ("Crown Octavo"),       348,  527, PAPERSIZE_METRIC }, /* 123mm x 186mm */
-  { N_ ("Large Crown Octavo"), 365,  561, PAPERSIZE_METRIC }, /* 129mm x 198mm */
-  { N_ ("Demy Octavo"),        391,  612, PAPERSIZE_METRIC }, /* 138mm x 216mm */
-  { N_ ("Royal Octavo"),       442,  663, PAPERSIZE_METRIC }, /* 156mm x 234mm */
-/*{ N_ ("ISO A5"),             419,  595, PAPERSIZE_METRIC },    148mm x 210mm */
+  { N_ ("Crown Quarto"),       535,  697, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 189mm x 246mm */
+  { N_ ("Large Crown Quarto"), 569,  731, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 201mm x 258mm */
+  { N_ ("Demy Quarto"),        620,  782, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 219mm x 276mm */
+  { N_ ("Royal Quarto"),       671,  884, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 237mm x 312mm */
+/*{ "ISO A4",             595,  841, PAPERSIZE_METRIC, 0, 0, 0, 0 },    210mm x 297mm */
+  { N_ ("Crown Octavo"),       348,  527, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 123mm x 186mm */
+  { N_ ("Large Crown Octavo"), 365,  561, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 129mm x 198mm */
+  { N_ ("Demy Octavo"),        391,  612, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 138mm x 216mm */
+  { N_ ("Royal Octavo"),       442,  663, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 156mm x 234mm */
+/*{ N_ ("ISO A5"),             419,  595, 0, 0, 0, 0, PAPERSIZE_METRIC },    148mm x 210mm */
 
   /* Paperback sizes in common usage */
-  { N_ ("Small paperback"),         314, 504, PAPERSIZE_METRIC }, /* 111mm x 178mm */
-  { N_ ("Penguin small paperback"), 314, 513, PAPERSIZE_METRIC }, /* 111mm x 181mm */
-  { N_ ("Penguin large paperback"), 365, 561, PAPERSIZE_METRIC }, /* 129mm x 198mm */
+  { N_ ("Small paperback"),         314, 504, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 111mm x 178mm */
+  { N_ ("Penguin small paperback"), 314, 513, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 111mm x 181mm */
+  { N_ ("Penguin large paperback"), 365, 561, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 129mm x 198mm */
 
   /* Miscellaneous sizes */
-  { N_ ("Hagaki Card"), 283, 420, PAPERSIZE_METRIC }, /* 100 x 148 mm */
-  { N_ ("Oufuku Card"), 420, 567, PAPERSIZE_METRIC }, /* 148 x 200 mm */
-  { N_ ("Long 3"), 340, 666, PAPERSIZE_METRIC }, /* Japanese long envelope #3 */
-  { N_ ("Long 4"), 255, 581, PAPERSIZE_METRIC }, /* Japanese long envelope #4 */
-  { N_ ("Kaku"), 680, 941, PAPERSIZE_METRIC }, /* Japanese Kaku envelope #4 */
-  { N_ ("Commercial 10"), 297, 684, PAPERSIZE_ENGLISH }, /* US Commercial 10 env */
-  { N_ ("A2 Invitation"), 315, 414, PAPERSIZE_ENGLISH }, /* US A2 invitation */
-  { N_ ("Custom"), 0, 0, PAPERSIZE_ENGLISH },
+  { N_ ("Hagaki Card"), 283, 420, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 100 x 148 mm */
+  { N_ ("Oufuku Card"), 420, 567, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* 148 x 200 mm */
+  { N_ ("Long 3"), 340, 666, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese long envelope #3 */
+  { N_ ("Long 4"), 255, 581, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese long envelope #4 */
+  { N_ ("Kaku"), 680, 941, 0, 0, 0, 0, PAPERSIZE_METRIC }, /* Japanese Kaku envelope #4 */
+  { N_ ("Commercial 10"), 297, 684, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US Commercial 10 env */
+  { N_ ("A2 Invitation"), 315, 414, 0, 0, 0, 0, PAPERSIZE_ENGLISH }, /* US A2 invitation */
+  { N_ ("Custom"), 0, 0, 0, 0, 0, 0, PAPERSIZE_ENGLISH },
 
-  { "",           0,    0, PAPERSIZE_METRIC }
+  { "",           0,    0, 0, 0, 0, 0, PAPERSIZE_METRIC }
 };
 
 int
@@ -649,6 +640,34 @@ stp_papersize_get_height(const stp_papersize_t pt)
 {
   const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
   return p->height;
+}
+
+unsigned
+stp_papersize_get_top(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->top;
+}
+
+unsigned
+stp_papersize_get_left(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->left;
+}
+
+unsigned
+stp_papersize_get_bottom(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->bottom;
+}
+
+unsigned
+stp_papersize_get_right(const stp_papersize_t pt)
+{
+  const stp_internal_papersize_t *p = (const stp_internal_papersize_t *) pt;
+  return p->right;
 }
 
 stp_papersize_unit_t
@@ -721,7 +740,7 @@ stp_default_media_size(const stp_printer_t printer,
         	   int  *width,		/* O - Width in points */
         	   int  *height)	/* O - Height in points */
 {
-  if (stp_get_page_width(v) > stp_get_page_height(v) > 0)
+  if (stp_get_page_width(v) > 0 && stp_get_page_height(v) > 0)
     {
       *width = stp_get_page_width(v);
       *height = stp_get_page_height(v);
@@ -1118,12 +1137,15 @@ stp_minimum_settings()
   return (stp_vars_t) &min_vars;
 }
 
-#ifdef DISABLE_NLS
+#if defined DISABLE_NLS || !defined HAVE_VASPRINTF
 #if __STDC__
 # include <stdarg.h>
 #else
 # include <varargs.h>
 #endif
+
+static int vasprintf (char **result, const char *format, va_list args);
+static int int_vasprintf (char **result, const char *format, va_list *args);
 
 static int
 int_vasprintf (char **result, const char *format, va_list *args)
@@ -1256,6 +1278,18 @@ stp_eprintf(const stp_vars_t v, const char *format, ...)
   free(result);
 }
 
+void *
+stp_malloc (size_t size)
+{
+  register void *memptr = NULL;
+
+  if ((memptr = malloc (size)) == NULL)
+    {
+      fprintf (stderr, "Virtual memory exhausted.\n");
+      exit (EXIT_FAILURE);
+    }
+  return (memptr);
+}
 
 
 #ifdef QUANTIFY

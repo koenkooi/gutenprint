@@ -1,5 +1,5 @@
 /*
- * $Id: xmalloc.c,v 1.2 2001/02/02 01:25:32 rleigh Exp $
+ * $Id: xmalloc.c,v 1.2.4.1 2001/04/30 17:47:11 sharkey Exp $
  * gimp-print memory allocation functions.
  * Copyright (C) 1999,2000  Roger Leigh
  *
@@ -26,9 +26,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-void *xmalloc (size_t);
-void *stp_realloc (void *, size_t);
+void *xmalloc (size_t size);
+void *xrealloc (void *ptr, size_t size);
+void *xcalloc (size_t count, size_t size);
 
 
 /******************************************************************************

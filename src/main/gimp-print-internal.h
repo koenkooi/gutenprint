@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.4.1 2001/03/05 17:44:21 sharkey Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -198,7 +198,7 @@ typedef struct stp_softweave
   int oversample;		/* Excess precision per row */
   int repeat_count;		/* How many times a pass is repeated */
   int ncolors;			/* How many colors (1, 4, or 6) */
-  int horizontal_width;		/* Line width in output pixels */
+  int linewidth;		/* Line width in input pixels */
   int vertical_height;		/* Image height in output pixels */
   int firstline;		/* Actual first line (referenced to paper) */
 
@@ -219,12 +219,13 @@ typedef struct stp_softweave
   int rcache;
   int vcache;
   stp_vars_t v;
-  void (*flushfunc)(struct stp_softweave *sw,
-		    int passno, int model,
-		    int width, int hoffset,
-		    int ydpi, int xdpi,
-		    int physical_xdpi,
-		    int vertical_subpass);
+  void (*flushfunc)(struct stp_softweave *sw, int passno, int model,
+		    int width, int hoffset, int ydpi, int xdpi,
+		    int physical_xdpi, int vertical_subpass);
+  void (*fill_start)(struct stp_softweave *sw, int row, int subpass,
+		     int width, int missingstartrows, int color);
+  int (*pack)(const unsigned char *in, int bytes,
+	      unsigned char *out, unsigned char **optr);
 } stp_softweave_t;
 
 /*
@@ -259,12 +260,10 @@ extern void	stp_dither_set_density(void *vd, double);
 extern void	stp_dither_set_black_density(void *vd, double);
 extern void 	stp_dither_set_black_lower(void *vd, double);
 extern void 	stp_dither_set_black_upper(void *vd, double);
-extern void	stp_dither_set_black_levels(void *vd, double, double, double);
-extern void 	stp_dither_set_randomizers(void *vd, double, double, double,
-					   double);
-extern void 	stp_dither_set_ink_darkness(void *vd, double, double, double);
-extern void 	stp_dither_set_light_inks(void *vd, double, double, double,
-					  double);
+extern void	stp_dither_set_black_level(void *vd, int color, double);
+extern void 	stp_dither_set_randomizer(void *vd, int color, double);
+extern void 	stp_dither_set_ink_darkness(void *vd, int color, double);
+extern void 	stp_dither_set_light_ink(void *vd, int color, double, double);
 extern void	stp_dither_set_ranges(void *vd, int color, int nlevels,
 				      const stp_simple_dither_range_t *ranges,
 				      double density);
@@ -281,6 +280,8 @@ extern void	stp_dither_set_max_ink(void *vd, int, double);
 extern void	stp_dither_set_x_oversample(void *vd, int os);
 extern void	stp_dither_set_y_oversample(void *vd, int os);
 extern void	stp_dither_set_adaptive_divisor(void *vd, unsigned divisor);
+extern int	stp_dither_get_first_position(void *vd, int color, int dark);
+extern int	stp_dither_get_last_position(void *vd, int color, int dark);
 
 
 extern void	stp_free_dither(void *);
@@ -291,7 +292,7 @@ extern void	stp_dither(const unsigned short *, int, void *,
 			   unsigned char *, unsigned char *,
 			   unsigned char *, unsigned char *,
 			   unsigned char *, unsigned char *,
-			   int duplicate_line);
+			   int duplicate_line, int zero_mask);
 
 extern void	stp_fold(const unsigned char *line, int single_height,
 			 unsigned char *outbuf);
@@ -316,8 +317,13 @@ extern void	stp_unpack_8(int height, int bits, const unsigned char *in,
 			     unsigned char *out4, unsigned char *out5,
 			     unsigned char *out6, unsigned char *out7);
 
-extern int	stp_pack(const unsigned char *line, int height,
-			 unsigned char *comp_buf, unsigned char **comp_ptr);
+extern int	stp_pack_tiff(const unsigned char *line, int height,
+			      unsigned char *comp_buf,
+			      unsigned char **comp_ptr);
+
+extern int	stp_pack_uncompressed(const unsigned char *line, int height,
+				      unsigned char *comp_buf,
+				      unsigned char **comp_ptr);
 
 extern void *stp_initialize_weave(int jets, int separation, int oversample,
 				  int horizontal, int vertical,
@@ -331,7 +337,26 @@ extern void *stp_initialize_weave(int jets, int separation, int oversample,
 						    int width, int hoffset,
 						    int ydpi, int xdpi,
 						    int physical_xdpi,
-						    int vertical_subpass));
+						    int vertical_subpass),
+				  void (*fill_start)(stp_softweave_t *sw,
+						     int row,
+						     int subpass, int width,
+						     int missingstartrows,
+						     int vertical_subpass),
+				  int (*pack)(const unsigned char *in,
+					      int bytes, unsigned char *out,
+					      unsigned char **optr),
+				  int (*compute_linewidth)(const stp_softweave_t *sw));
+
+extern void stp_fill_tiff(stp_softweave_t *sw, int row, int subpass,
+			  int width, int missingstartrows, int color);
+extern void stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
+				  int width, int missingstartrows, int color);
+
+extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw);
+extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw);
+
+
 
 extern void stp_flush_all(void *, int model, int width, int hoffset,
 			  int ydpi, int xdpi, int physical_xdpi);
@@ -382,6 +407,7 @@ extern void stp_puts(const char *s, const stp_vars_t v);
 
 extern void stp_eprintf(const stp_vars_t v, const char *format, ...);
 
+extern void *stp_malloc (size_t);
 
 /* Uncomment the next line to get performance statistics:
  * look for QUANT(#) in the code. At the end of escp2-print
@@ -446,5 +472,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.4.1 2001/03/05 17:44:21 sharkey Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.4.2 2001/04/30 17:47:12 sharkey Exp $".
  */

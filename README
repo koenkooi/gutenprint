@@ -1,4 +1,4 @@
-This is Gimp-Print version 4.1.5, a development release in the 4.1
+This is Gimp-Print version 4.1.6, a development release in the 4.1
 line.  Gimp-print is the print facility for the Gimp, and in addition
 a suite of drivers that may be used with common UNIX spooling systems
 using GhostScript or CUPS.  These drivers provide printing quality for
@@ -38,15 +38,20 @@ If you have installed the Gimp from source on Linux: after running
 make install, you must run ldconfig as root before attempting to build
 this plugin.
 
-Gimp-print 4.1 requires the Gimp 1.2.
+Gimp-print 4.1 requires the Gimp 1.2.  As of Gimp-print 4.1.6, the
+plugin will no longer compile against the Gimp 1.0 or 1.1.  While the
+plugin should continue to compile against the Gimp 1.1.21 and above
+(in the 1.1 line), such use is not supported.
 
 
 GHOSTSCRIPT
 
 This package includes a Ghostscript driver that may be built, allowing
 use of this software for general printing purposes.  Please read
-src/ghost/README for more information, including how to build and install
-it.  To build the Ghostscript driver, you must run:
+src/ghost/README for more information, including how to build and
+install it; the build procedure here merely creates the necessary
+source files that you must add to your Ghostscript source.  To build
+the Ghostscript driver, you must run:
 
 ./configure --with-ghost
 make
@@ -74,6 +79,49 @@ The last command varies with OS.  It may be /etc/init.d/cups,
 If you do not wish to build the Gimp Print plugin, you must run
 
 ./configure --with-cups --without-gimp
+
+
+FOOMATIC
+
+This package includes support for the Foomatic meta-driver package.
+This requires the foomatic-xml distribution.  Foomatic is available
+from http://www.linuxprinting.org/foomatic.html.  It also will soon
+(as of April 2001) be available in Debian unstable.  For best results,
+use the version in cvs.
+
+To build the Foomatic data, you must run:
+
+./configure --with-foomatic
+make
+make install
+
+The "make install" step will add the necessary data to your Foomatic
+installation.  It will not create the spooler-specific data files; to
+do that, you must follow this procedure:
+
+     - examine the output of `foomatic-configure -O', and find the
+       foomatic ID for your printer.
+
+     - Run foomatic-datafile with that printer ID, the driver name
+       'gimp-print', and the spooler type you wish to use.
+       foomatic-datafile -h explains how to run this program.  It will
+       generate a foomatic filter datafile on stdout.
+
+     - This datafile may then be used instead of the ones from the
+       linxuprinting.org website.  Follow the instructions for your
+       spooler from the website to install the data file and filter.
+
+Note that it almost never makes sense to build the Foomatic driver
+without also building the Ghostscript driver.  Please read the
+instructions above in the GHOSTSCRIPT section.
+
+If you do not wish to build the Gimp Print plugin, you must run
+
+./configure --with-foomatic --without-gimp
+
+Please visit http://www.linuxprinting.org/foomatic.html for more
+information on Foomatic.  The current Foomatic data was generated for
+"Phase 2".
 
 
 RECOMMENDED SETTINGS

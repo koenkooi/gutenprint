@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.12.4.1 2001/03/05 17:44:22 sharkey Exp $"
+ * "$Id: print-weave.c,v 1.12.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -372,8 +372,8 @@ invert_map(int *map, int *stagger, int count, int oldfirstpass,
 {
 	int i;
 	int *newmap, *newstagger;
-	newmap = xmalloc(count * sizeof(int));
-	newstagger = xmalloc(count * sizeof(int));
+	newmap = stp_malloc(count * sizeof(int));
+	newstagger = stp_malloc(count * sizeof(int));
 
 	for (i = 0; i < count; i++) {
 		newmap[map[i] - oldfirstpass] = i + newfirstpass;
@@ -399,8 +399,8 @@ make_passmap(raw_t *w, int **map, int **starts, int first_pass_number,
 	assert(first_pass_to_map <= first_pass_after_map, w->v);
 	assert(first_pass_to_stagger <= first_pass_after_stagger, w->v);
 
-	*map = passmap = xmalloc(passes_to_map * sizeof(int));
-	*starts = startrows = xmalloc(passes_to_map * sizeof(int));
+	*map = passmap = stp_malloc(passes_to_map * sizeof(int));
+	*starts = startrows = stp_malloc(passes_to_map * sizeof(int));
 
 	for (i = 0; i < passes_to_map; i++) {
 		int startrow, subpass;
@@ -548,7 +548,7 @@ initialize_weave_params(int S,		/* I - jet separation */
                         int strategy,	/* I - weave pattern variant to use */
 			stp_vars_t v)
 {
-	cooked_t *w = xmalloc(sizeof(cooked_t));
+	cooked_t *w = stp_malloc(sizeof(cooked_t));
 	if (w) {
 		initialize_raw_weave(&w->rw, S, J, H, strategy, v);
 		calculate_pass_map(w, pageheight, firstrow, lastrow);
@@ -635,15 +635,15 @@ stp_calculate_row_parameters(void *vw,		/* I - weave parameters */
 
 void
 stp_fold(const unsigned char *line,
-	   int single_height,
+	   int single_length,
 	   unsigned char *outbuf)
 {
   int i;
-  memset(outbuf, 0, single_height * 2);
-  for (i = 0; i < single_height; i++)
+  memset(outbuf, 0, single_length * 2);
+  for (i = 0; i < single_length; i++)
     {
       unsigned char l0 = line[0];
-      unsigned char l1 = line[single_height];
+      unsigned char l1 = line[single_length];
       if (l0 || l1)
 	{
 	  outbuf[0] =
@@ -671,7 +671,7 @@ stp_fold(const unsigned char *line,
 }
 
 static void
-stp_split_2_1(int height,
+stp_split_2_1(int length,
 		const unsigned char *in,
 		unsigned char *outhi,
 		unsigned char *outlo)
@@ -679,7 +679,7 @@ stp_split_2_1(int height,
   unsigned char *outs[2];
   int i;
   int row = 0;
-  int limit = height * 2;
+  int limit = length * 2;
   outs[0] = outhi;
   outs[1] = outlo;
   memset(outs[1], 0, limit);
@@ -734,7 +734,7 @@ stp_split_2_1(int height,
 }
 
 static void
-stp_split_2_2(int height,
+stp_split_2_2(int length,
 		const unsigned char *in,
 		unsigned char *outhi,
 		unsigned char *outlo)
@@ -742,7 +742,7 @@ stp_split_2_2(int height,
   unsigned char *outs[2];
   int i;
   unsigned row = 0;
-  int limit = height * 2;
+  int limit = length * 2;
   outs[0] = outhi;
   outs[1] = outlo;
   memset(outs[1], 0, limit);
@@ -777,20 +777,20 @@ stp_split_2_2(int height,
 }
 
 void
-stp_split_2(int height,
+stp_split_2(int length,
 	      int bits,
 	      const unsigned char *in,
 	      unsigned char *outhi,
 	      unsigned char *outlo)
 {
   if (bits == 2)
-    stp_split_2_2(height, in, outhi, outlo);
+    stp_split_2_2(length, in, outhi, outlo);
   else
-    stp_split_2_1(height, in, outhi, outlo);
+    stp_split_2_1(length, in, outhi, outlo);
 }
 
 static void
-stp_split_4_1(int height,
+stp_split_4_1(int length,
 		const unsigned char *in,
 		unsigned char *out0,
 		unsigned char *out1,
@@ -800,7 +800,7 @@ stp_split_4_1(int height,
   unsigned char *outs[4];
   int i;
   int row = 0;
-  int limit = height * 2;
+  int limit = length * 2;
   outs[0] = out0;
   outs[1] = out1;
   outs[2] = out2;
@@ -859,7 +859,7 @@ stp_split_4_1(int height,
 }
 
 static void
-stp_split_4_2(int height,
+stp_split_4_2(int length,
 		const unsigned char *in,
 		unsigned char *out0,
 		unsigned char *out1,
@@ -869,7 +869,7 @@ stp_split_4_2(int height,
   unsigned char *outs[4];
   int i;
   int row = 0;
-  int limit = height * 2;
+  int limit = length * 2;
   outs[0] = out0;
   outs[1] = out1;
   outs[2] = out2;
@@ -908,7 +908,7 @@ stp_split_4_2(int height,
 }
 
 void
-stp_split_4(int height,
+stp_split_4(int length,
 	      int bits,
 	      const unsigned char *in,
 	      unsigned char *out0,
@@ -917,9 +917,9 @@ stp_split_4(int height,
 	      unsigned char *out3)
 {
   if (bits == 2)
-    stp_split_4_2(height, in, out0, out1, out2, out3);
+    stp_split_4_2(length, in, out0, out1, out2, out3);
   else
-    stp_split_4_1(height, in, out0, out1, out2, out3);
+    stp_split_4_1(length, in, out0, out1, out2, out3);
 }
 
 
@@ -932,137 +932,81 @@ stp_split_4(int height,
 #endif
 
 static void
-stp_unpack_2_1(int height,
+stp_unpack_2_1(int length,
 		 const unsigned char *in,
 		 unsigned char *out0,
 		 unsigned char *out1)
 {
-  unsigned char	tempin,
-		bit,
-		temp0,
-		temp1;
+  unsigned char ti0, ti1;
+  unsigned char to0, to1;
 
+  if (length <= 0)
+    return;
 
-  for (bit = 128, temp0 = 0, temp1 = 0;
-       height > 0;
-       height --)
+  for (;length; length --)
     {
-      tempin = *in++;
+      ti0 = *in++;
+      ti1 = *in++;
 
-      if (tempin & 128)
-        temp0 |= bit;
-      if (tempin & 64)
-        temp1 |= bit;
-
-      bit >>= 1;
-
-      if (tempin & 32)
-        temp0 |= bit;
-      if (tempin & 16)
-        temp1 |= bit;
-
-      bit >>= 1;
-
-      if (tempin & 8)
-        temp0 |= bit;
-      if (tempin & 4)
-        temp1 |= bit;
-
-      bit >>= 1;
-
-      if (tempin & 2)
-        temp0 |= bit;
-      if (tempin & 1)
-        temp1 |= bit;
-
-      if (bit > 1)
-        bit >>= 1;
-      else
-      {
-        bit     = 128;
-	*out0++ = temp0;
-	*out1++ = temp1;
-
-	temp0   = 0;
-	temp1   = 0;
-      }
-    }
-
-  if (bit < 128)
-    {
-      *out0++ = temp0;
-      *out1++ = temp1;
+      to0  = (ti0 & 0x80) << 0;
+      to1  = (ti0 & 0x40) << 1;
+      to0 |= (ti0 & 0x20) << 1;
+      to1 |= (ti0 & 0x10) << 2;
+      to0 |= (ti0 & 0x08) << 2;
+      to1 |= (ti0 & 0x04) << 3;
+      to0 |= (ti0 & 0x02) << 3;
+      to1 |= (ti0 & 0x01) << 4;
+      to0 |= (ti1 & 0x80) >> 4;
+      to1 |= (ti1 & 0x40) >> 3;
+      to0 |= (ti1 & 0x20) >> 3;
+      to1 |= (ti1 & 0x10) >> 2;
+      to0 |= (ti1 & 0x08) >> 2;
+      to1 |= (ti1 & 0x04) >> 1;
+      to0 |= (ti1 & 0x02) >> 1;
+      to1 |= (ti1 & 0x01) >> 0;
+      *out0++ = to0;
+      *out1++ = to1;
     }
 }
 
 static void
-stp_unpack_2_2(int height,
-		 const unsigned char *in,
-		 unsigned char *out0,
-		 unsigned char *out1)
+stp_unpack_2_2(int length,
+	       const unsigned char *in,
+	       unsigned char *out0,
+	       unsigned char *out1)
 {
-  unsigned char	tempin,
-		shift,
-		temp0,
-		temp1;
+  if (length <= 0)
+    return;
 
-
-  height *= 2;
-
-  for (shift = 0, temp0 = 0, temp1 = 0;
-       height > 0;
-       height --)
+  for (;length;length --)
     {
-     /*
-      * Note - we can't use (tempin & N) >> (shift - M) since negative
-      * right-shifts are not always implemented.
-      */
+      unsigned char ti0, ti1;
+      ti0 = in[0];
+      ti1 = in[1];
 
-      tempin = *in++;
-
-      if (tempin & 192)
-        temp0 |= (tempin & 192) >> shift;
-      if (tempin & 48)
-        temp1 |= ((tempin & 48) << 2) >> shift;
-
-      shift += 2;
-
-      if (tempin & 12)
-        temp0 |= ((tempin & 12) << 4) >> shift;
-      if (tempin & 3)
-        temp1 |= ((tempin & 3) << 6) >> shift;
-
-      if (shift < 6)
-        shift += 2;
-      else
-      {
-        shift   = 0;
-	*out0++ = temp0;
-	*out1++ = temp1;
-
-	temp0   = 0;
-	temp1   = 0;
-      }
-    }
-
-  if (shift)
-    {
-      *out0++ = temp0;
-      *out1++ = temp1;
+      *out0++  = (ti0 & 0xc0) << 0
+	| (ti0 & 0x0c) << 2
+	| (ti1 & 0xc0) >> 4
+	| (ti1 & 0x0c) >> 2;
+      *out1++  = (ti0 & 0x30) << 2
+	| (ti0 & 0x03) << 4
+	| (ti1 & 0x30) >> 2
+	| (ti1 & 0x03) >> 0;
+      in += 2;
     }
 }
 
 void
-stp_unpack_2(int height,
+stp_unpack_2(int length,
 	       int bits,
 	       const unsigned char *in,
 	       unsigned char *outlo,
 	       unsigned char *outhi)
 {
   if (bits == 1)
-    stp_unpack_2_1(height, in, outlo, outhi);
+    stp_unpack_2_1(length, in, outlo, outhi);
   else
-    stp_unpack_2_2(height, in, outlo, outhi);
+    stp_unpack_2_2(length, in, outlo, outhi);
 }
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -1078,75 +1022,71 @@ stp_unpack_2(int height,
 #endif
 
 static void
-stp_unpack_4_1(int height,
+stp_unpack_4_1(int length,
 		 const unsigned char *in,
 		 unsigned char *out0,
 		 unsigned char *out1,
 		 unsigned char *out2,
 		 unsigned char *out3)
 {
-  unsigned char	tempin,
-		bit,
-		temp0,
-		temp1,
-		temp2,
-		temp3;
+  unsigned char ti0, ti1, ti2, ti3;
+  unsigned char to0, to1, to2, to3;
 
+  if (length <= 0)
+    return;
 
-  for (bit = 128, temp0 = 0, temp1 = 0, temp2 = 0, temp3 = 0;
-       height > 0;
-       height --)
+  for (;length; length --)
     {
-      tempin = *in++;
+      ti0 = *in++;
+      ti1 = *in++;
+      ti2 = *in++;
+      ti3 = *in++;
 
-      if (tempin & 128)
-        temp0 |= bit;
-      if (tempin & 64)
-        temp1 |= bit;
-      if (tempin & 32)
-        temp2 |= bit;
-      if (tempin & 16)
-        temp3 |= bit;
+      to0  = (ti0 & 0x80) << 0;
+      to1  = (ti0 & 0x40) << 1;
+      to2  = (ti0 & 0x20) << 2;
+      to3  = (ti0 & 0x10) << 3;
+      to0 |= (ti0 & 0x08) << 3;
+      to1 |= (ti0 & 0x04) << 4;
+      to2 |= (ti0 & 0x02) << 5;
+      to3 |= (ti0 & 0x01) << 6;
 
-      bit >>= 1;
+      to0 |= (ti1 & 0x80) >> 2;
+      to1 |= (ti1 & 0x40) >> 1;
+      to2 |= (ti1 & 0x20) >> 0;
+      to3 |= (ti1 & 0x10) << 1;
+      to0 |= (ti1 & 0x08) << 1;
+      to1 |= (ti1 & 0x04) << 2;
+      to2 |= (ti1 & 0x02) << 3;
+      to3 |= (ti1 & 0x01) << 4;
 
-      if (tempin & 8)
-        temp0 |= bit;
-      if (tempin & 4)
-        temp1 |= bit;
-      if (tempin & 2)
-        temp2 |= bit;
-      if (tempin & 1)
-        temp3 |= bit;
+      to0 |= (ti2 & 0x80) >> 4;
+      to1 |= (ti2 & 0x40) >> 3;
+      to2 |= (ti2 & 0x20) >> 2;
+      to3 |= (ti2 & 0x10) >> 1;
+      to0 |= (ti2 & 0x08) >> 1;
+      to1 |= (ti2 & 0x04) >> 0;
+      to2 |= (ti2 & 0x02) << 1;
+      to3 |= (ti2 & 0x01) << 2;
 
-      if (bit > 1)
-        bit >>= 1;
-      else
-      {
-        bit     = 128;
-	*out0++ = temp0;
-	*out1++ = temp1;
-	*out2++ = temp2;
-	*out3++ = temp3;
+      to0 |= (ti3 & 0x80) >> 6;
+      to1 |= (ti3 & 0x40) >> 5;
+      to2 |= (ti3 & 0x20) >> 4;
+      to3 |= (ti3 & 0x10) >> 3;
+      to0 |= (ti3 & 0x08) >> 3;
+      to1 |= (ti3 & 0x04) >> 2;
+      to2 |= (ti3 & 0x02) >> 1;
+      to3 |= (ti3 & 0x01) >> 0;
 
-	temp0   = 0;
-	temp1   = 0;
-	temp2   = 0;
-	temp3   = 0;
-      }
-    }
-
-  if (bit < 128)
-    {
-      *out0++ = temp0;
-      *out1++ = temp1;
-      *out2++ = temp2;
-      *out3++ = temp3;
+      *out0++ = to0;
+      *out1++ = to1;
+      *out2++ = to2;
+      *out3++ = to3;
     }
 }
 
 static void
-stp_unpack_4_2(int height,
+stp_unpack_4_2(int length,
 		 const unsigned char *in,
 		 unsigned char *out0,
 		 unsigned char *out1,
@@ -1161,11 +1101,11 @@ stp_unpack_4_2(int height,
 		temp3;
 
 
-  height *= 2;
+  length *= 2;
 
   for (shift = 0, temp0 = 0, temp1 = 0, temp2 = 0, temp3 = 0;
-       height > 0;
-       height --)
+       length > 0;
+       length --)
     {
      /*
       * Note - we can't use (tempin & N) >> (shift - M) since negative
@@ -1210,7 +1150,7 @@ stp_unpack_4_2(int height,
 }
 
 void
-stp_unpack_4(int height,
+stp_unpack_4(int length,
 	       int bits,
 	       const unsigned char *in,
 	       unsigned char *out0,
@@ -1219,13 +1159,13 @@ stp_unpack_4(int height,
 	       unsigned char *out3)
 {
   if (bits == 1)
-    stp_unpack_4_1(height, in, out0, out1, out2, out3);
+    stp_unpack_4_1(length, in, out0, out1, out2, out3);
   else
-    stp_unpack_4_2(height, in, out0, out1, out2, out3);
+    stp_unpack_4_2(length, in, out0, out1, out2, out3);
 }
 
 static void
-stp_unpack_8_1(int height,
+stp_unpack_8_1(int length,
 		 const unsigned char *in,
 		 unsigned char *out0,
 		 unsigned char *out1,
@@ -1242,8 +1182,8 @@ stp_unpack_8_1(int height,
 
   for (bit = 128, temp0 = 0, temp1 = 0, temp2 = 0,
        temp3 = 0, temp4 = 0, temp5 = 0, temp6 = 0, temp7 = 0;
-       height > 0;
-       height --)
+       length > 0;
+       length --)
     {
       tempin = *in++;
 
@@ -1303,7 +1243,7 @@ stp_unpack_8_1(int height,
 }
 
 static void
-stp_unpack_8_2(int height,
+stp_unpack_8_2(int length,
 		 const unsigned char *in,
 		 unsigned char *out0,
 		 unsigned char *out1,
@@ -1328,8 +1268,8 @@ stp_unpack_8_2(int height,
 
   for (shift = 0, temp0 = 0, temp1 = 0,
        temp2 = 0, temp3 = 0, temp4 = 0, temp5 = 0, temp6 = 0, temp7 = 0;
-       height > 0;
-       height --)
+       length > 0;
+       length --)
     {
      /*
       * Note - we can't use (tempin & N) >> (shift - M) since negative
@@ -1397,7 +1337,7 @@ stp_unpack_8_2(int height,
 }
 
 void
-stp_unpack_8(int height,
+stp_unpack_8(int length,
 	       int bits,
 	       const unsigned char *in,
 	       unsigned char *out0,
@@ -1410,57 +1350,74 @@ stp_unpack_8(int height,
 	       unsigned char *out7)
 {
   if (bits == 1)
-    stp_unpack_8_1(height, in, out0, out1, out2, out3,
+    stp_unpack_8_1(length, in, out0, out1, out2, out3,
 		     out4, out5, out6, out7);
   else
-    stp_unpack_8_2(height, in, out0, out1, out2, out3,
+    stp_unpack_8_2(length, in, out0, out1, out2, out3,
 		     out4, out5, out6, out7);
 }
 
 int
-stp_pack(const unsigned char *line,
-	 int height,
-	 unsigned char *comp_buf,
-	 unsigned char **comp_ptr)
+stp_pack_uncompressed(const unsigned char *line,
+		      int length,
+		      unsigned char *comp_buf,
+		      unsigned char **comp_ptr)
+{
+  int i;
+  memcpy(comp_buf, line, length);
+  *comp_ptr = comp_buf + length;
+  for (i = 0; i < length; i++)
+    if (line[i])
+      return 1;
+  return 0;
+}
+
+int
+stp_pack_tiff(const unsigned char *line,
+	      int length,
+	      unsigned char *comp_buf,
+	      unsigned char **comp_ptr)
 {
   const unsigned char *start;		/* Start of compressed data */
   unsigned char repeat;			/* Repeating char */
   int count;			/* Count of compressed bytes */
   int tcount;			/* Temporary count < 128 */
   int active = 0;		/* Have we found data? */
+  register const unsigned char *xline = line;
+  register int xlength = length;
 
   /*
-   * Compress using TIFF "packbits" run-height encoding...
+   * Compress using TIFF "packbits" run-length encoding...
    */
 
   (*comp_ptr) = comp_buf;
 
-  while (height > 0)
+  while (xlength > 0)
     {
       /*
        * Get a run of non-repeated chars...
        */
 
-      start  = line;
-      line   += 2;
-      height -= 2;
+      start  = xline;
+      xline   += 2;
+      xlength -= 2;
 
-      while (height > 0 && (line[-2] != line[-1] || line[-1] != line[0]))
+      while (xlength > 0 && (xline[-2] != xline[-1] || xline[-1] != xline[0]))
 	{
-	  if (! active && (line[-2] || line[-1] || line[0]))
+	  if (! active && (xline[-2] || xline[-1] || xline[0]))
 	    active = 1;
-	  line ++;
-	  height --;
+	  xline ++;
+	  xlength --;
 	}
 
-      line   -= 2;
-      height += 2;
+      xline   -= 2;
+      xlength += 2;
 
       /*
        * Output the non-repeated sequences (max 128 at a time).
        */
 
-      count = line - start;
+      count = xline - start;
       while (count > 0)
 	{
 	  tcount = count > 128 ? 128 : count;
@@ -1473,32 +1430,37 @@ stp_pack(const unsigned char *line,
 	  count    -= tcount;
 	}
 
-      if (height <= 0)
+      if (xlength <= 0)
 	break;
 
       /*
        * Find the repeated sequences...
        */
 
-      start  = line;
-      repeat = line[0];
+      start  = xline;
+      repeat = xline[0];
       if (repeat)
 	active = 1;
 
-      line ++;
-      height --;
+      xline ++;
+      xlength --;
 
-      while (height > 0 && *line == repeat)
+      if (xlength > 0)
 	{
-	  line ++;
-	  height --;
+	  int ylength = xlength;
+	  while (ylength && *xline == repeat)
+	    {
+	      xline ++;
+	      ylength --;
+	    }
+	  xlength = ylength;
 	}
 
       /*
        * Output the repeated sequences (max 128 at a time).
        */
 
-      count = line - start;
+      count = xline - start;
       while (count > 0)
 	{
 	  tcount = count > 128 ? 128 : count;
@@ -1512,7 +1474,6 @@ stp_pack(const unsigned char *line,
     }
   return active;
 }
-
 
 /*
  * "Soft" weave
@@ -1755,11 +1716,19 @@ stp_initialize_weave(int jets,	/* Width of print head */
 		     void (*flushfunc)(stp_softweave_t *sw, int passno,
 				       int model, int width, int hoffset,
 				       int ydpi, int xdpi, int physical_xdpi,
-				       int vertical_subpass))
+				       int vertical_subpass),
+		     void (*fill_start)(stp_softweave_t *sw, int row,
+					int subpass, int width,
+					int missingstartrows,
+					int vertical_subpass),
+		     int (*pack)(const unsigned char *in, int bytes,
+				 unsigned char *out, unsigned char **optr),
+		     int (*compute_linewidth)(const stp_softweave_t *sw))
 {
   int i;
   int last_line, maxHeadOffset;
-  stp_softweave_t *sw = xmalloc(sizeof (stp_softweave_t));
+  int horizontal_width;
+  stp_softweave_t *sw = stp_malloc(sizeof (stp_softweave_t));
 
   (void) memset(sw, 0, sizeof(stp_softweave_t));
   if (jets < 1)
@@ -1853,19 +1822,22 @@ stp_initialize_weave(int jets,	/* Width of print head */
    * one part in 128.
    */
 
-  sw->horizontal_width = (linewidth + 128 + 7) * 129 / 128;
+  sw->linewidth = linewidth;
   sw->vertical_height = lineheight;
-  sw->lineoffsets = xmalloc(sw->vmod * sizeof(stp_lineoff_t));
+  sw->lineoffsets = stp_malloc(sw->vmod * sizeof(stp_lineoff_t));
   memset(sw->lineoffsets, 0, sw->vmod * sizeof(stp_lineoff_t));
-  sw->lineactive = xmalloc(sw->vmod * sizeof(stp_lineactive_t));
+  sw->lineactive = stp_malloc(sw->vmod * sizeof(stp_lineactive_t));
   memset(sw->lineactive, 0, sw->vmod * sizeof(stp_lineactive_t));
-  sw->linebases = xmalloc(sw->vmod * sizeof(stp_linebufs_t));
-  sw->passes = xmalloc(sw->vmod * sizeof(stp_pass_t));
+  sw->linebases = stp_malloc(sw->vmod * sizeof(stp_linebufs_t));
+  sw->passes = stp_malloc(sw->vmod * sizeof(stp_pass_t));
   memset(sw->passes, 0, sw->vmod * sizeof(stp_pass_t));
-  sw->linecounts = xmalloc(sw->vmod * sizeof(stp_linecount_t));
+  sw->linecounts = stp_malloc(sw->vmod * sizeof(stp_linecount_t));
   memset(sw->linecounts, 0, sw->vmod * sizeof(stp_linecount_t));
   sw->rcache = -2;
   sw->vcache = -2;
+  sw->fill_start = fill_start;
+  sw->pack = pack;
+  horizontal_width = (compute_linewidth)(sw);
 
   for (i = 0; i < sw->vmod; i++)
     {
@@ -1874,7 +1846,7 @@ stp_initialize_weave(int jets,	/* Width of print head */
       for (j = 0; j < sw->ncolors; j++)
 	{
 	  sw->linebases[i].v[j] =
-	    xmalloc(jets * sw->bitwidth * sw->horizontal_width / 8);
+	    stp_malloc(jets * sw->bitwidth * horizontal_width / 8);
 	}
     }
   return (void *) sw;
@@ -2036,9 +2008,9 @@ stp_get_pass_by_pass(const stp_softweave_t *sw, int pass)
  * with a count of 1.
  */
 
-static void
-fillin_start_rows(const stp_softweave_t *sw, int row, int subpass,
-		  int width, int missingstartrows, int color)
+void
+stp_fill_tiff(stp_softweave_t *sw, int row, int subpass,
+	      int width, int missingstartrows, int color)
 {
   stp_lineoff_t *lineoffs;
   stp_linecount_t *linecount;
@@ -2049,31 +2021,31 @@ fillin_start_rows(const stp_softweave_t *sw, int row, int subpass,
   width = sw->bitwidth * width * 8;
   for (k = 0; k < missingstartrows; k++)
     {
-    int bytes_to_fill = width;
-    int full_blocks = bytes_to_fill / (128 * 8);
-    int leftover = (7 + (bytes_to_fill % (128 * 8))) / 8;
-    int l = 0;
-    bufs = stp_get_linebases(sw, row, subpass, sw->head_offset[color]);
+      int bytes_to_fill = width;
+      int full_blocks = bytes_to_fill / (128 * 8);
+      int leftover = (7 + (bytes_to_fill % (128 * 8))) / 8;
+      int l = 0;
+      bufs = stp_get_linebases(sw, row, subpass, sw->head_offset[color]);
 
-    while (l < full_blocks)
-      {
-      (bufs[0].v[color][2 * i]) = 129;
-      (bufs[0].v[color][2 * i + 1]) = 0;
-      i++;
-      l++;
-      }
-    if (leftover == 1)
-      {
-      (bufs[0].v[color][2 * i]) = 1;
-      (bufs[0].v[color][2 * i + 1]) = 0;
-      i++;
-      }
-    else if (leftover > 0)
-      {
-      (bufs[0].v[color][2 * i]) = 257 - leftover;
-      (bufs[0].v[color][2 * i + 1]) = 0;
-      i++;
-      }
+      while (l < full_blocks)
+	{
+	  (bufs[0].v[color][2 * i]) = 129;
+	  (bufs[0].v[color][2 * i + 1]) = 0;
+	  i++;
+	  l++;
+	}
+      if (leftover == 1)
+	{
+	  (bufs[0].v[color][2 * i]) = 1;
+	  (bufs[0].v[color][2 * i + 1]) = 0;
+	  i++;
+	}
+      else if (leftover > 0)
+	{
+	  (bufs[0].v[color][2 * i]) = 257 - leftover;
+	  (bufs[0].v[color][2 * i + 1]) = 0;
+	  i++;
+	}
     }
 
   lineoffs = stp_get_lineoffsets(sw, row, subpass, sw->head_offset[color]);
@@ -2082,8 +2054,37 @@ fillin_start_rows(const stp_softweave_t *sw, int row, int subpass,
   linecount[0].v[color] = missingstartrows;
 }
 
+void
+stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
+		      int width, int missingstartrows, int color)
+{
+  stp_lineoff_t *lineoffs;
+  stp_linecount_t *linecount;
+  const stp_linebufs_t *bufs;
+
+  bufs = stp_get_linebases(sw, row, subpass, sw->head_offset[color]);
+  lineoffs = stp_get_lineoffsets(sw, row, subpass, sw->head_offset[color]);
+  linecount = stp_get_linecount(sw, row, subpass, sw->head_offset[color]);
+  width *= sw->bitwidth * missingstartrows;
+  memset(bufs[0].v[color], 0, width);
+  lineoffs[0].v[color] = width;
+  linecount[0].v[color] = missingstartrows;
+}
+
+int
+stp_compute_tiff_linewidth(const stp_softweave_t *sw)
+{
+  return ((sw->linewidth + 128 + 7) * 129 / 128);
+}
+
+int
+stp_compute_uncompressed_linewidth(const stp_softweave_t *sw)
+{
+  return (8 * ((sw->linewidth + 7) / 8));
+}
+
 static void
-initialize_row(const stp_softweave_t *sw, int row, int width)
+initialize_row(stp_softweave_t *sw, int row, int width)
 {
   stp_weave_t w;
   int i, j, jj;
@@ -2127,7 +2128,7 @@ initialize_row(const stp_softweave_t *sw, int row, int width)
 
       if((linecount[0].v[j] == 0) && (w.jet > 0))
         {
-	fillin_start_rows(sw, row, i, width, w.jet, j);
+	  (sw->fill_start)(sw, row, i, width, w.jet, j);
         }
       }
     }
@@ -2235,9 +2236,9 @@ stp_write_weave(void *        vsw,
   int cpass = sw->current_vertical_subpass * h_passes;
 
   if (!sw->fold_buf)
-    sw->fold_buf = xmalloc(COMPBUFWIDTH);
+    sw->fold_buf = stp_malloc(COMPBUFWIDTH);
   if (!sw->comp_buf)
-    sw->comp_buf = xmalloc(COMPBUFWIDTH);
+    sw->comp_buf = stp_malloc(COMPBUFWIDTH);
   if (sw->current_vertical_subpass == 0)
     initialize_row(sw, sw->lineno, xlength);
 
@@ -2250,7 +2251,7 @@ stp_write_weave(void *        vsw,
         for (i = 0; i < h_passes; i++)
 	  {
 	    if (!sw->s[i])
-	      sw->s[i] = xmalloc(COMPBUFWIDTH);
+	      sw->s[i] = stp_malloc(COMPBUFWIDTH);
 	    lineoffs[i] = stp_get_lineoffsets(sw, sw->lineno, cpass + i, sw->head_offset[j]);
 	    lineactives[i] = stp_get_lineactive(sw, sw->lineno, cpass + i, sw->head_offset[j]);
 	    bufs[i] = stp_get_linebases(sw, sw->lineno, cpass + i, sw->head_offset[j]);
@@ -2320,7 +2321,7 @@ stp_write_weave(void *        vsw,
 		}
 	      for (i = 0; i < h_passes; i++)
 		{
-		  setactive = stp_pack(sw->s[i], sw->bitwidth * xlength,
+		  setactive = (sw->pack)(sw->s[i], sw->bitwidth * xlength,
 				       sw->comp_buf, &comp_ptr);
 		  add_to_row(sw, sw->lineno, sw->comp_buf,
 			     comp_ptr - sw->comp_buf, j, setactive,
@@ -2329,7 +2330,7 @@ stp_write_weave(void *        vsw,
 	    }
 	  else
 	    {
-	      setactive = stp_pack(in, length * sw->bitwidth,
+	      setactive = (sw->pack)(in, length * sw->bitwidth,
 				   sw->comp_buf, &comp_ptr);
 	      add_to_row(sw, sw->lineno, sw->comp_buf, comp_ptr - sw->comp_buf,
 			 j, setactive, lineoffs[0], lineactives[0], bufs[0]);

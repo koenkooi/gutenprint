@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.5.4.1 2001/03/05 17:44:22 sharkey Exp $"
+ * "$Id: print-ps.c,v 1.5.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -98,7 +98,7 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
       if (strcmp(name, "PageSize") == 0)
 	{
 	  int papersizes = stp_known_papersizes();
-	  valptrs = xmalloc(sizeof(char *) * papersizes);
+	  valptrs = stp_malloc(sizeof(char *) * papersizes);
 	  *count = 0;
 	  for (i = 0; i < papersizes; i++)
 	    {
@@ -106,7 +106,7 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
 	      if (strlen(stp_papersize_get_name(pt)) > 0)
 		{
 		  valptrs[*count] =
-		    xmalloc(strlen(stp_papersize_get_name(pt)) +1 );
+		    stp_malloc(strlen(stp_papersize_get_name(pt)) +1 );
 		  strcpy(valptrs[*count], stp_papersize_get_name(pt));
 		  (*count)++;
 		}
@@ -120,7 +120,7 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
   rewind(ps_ppd);
   *count = 0;
 
-  valptrs = xmalloc(100 * sizeof(char *));
+  valptrs = stp_malloc(100 * sizeof(char *));
 
   while (fgets(line, sizeof(line), ps_ppd) != NULL)
   {
@@ -132,7 +132,7 @@ ps_parameters(const stp_printer_t printer,	/* I - Printer model */
 
     if (strcasecmp(lname, name) == 0)
     {
-      valptrs[(*count)] = xmalloc(strlen(loption) + 1);
+      valptrs[(*count)] = stp_malloc(strlen(loption) + 1);
       strcpy(valptrs[(*count)], loption);
       (*count) ++;
     }
@@ -288,6 +288,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 		out_offset;	/* Output offset (Level 2 output) */
   time_t	curtime;	/* Current time of day */
   stp_convert_t	colorfunc;	/* Color conversion function... */
+  int		zero_mask;
   char		*command;	/* PostScript command */
   int		order,		/* Order of command */
 		num_commands;	/* Number of commands */
@@ -367,7 +368,12 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   _fsetmode(v, "t");
 #endif
   stp_puts("%!PS-Adobe-3.0\n", v);
-  stp_zprintf(v, "%%%%Creator: %s\n", image->get_appname(image));
+#ifdef HAVE_CONFIG_H
+  stp_zprintf(v, "%%%%Creator: %s/Gimp-Print %s (%s)\n",
+	      image->get_appname(image), VERSION, RELEASE_DATE);
+#else
+  stp_zprintf(v, "%%%%Creator: %s/Gimp-Print\n", image->get_appname(image));
+#endif
   stp_zprintf(v, "%%%%CreationDate: %s", ctime(&curtime));
   stp_puts("%%Copyright: 1997-2000 by Michael Sweet (mike@easysw.com) and Robert Krawitz (rlk@alum.mit.edu)\n", v);
   stp_zprintf(v, "%%%%BoundingBox: %d %d %d %d\n",
@@ -386,7 +392,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   if ((command = ppd_find(ppd_file, "PageSize", media_size, &order)) != NULL)
   {
-    commands[num_commands].command = xmalloc(strlen(command) + 1);
+    commands[num_commands].command = stp_malloc(strlen(command) + 1);
     strcpy(commands[num_commands].command, command);
     commands[num_commands].order   = order;
     num_commands ++;
@@ -394,7 +400,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   if ((command = ppd_find(ppd_file, "InputSlot", media_source, &order)) != NULL)
   {
-    commands[num_commands].command = xmalloc(strlen(command) + 1);
+    commands[num_commands].command = stp_malloc(strlen(command) + 1);
     strcpy(commands[num_commands].command, command);
     commands[num_commands].order   = order;
     num_commands ++;
@@ -402,7 +408,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   if ((command = ppd_find(ppd_file, "MediaType", media_type, &order)) != NULL)
   {
-    commands[num_commands].command = xmalloc(strlen(command) + 1);
+    commands[num_commands].command = stp_malloc(strlen(command) + 1);
     strcpy(commands[num_commands].command, command);
     commands[num_commands].order   = order;
     num_commands ++;
@@ -410,7 +416,7 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 
   if ((command = ppd_find(ppd_file, "Resolution", resolution, &order)) != NULL)
   {
-    commands[num_commands].command = xmalloc(strlen(command) + 1);
+    commands[num_commands].command = stp_malloc(strlen(command) + 1);
     strcpy(commands[num_commands].command, command);
     commands[num_commands].order   = order;
     num_commands ++;
@@ -462,10 +468,10 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
           (double)out_width / ((double)image_width),
           (double)out_height / ((double)image_height));
 
-  in  = xmalloc(image_width * image_bpp);
-  out = xmalloc((image_width * out_bpp + 3) * 2);
+  in  = stp_malloc(image_width * image_bpp);
+  out = stp_malloc((image_width * out_bpp + 3) * 2);
 
-  stp_compute_lut(256, nv);
+  stp_compute_lut(nv, 256);
 
   if (model == 0)
   {
@@ -486,7 +492,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 	image->note_progress(image, y, image_height);
 
       image->get_row(image, in, y);
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, nv, NULL, NULL, NULL);
+      (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
+		   NULL, NULL, NULL);
 
       ps_hex(v, out, image_width * out_bpp);
     }
@@ -526,8 +533,8 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
 	image->note_progress(image, y, image_height);
 
       image->get_row(image, in, y);
-      (*colorfunc)(in, out + out_offset, image_width, image_bpp, cmap, nv,
-		   NULL, NULL, NULL);
+      (*colorfunc)(nv, in, out + out_offset, &zero_mask, image_width,
+		   image_bpp, cmap, NULL, NULL, NULL);
 
       out_ps_height = out_offset + image_width * out_bpp;
 
@@ -686,7 +693,7 @@ ppd_find(const char *ppd_file,	/* I - Name of PPD file */
   if (ppd_file == NULL || name == NULL || option == NULL)
     return (NULL);
   if (!value)
-    value = xmalloc(32768);
+    value = stp_malloc(32768);
 
   if (ps_ppd_file == NULL || strcmp(ps_ppd_file, ppd_file) != 0)
   {

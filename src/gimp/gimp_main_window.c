@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.6.4.1 2001/03/05 17:44:21 sharkey Exp $"
+ * "$Id: gimp_main_window.c,v 1.6.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -248,7 +248,7 @@ gimp_create_main_window (void)
 
   /*
    * thumbnail_w and thumbnail_h have now been adjusted to the actual
-   * thumbnail dimensions.  Now initialize a colour-adjusted version of
+   * thumbnail dimensions.  Now initialize a color-adjusted version of
    * the thumbnail...
    */
 
@@ -1113,7 +1113,7 @@ void
 gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 			gint            num_items,   /* I - Number of items */
 			gchar    **items,       /* I - Menu items */
-			gchar     *cur_item,    /* I - Current item */
+			const gchar     *cur_item,    /* I - Current item */
 			GtkSignalFunc   callback,    /* I - Callback */
 			gint           *callback_id) /* IO - Callback ID (init to -1) */
 {
@@ -1132,7 +1132,6 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
     {
       list = g_list_append (list, _("Standard"));
       gtk_combo_set_popdown_strings (GTK_COMBO (combo), list);
-      g_list_free (list);
       *callback_id = -1;
       gtk_widget_set_sensitive (combo, FALSE);
       gtk_widget_show (combo);
@@ -1140,7 +1139,7 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
     }
 
   for (i = 0; i < num_items; i ++)
-    list = g_list_append (list, gettext (items[i]));
+    list = g_list_append (list, strdup(gettext (items[i])));
 
   gtk_combo_set_popdown_strings (GTK_COMBO (combo), list);
 
@@ -1148,14 +1147,14 @@ gimp_plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 				     callback,
 				     NULL);
 
-  gtk_entry_set_text (entry, cur_item);
+  gtk_entry_set_text (entry, strdup(cur_item));
 
   for (i = 0; i < num_items; i ++)
     if (strcmp(items[i], cur_item) == 0)
       break;
 
   if (i == num_items)
-    gtk_entry_set_text (entry, gettext (items[0]));
+    gtk_entry_set_text (entry, strdup(gettext (items[0])));
 
   gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, FALSE);
   gtk_widget_set_sensitive (combo, TRUE);
@@ -1400,9 +1399,12 @@ gimp_plist_callback (GtkWidget *widget,
 			  gimp_media_size_callback,
 			  &media_size_callback_id);
 
-  for (i = 0; i < num_media_sizes; i ++)
-    free (media_sizes[i]);
-  free (media_sizes);
+  if (num_media_sizes > 0)
+    {
+      for (i = 0; i < num_media_sizes; i ++)
+	free (media_sizes[i]);
+      free (media_sizes);
+    }
 
   media_types = (*(stp_printer_get_printfuncs(current_printer)->parameters)) (current_printer,
 						  stp_get_ppd_file(p->v),
@@ -1516,8 +1518,8 @@ gimp_media_size_callback (GtkWidget *widget,
       if (stp_get_unit(vars))
 	unit_scaler /= 2.54;
       new_value *= unit_scaler;
-      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, vars,
-					   &width_limit, &height_limit);
+      (stp_printer_get_printfuncs(current_printer)->limit)
+	(current_printer, vars, &width_limit, &height_limit);
       if (new_value < 72)
 	new_value = 72;
       else if (new_value > width_limit)
@@ -1526,12 +1528,12 @@ gimp_media_size_callback (GtkWidget *widget,
       stp_set_page_width(vars, new_value);
       stp_set_left(vars, -1);
       stp_set_left(plist[plist_current].v, stp_get_left(vars));
-      gimp_preview_update ();
       new_value = new_value / 72.0;
       if (stp_get_unit(vars))
 	new_value *= 2.54;
       g_snprintf(s, sizeof(s), "%.2f", new_value);
       gtk_entry_set_text(GTK_ENTRY(custom_size_width), s);
+      gimp_preview_update ();
     }
   else if (widget == custom_size_height)
     {
@@ -1542,8 +1544,8 @@ gimp_media_size_callback (GtkWidget *widget,
       if (stp_get_unit(vars))
 	unit_scaler /= 2.54;
       new_value *= unit_scaler;
-      (stp_printer_get_printfuncs(current_printer)->limit)(current_printer, vars,
-					   &width_limit, &height_limit);
+      (stp_printer_get_printfuncs(current_printer)->limit)
+	(current_printer, vars, &width_limit, &height_limit);
       if (new_value < 144)
 	new_value = 144;
       else if (new_value > height_limit)
@@ -1552,12 +1554,12 @@ gimp_media_size_callback (GtkWidget *widget,
       stp_set_page_height(vars, new_value);
       stp_set_top(vars, -1);
       stp_set_top(plist[plist_current].v, stp_get_top(vars));
-      gimp_preview_update ();
       new_value = new_value / 72.0;
       if (stp_get_unit(vars))
 	new_value *= 2.54;
       g_snprintf(s, sizeof(s), "%.2f", new_value);
       gtk_entry_set_text(GTK_ENTRY(custom_size_height), s);
+      gimp_preview_update ();
     }
   else
     {
@@ -1964,7 +1966,7 @@ void
 gimp_update_adjusted_thumbnail (void)
 {
   gint      x, y;
-  stp_convert_t colourfunc;
+  stp_convert_t colorfunc;
   gushort   out[3 * THUMBNAIL_MAXW];
   guchar   *adjusted_data = adjusted_thumbnail_data;
   gfloat    old_density = stp_get_density(vars);
@@ -1974,14 +1976,14 @@ gimp_update_adjusted_thumbnail (void)
 
   stp_set_density(vars, 1.0);
 
-  stp_compute_lut (256, vars);
-  colourfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
+  stp_compute_lut (vars, 256);
+  colorfunc = stp_choose_colorfunc (stp_get_output_type(vars), thumbnail_bpp, NULL,
 				 &adjusted_thumbnail_bpp, vars);
 
   for (y = 0; y < thumbnail_h; y++)
     {
-      (*colourfunc) (thumbnail_data + thumbnail_bpp * thumbnail_w * y,
-		     out, thumbnail_w, thumbnail_bpp, NULL, vars, NULL, NULL,
+      (*colorfunc) (vars, thumbnail_data + thumbnail_bpp * thumbnail_w * y,
+		     out, NULL, thumbnail_w, thumbnail_bpp, NULL, NULL, NULL,
 		     NULL);
       for (x = 0; x < adjusted_thumbnail_bpp * thumbnail_w; x++)
 	{

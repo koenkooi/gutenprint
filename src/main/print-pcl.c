@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.8.4.1 2001/03/05 17:44:22 sharkey Exp $"
+ * "$Id: print-pcl.c,v 1.8.4.2 2001/04/30 17:47:12 sharkey Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1338,7 +1338,7 @@ pcl_get_model_capabilities(int model)	/* I: Model */
 static char *
 c_strdup(const char *s)
 {
-  char *ret = xmalloc(strlen(s) + 1);
+  char *ret = stp_malloc(strlen(s) + 1);
   strcpy(ret, s);
   return ret;
 }
@@ -1439,7 +1439,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
       int use_custom = ((caps->stp_printer_type & PCL_PRINTER_CUSTOM_SIZE)
                          == PCL_PRINTER_CUSTOM_SIZE);
 #endif
-      valptrs = xmalloc(sizeof(char *) * papersizes);
+      valptrs = stp_malloc(sizeof(char *) * papersizes);
       *count = 0;
       for (i = 0; i < papersizes; i++)
 	{
@@ -1452,7 +1452,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
 		(pcl_convert_media_size(stp_papersize_get_name(pt), model)
 		 != -1))))
 	    {
-	      valptrs[*count] = xmalloc(strlen(stp_papersize_get_name(pt)) +1);
+	      valptrs[*count] = stp_malloc(strlen(stp_papersize_get_name(pt)) +1);
 	      strcpy(valptrs[*count], stp_papersize_get_name(pt));
 	      (*count)++;
 	    }
@@ -1468,7 +1468,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
     }
     else
     {
-      valptrs = xmalloc(sizeof(char *) * NUM_PRINTER_PAPER_TYPES);
+      valptrs = stp_malloc(sizeof(char *) * NUM_PRINTER_PAPER_TYPES);
       *count = 0;
       for (i=0; (i < NUM_PRINTER_PAPER_TYPES) && (caps->paper_types[i] != -1); i++) {
         valptrs[i] = c_strdup(pcl_val_to_string(caps->paper_types[i], pcl_media_types,
@@ -1487,7 +1487,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
     }
     else
     {
-      valptrs = xmalloc(sizeof(char *) * NUM_PRINTER_PAPER_SOURCES);
+      valptrs = stp_malloc(sizeof(char *) * NUM_PRINTER_PAPER_SOURCES);
       *count = 0;
       for (i=0; (i < NUM_PRINTER_PAPER_SOURCES) && (caps->paper_sources[i] != -1); i++) {
         valptrs[i] = c_strdup(pcl_val_to_string(caps->paper_sources[i], pcl_media_sources,
@@ -1500,7 +1500,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
   else if (strcmp(name, "Resolution") == 0)
   {
     *count = 0;
-    valptrs = xmalloc(sizeof(char *) * NUM_RESOLUTIONS);
+    valptrs = stp_malloc(sizeof(char *) * NUM_RESOLUTIONS);
     for (i = 0; i < NUM_RESOLUTIONS; i++)
     {
       if (caps->resolutions & pcl_resolutions[i].pcl_code)
@@ -1516,7 +1516,7 @@ pcl_parameters(const stp_printer_t printer,/* I - Printer model */
   {
     if (caps->color_type & PCL_COLOR_CMYKcm)
     {
-      valptrs = xmalloc(sizeof(char *) * 2);
+      valptrs = stp_malloc(sizeof(char *) * 2);
       valptrs[0] = c_strdup(ink_types[0]);
       valptrs[1] = c_strdup(ink_types[1]);
       *count = 2;
@@ -1580,6 +1580,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
           stp_image_t *image,		/* I - Image to print */
 	  const stp_vars_t v)
 {
+  int i;
   unsigned char *cmap = stp_get_cmap(v);
   int		model = stp_printer_get_model(printer);
   const char	*resolution = stp_get_resolution(v);
@@ -1618,6 +1619,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 		errline,	/* Current raster line */
 		errlast;	/* Last raster line loaded */
   stp_convert_t	colorfunc;	/* Color conversion function... */
+  int		zero_mask;
   void		(*writefunc)(const stp_vars_t, unsigned char *, int, int);
 				/* PCL output function */
   int           image_height,
@@ -1661,10 +1663,12 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   * Choose the correct color conversion function...
   */
   if (((caps->resolutions & PCL_RES_600_600_MONO) == PCL_RES_600_600_MONO) &&
-      output_type != OUTPUT_GRAY && xdpi == 600 && ydpi == 600) {
-      fprintf(stderr, "600x600 resolution only available in MONO\n");
+      output_type != OUTPUT_GRAY && xdpi == 600 && ydpi == 600)
+    {
+      stp_eprintf(v, "600x600 resolution only available in MONO\n");
       output_type = OUTPUT_GRAY;
-  }
+      stp_set_output_type(nv, OUTPUT_GRAY);
+    }
 
   if (stp_get_image_type(nv) == IMAGE_MONOCHROME)
     {
@@ -1672,7 +1676,11 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     }
 
   if (caps->color_type == PCL_COLOR_NONE)
-    output_type = OUTPUT_GRAY;
+    {
+      output_type = OUTPUT_GRAY;
+      stp_set_output_type(nv, OUTPUT_GRAY);
+    }
+  stp_set_output_color_model(nv, COLOR_MODEL_CMY);
 
   colorfunc = stp_choose_colorfunc(output_type, image_bpp, cmap, &out_bpp, nv);
 
@@ -2004,7 +2012,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 
   if (output_type == OUTPUT_GRAY)
   {
-    black   = xmalloc(height);
+    black   = stp_malloc(height);
     cyan    = NULL;
     magenta = NULL;
     yellow  = NULL;
@@ -2013,18 +2021,18 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   }
   else
   {
-    cyan    = xmalloc(height);
-    magenta = xmalloc(height);
-    yellow  = xmalloc(height);
+    cyan    = stp_malloc(height);
+    magenta = stp_malloc(height);
+    yellow  = stp_malloc(height);
 
     if ((caps->color_type & PCL_COLOR_CMY) == PCL_COLOR_CMY)
       black = NULL;
     else
-      black = xmalloc(height);
+      black = stp_malloc(height);
     if (do_6color)
     {
-      lcyan    = xmalloc(height);
-      lmagenta = xmalloc(height);
+      lcyan    = stp_malloc(height);
+      lmagenta = stp_malloc(height);
     }
     else
     {
@@ -2037,7 +2045,7 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
   * Output the page, rotating as necessary...
   */
 
-  stp_compute_lut(256, nv);
+  stp_compute_lut(nv, 256);
 
   if (xdpi > ydpi)
     dither = stp_init_dither(image_width, out_width, 1, xdpi / ydpi, nv);
@@ -2047,7 +2055,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 /* Set up dithering for special printers. */
 
 #if 1		/* Leave alone for now */
-  stp_dither_set_black_levels(dither, 1.2, 1.2, 1.2);
+  for (i = 0; i <= NCOLORS; i++)
+    stp_dither_set_black_level(dither, i, 1.2);
   stp_dither_set_black_lower(dither, .3);
   stp_dither_set_black_upper(dither, .999);
 #endif
@@ -2074,12 +2083,13 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
 	  stp_dither_set_ranges_simple(dither, ECOLOR_M, 3, dot_sizes_use, stp_get_density(nv));
 	}
     }
-  else
-
+  else if (do_6color)
+    {
 /* Set light inks for 6 colour printers. Numbers copied from print-escp2.c */
-
-    if (do_6color)
-      stp_dither_set_light_inks(dither, .25, .25, 0.0, stp_get_density(nv));
+      stp_dither_set_light_ink(dither, ECOLOR_C, .25, stp_get_density(nv));
+      stp_dither_set_light_ink(dither, ECOLOR_M, .25, stp_get_density(nv));
+    }
+  stp_dither_set_transition(dither, .6);
 
   switch (stp_get_image_type(nv))
     {
@@ -2095,8 +2105,8 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
     }
   stp_dither_set_density(dither, stp_get_density(nv));
 
-  in  = xmalloc(image_width * image_bpp);
-  out = xmalloc(image_width * out_bpp * 2);
+  in  = stp_malloc(image_width * image_bpp);
+  out = stp_malloc(image_width * out_bpp * 2);
 
   errdiv  = image_height / out_height;
   errmod  = image_height % out_height;
@@ -2119,12 +2129,12 @@ pcl_print(const stp_printer_t printer,		/* I - Model */
       errlast = errline;
       duplicate_line = 0;
       image->get_row(image, in, errline);
-      (*colorfunc)(in, out, image_width, image_bpp, cmap, nv,
+      (*colorfunc)(nv, in, out, &zero_mask, image_width, image_bpp, cmap,
 		   hue_adjustment, lum_adjustment, NULL);
     }
 
     stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		yellow, NULL, black, duplicate_line);
+		yellow, NULL, black, duplicate_line, zero_mask);
 
     if (do_cret)
     {
@@ -2279,7 +2289,7 @@ pcl_mode2(const stp_vars_t v,		/* I - Print file or command */
   unsigned char	comp_buf[1536],		/* Compression buffer */
 		*comp_ptr;		/* Current slot in buffer */
 
-  stp_pack(line, height, comp_buf, &comp_ptr);
+  stp_pack_tiff(line, height, comp_buf, &comp_ptr);
 
  /*
   * Send a line of raster graphics...
