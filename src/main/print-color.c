@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.74 2003/05/05 00:36:03 rlk Exp $"
+ * "$Id: print-color.c,v 1.75 2003/05/07 00:17:08 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -107,7 +107,7 @@ static float_param_t float_parameters[] =
       "LinearContrast", N_("Linear Contrast Adjustment"),
       N_("Use linear vs. fixed end point contrast adjustment"),
       STP_PARAMETER_TYPE_BOOLEAN, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1
+      STP_PARAMETER_LEVEL_ADVANCED3, 1, 1, -1
     }, 0.0, 0.0, 0.0, 0
   },
   {
