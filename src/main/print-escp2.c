@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.255.2.6 2003/05/04 14:07:04 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.255.2.7 2003/05/04 15:59:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -86,6 +86,7 @@ typedef struct
   int page_management_units;	/* Page management units (dpi) */
   int vertical_units;		/* Vertical units (dpi) */
   int horizontal_units;		/* Horizontal units (dpi) */
+  int micro_units;		/* Micro-units for horizontal positioning */
   int unit_scale;		/* Scale factor for units */
 
   /* Ink parameters */
@@ -129,6 +130,7 @@ typedef struct
   int image_left;		/* Left edge of image (points) */
   int image_scaled_width;	/* Width of printed region (dots) */
   int image_scaled_height;	/* Height of printed region (dots) */
+  int image_left_position;	/* Left dot position of image */
 
   /* Transitory state */
   int printed_something;	/* Have we actually printed anything? */
@@ -1104,7 +1106,8 @@ escp2_set_resolution(stp_vars_t v)
 		      pd->unit_scale / pd->horizontal_units,
 		      pd->unit_scale);
   else
-    stpi_send_command(v, "\033(U", "bc", pd->unit_scale / pd->res->vres);
+    stpi_send_command(v, "\033(U", "bc",
+		      pd->unit_scale / pd->page_management_units);
 }
 
 static void
@@ -1316,28 +1319,19 @@ set_horizontal_position(stp_vars_t v, stpi_pass_t *pass, int vertical_subpass)
 {
   escp2_privdata_t *pd = get_privdata(v);
   int microoffset = vertical_subpass & (pd->horizontal_passes - 1);
+  int pos = pd->image_left_position + microoffset;
 
-  /* Note hard-coded 720 DPI here */
-  if (!escp2_has_advanced_command_set(v) && pd->res->hres <= 720)
+  if (pos != 0)
     {
-      int pos = ((pd->image_left * pd->horizontal_units / 72) + microoffset);
-      if (pos > 0)
+      if (!escp2_has_advanced_command_set(v) &&
+	  pd->res->hres < pd->micro_units)
 	stpi_send_command(v, "\033\\", "h", pos);
-    }
-  else if (escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) ||
-	   (escp2_has_advanced_command_set(v) &&
-	    escp2_has_cap(v, MODEL_VARIABLE_DOT, MODEL_VARIABLE_YES)))
-    {
-      int pos = ((pd->image_left * pd->horizontal_units / 72) + microoffset);
-      if (pos > 0)
+      else if (escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) ||
+	       (escp2_has_advanced_command_set(v) &&
+		escp2_has_cap(v, MODEL_VARIABLE_DOT, MODEL_VARIABLE_YES)))
 	stpi_send_command(v, "\033($", "bl", pos);
-    }
-  else
-    {
-      /* 1440 is the only allowed value here */
-      int pos = ((pd->image_left * 1440 / 72) + microoffset);
-      if (pos > 0)
-	stpi_send_command(v, "\033(\\", "bh", 1440, pos);
+      else
+	stpi_send_command(v, "\033(\\", "bh", pd->micro_units, pos);
     }
 }
 
@@ -1347,7 +1341,7 @@ send_print_command(stp_vars_t v, stpi_pass_t *pass, int color, int nlines)
   escp2_privdata_t *pd = get_privdata(v);
   int lwidth = (pd->image_scaled_width + (pd->horizontal_passes - 1)) /
     pd->horizontal_passes;
-  int ydpi = pd->res->vres * pd->res->vertical_undersample;
+  int ydpi = pd->vertical_units;
   if (!escp2_has_cap(v, MODEL_COMMAND, MODEL_COMMAND_PRO) &&
       pd->nozzles == 1 && pd->bitwidth == 1)
     {
@@ -1797,26 +1791,31 @@ static void
 setup_resolution(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
+  int vertical;
+  int horizontal;
   pd->res =
     escp2_find_resolution(v, stp_get_string_parameter(v, "Resolution"));
+  vertical = pd->res->vres * pd->res->vertical_undersample;
+  horizontal = pd->res->hres * pd->res->vertical_denominator;
 
   pd->physical_xdpi = escp2_base_res(v, pd->res->resid);
   if (pd->physical_xdpi > pd->res->hres)
     pd->physical_xdpi = pd->res->hres;
+
   if (escp2_use_extended_commands(v, pd->res->softweave))
     {
       pd->unit_scale = escp2_max_hres(v);
-      pd->horizontal_units = pd->res->hres;
-      pd->vertical_units = pd->res->vres;
-      pd->page_management_units = pd->res->vres;
+      pd->horizontal_units = horizontal;
+      pd->micro_units = pd->horizontal_units;
     }
   else
     {
       pd->unit_scale = 3600;
-      pd->horizontal_units = pd->res->vres;
-      pd->vertical_units = pd->res->vres;
-      pd->page_management_units = pd->res->vres;
+      pd->horizontal_units = vertical;
+      pd->micro_units = 1440;
     }
+  pd->vertical_units = vertical;
+  pd->page_management_units = vertical;
 }  
 
 static void
@@ -1933,6 +1932,7 @@ setup_page(stp_vars_t v)
   pd->image_left = stp_get_left(v) - pd->page_left;
   pd->image_width = stp_get_width(v);
   pd->image_scaled_width = pd->image_width * pd->res->hres / 72;
+  pd->image_left_position = pd->image_left * pd->micro_units / 72;
 
 
   pd->page_height = pd->page_bottom - pd->page_top;
@@ -2013,7 +2013,7 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
   stpi_initialize_weave
     (v,
      pd->nozzles,
-     pd->nozzle_separation * pd->res->vres / escp2_base_separation(v),
+     pd->nozzle_separation * pd->vertical_units / escp2_base_separation(v),
      pd->horizontal_passes,
      pd->res->vertical_passes,
      pd->res->vertical_oversample,
@@ -2021,8 +2021,8 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      pd->bitwidth,
      pd->image_scaled_width,
      pd->image_scaled_height,
-     pd->image_top * pd->res->vres / 72,
-     (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72,
+     pd->image_top * pd->vertical_units / 72,
+     (pd->page_height + escp2_extra_feed(v)) * pd->vertical_units / 72,
      pd->head_offset,
      STPI_WEAVE_ZIGZAG,
      flush_pass,

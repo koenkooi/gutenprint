@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.28.16.1 2003/05/01 02:45:35 rlk Exp $ */
+/* $Id: unprint.c,v 1.28.16.2 2003/05/04 15:59:27 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -848,7 +848,9 @@ parse_escp2_extended(FILE *fp_r)
 	}
       else
 	{
+/*
 	  fprintf(stderr,"Warning!  Commands in unrecognised remote mode %s ignored.\n", buf);
+*/
 	  do
 	    {
 	      while((!eject) && (ch!=0x1b))
@@ -1178,6 +1180,9 @@ parse_escp2_command(FILE *fp_r)
       get2("Error reading absolute horizontal position.\n");
       pstate.xposition = sh * (pstate.relative_horizontal_units /
 			       pstate.absolute_horizontal_units);
+      break;
+    case 0x0:			/* Exit remote mode */
+      get2("Error exiting remote mode.\n");
       break;
     case 0x6: /* flush buffers */
       /* Woosh.  Consider them flushed. */
