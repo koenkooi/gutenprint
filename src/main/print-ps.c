@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.11 2001/04/15 13:29:53 rlk Exp $"
+ * "$Id: print-ps.c,v 1.12 2001/04/22 01:27:09 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -364,9 +364,6 @@ ps_print(const stp_printer_t printer,		/* I - Model (Level 1 or 2) */
   printf("left = %d, top = %d\n", left, top);
 #endif /* DEBUG */
 
-#ifdef __EMX__
-  _fsetmode(v, "t");
-#endif
   stp_puts("%!PS-Adobe-3.0\n", v);
 #ifdef HAVE_CONFIG_H
   stp_zprintf(v, "%%%%Creator: %s/Gimp-Print %s (%s)\n",
