@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.31 2003/11/01 15:44:56 rlk Exp $"
+ * "$Id: dither-main.c,v 1.32 2003/11/02 00:29:36 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -420,6 +420,23 @@ stpi_dither_get_last_position(stp_vars_t v, int color, int subchannel)
   if (channel < 0)
     return -1;
   return CHANNEL(d, channel).row_ends[1];
+}
+
+int *
+stpi_dither_get_errline(stpi_dither_t *d, int row, int color)
+{
+  stpi_dither_channel_t *dc;
+  if (row < 0 || color < 0 || color >= CHANNEL_COUNT(d))
+    return NULL;
+  dc = &(CHANNEL(d, color));
+  if (!dc->errs)
+    dc->errs = stpi_zalloc(d->error_rows * sizeof(int *));
+  if (!dc->errs[row % dc->error_rows])
+    {
+      int size = 2 * MAX_SPREAD + (16 * ((d->dst_width + 7) / 8));
+      dc->errs[row % dc->error_rows] = stpi_zalloc(size * sizeof(int));
+    }
+  return dc->errs[row % dc->error_rows] + MAX_SPREAD;
 }
 
 void

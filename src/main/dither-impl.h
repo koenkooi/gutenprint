@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.14 2003/11/01 15:44:56 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.15 2003/11/02 00:29:36 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -182,6 +182,7 @@ extern int stpi_dither_translate_channel(stp_vars_t v, unsigned channel,
 					 unsigned subchannel);
 extern void stpi_dither_channel_destroy(stpi_dither_channel_t *channel);
 extern void stpi_dither_finalize(stp_vars_t v);
+extern int *stpi_dither_get_errline(stpi_dither_t *d, int row, int color);
 
 
 #define ADVANCE_UNIDIRECTIONAL(d, bit, input, width, xerror, xstep, xmod) \
@@ -247,5 +248,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.14 2003/11/01 15:44:56 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.15 2003/11/02 00:29:36 rlk Exp $".
  */
