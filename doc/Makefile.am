@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2001/05/11 22:38:28 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2001/06/16 11:51:49 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,14 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+
+## Variables
+
 DOCS = \
  FAQ.html \
  README.dither \
- README.escp2 \
  README.maintaining \
  README.new-printer \
- README.weave \
  docbook.css \
  print-color.png \
  print-main.png \
@@ -37,14 +38,20 @@ DOCS = \
  print.html \
  print.sgml
 
+
+## Data
+
 info_TEXINFOS = gimpprint.texi
 
-gimpprint_TEXINFOS = gpl.texi
+gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi types.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi indices.texi
+
+
+## Rules
 
 all-local: html
 
 html: html-stamp
-html-stamp: gimpprint.texi version.texi gpl.texi
+html-stamp: $(gimpprint_TEXINFOS)
 	if test x$(TEXI2HTML_PROG) != x ; then \
 	  rm -rf manual-html ; \
 	  mkdir manual-html ; \
@@ -69,6 +76,9 @@ dist-hook: html
 
 maintainer-clean-local:
 	rm -rf manual-html
+
+
+## Clean
 
 DISTCLEANFILES = html-stamp
 MAINTAINERCLEANFILES = Makefile.in
