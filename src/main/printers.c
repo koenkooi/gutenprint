@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.62 2004/03/28 21:17:38 rlk Exp $"
+ * "$Id: printers.c,v 1.63 2004/04/02 02:29:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -718,9 +718,21 @@ stpi_verify_printer_params(stp_vars_t v)
 	  answer = 0;
 	  stpi_eprintf(v, _("Page size is not valid\n"));
 	}
+      stpi_dprintf(STPI_DBG_PAPER, v,
+		   "page size max %d %d min %d %d actual %d %d\n",
+		   width, height, min_width, min_height,
+		   stp_get_page_width(v), stp_get_page_height(v));
     }
 
   stp_get_imageable_area(v, &left, &right, &bottom, &top);
+
+  stpi_dprintf(STPI_DBG_PAPER, v,
+	       "page      left %d top %d right %d bottom %d\n",
+	       left, top, right, bottom);
+  stpi_dprintf(STPI_DBG_PAPER, v,
+	       "requested left %d top %d width %d height %d\n",
+	       stp_get_left(v), stp_get_top(v),
+	       stp_get_width(v), stp_get_height(v));
 
   if (stp_get_top(v) < top)
     {
@@ -749,13 +761,15 @@ stpi_verify_printer_params(stp_vars_t v)
   if (stp_get_left(v) + stp_get_width(v) > right)
     {
       answer = 0;
-      stpi_eprintf(v, _("Image is too wide for the page\n"));
+      stpi_eprintf(v, _("Image is too wide for the page: left margin is %d, width %d, right edge is %d\n"),
+		   stp_get_left(v), stp_get_width(v), right);
     }
 
   if (stp_get_top(v) + stp_get_height(v) > bottom)
     {
       answer = 0;
-      stpi_eprintf(v, _("Image is too long for the page\n"));
+      stpi_eprintf(v, _("Image is too long for the page: top margin is %d, height %d, bottom edge is %d\n"),
+		   stp_get_left(v), stp_get_width(v), right);
     }
 
   CHECK_INT_RANGE(v, page_number, 0, INT_MAX);
