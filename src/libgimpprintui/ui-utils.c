@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.3 2003/01/12 22:38:30 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.3.6.1 2003/02/02 05:06:04 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -796,16 +796,17 @@ stpui_table_attach_aligned(GtkTable *table, gint column, gint row,
 }
 
 void
-stpui_create_new_combo(list_option_t *list_option, GtkWidget *table,
+stpui_create_new_combo(option_t *option, GtkWidget *table,
 		       int hpos, int vpos)
 {
   GtkWidget *event_box = gtk_event_box_new();
-  list_option->combo = gtk_combo_new();
-  gtk_container_add(GTK_CONTAINER(event_box), list_option->combo);
-  gtk_widget_show(list_option->combo);
-  stpui_set_help_data(event_box, _(list_option->fast_desc->help));
-  list_option->label = stpui_table_attach_aligned
-    (GTK_TABLE(table), hpos, vpos, _(list_option->fast_desc->text),
+  GtkWidget *combo = gtk_combo_new();
+  option->info.list.combo = combo;
+  gtk_container_add(GTK_CONTAINER(event_box), combo);
+  gtk_widget_show(combo);
+  stpui_set_help_data(event_box, _(option->fast_desc->help));
+  option->info.list.label = stpui_table_attach_aligned
+    (GTK_TABLE(table), hpos, vpos, _(option->fast_desc->text),
      1.0, 0.5, event_box, 1, TRUE);
 }
 

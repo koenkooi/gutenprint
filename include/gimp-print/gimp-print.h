@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.23 2003/01/26 02:38:13 rlk Exp $
+ *  $Id: gimp-print.h,v 1.23.2.1 2003/02/02 05:06:03 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -221,10 +221,10 @@ typedef enum stp_parameter_type
  */
 typedef enum stp_parameter_class
 {
-  STP_PARAMETER_CLASS_INVALID,
   STP_PARAMETER_CLASS_FEATURE,	/* Printer feature */
   STP_PARAMETER_CLASS_OUTPUT,	/* Output control */
-  STP_PARAMETER_CLASS_PAGE_SIZE	/* Special for specifying page size */
+  STP_PARAMETER_CLASS_PAGE_SIZE, /* Special for specifying page size */
+  STP_PARAMETER_CLASS_INVALID
 } stp_parameter_class_t;
 
 /*
@@ -232,14 +232,14 @@ typedef enum stp_parameter_class
  */
 typedef enum stp_parameter_level
 {
-  STP_PARAMETER_LEVEL_INVALID,
   STP_PARAMETER_LEVEL_BASIC,
   STP_PARAMETER_LEVEL_ADVANCED,
   STP_PARAMETER_LEVEL_ADVANCED1,
   STP_PARAMETER_LEVEL_ADVANCED2,
   STP_PARAMETER_LEVEL_ADVANCED3,
   STP_PARAMETER_LEVEL_ADVANCED4,
-  STP_PARAMETER_LEVEL_ADVANCED5
+  STP_PARAMETER_LEVEL_ADVANCED5,
+  STP_PARAMETER_LEVEL_INVALID
 } stp_parameter_level_t;
 
 /*
@@ -1008,5 +1008,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.23 2003/01/26 02:38:13 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.23.2.1 2003/02/02 05:06:03 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.4 2003/01/12 22:38:30 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.4.6.1 2003/02/02 05:06:03 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -43,15 +43,31 @@
 
 typedef struct
 {
-  const char *name;
-  void (*extra)(const gchar *);
   gint callback_id;
-  const stp_parameter_t *fast_desc;
   const char *default_val;
   stp_string_list_t params;
   GtkWidget *combo;
   GtkWidget *label;
-} list_option_t;
+} list_option_t;  
+
+typedef struct
+{
+  GtkObject *adjustment;
+  gfloat upper;
+  gfloat lower;
+  gfloat deflt;
+  gfloat scale;
+} float_option_t;
+
+typedef struct
+{
+  const stp_parameter_t *fast_desc;
+  int is_active;
+  union {
+    list_option_t list;
+    float_option_t flt;
+  } info;
+} option_t;
 
 typedef struct
 {
@@ -69,15 +85,6 @@ typedef struct
   gint value;
   GtkWidget *button;
 } radio_group_t;
-
-typedef struct
-{
-  const char *name;
-  GtkObject *adjustment;
-  gfloat scale;
-  gint is_active;
-  gint update_thumbnail;
-} color_option_t;
 
 typedef struct
 {
@@ -141,7 +148,7 @@ extern GSList *stpui_create_radio_button(radio_group_t *radio, GSList *group,
 					 GtkWidget *table, int hpos, int vpos,
 					 GtkSignalFunc callback);
 extern void stpui_set_adjustment_tooltip (GtkObject *adj, const gchar *tip);
-extern void stpui_create_new_combo(list_option_t *list_option,
+extern void stpui_create_new_combo(option_t *option,
 				   GtkWidget *table, int hpos, int vpos);
 extern void stpui_help_init (void);
 extern void stpui_help_free (void);

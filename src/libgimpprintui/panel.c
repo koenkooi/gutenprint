@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.18 2003/01/26 03:28:29 mtomlinson Exp $"
+ * "$Id: panel.c,v 1.18.2.1 2003/02/02 05:06:04 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -107,8 +107,9 @@ static GtkWidget *file_browser;        /* FSD for print files */
 static GtkWidget *adjust_color_button;
 static GtkWidget *about_dialog;
 
-static GtkWidget *printer_features_table;
-static GtkWidget *color_adjustment_table;
+static GtkWidget *page_size_table_list[STP_PARAMETER_LEVEL_INVALID];
+static GtkWidget *printer_features_table_list[STP_PARAMETER_LEVEL_INVALID];
+static GtkWidget *color_adjustment_table_list[STP_PARAMETER_LEVEL_INVALID];
 
 static gboolean preview_valid = FALSE;
 static gboolean frame_valid = FALSE;
@@ -211,20 +212,8 @@ static void update_adjusted_thumbnail (void);
 static void set_media_size(const gchar *new_media_size);
 static stp_printer_t tmp_printer = NULL;
 
-static list_option_t page_size_option = { "PageSize", set_media_size, -1 };
-
-static list_option_t the_list_options[] =
-  {
-    { "MediaType", NULL, -1 },
-    { "InputSlot", NULL, -1 },
-    { "InkType", NULL, -1 },
-    { "Resolution", NULL, -1 },
-    { "DitherAlgorithm", NULL, -1 },
-    { "ImageOptimization", NULL, -1 },
-  };
-
-static const gint list_option_count = (sizeof(the_list_options) /
-				       sizeof(list_option_t));
+static option_t *current_options = NULL;
+static int current_option_count = 0;
 
 static unit_t units[] =
   {
@@ -251,25 +240,6 @@ static radio_group_t output_types[] =
 static const gint output_type_count = (sizeof(output_types) /
 				       sizeof(radio_group_t));
 
-static color_option_t color_options[] =
-  {
-    { "Brightness",     NULL, 10,  1, 1 },
-    { "Contrast",       NULL, 10,  1, 1 },
-    { "Cyan",           NULL, 10,  1, 1 },
-    { "Magenta",        NULL, 10,  1, 1 },
-    { "Yellow",         NULL, 10,  1, 1 },
-    { "Black",          NULL, 10,  1, 0 },
-    { "Saturation",     NULL, 100, 1, 1 },
-    { "Density",        NULL, 100, 1, 0 },
-    { "BlackDensity",   NULL, 100, 1, 0 },
-    { "CyanDensity",    NULL, 100, 1, 0 },
-    { "MagentaDensity", NULL, 100, 1, 0 },
-    { "YellowDensity",  NULL, 100, 1, 0 },
-    { "Gamma",          NULL, 100, 1, 1 }
-  };
-const static gint color_option_count = (sizeof(color_options) /
-					sizeof(color_option_t));
-
 static gdouble preview_ppi = 10;
 
 static stp_string_list_t printer_list = 0;
@@ -279,16 +249,6 @@ static gint thumbnail_w, thumbnail_h, thumbnail_bpp;
 static guchar *thumbnail_data;
 static guchar *adjusted_thumbnail_data;
 static guchar *preview_thumbnail_data;
-
-static list_option_t *
-get_list_option_by_name(const char *name)
-{
-  int i;
-  for (i = 0; i < list_option_count; i++)
-    if (strcmp(name, the_list_options[i].name) == 0)
-      return &(the_list_options[i]);
-  return NULL;
-}
 
 static void
 build_printer_combo(void)
@@ -321,41 +281,201 @@ build_printer_combo(void)
 		    NULL);
 }
 
+void
+build_a_combo(option_t *option)
+{
+  if (option->fast_desc &&
+      option->fast_desc->p_type == STP_PARAMETER_TYPE_STRING_LIST)
+    {
+      const gchar *val = stp_get_string_parameter(pv->v,
+						  option->fast_desc->name);
+      if (option->info.list.params == NULL || ! option->is_active ||
+	  stp_string_list_count(option->info.list.params) == 0)
+	stp_set_string_parameter(pv->v, option->fast_desc->name, NULL);
+      else if (!val || strlen(val) == 0)
+	stp_set_string_parameter(pv->v, option->fast_desc->name,
+				 option->info.list.default_val);
+      plist_build_combo(option->info.list.combo, option->info.list.label,
+			option->info.list.params,
+			option->is_active,
+			stp_get_string_parameter(pv->v,
+						 option->fast_desc->name),
+			option->info.list.default_val, combo_callback,
+			&(option->info.list.callback_id), option);
+      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE)
+	set_media_size
+	  (stp_get_string_parameter(pv->v, option->fast_desc->name));
+    }
+  else
+    plist_build_combo(option->info.list.combo, option->info.list.label,
+		      NULL, 0, "", "", combo_callback,
+		      &(option->info.list.callback_id), option);
+}
+
 static void
 populate_options(const stp_vars_t v)
 {
   stp_parameter_list_t params = stp_get_parameter_list(v);
   int i;
-  for (i = 0; i < list_option_count; i++)
+  if (current_options)
     {
-      list_option_t *option = &(the_list_options[i]);
-      if (option->params)
+      for (i = 0; i < current_option_count; i++)
 	{
-	  stp_string_list_free(option->params);
-	  option->params = NULL;
+	  option_t *opt = &(current_options[i]);
+	  switch (opt->fast_desc->p_type)
+	    {
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	      gtk_widget_destroy(opt->info.list.combo);
+	      gtk_widget_destroy(opt->info.list.label);
+	      stp_string_list_free(opt->info.list.params);
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_LABEL(opt->info.flt.adjustment)));
+	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_SCALE(opt->info.flt.adjustment)));
+	      gtk_widget_destroy(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(opt->info.flt.adjustment)));
+	      break;
+	    default:
+	      break;
+	    }
+/*	  gtk_object_destroy(opt->info.flt.adjustment); */
 	}
-      option->default_val = NULL;
-      option->fast_desc = stp_parameter_find(params, option->name);
+      free(current_options);
     }
+  current_option_count = stp_parameter_list_count(params);
+  current_options = malloc(sizeof(option_t) * current_option_count);
+
+  for (i = 0; i < current_option_count; i++)
+    {
+      stp_parameter_t desc;
+      option_t *opt = &(current_options[i]);
+      opt->fast_desc = stp_parameter_list_param(params, i);
+      switch (opt->fast_desc->p_type)
+	{
+	case STP_PARAMETER_TYPE_STRING_LIST:
+	  stp_describe_parameter(v, opt->fast_desc->name, &desc);
+	  opt->info.list.callback_id = -1;
+	  opt->info.list.default_val = desc.deflt.str;
+	  opt->info.list.params = stp_string_list_create_copy(desc.bounds.str);
+	  opt->info.list.combo = NULL;
+	  opt->info.list.label = NULL;
+	  opt->is_active = desc.is_active;
+	  stp_parameter_description_free(&desc);
+	  break;
+	case STP_PARAMETER_TYPE_DOUBLE:
+	  stp_describe_parameter(v, opt->fast_desc->name, &desc);
+	  opt->info.flt.adjustment = NULL;
+	  opt->info.flt.upper = desc.bounds.dbl.upper;
+	  opt->info.flt.lower = desc.bounds.dbl.lower;
+	  opt->info.flt.deflt = desc.deflt.dbl;
+	  opt->info.flt.scale = 1.0;
+	  opt->is_active = desc.is_active;
+	  stp_parameter_description_free(&desc);
+	  break;
+	default:
+	  break;
+	}
+    }
+  stp_parameter_list_free(params);
 }
 
 static void
-populate_option_table(GtkWidget *table, int p_type, int p_class)
+populate_option_table(GtkWidget **table, int p_class)
 {
   int i;
-  int vpos = 0;
-  for (i = 0; i < list_option_count; i++)
+  int vpos[STP_PARAMETER_LEVEL_INVALID];
+  for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
+    vpos[i] = 0;
+  for (i = 0; i < current_option_count; i++)
     {
-      list_option_t *option = &(the_list_options[i]);
-      const stp_parameter_t *desc = option->fast_desc;
-      if (desc)
+      option_t *opt = &(current_options[i]);
+      const stp_parameter_t *desc = opt->fast_desc;
+      if (desc->p_class == p_class)
 	{
-	  if (desc->p_type == p_type && desc->p_class == p_class)
-	    stpui_create_new_combo(option, table, 0, vpos++);
+	  switch (desc->p_type)
+	    {
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	      stpui_create_new_combo(opt, table[desc->p_level], 0,
+				     vpos[desc->p_level]++);
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      opt->info.flt.adjustment = 
+		stpui_scale_entry_new(GTK_TABLE(table[desc->p_level]),
+				      0, i + 1, _(desc->text), 200, 0,
+				      opt->info.flt.deflt,
+				      opt->info.flt.lower,
+				      opt->info.flt.upper,
+				      .001, .01, 3, TRUE, 0, 0, NULL);
+	      stpui_set_adjustment_tooltip(opt->info.flt.adjustment,
+					   _(desc->help));
+	      gtk_signal_connect(GTK_OBJECT(opt->info.flt.adjustment),
+				 "value_changed",
+				 GTK_SIGNAL_FUNC(color_update), (gpointer) i);
+	      break;
+	    default:
+	      break;
+	    }
+	}
+    }
+  for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
+    gtk_widget_show(table[i]);
+}
+
+static void
+set_options_active(void)
+{
+  int i;
+  for (i = 0; i < current_option_count; i++)
+    {
+      option_t *opt = &(current_options[i]);
+      const stp_parameter_t *desc = opt->fast_desc;
+      switch (desc->p_type)
+	{
+	case STP_PARAMETER_TYPE_STRING_LIST:
+	  build_a_combo(opt);
+	  break;
+	case STP_PARAMETER_TYPE_DOUBLE:
+	  if (opt->is_active)
+	    {
+	      GtkObject *adj = opt->info.flt.adjustment;
+	      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
+	      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
+	      gtk_widget_show(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+	    }
+	  else
+	    {
+	      GtkObject *adj = opt->info.flt.adjustment;
+	      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_LABEL(adj)));
+	      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SCALE(adj)));
+	      gtk_widget_hide(GTK_WIDGET(SCALE_ENTRY_SPINBUTTON(adj)));
+	    }
+	  break;
+	default:
+	  break;
 	}
     }
 }
 
+static GtkWidget *
+create_table_list(GtkWidget **table_list)
+{
+  int i;
+  GtkWidget *parent = gtk_table_new(1, 1, FALSE);
+  gtk_table_set_col_spacings (GTK_TABLE (parent), 2);
+  gtk_table_set_row_spacings (GTK_TABLE (parent), 0);
+  gtk_container_set_border_width (GTK_CONTAINER (parent), 4);
+  gtk_widget_show (parent);
+  for (i = 0; i < STP_PARAMETER_LEVEL_INVALID; i++)
+    {
+      GtkWidget *table = gtk_table_new(1, 1, FALSE);
+      table_list[i] = table;
+      gtk_table_set_col_spacings (GTK_TABLE (table), 2);
+      gtk_table_set_row_spacings (GTK_TABLE (table), 0);
+      gtk_container_set_border_width(GTK_CONTAINER(table), 0);
+      gtk_table_attach_defaults(GTK_TABLE(parent), table, 0, 2, i, i + 1);
+      gtk_widget_show(table);
+    }
+  return parent;
+}
 
 static void
 create_top_level_structure(void)
@@ -823,6 +943,7 @@ static void
 create_printer_settings_frame (void)
 {
   GtkWidget *table;
+  GtkWidget *child_table;
   GtkWidget *sep;
   GtkWidget *printer_hbox;
   GtkWidget *media_size_table;
@@ -830,7 +951,6 @@ create_printer_settings_frame (void)
   GtkWidget *event_box;
   gint vpos = 0;
 
-  populate_options(stp_default_settings());
   create_printer_dialog ();
   create_about_dialog ();
   create_new_printer_dialog ();
@@ -905,10 +1025,10 @@ create_printer_settings_frame (void)
    * Media size combo box.
    */
 
-  page_size_option.fast_desc =
-    stp_parameter_find_in_settings(stp_default_settings(), "PageSize");
-  stpui_create_new_combo(&page_size_option, table, 0, vpos++);
-
+  child_table = create_table_list(page_size_table_list);
+  gtk_table_attach_defaults(GTK_TABLE(table), child_table,
+			    0, 2, vpos, vpos + 1);
+  vpos++;
   /*
    * Custom media size entries
    */
@@ -927,14 +1047,8 @@ create_printer_settings_frame (void)
      _("Height of the paper that you wish to print to"),
      custom_media_size_callback);
 
-  printer_features_table = gtk_table_new (1, 1, FALSE);
-  gtk_table_set_col_spacings (GTK_TABLE (printer_features_table), 2);
-  gtk_table_set_row_spacings (GTK_TABLE (printer_features_table), 0);
-  gtk_container_set_border_width (GTK_CONTAINER (printer_features_table), 4);
-  gtk_widget_show (printer_features_table);
-  populate_option_table(printer_features_table, STP_PARAMETER_TYPE_STRING_LIST,
-			STP_PARAMETER_CLASS_FEATURE);
-  gtk_table_attach_defaults(GTK_TABLE(table), printer_features_table,
+  child_table = create_table_list(printer_features_table_list);
+  gtk_table_attach_defaults(GTK_TABLE(table), child_table,
 			    0, 2, vpos, vpos + 1);
 }
 
@@ -1108,8 +1222,8 @@ create_scaling_frame (void)
 static void
 create_color_adjust_window (void)
 {
-  gint i;
   GtkWidget *table;
+  GtkWidget *child_table;
   GtkWidget *event_box;
 #if 0
   GtkWidget *curve;
@@ -1159,39 +1273,8 @@ create_color_adjust_window (void)
                       GTK_SIGNAL_FUNC (redraw_color_swatch),
                       NULL);
 
-  for (i = 0; i < color_option_count; i++)
-    {
-      color_option_t *opt = &(color_options[i]);
-      stp_parameter_t desc;
-      stp_describe_parameter(stp_default_settings(), opt->name, &desc);
-      if (desc.p_type == STP_PARAMETER_TYPE_DOUBLE &&
-	  desc.p_class == STP_PARAMETER_CLASS_OUTPUT &&
-	  desc.p_level == STP_PARAMETER_LEVEL_BASIC)
-	{
-	  opt->adjustment =
-	    stpui_scale_entry_new(GTK_TABLE(table), 0, i + 1, _(desc.text),
-				  200, 0, desc.deflt.dbl,
-				  desc.bounds.dbl.lower,
-				  desc.bounds.dbl.upper,
-				  desc.deflt.dbl / (opt->scale * 10),
-				  desc.deflt.dbl / opt->scale,
-				  3, TRUE, 0, 0, NULL);
-	  stpui_set_adjustment_tooltip(opt->adjustment, _(desc.help));
-	  gtk_signal_connect(GTK_OBJECT(opt->adjustment), "value_changed",
-			     GTK_SIGNAL_FUNC(color_update), (gpointer) i);
-	}
-      stp_parameter_description_free(&desc);
-    }
-
-  color_adjustment_table = gtk_table_new (1, 1, FALSE);
-  gtk_table_set_col_spacings (GTK_TABLE (color_adjustment_table), 2);
-  gtk_table_set_row_spacings (GTK_TABLE (color_adjustment_table), 2);
-  gtk_container_set_border_width (GTK_CONTAINER (color_adjustment_table), 4);
-  gtk_widget_show (color_adjustment_table);
-  populate_option_table(color_adjustment_table, STP_PARAMETER_TYPE_STRING_LIST,
-			STP_PARAMETER_CLASS_OUTPUT);
-  gtk_table_attach_defaults(GTK_TABLE(table), color_adjustment_table,
-			    0, 2, i + 1, i + 2);
+  child_table = create_table_list(color_adjustment_table_list);
+  gtk_table_attach_defaults(GTK_TABLE(table), child_table, 0, 2, 1, 2);
 
 #if 0
   curve = gtk_gamma_curve_new();
@@ -1525,9 +1608,6 @@ plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
 
   gtk_combo_set_popdown_strings (GTK_COMBO (combo), list);
 
-  *callback_id = gtk_signal_connect (GTK_OBJECT (entry), "changed", callback,
-				     data);
-
   for (i = 0; i < num_items; i ++)
     if (strcmp(stp_string_list_param(items, i)->name, cur_item) == 0)
       break;
@@ -1547,6 +1627,9 @@ plist_build_combo (GtkWidget      *combo,       /* I - Combo widget */
   gtk_widget_show (combo);
   if (label)
     gtk_widget_show(label);
+
+  *callback_id = gtk_signal_connect (GTK_OBJECT (entry), "changed", callback,
+				     data);
 }
 
 void
@@ -1664,45 +1747,15 @@ static void
 do_color_updates (void)
 {
   int i;
-  for (i = 0; i < color_option_count; i++)
+  for (i = 0; i < current_option_count; i++)
     {
-      color_option_t *opt = &(color_options[i]);
-      gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->adjustment),
-			       stp_get_float_parameter(pv->v, opt->name));
+      option_t *opt = &(current_options[i]);
+      if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE)
+       	gtk_adjustment_set_value(GTK_ADJUSTMENT(opt->info.flt.adjustment),
+				 stp_get_float_parameter
+				 (pv->v, opt->fast_desc->name));
     }
   update_adjusted_thumbnail ();
-}
-
-static void
-build_a_combo(list_option_t *option)
-{
-  if (option->fast_desc &&
-      option->fast_desc->p_type == STP_PARAMETER_TYPE_STRING_LIST)
-    {
-      stp_parameter_t desc;
-      const gchar *val = stp_get_string_parameter(pv->v, option->name);
-      stp_describe_parameter(pv->v, option->name, &desc);
-      if (desc.is_active)
-	{
-	  option->params = desc.bounds.str;
-	  option->default_val = desc.deflt.str;
-	}
-      if (option->params == NULL ||
-	  stp_string_list_count(option->params) == 0)
-	stp_set_string_parameter(pv->v, option->name, NULL);
-      else if (!val || strlen(val) == 0)
-	stp_set_string_parameter(pv->v, option->name, desc.deflt.str);
-      plist_build_combo(option->combo, option->label, option->params,
-			desc.is_active,
-			stp_get_string_parameter(pv->v, option->name),
-			option->default_val, combo_callback,
-			&(option->callback_id), option);
-      if (option->extra)
-	(option->extra)(stp_get_string_parameter(pv->v, option->name));
-    }
-  else
-    plist_build_combo(option->combo, option->label, NULL, 0, "", "",
-		      combo_callback, &(option->callback_id), option);
 }
 
 static void
@@ -1753,9 +1806,12 @@ do_all_updates(void)
    */
 
   populate_options(pv->v);
-  for (i = 0; i < list_option_count; i++)
-    build_a_combo(&(the_list_options[i]));
-  build_a_combo(&(page_size_option));
+  populate_option_table(page_size_table_list, STP_PARAMETER_CLASS_PAGE_SIZE);
+  populate_option_table(printer_features_table_list,
+			STP_PARAMETER_CLASS_FEATURE);
+  populate_option_table(color_adjustment_table_list,
+			STP_PARAMETER_CLASS_OUTPUT);
+  set_options_active();
 
   do_color_updates ();
 
@@ -1819,7 +1875,7 @@ plist_callback (GtkWidget *widget,
 	  (GTK_TOGGLE_BUTTON (output_types[1].button), TRUE);
       gtk_widget_set_sensitive (output_types[0].button, FALSE);
     }
-/*  do_all_updates(); */
+  do_all_updates();
 
   setup_update ();
   do_all_updates();
@@ -1913,18 +1969,19 @@ set_media_size(const gchar *new_media_size)
 static void
 combo_callback(GtkWidget *widget, gpointer data)
 {
-  list_option_t *option = (list_option_t *)data;
+  option_t *option = (option_t *)data;
   const gchar *new_value =
-    stpui_combo_get_name(option->combo, option->params);
-  const gchar *value = stp_get_string_parameter(pv->v, option->name);
+    stpui_combo_get_name(option->info.list.combo, option->info.list.params);
+  const gchar *value =
+    stp_get_string_parameter(pv->v, option->fast_desc->name);
   reset_preview();
   if (!value || strcmp(value, new_value) != 0)
     {
       invalidate_frame();
       invalidate_preview_thumbnail();
-      if (option->extra)
-	(option->extra)(new_value);
-      stp_set_string_parameter(pv->v, option->name, new_value);
+      if (option->fast_desc->p_class == STP_PARAMETER_CLASS_PAGE_SIZE)
+	set_media_size(new_value);
+      stp_set_string_parameter(pv->v, option->fast_desc->name, new_value);
       preview_update();
       if (option->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
 	update_adjusted_thumbnail();
@@ -1948,32 +2005,6 @@ orientation_callback (GtkWidget *widget,
     }
 }
 
-static void
-set_color_sliders_active (void)
-{
-  int i;
-  stp_parameter_t desc;
-  for (i = 0; i < color_option_count; i++)
-    {
-      color_option_t *opt = &(color_options[i]);
-      GtkObject *adj = opt->adjustment;
-      stp_describe_parameter(pv->v, opt->name, &desc);
-      if (desc.is_active)
-	{
-	  gtk_widget_show(GTK_WIDGET (SCALE_ENTRY_LABEL (adj)));
-	  gtk_widget_show(GTK_WIDGET (SCALE_ENTRY_SCALE (adj)));
-	  gtk_widget_show(GTK_WIDGET (SCALE_ENTRY_SPINBUTTON (adj)));
-	}
-      else
-	{
-	  gtk_widget_hide(GTK_WIDGET (SCALE_ENTRY_LABEL (adj)));
-	  gtk_widget_hide(GTK_WIDGET (SCALE_ENTRY_SCALE (adj)));
-	  gtk_widget_hide(GTK_WIDGET (SCALE_ENTRY_SPINBUTTON (adj)));
-	}
-      stp_parameter_description_free(&desc);
-    }
-}
-
 /*
  *  output_type_callback() - Update the current output type.
  */
@@ -1988,8 +2019,9 @@ output_type_callback (GtkWidget *widget,
       stp_set_output_type (pv->v, (gint) data);
       invalidate_preview_thumbnail ();
       update_adjusted_thumbnail ();
-      set_color_sliders_active();
+      set_options_active();
       preview_update ();
+      do_all_updates();
     }
 }
 
@@ -3017,18 +3049,19 @@ static void
 color_update (GtkAdjustment *adjustment)
 {
   int i;
-  for (i = 0; i < color_option_count; i++)
+  for (i = 0; i < current_option_count; i++)
     {
-      color_option_t *opt = &(color_options[i]);
-      if (adjustment == GTK_ADJUSTMENT(opt->adjustment))
+      option_t *opt = &(current_options[i]);
+      if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	  adjustment == GTK_ADJUSTMENT(opt->info.flt.adjustment))
 	{
-	  if (opt->update_thumbnail)
-	    invalidate_preview_thumbnail ();
-	  if (stp_get_float_parameter(pv->v, opt->name) != adjustment->value)
+	  invalidate_preview_thumbnail ();
+	  if (stp_get_float_parameter(pv->v, opt->fast_desc->name) !=
+	      adjustment->value)
 	    {
-	      stp_set_float_parameter(pv->v, opt->name, adjustment->value);
-	      if (opt->update_thumbnail)
-		update_adjusted_thumbnail();
+	      stp_set_float_parameter(pv->v, opt->fast_desc->name,
+				      adjustment->value);
+	      update_adjusted_thumbnail();
 	    }
 	}
     }
@@ -3037,13 +3070,14 @@ color_update (GtkAdjustment *adjustment)
 static void
 set_color_defaults (void)
 {
-  const stp_vars_t defvars = stp_default_settings ();
   int i;
-  for (i = 0; i < color_option_count; i++)
+  for (i = 0; i < current_option_count; i++)
     {
-      color_option_t *opt = &(color_options[i]);
-      stp_set_float_parameter(pv->v, opt->name,
-			      stp_get_float_parameter(defvars, opt->name));
+      option_t *opt = &(current_options[i]);
+      if (opt->fast_desc->p_type == STP_PARAMETER_TYPE_DOUBLE &&
+	  opt->fast_desc->p_class == STP_PARAMETER_CLASS_OUTPUT)
+	stp_set_float_parameter(pv->v, opt->fast_desc->name,
+				opt->info.flt.deflt);
     }
 
   do_color_updates ();
