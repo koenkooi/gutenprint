@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.25 2003/02/13 03:33:05 rlk Exp $
+ *  $Id: gimp-print.h,v 1.26 2003/02/15 23:10:43 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -1076,11 +1076,16 @@ extern int stp_end_job(const stp_vars_t, stp_image_t *image);
  */
 extern const char *stp_set_output_codeset(const char *codeset);
 
+/*
+ * Remove inactive and unclaimed options from the list
+ */
+extern void stp_prune_inactive_options(stp_vars_t v);
+
 #ifdef __cplusplus
   }
 #endif
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.25 2003/02/13 03:33:05 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.26 2003/02/15 23:10:43 rlk Exp $
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.50 2003/02/15 16:38:20 rlk Exp $"
+ * "$Id: print.c,v 1.51 2003/02/15 23:10:43 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -419,6 +419,7 @@ do_print_dialog (gchar *proc_name)
   char *filename = gimp_personal_rc_file ((BAD_CONST_CHAR) "printrc");
   stpui_set_printrc_file(filename);
   g_free(filename);
+  if (! getenv("STP_PRINT_MESSAGES_TO_STDERR"))
   stpui_set_errfunc(gimp_errfunc);
   stpui_set_thumbnail_func(stpui_get_thumbnail_data_function);
   stpui_set_thumbnail_data((void *) image_ID);

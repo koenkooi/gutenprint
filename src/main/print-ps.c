@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.58 2003/02/09 23:20:40 rlk Exp $"
+ * "$Id: print-ps.c,v 1.59 2003/02/15 23:10:47 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -369,6 +369,7 @@ ps_print(const stp_vars_t v, stp_image_t *image)
   if (!media_source)
     media_source = "";
 
+  stp_prune_inactive_options(nv);
   if (!stp_verify(nv))
     {
       stpi_eprintf(nv, "Print options not verified; cannot print.\n");

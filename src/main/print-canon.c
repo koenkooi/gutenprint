@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.108 2003/02/09 23:20:33 rlk Exp $"
+ * "$Id: print-canon.c,v 1.109 2003/02/15 23:10:44 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2117,6 +2117,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
   const canon_variable_inkset_t *inks;
   const canon_res_t *res = canon_resolutions;
 
+  stp_prune_inactive_options(nv);
   if (!stp_verify(nv))
     {
       stpi_eprintf(nv, "Print options not verified; cannot print.\n");

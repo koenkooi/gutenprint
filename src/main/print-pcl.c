@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.90 2003/02/09 23:20:40 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.91 2003/02/15 23:10:47 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1962,6 +1962,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
   stp_curve_t   lum_adjustment;
   stp_curve_t   hue_adjustment;
 
+  stp_prune_inactive_options(nv);
   if (!stp_verify(nv))
     {
       stpi_eprintf(nv, "Print options not verified; cannot print.\n");

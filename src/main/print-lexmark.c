@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.108 2003/02/09 23:20:38 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.109 2003/02/15 23:10:47 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1473,6 +1473,7 @@ lexmark_print(const stp_vars_t v, stp_image_t *image)
   const paper_t *media = get_media_type(media_type,caps);
   const lexmark_inkparam_t *ink_parameter = lexmark_get_ink_parameter(ink_type, output_type, caps, nv);
 
+  stp_prune_inactive_options(nv);
 
 #ifdef DEBUG
   dbgfileprn = lex_open_tmp_file(); /* open file with xx */
