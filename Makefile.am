@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.133 2003/01/01 21:05:57 rleigh Exp $
+## $Id: Makefile.am,v 1.134 2003/03/28 21:54:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -84,11 +84,6 @@ dist-hook:
 	$(FIND) $(distdir) -name '.*' -print | xargs $(RM) -rf
 	$(FIND) $(distdir) -name '#*' -print | xargs $(RM) -rf
 	$(FIND) $(distdir) -name '*~' -print | xargs $(RM) -rf
-
-maintainer-clean-local:
-	$(FIND) . -name '.*' -type f -print | xargs $(RM) -f
-	$(FIND) . -name '#*' -type f -print | xargs $(RM) -f
-	$(FIND) . -name '*~' -type f -print | xargs $(RM) -f
 
 install-cups: all
 	cd src/cups ; \
