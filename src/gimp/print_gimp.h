@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.5 2001/02/24 03:14:25 rlk Exp $"
+ * "$Id: print_gimp.h,v 1.6 2001/04/12 01:55:44 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -62,18 +62,6 @@ typedef struct		/**** Printer List ****/
   char	name[128];		/* Name of printer */
   stp_vars_t v;
 } gp_plist_t;
-
-/*
- * Constants for GUI...
- */
-
-#if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
-#define GIMP_1_0
-#endif
-
-#if !defined(GIMP_PRINT_MAINT) && !defined(GIMP_1_0)
-#define NEW_UI_ONLY
-#endif
 
 /*
  * Function prototypes
