@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.1.2.5 2003/05/25 01:50:03 rlk Exp $"
+ * "$Id: channel.c,v 1.1.2.6 2003/05/25 02:28:09 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -203,8 +203,6 @@ stpi_channel_initialize(stp_vars_t v, stp_image_t *image,
 	  next_breakpoint = c->sc[0].value * 65535 * c->sc[0].density / 2;
 	  if (next_breakpoint > 65535)
 	    next_breakpoint = 65535;
-	  stpi_erprintf("Current %d; Next breakpoint at %d\n",
-			val, next_breakpoint);
 	  while (val <= next_breakpoint)
 	    {
 	      int value = (int) ((double) val / c->sc[0].value);
