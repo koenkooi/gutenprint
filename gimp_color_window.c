@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.13 2000/08/25 02:32:51 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.14 2000/08/25 21:43:17 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -120,7 +120,7 @@ gimp_create_color_adjust_window (void)
   contrast_adjustment =
     gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("Contrast:"), 200, 0,
-                          vars.contrast, 25.0, 400.0, 1.0, 10.0, 0,
+                          vars.contrast, 0.0, 400.0, 1.0, 10.0, 0,
                           TRUE, 0, 0,
                           NULL, NULL);
   gtk_signal_connect (GTK_OBJECT (contrast_adjustment), "value_changed",

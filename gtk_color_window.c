@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.15 2000/08/02 00:59:36 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.16 2000/08/25 21:43:17 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -230,7 +230,7 @@ void gtk_create_color_adjust_window(void)
     gtk_widget_show(box);
 
     contrast_adjustment = scale_data =
-	gtk_adjustment_new((float)vars.contrast, 25.0, 401.0, 1.0, 1.0, 1.0);
+	gtk_adjustment_new((float)vars.contrast, 0.0, 401.0, 1.0, 1.0, 1.0);
 
     gtk_signal_connect(GTK_OBJECT(contrast_adjustment),
 		       "value_changed",
