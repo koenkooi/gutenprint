@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.5 2001/02/25 01:58:35 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.6 2001/04/22 03:15:49 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -241,7 +241,8 @@ stp_print_page(gx_device_printer * pdev, FILE * file)
 
   if (strlen(stp_get_resolution(stp_data.v)) == 0)
     stp_set_resolution(stp_data.v,
-		       (*stp_printer_get_printfuncs(printer)->default_resolution)(printer));
+		       ((*stp_printer_get_printfuncs(printer)->default_parameters)
+			(printer, NULL, "Resolution")));
   if (strlen(stp_get_dither_algorithm(stp_data.v)) == 0)
     stp_set_dither_algorithm(stp_data.v, stp_default_dither_algorithm());
 
