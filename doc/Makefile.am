@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2001/07/05 23:49:08 rlk Exp $
+## $Id: Makefile.am,v 1.9 2001/07/05 23:59:49 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,8 @@ DOCS = \
  print-main.png \
  print-setup.png \
  print.html \
- print.sgml
+ print.sgml \
+ html-stamp
 
 
 ## Data
