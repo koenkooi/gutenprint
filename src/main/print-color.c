@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.44 2004/03/28 04:02:02 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.45 2004/03/28 04:43:49 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -241,7 +241,7 @@ static const color_description_t color_descriptions[] =
     COLOR_CORRECTION_ACCURATE,    &convert_to_kcmy   },
   { "CMYKRB",     0, 1, COLOR_ID_CMYKRB, COLOR_BLACK,   CMASK_CMYKRB, 6,
     COLOR_CORRECTION_ACCURATE,    &convert_to_cmykrb },
-  { "Raw",        0, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,           -1,
+  { "Raw",        1, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,           -1,
     COLOR_CORRECTION_RAW,         &convert_raw       },
 };
 
@@ -1367,7 +1367,7 @@ fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	\
     {									\
       lut->printed_colorfunc = 1;					\
       stpi_dprintf(STPI_DBG_COLORFUNC, vars,				\
-		   "Colorfunc is %s_%d_to_%s, %s, %s,, %d\n",		\
+		   "Colorfunc is %s_%d_to_%s, %s, %s, %d\n",		\
 		   #fromname, lut->channel_depth, #toname,		\
 		   lut->input_color_description->name,			\
 		   lut->output_color_description->name,			\
@@ -3686,7 +3686,7 @@ stpi_color_traditional_init(stp_vars_t v,
       return -1;
     }
 
-  if (lut->output_color_description->channel_count < 1)
+  if (lut->input_color_description->color_id == COLOR_ID_RAW)
     {
       if (stpi_verify_parameter(v, "STPIRawChannels", 1) != PARAMETER_OK)
 	{
@@ -3892,9 +3892,24 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 		  description->bounds.str = stp_string_list_create();
 		  for (j = 0; j < color_description_count; j++)
 		    if (color_descriptions[j].input)
-		      stp_string_list_add_string
-			(description->bounds.str, color_descriptions[j].name,
-			 color_descriptions[j].name);
+		      {
+			if (color_descriptions[j].color_id == COLOR_ID_RAW)
+			  {
+			    stp_parameter_t desc;
+			    stp_describe_parameter(v, "RawChannels", &desc);
+			    if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+			      stp_string_list_add_string
+				(description->bounds.str,
+				 color_descriptions[j].name,
+				 color_descriptions[j].name);
+			    stp_parameter_description_free(&desc);
+			  }
+			else
+			  stp_string_list_add_string
+			    (description->bounds.str,
+			     color_descriptions[j].name,
+			     color_descriptions[j].name);
+		      }
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}

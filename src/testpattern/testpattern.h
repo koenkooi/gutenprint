@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.12.4.2 2004/03/28 00:00:24 rlk Exp $"
+ * "$Id: testpattern.h,v 1.12.4.3 2004/03/28 04:43:50 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -75,7 +75,6 @@ extern double global_hsize;
 extern double global_vsize;
 extern int global_noblackline;
 extern const char *global_image_type;
-extern const char *global_printing_mode;
 extern int global_color_model;
 extern int global_bit_depth;
 extern int global_channel_depth;

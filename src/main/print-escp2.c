@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.15 2004/03/28 02:05:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.16 2004/03/28 04:43:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -723,8 +723,8 @@ static int
 using_automatic_settings(stp_const_vars_t v, auto_mode_t mode)
 {
   int is_raw = 0;
-  if (stp_get_string_parameter(v, "PrintingMode") &&
-      strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0)
+  if (stp_get_string_parameter(v, "InputImageType") &&
+      strcmp(stp_get_string_parameter(v, "InputImageType"), "Raw") == 0)
     is_raw = 1;
   switch (mode)
     {
@@ -1538,8 +1538,6 @@ escp2_parameters(stp_const_vars_t v, const char *name,
 	(description->bounds.str, "Color", _("Color"));
       stp_string_list_add_string
 	(description->bounds.str, "BW", _("Black and White"));
-      stp_string_list_add_string
-	(description->bounds.str, "Raw", _("Raw"));
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
     }
@@ -1721,10 +1719,11 @@ static const char *
 escp2_describe_output(stp_const_vars_t v)
 {
   const char *printing_mode = stp_get_string_parameter(v, "PrintingMode");
-  if (strcmp(printing_mode, "BW") == 0)
-    return "Grayscale";
-  else if (strcmp(printing_mode, "Raw") == 0)
+  const char *input_image_type = stp_get_string_parameter(v, "InputImageType");
+  if (strcmp(input_image_type, "Raw") == 0)
     return "Raw";
+  else if (strcmp(printing_mode, "BW") == 0)
+    return "Grayscale";
   else
     {
       const escp2_inkname_t *ink_type = get_inktype(v);
@@ -2264,9 +2263,8 @@ setup_head_parameters(stp_vars_t v)
   /*
    * Set up the output channels
    */
-  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0)
+  if (strcmp(stp_get_string_parameter(v, "InputImageType"), "Raw") == 0)
     pd->logical_channels = pd->inkname->channel_set->channel_count;
-      
   else if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "BW") == 0)
     pd->logical_channels = 1;
   else
@@ -2604,7 +2602,7 @@ escp2_do_print(stp_vars_t v, stp_image_t *image, int print_op)
     }
   stpi_image_init(image);
 
-  if (strcmp(stp_get_string_parameter(v, "PrintingMode"), "Raw") == 0 &&
+  if (strcmp(stp_get_string_parameter(v, "InputImageType"), "Raw") == 0 &&
       !set_raw_ink_type(v))
     return 0;
 
