@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.108 2001/09/02 13:30:25 rlk Exp $
+## $Id: Makefile.am,v 1.109 2001/09/08 17:23:08 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ MAINT_CHARSET = latin1
 NONGIMP_SUBDIRS = test
 NONGIMP_DISTDIRS = debian
 ## @-@-@-@-@ YES-GIMP @-@-@-@-@
-SUBDIRS = doc intl lib man src po samples include $(NONGIMP_SUBDIRS)
+SUBDIRS = doc include intl lib man src samples $(NONGIMP_SUBDIRS) po
 DISTDIRS = scripts $(NONGIMP_DISTDIRS)
 
 if MAINTAINER_MODE
