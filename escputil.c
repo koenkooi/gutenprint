@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.14 2000/10/14 01:40:14 rlk Exp $"
+ * "$Id: escputil.c,v 1.15 2000/10/14 02:50:17 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -20,15 +20,15 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifdef __GNU_LIBRARY__
-#include <getopt.h>
-#endif
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
+#ifdef __GNU_LIBRARY__
+#include <getopt.h>
+#endif
 
 char *banner = "\
 Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)\n\
