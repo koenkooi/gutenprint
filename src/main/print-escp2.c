@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.40 2001/03/24 01:42:12 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.41 2001/03/26 13:23:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3009,7 +3009,8 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
 			       page_height * physical_ydpi / 72
 				 + escp2_extra_feed(model, nv)
 				     * physical_ydpi / 360,
-			       1, head_offset, nv, flush_pass);
+			       1, head_offset, nv, flush_pass,
+			       stp_fill_tiff, stp_compute_tiff_linewidth);
 
   /*
    * Compute the LUT.  For now, it's 8 bit, but that may eventually
