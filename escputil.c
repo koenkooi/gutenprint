@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.15.2.1 2000/10/21 19:54:31 rlk Exp $"
+ * "$Id: escputil.c,v 1.15.2.2 2000/10/29 13:44:40 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -112,7 +112,7 @@ Usage: escputil [-P printer | -r device] [-u] [-c | -n | -a | -i] [-q]\n\
     -u The printer is connected via USB.\n\
     -h Print this help message.\n\
     -q Suppress the banner.\n\
-    -m Specify the precise printer model for head alignment.\n"
+    -m Specify the precise printer model for head alignment.\n";
 #endif
 
 typedef struct
