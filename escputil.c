@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.20 2000/12/22 20:33:22 rleigh Exp $"
+ * "$Id: escputil.c,v 1.21 2000/12/22 23:09:02 rlk Exp $"
  *
  *   Printer maintenance utility for Epson Stylus printers
  *
@@ -968,7 +968,7 @@ char *do_get_input (const char *prompt)
 	memset(input, 0, BUFSIZ);
 	printf ("%s", prompt);
 	fgets_status = fgets (input, BUFSIZ, stdin);
-	if (fgets_stat == NULL)
+	if (fgets_status == NULL)
 	{
 		fprintf (stderr, "Error in input\n");
 		return (NULL);
