@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.33.2.5 2002/11/16 21:54:56 rlk Exp $"
+ * "$Id: print.c,v 1.33.2.6 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -488,7 +488,7 @@ run (char   *name,		/* I - Name of print program. */
 	    gimp_vars.unit = param[27].data.d_int32;
 	}
 
-      current_printer = stp_get_printer_by_driver(stp_get_driver(gimp_vars.v));
+      current_printer = stp_get_printer(gimp_vars.v);
       break;
 
     case GIMP_RUN_WITH_LAST_VALS:
@@ -874,7 +874,7 @@ add_printer(const gp_plist_t *key, int add_only)
     {
       if (add_only)
 	return 0;
-      if (stp_get_printer_by_driver(stp_get_driver(key->v)))
+      if (stp_get_printer(key->v))
 	{
 #ifdef DEBUG
 	  printf("Updated File printer directly\n");
@@ -885,7 +885,7 @@ add_printer(const gp_plist_t *key, int add_only)
 	}
       return 1;
     }
-  else if (stp_get_printer_by_driver(stp_get_driver(key->v)))
+  else if (stp_get_printer(key->v))
     {
       p = psearch(key, plist + 1, plist_count - 1,
 		  sizeof(gp_plist_t),
@@ -993,7 +993,7 @@ printrc_load(void)
         GET_MANDATORY_INTERNAL_STRING_PARAM(output_to);
         GET_MANDATORY_STRING_PARAM(driver);
 
-        if (! stp_get_printer_by_driver(stp_get_driver(key.v)))
+        if (! stp_get_printer(key.v))
 	  continue;
 
         GET_MANDATORY_STRING_PARAM(ppd_file);
@@ -1454,5 +1454,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.33.2.5 2002/11/16 21:54:56 rlk Exp $".
+ * End of "$Id: print.c,v 1.33.2.6 2002/11/16 22:34:49 rlk Exp $".
  */

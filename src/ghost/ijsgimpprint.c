@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgimpprint.c,v 1.21.2.1 2002/11/16 20:03:52 rlk Exp $
+ *  $Id: ijsgimpprint.c,v 1.21.2.2 2002/11/16 22:34:48 rlk Exp $
  *
  *   ijs server for gimp-print.
  *
@@ -335,7 +335,7 @@ gimp_get_cb (void *get_cb_data,
 {
   IMAGE *img = (IMAGE *)get_cb_data;
   stp_vars_t v = img->v;
-  stp_printer_t printer = stp_get_printer_by_driver(stp_get_driver(v));
+  stp_printer_t printer = stp_get_printer(v);
   GimpParamList *pl = img->params;
   GimpParamList *curs;
   const char *val = NULL;
@@ -868,7 +868,7 @@ main (int argc, char **argv)
 	  /* Printer data to file */
 	  stp_set_outdata(img.v, f);
 
-	  printer = stp_get_printer_by_driver(stp_get_driver(img.v));
+	  printer = stp_get_printer(img.v);
 	  if (printer == NULL)
 	    {
 	      fprintf(stderr, _("Unknown printer %s\n"),

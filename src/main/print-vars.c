@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.6.2.4 2002/11/16 20:03:53 rlk Exp $"
+ * "$Id: print-vars.c,v 1.6.2.5 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -269,45 +269,6 @@ do						\
   ((x)) = NULL;					\
 } while (0)
 
-static size_t
-c_strlen(const char *s)
-{
-  return strlen(s);
-}
-
-static char *
-c_strndup(const char *s, int n)
-{
-  char *ret;
-  if (!s || n < 0)
-    {
-      ret = stp_malloc(1);
-      ret[0] = 0;
-      return ret;
-    }
-  else
-    {
-      ret = stp_malloc(n + 1);
-      memcpy(ret, s, n);
-      ret[n] = 0;
-      return ret;
-    }
-}
-
-static char *
-c_strdup(const char *s)
-{
-  char *ret;
-  if (!s)
-    {
-      ret = stp_malloc(1);
-      ret[0] = 0;
-      return ret;
-    }
-  else
-    return c_strndup(s, c_strlen(s));
-}
-
 static void
 check_vars(const stp_internal_vars_t *v)
 {
@@ -334,8 +295,8 @@ stp_free_vars(stp_vars_t vv)
   stp_free(v);
 }
 
-#define DEF_STRING_FUNCS(s, t)				\
-t void							\
+#define DEF_STRING_FUNCS(s)				\
+void							\
 stp_set_##s(stp_vars_t vv, const char *val)		\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -343,11 +304,11 @@ stp_set_##s(stp_vars_t vv, const char *val)		\
   if (v->s == val)					\
     return;						\
   SAFE_FREE(v->s);					\
-  v->s = c_strdup(val);					\
+  v->s = stp_strdup(val);				\
   v->verified = 0;					\
 }							\
 							\
-t void							\
+void							\
 stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -355,11 +316,32 @@ stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
   if (v->s == val)					\
     return;						\
   SAFE_FREE(v->s);					\
-  v->s = c_strndup(val, n);				\
+  v->s = stp_strndup(val, n);				\
   v->verified = 0;					\
 }							\
 							\
-t const char *						\
+const char *						\
+stp_get_##s(const stp_vars_t vv)			\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  check_vars(v);					\
+  return v->s;						\
+}
+
+#define DEF_STRING_FUNCS_INTERNAL(s)			\
+static void						\
+stp_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
+{							\
+  stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
+  check_vars(v);					\
+  if (v->s == val)					\
+    return;						\
+  SAFE_FREE(v->s);					\
+  v->s = stp_strndup(val, n);				\
+  v->verified = 0;					\
+}							\
+							\
+static const char *					\
 stp_get_##s(const stp_vars_t vv)			\
 {							\
   stp_internal_vars_t *v = (stp_internal_vars_t *) vv;	\
@@ -385,14 +367,8 @@ stp_get_##s(const stp_vars_t vv)			\
   return v->s;						\
 }
 
-DEF_STRING_FUNCS(driver, )
-DEF_STRING_FUNCS(ppd_file, )
-DEF_STRING_FUNCS(resolution, static)
-DEF_STRING_FUNCS(media_size_name, static)
-DEF_STRING_FUNCS(media_type, static)
-DEF_STRING_FUNCS(media_source, static)
-DEF_STRING_FUNCS(ink_type, static)
-DEF_STRING_FUNCS(dither_algorithm, static)
+DEF_STRING_FUNCS(driver)
+DEF_STRING_FUNCS(ppd_file)
 DEF_FUNCS(output_type, int, )
 DEF_FUNCS(left, int, )
 DEF_FUNCS(top, int, )
@@ -403,6 +379,20 @@ DEF_FUNCS(page_width, int, )
 DEF_FUNCS(page_height, int, )
 DEF_FUNCS(input_color_model, int, )
 DEF_FUNCS(output_color_model, int, )
+DEF_FUNCS(lut, void *, )
+DEF_FUNCS(outdata, void *, )
+DEF_FUNCS(errdata, void *, )
+DEF_FUNCS(driver_data, void *, )
+DEF_FUNCS(cmap, unsigned char *, )
+DEF_FUNCS(outfunc, stp_outfunc_t, )
+DEF_FUNCS(errfunc, stp_outfunc_t, )
+
+DEF_STRING_FUNCS_INTERNAL(resolution)
+DEF_STRING_FUNCS_INTERNAL(media_size_name)
+DEF_STRING_FUNCS_INTERNAL(media_type)
+DEF_STRING_FUNCS_INTERNAL(media_source)
+DEF_STRING_FUNCS_INTERNAL(ink_type)
+DEF_STRING_FUNCS_INTERNAL(dither_algorithm)
 DEF_FUNCS(brightness, float, static)
 DEF_FUNCS(gamma, float, static)
 DEF_FUNCS(contrast, float, static)
@@ -412,13 +402,6 @@ DEF_FUNCS(yellow, float, static)
 DEF_FUNCS(saturation, float, static)
 DEF_FUNCS(density, float, static)
 DEF_FUNCS(app_gamma, float, static)
-DEF_FUNCS(lut, void *, )
-DEF_FUNCS(outdata, void *, )
-DEF_FUNCS(errdata, void *, )
-DEF_FUNCS(driver_data, void *, )
-DEF_FUNCS(cmap, unsigned char *, )
-DEF_FUNCS(outfunc, stp_outfunc_t, )
-DEF_FUNCS(errfunc, stp_outfunc_t, )
 
 void
 stp_set_verified(stp_vars_t vv, int val)
@@ -452,7 +435,7 @@ stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
       stp_set_verified(vd, 0);
       dest->options = nopt;
       memcpy(nopt, opt, sizeof(stp_internal_option_t));
-      nopt->name = stp_malloc(c_strlen(opt->name) + 1);
+      nopt->name = stp_malloc(stp_strlen(opt->name) + 1);
       strcpy(nopt->name, opt->name);
       nopt->data = stp_malloc(opt->length);
       memcpy(nopt->data, opt->data, opt->length);
@@ -464,7 +447,7 @@ stp_copy_options(stp_vars_t vd, const stp_vars_t vs)
           memcpy(nopt, opt, sizeof(stp_internal_option_t));
           nopt->prev = popt;
           popt->next = nopt;
-          nopt->name = stp_malloc(c_strlen(opt->name) + 1);
+          nopt->name = stp_malloc(stp_strlen(opt->name) + 1);
           strcpy(nopt->name, opt->name);
           nopt->data = stp_malloc(opt->length);
           memcpy(nopt->data, opt->data, opt->length);
@@ -607,9 +590,9 @@ stp_fill_parameter_settings(stp_parameter_t *desc, const char *name)
 	  desc->type = param->type;
 	  desc->level = param->level;
 	  desc->class = param->class;
-	  desc->name = c_strdup(param->name);
-	  desc->text = c_strdup(param->text);
-	  desc->help = c_strdup(param->help);
+	  desc->name = stp_strdup(param->name);
+	  desc->text = stp_strdup(param->text);
+	  desc->help = stp_strdup(param->help);
 	  return;
 	}
       param++;
@@ -619,17 +602,14 @@ stp_fill_parameter_settings(stp_parameter_t *desc, const char *name)
 void
 stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
 {
+  int count;
+  int i;
+  const stp_parameter_t *params;
   if (vs == vd)
     return;
   stp_set_driver(vd, stp_get_driver(vs));
   stp_set_driver_data(vd, stp_get_driver_data(vs));
   stp_set_ppd_file(vd, stp_get_ppd_file(vs));
-  stp_set_resolution(vd, stp_get_resolution(vs));
-  stp_set_media_size_name(vd, stp_get_media_size_name(vs));
-  stp_set_media_type(vd, stp_get_media_type(vs));
-  stp_set_media_source(vd, stp_get_media_source(vs));
-  stp_set_ink_type(vd, stp_get_ink_type(vs));
-  stp_set_dither_algorithm(vd, stp_get_dither_algorithm(vs));
   stp_set_output_type(vd, stp_get_output_type(vs));
   stp_set_left(vd, stp_get_left(vs));
   stp_set_top(vd, stp_get_top(vs));
@@ -638,15 +618,6 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_image_type(vd, stp_get_image_type(vs));
   stp_set_page_width(vd, stp_get_page_width(vs));
   stp_set_page_height(vd, stp_get_page_height(vs));
-  stp_set_brightness(vd, stp_get_brightness(vs));
-  stp_set_gamma(vd, stp_get_gamma(vs));
-  stp_set_contrast(vd, stp_get_contrast(vs));
-  stp_set_cyan(vd, stp_get_cyan(vs));
-  stp_set_magenta(vd, stp_get_magenta(vs));
-  stp_set_yellow(vd, stp_get_yellow(vs));
-  stp_set_saturation(vd, stp_get_saturation(vs));
-  stp_set_density(vd, stp_get_density(vs));
-  stp_set_app_gamma(vd, stp_get_app_gamma(vs));
   stp_set_input_color_model(vd, stp_get_input_color_model(vd));
   stp_set_output_color_model(vd, stp_get_output_color_model(vd));
   stp_set_lut(vd, stp_get_lut(vs));
@@ -655,6 +626,26 @@ stp_copy_vars(stp_vars_t vd, const stp_vars_t vs)
   stp_set_cmap(vd, stp_get_cmap(vs));
   stp_set_outfunc(vd, stp_get_outfunc(vs));
   stp_set_errfunc(vd, stp_get_errfunc(vs));
+  params = stp_list_parameters(vs, &count);
+  for (i = 0; i < count; i++)
+    switch (params[i].type)
+      {
+      case STP_PARAMETER_TYPE_STRING_LIST:
+      case STP_PARAMETER_TYPE_FILE:
+	stp_set_string_parameter(vd, params[i].name,
+				 stp_get_string_parameter(vs, params[i].name));
+	break;
+      case STP_PARAMETER_TYPE_DOUBLE:
+	stp_set_float_parameter(vd, params[i].name,
+				stp_get_float_parameter(vs, params[i].name));
+	break;
+      case STP_PARAMETER_TYPE_CURVE:
+	stp_set_curve_parameter(vd, params[i].name,
+				stp_get_curve_parameter(vs, params[i].name));
+	break;
+      default:
+	break;
+      }
   stp_copy_options(vd, vs);
   stp_set_verified(vd, stp_get_verified(vs));
 }
@@ -667,36 +658,31 @@ stp_allocate_copy(const stp_vars_t vs)
   return (vd);
 }
 
-#define ICLAMP(value)						\
-do								\
-{								\
-  if (stp_get_##value(user) < stp_get_##value(min))		\
-    stp_set_##value(user, stp_get_##value(min));		\
-  else if (stp_get_##value(user) > stp_get_##value(max))	\
-    stp_set_##value(user, stp_get_##value(max));		\
-} while (0)
-
 void
 stp_merge_printvars(stp_vars_t user, const stp_vars_t print)
 {
-  const stp_vars_t max = stp_maximum_settings();
-  const stp_vars_t min = stp_minimum_settings();
-  stp_set_cyan(user, stp_get_cyan(user) * stp_get_cyan(print));
-  ICLAMP(cyan);
-  stp_set_magenta(user, stp_get_magenta(user) * stp_get_magenta(print));
-  ICLAMP(magenta);
-  stp_set_yellow(user, stp_get_yellow(user) * stp_get_yellow(print));
-  ICLAMP(yellow);
-  stp_set_contrast(user, stp_get_contrast(user) * stp_get_contrast(print));
-  ICLAMP(contrast);
-  stp_set_brightness(user, stp_get_brightness(user)*stp_get_brightness(print));
-  ICLAMP(brightness);
-  stp_set_gamma(user, stp_get_gamma(user) / stp_get_gamma(print));
-  ICLAMP(gamma);
-  stp_set_saturation(user, stp_get_saturation(user)*stp_get_saturation(print));
-  ICLAMP(saturation);
-  stp_set_density(user, stp_get_density(user) * stp_get_density(print));
-  ICLAMP(density);
+  int count;
+  int i;
+  const stp_parameter_t *params = stp_list_parameters(print, &count);
+  for (i = 0; i < count; i++)
+    if (params[i].type == STP_PARAMETER_TYPE_DOUBLE &&
+	params[i].class == STP_PARAMETER_CLASS_OUTPUT &&
+	params[i].level == STP_PARAMETER_LEVEL_BASIC)
+      {
+	stp_parameter_t desc;
+	double usrval = stp_get_float_parameter(user, "Gamma");
+	double prnval = stp_get_float_parameter(print, "Gamma");
+	stp_describe_parameter(print, params[i].name, &desc);
+	if (strcmp(params[i].name, "Gamma") == 0)
+	  usrval /= prnval;
+	else
+	  usrval *= prnval;
+	if (usrval < desc.bounds.dbl.lower)
+	  usrval = desc.bounds.dbl.lower;
+	else if (usrval < desc.bounds.dbl.upper)
+	  usrval = desc.bounds.dbl.upper;
+	stp_set_float_parameter(user, params[i].name, usrval);
+      }
   if (stp_get_output_type(print) == OUTPUT_GRAY &&
       (stp_get_output_type(user) == OUTPUT_COLOR ||
        stp_get_output_type(user) == OUTPUT_RAW_CMYK))

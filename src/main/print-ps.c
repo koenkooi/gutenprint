@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.34.2.5 2002/11/16 21:47:06 rlk Exp $"
+ * "$Id: print-ps.c,v 1.34.2.6 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -59,15 +59,6 @@ static const char	*ps_ppd_file = NULL;
 static void	ps_hex(const stp_vars_t, unsigned short *, int);
 static void	ps_ascii85(const stp_vars_t, unsigned short *, int, int);
 static char	*ppd_find(const char *, const char *, const char *, int *);
-
-
-static char *
-c_strdup(const char *s)
-{
-  char *ret = stp_malloc(strlen(s) + 1);
-  strcpy(ret, s);
-  return ret;
-}
 
 /*
  * 'ps_parameters()' - Return the parameter values for the given parameter.

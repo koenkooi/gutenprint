@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.83.2.2 2002/11/16 20:03:52 rlk Exp $"
+ * "$Id: print-canon.c,v 1.83.2.3 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1435,14 +1435,6 @@ canon_size_type(const stp_vars_t v, const canon_cap_t * caps)
   return 0;
 }
 
-static char *
-c_strdup(const char *s)
-{
-  char *ret = stp_malloc(strlen(s) + 1);
-  strcpy(ret, s);
-  return ret;
-}
-
 #ifndef EXPERIMENTAL_STUFF
 static int canon_res_code(const canon_cap_t * caps, int xdpi, int ydpi)
 {
@@ -1652,7 +1644,7 @@ canon_parameters(const stp_vars_t v, const char *name,
 	  sprintf(tmp2,"%dx%d DPI",
 		   (1<<x)/2*caps->base_res,(1<<y)/2*caps->base_res);
 	  if (stp_string_list_count(description->bounds.str) == 0)
-	    description->deflt.str = c_strdup(tmp1);
+	    description->deflt.str = stp_strdup(tmp1);
 	  stp_string_list_add_param(description->bounds.str, tmp1, tmp2);
 	  stp_deprintf(STP_DBG_CANON,"supports mode '%s'\n",tmp2);
 

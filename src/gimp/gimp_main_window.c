@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.87.2.4 2002/11/16 21:39:06 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.87.2.5 2002/11/16 22:34:48 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1736,7 +1736,7 @@ plist_callback (GtkWidget *widget,
   pv = &(plist[plist_current]);
 
   if (strcmp(stp_get_driver(pv->v), ""))
-    current_printer = stp_get_printer_by_driver (stp_get_driver (pv->v));
+    current_printer = stp_get_printer(pv->v);
 
   suppress_preview_update++;
   setup_update ();
@@ -2008,7 +2008,7 @@ setup_update (void)
   GtkAdjustment *adjustment;
   gint           idx;
 
-  current_printer = stp_get_printer_by_driver (stp_get_driver (pv->v));
+  current_printer = stp_get_printer(pv->v);
   idx = stp_get_printer_index_by_driver (stp_get_driver (pv->v));
 
   gtk_clist_select_row (GTK_CLIST (printer_driver), idx, 0);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.5.2.2 2002/11/16 20:03:53 rlk Exp $"
+ * "$Id: print-papers.c,v 1.5.2.3 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -463,7 +463,7 @@ stp_get_papersize_by_name(const char *name)
   const stp_internal_papersize_t *val = &(paper_sizes[0]);
   if (!name)
     return NULL;
-  while (c_strlen(val->name) > 0)
+  while (stp_strlen(val->name) > 0)
     {
       if (!strcmp(val->name, name))
 	return (stp_papersize_t) val;

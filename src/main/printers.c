@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.7.2.4 2002/11/16 20:03:53 rlk Exp $"
+ * "$Id: printers.c,v 1.7.2.5 2002/11/16 22:34:49 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -103,7 +103,7 @@ stp_describe_parameter(const stp_vars_t v, const char *name,
 		       stp_parameter_t *description)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   (printfuncs->parameters)(v, name, description);
 }
 
@@ -111,7 +111,7 @@ void
 stp_get_media_size(const stp_vars_t v, int *width, int *height)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   (printfuncs->media_size)(v, width, height);
 }
 
@@ -120,7 +120,7 @@ stp_get_imageable_area(const stp_vars_t v,
 		       int *left, int *right, int *bottom, int *top)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   (printfuncs->imageable_area)(v, left, right, bottom, top);
 }
 
@@ -129,7 +129,7 @@ stp_get_size_limit(const stp_vars_t v, int *max_width, int *max_height,
 		   int *min_width, int *min_height)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   (printfuncs->limit)(v, max_width, max_height, min_width,min_height);
 }
 
@@ -137,7 +137,7 @@ void
 stp_describe_resolution(const stp_vars_t v, int *x, int *y)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   (printfuncs->describe_resolution)(v, x, y);
 }
 
@@ -145,7 +145,7 @@ int
 stp_verify(const stp_vars_t v)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   return (printfuncs->verify)(v);
 }
 
@@ -153,7 +153,7 @@ int
 stp_print(const stp_vars_t v, stp_image_t *image)
 {
   const stp_printfuncs_t *printfuncs =
-    stp_printer_get_printfuncs(stp_get_printer_by_driver(stp_get_driver(v)));
+    stp_printer_get_printfuncs(stp_get_printer(v));
   return (printfuncs->print)(v, image);
 }
 
