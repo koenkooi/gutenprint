@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.48 2003/02/09 23:20:28 rlk Exp $"
+ * "$Id: print.c,v 1.49 2003/02/14 00:17:50 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -157,11 +157,7 @@ stpui_get_thumbnail_data_function(void *image_ID, gint *width, gint *height,
  * 'run()' - Run the plug-in...
  */
 
-/* #define DEBUG_STARTUP */
-
-#ifdef DEBUG_STARTUP
 volatile int SDEBUG = 1;
-#endif
 
 static void
 run (char   *name,		/* I - Name of print program. */
@@ -178,10 +174,9 @@ run (char   *name,		/* I - Name of print program. */
   gdouble xres, yres;
   const char *image_filename;
   stp_image_t *image;
-#ifdef DEBUG_STARTUP
-  while (SDEBUG)
-    ;
-#endif
+  if (getenv("STP_DEBUG_STARTUP"))
+    while (SDEBUG)
+      ;
 
  /*
   * Initialise libgimpprint
