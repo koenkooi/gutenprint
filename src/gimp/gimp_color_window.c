@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.37 2002/12/07 05:39:50 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.38 2002/12/08 17:22:19 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -83,9 +83,9 @@ dither_algo_callback (GtkWidget *widget, gpointer data)
 {
   stp_string_list_t vec = NULL;
   stp_parameter_t desc;
+  const gchar *new_algo;
   stp_describe_parameter(pv->v, "DitherAlgorithm", &desc);
-  const gchar *new_algo =
-    Combo_get_name(dither_algo_combo, desc.bounds.str);
+  new_algo = Combo_get_name(dither_algo_combo, desc.bounds.str);
   if (strcmp(stp_get_string_parameter(pv->v, "DitherAlgorithm"), new_algo) != 0)
     stp_set_string_parameter(pv->v, "DitherAlgorithm", new_algo);
 }
