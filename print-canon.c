@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.39 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: print-canon.c,v 1.40 2000/04/20 02:49:24 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1017,13 +1017,9 @@ canon_print(const printer_t *printer,		/* I - Model */
     {
     case IMAGE_LINE_ART:
       dither_set_ink_spread(dither, 19);
-      dither_set_black_lower(dither, .04);
-      dither_set_randomizers(dither, 0, 0, 0, 0);
-      dither_set_black_upper(dither, .1);
       break;
     case IMAGE_SOLID_TONE:
       dither_set_ink_spread(dither, 15);
-      dither_set_randomizers(dither, .1, .1, .1, .01);
       break;
     case IMAGE_CONTINUOUS:
       dither_set_ink_spread(dither, 14);
@@ -1524,6 +1520,9 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 
 /*
  *   $Log: print-canon.c,v $
+ *   Revision 1.40  2000/04/20 02:49:24  rlk
+ *   Clean up the solid color and line art modes a bit.
+ *
  *   Revision 1.39  2000/04/20 02:42:54  rlk
  *   Reduce initial memory footprint.
  *
@@ -1681,5 +1680,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
  *   Revision 1.1  2000/02/01 09:01:40  gandy
  *   Add print-canon.c: Support for the BJC 6000 and possibly others
  *
- * End of "$Id: print-canon.c,v 1.39 2000/04/20 02:42:54 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.40 2000/04/20 02:49:24 rlk Exp $".
  */

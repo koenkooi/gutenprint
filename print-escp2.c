@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.126 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.127 2000/04/20 02:49:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1147,13 +1147,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
     {
     case IMAGE_LINE_ART:
       dither_set_ink_spread(dither, 19);
-      dither_set_black_lower(dither, .04);
-      dither_set_randomizers(dither, 0, 0, 0, 0);
-      dither_set_black_upper(dither, .1);
       break;
     case IMAGE_SOLID_TONE:
       dither_set_ink_spread(dither, 15);
-      dither_set_randomizers(dither, .1, .1, .1, .01);
       break;
     case IMAGE_CONTINUOUS:
       dither_set_ink_spread(dither, 13);
@@ -2933,6 +2929,9 @@ escp2_write_weave(void *        vsw,
 
 /*
  *   $Log: print-escp2.c,v $
+ *   Revision 1.127  2000/04/20 02:49:24  rlk
+ *   Clean up the solid color and line art modes a bit.
+ *
  *   Revision 1.126  2000/04/20 02:42:54  rlk
  *   Reduce initial memory footprint.
  *
@@ -3450,5 +3449,5 @@ escp2_write_weave(void *        vsw,
  *   Revision 1.1  1997/07/02  13:51:53  mike
  *   Initial revision
  *
- * End of "$Id: print-escp2.c,v 1.126 2000/04/20 02:42:54 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.127 2000/04/20 02:49:24 rlk Exp $".
  */
