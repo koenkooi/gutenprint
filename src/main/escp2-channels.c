@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.25 2003/09/20 20:18:35 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.26 2003/09/20 23:44:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1045,7 +1045,7 @@ static const escp2_inkname_t *const c80_ink_types[] =
 };
 
 DECLARE_INKLIST("None", c80, c80, N_("EPSON Standard Inks"),
-		c80, standard, standard);
+		c80, c80, standard);
 
 static const escp2_inkname_t *const c80_quadtone_ink_types[] =
 {
