@@ -1,6 +1,6 @@
 gimp-print (4.2.2-pre1-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release, Closes: #147404, #139218
   * Move escputil to section utils (RL)
   * Add postscript-viewer virtual package as an alternative to gs Recommends
     for cupsys-driver-gimpprint (RL)
