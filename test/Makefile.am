@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.39 2003/03/30 12:52:40 rleigh Exp $
+## $Id: Makefile.am,v 1.40 2003/05/20 01:48:28 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-INCLUDES = -I$(top_srcdir)/src/main $(GIMPPRINT_CFLAGS)
+INCLUDES = -I$(top_srcdir)/src/main $(AM_CFLAGS) $(GIMPPRINT_CFLAGS)
 
 TESTS = curve run-testdither run-weavetest
 

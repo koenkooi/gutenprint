@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.30 2003/03/30 12:52:37 rleigh Exp $
+## $Id: Makefile.am,v 1.31 2003/05/20 01:48:27 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ EXTRA_DIST = README
 
 ## Variables
 
-LOCAL_CFLAGS = @IJS_CFLAGS@ @GLIB_CFLAGS@ $(GIMPPRINT_CFLAGS)
+LOCAL_CFLAGS = $(GIMPPRINT_CFLAGS) @IJS_CFLAGS@ @GLIB_CFLAGS@
 
 
 ## Programs
