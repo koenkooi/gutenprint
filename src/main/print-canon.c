@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.16 2001/03/05 16:02:48 gandy Exp $"
+ * "$Id: print-canon.c,v 1.17 2001/03/05 16:04:20 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1461,7 +1461,8 @@ canon_init_setImage(const stp_vars_t v, canon_init_t *init)
   }
 
   /* workaround for the bjc8200 in 6color mode - not really understood */
-  if ((init->caps->model==8200) && (init->colormode==COLOR_CCMMYK)) {
+  if ((init->caps->model==8200) && 
+      (init->colormode==COLOR_CCMMYK)) {
     arg_74_1= 0xff;
     arg_74_2= 0x90;
     arg_74_3= 0x04;
