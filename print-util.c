@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.121 2000/08/28 12:51:45 rlk Exp $"
+ * "$Id: print-util.c,v 1.122 2000/08/28 23:24:29 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -140,9 +140,9 @@ static vars_t max_vars =
 	-1,			/* Y offset (-1 = center) */
 	4.0,			/* Screen gamma */
 	4.0,			/* Contrast */
-	2.0,			/* Cyan */
-	2.0,			/* Magenta */
-	2.0,			/* Yellow */
+	4.0,			/* Cyan */
+	4.0,			/* Magenta */
+	4.0,			/* Yellow */
 	0,			/* Linear */
 	9.0,			/* Output saturation */
 	2.0,			/* Density */
