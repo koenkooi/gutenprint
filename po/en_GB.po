@@ -3,12 +3,12 @@
 # Roger Leigh <roger@whinlatter.uklinux.net>, 2001.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: en_GB.po,v 1.80.2.10 2002/03/18 21:29:13 rleigh Exp $
+# $Id: en_GB.po,v 1.80.2.11 2002/03/30 20:26:36 rlk Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gimp-print\n"
-"POT-Creation-Date: 2002-03-18 20:29+0000\n"
+"POT-Creation-Date: 2002-03-30 15:21-0500\n"
 "PO-Revision-Date: 2001-11-05 21:42+0100\n"
 "Last-Translator: Roger Leigh <roger@whinlatter.uklinux.net>\n"
 "Language-Team: British English\n"
