@@ -4,7 +4,7 @@
    XML description of papers known to libgutenprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.17 2004/09/17 18:38:21 rleigh Exp $"
+   "$Id: papers.xml,v 1.18 2005/03/29 00:23:43 rlk Exp $"
 -->
 
 <!--
@@ -66,13 +66,6 @@
       <comment value="CD, 65mm diameter"/>
       <width value="184"/>
       <height value="184"/>
-      <unit value="english"/>
-    </paper>
-    <paper name="Postcard">
-      <description value="Postcard"/>
-      <comment value="100mm x 147mm"/>
-      <width value="283"/>
-      <height value="416"/>
       <unit value="english"/>
     </paper>
     <paper name="w216h360">
