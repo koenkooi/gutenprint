@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.152 2001/12/14 02:47:15 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.153 2001/12/18 01:17:18 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -332,15 +332,6 @@ escp2_has_advanced_command_set(int model, const stp_vars_t v)
   return (escp2_has_cap(model, MODEL_COMMAND, MODEL_COMMAND_PRO,v) ||
 	  escp2_has_cap(model, MODEL_COMMAND, MODEL_COMMAND_1999,v) ||
 	  escp2_has_cap(model, MODEL_COMMAND, MODEL_COMMAND_2000,v));
-}
-
-static void *
-xzmalloc(size_t bytes)
-{
-  void *retval = stp_malloc(bytes);
-  if (retval)
-    memset(retval, 0, bytes);
-  return (retval);
 }
 
 static char *
@@ -1341,22 +1332,22 @@ escp2_print(const stp_printer_t printer,		/* I - Model */
   length = (out_width + 7) / 8;
 
   if (output_type == OUTPUT_GRAY || output_type == OUTPUT_MONOCHROME)
-    black = xzmalloc(length * bits);
+    black = stp_zalloc(length * bits);
   else
     {
-      cyan = xzmalloc(length * bits);
-      magenta = xzmalloc(length * bits);
-      yellow = xzmalloc(length * bits);
+      cyan = stp_zalloc(length * bits);
+      magenta = stp_zalloc(length * bits);
+      yellow = stp_zalloc(length * bits);
 
       if (ncolors == 7)
-	dyellow = xzmalloc(length * bits);
+	dyellow = stp_zalloc(length * bits);
       if (ncolors >= 6)
 	{
-	  lcyan = xzmalloc(length * bits);
-	  lmagenta = xzmalloc(length * bits);
+	  lcyan = stp_zalloc(length * bits);
+	  lmagenta = stp_zalloc(length * bits);
 	}
       if (hasblack)
-	black = xzmalloc(length * bits);
+	black = stp_zalloc(length * bits);
     }
   cols[0] = black;
   cols[1] = magenta;
