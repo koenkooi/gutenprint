@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.12 2000/05/03 01:53:25 mitsch Exp $"
+ * "$Id: print_gimp.h,v 1.13 2000/05/04 17:51:27 mitsch Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -30,6 +30,7 @@
 #define __PRINT_GIMP_H__
 
 #include <gtk/gtk.h>
+
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
 
@@ -48,7 +49,7 @@
 #define PREVIEW_SIZE_VERT  240 /* Assuming max media size of 24" A2 */
 #define PREVIEW_SIZE_HORIZ 240 /* Assuming max media size of 24" A2 */
 
-#if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 16)
+#if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
 #define GIMP_1_0
 #endif
 
