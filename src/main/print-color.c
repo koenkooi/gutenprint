@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.11 2001/01/19 03:01:40 rlk Exp $"
+ * "$Id: print-color.c,v 1.1 2001/01/22 19:46:35 rleigh Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *

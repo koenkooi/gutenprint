@@ -1,5 +1,5 @@
 /*
- * "$Id: quickmatrix257.h,v 1.4 2000/12/04 01:41:01 rlk Exp $"
+ * "$Id: quickmatrix257.h,v 1.1 2001/01/22 19:46:35 rleigh Exp $"
  *
  *   Square dither matrix file for the gimp-print plugin.
  *

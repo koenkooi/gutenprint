@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.112 2001/01/20 23:10:57 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.1 2001/01/22 19:46:35 rleigh Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
