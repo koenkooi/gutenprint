@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.154 2000/06/01 01:44:59 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.155 2000/06/02 11:52:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -837,7 +837,7 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
 
       if (!use_softweave || ydpi < 720)
 	fprintf(prn, "\033(v\004%c%c%c%c%c", 0,
-		t & 0xff, t >> 8, (t >> 16) & 0xff, (t >> 24) & 0xff);
+		top & 0xff, top >> 8, (top >> 16) & 0xff, (top >> 24) & 0xff);
     }
   else
     {
@@ -860,7 +860,7 @@ escp2_init_printer(FILE *prn,int model, int output_type, int ydpi, int xdpi,
 		(((page_length * 720 / 72) >> 24) & 0xff));
 
       if (!use_softweave || ydpi < 720)
-	fprintf(prn, "\033(v\002%c%c%c", 0, t & 0xff, t >> 8);
+	fprintf(prn, "\033(v\002%c%c%c", 0, top & 0xff, top >> 8);
     }
 }
 
