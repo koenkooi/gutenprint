@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.7 2001/02/03 03:35:21 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.8 2001/02/17 22:24:02 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -307,7 +307,7 @@ main(int  argc,				/* I - Number of command-line arguments */
 
     if ((size = stp_get_papersize_by_size(cups.header.PageSize[1],
                                       cups.header.PageSize[0])) != NULL)
-      strcpy(v.media_size, size->name);
+      strncpy(v.media_size, size->name, sizeof(v.media_size) - 1);
     else
       fprintf(stderr, "ERROR: Unable to get media size!\n");
 
@@ -573,5 +573,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 }
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.7 2001/02/03 03:35:21 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.8 2001/02/17 22:24:02 rlk Exp $".
  */
