@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.120 2004/06/06 16:19:26 rlk Exp $"
+ * "$Id: print-color.c,v 1.121 2004/07/24 02:07:21 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -54,6 +54,7 @@ static const color_correction_t color_corrections[] =
   { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
   { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
   { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
+  { "Predithered", N_("Pre-Dithered"),  COLOR_CORRECTION_PREDITHERED, 0 },
 };
 
 static const int color_correction_count =

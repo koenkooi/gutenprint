@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.5 2004/06/05 16:16:17 rlk Exp $"
+ * "$Id: color-conversion.h,v 1.6 2004/07/24 02:07:21 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -43,7 +43,8 @@ typedef enum
   COLOR_CORRECTION_THRESHOLD,
   COLOR_CORRECTION_DESATURATED,
   COLOR_CORRECTION_DENSITY,
-  COLOR_CORRECTION_RAW
+  COLOR_CORRECTION_RAW,
+  COLOR_CORRECTION_PREDITHERED
 } color_correction_enum_t;
 
 typedef struct
