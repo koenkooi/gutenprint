@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.106 2000/03/02 03:12:20 khk Exp $"
+ * "$Id: print-escp2.c,v 1.107 2000/03/03 00:11:20 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.107  2000/03/03 00:11:20  rlk
+ *   Silly bug in rgb_to_gray
+ *
  *   Revision 1.106  2000/03/02 03:12:20  khk
  *   Cleaned up some compiler warnings in print-escp2.c
  *
@@ -2563,7 +2566,7 @@ modd(int x, int y)
 /*
  * Compute the weave parameters for the given row.  This computation is
  * rather complex, and I need to go back and write down very carefully
- * what's going on here.
+ * what's going on here.  That is, if I can figure it out myself :-)
  */
 
 static void
@@ -3048,5 +3051,5 @@ escp2_write_weave(void *        vsw,
 #endif
 
 /*
- * End of "$Id: print-escp2.c,v 1.106 2000/03/02 03:12:20 khk Exp $".
+ * End of "$Id: print-escp2.c,v 1.107 2000/03/03 00:11:20 rlk Exp $".
  */
