@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.46 2002/12/07 16:54:43 rlk Exp $"
+ * "$Id: escputil.c,v 1.47 2002/12/07 23:24:25 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -255,8 +255,8 @@ stp_printer_t printer_list[] =
   { "895",	N_("Stylus Photo 895"),	3,	15,	0,	0,	0 },
   { "915",	N_("Stylus Photo 915"),	3,	15,	0,	0,	0 },
   { "925",	N_("Stylus Photo 925"),	3,	15,	0,	0,	0 },
-  { "950",	N_("Stylus Photo 950"),	3,	15,	0,	0,	0 },
-  { "960",	N_("Stylus Photo 960"),	3,	15,	0,	0,	0 },
+  { "950",	N_("Stylus Photo 950"),	4,	15,	0,	0,	0 },
+  { "960",	N_("Stylus Photo 960"),	4,	15,	0,	0,	0 },
   { "1200",	N_("Stylus Photo 1200"),3,	15,	0,	0,	0 },
   { "1270",	N_("Stylus Photo 1270"),3,	15,	0,	0,	0 },
   { "1280",	N_("Stylus Photo 1280"),3,	15,	0,	0,	0 },
