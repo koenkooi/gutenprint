@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.25 2002/09/11 00:01:16 rlk Exp $ */
+/* $Id: unprint.c,v 1.26 2002/10/27 00:43:03 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -940,14 +940,14 @@ parse_escp2_extended(FILE *fp_r)
       pstate.yposition = 0;
       if (pstate.top_margin + pstate.bottom_margin > pstate.page_height)
 	pstate.page_height = pstate.top_margin + pstate.bottom_margin;
-      page = (line_type **) xcalloc(pstate.bottom_margin - pstate.top_margin,
-				    sizeof(line_type *));
       fprintf(stderr, "Setting top margin to %d (%.3f)\n",
 	      pstate.top_margin,
 	      (double) pstate.top_margin / pstate.page_management_units);
       fprintf(stderr, "Setting bottom margin to %d (%.3f)\n",
 	      pstate.bottom_margin,
 	      (double) pstate.bottom_margin / pstate.page_management_units);
+      page = (line_type **) xcalloc(pstate.bottom_margin - pstate.top_margin,
+				    sizeof(line_type *));
       break;
     case 'V': /* set absolute vertical position */
       i = 0;
