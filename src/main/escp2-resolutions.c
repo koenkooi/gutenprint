@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.12 2003/05/05 00:36:03 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.13 2003/05/05 02:49:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -128,8 +128,6 @@ const res_t stpi_escp2_standard_reslist[] =
 
   { "1440x1440sw",      N_("1440 x 1440 DPI"),
     1440, 1440, 1,  0, 1, 1, 1, 1, RES_2880_720},
-  { "1440x1440hq2",     N_("1440 x 1440 DPI Highest Quality"),
-    1440, 1440, 1,  0, 2, 1, 1, 1, RES_2880_720},
 
   { "2880x1440sw",      N_("2880 x 1440 DPI"),
     2880, 1440, 1,  0, 1, 1, 1, 1, RES_2880_1440},
