@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.22 2004/05/07 19:20:30 rleigh Exp $"
+ * "$Id: dither-impl.h,v 1.23 2004/07/24 02:22:30 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -55,6 +55,7 @@ extern "C" {
 #define D_UNITONE 64
 #define D_HYBRID_EVENTONE (D_ORDERED_BASE | D_EVENTONE)
 #define D_HYBRID_UNITONE (D_ORDERED_BASE | D_UNITONE)
+#define D_PREDITHERED 128
 
 #define DITHER_FAST_STEPS (6)
 
@@ -177,6 +178,7 @@ typedef struct dither
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
 
 
+extern stpi_ditherfunc_t stpi_dither_predithered;
 extern stpi_ditherfunc_t stpi_dither_very_fast;
 extern stpi_ditherfunc_t stpi_dither_ordered;
 extern stpi_ditherfunc_t stpi_dither_ed;
@@ -254,5 +256,5 @@ do									\
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.22 2004/05/07 19:20:30 rleigh Exp $".
+ * End of "$Id: dither-impl.h,v 1.23 2004/07/24 02:22:30 rlk Exp $".
  */
