@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.69 2000/02/28 12:48:32 rlk Exp $"
+ * "$Id: print.c,v 1.70 2000/03/01 01:14:07 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1138,18 +1138,19 @@ do_print_dialog(void)
   group = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
   if (vars.scaling > 0.0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-  gtk_signal_connect(GTK_OBJECT(button), "toggled",
-                     (GtkSignalFunc)scaling_callback, NULL);
   gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
   gtk_widget_show(button);
 
   scaling_ppi = button = gtk_radio_button_new_with_label(group, _("PPI"));
   if (vars.scaling < 0.0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-  gtk_signal_connect(GTK_OBJECT(button), "toggled",
-                     (GtkSignalFunc)scaling_callback, NULL);
   gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
   gtk_widget_show(button);
+
+  gtk_signal_connect(GTK_OBJECT(scaling_percent), "toggled",
+                     (GtkSignalFunc)scaling_callback, NULL);
+  gtk_signal_connect(GTK_OBJECT(scaling_ppi), "toggled",
+                     (GtkSignalFunc)scaling_callback, NULL);
 
 #ifndef GIMP_1_0
   scaling_image = button = gtk_button_new_with_label(_("Set Image Scale"));
@@ -2327,11 +2328,11 @@ do_misc_updates()
   else
     {
       float tmp = plist[plist_current].v.scaling;
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_percent), TRUE);
       GTK_ADJUSTMENT(scaling_adjustment)->lower = 5.0;
       GTK_ADJUSTMENT(scaling_adjustment)->upper = 101.0;
       sprintf(s, "%.1f", tmp);
       GTK_ADJUSTMENT(scaling_adjustment)->value = tmp;
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scaling_percent), TRUE);
       gtk_signal_handler_block_by_data(GTK_OBJECT(scaling_entry), NULL);
       gtk_entry_set_text(GTK_ENTRY(scaling_entry), s);
       gtk_signal_handler_unblock_by_data(GTK_OBJECT(scaling_entry), NULL);
@@ -3616,5 +3617,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.69 2000/02/28 12:48:32 rlk Exp $".
+ * End of "$Id: print.c,v 1.70 2000/03/01 01:14:07 rlk Exp $".
  */
