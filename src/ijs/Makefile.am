@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2001/12/16 02:06:31 rlk Exp $
+## $Id: Makefile.am,v 1.2 2002/01/11 00:58:42 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,8 @@ MAINT_CHARSET = latin1
 ## Variables
 
 AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
-LIBS = @LIBS@ $(INTLLIBS)
+INCLUDES = @IJS_CFLAGS@ @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
+LIBS = @IJS_LIBS@ @LIBS@ $(INTLLIBS)
 
 ## Programs
 
@@ -38,7 +38,7 @@ bin_PROGRAMS = @IJS_BIN@
 
 EXTRA_PROGRAMS = ijsgimpprint
 
-ijsgimpprint_LDADD = $(LIBGIMPPRINT_LIBS) -lijs
+ijsgimpprint_LDADD = $(LIBGIMPPRINT_LIBS)
 ijsgimpprint_DEPENDENCIES = $(LIBGIMPPRINT_LIBS)
 
 $(LIBGIMPPRINT_LIBS):
