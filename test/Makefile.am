@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.17 2001/06/02 23:01:55 rleigh Exp $
+## $Id: Makefile.am,v 1.18 2001/06/02 23:31:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -64,4 +64,4 @@ $(LIBGIMPPRINT_LIBS):
 CLEANFILES = $(EXTRA_PROGRAMS)
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = cyan-sweep.tif mixed-color-1bit.ppm parse-escp2 run-weavetest
+EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest
