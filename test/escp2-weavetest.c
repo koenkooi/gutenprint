@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.19 2001/09/02 13:30:27 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.19.6.1 2002/05/02 02:02:33 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -163,10 +163,11 @@ run_one_weavetest(int physjets, int physsep, int hpasses, int vpasses,
       head_offset[0] = (physjets+1)*physsep;
       head_offset[1] = (physjets+1)*physsep;
       head_offset[2] = 2*(physjets+1)*physsep;
+      phys_lines += 2*(physjets+1)*physsep;
     }
 
   sw = stp_initialize_weave(physjets, physsep, hpasses, vpasses, subpasses,
-			    1, 1, 128, nrows, 1, first_line,
+			    7, 1, 128, nrows, 1, first_line,
 			    phys_lines, strategy, head_offset, v, flush_pass,
 			    stp_fill_tiff, stp_pack_tiff,
 			    stp_compute_tiff_linewidth);
