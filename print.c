@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.99 2000/06/19 16:40:40 jmv Exp $"
+ * "$Id: print.c,v 1.100 2000/06/20 01:28:10 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -313,7 +313,6 @@ run (char   *name,		/* I - Name of print program. */
   GDrawable	*drawable;	/* Drawable for image */
   GRunModeType	 run_mode;	/* Current run mode */
   FILE		*prn;		/* Print file/command */
-  guchar	*cmap;		/* Colormap (indexed images only) */
   int		 ncolors;	/* Number of colors in colormap */
   GParam	*values;	/* Return values */
 #ifdef __EMX__
@@ -636,20 +635,16 @@ run (char   *name,		/* I - Name of print program. */
 	   */
 
 	  if (gimp_image_base_type (image_ID) == INDEXED)
-	    cmap = gimp_image_get_cmap (image_ID, &ncolors);
+	    vars.cmap = gimp_image_get_cmap (image_ID, &ncolors);
 	  else
-	    {
-	      cmap    = NULL;
-	      ncolors = 0;
-	    }
+	    vars.cmap    = NULL;
 
 	  /*
-	   * Finally, call the print driver to send the image to the printer and
-	   * close the output file/command...
+	   * Finally, call the print driver to send the image to the printer
+	   * and close the output file/command...
 	   */
 
-	  (*current_printer->print) (current_printer, 1, prn, image, cmap,
-				     &vars);
+	  (*current_printer->print) (current_printer, 1, prn, image, &vars);
 
 	  if (plist_current > 0)
 #ifndef __EMX__
@@ -1175,5 +1170,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.99 2000/06/19 16:40:40 jmv Exp $".
+ * End of "$Id: print.c,v 1.100 2000/06/20 01:28:10 rlk Exp $".
  */

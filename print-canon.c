@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.58 2000/06/19 08:00:59 gandy Exp $"
+ * "$Id: print-canon.c,v 1.59 2000/06/20 01:28:10 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -707,9 +707,9 @@ canon_print(const printer_t *printer,		/* I - Model */
             int       copies,		/* I - Number of copies */
             FILE      *prn,		/* I - File to print to */
 	    Image     image,		/* I - Image to print */
-            unsigned char    *cmap,	/* I - Colormap (for indexed images) */
 	    const vars_t    *v)
 {
+  unsigned char *cmap = v->cmap;
   int		model = printer->model;
   char 		*ppd_file = v->ppd_file;
   char 		*resolution = v->resolution;

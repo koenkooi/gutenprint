@@ -27,7 +27,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.17 2000/06/18 00:30:06 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.18 2000/06/20 01:28:10 rlk Exp $ */
 /* epson stylus photo  output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -125,9 +125,12 @@ static privdata_t stp_data =
     100,			/* g          */
     100,			/* b          */
     0,				/* lin        */
-    1.0,				/* saturation */
+    1.0,			/* saturation */
     1.0,			/* density */
     0,				/* image type */
+    0,				/* unit */
+    NULL,			/* lookup table */
+    NULL			/* Color map */
   }
 };
 
@@ -230,11 +233,11 @@ private int stp_print_page(gx_device_printer * pdev, FILE * file)
   compute_lut(&(printer->printvars), 1, &stp_data.v);
 
   stp_data.topoffset = 0;
+  stp_data.v.cmap = NULL;
   escp2_print(printer,	/* I - Model */
 	      1,		/* I - Number of copies */
 	      file,		/* I - File to print to */
 	      NULL,		/* I - Image to print (dummy) */
-	      NULL,		/* I - Colormap (for indexed images) */
 	      &stp_data.v);	/* vars_t * */
 
   gs_free_object(pdev->memory, stp_row, "stp row buffer");

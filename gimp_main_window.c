@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.22 2000/06/20 00:20:54 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.23 2000/06/20 01:28:10 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -325,7 +325,7 @@ gimp_create_main_window (void)
                       (gpointer) 0);
   gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
-  unit_cm = button = gtk_radio_button_new_with_label (group, _("Cm"));
+  unit_cm = button = gtk_radio_button_new_with_label (group, _("cm"));
   if (vars.unit == 1)
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
   gtk_signal_connect (GTK_OBJECT (button), "toggled",
