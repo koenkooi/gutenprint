@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.37 2002/07/06 22:33:23 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.38 2002/07/06 22:54:33 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1855,9 +1855,9 @@ DECLARE_INK_CHANNEL(quadtone);
 
 static const physical_subchannel_t c80_quadtone_subchannels[] =
 {
-  { 4, -1, 0 },
+  { 4, -1, 240 },
   { 1, -1, 120 },
-  { 2, -1, 240 },
+  { 2, -1, 0 },
   { 0, -1, 0 }
 };
 
