@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2004/05/26 03:16:14 rlk Exp $
+## $Id: Makefile.am,v 1.11 2004/05/26 22:37:13 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ libgimpprintui_la_SOURCES =			\
 libgimpprintui_la_LIBADD = $(GIMPPRINT_UI_LIBDEPS)
 # Uncommment to build an unversioned library (version in soname)
 libgimpprintui_la_CFLAGS = $(AM_CFLAGS) $(GIMPPRINT_CFLAGS) $(GTK_CFLAGS)
-libgimpprintui_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir) -static
+libgimpprintui_la_LDFLAGS = -release $(GIMPPRINT_VERSION) -rpath $(libdir)
 # Uncomment to build a versioned library
 #libgimpprintui_la_LDFLAGS = \
 # -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
