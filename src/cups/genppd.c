@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.96 2004/05/09 16:06:07 rleigh Exp $"
+ * "$Id: genppd.c,v 1.97 2004/05/26 22:32:53 rleigh Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -491,6 +491,16 @@ help(void)
        "  A list of printer models, either the driver or quoted full name.\n");
 }
 
+/*
+ * 'dirent_sort()' - sort directory entries
+ */
+static int
+dirent_sort(const void *a,
+	    const void *b)
+{
+  return strcoll ((*(const struct dirent **) a)->d_name,
+		  (*(const struct dirent **) b)->d_name);
+}
 
 /*
  * 'getlangs()' - Get a list of available translations
@@ -503,7 +513,7 @@ getlangs(void)
   int n;
   char **langs;
 
-  n = scandir (baselocaledir, &langdirs, checkcat, alphasort);
+  n = scandir (baselocaledir, &langdirs, checkcat, dirent_sort);
   if (n >= 0)
     {
       int idx;
@@ -1499,5 +1509,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.96 2004/05/09 16:06:07 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.97 2004/05/26 22:32:53 rleigh Exp $".
  */

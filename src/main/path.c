@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.12 2004/05/09 16:06:10 rleigh Exp $"
+ * "$Id: path.c,v 1.13 2004/05/26 22:32:54 rleigh Exp $"
  *
  *   libgimpprint path functions - split and search paths.
  *
@@ -40,6 +40,15 @@ static const char *path_check_path;   /* Path for scandir() callback */
 static const char *path_check_suffix; /* Suffix for scandir() callback */
 
 
+static int
+dirent_sort(const void *a,
+	    const void *b)
+{
+  return strcoll ((*(const struct dirent **) a)->d_name,
+		  (*(const struct dirent **) b)->d_name);
+}
+
+
 /*
  * Make a list of all modules in the search path.
  */
@@ -70,7 +79,7 @@ stp_path_search(stp_list_t *dirlist, /* List of directories to search */
       stp_deprintf(STP_DBG_PATH, "stp-path: directory: %s\n",
 		   (const char *) stp_list_item_get_data(diritem));
       n = scandir ((const char *) stp_list_item_get_data(diritem),
-		   &module_dir, stpi_path_check, alphasort);
+		   &module_dir, stpi_path_check, dirent_sort);
       if (n >= 0)
 	{
 	  int idx;
