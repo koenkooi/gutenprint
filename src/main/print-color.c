@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.2 2004/03/09 03:00:25 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.3 2004/03/13 18:12:48 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -49,6 +49,12 @@ typedef unsigned (*stp_convert_t)(stp_const_vars_t vars,
 				  const unsigned char *in,
 				  unsigned short *out);
 
+typedef enum
+{
+  COLOR_WHITE,		/* RGB */
+  COLOR_BLACK		/* CMY */
+} color_model_t;
+
 typedef struct
 {
   unsigned steps;
@@ -58,8 +64,8 @@ typedef struct
   int image_width;
   int out_channels;
   int channels_are_initialized;
-  int input_color_model;
-  int output_color_model;
+  color_model_t input_color_model;
+  color_model_t output_color_model;
   stp_convert_t colorfunc;
   stp_curve_t composite;
   stp_curve_t black;
@@ -113,6 +119,14 @@ static const float_param_t float_parameters[] =
       N_("Input image type"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1
+    }, 0.0, 0.0, 0.0, 0
+  },
+  {
+    {
+      "OutputImageType", N_("Output Image Type"), N_("Core Parameter"),
+      N_("Output image type"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+      STP_PARAMETER_LEVEL_INTERNAL, 1, 1, -1, 1
     }, 0.0, 0.0, 0.0, 0
   },
   {
@@ -1405,7 +1419,7 @@ color_##bits##_to_gray(stp_const_vars_t vars,				   \
   stp_curve_resample(lut->composite, 1 << bits);			   \
   composite = stp_curve_get_ushort_data(lut->composite, &count);	   \
 									   \
-  if (lut->input_color_model == COLOR_MODEL_CMY)			   \
+  if (lut->input_color_model == COLOR_BLACK)				   \
     {									   \
       l_red = (100 - l_red) / 2;					   \
       l_green = (100 - l_green) / 2;					   \
@@ -1545,7 +1559,7 @@ initialize_channels(stp_vars_t v, stp_image_t *image)
 }
 
 static int
-stpi_color_traditional_get_row(stp_const_vars_t v,
+stpi_color_traditional_get_row(stp_vars_t v,
 			       stp_image_t *image,
 			       int row,
 			       unsigned *zero_mask)
@@ -1557,7 +1571,7 @@ stpi_color_traditional_get_row(stp_const_vars_t v,
       != STP_IMAGE_STATUS_OK)
     return 2;
   if (!lut->channels_are_initialized)
-    initialize_channels((stp_vars_t)v, image);
+    initialize_channels(v, image);
   zero = (lut->colorfunc)(v, lut->in_data, stpi_channel_get_input(v));
   if (zero_mask)
     *zero_mask = zero;
@@ -1742,7 +1756,7 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
       double temp_pixel, pixel;
       pixel = (double) i / (double) (isteps - 1);
 
-      if (l->input_color_model == COLOR_MODEL_CMY)
+      if (l->input_color_model == COLOR_BLACK)
 	pixel = 1.0 - pixel;
 
       /*
@@ -1815,7 +1829,7 @@ compute_a_curve(stp_curve_t curve, double c_gamma, lut_params_t *l)
        */
 
       pixel = 65535 * pow(pixel, l->print_gamma);	/* was + 0.5 here */
-      if (l->output_color_model == COLOR_MODEL_RGB)
+      if (l->output_color_model == COLOR_WHITE)
 	pixel = 65535 - pixel;
 
       if (pixel <= 0.0)
@@ -2364,6 +2378,28 @@ stpi_color_traditional_describe_parameter(stp_const_vars_t v,
 					     "CMYK", "CMYK");
 		  stp_string_list_add_string(description->bounds.str,
 					     "KCMY", "KCMY");
+		  stp_string_list_add_string(description->bounds.str,
+					     "Raw", "Raw");
+		  description->deflt.str =
+		    stp_string_list_param(description->bounds.str, 0)->name;
+		}
+	      else if (strcmp(name, "OutputImageType") == 0)
+		{
+		  description->bounds.str = stp_string_list_create();
+		  stp_string_list_add_string(description->bounds.str,
+					     "Grayscale", "Grayscale");
+		  stp_string_list_add_string(description->bounds.str,
+					     "Whitescale", "Whitescale");
+		  stp_string_list_add_string(description->bounds.str,
+					     "RGB", "RGB");
+		  stp_string_list_add_string(description->bounds.str,
+					     "CMY", "CMY");
+		  stp_string_list_add_string(description->bounds.str,
+					     "CMYK", "CMYK");
+		  stp_string_list_add_string(description->bounds.str,
+					     "CMYKRB", "CMYKRB");
+		  stp_string_list_add_string(description->bounds.str,
+					     "Raw", "Raw");
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}

@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.14.4.2 2004/03/11 03:37:55 rlk Exp $"
+ * "$Id: color.h,v 1.14.4.3 2004/03/13 18:12:48 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -57,7 +57,7 @@ typedef enum
 typedef struct
 {
   int (*init)(stp_vars_t v, stp_image_t *image, size_t steps);
-  int (*get_row)(stp_const_vars_t v, stp_image_t *image,
+  int (*get_row)(stp_vars_t v, stp_image_t *image,
 		 int row, unsigned *zero_mask);
   stp_parameter_list_t (*list_parameters)(stp_const_vars_t v);
   void (*describe_parameter)(stp_const_vars_t v, const char *name,
@@ -86,7 +86,7 @@ extern int stpi_color_init(stp_vars_t v, stp_image_t *image, size_t steps);
  * Acquire input and perform color conversion.  Return value
  * is status; zero is success.
  */
-extern int stpi_color_get_row(stp_const_vars_t v, stp_image_t *image,
+extern int stpi_color_get_row(stp_vars_t v, stp_image_t *image,
 			      int row, unsigned *zero_mask);
 
 extern stp_parameter_list_t stpi_color_list_parameters(stp_const_vars_t v);
