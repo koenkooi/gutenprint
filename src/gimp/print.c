@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.8 2001/04/19 23:39:56 rlk Exp $"
+ * "$Id: print.c,v 1.9 2001/04/27 23:03:19 rleigh Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -264,6 +264,12 @@ run (char   *name,		/* I - Name of print program. */
   while (SDEBUG)
     ;
 #endif
+
+ /*
+  * Initialise libgimpprint
+  */
+
+  stp_init();
 
 #ifdef INIT_I18N_UI
   INIT_I18N_UI();
@@ -1426,5 +1432,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.8 2001/04/19 23:39:56 rlk Exp $".
+ * End of "$Id: print.c,v 1.9 2001/04/27 23:03:19 rleigh Exp $".
  */

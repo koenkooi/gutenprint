@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.92 2001/03/08 19:48:19 rleigh Exp $
+## $Id: Makefile.am,v 1.93 2001/04/27 23:03:18 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,9 +60,9 @@ ChangeLog:
 
 dist-hook:
 	for dir in debian doc scripts ; do \
-	  if test -d $$dir ; then \
+	  if test -d $(top_srcdir)/$$dir ; then \
 	    mkdir $(distdir)/$$dir; \
-	    for dirfile in $$dir/*; do \
+	    for dirfile in $(top_srcdir)/$$dir/*; do \
 	      if test -f $$dirfile ; then \
 	        cp -p $$dirfile $(distdir)/$$dir; \
 	      fi \
@@ -77,8 +77,6 @@ dist-hook:
 	  find $(distdir) -name Makefile.in -print | xargs --no-run-if-empty rm ; \
 	  rm -f .gimp-dist ; \
 	fi
-
-.PHONY: gimp-dist install-gimp install-cups install-ghost snapshot ChangeLog
 
 gimp-dist:
 	touch .gimp-dist

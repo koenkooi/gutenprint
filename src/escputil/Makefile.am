@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/02/03 19:42:09 rleigh Exp $
+## $Id: Makefile.am,v 1.6 2001/04/27 23:03:19 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,6 @@ INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 LIBS = ../../lib/libprintut.la $(INTLLIBS) ../../lib/libprintut.la @LIBS@
 
 AM_CPPFLAGS =\
- -DLOCALEDIR=\""$(localedir)"\"\
  @MAINTAINER_CFLAGS@
 
 bin_PROGRAMS = @ESCPUTIL_BIN@

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.16 2001/03/09 21:23:35 rleigh Exp $
+## $Id: Makefile.am,v 1.17 2001/04/27 23:03:19 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@ MAINT_CHARSET = latin1
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 
 AM_CPPFLAGS =\
- -DLOCALEDIR=\""$(localedir)"\"\
  @MAINTAINER_CFLAGS@
 
 bin_SCRIPTS = gimpprint-config

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/01/24 03:23:01 rlk Exp $
+## $Id: Makefile.am,v 1.3 2001/04/27 23:03:19 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@ MAINT_CHARSET = latin1
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
 
 AM_CPPFLAGS =\
- -DLOCALEDIR=\""$(localedir)"\"\
  @MAINTAINER_CFLAGS@
 
 LFLAGS = -i
