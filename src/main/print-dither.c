@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.13.2.4 2001/03/24 01:47:27 rlk Exp $"
+ * "$Id: print-dither.c,v 1.13.2.5 2001/03/24 02:05:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2141,9 +2141,18 @@ stp_dither_cmyk_fast(const unsigned short  *input,
 
   height = (d->dst_width + 7) / 8;
 
-  memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
+  if (cyan)
+    memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
+  if (lcyan)
+    memset(lcyan, 0, height * d->dither[ECOLOR_C].signif_bits);
+  if (magenta)
+    memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
+  if (lmagenta)
+    memset(lmagenta, 0, height * d->dither[ECOLOR_M].signif_bits);
+  if (yellow)
+    memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
+  if (lyellow)
+    memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   /*
@@ -2290,9 +2299,18 @@ stp_dither_cmyk_ordered(const unsigned short  *input,
 
   height = (d->dst_width + 7) / 8;
 
-  memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
-  memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
-  memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
+  if (cyan)
+    memset(cyan, 0, height * d->dither[ECOLOR_C].signif_bits);
+  if (lcyan)
+    memset(lcyan, 0, height * d->dither[ECOLOR_C].signif_bits);
+  if (magenta)
+    memset(magenta, 0, height * d->dither[ECOLOR_M].signif_bits);
+  if (lmagenta)
+    memset(lmagenta, 0, height * d->dither[ECOLOR_M].signif_bits);
+  if (yellow)
+    memset(yellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
+  if (lyellow)
+    memset(lyellow, 0, height * d->dither[ECOLOR_Y].signif_bits);
   if (black)
     memset(black, 0, height * d->dither[ECOLOR_K].signif_bits);
   /*

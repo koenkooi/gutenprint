@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.7.2.4 2001/03/24 01:47:27 rlk Exp $"
+ * "$Id: print-color.c,v 1.7.2.5 2001/03/24 02:05:44 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -728,7 +728,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
     isat = 1.0 / ssat;
   while (width > 0)
     {
-      double h, s, v;
+      double h, s, l;
       switch (bpp)
 	{
 	case 1:
@@ -806,7 +806,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 	  if ((compute_saturation) &&
 	      (out->c[i] != out->m[i] || out->c[i] != out->y[i]))
 	    {
-	      calc_cmy_to_hsl(out, i, &h, &s, &v);
+	      calc_cmy_to_hsl(out, i, &h, &s, &l);
 	      if (ssat < 1)
 		s *= ssat;
 	      else
@@ -817,7 +817,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(out, i, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, l);
 	    }
 	  update_cmyk(out, i);	/* Fiddle with the INPUT */
 	  out->c[i] = lookup_value(out->c[i], lut->steps,
@@ -832,7 +832,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 	  if ((split_saturation || hue_map || lum_map || sat_map) &&
 	      (out->c[i] != out->m[i] || out->c[i] != out->y[i]))
 	    {
-	      calc_rgb_to_hsl(out, i, &h, &s, &v);
+	      calc_rgb_to_hsl(out, i, &h, &s, &l);
 	      if (split_saturation)
 		{
 		  if (ssat < 1)
@@ -861,7 +861,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 		      else if (h >= 6.0)
 			h -= 6.0;
 		    }
-		  if (lum_map && v > .0001 && v < .9999)
+		  if (lum_map && l > .0001 && l < .9999)
 		    {
 		      int ih;
 		      double eh;
@@ -870,12 +870,12 @@ rgb_to_cmy(const unsigned char	*rgbin,
 		      eh = nh - (double) ih;
 		      if (lum_map[ih] != 1.0 || lum_map[ih + 1] != 1.0)
 			{
-			  double ev = lum_map[ih] +
+			  double el = lum_map[ih] +
 			    eh * (lum_map[ih + 1] - lum_map[ih]);
-			  ev = 1.0 + (s * (ev - 1.0));
-			  if (v > .5)
-			    ev = 1.0 + ((2.0 * (1.0 - v)) * (ev - 1.0));
-			  v = 1.0 - pow(1.0 - v, ev);
+			  el = 1.0 + (s * (el - 1.0));
+			  if (l > .5)
+			    el = 1.0 + ((2.0 * (1.0 - l)) * (el - 1.0));
+			  l = 1.0 - pow(1.0 - l, el);
 			}
 		    }
 		  if (sat_map)
@@ -893,7 +893,7 @@ rgb_to_cmy(const unsigned char	*rgbin,
 			}
 		    }
 		}
-	      calc_hsl_to_cmy(out, i, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, l);
 	    }
 	  if (ld < 65536)
 	    {
@@ -1043,7 +1043,7 @@ fast_indexed_to_cmy(const unsigned char *indexed,
   int i = 0;
   while (width > 0)
     {
-      double h, s, v;
+      double h, s, l;
       if (bpp == 1)
 	{
 	  /*
@@ -1084,7 +1084,7 @@ fast_indexed_to_cmy(const unsigned char *indexed,
 	{
 	  if (saturation != 1.0)
 	    {
-	      calc_rgb_to_hsl(out, i, &h, &s, &v);
+	      calc_rgb_to_hsl(out, i, &h, &s, &l);
 	      if (saturation < 1)
 		s *= saturation;
 	      else if (saturation > 1)
@@ -1095,7 +1095,7 @@ fast_indexed_to_cmy(const unsigned char *indexed,
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(out, i, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, l);
 	    }
 	  if (density != 1.0)
 	    {
@@ -1146,7 +1146,7 @@ fast_rgb_to_cmy(const unsigned char *rgbin,
   int i = 0;
   while (width > 0)
     {
-      double h, s, v;
+      double h, s, l;
       if (bpp == 3)
 	{
 	  /*
@@ -1192,7 +1192,7 @@ fast_rgb_to_cmy(const unsigned char *rgbin,
 	{
 	  if (saturation != 1.0)
 	    {
-	      calc_rgb_to_out(rgbout, &h, &s, &v);
+	      calc_rgb_to_out(rgbout, &h, &s, &l);
 	      if (saturation < 1)
 		s *= saturation;
 	      else if (saturation > 1)
@@ -1203,7 +1203,7 @@ fast_rgb_to_cmy(const unsigned char *rgbin,
 		}
 	      if (s > 1)
 		s = 1.0;
-	      calc_hsl_to_cmy(out, i, h, s, v);
+	      calc_hsl_to_cmy(out, i, h, s, l);
 	    }
 	  if (density != 1.0)
 	    {

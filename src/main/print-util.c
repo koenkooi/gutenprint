@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.11.2.2 2001/03/10 00:22:54 rlk Exp $"
+ * "$Id: print-util.c,v 1.11.2.3 2001/03/24 02:05:44 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -721,7 +721,7 @@ stp_default_media_size(const stp_printer_t printer,
         	   int  *width,		/* O - Width in points */
         	   int  *height)	/* O - Height in points */
 {
-  if (stp_get_page_width(v) > stp_get_page_height(v) > 0)
+  if (stp_get_page_width(v) > 0 && stp_get_page_height(v) > 0)
     {
       *width = stp_get_page_width(v);
       *height = stp_get_page_height(v);
@@ -1125,11 +1125,11 @@ stp_minimum_settings()
 # include <varargs.h>
 #endif
 
-static int stp_vasprintf (char **result, const char *format, va_list args);
-static int int_stp_vasprintf (char **result, const char *format, va_list *args);
+static int vasprintf (char **result, const char *format, va_list args);
+static int int_vasprintf (char **result, const char *format, va_list *args);
 
 static int
-int_stp_vasprintf (char **result, const char *format, va_list *args)
+int_vasprintf (char **result, const char *format, va_list *args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -1206,9 +1206,9 @@ int_stp_vasprintf (char **result, const char *format, va_list *args)
 }
 
 static int
-stp_vasprintf (char **result, const char *format, va_list args)
+vasprintf (char **result, const char *format, va_list args)
 {
-  return int_stp_vasprintf (result, format, &args);
+  return int_vasprintf (result, format, &args);
 }
 #else
 extern int vasprintf (char **result, const char *format, va_list args);
