@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.7 2001/04/12 01:55:44 rlk Exp $"
+ * "$Id: print.c,v 1.8 2001/04/19 23:39:56 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -247,7 +247,7 @@ run (char   *name,		/* I - Name of print program. */
 {
   GDrawable	*drawable;	/* Drawable for image */
   GRunModeType	 run_mode;	/* Current run mode */
-  FILE		*prn;		/* Print file/command */
+  FILE		*prn = NULL;	/* Print file/command */
   int		 ncolors;	/* Number of colors in colormap */
   GParam	*values;	/* Return values */
 #ifdef __EMX__
@@ -1426,5 +1426,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.7 2001/04/12 01:55:44 rlk Exp $".
+ * End of "$Id: print.c,v 1.8 2001/04/19 23:39:56 rlk Exp $".
  */
