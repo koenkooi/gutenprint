@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_color_window.c,v 1.8 2000/04/20 02:42:54 rlk Exp $"
+ * "$Id: gtk_color_window.c,v 1.9 2000/05/06 13:18:57 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -499,7 +499,7 @@ void gtk_create_color_adjust_window(void)
     gtk_widget_show(box);
 
     density_adjustment = scale_data =
-	gtk_adjustment_new((float)vars.density, 0.1, 3.0, 0.001, 0.01, 1.0);
+	gtk_adjustment_new((float)vars.density, 0.1, 4.0, 0.001, 0.01, 1.0);
 
     gtk_signal_connect(GTK_OBJECT(scale_data),
 		       "value_changed",
