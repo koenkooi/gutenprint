@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.48 2002/11/06 23:46:03 rlk Exp $"
+ * "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -818,7 +818,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
     cur_opt++;
   }
 
-  gzprintf(fp, "*VariableSizes: %s\n\n", variable_sizes ? "true" : "false");
+  gzprintf(fp, "*VariablePaperSize: %s\n\n", variable_sizes ? "true" : "false");
 
   gzputs(fp, "*OpenUI *PageSize: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageSize\n");
@@ -1168,5 +1168,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.48 2002/11/06 23:46:03 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.49 2002/11/07 12:01:02 rlk Exp $".
  */
