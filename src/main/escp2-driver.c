@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.8 2003/06/15 02:32:25 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.9 2003/07/12 21:27:30 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -131,6 +131,7 @@ print_debug_params(stp_vars_t v)
   print_remote_int_param(v, "Horizontal_units", pd->horizontal_units);
   print_remote_int_param(v, "Micro_units", pd->micro_units);
   print_remote_int_param(v, "Unit_scale", pd->unit_scale);
+  print_remote_int_param(v, "Zero_advance", pd->send_zero_pass_advance);
   print_remote_int_param(v, "Bits", pd->bitwidth);
   print_remote_int_param(v, "Resid", pd->ink_resid);
   print_remote_int_param(v, "Drop Size", pd->drop_size);
@@ -418,6 +419,7 @@ set_vertical_position(stp_vars_t v, stpi_pass_t *pass)
     (pd->separation_rows - 1);
   advance = advance * pd->vertical_units / pd->res->vres;
   if (pass->logicalpassstart > pd->last_pass_offset ||
+      (pd->send_zero_pass_advance && pass->pass > pd->last_pass) ||
       pd->printing_initial_vertical_offset != 0)
     {
       advance += pd->printing_initial_vertical_offset;
@@ -427,6 +429,7 @@ set_vertical_position(stp_vars_t v, stpi_pass_t *pass)
       else
 	stpi_send_command(v, "\033(v", "bh", advance);
       pd->last_pass_offset = pass->logicalpassstart;
+      pd->last_pass = pass->pass;
     }
 }
 
