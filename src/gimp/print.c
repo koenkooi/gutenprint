@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.60 2004/05/17 16:44:08 davehill Exp $"
+ * "$Id: print.c,v 1.61 2004/05/26 03:16:12 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -289,7 +289,10 @@ run (char   *name,		/* I - Name of print program. */
 	values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
       else
 	{
+#if 0
+	  /* What do we do with old output_to?  Probably best ignore it. */
 	  stpui_plist_set_output_to(&gimp_vars, param[3].data.d_string);
+#endif
 	  stp_set_driver(gimp_vars.v, param[4].data.d_string);
 	  stp_set_file_parameter(gimp_vars.v, "PPDFile", param[5].data.d_string);
 	  switch (param[6].data.d_int32)

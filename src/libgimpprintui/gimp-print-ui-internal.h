@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.15 2004/05/23 23:40:24 rleigh Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.16 2004/05/26 03:16:14 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -144,6 +144,7 @@ extern gint stpui_plist_current;     /* Current system printer */
 extern stpui_plist_t *stpui_plist;		  /* System printers */
 extern const char *stpui_printrc_current_printer;
 extern int stpui_show_all_paper_sizes;
+extern stp_string_list_t *stpui_system_print_queues;
 
 /*
  * Function prototypes
