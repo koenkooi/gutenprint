@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.25.2.4 2001/02/22 02:42:43 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.25.2.5 2001/02/23 02:52:08 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3107,6 +3107,7 @@ stp_printfuncs_t stp_escp2_printfuncs =
   escp2_print,
   escp2_default_resolution,
   escp2_describe_resolution,
+  stp_verify_printer_params
 };
 
 static unsigned char *microweave_s = 0;

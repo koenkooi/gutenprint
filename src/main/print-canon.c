@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10.2.3 2001/02/21 03:04:56 rlk Exp $"
+ * "$Id: print-canon.c,v 1.10.2.4 2001/02/23 02:52:08 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2281,6 +2281,7 @@ stp_printfuncs_t stp_canon_printfuncs =
   canon_print,
   canon_default_resolution,
   canon_describe_resolution,
+  stp_verify_printer_params
 };
 
 /*

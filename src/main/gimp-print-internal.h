@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.15.2.2 2001/02/23 01:14:33 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.15.2.3 2001/02/23 02:52:08 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -361,6 +361,9 @@ stp_weave_parameters_by_row(const stp_softweave_t *sw, int row,
 
 extern void stp_destroy_weave(void *);
 
+extern int
+stp_verify_printer_params(const stp_printer_t, const stp_vars_t);
+
 extern void stp_zprintf(const stp_vars_t v, const char *format, ...);
 
 extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
@@ -436,5 +439,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.15.2.2 2001/02/23 01:14:33 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.15.2.3 2001/02/23 02:52:08 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print.h.in,v 1.1.2.5 2001/02/23 01:14:32 rlk Exp $"
+ * "$Id: gimp-print.h.in,v 1.1.2.6 2001/02/23 02:52:08 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -158,7 +158,7 @@ typedef struct stp_image
  *
  * The member functions are:
  *
- * char **(*parameters)(const struct *printer,
+ * char **(*parameters)(const stp_printer_t printer,
  *                      char *ppd_file,
  *                      char *name,
  *                      int *count)
@@ -280,6 +280,7 @@ typedef struct
   const char *(*default_resolution)(const stp_printer_t printer);
   void  (*describe_resolution)(const stp_printer_t printer,
 			       const char *resolution, int *x, int *y);
+  int   (*verify)(const stp_printer_t p, const stp_vars_t v);
 } stp_printfuncs_t;
 
 extern const char *stp_printer_get_long_name(const stp_printer_t);
@@ -426,8 +427,6 @@ stp_compute_page_parameters(int page_right, int page_left, int page_top,
 			    int *page_width, int *page_height, int *out_width,
 			    int *out_height, int *left, int *top);
 
-extern int
-stp_verify_printer_params(const stp_printer_t, const stp_vars_t);
 extern const stp_vars_t stp_default_settings(void);
 extern const stp_vars_t stp_maximum_settings(void);
 extern const stp_vars_t stp_minimum_settings(void);
@@ -438,5 +437,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* _GIMP_PRINT_H_ */
 /*
- * End of "$Id: gimp-print.h.in,v 1.1.2.5 2001/02/23 01:14:32 rlk Exp $".
+ * End of "$Id: gimp-print.h.in,v 1.1.2.6 2001/02/23 02:52:08 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.4.2.4 2001/02/23 01:14:32 rlk Exp $"
+ * "$Id: print.c,v 1.4.2.5 2001/02/23 02:52:08 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -581,8 +581,9 @@ run (char   *name,		/* I - Name of print program. */
 	  stp_set_errfunc(vars, gimp_writefunc);
 	  stp_set_outdata(vars, prn);
 	  stp_set_errdata(vars, stderr);
-	  if (stp_verify_printer_params(current_printer, vars))
-	    (*stp_printer_get_printfuncs(current_printer)->print)
+	  if (stp_printer_get_printfuncs(current_printer)->verify
+	      (current_printer, vars))
+	    stp_printer_get_printfuncs(current_printer)->print
 	      (current_printer, image, vars);
 	  else
 	    values[0].data.d_status = STATUS_EXECUTION_ERROR;
@@ -1490,5 +1491,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.4.2.4 2001/02/23 01:14:32 rlk Exp $".
+ * End of "$Id: print.c,v 1.4.2.5 2001/02/23 02:52:08 rlk Exp $".
  */
