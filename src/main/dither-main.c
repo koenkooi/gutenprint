@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.17.2.1 2003/05/12 01:22:49 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17.2.2 2003/05/15 00:07:24 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -477,11 +477,11 @@ stpi_dither_get_last_position(stp_vars_t v, int color, int subchannel)
 }
 
 void
-stpi_dither(stp_vars_t v, int row, int duplicate_line, int zero_mask)
+stpi_dither_internal(stp_vars_t v, int row, const unsigned short *input,
+		     int duplicate_line, int zero_mask)
 {
   int i, j;
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
-  const unsigned short *input = stpi_channel_get_output(v);
   int ghost_channels = 0;
   for (i = 0; i < PHYSICAL_CHANNEL_COUNT(d); i++)
     {
@@ -506,4 +506,11 @@ stpi_dither(stp_vars_t v, int row, int duplicate_line, int zero_mask)
   d->n_ghost_channels = ghost_channels;
   d->ptr_offset = 0;
   (d->ditherfunc)(v, row, input, duplicate_line, zero_mask);
+}
+
+void
+stpi_dither(stp_vars_t v, int row, int duplicate_line, int zero_mask)
+{
+  const unsigned short *input = stpi_channel_get_output(v);
+  stpi_dither_internal(v, row, input, duplicate_line, zero_mask);
 }
