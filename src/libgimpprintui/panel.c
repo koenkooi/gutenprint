@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.39.2.1 2003/05/25 02:20:37 rlk Exp $"
+ * "$Id: panel.c,v 1.39.2.2 2003/05/25 03:08:35 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3114,8 +3114,6 @@ print_driver_callback (GtkWidget      *widget, /* I - Driver list */
   reset_preview ();
   data = gtk_clist_get_row_data (GTK_CLIST (widget), row);
   tmp_printer = stp_get_printer_by_index ((gint) data);
-  fprintf(stderr, "printer name %s %d\n", stp_printer_get_driver(tmp_printer),
-	  (int) data);
 
   pop_ppd_box();
   calling_print_driver_callback--;
