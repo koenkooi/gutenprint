@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.8 2002/04/28 03:47:23 rlk Exp $
+dnl $Id: configure.ac,v 1.9 2002/05/02 18:13:23 rleigh Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.8 $)
+AC_REVISION($Revision: 1.9 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -233,11 +233,6 @@ STP_ARG_ENABLE([debug],
                [turn on debugging in build],
                [ENABLE_DEBUG],
                [no])
-if test x$ENABLE_DEBUG = xyes ; then
-  CFLAGS="${CFLAGS:=} -g"
-else
-  CFLAGS="${CFLAGS:=} -O"
-fi
 
 STP_ARG_WITH_DETAILED([readline], ,
                       [use readline],
@@ -400,6 +395,15 @@ packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
 
 dnl Compiler flags
+if test "$CC" = "gcc" ; then
+  :
+else
+  if test x$ENABLE_DEBUG = xyes ; then
+    CFLAGS="${CFLAGS:=} -g"
+  else
+    CFLAGS="${CFLAGS:=} -O"
+  fi
+fi
 if test "$CC" = "gcc" ; then
   GNUCFLAGS="-Wall -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wwrite-strings -pedantic"
 fi
