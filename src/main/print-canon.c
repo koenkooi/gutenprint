@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.50 2001/07/02 10:57:30 gandy Exp $"
+ * "$Id: print-canon.c,v 1.51 2001/07/02 11:11:06 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -702,6 +702,22 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_SLOT_ASF1,
     CANON_CAP_STD0 | CANON_CAP_a,
     {-1,0,0,0,-1,-1}, /* max res of 720x360 !! */
+    {1,1,1,1,1,1},
+    CANON_INK(canon_ink_standard),
+    standard_lum_adjustment,
+    standard_hue_adjustment,
+    standard_sat_adjustment
+  },
+
+  { /* Canon BJC 85 */
+    85,
+    9.5*72, 14*72,
+    90, 720, 360, 2,
+    11, 9, 10, 18,
+    CANON_INK_K | CANON_INK_CMYK | CANON_INK_CcMmYK,
+    CANON_SLOT_ASF1,
+    CANON_CAP_STD0 | CANON_CAP_a | CANON_CAP_DMT,
+    {-1,1,0,0,-1,-1}, /* max res of 720x360 !! */
     {1,1,1,1,1,1},
     CANON_INK(canon_ink_standard),
     standard_lum_adjustment,
