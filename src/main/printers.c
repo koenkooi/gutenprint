@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.59 2003/07/18 21:56:07 rlk Exp $"
+ * "$Id: printers.c,v 1.60 2003/10/20 02:39:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -987,4 +987,5 @@ void
 stpi_init_printer(void)
 {
   stpi_register_xml_parser("printdef", stpi_xml_process_printdef);
+  stpi_register_xml_preload("printers.xml");
 }

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.27 2003/06/20 00:15:13 rlk Exp $"
+ * "$Id: print-papers.c,v 1.28 2003/10/20 02:39:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -85,8 +85,12 @@ check_paperlist(void)
 {
   if (paper_list == NULL)
     {
-      stpi_erprintf("No papers found: is STP_MODULE_PATH correct?\n");
-      stpi_paper_list_init();
+      stpi_xml_parse_file_named("papers.xml");
+      if (paper_list == NULL)
+	{
+	  stpi_erprintf("No papers found: is STP_MODULE_PATH correct?\n");
+	  stpi_paper_list_init();
+	}
     }
 }
 
