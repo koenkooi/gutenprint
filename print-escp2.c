@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.152 2000/05/29 23:04:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.153 2000/05/31 01:15:03 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1173,7 +1173,9 @@ escp2_print(const printer_t *printer,		/* I - Model */
   */
 
   nv.density = nv.density * printer->printvars.density /
-    (real_horizontal_passes * vertical_subsample);
+    (horizontal_passes * vertical_subsample);
+  if (bits == 2)
+    nv.density *= 3.3;
   if (nv.density > 1.0)
     nv.density = 1.0;
   nv.saturation *= printer->printvars.saturation;
