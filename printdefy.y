@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.5 2000/06/20 01:17:45 rlk Exp $"
+ * "$Id: printdefy.y,v 1.6 2000/06/29 22:47:33 cpbs Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -31,6 +31,8 @@ extern int mylineno;
 printer_t thePrinter;
 char *quotestrip(const char *i);
 char *endstrip(const char *i);
+
+extern int yylex(void);
 
 #define ENONE 0
 #define ECANON 1
