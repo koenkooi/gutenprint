@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2001/02/03 04:00:49 rlk Exp $
+## $Id: Makefile.am,v 1.6 2001/02/17 22:42:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ MAINHEADERS = print.h print-internal.h print-intl-internal.h quickmatrix257.h ra
 
 MAINFILES = $(MAINCODE) $(MAINHEADERS)
 
-if GHOST_BIN
+if BUILD_GHOST
 all-local: $(srcdir)/$(addprefix gdevstp-,$(MAINCODE)) $(srcdir)/$(addprefix gdevstp-,$(MAINHEADERS))
 endif
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.15 2001/02/03 19:42:09 rleigh Exp $
+## $Id: Makefile.am,v 1.16 2001/02/17 22:42:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -63,9 +63,9 @@ canon_LDADD = $(CUPS_LIBS)
 
 epson_LDADD = $(CUPS_LIBS)
 
-genppd_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS)
+genppd_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
 
-rastertoprinter_LDADD = $(CUPS_LIBS) $(GIMPPRINT_LIBS)
+rastertoprinter_LDADD = $(CUPS_LIBS) $(LIBGIMPPRINT_LIBS)
 
 ## Data
 
@@ -103,7 +103,7 @@ ppd:    genppd
 	-rm -rf ppd
 	./genppd
 
-$(GIMPPRINT_LIBS):
+$(LIBGIMPPRINT_LIBS):
 	$(MAKE) -C ../main
 
 dist-hook:

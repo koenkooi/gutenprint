@@ -1,5 +1,5 @@
 /*
- * "$Id: print-version.c,v 1.1 2001/02/09 18:20:22 rleigh Exp $"
+ * "$Id: print-version.c,v 1.2 2001/02/17 22:42:10 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -39,6 +39,7 @@
 const unsigned int gimpprint_major_version = GIMPPRINT_MAJOR_VERSION;
 const unsigned int gimpprint_minor_version = GIMPPRINT_MINOR_VERSION;
 const unsigned int gimpprint_micro_version = GIMPPRINT_MICRO_VERSION;
+const unsigned int gimpprint_current_interface = GIMPPRINT_CURRENT_INTERFACE;
 const unsigned int gimpprint_binary_age = GIMPPRINT_BINARY_AGE;
 const unsigned int gimpprint_interface_age = GIMPPRINT_INTERFACE_AGE;
 
