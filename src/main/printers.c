@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.2 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: printers.c,v 1.3 2002/10/28 00:52:17 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -33,7 +33,9 @@
 #include "gimp-print-internal.h"
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <math.h>
+#ifdef HAVE_LIMITS_H
 #include <limits.h>
+#endif
 #include <string.h>
 
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.57 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.58 2002/10/28 00:52:17 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2725,7 +2725,7 @@ pcl_mode2(const stp_vars_t v,		/* I - Print file or command */
 {
   unsigned char	*comp_ptr;		/* Current slot in buffer */
 
-  stp_pack_tiff(line, height, comp_buf, &comp_ptr);
+  stp_pack_tiff(line, height, comp_buf, &comp_ptr, NULL, NULL);
 
  /*
   * Send a line of raster graphics...

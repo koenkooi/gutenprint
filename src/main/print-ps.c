@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.30 2002/10/27 00:43:02 rlk Exp $"
+ * "$Id: print-ps.c,v 1.31 2002/10/28 00:52:17 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -34,7 +34,9 @@
 #include <gimp-print/gimp-print-intl-internal.h>
 #include <time.h>
 #include <string.h>
+#ifdef HAVE_LIMITS_H
 #include <limits.h>
+#endif
 #include <stdio.h>
 
 #ifdef _MSC_VER
