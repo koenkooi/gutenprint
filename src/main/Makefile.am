@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.44 2002/11/24 02:46:46 rlk Exp $
+## $Id: Makefile.am,v 1.45 2002/11/28 23:55:48 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,9 @@ m4data_DATA = gimpprint.m4
 
 pkgconfigdata_DATA = gimpprint.pc
 
-pkgxmldata_DATA = printers.xml
+pkgxmldata_DATA = \
+	papers.xml \
+	printers.xml
 
 
 ## Rules
