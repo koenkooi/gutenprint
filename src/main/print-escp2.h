@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.7.4.6 2002/12/06 02:31:24 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.7.4.7 2002/12/08 21:12:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -257,6 +257,9 @@ typedef struct
   size_t n_inks;
 } inklist_t;
 
+#define ROLL_FEED_CUT_ALL (1)
+#define ROLL_FEED_CUT_LAST (2)
+
 typedef struct
 {
   const char *data;
@@ -267,6 +270,7 @@ typedef struct
 {
   const char *name;
   const char *text;
+  unsigned roll_feed_cut_flags;
   init_sequence_t init_sequence;
   init_sequence_t deinit_sequence;
 } input_slot_t;

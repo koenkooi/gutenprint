@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.43.4.3 2002/10/02 01:00:40 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.43.4.4 2002/12/08 21:12:41 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -349,7 +349,10 @@ extern void stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
 extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw, int n);
 extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw, int n);
 
-
+extern int stp_start_job(const stp_printer_t printer,
+			 stp_image_t *image, const stp_vars_t v);
+extern int stp_end_job(const stp_printer_t printer,
+		       stp_image_t *image, const stp_vars_t v);
 
 extern void stp_flush_all(void *, int model, int width, int hoffset,
 			  int ydpi, int xdpi, int physical_xdpi);
@@ -488,5 +491,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.43.4.3 2002/10/02 01:00:40 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.43.4.4 2002/12/08 21:12:41 rlk Exp $".
  */
