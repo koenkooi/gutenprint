@@ -25,7 +25,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-/*$Id: gdevstp.c,v 1.40 2000/09/09 20:17:08 rlk Exp $ */
+/*$Id: gdevstp.c,v 1.41 2000/09/28 23:33:05 rlk Exp $ */
 /* stp output driver */
 #include "gdevprn.h"
 #include "gdevpccm.h"
@@ -147,10 +147,13 @@ stp_dbg(const char *msg, const privdata_t *stp_data)
 
   fprintf(gs_stderr,"Settings: Gamma: %f  Saturation: %f  Density: %f\n",
 	  stp_data->v.gamma, stp_data->v.saturation, stp_data->v.density);
+  fprintf(gs_stderr, "Settings: width %d, height %d\n",
+	  stp_data->v.page_width, stp_data->v.page_height);
   fprintf(gs_stderr, "Settings: Quality %s\n", stp_data->v.resolution);
   fprintf(gs_stderr, "Settings: Dither %s\n", stp_data->v.dither_algorithm);
   fprintf(gs_stderr, "Settings: InputSlot %s\n", stp_data->v.media_source);
   fprintf(gs_stderr, "Settings: MediaType %s\n", stp_data->v.media_type);
+  fprintf(gs_stderr, "Settings: MediaSize %s\n", stp_data->v.media_size);
   fprintf(gs_stderr, "Settings: Model %s\n", stp_data->v.driver);
   fprintf(gs_stderr, "Settings: InkType %s\n", stp_data->v.ink_type);
 }
@@ -310,6 +313,7 @@ stp_get_params(gx_device *pdev, gs_param_list *plist)
       (code = param_write_string(plist, "Quality", &pquality)) < 0 ||
       (code = param_write_string(plist, "InkType", &pinktype) < 0) ||
       (code = param_write_string(plist, "MediaType", &pmediatype)) < 0 ||
+      (code = param_write_string(plist, "stpMediaType", &pmediatype)) < 0 ||
       (code = param_write_string(plist, "InputSlot", &pInputSlot)) < 0
       )
     return code;
@@ -323,6 +327,7 @@ gsncpy(char *d, const gs_param_string *s, int limit)
   if (limit > s->size)
     limit = s->size;
   strncpy(d, s->data, limit);
+  d[limit] = '\000';
 }
 
 /* Put parameters. */
@@ -373,7 +378,9 @@ stp_put_params(gx_device *pdev, gs_param_list *plist)
   param_read_string(plist, "Quality", &pquality);
   param_read_string(plist, "Dither", &palgorithm);
   param_read_string(plist, "InputSlot", &pInputSlot);
-  param_read_string(plist, "MediaType", &pmediatype);
+  param_read_string(plist, "stpMediaType", &pmediatype);
+  if (pmediatype.data && strlen(pmediatype.data) == 0)
+    param_read_string(plist, "MediaType", &pmediatype);
   param_read_string(plist, "Model", &pmodel);
   param_read_string(plist, "InkType", &pinktype);
 
