@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.5 2001/01/28 17:53:28 rwisi Exp $"
+ * "$Id: print-lexmark.c,v 1.6 2001/01/29 02:07:17 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -343,12 +343,6 @@ static void lexmark_write_line(FILE *,
 			       unsigned char *, int,
 			       unsigned char *, int,
 			       int, int, int, int, int);
-
-#define MAX_OVERSAMPLED 4
-#define MAX_BPP 2
-#define BITS_PER_BYTE 8
-#define COMPBUFWIDTH (PHYSICAL_BPI * MAX_OVERSAMPLED * MAX_BPP * \
-	MAX_CARRIAGE_WIDTH / BITS_PER_BYTE)
 
 
 /* Codes for possible ink-tank combinations.

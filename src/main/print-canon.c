@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.2 2001/01/22 21:44:25 rleigh Exp $"
+ * "$Id: print-canon.c,v 1.3 2001/01/29 02:07:17 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -810,13 +810,6 @@ static void canon_write_line(FILE *, canon_cap_t, int,
 			     unsigned char *, int,
 			     unsigned char *, int,
 			     int, int, int, int);
-
-#define PHYSICAL_BPI 1440
-#define MAX_OVERSAMPLED 4
-#define MAX_BPP 2
-#define BITS_PER_BYTE 8
-#define COMPBUFWIDTH (PHYSICAL_BPI * MAX_OVERSAMPLED * MAX_BPP * \
-	MAX_CARRIAGE_WIDTH / BITS_PER_BYTE)
 
 
 /* Codes for possible ink-tank combinations.
