@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.20 2000/02/06 03:59:09 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.21 2000/02/06 21:25:10 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,9 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.21  2000/02/06 21:25:10  davehill
+ *   Fixed max paper sizes.
+ *
  *   Revision 1.20  2000/02/06 03:59:09  rlk
  *   More work on the generalized dithering parameters stuff.  At this point
  *   it really looks like a proper object.  Also dynamically allocate the error
@@ -325,13 +328,13 @@ pcl_parameters(int  model,	/* I - Printer model */
       *count = 0;
       if (model == 5 || model == 1100)
 	{
-	  width_limit = 11 * 72;
-	  length_limit = 17 * 72;
+	  width_limit = 12 * 72;
+	  length_limit = 18 * 72;
 	}
       else
 	{
 	  width_limit = 17 * 72 / 2; /* 8.5" */
-	  length_limit = 11 * 72;
+	  length_limit = 14 * 72;
 	}
       for (i = 0; i < known_papersizes(); i++)
 	{
@@ -1241,5 +1244,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.20 2000/02/06 03:59:09 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.21 2000/02/06 21:25:10 davehill Exp $".
  */
