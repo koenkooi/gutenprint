@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.16 2004/03/21 22:34:11 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.17 2004/03/21 22:50:50 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1520,6 +1520,53 @@ CMYK_TO_KCMY_LINE_ART_FUNC(unsigned char, cmyk_8)
 CMYK_TO_KCMY_LINE_ART_FUNC(unsigned short, cmyk_16)
 GENERIC_COLOR_FUNC(cmyk, kcmy_line_art)
 
+#define KCMY_TO_KCMY_LINE_ART_FUNC(T, name)				\
+static unsigned								\
+name##_to_kcmy_line_art(stp_const_vars_t vars,				\
+			const unsigned char *in,			\
+			unsigned short *out)				\
+{									\
+  int i;								\
+  int z = 15;								\
+  const T *s_in = (const T *) in;					\
+  unsigned desired_high_bit = 0;					\
+  unsigned high_bit = 1 << ((sizeof(T) * 8) - 1);			\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  int width = lut->image_width;						\
+  memset(out, 0, width * 4 * sizeof(unsigned short));			\
+  if (!lut->invert_output)						\
+    desired_high_bit = high_bit;					\
+									\
+  for (i = 0; i < width; i++, out += 4, s_in += 4)			\
+    {									\
+      if ((s_in[0] & high_bit) == desired_high_bit)			\
+	{								\
+	  z &= 0xe;							\
+	  out[0] = 65535;						\
+	}								\
+      if ((s_in[1] & high_bit) == desired_high_bit)			\
+	{								\
+	  z &= 0xd;							\
+	  out[1] = 65535;						\
+	}								\
+      if ((s_in[2] & high_bit) == desired_high_bit)			\
+	{								\
+	  z &= 0xb;							\
+	  out[2] = 65535;						\
+	}								\
+      if ((s_in[3] & high_bit) == desired_high_bit)			\
+	{								\
+	  z &= 0x7;							\
+	  out[3] = 65535;						\
+	}								\
+    }									\
+  return z;								\
+}
+
+KCMY_TO_KCMY_LINE_ART_FUNC(unsigned char, kcmy_8)
+KCMY_TO_KCMY_LINE_ART_FUNC(unsigned short, kcmy_16)
+GENERIC_COLOR_FUNC(kcmy, kcmy_line_art)
+
 #define GRAY_TO_COLOR_LINE_ART_FUNC(T, name, bits, channels)		\
 static unsigned								\
 gray_##bits##_to_##name##_line_art(stp_const_vars_t vars,		\
@@ -1672,7 +1719,7 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
 	{								\
 	  int outpos = (j + 1) & 3;					\
 	  int inval = *s_in++;						\
-	  nz[outpos] |= j;						\
+	  nz[outpos] |= inval;						\
 	  out[outpos] =							\
 	    cache_fast_ushort(&(lut->channel_curves[outpos]))[inval];	\
 	}								\
@@ -1686,6 +1733,46 @@ cmyk_##size##_to_kcmy(stp_const_vars_t vars,				\
 CMYK_TO_KCMY_FUNC(unsigned char, 8)
 CMYK_TO_KCMY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(cmyk, kcmy)
+
+#define KCMY_TO_KCMY_FUNC(T, size)					\
+static unsigned								\
+kcmy_##size##_to_kcmy(stp_const_vars_t vars,				\
+		      const unsigned char *in,				\
+		      unsigned short *out)				\
+{									\
+  int i;								\
+  unsigned retval = 0;							\
+  int j;								\
+  int nz[4];								\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+									\
+  for (i = 0; i < 4; i++)						\
+    {									\
+      stp_curve_resample(lut->channel_curves[i].curve, 1 << size);	\
+      (void) cache_get_ushort_data(&(lut->channel_curves[i]));		\
+    }									\
+									\
+  memset(nz, 0, sizeof(nz));						\
+									\
+  for (i = 0; i < lut->image_width; i++, out += 4)			\
+    {									\
+      for (j = 0; j < 4; j++)						\
+	{								\
+	  int inval = *s_in++;						\
+	  nz[j] |= inval;						\
+	  out[j] = cache_fast_ushort(&(lut->channel_curves[j]))[inval];	\
+	}								\
+    }									\
+  for (j = 0; j < 4; j++)						\
+    if (nz[j] == 0)							\
+      retval |= (1 << j);						\
+  return retval;							\
+}
+
+KCMY_TO_KCMY_FUNC(unsigned char, 8)
+KCMY_TO_KCMY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(kcmy, kcmy)
 
 /*
  * 'gray_to_gray()' - Convert grayscale image data to grayscale (brightness
@@ -1789,36 +1876,115 @@ COLOR_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(color, gray)
 
 
-#define CMYK_TO_GRAY_FUNC(T, bits)					 \
-static unsigned								 \
-cmyk_##bits##_to_gray(stp_const_vars_t vars,				 \
-		      const unsigned char *in,				 \
-		      unsigned short *out)				 \
-{									 \
-  int i;								 \
-  int j;								 \
-  int nz = 0;								 \
-  const T *s_in = (const T *) in;					 \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	 \
-  const unsigned short *composite;					 \
-  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])), \
-		     1 << bits);					 \
-  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	 \
-									 \
-  for (i = 0; i < lut->image_width; i++, s_in += 4, out ++)		 \
-    {									 \
-      for (j = 0; j < 4; j++)						 \
-	{								 \
-	  nz |= s_in[0];						 \
-	  out[0] = composite[s_in[0]];					 \
-	}								 \
-    }									 \
-  return nz ? 1 : 0;							 \
+#define CMYK_TO_GRAY_FUNC(T, bits)					    \
+static unsigned								    \
+cmyk_##bits##_to_gray(stp_const_vars_t vars,				    \
+		      const unsigned char *in,				    \
+		      unsigned short *out)				    \
+{									    \
+  int i;								    \
+  int i0 = -1;								    \
+  int i1 = -1;								    \
+  int i2 = -1;								    \
+  int i3 = -4;								    \
+  int o0 = 0;								    \
+  int nz = 0;								    \
+  const T *s_in = (const T *) in;					    \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
+  int l_red = LUM_RED;							    \
+  int l_green = LUM_GREEN;						    \
+  int l_blue = LUM_BLUE;						    \
+  int l_white = 0;							    \
+  const unsigned short *composite;					    \
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])),    \
+		     1 << bits);					    \
+  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	    \
+									    \
+  if (!lut->invert_output)						    \
+    {									    \
+      l_red = (100 - l_red) / 3;					    \
+      l_green = (100 - l_green) / 3;					    \
+      l_blue = (100 - l_blue) / 3;					    \
+      l_white = (100 - l_white) / 3;					    \
+    }									    \
+									    \
+  for (i = 0; i < lut->image_width; i++)				    \
+    {									    \
+      if (i0 != s_in[0] || i1 != s_in[1] || i2 != s_in[2] || i3 != s_in[3]) \
+	{								    \
+	  i0 = s_in[0];							    \
+	  i1 = s_in[1];							    \
+	  i2 = s_in[2];							    \
+	  i3 = s_in[3];							    \
+	  o0 = composite[(i0 * l_red + i1 * l_green +			    \
+			  i2 * l_blue + i3 * l_white) / 100];		    \
+	  nz |= o0;							    \
+	}								    \
+      out[0] = o0;							    \
+      s_in += 4;							    \
+      out ++;								    \
+    }									    \
+  return nz ? 1 : 0;							    \
 }
 
 CMYK_TO_GRAY_FUNC(unsigned char, 8)
 CMYK_TO_GRAY_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(cmyk, gray)
+
+#define KCMY_TO_GRAY_FUNC(T, bits)					    \
+static unsigned								    \
+kcmy_##bits##_to_gray(stp_const_vars_t vars,				    \
+		      const unsigned char *in,				    \
+		      unsigned short *out)				    \
+{									    \
+  int i;								    \
+  int i0 = -1;								    \
+  int i1 = -1;								    \
+  int i2 = -1;								    \
+  int i3 = -4;								    \
+  int o0 = 0;								    \
+  int nz = 0;								    \
+  const T *s_in = (const T *) in;					    \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	    \
+  int l_red = LUM_RED;							    \
+  int l_green = LUM_GREEN;						    \
+  int l_blue = LUM_BLUE;						    \
+  int l_white = 0;							    \
+  const unsigned short *composite;					    \
+  stp_curve_resample(cache_get_curve(&(lut->channel_curves[CHANNEL_K])),    \
+		     1 << bits);					    \
+  composite = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));	    \
+									    \
+  if (!lut->invert_output)						    \
+    {									    \
+      l_red = (100 - l_red) / 3;					    \
+      l_green = (100 - l_green) / 3;					    \
+      l_blue = (100 - l_blue) / 3;					    \
+      l_white = (100 - l_white) / 3;					    \
+    }									    \
+									    \
+  for (i = 0; i < lut->image_width; i++)				    \
+    {									    \
+      if (i0 != s_in[0] || i1 != s_in[1] || i2 != s_in[2] || i3 != s_in[3]) \
+	{								    \
+	  i0 = s_in[0];							    \
+	  i1 = s_in[1];							    \
+	  i2 = s_in[2];							    \
+	  i3 = s_in[3];							    \
+	  o0 = composite[(i0 * l_white + i1 * l_red +			    \
+			  i2 * l_green + i3 * l_blue) / 100];		    \
+	  nz |= o0;							    \
+	}								    \
+      out[0] = o0;							    \
+      s_in += 4;							    \
+      out ++;								    \
+    }									    \
+  return nz ? 1 : 0;							    \
+}
+
+KCMY_TO_GRAY_FUNC(unsigned char, 8)
+KCMY_TO_GRAY_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(kcmy, gray)
 
 #define CMYK_TO_KCMY_RAW_FUNC(T, bits)					\
 static unsigned								\
@@ -1854,6 +2020,40 @@ cmyk_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
 CMYK_TO_KCMY_RAW_FUNC(unsigned char, 8)
 CMYK_TO_KCMY_RAW_FUNC(unsigned short, 16)
 GENERIC_COLOR_FUNC(cmyk, kcmy_raw)
+
+#define KCMY_TO_KCMY_RAW_FUNC(T, bits)					\
+static unsigned								\
+kcmy_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
+			  const unsigned char *in,			\
+			  unsigned short *out)				\
+{									\
+  int i;								\
+  int j;								\
+  int nz[4];								\
+  unsigned retval = 0;							\
+  const T *s_in = (const T *) in;					\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+									\
+  memset(nz, 0, sizeof(nz));						\
+  for (i = 0; i < lut->image_width; i++)				\
+    {									\
+      for (j = 0; j < 4; j++)						\
+	{								\
+	  out[i] = s_in[i] * (65535 / (1 << bits));			\
+	  nz[j] |= out[j];						\
+	}								\
+      s_in += 4;							\
+      out += 4;								\
+    }									\
+  for (j = 0; j < 4; j++)						\
+    if (nz[j] == 0)							\
+      retval |= (1 << j);						\
+  return retval;							\
+}
+
+KCMY_TO_KCMY_RAW_FUNC(unsigned char, 8)
+KCMY_TO_KCMY_RAW_FUNC(unsigned short, 16)
+GENERIC_COLOR_FUNC(kcmy, kcmy_raw)
 
 #define RAW_TO_RAW_FUNC(T, bits)					\
 static unsigned								\
