@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.h,v 1.2 2003/05/05 00:36:02 rlk Exp $"
+ * "$Id: sequence.h,v 1.3 2003/06/29 14:41:54 rleigh Exp $"
  *
  *   libgimpprint sequence functions.
  *
@@ -25,12 +25,13 @@
  * compile on generic platforms that don't support glib, gimp, gimpprint, etc.
  */
 
-#ifndef GIMP_PRINT_SEQUENCE_H
-#define GIMP_PRINT_SEQUENCE_H
+#ifndef __GIMP_PRINT_SEQUENCE_H__
+#define __GIMP_PRINT_SEQUENCE_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 typedef void *stp_sequence_t;
 typedef const void *stp_const_sequence_t;
@@ -112,4 +113,4 @@ extern const unsigned short *stp_sequence_get_ushort_data(stp_const_sequence_t s
   }
 #endif
 
-#endif /* GIMP_PRINT_SEQUENCE_H */
+#endif /* __GIMP_PRINT_SEQUENCE_H__ */

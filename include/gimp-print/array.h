@@ -1,5 +1,5 @@
 /*
- * "$Id: array.h,v 1.3 2003/05/05 00:36:02 rlk Exp $"
+ * "$Id: array.h,v 1.4 2003/06/29 14:41:54 rleigh Exp $"
  *
  *   libgimpprint array functions.
  *
@@ -25,8 +25,8 @@
  * compile on generic platforms that don't support glib, gimp, gimpprint, etc.
  */
 
-#ifndef GIMP_PRINT_ARRAY_H
-#define GIMP_PRINT_ARRAY_H
+#ifndef __GIMP_PRINT_ARRAY_H__
+#define __GIMP_PRINT_ARRAY_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,4 +65,4 @@ extern stp_const_sequence_t stp_array_get_sequence(stp_const_array_t array);
   }
 #endif
 
-#endif /* GIMP_PRINT_ARRAY_H */
+#endif /* __GIMP_PRINT_ARRAY_H__ */
