@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.32 2004/03/25 03:12:36 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.33 2004/03/27 00:52:00 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -290,6 +290,7 @@ typedef struct
   double contrast;
   double brightness;
   int linear_contrast_adjustment;
+  int printed_colorfunc;
   cached_curve_t hue_map;
   cached_curve_t lum_map;
   cached_curve_t sat_map;
@@ -358,7 +359,7 @@ static const float_param_t float_parameters[] =
       N_("Raw Channels"),
       STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_CORE,
       STP_PARAMETER_LEVEL_INTERNAL, 1, 1, -1, 1
-    }, 1.0, STP_CHANNEL_LIMIT, 0.0, CMASK_EVERY
+    }, 1.0, STP_CHANNEL_LIMIT, 1.0, CMASK_EVERY
   },
   {
     {
@@ -1363,16 +1364,22 @@ raw_cmy_to_kcmy(stp_const_vars_t vars, const unsigned short *in,
   return retval;
 }
 
-#define GENERIC_COLOR_FUNC(fromname, toname)				\
-static unsigned								\
-fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	\
-		       unsigned short *out)				\
-{									\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  if (lut->channel_depth == 8)						\
-    return fromname##_8_to_##toname(vars, in, out);			\
-  else									\
-    return fromname##_16_to_##toname(vars, in, out);			\
+#define GENERIC_COLOR_FUNC(fromname, toname)				   \
+static unsigned								   \
+fromname##_to_##toname(stp_const_vars_t vars, const unsigned char *in,	   \
+		       unsigned short *out)				   \
+{									   \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
+  if (!lut->printed_colorfunc)						   \
+    {									   \
+      lut->printed_colorfunc = 1;					   \
+      stpi_dprintf(STPI_DBG_COLORFUNC, vars, "Colorfunc is %s_%d_to_%s\n", \
+		   #fromname, lut->channel_depth, #toname);		   \
+    }									   \
+  if (lut->channel_depth == 8)						   \
+    return fromname##_8_to_##toname(vars, in, out);			   \
+  else									   \
+    return fromname##_16_to_##toname(vars, in, out);			   \
 }
 
 #define COLOR_TO_COLOR_FUNC(T, bits)					      \
@@ -2514,10 +2521,10 @@ cmyk_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
   memset(nz, 0, sizeof(nz));						\
   for (i = 0; i < lut->image_width; i++)				\
     {									\
-      out[0] = s_in[3] * (65535 / (1 << bits));				\
-      out[1] = s_in[0] * (65535 / (1 << bits));				\
-      out[2] = s_in[1] * (65535 / (1 << bits));				\
-      out[3] = s_in[2] * (65535 / (1 << bits));				\
+      out[0] = s_in[3] * (65535 / ((1 << bits) - 1));			\
+      out[1] = s_in[0] * (65535 / ((1 << bits) - 1));			\
+      out[2] = s_in[1] * (65535 / ((1 << bits) - 1));			\
+      out[3] = s_in[2] * (65535 / ((1 << bits) - 1));			\
       for (j = 0; j < 4; j++)						\
 	nz[j] |= out[j];						\
       s_in += 4;							\
@@ -2551,7 +2558,7 @@ kcmy_##bits##_to_kcmy_raw(stp_const_vars_t vars,			\
     {									\
       for (j = 0; j < 4; j++)						\
 	{								\
-	  out[i] = s_in[i] * (65535 / (1 << bits));			\
+	  out[i] = s_in[i] * (65535 / ((1 << bits) - 1));		\
 	  nz[j] |= out[j];						\
 	}								\
       s_in += 4;							\
@@ -2820,7 +2827,7 @@ raw_##bits##_to_raw_raw(stp_const_vars_t vars,				\
       for (j = 0; j < colors; j++)					\
 	{								\
 	  nz[j] |= s_in[j];						\
-	  out[j] = s_in[j] * (65535 / (1 << bits));			\
+	  out[j] = s_in[j] * (65535 / ((1 << bits) - 1));		\
 	}								\
       s_in += colors;							\
       out += colors;							\
@@ -3380,7 +3387,8 @@ setup_channel(stp_vars_t v, int i, const channel_param_t *p)
   if (stp_check_float_parameter(v, p->gamma_name, STP_PARAMETER_DEFAULTED))
     lut->gamma_values[i] = stp_get_float_parameter(v, p->gamma_name);
 
-  if (stp_get_curve_parameter_active(v, p->curve_name)>=
+  if (stp_get_curve_parameter_active(v, p->curve_name) > 0 &&
+      stp_get_curve_parameter_active(v, p->curve_name) >=
       stp_get_float_parameter_active(v, p->gamma_name))
     cache_set_curve_copy(&(lut->channel_curves[i]),
 			 stp_get_curve_parameter(v, p->curve_name));

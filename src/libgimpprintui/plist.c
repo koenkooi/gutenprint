@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.30.4.2 2004/03/26 01:20:16 rlk Exp $"
+ * "$Id: plist.c,v 1.30.4.3 2004/03/27 00:52:00 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -170,7 +170,7 @@ stpui_printer_initialize(stpui_plist_t *printer)
     }
   if (image_channel_depth)
     {
-      (void) sprintf(tmp, "%d", image_raw_channels);
+      (void) sprintf(tmp, "%d", image_channel_depth);
       stp_set_string_parameter(printer->v, "ChannelBitDepth", tmp);
     }
   printer->invalid_mask = INVALID_TOP | INVALID_LEFT;
@@ -1088,7 +1088,7 @@ stpui_get_system_printers(void)
                 fprintf(stderr, "Adding new printer from lpc: <%s>\n",
                   line);
 #endif
-		result = g_strdup_printf("lpr -P%s -l", line);
+		result = g_strdup_printf("lpr -l -P%s", line);
 		stpui_plist_set_output_to(&(stpui_plist[stpui_plist_count]), result);
 		free(result);
 		stp_set_driver(stpui_plist[stpui_plist_count].v, "ps2");
@@ -1119,7 +1119,7 @@ stpui_get_system_printers(void)
                 fprintf(stderr, "Adding new printer from lpc: <%s>\n",
                   name);
 #endif
-		result = g_strdup_printf("lp -s -d%s -oraw", name);
+		result = g_strdup_printf("lp -oraw -s -d%s", name);
 		stpui_plist_set_output_to(&(stpui_plist[stpui_plist_count]), result);
 		free(result);
 		stp_set_driver(stpui_plist[stpui_plist_count].v, "ps2");
@@ -1425,5 +1425,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.30.4.2 2004/03/26 01:20:16 rlk Exp $".
+ * End of "$Id: plist.c,v 1.30.4.3 2004/03/27 00:52:00 rlk Exp $".
  */

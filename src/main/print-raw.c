@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.30.4.5 2004/03/20 21:38:41 rlk Exp $"
+ * "$Id: print-raw.c,v 1.30.4.6 2004/03/27 00:52:01 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -237,6 +237,7 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 	  }
     }
 
+  stp_set_float_parameter(nv, "Density", 1.0);
   stpi_channel_reset(nv);
   for (i = 0; i < ink_channels; i++)
     stpi_channel_add(nv, i, 0, 1.0);
@@ -255,8 +256,6 @@ raw_print(stp_const_vars_t v, stp_image_t *image)
 
   if (out_channels != ink_channels)
     final_out = stpi_malloc(width * ink_channels * 2);
-
-  stp_set_float_parameter(nv, "Density", 1.0);
 
   for (y = 0; y < height; y++)
     {

@@ -1,5 +1,5 @@
 /*
- * "$Id: generic-options.c,v 1.3.4.3 2004/03/13 17:58:03 rlk Exp $"
+ * "$Id: generic-options.c,v 1.3.4.4 2004/03/27 00:52:00 rlk Exp $"
  *
  *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -232,9 +232,9 @@ stpi_describe_generic_parameter(stp_const_vars_t v, const char *name,
   else if (strcmp(name, "JobMode") == 0)
     {
       description->bounds.str = stp_string_list_create();
-      for (i = 0; i < stpi_get_image_types_count(); i++)
+      for (i = 0; i < stpi_get_job_modes_count(); i++)
 	{
-	  const stpi_image_type_t *itype = stpi_get_image_type_by_index(i);
+	  const stpi_job_mode_t *itype = stpi_get_job_mode_by_index(i);
 	  stp_string_list_add_string(description->bounds.str, itype->name,
 				     itype->text);
 	}

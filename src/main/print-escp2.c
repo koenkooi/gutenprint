@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.308.2.9 2004/03/26 02:02:53 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.308.2.10 2004/03/27 00:52:01 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2547,12 +2547,12 @@ escp2_print_page(stp_vars_t v, stp_image_t *image)
      PACKFUNC,
      COMPUTEFUNC);
 
+  stpi_dither_init(v, image, pd->image_printed_width, pd->res->printed_hres,
+		   pd->res->printed_vres);
   allocate_channels(v, line_width);
   adjust_print_quality(v, image);
   out_channels = stpi_color_init(v, image, 65536);
 
-  stpi_dither_init(v, image, pd->image_printed_width, pd->res->printed_hres,
-		   pd->res->printed_vres);
 /*  stpi_dither_set_expansion(v, pd->res->hres / pd->res->printed_hres); */
 
   setup_inks(v);

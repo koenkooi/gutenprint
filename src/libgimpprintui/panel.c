@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.57.2.2 2004/03/26 02:02:53 rlk Exp $"
+ * "$Id: panel.c,v 1.57.2.3 2004/03/27 00:52:00 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -686,6 +686,7 @@ populate_options(stp_const_vars_t v)
 {
   stp_parameter_list_t params = stp_get_parameter_list(v);
   int i;
+  int idx;
   if (current_options)
     {
       for (i = 0; i < current_option_count; i++)
@@ -738,57 +739,66 @@ populate_options(stp_const_vars_t v)
   current_option_count = stp_parameter_list_count(params);
   current_options = malloc(sizeof(option_t) * current_option_count);
 
-  for (i = 0; i < current_option_count; i++)
+  for (idx = 0, i = 0; i < current_option_count; i++)
     {
       stp_parameter_t desc;
-      option_t *opt = &(current_options[i]);
-      opt->fast_desc = stp_parameter_list_param(params, i);
-      stp_describe_parameter(v, opt->fast_desc->name, &desc);
-      opt->checkbox = NULL;
-      opt->is_active = 0;
-      opt->is_enabled = 0;
-      switch (opt->fast_desc->p_type)
+      stp_parameter_t *param = stp_parameter_list_param(params, i);
+      if (param->p_class == STP_PARAMETER_CLASS_OUTPUT ||
+	  param->p_class == STP_PARAMETER_CLASS_FEATURE ||
+	  (param->p_class == STP_PARAMETER_CLASS_CORE &&
+	   strcmp(param->name, "PageSize") == 0))
 	{
-	case STP_PARAMETER_TYPE_STRING_LIST:
-	  opt->info.list.callback_id = -1;
-	  opt->info.list.default_val = g_strdup(desc.deflt.str);
-	  if (desc.bounds.str)
-	    opt->info.list.params =
-	      stp_string_list_create_copy(desc.bounds.str);
-	  else
-	    opt->info.list.params = NULL;
-	  opt->info.list.combo = NULL;
-	  opt->info.list.label = NULL;
-	  opt->is_active = desc.is_active;
-	  break;
-	case STP_PARAMETER_TYPE_DOUBLE:
-	  opt->info.flt.adjustment = NULL;
-	  opt->info.flt.upper = desc.bounds.dbl.upper;
-	  opt->info.flt.lower = desc.bounds.dbl.lower;
-	  opt->info.flt.deflt = desc.deflt.dbl;
-	  opt->info.flt.scale = 1.0;
-	  opt->is_active = desc.is_active;
-	  break;
-	case STP_PARAMETER_TYPE_CURVE:
-	  opt->info.curve.label = NULL;
-	  opt->info.curve.button = NULL;
-	  opt->info.curve.dialog = NULL;
-	  opt->info.curve.gamma_curve = NULL;
-	  opt->info.curve.current = NULL;
-	  opt->info.curve.deflt = desc.deflt.curve;
-	  opt->info.curve.is_visible = FALSE;
-	  opt->is_active = desc.is_active;
-	  break;
-	case STP_PARAMETER_TYPE_BOOLEAN:
-	  opt->info.bool.checkbox = NULL;
-	  opt->info.bool.current = 0;
-	  opt->info.bool.deflt = desc.deflt.boolean;
-	  opt->is_active = desc.is_active;
-	default:
-	  break;
+	  option_t *opt = &(current_options[idx]);
+	  opt->fast_desc = stp_parameter_list_param(params, i);
+	  stp_describe_parameter(v, opt->fast_desc->name, &desc);
+	  opt->checkbox = NULL;
+	  opt->is_active = 0;
+	  opt->is_enabled = 0;
+	  switch (opt->fast_desc->p_type)
+	    {
+	    case STP_PARAMETER_TYPE_STRING_LIST:
+	      opt->info.list.callback_id = -1;
+	      opt->info.list.default_val = g_strdup(desc.deflt.str);
+	      if (desc.bounds.str)
+		opt->info.list.params =
+		  stp_string_list_create_copy(desc.bounds.str);
+	      else
+		opt->info.list.params = NULL;
+	      opt->info.list.combo = NULL;
+	      opt->info.list.label = NULL;
+	      opt->is_active = desc.is_active;
+	      break;
+	    case STP_PARAMETER_TYPE_DOUBLE:
+	      opt->info.flt.adjustment = NULL;
+	      opt->info.flt.upper = desc.bounds.dbl.upper;
+	      opt->info.flt.lower = desc.bounds.dbl.lower;
+	      opt->info.flt.deflt = desc.deflt.dbl;
+	      opt->info.flt.scale = 1.0;
+	      opt->is_active = desc.is_active;
+	      break;
+	    case STP_PARAMETER_TYPE_CURVE:
+	      opt->info.curve.label = NULL;
+	      opt->info.curve.button = NULL;
+	      opt->info.curve.dialog = NULL;
+	      opt->info.curve.gamma_curve = NULL;
+	      opt->info.curve.current = NULL;
+	      opt->info.curve.deflt = desc.deflt.curve;
+	      opt->info.curve.is_visible = FALSE;
+	      opt->is_active = desc.is_active;
+	      break;
+	    case STP_PARAMETER_TYPE_BOOLEAN:
+	      opt->info.bool.checkbox = NULL;
+	      opt->info.bool.current = 0;
+	      opt->info.bool.deflt = desc.deflt.boolean;
+	      opt->is_active = desc.is_active;
+	    default:
+	      break;
+	    }
+	  idx++;
+	  stp_parameter_description_free(&desc);
 	}
-      stp_parameter_description_free(&desc);
     }
+  current_option_count = idx;
   stp_parameter_list_free(params);
 }
 
@@ -860,7 +870,9 @@ populate_option_table(GtkWidget *table, int p_class)
       option_t *opt = &(current_options[i]);
       stp_const_curve_t xcurve;
       const stp_parameter_t *desc = opt->fast_desc;
-      if (desc->p_class == p_class)
+      if (desc->p_class == p_class &&
+	  (desc->p_class != STP_PARAMETER_CLASS_CORE ||
+	   strcmp(desc->name, "PageSize") == 0))
 	{
 	  switch (desc->p_type)
 	    {
@@ -2640,7 +2652,7 @@ do_all_updates(void)
     {
       if (stp_get_string_parameter(pv->v, "PrintingMode") &&
 	  strcmp(output_types[i].value,
-		 stp_get_string_parameter(pv->v, "PrintingMode")))
+		 stp_get_string_parameter(pv->v, "PrintingMode")) == 0)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_types[i].button),
 				     TRUE);
     }
