@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.1.2.3 2004/06/20 14:15:50 rleigh Exp $"
+ * "$Id: panel.c,v 1.1.2.4 2004/06/20 15:48:39 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1634,7 +1634,7 @@ create_printer_dialog (void)
      G_CALLBACK (ppd_ok_callback), NULL);
   g_signal_connect_object
     (G_OBJECT (GTK_FILE_SELECTION (ppd_browser)->cancel_button), "clicked",
-     G_CALLBACK (gtk_widget_hide), G_OBJECT (ppd_browser), (GConnectFlags) 0);
+     G_CALLBACK (gtk_widget_hide), G_OBJECT (ppd_browser), G_CONNECT_SWAPPED);
 }
 
 static void
@@ -2113,7 +2113,7 @@ create_image_settings_frame (void)
   g_signal_connect_object (G_OBJECT (adjust_color_button), "clicked",
 			   G_CALLBACK (gtk_widget_show),
 			   G_OBJECT (color_adjust_dialog),
-			   (GConnectFlags) 0);
+			   G_CONNECT_SWAPPED);
 }
 
 static void
