@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.19.2.4 2000/04/14 12:46:18 rlk Exp $"
+ * "$Id: print-dither.c,v 1.19.2.5 2000/04/16 02:13:55 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -48,23 +48,24 @@
 #define ECOLOR_Y 2
 #define ECOLOR_K 3
 
-#if 0
-#define MATRIX_NB (6)
-#define MATRIX_SIZE (1 << (MATRIX_NB))
-#define MODOP(x, y) ((x) & ((y) - 1))
-#endif
+#define MATRIX_NB0 (7)
+#define MATRIX_SIZE0 (1 << (MATRIX_NB0))
+#define MODOP0(x, y) ((x) & ((y) - 1))
 
-#if 0
-#define MATRIX_NB (4)
-#define MATRIX_SIZE (3 * 3 * 3 * 3)
-#define MODOP(x, y) ((x) % (y))
-#endif
+#define MATRIX_NB1 (4)
+#define MATRIX_SIZE1 (3 * 3 * 3 * 3)
+#define MODOP1(x, y) ((x) % (y))
 
-#if 1
-#define MATRIX_NB (3)
-#define MATRIX_SIZE (5 * 5 * 5)
-#define MODOP(x, y) ((x) % (y))
-#endif
+#define MATRIX_NB2 (3)
+#define MATRIX_SIZE2 (5 * 5 * 5)
+#define MODOP2(x, y) ((x) % (y))
+
+#define MATRIX_SIZE0_2 ((MATRIX_SIZE0) * (MATRIX_SIZE0))
+#define MATRIX_SIZE1_2 ((MATRIX_SIZE1) * (MATRIX_SIZE1))
+#define MATRIX_SIZE2_2 ((MATRIX_SIZE2) * (MATRIX_SIZE2))
+
+#define DITHERPOINT(x, y, m, d) \
+((d)->ordered_dither_matrix##m[MODOP##m((x), MATRIX_SIZE##m)][MODOP##m((y), MATRIX_SIZE##m)])
 
 typedef struct dither_segment
 {
@@ -91,7 +92,9 @@ typedef struct dither_color
 typedef struct dither
 {
   int *errs[ERROR_ROWS][NCOLORS];
-  unsigned ordered_dither_matrix[MATRIX_SIZE][MATRIX_SIZE];
+  unsigned ordered_dither_matrix0[MATRIX_SIZE0][MATRIX_SIZE0];
+  unsigned ordered_dither_matrix1[MATRIX_SIZE1][MATRIX_SIZE1];
+  unsigned ordered_dither_matrix2[MATRIX_SIZE2][MATRIX_SIZE2];
   int src_width;
   int dst_width;
   int density;
@@ -116,6 +119,9 @@ typedef struct dither
   int c_darkness;		/* Perceived "darkness" of each ink, */
   int m_darkness;		/* in 64ths, to calculate CMY-K transitions */
   int y_darkness;
+
+  int x_oversample;
+  int y_oversample;
 
   dither_color_t c_dither;
   dither_color_t m_dither;
@@ -178,16 +184,31 @@ calc_ordered_point_3(unsigned x, unsigned y, int steps, int multiplier)
  * Four neighbors at distance of 1 or 2 (diagonal or lateral)
  */
 
+static int msq0[] =
+{
+  00, 14, 21, 17,  8,
+  22, 18,  5,  4, 11,
+  9,   1, 12, 23, 15,
+  13, 20, 19,  6,  2,
+  16,  7,  3, 10, 24 
+};
+
+static int msq1[] = 
+{
+  03, 11, 20, 17,  9,
+  22, 19,  8,  1, 10,
+  06,  0, 12, 24, 18,
+  14, 23, 16,  5,  2,
+  15,  7,  4, 13, 21
+};
+
+
 static int
-calc_ordered_point_5(unsigned x, unsigned y, int steps, int multiplier)
+calc_ordered_point_5(unsigned x, unsigned y, int steps, int multiplier,
+		     int *map)
 {
   int i, j;
   unsigned retval = 0;
-  static int map[25] = { 00, 14, 21, 17,  8,
-			 22, 18,  5,  4, 11,
-			 9,   1, 12, 23, 15,
-			 13, 20, 19,  6,  2,
-			 16,  7,  3, 10, 24 };
   int divisor = 1;
   int div1;
   for (i = 0; i < steps; i++)
@@ -200,6 +221,7 @@ calc_ordered_point_5(unsigned x, unsigned y, int steps, int multiplier)
       for (j = i; j < steps - 1; j++)
 	div1 *= 25;
       retval += base * div1;
+      divisor *= 5;
     }
   return retval * multiplier;
 }
@@ -221,13 +243,29 @@ init_dither(int in_width, int out_width)
   dither_set_y_ranges(d, 1, &r, 1.0);
   dither_set_k_ranges(d, 1, &r, 1.0);
 
-  for (x = 0; x < MATRIX_SIZE; x++)
-    for (y = 0; y < MATRIX_SIZE; y++)
+  for (x = 0; x < MATRIX_SIZE0; x++)
+    for (y = 0; y < MATRIX_SIZE0; y++)
       {
-	d->ordered_dither_matrix[x][y] =
-	  calc_ordered_point_5(x, y, MATRIX_NB, 1);
-	d->ordered_dither_matrix[x][y] =
-	  d->ordered_dither_matrix[x][y] * 65536 / (MATRIX_SIZE * MATRIX_SIZE);
+	d->ordered_dither_matrix0[x][y] =
+	  calc_ordered_point(x, y, MATRIX_NB0, 1);
+	d->ordered_dither_matrix0[x][y] =
+	  d->ordered_dither_matrix0[x][y] * 65536 / (MATRIX_SIZE0_2 - 1);
+      }
+  for (x = 0; x < MATRIX_SIZE1; x++)
+    for (y = 0; y < MATRIX_SIZE1; y++)
+      {
+	d->ordered_dither_matrix1[x][y] =
+	  calc_ordered_point_3(x, y, MATRIX_NB1, 1);
+	d->ordered_dither_matrix1[x][y] =
+	  d->ordered_dither_matrix1[x][y] * 65536 / (MATRIX_SIZE1_2 - 1);
+      }
+  for (x = 0; x < MATRIX_SIZE2; x++)
+    for (y = 0; y < MATRIX_SIZE2; y++)
+      {
+	d->ordered_dither_matrix2[x][y] =
+	  calc_ordered_point_5(x, y, MATRIX_NB2, 1, msq1);
+	d->ordered_dither_matrix2[x][y] =
+	  d->ordered_dither_matrix2[x][y] * 65536 / (MATRIX_SIZE2_2 - 1);
       }
 
   d->spread = 13;
@@ -249,18 +287,24 @@ init_dither(int in_width, int out_width)
   d->c_darkness = 22;
   d->m_darkness = 16;
   d->y_darkness = 10;
-#if 0
-  d->c_levels[0] = 0;
-  d->c_transitions[0] = 0;
-  d->c_levels[1] = 32767;
-  d->c_transitions[1] = (32767 + 0) / 2;
-  d->c_levels[2] = 213 * 256;
-  d->c_transitions[2] = ((213 * 256) + 32767) / 2;
-  d->c_levels[3] = 65535;
-  d->c_transitions[3] = (65535 + (213 * 256)) / 2;
-#endif
+  d->x_oversample = 1;
+  d->y_oversample = 1;
   return d;
 }  
+
+void
+dither_set_x_oversample(void *vd, int os)
+{
+  dither_t *d = (dither_t *) vd;
+  d->x_oversample = os;
+}
+
+void
+dither_set_y_oversample(void *vd, int os)
+{
+  dither_t *d = (dither_t *) vd;
+  d->y_oversample = os;
+}
 
 void
 dither_set_density(void *vd, double density)
@@ -748,8 +792,12 @@ do {						\
 static int
 print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	    int x, int y, unsigned char *c, unsigned char *lc,
-	    unsigned char bit, int length)
+	    unsigned char bit, int length, int invert_x, int invert_y)
 {
+  static int lastx = 0;
+  static int lasty = 0;
+  static int lastxy = 0;
+  static int lastyx = 0;
   int i;
   int levels = rv->nlevels - 1;
   if (adjusted <= 0 || base == 0)
@@ -763,9 +811,6 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	  unsigned virtual_value;
 	  unsigned vmatrix;
 
-	  int xy3, yx3;
-	  xy3 = MODOP((x + y / 3), (MATRIX_SIZE));
-	  yx3 = MODOP((y + x / 3), (MATRIX_SIZE));
 	  /*
 	   * Where are we within the range.  If we're going to print at
 	   * all, this determines the probability of printing the darker
@@ -792,7 +837,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	    virtual_value = dd->value_l +
 	      (dd->value_span * rangepoint / 65536);
 
-	  vmatrix = d->ordered_dither_matrix[yx3][xy3];
+	  vmatrix = DITHERPOINT(x, y, 1, d) ^ DITHERPOINT(x, y, 2, d) >> 2;
 	  vmatrix = vmatrix * virtual_value / 65536;
 
 	  /*
@@ -806,8 +851,12 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	      unsigned char *tptr;
 	      unsigned bits;
 	      
+#if 0
+	      xy3 = MODOP2((x /* + y / 3 */), (MATRIX_SIZE2));
+	      yx3 = MODOP2((y /* + x / 3 */), (MATRIX_SIZE2));
 	      xy3 = MODOP((x * 3 + y * 2), (MATRIX_SIZE));
 	      yx3 = MODOP((y * 3 + y * 2), (MATRIX_SIZE));
+#endif
 #if 0
 	      xy3 = rand() % (MATRIX_SIZE - 1);
 	      yx3 = rand() % (MATRIX_SIZE - 1);
@@ -815,7 +864,7 @@ print_color(dither_t *d, dither_color_t *rv, int base, int adjusted,
 	      /*
 	       * FIXME we should use different matrices for each color
 	       */
-	      if (rangepoint >= d->ordered_dither_matrix[xy3][yx3])
+	      if (rangepoint >= DITHERPOINT(x, y, 2, d))
 		{
 		  isdark = dd->isdark_h;
 		  bits = dd->bits_h;
@@ -889,7 +938,7 @@ dither_fastblack(unsigned short     *gray,	/* I - Grayscale pixels */
       if (k >= 32768)
 	{
 	  if (d->density >=
-	      d->ordered_dither_matrix[(x + row / 5) & 63][(x / 5 + row) & 63])
+	      d->ordered_dither_matrix0[(x + row / 5) & 63][(x / 5 + row) & 63])
 	    *kptr |= bit;
 	}
 
@@ -963,7 +1012,8 @@ dither_black(unsigned short   *gray,		/* I - Grayscale pixels */
     k = 65535 - *gray;
     ok = k;
     UPDATE_COLOR(k);
-    k = print_color(d, &(d->k_dither), ok, k, x, row, kptr, NULL, bit, length);
+    k = print_color(d, &(d->k_dither), ok, ok, x, row, kptr, NULL, bit,
+		    length, 0, 0);
     UPDATE_DITHER(k, , x, d->src_width);
     INCREMENT_BLACK();
   }
@@ -1137,9 +1187,6 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
     c = 65535 - (unsigned) rgb[0];
     m = 65535 - (unsigned) rgb[1];
     y = 65535 - (unsigned) rgb[2];
-    oc = c;
-    om = m;
-    oy = y;
     k = MIN(c, MIN(m, y));
     maxlevel = MAX(c, MAX(m, y));
 
@@ -1186,6 +1233,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
        */
       ok = k;
       nk = k + (ditherk) / 8;
+      oc = c;
+      om = m;
+      oy = y;
       tk = (((oc * d->c_darkness) + (om * d->m_darkness) + (oy * d->y_darkness))
 	    >> 6);
       kdarkness = MAX(tk, ak);
@@ -1242,7 +1292,7 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 	y = 65535;
       k = bk;
       tk = print_color(d, &(d->k_dither), bk, k, x, row, kptr, NULL, bit,
-		       length);
+		       length, 0, 0);
       if (tk != k)
 	printed_black = 1;
       k = tk;
@@ -1265,6 +1315,10 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
       y  = ((unsigned) (65535 - rgb[0] / 4)) * yk / 65535 + k;
     }
 
+    oc = c;
+    om = m;
+    oy = y;
+
     density = (c + m + y);
     UPDATE_COLOR(c);
     UPDATE_COLOR(m);
@@ -1273,11 +1327,11 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
     if (!printed_black)
       {
 	c = print_color(d, &(d->c_dither), (oc / 3 + density / 4), c,
-			row, x, cptr, lcptr, bit, length);
+			x, row, cptr, lcptr, bit, length, 0, 1);
 	m = print_color(d, &(d->m_dither), (om / 3 + density / 4), m,
-			(x + 15), (row + 15), mptr, lmptr, bit, length);
+			x, row, mptr, lmptr, bit, length, 1, 0);
 	y = print_color(d, &(d->y_dither), (oy / 3 + density / 4), y,
-			(row + 15), (x + 15), yptr, lyptr, bit, length);
+			x, row, yptr, lyptr, bit, length, 1, 1);
       }
 
     UPDATE_DITHER(c, 2, x, d->dst_width);
@@ -1297,6 +1351,9 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
 
 /*
  *   $Log: print-dither.c,v $
+ *   Revision 1.19.2.5  2000/04/16 02:13:55  rlk
+ *   More improvements
+ *
  *   Revision 1.19.2.4  2000/04/14 12:46:18  rlk
  *   Other dithering options
  *
@@ -1356,5 +1413,5 @@ dither_cmyk(unsigned short  *rgb,	/* I - RGB pixels */
  *   Revision 1.1  2000/02/06 18:40:53  rlk
  *   Split out dither stuff from print-util
  *
- * End of "$Id: print-dither.c,v 1.19.2.4 2000/04/14 12:46:18 rlk Exp $".
+ * End of "$Id: print-dither.c,v 1.19.2.5 2000/04/16 02:13:55 rlk Exp $".
  */
