@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.67 2003/05/05 00:36:02 rlk Exp $"
+ * "$Id: genppd.c,v 1.68 2003/05/09 23:21:00 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -976,6 +976,17 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
   gzputs(fp, "*CloseUI: *ColorModel\n\n");
 
+  gzputs(fp, "*OpenUI *OutputOrder: PickOne\n");
+  gzputs(fp, "*OrderDependency: 10 AnySetup *OutputOrder\n");
+  /* Assume that color printers are inkjets and should have pages reversed */
+  if (stp_get_output_type(printvars) == OUTPUT_COLOR)
+    gzputs(fp, "*DefaultOutputOrder: Reverse\n");
+  else
+    gzputs(fp, "*DefaultOutputOrder: Normal\n");
+  gzputs(fp, "*OutputOrder Normal/Normal: Normal\n");
+  gzputs(fp, "*OutputOrder Reverse/Reverse: Reverse\n");
+  gzputs(fp, "*CloseUI: *OutputOrder\n\n");
+
  /*
   * Media types...
   */
@@ -1195,5 +1206,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.67 2003/05/05 00:36:02 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.68 2003/05/09 23:21:00 rlk Exp $".
  */
