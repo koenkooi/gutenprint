@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.131 2003/09/21 03:13:18 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.132 2003/09/21 03:17:58 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1981,18 +1981,15 @@ densityDivisor /= 1.2;
   if (!use_dmt) {
     if (cols.p.C)
       {
-	stpi_dither_set_inks_full(v, ECOLOR_C, 2, photo_dither_shades,
-				  stp_get_float_parameter(v, "Density"));
+	stpi_dither_set_inks_full(v, ECOLOR_C, 2, photo_dither_shades, 1.0);
       }
     if (cols.p.M)
       {
-	stpi_dither_set_inks_full(v, ECOLOR_M, 2, photo_dither_shades,
-				  stp_get_float_parameter(v, "Density"));
+	stpi_dither_set_inks_full(v, ECOLOR_M, 2, photo_dither_shades, 1.0);
       }
     if (cols.p.Y)
       {
-	stpi_dither_set_inks_full(v, ECOLOR_Y, 2, photo_dither_shades,
-				  stp_get_float_parameter(v, "Density"));
+	stpi_dither_set_inks_full(v, ECOLOR_Y, 2, photo_dither_shades, 1.0);
       }
   }
 

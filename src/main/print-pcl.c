@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.120 2003/09/21 03:13:18 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.121 2003/09/21 03:17:58 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2330,32 +2330,30 @@ pcl_do_print(stp_vars_t v, stp_image_t *image)
 
   if (privdata.do_cret)			/* 4-level printing for 800/1120 */
     {
-      stpi_dither_set_inks_simple
-	(v, ECOLOR_Y, 3, dot_sizes_use, density);
+      stpi_dither_set_inks_simple(v, ECOLOR_Y, 3, dot_sizes_use, 1.0);
       if (!privdata.do_cretb)
-        stpi_dither_set_inks_simple
-	  (v, ECOLOR_K, 3, dot_sizes_use, density);
+        stpi_dither_set_inks_simple(v, ECOLOR_K, 3, dot_sizes_use, 1.0);
 
       /* Note: no printer I know of does both CRet (4-level) and 6 colour, but
 	 what the heck. variable_dither_ranges copied from print-escp2.c */
 
       if (privdata.do_6color)			/* Photo for 69x */
 	{
-	  stpi_dither_set_inks_full(v, ECOLOR_C, 6, variable_shades, density);
-	  stpi_dither_set_inks_full(v, ECOLOR_M, 6, variable_shades, density);
+	  stpi_dither_set_inks_full(v, ECOLOR_C, 6, variable_shades, 1.0);
+	  stpi_dither_set_inks_full(v, ECOLOR_M, 6, variable_shades, 1.0);
 	}
       else
 	{
-	  stpi_dither_set_inks_simple(v, ECOLOR_C, 3, dot_sizes_use, density);
-	  stpi_dither_set_inks_simple(v, ECOLOR_M, 3, dot_sizes_use, density);
+	  stpi_dither_set_inks_simple(v, ECOLOR_C, 3, dot_sizes_use, 1.0);
+	  stpi_dither_set_inks_simple(v, ECOLOR_M, 3, dot_sizes_use, 1.0);
 	}
     }
   else if (privdata.do_6color)
     {
       /* Set light inks for 6 colour printers.
 	 Numbers copied from print-escp2.c */
-      stpi_dither_set_inks_full(v, ECOLOR_C, 2, photo_dither_shades, density);
-      stpi_dither_set_inks_full(v, ECOLOR_M, 2, photo_dither_shades, density);
+      stpi_dither_set_inks_full(v, ECOLOR_C, 2, photo_dither_shades, 1.0);
+      stpi_dither_set_inks_full(v, ECOLOR_M, 2, photo_dither_shades, 1.0);
     }
   if (black)
     stpi_channel_set_density_adjustment(v, ECOLOR_K, 0,
