@@ -1,5 +1,5 @@
 /*
- * "$Id: pcl-unprint.c,v 1.14 2000/06/20 22:32:51 cpbs Exp $"
+ * "$Id: pcl-unprint.c,v 1.15 2000/08/02 17:26:36 davehill Exp $"
  *
  * pclunprint.c - convert an HP PCL file into an image file for viewing.
  *
@@ -29,7 +29,7 @@
 #include<ctype.h>
 #include<string.h>
 
-static char *id="@(#) $Id: pcl-unprint.c,v 1.14 2000/06/20 22:32:51 cpbs Exp $";
+static char *id="@(#) $Id: pcl-unprint.c,v 1.15 2000/08/02 17:26:36 davehill Exp $";
 
 /*
  * Largest data attached to a command. 1024 means that we can have up to 8192
@@ -292,8 +292,6 @@ void pcl_read_command(void)
     fill_buffer();
     if (eof == 1)
 	return;
-
-/* First character must be ESC, otherwise we have gone wrong! */
 
     c = read_buffer[read_pointer++];
 #ifdef DEBUG
@@ -1541,23 +1539,32 @@ int main(int argc, char *argv[])
 
 	    case PCL_PJL_COMMAND : {
 		    int c;
-		    fprintf(stderr, "%s: ", pcl_commands[command_index].description);
+		    fprintf(stderr, "%s\n", pcl_commands[command_index].description);
 
 /*
  * This is a special command, actually it is a PJL instruction. Read up
- * to the next NL and output it.
+ * to the next ESC and output it.
  */
 
 		    c = 0;
-		    while (c != '\n') {
+		    while (1) {
 			fill_buffer();
 			if (eof == 1) {
 			    fprintf(stderr, "\n");
 			    break;
 			}
 			c = read_buffer[read_pointer++];
+			if (c == '\033')
+			    break;
 			fprintf(stderr, "%c", c);
 		    }
+
+/*
+ * Now we are sitting at the "ESC" that is the start of the next command.
+ */
+		    read_pointer--;
+		    fprintf(stderr, "\n");
+		    fprintf(stderr, "End of %s\n", pcl_commands[command_index].description);
 		}
 		break;
 
