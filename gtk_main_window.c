@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.58 2000/10/14 01:40:14 rlk Exp $"
+ * "$Id: gtk_main_window.c,v 1.59 2000/12/30 19:26:40 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1535,7 +1535,7 @@ gtk_position_callback (GtkWidget *widget)
 	      was_percent = 1;
 	    }
 	  GTK_ADJUSTMENT(scaling_adjustment)->value =
-	    (image_width - .5) / new_value;
+	    ((gdouble) image_width) / new_value;
 	  gtk_signal_emit_by_name (scaling_adjustment, "value_changed");
 	  if (was_percent)
 	    {
@@ -1554,7 +1554,7 @@ gtk_position_callback (GtkWidget *widget)
 	      was_percent = 1;
 	    }
 	  GTK_ADJUSTMENT(scaling_adjustment)->value =
-	    (image_height - .5) / new_value;
+	    ((gdouble) image_height) / new_value;
 	  gtk_signal_emit_by_name (scaling_adjustment, "value_changed");
 	  if (was_percent)
 	    {
@@ -2225,8 +2225,8 @@ static void gtk_preview_update(void)
     max_ppi_scaling = min_ppi_scaling * 20;
     if (vars.scaling > -min_ppi_scaling)
       vars.scaling = -min_ppi_scaling;
-    twidth = (72.0 * image_width / -vars.scaling) + .5;
-    print_width = twidth;
+    twidth = (72.0 * image_width / -vars.scaling);
+    print_width = twidth + .5;
     print_height = (twidth * (gdouble) image_height / image_width) + .5;
     GTK_ADJUSTMENT (scaling_adjustment)->lower = min_ppi_scaling;
     GTK_ADJUSTMENT (scaling_adjustment)->upper = max_ppi_scaling;
