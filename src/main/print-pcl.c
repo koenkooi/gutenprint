@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.33 2001/07/28 01:42:26 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.34 2001/07/29 00:18:43 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1657,7 +1657,7 @@ pcl_default_parameters(const stp_printer_t printer,
 	}
       else
 	{
-	  return _(pcl_val_to_string(caps->paper_sources[0], pcl_media_types,
+	  return _(pcl_val_to_string(caps->paper_sources[0], pcl_media_sources,
 				     NUM_PRINTER_PAPER_SOURCES));
 	}
     }
