@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.101 2000/06/22 19:20:59 easysw Exp $"
+ * "$Id: print-util.c,v 1.102 2000/06/24 15:11:11 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -839,8 +839,8 @@ default_media_size(int  model,		/* I - Printer model */
   const papersize_t *papersize = get_papersize_by_name(media_size);
   if (!papersize)
     {
-      *width = 0;
-      *length = 0;
+      *width = 1;
+      *length = 1;
     }
   else
     {
