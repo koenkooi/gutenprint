@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.14 2000/07/31 22:57:51 cpbs Exp $"
+ * "$Id: escp2-weavetest.c,v 1.15 2000/08/01 11:45:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -134,6 +134,11 @@ main(int argc, char **argv)
   hpasses = atoi(argv[3]);
   vpasses = atoi(argv[4]);
   subpasses = atoi(argv[5]);
+  if (physjets < hpasses * vpasses * subpasses)
+    {
+      fprintf(stderr, "Oversample exceeds jets\n");
+      return 1;
+    }
   nrows = atoi(argv[6]);
   first_line = atoi(argv[7]);
   phys_lines = atoi(argv[8]);
