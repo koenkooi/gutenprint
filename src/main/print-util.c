@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.93 2003/03/30 12:52:40 rleigh Exp $"
+ * "$Id: print-util.c,v 1.94 2003/04/12 21:19:48 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -604,6 +604,10 @@ stp_init(void)
       bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
 #endif
       stpi_init_debug();
+      stpi_xml_preinit();
+      stpi_init_printer();
+      stpi_init_paper();
+      stpi_init_dither();
       /* Load modules */
       if (stpi_module_load())
 	return 1;

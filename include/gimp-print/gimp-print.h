@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.31 2003/03/30 12:52:37 rleigh Exp $
+ *  $Id: gimp-print.h,v 1.32 2003/04/12 21:19:45 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -48,7 +48,6 @@
 #include <gimp-print/array.h>
 #include <gimp-print/curve.h>
 #include <gimp-print/sequence.h>
-#include <gimp-print/xml.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -818,5 +817,5 @@ extern const char *stp_set_output_codeset(const char *codeset);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.31 2003/03/30 12:52:37 rleigh Exp $
+ * End of $Id: gimp-print.h,v 1.32 2003/04/12 21:19:45 rlk Exp $
  */

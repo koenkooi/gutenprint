@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.13 2003/04/08 01:50:25 rlk Exp $"
+ * "$Id: curve.c,v 1.14 2003/04/12 21:19:49 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -213,7 +213,7 @@ const char *spline_curve_2 =
 int
 main(int argc, char **argv)
 {
-  xmlChar *tmp;
+  char *tmp;
   int i;
 
   stp_curve_t curve1;
@@ -242,7 +242,7 @@ main(int argc, char **argv)
     TEST_FAIL();
   else
     TEST_PASS();
-  xmlFree(tmp);
+  free(tmp);
 
   TEST("stp_curve_resample");
   if (curve2 != NULL && stp_curve_resample(curve2, 95) == 0)
@@ -304,7 +304,7 @@ main(int argc, char **argv)
 	      if (verbose)
 		printf("%s", tmp);
 	    }
-	  xmlFree(tmp);
+	  free(tmp);
 	}
       else
 	TEST_FAIL();

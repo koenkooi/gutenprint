@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2003/03/30 12:52:37 rleigh Exp $
+## $Id: Makefile.am,v 1.11 2003/04/12 21:19:45 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@ pkginclude_HEADERS = \
 	array.h \
 	curve.h \
 	sequence.h \
-	xml.h \
 	gimp-print-ui.h
 
 nodist_pkginclude_HEADERS = gimp-print-version.h
