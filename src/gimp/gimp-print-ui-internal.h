@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-ui-internal.h,v 1.2 2002/12/30 16:48:01 rlk Exp $"
+ * "$Id: gimp-print-ui-internal.h,v 1.3 2002/12/30 17:39:26 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -62,21 +62,21 @@ extern guchar *preview_thumbnail_data;
 extern GtkWidget *color_adjust_dialog;
 extern GtkWidget *dither_algo_combo;
 
-extern gp_plist_t *pv;
+extern stpui_plist_t *pv;
 
 /*
  * Function prototypes
  */
-extern void plist_set_output_to(gp_plist_t *p, const char *val);
-extern void plist_set_output_to_n(gp_plist_t *p, const char *val, int n);
-extern const char *plist_get_output_to(const gp_plist_t *p);
-extern void plist_set_name(gp_plist_t *p, const char *val);
-extern void plist_set_name_n(gp_plist_t *p, const char *val, int n);
-extern const char *plist_get_name(const gp_plist_t *p);
-extern void copy_printer(gp_plist_t *vd, const gp_plist_t *vs);
+extern void stpui_plist_set_output_to(stpui_plist_t *p, const char *val);
+extern void stpui_plist_set_output_to_n(stpui_plist_t *p, const char *val, int n);
+extern const char *stpui_plist_get_output_to(const stpui_plist_t *p);
+extern void stpui_plist_set_name(stpui_plist_t *p, const char *val);
+extern void stpui_plist_set_name_n(stpui_plist_t *p, const char *val, int n);
+extern const char *stpui_plist_get_name(const stpui_plist_t *p);
+extern void stpui_plist_copy(stpui_plist_t *vd, const stpui_plist_t *vs);
 
-extern int add_printer(const gp_plist_t *key, int add_only);
-extern void initialize_printer(gp_plist_t *printer);
+extern int stpui_plist_add(const stpui_plist_t *key, int add_only);
+extern void stpui_printer_initialize(stpui_plist_t *printer);
 extern void update_adjusted_thumbnail (void);
 extern const char *Combo_get_name(GtkWidget   *combo,
 				  const stp_string_list_t options);

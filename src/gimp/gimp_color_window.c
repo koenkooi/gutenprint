@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.42 2002/12/30 03:33:23 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.43 2002/12/30 17:39:26 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -82,25 +82,25 @@ static GtkDrawingArea *swatch = NULL;
 #define THUMBNAIL_HINTH	(128)
 
 void
-set_thumbnail_func(get_thumbnail_func_t func)
+stpui_set_thumbnail_func(get_thumbnail_func_t func)
 {
   thumbnail_func = func;
 }
 
 get_thumbnail_func_t
-get_thumbnail_func(void)
+stpui_get_thumbnail_func(void)
 {
   return thumbnail_func;
 }
 
 void
-set_thumbnail_data(void *data)
+stpui_set_thumbnail_data(void *data)
 {
   thumbnail_private_data = data;
 }
 
 void *
-get_thumbnail_data(void)
+stpui_get_thumbnail_data(void)
 {
   return thumbnail_private_data;
 }
