@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.38 2003/01/01 21:05:57 rleigh Exp $
+dnl $Id: configure.ac,v 1.39 2003/01/02 20:23:52 mtomlinson Exp $
 dnl Copyright (C) 2001 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GIMPPRINT_VERSION], GIMPPRINT_MAJOR_VERSION.GIMPPRINT_MINOR_VERSION.GIM
 
 AC_INIT(GIMPPRINT_NAME, GIMPPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.50)
-AC_REVISION($Revision: 1.38 $)
+AC_REVISION($Revision: 1.39 $)
 AC_CONFIG_SRCDIR(src/main/print-dither.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -389,7 +389,8 @@ STP_CUPS_PROGS
 
 dnl foomatic checks
 if test x${BUILD_FOOMATIC} = xyes ; then
-  AC_PATH_PROG(FOOMATIC_KITLOAD, foomatic-kitload, , [$PATH:/usr/sbin:/usr/local/sbin])
+  PATH_SBIN=$PATH:/usr/sbin:/usr/local/sbin
+  AC_PATH_PROG(FOOMATIC_KITLOAD, foomatic-kitload, , [$PATH_SBIN])
   if test -z "$FOOMATIC_KITLOAD" ; then
     AC_MSG_WARN(Cannot find foomatic-kitload; attempt to install foomatic will fail)
   fi
