@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.21 2002/11/18 22:55:19 rleigh Exp $"
+ * "$Id: print-escp2.h,v 1.22 2002/11/28 16:42:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -267,8 +267,16 @@ typedef struct
 
 typedef struct
 {
+  const char *data;
+  size_t length;
+} init_sequence_t;
+
+typedef struct
+{
   const char *name;
   const char *text;
+  init_sequence_t init_sequence;
+  init_sequence_t deinit_sequence;
 } input_slot_t;
 
 typedef struct
@@ -276,12 +284,6 @@ typedef struct
   const input_slot_t *slots;
   size_t n_input_slots;
 } input_slot_list_t;
-
-typedef struct
-{
-  const char *data;
-  size_t length;
-} init_sequence_t;
 
 typedef struct escp2_printer
 {
@@ -381,5 +383,5 @@ extern const int stp_escp2_model_limit;
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.21 2002/11/18 22:55:19 rleigh Exp $".
+ * End of "$Id: print-escp2.h,v 1.22 2002/11/28 16:42:19 rlk Exp $".
  */
