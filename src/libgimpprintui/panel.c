@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.47 2003/08/30 22:36:12 rlk Exp $"
+ * "$Id: panel.c,v 1.48 2003/09/27 19:56:43 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3523,8 +3523,10 @@ set_thumbnail_orientation(void)
     case ORIENT_SEASCAPE:
       for (x = 0; x < thumbnail_w; x++)
 	for (y = 0; y < thumbnail_h; y++)
-	  memcpy((preview_thumbnail_data + bpp * (x * thumbnail_h + y)),
-		 (adjusted_thumbnail_data + bpp * (y * thumbnail_w + x)), bpp);
+	  memcpy((preview_thumbnail_data +
+		  bpp * (preview_limit - (x * thumbnail_h + y))),
+		 (adjusted_thumbnail_data +
+		  bpp * ((thumbnail_h - y - 1) * thumbnail_w + x)), bpp);
       break;
 
     case ORIENT_UPSIDEDOWN:
@@ -3535,9 +3537,9 @@ set_thumbnail_orientation(void)
     case ORIENT_LANDSCAPE:
       for (x = 0; x < thumbnail_w; x++)
 	for (y = 0; y < thumbnail_h; y++)
-	  memcpy((preview_thumbnail_data +
-		  bpp * (preview_limit - (x * thumbnail_h + y))),
-		 (adjusted_thumbnail_data + bpp * (y * thumbnail_w + x)), bpp);
+	  memcpy((preview_thumbnail_data + bpp * (x * thumbnail_h + y)),
+		 (adjusted_thumbnail_data +
+		  bpp * ((thumbnail_h - y - 1) * thumbnail_w + x)), bpp);
       break;
     }
 }  
