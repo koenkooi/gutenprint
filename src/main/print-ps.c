@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.26.2.6 2004/03/19 02:35:54 rlk Exp $"
+ * "$Id: print-ps.c,v 1.26.2.7 2004/06/13 14:33:55 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -273,6 +273,7 @@ ps_media_size_internal(const stp_printer_t printer,	/* I - Printer model */
 		       int  *height)		/* O - Height in points */
 {
   char	*dimensions;			/* Dimensions of media size */
+  float fwidth, fheight;
 
   stp_dprintf(STP_DBG_PS, v,
 	      "ps_media_size(%d, \'%s\', \'%s\', %08x, %08x)\n",
@@ -283,7 +284,13 @@ ps_media_size_internal(const stp_printer_t printer,	/* I - Printer model */
   if ((dimensions = ppd_find(stp_get_ppd_file(v), "PaperDimension",
 			     stp_get_media_size(v), NULL))
       != NULL)
-    sscanf(dimensions, "%d%d", width, height);
+    {
+      sscanf(dimensions, "%f%f", &fwidth, &fheight);
+      *width = fwidth;
+      *height = fheight;
+      stp_dprintf(STP_DBG_PS, v, "dimensions '%s' %f %f %d %d\n",
+		  dimensions, fwidth, fheight, *width, *height);
+    }
   else
     stp_default_media_size(printer, v, width, height);
 }
