@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.89 2004/06/20 15:13:37 davehill Exp $"
+ * "$Id: rastertoprinter.c,v 1.90 2004/06/21 10:15:05 m0m Exp $"
  *
  *   Gimp-Print based raster filter for the Common UNIX Printing System.
  *
@@ -363,7 +363,7 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
     cups->adjusted_height = cups->header.cupsHeight;
   fprintf(stderr, "DEBUG: Gimp-Print CUPS settings w %d %d l %d r %d  h %d %d t %d b %d\n",
 	  cups->width, cups->adjusted_width, cups->left, cups->right,
-	  cups->height, cups->adjusted_width, cups->top, cups->bottom);
+	  cups->height, cups->adjusted_height, cups->top, cups->bottom);
 
   return v;
 }
@@ -986,5 +986,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.89 2004/06/20 15:13:37 davehill Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.90 2004/06/21 10:15:05 m0m Exp $".
  */
