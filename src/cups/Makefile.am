@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.25 2001/06/04 19:03:13 rleigh Exp $
+## $Id: Makefile.am,v 1.26 2001/06/24 13:09:13 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 
 ## Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = 1.4 foreign
+AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
 
@@ -157,10 +157,4 @@ EXTRA_DIST = \
 	calibrate.ppm \
 	command.txt \
 	command.types
-
-
-
-
-
-
 
