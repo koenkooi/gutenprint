@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.49 2000/02/05 20:02:10 rlk Exp $"
+ * "$Id: print.c,v 1.50 2000/02/06 03:59:09 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -429,7 +429,6 @@ run(char   *name,		/* I - Name of print program. */
   GDrawable	*drawable;	/* Drawable for image */
   GRunModeType	run_mode;	/* Current run mode */
   FILE		*prn;		/* Print file/command */
-  int		i;		/* Looping var */
   lut_t		lut;		/* 16-bit lookup table for brightness */
   guchar	*cmap;		/* Colormap (indexed images only) */
   int		ncolors;	/* Number of colors in colormap */
@@ -3493,5 +3492,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.49 2000/02/05 20:02:10 rlk Exp $".
+ * End of "$Id: print.c,v 1.50 2000/02/06 03:59:09 rlk Exp $".
  */

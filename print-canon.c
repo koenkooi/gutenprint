@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.10 2000/02/04 09:40:28 gandy Exp $"
+ * "$Id: print-canon.c,v 1.11 2000/02/06 03:59:09 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,12 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.11  2000/02/06 03:59:09  rlk
+ *   More work on the generalized dithering parameters stuff.  At this point
+ *   it really looks like a proper object.  Also dynamically allocate the error
+ *   buffers.  This segv'd a lot, which forced me to efence it, which was just
+ *   as well because I found a few problems as a result...
+ *
  *   Revision 1.10  2000/02/04 09:40:28  gandy
  *   Models BJC-1000/2000/3000/6000/6100/7000/7100 ready for testing.
  *
@@ -621,6 +627,7 @@ canon_print(int       model,		/* I - Model */
   int           image_height,
                 image_width,
                 image_bpp;
+  void *	dither;
 
   canon_cap_t caps= canon_get_model_capabilities(model);
   int printhead= canon_printhead_type(ink_type,caps);
@@ -849,7 +856,7 @@ canon_print(int       model,		/* I - Model */
   if (black)    fputc('K',stderr);
   fprintf(stderr,"\n");
 
-  init_dither();
+  dither = init_dither(image_width, out_width, 1);
     
  /*
   * Output the page, rotating as necessary...
@@ -877,10 +884,10 @@ canon_print(int       model,		/* I - Model */
       (*colorfunc)(in, out, image_height, image_bpp, lut, cmap, v);
 
       if (output_type == OUTPUT_GRAY)
-	dither_black(out, x, image_height, out_width, black,1);
+	dither_black(out, x, dither, black);
       else
-	dither_cmyk(out, x, image_height, out_width, cyan, lcyan,
-		    magenta, lmagenta, yellow, lyellow, black,1);
+	dither_cmyk(out, x, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, lyellow, black);
 
       /* fprintf(stderr,"."); */
       canon_write_line(prn,
@@ -935,10 +942,10 @@ canon_print(int       model,		/* I - Model */
       (*colorfunc)(in, out, image_width, image_bpp, lut, cmap, v);
 
       if (output_type == OUTPUT_GRAY)
-	dither_black(out, y, image_width, out_width, black,1);
+	dither_black(out, y, dither, black);
       else
-	dither_cmyk(out, y, image_width, out_width, cyan, lcyan,
-		    magenta, lmagenta, yellow, 0, black,1);
+	dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		    yellow, lyellow, black);
 
       /* fprintf(stderr,","); */
 
@@ -970,7 +977,7 @@ canon_print(int       model,		/* I - Model */
       }
     }
   }
-  free_dither();
+  free_dither(dither);
 
   /*
    * Flush delayed buffers...
@@ -1231,5 +1238,5 @@ canon_write(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-canon.c,v 1.10 2000/02/04 09:40:28 gandy Exp $".
+ * End of "$Id: print-canon.c,v 1.11 2000/02/06 03:59:09 rlk Exp $".
  */
