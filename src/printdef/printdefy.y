@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.5 2001/06/04 19:03:13 rleigh Exp $"
+ * "$Id: printdefy.y,v 1.6 2001/06/07 02:24:24 rlk Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -48,7 +48,7 @@ const char *printfuncs[] =
 
 const size_t nprintfuncs = sizeof(printfuncs) / sizeof(const char *);
 
-static void
+void
 initialize_the_printer(const char *name, const char *driver)
 {
   strncpy(thePrinter.printvars.output_to, name, 63);
@@ -65,7 +65,7 @@ initialize_the_printer(const char *name, const char *driver)
   thePrinter.printvars.density = 1.0;
 }
 
-static void
+void
 output_the_printer(void)
 {
   printf("  {\n");
