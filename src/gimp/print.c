@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.52 2003/04/09 23:34:08 rlk Exp $"
+ * "$Id: print.c,v 1.53 2003/04/13 04:22:17 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -172,7 +172,7 @@ run (char   *name,		/* I - Name of print program. */
   gint32         drawable_ID;   /* drawable ID */
   GimpExportReturnType export = GIMP_EXPORT_CANCEL;    /* return value of gimp_export_image() */
   gdouble xres, yres;
-  const char *image_filename;
+  char *image_filename;
   stp_image_t *image;
   if (getenv("STP_DEBUG_STARTUP"))
     while (SDEBUG)
