@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.25 2000/01/21 00:53:39 rlk Exp $"
+ * "$Id: print.h,v 1.26 2000/01/25 19:51:27 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -119,6 +119,13 @@ typedef struct		/**** Printer List ****/
   vars_t v;
 } plist_t;
 
+typedef struct
+{
+  char name[32];
+  unsigned width;
+  unsigned length;
+} papersize_t;
+
 /*
  * Abstract data type for interfacing with the image creation program
  * (in this case, the Gimp).
@@ -229,6 +236,10 @@ extern void	ps_print(int model, int copies, FILE *prn,
 			 Image image, unsigned char *cmap,
 			 lut_t *lut, vars_t *v);
 
+int		      known_papersizes(void);
+const papersize_t    *get_papersizes(void);
+const papersize_t    *get_papersize_by_name(const char *);
+
 #ifdef LEFTOVER_8_BIT
 extern void	dither_cmyk4(unsigned char *, int, int, int, unsigned char *,
 		             unsigned char *, unsigned char *,
@@ -241,5 +252,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.25 2000/01/21 00:53:39 rlk Exp $".
+ * End of "$Id: print.h,v 1.26 2000/01/25 19:51:27 rlk Exp $".
  */
