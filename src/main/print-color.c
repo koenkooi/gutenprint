@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.20 2004/03/22 02:50:33 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.21 2004/03/22 03:07:56 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -2196,6 +2196,37 @@ GENERIC_COLOR_FUNC(kcmy, cmykrb_threshold)
 RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, 8)
 RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb_fast)
+
+#define CMYK_DISPATCH(name)						\
+static unsigned								\
+CMYK_to_##name(stp_const_vars_t vars, const unsigned char *in,		\
+	       unsigned short *out)					\
+{									\
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
+  if (lut->input_color_description->color_id == COLOR_ID_CMYK)		\
+    return cmyk_to_##name(vars, in, out);				\
+  else if (lut->input_color_description->color_id == COLOR_ID_KCMY)	\
+    return kcmy_to_##name(vars, in, out);				\
+  else									\
+    {									\
+      stp_eprintf("Bad dispatch to CMYK_to_%s: %d\n", #name,		\
+		  lut->input_color_description->color_id);		\
+      return 0;								\
+    }									\
+}
+
+CMYK_DISPATCH(cmykrb)
+CMYK_DISPATCH(cmykrb_fast)
+CMYK_DISPATCH(cmykrb_threshold)
+CMYK_DISPATCH(rgb)
+CMYK_DISPATCH(rgb_fast)
+CMYK_DISPATCH(rgb_threshold)
+CMYK_DISPATCH(kcmy)
+CMYK_DISPATCH(kcmy_raw)
+CMYK_DISPATCH(kcmy_threshold)
+CMYK_DISPATCH(gray)
+CMYK_DISPATCH(gray_threshold)
+
 
 #define RAW_TO_RAW_FUNC(T, bits)					\
 static unsigned								\
