@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.76 2004/02/28 20:05:04 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.77 2004/03/22 02:53:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -468,6 +468,8 @@ typedef struct escp2_printer
 				/* Print directly to CD */
   short		cd_x_offset;	/* Center of CD (horizontal offset) */
   short		cd_y_offset;	/* Center of CD (vertical offset) */
+  short		cd_page_width;	/* Width of "page" when printing to CD */
+  short		cd_page_height;	/* Height of "page" when printing to CD */
 /*****************************************************************************/
   /* Parameters for escputil */
   short		alignment_passes;
@@ -675,5 +677,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.76 2004/02/28 20:05:04 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.77 2004/03/22 02:53:53 rlk Exp $".
  */
