@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.15 2003/04/13 03:50:27 rlk Exp $"
+ * "$Id: dither.h,v 1.16 2003/04/13 04:26:00 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -40,8 +40,6 @@ extern "C" {
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
-#include "array.h"
 
 /*
  * ECOLOR_K must be 0
@@ -219,5 +217,5 @@ extern void stpi_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.15 2003/04/13 03:50:27 rlk Exp $".
+ * End of "$Id: dither.h,v 1.16 2003/04/13 04:26:00 rlk Exp $".
  */

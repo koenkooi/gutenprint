@@ -1,5 +1,5 @@
 /*
- * "$Id: array.c,v 1.3 2003/04/13 03:50:26 rlk Exp $"
+ * "$Id: array.c,v 1.4 2003/04/13 04:26:00 rlk Exp $"
  *
  *   Array data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -32,7 +32,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "array.h"
 #include "xml.h"
 
 

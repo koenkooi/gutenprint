@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.71 2003/04/09 02:59:53 rlk Exp $"
+ * "$Id: print-color.c,v 1.72 2003/04/13 04:26:00 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -37,7 +37,6 @@
 #include <limits.h>
 #endif
 #include <string.h>
-#include "curve.h"
 #include "xml.h"
 
 #ifdef __GNUC__
