@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.22 2002/06/09 16:06:04 rleigh Exp $
+## $Id: Makefile.am,v 1.23 2002/08/07 23:20:24 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -59,11 +59,8 @@ install-gimp_plug_inPROGRAMS: $(gimp_plug_in_PROGRAMS)
 	@DESTDIR='$(DESTDIR)'; export DESTDIR;\
 	list='$(gimp_plug_in_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    if test -f .libs/$$p; then \
-	      cd .libs; \
-	    fi; \
-	    echo $(GIMPTOOL) --install-@PLUG_IN_PATH@ $$p; \
-            $(GIMPTOOL) --install-@PLUG_IN_PATH@ $$p; \
+	    echo $(LIBTOOL) --mode=install `$(GIMPTOOL) --just-print --install-@PLUG_IN_PATH@ $$p`; \
+            $(LIBTOOL) --mode=install `$(GIMPTOOL) --just-print --install-@PLUG_IN_PATH@ $$p`; \
 	  else :; fi; \
 	done
 
