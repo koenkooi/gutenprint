@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.27 2000/02/22 08:08:39 gandy Exp $"
+ * "$Id: print-canon.c,v 1.28 2000/02/22 08:18:17 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.28  2000/02/22 08:18:17  gandy
+ *   Fixed bug introduced with last commit (thou shall never prettify your source...)
+ *
  *   Revision 1.27  2000/02/22 08:08:39  gandy
  *   Some minor cosmethics
  *
@@ -768,7 +771,7 @@ canon_advance_buffer(unsigned char *buf, int len, int num)
 /*
  * 'canon_print()' - Print an image to an CANON printer.
  */
-static void
+void
 canon_print(int       model,		/* I - Model */
             int       copies,		/* I - Number of copies */
             FILE      *prn,		/* I - File to print to */
@@ -1243,6 +1246,7 @@ canon_print(int       model,		/* I - Model */
       } else {
 	dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
 		    yellow, lyellow, black);
+      }
 
       /* fprintf(stderr,","); */
 
@@ -1622,5 +1626,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-canon.c,v 1.27 2000/02/22 08:08:39 gandy Exp $".
+ * End of "$Id: print-canon.c,v 1.28 2000/02/22 08:18:17 gandy Exp $".
  */
