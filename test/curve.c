@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.7 2002/12/01 01:19:01 rlk Exp $"
+ * "$Id: curve.c,v 1.7.2.1 2002/12/05 02:25:17 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -244,10 +244,10 @@ main(int argc, char **argv)
     }
   stp_curve_print(stdout, curve2);
   fprintf(stdout, "\n");
-  printf("compose add\n");
-  if (!stp_curve_compose(&curve3, curve1, curve2, STP_CURVE_COMPOSE_MULTIPLY, -1))
+  printf("compose add (should fail)\n");
+  if (stp_curve_compose(&curve3, curve1, curve2, STP_CURVE_COMPOSE_MULTIPLY, -1))
     {
-      printf("add compose failed!\n");
+      printf("compose with different wrap mode should fail!\n");
       global_error_count++;
     }
   else
