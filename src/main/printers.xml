@@ -4,7 +4,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.89 2003/11/20 03:46:06 rlk Exp $"
+   "$Id: printers.xml,v 1.90 2003/11/28 02:25:32 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -799,7 +799,7 @@
       </printer>
       <printer name="EPSON Stylus CX-6300" driver="escp2-cx6300">
         <color value="true"/>
-        <model value="61"/>
+        <model value="60"/>
         <cyan value="0.96"/>
         <magenta value="1.02"/>
         <yellow value="1.02"/>
@@ -808,7 +808,7 @@
       </printer>
       <printer name="EPSON Stylus CX-6400" driver="escp2-cx6400">
         <color value="true"/>
-        <model value="61"/>
+        <model value="60"/>
         <cyan value="0.96"/>
         <magenta value="1.02"/>
         <yellow value="1.02"/>
