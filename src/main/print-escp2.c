@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.259.2.2 2003/05/22 01:15:38 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.259.2.3 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1094,6 +1094,7 @@ setup_inks(stp_vars_t v)
   const escp2_variable_inkset_t *inks;
   const paper_t *pt;
   double paper_k_upper = 0.5;
+  const escp2_inkname_t *ink_type = pd->inkname;
 
   pt = pd->paper_type;
   if (pt)
@@ -1105,7 +1106,8 @@ setup_inks(stp_vars_t v)
       for (i = 0; i < pd->logical_channels; i++)
 	{
 	  const escp2_variable_ink_t *ink = (*inks)[i];
-	  if (ink)
+	  const ink_channel_t *channel = ink_type->channels[i];
+	  if (ink && channel)
 	    {
 	      const char *param = pd->inkname->channel_parameter_names[i];
 	      double userval = 1.0;

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.7.2.3 2003/05/20 01:51:32 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.7.2.4 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -190,8 +190,8 @@ stpi_dither_ordered(stp_vars_t v,
   int		terminate;
   int xerror, xstep, xmod;
 
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
+  if ((zero_mask & ((1 << CHANNEL_COUNT(d)) - 1)) ==
+      ((1 << CHANNEL_COUNT(d)) - 1))
     return;
 
   length = (d->dst_width + 7) / 8;
@@ -205,11 +205,16 @@ stpi_dither_ordered(stp_vars_t v,
   QUANT(6);
   for (x = 0; x != terminate; x ++)
     {
+      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
-	  CHANNEL(d, i).v = raw[i];
-	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit, length, 0);
+	  if (CHANNEL(d, i).base_ptr)
+	    {
+	      CHANNEL(d, i).v = raw[in_ch];
+	      CHANNEL(d, i).o = CHANNEL(d, i).v;
+	      print_color_ordered(d, &(CHANNEL(d, i)), x, row, bit, length, 0);
+	      in_ch++;
+	    }
 	}
 
       QUANT(11);

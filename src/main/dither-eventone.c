@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.11.2.2 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.11.2.3 2003/05/23 22:54:43 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -134,8 +134,8 @@ et_initializer(stpi_dither_t *d, int duplicate_line, int zero_mask)
   }
 
   if (!duplicate_line) {
-    if ((zero_mask & ((1 << d->n_input_channels) - 1)) !=
-	((1 << d->n_input_channels) - 1)) {
+    if ((zero_mask & ((1 << CHANNEL_COUNT(d)) - 1)) !=
+	((1 << CHANNEL_COUNT(d)) - 1)) {
 	d->last_line_was_empty = 0;
     } else {
 	d->last_line_was_empty++;
@@ -408,48 +408,53 @@ stpi_dither_et(stp_vars_t v,
 
   for (; x != terminate; x += direction) {
 
+    int in_ch = 0;
     range = 0;
 
     for (i=0; i < channel_count; i++) {
-      int inkspot;
-      stpi_shade_segment_t *sp;
-      stpi_dither_channel_t *dc = &CHANNEL(d, i);
-      stpi_ink_defn_t *inkp;
-      stpi_ink_defn_t lower, upper;
+      if (CHANNEL(d, i).base_ptr)
+	{
+	  int inkspot;
+	  stpi_shade_segment_t *sp;
+	  stpi_dither_channel_t *dc = &CHANNEL(d, i);
+	  stpi_ink_defn_t *inkp;
+	  stpi_ink_defn_t lower, upper;
 
-      dc->o = dc->v = raw[i];
+	  dc->o = dc->v = raw[in_ch];
 
-      advance_eventone_pre(dc, et, x);
+	  advance_eventone_pre(dc, et, x);
 
-      /* Split data into sub-channels */
-      /* And incorporate error data from previous line */
-      sp =  split_shades(dc, x, &inkspot);
+	  /* Split data into sub-channels */
+	  /* And incorporate error data from previous line */
+	  sp =  split_shades(dc, x, &inkspot);
 
-      /* Find which are the two candidate dot sizes */
-      range += find_segment(sp, et, inkspot, sp->base, &lower, &upper);
+	  /* Find which are the two candidate dot sizes */
+	  range += find_segment(sp, et, inkspot, sp->base, &lower, &upper);
 
-      /* Determine whether to print the larger or smaller dot */
+	  /* Determine whether to print the larger or smaller dot */
 
-      inkp = &lower;
-      if (range >= 32768) {
-        range -= 65536;
-        inkp = &upper;
-      }
+	  inkp = &lower;
+	  if (range >= 32768) {
+	    range -= 65536;
+	    inkp = &upper;
+	  }
 
-      /* Adjust the error to reflect the dot choice */
-      if (inkp->bits) {
+	  /* Adjust the error to reflect the dot choice */
+	  if (inkp->bits) {
 
-        sp->value -= 2 * inkp->range;
-        sp->dis = et->d_sq;
+	    sp->value -= 2 * inkp->range;
+	    sp->dis = et->d_sq;
 
-        set_row_ends(dc, x);
+	    set_row_ends(dc, x);
 
-        /* Do the printing */
-        print_ink(d, dc->ptr, inkp, bit, length);
-      }
+	    /* Do the printing */
+	    print_ink(d, dc->ptr, inkp, bit, length);
+	  }
 
-      /* Spread the error around to the adjacent dots */
-      diffuse_error(dc, et, diff_factor, x, direction);
+	  /* Spread the error around to the adjacent dots */
+	  diffuse_error(dc, et, diff_factor, x, direction);
+	  in_ch++;
+	}
     }
     if (direction == 1)
       ADVANCE_UNIDIRECTIONAL(d, bit, raw, channel_count, xerror, xstep, xmod);

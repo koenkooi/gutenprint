@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ed.c,v 1.7.2.3 2003/05/20 01:51:32 rlk Exp $"
+ * "$Id: dither-ed.c,v 1.7.2.4 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Error diffusion and closely related adaptive hybrid dither algorithm
  *
@@ -51,6 +51,8 @@ get_errline(stpi_dither_t *d, int row, int color)
 {
   if (row < 0 || color < 0 || color >= CHANNEL_COUNT(d))
     return NULL;
+  if (!CHANNEL(d, color).errs)
+    CHANNEL(d, color).errs = stpi_zalloc(d->error_rows * sizeof(int *));
   if (CHANNEL(d, color).errs[row & 1])
     return CHANNEL(d, color).errs[row & 1] + MAX_SPREAD;
   else
@@ -357,8 +359,8 @@ shared_ed_initializer(stpi_dither_t *d,
   int i, j;
   if (!duplicate_line)
     {
-      if ((zero_mask & ((1 << d->n_input_channels) - 1)) !=
-	  ((1 << d->n_input_channels) - 1))
+      if ((zero_mask & ((1 << CHANNEL_COUNT(d)) - 1)) !=
+	  ((1 << CHANNEL_COUNT(d)) - 1))
 	d->last_line_was_empty = 0;
       else
 	d->last_line_was_empty++;
@@ -445,16 +447,21 @@ stpi_dither_ed(stp_vars_t v,
   QUANT(6);
   for (; x != terminate; x += direction)
     {
+      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
-	  CHANNEL(d, i).v = raw[i];
-	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  CHANNEL(d, i).b = CHANNEL(d, i).v;
-	  CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
-	  CHANNEL(d, i).v = print_color(d, &(CHANNEL(d, i)), x, row, bit,
-					length, 0, d->stpi_dither_type);
-	  ndither[i] = update_dither(d, i, d->src_width,
-				     direction, error[i][0], error[i][1]);
+	  if (CHANNEL(d, i).base_ptr)
+	    {
+	      CHANNEL(d, i).v = raw[in_ch];
+	      CHANNEL(d, i).o = CHANNEL(d, i).v;
+	      CHANNEL(d, i).b = CHANNEL(d, i).v;
+	      CHANNEL(d, i).v = UPDATE_COLOR(CHANNEL(d, i).v, ndither[i]);
+	      CHANNEL(d, i).v = print_color(d, &(CHANNEL(d, i)), x, row, bit,
+					    length, 0, d->stpi_dither_type);
+	      ndither[i] = update_dither(d, i, d->src_width,
+					 direction, error[i][0], error[i][1]);
+	      in_ch++;
+	    }
 	}
       QUANT(12);
       ADVANCE_BIDIRECTIONAL(d, bit, raw, direction, CHANNEL_COUNT(d), xerror,

@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.17.2.6 2003/05/22 01:15:38 rlk Exp $"
+ * "$Id: dither-main.c,v 1.17.2.7 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -227,6 +227,7 @@ dither_channel_destroy(stpi_dither_channel_t *channel)
 	SAFE_FREE(channel->errs[i]);
       SAFE_FREE(channel->errs);
     }
+  SAFE_FREE(channel->errs);
   SAFE_FREE(channel->ranges);
   if (channel->shades)
     {
@@ -265,7 +266,6 @@ void
 stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
 		 int xdpi, int ydpi)
 {
-  int i;
   int in_width = stpi_image_width(image);
   int image_bpp = stpi_image_bpp(image);
   stpi_dither_t *d = stpi_zalloc(sizeof(stpi_dither_t));
@@ -339,10 +339,6 @@ stpi_dither_init(stp_vars_t v, stp_image_t *image, int out_width,
   d->dst_width = out_width;
 
   stpi_dither_set_ink_spread(v, 13);
-  for (i = 0; i <= d->n_channels; i++)
-    {
-      stpi_dither_set_randomizer(v, i, 1.0);
-    }
   d->channel_count = 0;
 }
 
@@ -397,9 +393,10 @@ stpi_dither_internal(stp_vars_t v, int row, const unsigned short *input,
   stpi_dither_t *d = (stpi_dither_t *) stpi_get_component_data(v, "Dither");
   for (i = 0; i < CHANNEL_COUNT(d); i++)
     {
+      CHANNEL(d, i).ptr = CHANNEL(d, i).base_ptr;
       if (CHANNEL(d, i).ptr)
-	memset(CHANNEL(d, i).ptr, 0,
-	       (d->dst_width + 7) / 8 * CHANNEL(d, i).signif_bits);
+	  memset(CHANNEL(d, i).ptr, 0,
+		 (d->dst_width + 7) / 8 * CHANNEL(d, i).signif_bits);
       CHANNEL(d, i).row_ends[0] = -1;
       CHANNEL(d, i).row_ends[1] = -1;
 

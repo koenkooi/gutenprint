@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.5.2.3 2003/05/20 01:51:32 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.5.2.4 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -190,8 +190,6 @@ typedef struct dither
   int oversampling;
   int last_line_was_empty;
   int ptr_offset;
-  int n_channels;
-  int n_input_channels;
   int error_rows;
 
   int dither_class;		/* mono, black, or CMYK */
@@ -214,7 +212,7 @@ typedef struct dither
 } stpi_dither_t;
 
 #define CHANNEL(d, c) ((d)->channel[(c)])
-#define CHANNEL_COUNT(d) ((d)->n_channels)
+#define CHANNEL_COUNT(d) ((d)->total_channel_count)
 
 #define USMIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -293,5 +291,5 @@ do									 \
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.5.2.3 2003/05/20 01:51:32 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.5.2.4 2003/05/23 22:54:43 rlk Exp $".
  */

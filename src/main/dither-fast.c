@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-fast.c,v 1.7.2.2 2003/05/18 15:29:43 rlk Exp $"
+ * "$Id: dither-fast.c,v 1.7.2.3 2003/05/23 22:54:43 rlk Exp $"
  *
  *   Fast dither algorithm
  *
@@ -116,8 +116,8 @@ stpi_dither_fast(stp_vars_t v,
 
   int dst_width = d->dst_width;
   int xerror, xstep, xmod;
-  if ((zero_mask & ((1 << d->n_input_channels) - 1)) ==
-      ((1 << d->n_input_channels) - 1))
+  if ((zero_mask & ((1 << CHANNEL_COUNT(d)) - 1)) ==
+      ((1 << CHANNEL_COUNT(d)) - 1))
     return;
 
   length = (d->dst_width + 7) / 8;
@@ -130,12 +130,17 @@ stpi_dither_fast(stp_vars_t v,
   QUANT(14);
   for (x = 0; x != dst_width; x++)
     {
+      int in_ch = 0;
       for (i = 0; i < CHANNEL_COUNT(d); i++)
 	{
-	  CHANNEL(d, i).v = raw[i];
-	  CHANNEL(d, i).o = CHANNEL(d, i).v;
-	  if (CHANNEL(d, i).ptr)
-	    print_color_fast(d, &(CHANNEL(d, i)), x, row, bit, length);
+	  if (CHANNEL(d, i).base_ptr)
+	    {
+	      CHANNEL(d, i).v = raw[in_ch];
+	      CHANNEL(d, i).o = CHANNEL(d, i).v;
+	      if (CHANNEL(d, i).ptr)
+		print_color_fast(d, &(CHANNEL(d, i)), x, row, bit, length);
+	      in_ch++;
+	    }
 	}
       QUANT(16);
       ADVANCE_UNIDIRECTIONAL(d, bit, raw, CHANNEL_COUNT(d), xerror, xstep, xmod);
