@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.19 2003/09/21 22:06:46 rlk Exp $"
+ * "$Id: dither-eventone.c,v 1.20 2003/09/21 22:30:21 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -237,7 +237,7 @@ find_segment(stpi_dither_channel_t *dc, eventone_t *et, int totalink,
       stpi_ink_defn_t *ip;
 
       for (i=0, ip = dc->ink_list; i < dc->nlevels - 1; i++, ip++) {
-	if (ip->value <= totalink) {
+	if (ip->value <= baseink) {
 	  lower->bits = ip->bits;
 	  lower->range = ip->value;
 	} else {
@@ -324,6 +324,7 @@ stpi_dither_et(stp_vars_t v,
   xstep  = channel_count * (d->src_width / d->dst_width);
   xmod   = d->src_width % d->dst_width;
   xerror = (xmod * x) % d->dst_width;
+  et->ditherval = 0;
 
   for (; x != terminate; x += direction) {
     for (i=0; i < channel_count; i++) {
