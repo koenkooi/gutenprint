@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.12.8.1 2004/03/01 03:55:27 rlk Exp $"
+ * "$Id: string-list.c,v 1.12.8.2 2004/03/28 16:07:36 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -120,7 +120,7 @@ stp_string_list_add_string(stp_string_list_t list,
 }
 
 int
-stp_string_list_is_present(stp_string_list_t list, const char *value)
+stp_string_list_is_present(stp_const_string_list_t list, const char *value)
 {
   if (list && value)
     {
