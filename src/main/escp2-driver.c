@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.10 2003/08/06 01:42:31 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.11 2003/09/02 00:23:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -349,17 +349,8 @@ static void
 escp2_set_margins(stp_vars_t v)
 {
   escp2_privdata_t *pd = get_privdata(v);
-  int bot = pd->page_bottom;
+  int bot = pd->page_management_units * pd->page_bottom / 72;
   int top = pd->page_management_units * pd->page_top / 72;
-
-  /* adjust bottom margin for a 480 like head configuration */
-  bot -= pd->max_head_offset * 72 / pd->page_management_units;
-  if ((pd->max_head_offset * 72 % pd->page_management_units) != 0)
-    bot -= 1;
-  if (pd->page_bottom < 0)
-    bot = 0;
-
-  bot = bot * pd->page_management_units / 72;
 
   top += pd->initial_vertical_offset;
   if (pd->use_extended_commands &&
