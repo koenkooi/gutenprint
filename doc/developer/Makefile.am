@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2004/02/26 23:07:29 rleigh Exp $
+## $Id: Makefile.am,v 1.11 2004/02/27 03:01:47 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -149,7 +149,7 @@ uninstall-local:
 
 CLEAN_MANUALS = \
 	$(RM) -f gimpprint.pdf gimpprint.ps;	\
-	$(RM) -rf *html-stamp $(HTMLDIR);
+	$(RM) -rf *html-stamp $(HTMLDIR)
 
 clean-local:
 	if test $(srcdir) = "." -a $(MAINT_MODE) = false ; then \
