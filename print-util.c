@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.126 2000/09/03 01:22:25 rlk Exp $"
+ * "$Id: print-util.c,v 1.127 2000/09/03 14:40:22 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -269,9 +269,9 @@ update_cmyk(unsigned short *rgb)
    * too dark.
    */
 
-  nc = (c * 3 + FMIN(c, FMAX(m, y)) * 2 + FMAX(m, y) * 2 + k) / 8;
-  nm = (m * 3 + FMIN(m, FMAX(c, y)) * 2 + FMAX(c, y) * 2 + k) / 8;
-  ny = (y * 3 + FMIN(y, FMAX(c, m)) * 2 + FMAX(c, m) * 2 + k) / 8;
+  nc = (c * 3 + FMIN(c, FMAX(m, y)) * 5 + FMAX(m, y) * 0 + k) / 8;
+  nm = (m * 3 + FMIN(m, FMAX(c, y)) * 5 + FMAX(c, y) * 0 + k) / 8;
+  ny = (y * 3 + FMIN(y, FMAX(c, m)) * 5 + FMAX(c, m) * 0 + k) / 8;
 
   /*
    * Make sure we didn't go overboard.  We don't want to go too
