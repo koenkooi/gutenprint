@@ -1,3 +1,9 @@
+gimp-print (4.2.0-4) unstable; urgency=low
+
+  * Apply Roger's user's guide Makefile.am patch to maybe fix #128421
+
+ -- Eric Sharkey <sharkey@debian.org>  Sun,  3 Feb 2002 12:53:27 -0500
+
 gimp-print (4.2.0-3) unstable; urgency=low
 
   * Fix locales package description, Closes: #123796
