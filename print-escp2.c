@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.84 2000/02/18 00:17:44 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.85 2000/02/18 00:31:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.85  2000/02/18 00:31:28  rlk
+ *   Remove debug printf
+ *
  *   Revision 1.84  2000/02/18 00:17:44  rlk
  *   Update line spacing for ESC900
  *
@@ -1224,7 +1227,6 @@ escp2_print(int       model,		/* I - Model */
       int extra_points = ((escp2_nozzles(model) - 1) *
 			  escp2_nozzle_separation(model) + 5) / 10;
       top += extra_points;
-      fprintf(stderr, "Adjusted top is %d\n", top);
     }
 
  /*
@@ -2901,5 +2903,5 @@ escp2_write_weave(void *        vsw,
 #endif
 
 /*
- * End of "$Id: print-escp2.c,v 1.84 2000/02/18 00:17:44 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.85 2000/02/18 00:31:28 rlk Exp $".
  */
