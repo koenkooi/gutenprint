@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.1 2003/01/06 20:57:38 rleigh Exp $"
+ * "$Id: module.c,v 1.2 2003/01/07 18:18:15 rleigh Exp $"
  *
  *   libgimpprint module loader - load modules with libltdl.
  *
@@ -388,6 +388,17 @@ static void *stp_dlsym(void *handle,           /* Module */
   strcpy (full_symbol+len, symbol);
   len += strlen(symbol);
   full_symbol[len] = '\0';
+
+#if defined(__APPLE__) || defined(__OpenBSD__)
+/* Darwin and OpenBSD prepend underscores to symbols */
+ {
+   char *prefix_symbol = stp_malloc(sizeof(char) * (strlen(full_symbol) + 2));
+   prefix_symbol[0] = '_';
+   strcpy(prefix_symbol+1, full_symbol);
+   stp_free(full_symbol);
+   full_symbol = prefix_symbol;
+ }
+#endif
 
 #ifdef DEBUG
   fprintf(stderr, "SYMBOL: %s\n", full_symbol);
