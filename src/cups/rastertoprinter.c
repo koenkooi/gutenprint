@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.70 2003/07/20 02:55:43 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.71 2003/09/25 23:43:20 rlk Exp $"
  *
  *   GIMP-print based raster filter for the Common UNIX Printing System.
  *
@@ -785,7 +785,7 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
   {
     fprintf(stderr, "DEBUG2: Gimp-Print reading %d %d\n",
 	    bytes_per_line, cups->row);
-    while (cups->row < row)
+    while (cups->row <= row && cups->row < cups->header.cupsHeight)
       {
 	cupsRasterReadPixels(cups->ras, data, bytes_per_line);
 	cups->row ++;
@@ -916,5 +916,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.70 2003/07/20 02:55:43 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.71 2003/09/25 23:43:20 rlk Exp $".
  */
