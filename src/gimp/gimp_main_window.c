@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.2 2001/01/31 22:01:46 stevek Exp $"
+ * "$Id: gimp_main_window.c,v 1.3 2001/02/01 00:33:32 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1099,8 +1099,8 @@ gimp_scaling_callback (GtkWidget *widget)
       if (yres > max_ppi_scaling)
 	yres = max_ppi_scaling;
 
-      GTK_ADJUSTMENT (scaling_adjustment)->value = yres;
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scaling_ppi), TRUE);
+      GTK_ADJUSTMENT (scaling_adjustment)->value = yres;
       vars.scaling = 0.0;
       plist[plist_current].v.scaling = vars.scaling;
     }
