@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.112 2003/01/11 16:19:51 rlk Exp $"
+ * "$Id: print-dither.c,v 1.113 2003/01/12 22:38:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -290,7 +290,7 @@ static const stp_parameter_t dither_parameters[] =
        "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
        "Hybrid Floyd-Steinberg generally produces inferior output."),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-    STP_PARAMETER_LEVEL_BASIC
+    STP_PARAMETER_LEVEL_BASIC, 1, 1
   },
 };
 
