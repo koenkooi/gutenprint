@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2001/06/16 11:51:49 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2001/06/16 23:46:32 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ DOCS = \
  FAQ.html \
  README.dither \
  README.maintaining \
- README.new-printer \
  docbook.css \
  print-color.png \
  print-main.png \
@@ -43,7 +42,7 @@ DOCS = \
 
 info_TEXINFOS = gimpprint.texi
 
-gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi types.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi indices.texi
+gimpprint_TEXINFOS = overview.texi copying.texi gpl.texi introduction.texi using.texi types.texi functions.texi programs.texi problems.texi appendices.texi dither.texi weave.texi escp2.texi new-printer.texi indices.texi
 
 
 ## Rules
