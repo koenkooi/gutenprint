@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.32 1999/12/11 14:42:04 rlk Exp $"
+ * "$Id: print.c,v 1.33 1999/12/18 22:36:01 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -446,10 +446,6 @@ get_tmp_filename()
 /*
  * 'run()' - Run the plug-in...
  */
-
-#if 0
-#define PRINT_LUT
-#endif
 
 static void
 run(char   *name,		/* I - Name of print program. */
@@ -3288,5 +3284,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.32 1999/12/11 14:42:04 rlk Exp $".
+ * End of "$Id: print.c,v 1.33 1999/12/18 22:36:01 rlk Exp $".
  */
