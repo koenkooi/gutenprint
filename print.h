@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.14 1999/11/10 01:12:48 rlk Exp $"
+ * "$Id: print.h,v 1.15 1999/11/14 18:59:22 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -69,6 +69,10 @@ typedef struct
   unsigned short blue[256];
 } lut_t;
 
+/*
+ * Abstract data type for interfacing with the image creation program
+ * (in this case, the Gimp).
+ */
 typedef void *Image;
 
 extern void Image_init(Image image);
@@ -204,5 +208,5 @@ extern void	indexed_to_gray(unsigned char *, unsigned char *, int, int,
 #endif
 
 /*
- * End of "$Id: print.h,v 1.14 1999/11/10 01:12:48 rlk Exp $".
+ * End of "$Id: print.h,v 1.15 1999/11/14 18:59:22 rlk Exp $".
  */
