@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.52.2.1 2003/04/28 02:39:35 rlk Exp $"
+ * "$Id: print-weave.c,v 1.52.2.2 2003/05/03 03:14:21 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -1031,13 +1031,13 @@ stpi_initialize_weave(stp_vars_t v,
 		      int v_subpasses, /* Vertical passes */
 		      int v_subsample, /* Vertical oversampling */
 		      int ncolors,
-		      int width,	/* bits/pixel */
+		      int bitwidth,	/* bits/pixel */
 		      int linewidth,	/* Width of a line, in pixels */
 		      int line_count, /* Lines that will be printed */
 		      int first_line, /* First line that will be printed */
 		      int page_height, /* Total height of the page in rows */
-		      stpi_weave_strategy_t weave_strategy,
 		      const int *head_offset,
+		      stpi_weave_strategy_t weave_strategy,
 		      stpi_flushfunc flushfunc,
 		      stpi_fillfunc fillfunc,
 		      stpi_packfunc pack,
@@ -1132,7 +1132,7 @@ stpi_initialize_weave(stp_vars_t v,
   if (sw->virtual_jets > sw->jets)
     sw->vmod *= (sw->virtual_jets + sw->jets - 1) / sw->jets;
 
-  sw->bitwidth = width;
+  sw->bitwidth = bitwidth;
   sw->last_pass_offset = 0;
   sw->last_pass = -1;
   sw->current_vertical_subpass = 0;

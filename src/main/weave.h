@@ -1,5 +1,5 @@
 /*
- * "$Id: weave.h,v 1.8.2.1 2003/04/28 02:39:35 rlk Exp $"
+ * "$Id: weave.h,v 1.8.2.2 2003/05/03 03:14:21 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -122,11 +122,11 @@ typedef int stpi_compute_linewidth_func(stp_vars_t v, int n);
 
 extern void stpi_initialize_weave(stp_vars_t v, int jets, int separation,
 				  int oversample, int horizontal,
-				  int vertical, int ncolors, int width,
+				  int vertical, int ncolors, int bitwidth,
 				  int linewidth, int line_count,
 				  int first_line, int page_height,
-				  stpi_weave_strategy_t,
 				  const int *head_offset,
+				  stpi_weave_strategy_t,
 				  stpi_flushfunc,
 				  stpi_fillfunc,
 				  stpi_packfunc,
@@ -171,5 +171,5 @@ stpi_weave_parameters_by_row(stp_const_vars_t v, int row,
 
 #endif /* GIMP_PRINT_INTERNAL_WEAVE_H */
 /*
- * End of "$Id: weave.h,v 1.8.2.1 2003/04/28 02:39:35 rlk Exp $".
+ * End of "$Id: weave.h,v 1.8.2.2 2003/05/03 03:14:21 rlk Exp $".
  */
