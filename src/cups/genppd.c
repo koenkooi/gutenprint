@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.36.2.9 2003/02/05 16:27:34 easysw Exp $"
+ * "$Id: genppd.c,v 1.36.2.10 2003/03/31 02:51:13 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -523,6 +523,7 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
   gzputs(fp, "*FileSystem:	False\n");
   gzputs(fp, "*LandscapeOrientation: Plus90\n");
   gzputs(fp, "*TTRasterizer:	Type42\n");
+  gzputs(fp, "*RequiresPageRegion All:	True\n");
 
   gzputs(fp, "*cupsVersion:	1.1\n");
   gzprintf(fp, "*cupsModelNumber: \"%d\"\n", model);
@@ -938,5 +939,5 @@ write_ppd(const stp_printer_t p,	/* I - Printer driver */
 }
 
 /*
- * End of "$Id: genppd.c,v 1.36.2.9 2003/02/05 16:27:34 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.36.2.10 2003/03/31 02:51:13 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.15.4.31 2003/01/28 13:13:00 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.15.4.32 2003/03/31 02:51:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -4608,6 +4608,21 @@ const escp2_stp_printer_t stp_escp2_model_capabilities[] =
     c4pl_dotsizes, c4pl_densities, &variable_4pl_inks,
     &standard_paper_list, standard_reslist, &x80_inklist,
     variable_bits, variable_base_res, &default_input_slot_list,
+    &new_init_sequence, &je_deinit_sequence
+  },
+  /* 57: Japanese PM-970C */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_NO |
+     MODEL_ROLLFEED_YES | MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO |
+     MODEL_FAST_360_NO),
+    180, 180, 2, 360, 360, 1, 360, 360, 1,
+    360, 720, 720, 14400, -1, 2880, 1440, 360, 180,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(4),
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 190, 0, 0, 0,
+    c2pl_dotsizes, c2pl_densities, &variable_2pl_inks,
+    &sp950_paper_list, escp950_reslist, &photo7_japan_inklist,
+    stp950_bits, stp950_base_res, &standard_roll_feed_input_slot_list,
     &new_init_sequence, &je_deinit_sequence
   },
 };
