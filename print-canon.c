@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.62 2000/06/22 19:15:51 gandy Exp $"
+ * "$Id: print-canon.c,v 1.63 2000/06/22 19:25:22 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -618,6 +618,8 @@ canon_init_printer(FILE *prn, canon_cap_t caps,
   else if (print_head<=2) arg_6d_1= 0x02;
   else if (print_head<=4) arg_6d_1= 0x04;
   if (output_type==OUTPUT_GRAY) arg_6d_2= 0x02;
+
+  if (caps.model==8200) arg_6d_3= 0x01;
 
   arg_70_1= (printable_height >> 8) & 0xff;
   arg_70_2= (printable_height) & 0xff;
