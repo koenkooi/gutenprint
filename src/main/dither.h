@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.7 2003/01/18 21:00:39 rlk Exp $"
+ * "$Id: dither.h,v 1.8 2003/01/18 22:29:40 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -188,7 +188,6 @@ extern void stp_dither_set_ink_spread(stp_vars_t v, int spread);
 extern void stp_dither_set_adaptive_limit(stp_vars_t v, double limit);
 extern int stp_dither_get_first_position(stp_vars_t v, int color, int subchan);
 extern int stp_dither_get_last_position(stp_vars_t v, int color, int subchan);
-extern void stp_dither_set_light_ink(stp_vars_t v, int color, double, double);
 extern void stp_dither_set_shades(stp_vars_t v, int color, int nshades,
 				  const stp_shade_t *shades, double density);
 
@@ -207,5 +206,5 @@ extern void stp_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.7 2003/01/18 21:00:39 rlk Exp $".
+ * End of "$Id: dither.h,v 1.8 2003/01/18 22:29:40 rlk Exp $".
  */

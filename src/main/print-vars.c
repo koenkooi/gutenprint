@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.26 2003/01/18 21:01:12 rlk Exp $"
+ * "$Id: print-vars.c,v 1.27 2003/01/18 22:29:42 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1146,6 +1146,15 @@ stp_describe_parameter(const stp_vars_t v, const char *name,
   if (description->p_type != STP_PARAMETER_TYPE_INVALID)
     return;
   stp_dither_describe_parameter(v, name, description);
+}
+
+const stp_parameter_t *
+stp_parameter_find_in_settings(const stp_vars_t v, const char *name)
+{
+  stp_parameter_list_t param_list = stp_list_parameters(v);
+  const stp_parameter_t *param = stp_parameter_find(param_list, name);
+  stp_parameter_list_destroy(param_list);
+  return param;
 }
 
 size_t

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.83 2003/01/18 21:01:08 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.84 2003/01/18 22:29:41 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -61,6 +61,12 @@ typedef struct
   int		p0;
   int		p1;
 } pcl_t;
+
+static const stp_dither_range_simple_t photo_dither_ranges[] =
+{
+  { 0.25, 0x1, 1, 1 },
+  { 1.00, 0x1, 0, 1 }
+};
 
 /*
  * Media size to PCL media size code table
@@ -2416,8 +2422,10 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
   else if (do_6color)
     {
 /* Set light inks for 6 colour printers. Numbers copied from print-escp2.c */
-      stp_dither_set_light_ink(nv, ECOLOR_C, .25, stp_get_float_parameter(nv, "Density"));
-      stp_dither_set_light_ink(nv, ECOLOR_M, .25, stp_get_float_parameter(nv, "Density"));
+      stp_dither_set_ranges(nv, ECOLOR_C, 2, photo_dither_ranges,
+			    stp_get_float_parameter(nv, "Density"));
+      stp_dither_set_ranges(nv, ECOLOR_M, 2, photo_dither_ranges,
+			    stp_get_float_parameter(nv, "Density"));
     }
 
   if (!stp_check_curve_parameter(nv, "HueMap"))

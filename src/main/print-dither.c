@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.117 2003/01/18 21:00:49 rlk Exp $"
+ * "$Id: print-dither.c,v 1.118 2003/01/18 22:29:40 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -818,24 +818,6 @@ stp_dither_set_randomizer(stp_vars_t v, int i, double val)
   if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d))
     return;
   PHYSICAL_CHANNEL(d, i).randomizer = val * 65535;
-}
-
-void
-stp_dither_set_light_ink(stp_vars_t v, int i, double val, double density)
-{
-  dither_t *d = (dither_t *) stp_get_dither_data(v);
-  stp_dither_range_simple_t range[2];
-  if (i < 0 || i >= PHYSICAL_CHANNEL_COUNT(d) || val <= 0 || val > 1)
-    return;
-  range[0].bit_pattern = 1;
-  range[0].subchannel = 1;
-  range[0].value = val;
-  range[0].dot_size = 1;
-  range[1].bit_pattern = 1;
-  range[1].subchannel = 0;
-  range[1].value = 1;
-  range[1].dot_size = 1;
-  stp_dither_set_ranges(v, i, 2, range, density);
 }
 
 static void
