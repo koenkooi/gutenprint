@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.2 2001/01/25 02:31:46 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.3 2001/01/25 19:23:02 rleigh Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -30,12 +30,8 @@
  * compile on generic platforms that don't support glib, gimp, gtk, etc.
  */
 
-#ifndef _GIMP_PRINT_INTERNAL_H
-#define _GIMP_PRINT_INTERNAL_H
-
-#ifdef __cplusplus
-  extern "C" {
-#endif
+#ifndef _GIMP_PRINT_INTERNAL_H_
+#define _GIMP_PRINT_INTERNAL_H_
 
 #define ECOLOR_C 0
 #define ECOLOR_M 1
@@ -223,7 +219,7 @@ extern void  print_timers(void );
   }
 #endif
 
-#endif /* _GIMP_PRINT_INTERNAL_H */
+#endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.2 2001/01/25 02:31:46 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.3 2001/01/25 19:23:02 rleigh Exp $".
  */

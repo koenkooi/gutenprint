@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.54 2001/01/24 13:02:18 rlk Exp $
+dnl $Id: configure.in,v 1.55 2001/01/25 19:23:02 rleigh Exp $
 dnl Copyright (C) 2000 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -316,7 +316,7 @@ if test x${BUILD_ESCPUTIL} = xyes ; then
 fi
 if test x${BUILD_LIBGIMPPRINT} = xyes ; then
   MAIN_BIN="libgimpprint.la"
-  GIMPPRINT_LIBS="\$(top_srcdir)/src/main/libgimpprint.la"
+  GIMPPRINT_LIBS="\$(top_builddir)/src/main/libgimpprint.la"
 fi
 if test x${BUILD_TEST} = xyes ; then
   TEST_BIN="escp2-weavetest printer_options unprint escp2-unprint pcl-unprint"

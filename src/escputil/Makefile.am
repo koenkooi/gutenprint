@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2001/01/24 03:23:00 rlk Exp $
+## $Id: Makefile.am,v 1.3 2001/01/25 19:23:02 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 MAINT_CHARSET = latin1
 
 INCLUDES = @INCLUDES@ $(GIMP_CFLAGS)
+LIBS = ../../lib/libprintut.a @INTLLIBS@ ../../lib/libprintut.a @LIBS@
 
 AM_CPPFLAGS =\
  -DLOCALEDIR=\""$(localedir)"\"\
