@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.1.2.2 2004/06/20 13:50:33 rleigh Exp $"
+ * "$Id: panel.c,v 1.1.2.3 2004/06/20 14:15:50 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1114,7 +1114,7 @@ create_top_level_structure(void)
 		      _("Print"), print_callback,
 		      NULL, NULL, NULL, FALSE, FALSE,
 		      _("Cancel"), gtk_widget_destroy,
-		      NULL, 1, NULL, FALSE, TRUE,
+		      NULL, (GObject *) 1, NULL, FALSE, TRUE,
 
 		      NULL);
   gtk_window_set_policy(GTK_WINDOW(print_dialog), 1, 1, 1);
@@ -1408,8 +1408,7 @@ create_printer_dialog (void)
 				  _("OK"), setup_ok_callback,
 				  NULL, NULL, NULL, TRUE, FALSE,
 				  _("Cancel"), setup_cancel_callback,
-				  NULL, 1, NULL, FALSE, TRUE,
-
+				  NULL, (GObject *) 1, NULL, FALSE, TRUE,
 				  NULL);
   gtk_window_set_policy(GTK_WINDOW(setup_dialog), 1, 1, 1);
 
@@ -1645,12 +1644,12 @@ create_new_printer_dialog (void)
 
   new_printer_dialog =
     stpui_dialog_new (_("Define New Printer"), "print",
-                     GTK_WIN_POS_MOUSE, FALSE, TRUE, FALSE,
-                     _("OK"), new_printer_ok_callback,
-		     NULL, NULL, NULL, TRUE, FALSE,
-                     _("Cancel"), gtk_widget_hide,
-                     NULL, 1, NULL, FALSE, TRUE,
-		     NULL);
+		      GTK_WIN_POS_MOUSE, FALSE, TRUE, FALSE,
+		      _("OK"), new_printer_ok_callback,
+		      NULL, NULL, NULL, TRUE, FALSE,
+		      _("Cancel"), gtk_widget_hide,
+		      NULL, (GObject *) 1, NULL, FALSE, TRUE,
+		      NULL);
   gtk_window_set_policy(GTK_WINDOW(new_printer_dialog), 1, 1, 1);
 
   table = gtk_table_new (1, 1, FALSE);
@@ -1680,7 +1679,7 @@ create_about_dialog (void)
     stpui_dialog_new (_("About Gimp-Print " PLUG_IN_VERSION), "print",
 		      GTK_WIN_POS_MOUSE, FALSE, TRUE, FALSE,
 		      _("OK"), gtk_widget_hide,
-		      NULL, 1, NULL, TRUE, TRUE,
+		      NULL, (GObject *) 1, NULL, TRUE, TRUE,
 		      NULL);
   gtk_window_set_policy(GTK_WINDOW(about_dialog), 1, 1, 1);
 
@@ -1946,8 +1945,7 @@ create_color_adjust_window (void)
 		     _("Set Defaults"), set_color_defaults,
 		     NULL, NULL, NULL, FALSE, FALSE,
 		     _("Close"), gtk_widget_hide,
-		     NULL, 1, NULL, TRUE, TRUE,
-
+		     NULL, (GObject *) 1, NULL, TRUE, TRUE,
 		     NULL);
   gtk_window_set_policy(GTK_WINDOW(color_adjust_dialog), 1, 1, 1);
 

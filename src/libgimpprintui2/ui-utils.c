@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.1.2.1 2004/06/15 23:53:31 rleigh Exp $"
+ * "$Id: ui-utils.c,v 1.1.2.2 2004/06/20 14:15:50 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -90,7 +90,7 @@ dialog_create_action_areav (GtkDialog *dialog,
   const gchar    *label;
   GtkSignalFunc   callback;
   gpointer        data;
-  GtkObject      *slot_object;
+  GObject        *slot_object;
   GtkWidget     **widget_ptr;
   gboolean        default_action;
   gboolean        connect_delete;
@@ -119,7 +119,7 @@ dialog_create_action_areav (GtkDialog *dialog,
     {
       callback       = va_arg (args, GtkSignalFunc);
       data           = va_arg (args, gpointer);
-      slot_object    = va_arg (args, GtkObject *);
+      slot_object    = va_arg (args, GObject *);
       widget_ptr     = va_arg (args, GtkWidget **);
       default_action = va_arg (args, gboolean);
       connect_delete = va_arg (args, gboolean);
@@ -128,7 +128,7 @@ dialog_create_action_areav (GtkDialog *dialog,
       GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
       gtk_box_pack_start (GTK_BOX (hbbox), button, FALSE, FALSE, 0);
 
-      if (slot_object == (GtkObject *) 1)
+      if (slot_object == (GObject *) 1)
 	slot_object = G_OBJECT (dialog);
 
       if (data == NULL)
@@ -209,7 +209,7 @@ stpui_dialog_new (const gchar       *title,
 		   *  const gchar    *label,
 		   *  GtkSignalFunc   callback,
 		   *  gpointer        data,
-		   *  GtkObject      *slot_object,
+		   *  GObject      *slot_object,
 		   *  GtkWidget     **widget_ptr,
 		   *  gboolean        default_action,
 		   *  gboolean        connect_delete,
