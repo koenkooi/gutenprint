@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.25 2003/05/31 04:07:23 rlk Exp $"
+ * "$Id: util.h,v 1.26 2003/06/07 20:15:32 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -100,6 +100,7 @@ extern void stpi_xio_free(void *ixio);
 #define STPI_DBG_PAPER          0x4000
 #define STPI_DBG_PRINTERS       0x8000
 #define STPI_DBG_XML            0x10000
+#define STPI_DBG_VARS           0x20000
 extern unsigned long stpi_debug_level;
 
 extern void stpi_dprintf(unsigned long level, stp_const_vars_t v,
@@ -278,5 +279,5 @@ extern void print_timers(void );
 
 #endif /* GIMP_PRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.25 2003/05/31 04:07:23 rlk Exp $".
+ * End of "$Id: util.h,v 1.26 2003/06/07 20:15:32 rlk Exp $".
  */
