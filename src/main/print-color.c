@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.14 2004/03/21 21:55:28 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.15 2004/03/21 22:30:37 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -644,6 +644,13 @@ cache_set_curve(cached_curve_t *cache, stp_curve_t curve)
   cache->curve = curve;
 }
 
+static void
+cache_set_curve_copy(cached_curve_t *cache, stp_curve_t curve)
+{
+  cache_curve_invalidate(cache);
+  cache->curve = stp_curve_create_copy(curve);
+}
+
 static const size_t
 cache_get_count(cached_curve_t *cache)
 {
@@ -685,31 +692,31 @@ cache_get_double_data(cached_curve_t *cache)
 }
 
 static inline const unsigned short *
-cache_fast_ushort(cached_curve_t *cache)
+cache_fast_ushort(const cached_curve_t *cache)
 {
   return cache->s_cache;
 }
 
 static inline const double *
-cache_fast_double(cached_curve_t *cache)
+cache_fast_double(const cached_curve_t *cache)
 {
   return cache->d_cache;
 }
 
 static inline size_t
-cache_fast_count(cached_curve_t *cache)
+cache_fast_count(const cached_curve_t *cache)
 {
   return cache->count;
 }
 
 static void
-cache_copy(cached_curve_t *dest, cached_curve_t *src)
+cache_copy(cached_curve_t *dest, const cached_curve_t *src)
 {
   cache_curve_invalidate(dest);
   if (dest != src)
     {
-      if (cache_get_curve(src))
-	cache_set_curve(dest, stp_curve_create_copy(cache_get_curve(src)));
+      if (src->curve)
+	cache_set_curve_copy(dest, src->curve);
     }
 }
 
@@ -757,27 +764,28 @@ static void
 initialize_gcr_curve(stp_const_vars_t vars)
 {
   lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));
-  if (!lut->gcr_curve.curve)
+  if (!cache_get_curve(&(lut->gcr_curve)))
     {
       if (stp_check_curve_parameter(vars, "GCRCurve", STP_PARAMETER_DEFAULTED))
 	{
 	  double data;
 	  size_t count;
 	  int i;
-	  lut->gcr_curve.curve =
+	  stp_curve_t curve =
 	    stp_curve_create_copy(stp_get_curve_parameter(vars, "GCRCurve"));
-	  stp_curve_resample(lut->gcr_curve.curve, lut->steps);
-	  count = stp_curve_count_points(lut->gcr_curve.curve);
-	  stp_curve_set_bounds(lut->gcr_curve.curve, 0.0, 65535.0);
+	  stp_curve_resample(curve, lut->steps);
+	  count = stp_curve_count_points(curve);
+	  stp_curve_set_bounds(curve, 0.0, 65535.0);
 	  for (i = 0; i < count; i++)
 	    {
-	      stp_curve_get_point(lut->gcr_curve.curve, i, &data);
+	      stp_curve_get_point(curve, i, &data);
 	      data = 65535.0 * data * (double) i / (count - 1);
-	      stp_curve_set_point(lut->gcr_curve.curve, i, data);
+	      stp_curve_set_point(curve, i, data);
 	    }
+	  cache_set_curve(&(lut->gcr_curve), curve);
 	}
       else
-	lut->gcr_curve.curve = compute_gcr_curve(vars);
+	cache_set_curve(&(lut->gcr_curve), compute_gcr_curve(vars));
     }
 }
 
@@ -1224,7 +1232,8 @@ rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,	      \
   int bright_color_adjustment = 0;					      \
 									      \
   for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				      \
-    stp_curve_resample(lut->channel_curves[i + offset].curve, 1 << bits);     \
+    stp_curve_resample(cache_get_curve(&(lut->channel_curves[i + offset])),   \
+		       1 << bits);					      \
   red = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C + offset]));    \
   green = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M + offset]));  \
   blue = cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y + offset]));   \
@@ -1984,14 +1993,13 @@ copy_lut(void *vlut)
   free_channels(dest);
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      cache_copy(&(dest->channel_curves[i]),
-		 (cached_curve_t *) &(src->channel_curves[i]));
+      cache_copy(&(dest->channel_curves[i]), &(src->channel_curves[i]));
       dest->gamma_values[i] = src->gamma_values[i];
     }
-  cache_copy(&(dest->hue_map), (cached_curve_t *) &(src->hue_map));
-  cache_copy(&(dest->lum_map), (cached_curve_t *) &(src->lum_man));
-  cache_copy(&(dest->sat_map), (cached_curve_t *) &(src->sat_map));
-  cache_copy(&(dest->gcr_curve), (cached_curve_t *) &(src->gcr_curve));
+  cache_copy(&(dest->hue_map), &(src->hue_map));
+  cache_copy(&(dest->lum_map), &(src->lum_map));
+  cache_copy(&(dest->sat_map), &(src->sat_map));
+  cache_copy(&(dest->gcr_curve), &(src->gcr_curve));
   dest->steps = src->steps;
   dest->in_channels = src->in_channels;
   dest->out_channels = src->out_channels;
