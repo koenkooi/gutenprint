@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.132 2002/10/28 22:29:38 rleigh Exp $
+## $Id: Makefile.am,v 1.133 2003/01/01 21:05:57 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,9 @@ AUTOMAKE_OPTIONS = 1.5 dist-bzip2 check-news gnu no-dependencies
 
 MAINT_CHARSET = latin1
 ACLOCAL_AMFLAGS = -I m4 -I m4local
-DISTCHECK_CONFIGURE_FLAGS = --enable-non-native-prefix=\$$\{prefix\}
+
+include $(top_srcdir)/scripts/global.mk
+
 
 ## Variables
 

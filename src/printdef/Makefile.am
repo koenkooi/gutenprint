@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.11 2002/12/28 15:46:18 rlk Exp $
+## $Id: Makefile.am,v 1.12 2003/01/01 21:06:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,11 +23,12 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+include $(top_srcdir)/scripts/global.mk
+
 
 ## Variables
 
-AM_CFLAGS = $(GNUCFLAGS) @LIBXML_CFLAGS@
-INCLUDES = @INCLUDES@
+LOCAL_CFLAGS = $(GNUCFLAGS) @LIBXML_CFLAGS@
 
 
 ## Programs

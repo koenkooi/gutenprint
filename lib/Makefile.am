@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2003/01/01 21:06:08 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2003/01/01 21:06:00 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,32 +21,23 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 @SET_MAKE@
 
-MAINT_CHARSET = latin1
-
 include $(top_srcdir)/scripts/global.mk
-
-
-## Variables
-
-LOCAL_CFLAGS = $(GIMP_CFLAGS)
 
 
 ## Programs
 
-if BUILD_GIMP
-gimp_plug_in_PROGRAMS = print
-endif
+noinst_LTLIBRARIES = libprintut.la
 
-print_SOURCES = \
-	print-image-gimp.c \
-	print-intl.h \
-	print.c \
-	print_gimp.h
+libprintut_la_SOURCES =
 
-print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
-print_DEPENDENCIES = $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
+libprintut_la_LIBADD = @LTALLOCA@ @LTLIBOBJS@
 
 
-## Clean
+noinst_HEADERS = getopt.h libprintut.h pathmax.h xmalloc.h
+
+
+## CLean
 
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = alloca.c getopt.c getopt1.c strcspn.c vasprintf.c xgetcwd.c xmalloc.c

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.1 2002/09/21 14:59:52 rleigh Exp $
+## $Id: Makefile.am,v 1.2 2003/01/01 21:06:05 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,8 @@ AUTOMAKE_OPTIONS = 1.5 dist-bzip2 check-news gnu no-dependencies
 
 MAINT_CHARSET = latin1
 
+include $(top_srcdir)/scripts/global.mk
+
 
 ## Variables
 
@@ -31,6 +33,7 @@ MAINT_CHARSET = latin1
 EXTRA_DIST = \
 	autogen.sh \
 	buildgimpprintdebs \
+	global.mk
 	mkchlog
 
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2003/01/01 21:06:08 rleigh Exp $
+## $Id: Makefile.am,v 1.32 2003/01/01 21:05:58 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,30 +23,34 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+SUBDIRS = developer users_guide
+
 include $(top_srcdir)/scripts/global.mk
 
 
-## Variables
+## Data
 
-LOCAL_CFLAGS = $(GIMP_CFLAGS)
+docs:
+	cd developer; $(MAKE)
+	cd users_guide; $(MAKE)
 
+ps: $(MANUAL).ps
+	cd developer; $(MAKE) ps
+	cd users_guide; $(MAKE) ps
 
-## Programs
+pdf: $(MANUAL).pdf
+	cd developer; $(MAKE) pdf
+	cd users_guide; $(MAKE) pdf
 
-if BUILD_GIMP
-gimp_plug_in_PROGRAMS = print
-endif
-
-print_SOURCES = \
-	print-image-gimp.c \
-	print-intl.h \
-	print.c \
-	print_gimp.h
-
-print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
-print_DEPENDENCIES = $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
+html: 
+	cd developer; $(MAKE) html
+	cd users_guide; $(MAKE) html
 
 
 ## Clean
 
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = FAQ.html README.maintaining
+
+.PHONY: html ps pdf docs

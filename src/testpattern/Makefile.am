@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2003/01/01 16:46:35 rlk Exp $
+## $Id: Makefile.am,v 1.13 2003/01/01 21:06:10 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,15 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+include $(top_srcdir)/scripts/global.mk
+
 
 ## Variables
 
 pkgdatadir = $(datadir)/$(PACKAGE)/samples
 
-AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
-GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
-GIMPPRINT_DEPLIBS = -lm
-LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
-LIBPRINTUT = $(top_builddir)/lib/libprintut.la
-LIBS = $(INTLLIBS) @LIBS@
-
 TESTS = run-testpattern
+
 
 ## Programs
 
@@ -52,20 +47,20 @@ AM_LFLAGS = -i
 AM_YFLAGS = -d
 
 testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
-testpattern_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
+testpattern_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
 
 testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
 
-printers_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
+printers_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS)
 
-$(GIMPPRINT_LIBS):
-	cd ../main ; \
-	$(MAKE)
+
+## Data
 
 if BUILD_TESTPATTERN
 pkgdata_DATA = testpattern.sample extended.sample
 endif
+
 
 ## Clean
 

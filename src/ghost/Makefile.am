@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27 2002/10/27 00:43:02 rlk Exp $
+## $Id: Makefile.am,v 1.28 2003/01/01 21:06:07 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,8 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+include $(top_srcdir)/scripts/global.mk
+
 
 ## Clean
 
@@ -32,13 +34,8 @@ EXTRA_DIST = README
 
 ## Variables
 
-AM_CFLAGS = $(GNUCFLAGS)
-INCLUDES = @IJS_CFLAGS@ @INCLUDES@ $(LIBGIMPPRINT_CFLAGS)
-GIMPPRINT_LIBS = $(top_builddir)/src/main/libgimpprint.la
-GIMPPRINT_DEPLIBS = -lm
-LIBGIMPPRINT_LIBS = $(GIMPPRINT_LIBS) $(GIMPPRINT_DEPLIBS)
-LIBPRINTUT = $(top_builddir)/lib/libprintut.la
-LIBS = @IJS_LIBS@ $(INTLLIBS) @LIBS@
+LOCAL_CFLAGS = @IJS_CFLAGS@
+
 
 ## Programs
 
@@ -46,8 +43,4 @@ if BUILD_GHOSTSCRIPT
 bin_PROGRAMS = ijsgimpprint
 endif
 
-ijsgimpprint_LDADD = $(LIBPRINTUT) $(LIBGIMPPRINT_LIBS)
-
-$(GIMPPRINT_LIBS):
-	cd ../main ; \
-	$(MAKE)
+ijsgimpprint_LDADD = $(LIBPRINTUT) $(GIMPPRINT_LIBS) $(IJS_LIBS)

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.13 2002/12/31 20:39:18 rlk Exp $
+## $Id: Makefile.am,v 1.14 2003/01/01 21:06:05 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,8 @@ AUTOMAKE_OPTIONS = 1.4 gnu
 
 MAINT_CHARSET = latin1
 
+include $(top_srcdir)/scripts/global.mk
+
 SUBDIRS = 					\
 	printdef 				\
 	main					\
@@ -33,5 +35,8 @@ SUBDIRS = 					\
 	foomatic				\
 	ghost					\
 	testpattern
+
+
+## Clean
 
 MAINTAINERCLEANFILES = Makefile.in

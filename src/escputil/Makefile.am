@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2003/01/01 21:06:08 rleigh Exp $
+## $id: makefile.am,v 1.9 2001/06/03 18:35:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,25 +26,13 @@ MAINT_CHARSET = latin1
 include $(top_srcdir)/scripts/global.mk
 
 
-## Variables
-
-LOCAL_CFLAGS = $(GIMP_CFLAGS)
-
-
 ## Programs
 
-if BUILD_GIMP
-gimp_plug_in_PROGRAMS = print
+if BUILD_ESCPUTIL
+bin_PROGRAMS = escputil
 endif
 
-print_SOURCES = \
-	print-image-gimp.c \
-	print-intl.h \
-	print.c \
-	print_gimp.h
-
-print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
-print_DEPENDENCIES = $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
+escputil_LDADD = $(LIBPRINTUT) $(LIBREADLINE_DEPS)
 
 
 ## Clean

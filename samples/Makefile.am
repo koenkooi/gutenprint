@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2003/01/01 21:06:08 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2003/01/01 21:06:03 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,25 +28,18 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-LOCAL_CFLAGS = $(GIMP_CFLAGS)
+pkgsampledatadir = $(datadir)/$(PACKAGE)/samples
 
 
-## Programs
+## Data
 
-if BUILD_GIMP
-gimp_plug_in_PROGRAMS = print
+if INSTALL_SAMPLES
+pkgsampledata_DATA = colorbars4.png colorsweep.png profile.jpg
 endif
-
-print_SOURCES = \
-	print-image-gimp.c \
-	print-intl.h \
-	print.c \
-	print_gimp.h
-
-print_LDADD = $(LIBPRINTUT) $(GIMP_LIBS) $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
-print_DEPENDENCIES = $(GIMPPRINTUI_LIBS) $(GIMPPRINT_LIBS)
 
 
 ## Clean
 
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = $(pkgsampledata_DATA)
