@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.7 2001/02/09 18:20:22 rleigh Exp $"
+ * "$Id: print-canon.c,v 1.8 2001/02/11 03:47:53 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2160,13 +2160,8 @@ canon_print(const stp_printer_t *printer,		/* I - Model */
 		   NULL);
     }
 
-    if (nv.image_type == IMAGE_MONOCHROME)
-      stp_dither_monochrome(out, y, dither, black, duplicate_line);
-    else if (output_type == OUTPUT_GRAY)
-      stp_dither_black(out, y, dither, black, duplicate_line);
-    else
-      stp_dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		  yellow, 0, black, duplicate_line);
+    stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
+	       yellow, 0, black, duplicate_line);
 
 #ifdef DEBUG
     /* fprintf(stderr,","); */

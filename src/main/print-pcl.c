@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.7 2001/02/09 18:20:22 rleigh Exp $"
+ * "$Id: print-pcl.c,v 1.8 2001/02/11 03:47:53 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2123,18 +2123,16 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
      /*
       * 4-level (CRet) dithers...
       */
+      stp_dither(out, y, dither, cyan, lcyan, magenta, lmagenta,
+		 yellow, NULL, black, duplicate_line);
 
       if (output_type == OUTPUT_GRAY)
       {
-	stp_dither_black(out, y, dither, black, duplicate_line);
         (*writefunc)(v, black + height / 2, height / 2, 0);
         (*writefunc)(v, black, height / 2, 1);
       }
       else
       {
-	stp_dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, NULL, black, duplicate_line);
-	
 	if(do_cretb){
 /*	  (*writefunc)(v, black + height / 2, 0, 0); */
 	  (*writefunc)(v, black, height/2, 0);
@@ -2167,17 +2165,10 @@ pcl_print(const stp_printer_t *printer,		/* I - Model */
 
       if (output_type == OUTPUT_GRAY)
       {
-	if (nv.image_type == IMAGE_MONOCHROME)
-	  stp_dither_monochrome(out, y, dither, black, duplicate_line);
-	else
-	  stp_dither_black(out, y, dither, black, duplicate_line);
         (*writefunc)(v, black, height, 1);
       }
       else
       {
-	stp_dither_cmyk(out, y, dither, cyan, lcyan, magenta, lmagenta,
-		    yellow, NULL, black, duplicate_line);
-
         if (black != NULL)
           (*writefunc)(v, black, height, 0);
         (*writefunc)(v, cyan, height, 0);

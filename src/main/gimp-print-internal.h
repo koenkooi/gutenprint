@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.8 2001/02/03 04:00:49 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.9 2001/02/11 03:47:53 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -243,19 +243,12 @@ extern void	stp_dither_set_adaptive_divisor(void *vd, unsigned divisor);
 
 extern void	stp_free_dither(void *);
 
-
-extern void	stp_dither_monochrome(const unsigned short *, int, void *,
-				      unsigned char *, int duplicate_line);
-
-extern void	stp_dither_black(const unsigned short *, int, void *,
-				 unsigned char *, int duplicate_line);
-
-extern void	stp_dither_cmyk(const unsigned short *, int, void *,
-				unsigned char *,
-				unsigned char *, unsigned char *,
-				unsigned char *, unsigned char *,
-				unsigned char *, unsigned char *,
-				int duplicate_line);
+extern void	stp_dither(const unsigned short *, int, void *,
+			   unsigned char *,
+			   unsigned char *, unsigned char *,
+			   unsigned char *, unsigned char *,
+			   unsigned char *, unsigned char *,
+			   int duplicate_line);
 
 
 extern void *	stp_initialize_weave_params(int S, int J, int O,
@@ -431,5 +424,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.8 2001/02/03 04:00:49 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.9 2001/02/11 03:47:53 rlk Exp $".
  */
