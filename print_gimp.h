@@ -1,5 +1,5 @@
 /*
- * "$Id: print_gimp.h,v 1.16 2000/06/04 15:38:10 cpbs Exp $"
+ * "$Id: print_gimp.h,v 1.17 2000/06/12 01:30:52 cpbs Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -53,5 +53,12 @@
 #if !defined(GIMP_MINOR_VERSION) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 0) || (GIMP_MAJOR_VERSION == 1 && GIMP_MINOR_VERSION == 1 && GIMP_MICRO_VERSION < 21)
 #define GIMP_1_0
 #endif
+
+/*
+ * Function prototypes
+ */
+
+/* How to create an Image wrapping a Gimp drawable */
+extern Image Image_GDrawable_new(GDrawable *drawable);
 
 #endif  /* __PRINT_GIMP_H__ */
