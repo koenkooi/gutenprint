@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.44 2001/01/03 18:37:47 rleigh Exp $ */
+/* $Id: unprint.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?

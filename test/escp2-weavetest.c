@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.18 2001/01/15 20:49:48 rlk Exp $"
+ * "$Id: escp2-weavetest.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *

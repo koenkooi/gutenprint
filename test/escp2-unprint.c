@@ -1,4 +1,4 @@
-/* $Id: escp2-unprint.c,v 1.5 2001/01/03 18:37:46 rleigh Exp $ */
+/* $Id: escp2-unprint.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $ */
 /*
  * Attempt to simulate a printer to facilitate driver testing.  Is this
  * useful?

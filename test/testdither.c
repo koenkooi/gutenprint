@@ -1,5 +1,5 @@
 /*
- * "$Id: testdither.c,v 1.5 2001/01/19 03:01:41 rlk Exp $"
+ * "$Id: testdither.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $"
  *
  *   Test/profiling program for dithering code.
  *
@@ -722,5 +722,5 @@ write_photo(FILE          *fp,
 
 
 /*
- * End of "$Id: testdither.c,v 1.5 2001/01/19 03:01:41 rlk Exp $".
+ * End of "$Id: testdither.c,v 1.1 2001/01/22 19:15:53 rleigh Exp $".
  */
