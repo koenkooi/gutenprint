@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print.h,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -140,5 +140,5 @@ extern void	ps_print(int model, char *ppd_file, char *resolution,
 
 
 /*
- * End of "$Id: print.h,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print.h,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */

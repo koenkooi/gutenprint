@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print-ps.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -32,8 +32,8 @@
  * Revision History:
  *
  *   $Log: print-ps.c,v $
- *   Revision 1.1  1999/09/12 00:10:31  rlk
- *   Initial revision
+ *   Revision 1.1.1.1  1999/09/12 00:10:31  rlk
+ *   1.1.8 baseline
  *
  *   Revision 1.14  1999/05/29 16:35:29  yosh
  *   * configure.in
@@ -1110,5 +1110,5 @@ ppd_find(char *ppd_file,	/* I - Name of PPD file */
 
 
 /*
- * End of "$Id: print-ps.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print-ps.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */

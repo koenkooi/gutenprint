@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -30,8 +30,8 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
- *   Revision 1.1  1999/09/12 00:10:31  rlk
- *   Initial revision
+ *   Revision 1.1.1.1  1999/09/12 00:10:31  rlk
+ *   1.1.8 baseline
  *
  *   Revision 1.11  1999/05/29 16:35:26  yosh
  *   * configure.in
@@ -915,5 +915,5 @@ escp2_write(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-escp2.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */

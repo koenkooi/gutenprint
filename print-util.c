@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print-util.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -34,8 +34,8 @@
  * Revision History:
  *
  *   $Log: print-util.c,v $
- *   Revision 1.1  1999/09/12 00:10:31  rlk
- *   Initial revision
+ *   Revision 1.1.1.1  1999/09/12 00:10:31  rlk
+ *   1.1.8 baseline
  *
  *   Revision 1.10  1998/05/17 07:16:49  yosh
  *   0.99.31 fun
@@ -708,5 +708,5 @@ default_media_size(int  model,		/* I - Printer model */
 
 
 /*
- * End of "$Id: print-util.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print-util.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */

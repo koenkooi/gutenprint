@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -34,8 +34,8 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
- *   Revision 1.1  1999/09/12 00:10:31  rlk
- *   Initial revision
+ *   Revision 1.1.1.1  1999/09/12 00:10:31  rlk
+ *   1.1.8 baseline
  *
  *   Revision 1.11  1999/05/29 16:35:27  yosh
  *   * configure.in
@@ -1494,5 +1494,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */

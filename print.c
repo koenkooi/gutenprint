@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.1 1999/09/12 00:10:31 rlk Exp $"
+ * "$Id: print.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -2186,5 +2186,5 @@ get_printers(void)
 
 
 /*
- * End of "$Id: print.c,v 1.1 1999/09/12 00:10:31 rlk Exp $".
+ * End of "$Id: print.c,v 1.1.1.1 1999/09/12 00:10:31 rlk Exp $".
  */
