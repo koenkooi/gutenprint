@@ -5,7 +5,7 @@
    XML description of printers known to libgimpprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.68 2003/02/19 17:45:49 davehill Exp $"
+   "$Id: printers.xml,v 1.69 2003/03/29 04:43:04 rlk Exp $"
 -->
 
 <gimp-print xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -568,6 +568,12 @@
         <gamma value="0.585"/>
         <density value="1.0"/>
       </printer>
+      <printer name="EPSON Stylus Photo 900" driver="escp2-ph900">
+        <color value="true"/>
+        <model value="36"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
       <printer name="EPSON Stylus Photo 915" driver="escp2-915">
         <color value="true"/>
         <model value="36"/>
@@ -866,6 +872,12 @@
       <printer name="EPSON PM-950C" driver="escp2-pm950c">
         <color value="true"/>
         <model value="53"/>
+        <gamma value="0.585"/>
+        <density value="1.0"/>
+      </printer>
+      <printer name="EPSON PM-970C" driver="escp2-pm970c">
+        <color value="true"/>
+        <model value="57"/>
         <gamma value="0.585"/>
         <density value="1.0"/>
       </printer>

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.239 2003/03/22 15:54:47 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.240 2003/03/29 04:43:04 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -66,7 +66,7 @@ static int
 resid2dotid(int resid)
 {
   static const int dotidmap[] =
-    { 0, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 10, 11, 12, 12 };
+    { 0, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 10, 11, 12, 12, 13, 13 };
   if (resid < 0 || resid >= RES_N)
     return -1;
   return dotidmap[resid];
