@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.100 2000/12/04 01:05:04 rlk Exp $"
+ * "$Id: print-dither.c,v 1.101 2000/12/04 01:10:37 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -2001,6 +2001,8 @@ update_cmyk(const dither_t *d, int c, int m, int y, int k,
   bk = k;
   if (bk > 0 && density != d->black_density)
     bk = (unsigned) bk * (unsigned) d->black_density / density;
+  if (bk > 65535)
+    bk = 65535;
 
   if (k && ak && ok > 0)
     {
@@ -2195,6 +2197,10 @@ dither_cmyk_fast(const unsigned short  *rgb,	/* I - RGB pixels */
 	  m -= k;
 	  y -= k;
 	  ok = k;
+	  if (ok > 0 && d->density != d->black_density)
+	    ok = (unsigned) ok * (unsigned) d->black_density / d->density;
+	  if (ok > 65535)
+	    ok = 65535;
 	}
       QUANT(15);
 
