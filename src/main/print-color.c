@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.27.2.3 2002/07/23 02:45:55 rlk Exp $"
+ * "$Id: print-color.c,v 1.27.2.4 2002/07/23 02:46:13 rlk Exp $"
  *
  *   Print plug-in color management for the GIMP.
  *
@@ -1753,7 +1753,6 @@ cmyk_8_to_cmyk(const stp_vars_t vars,
   static unsigned short	lut[256];
   static double density = -1.0;
   static double print_gamma = -1.0;
-
 
   memset(nz, 0, sizeof(nz));
   if (density != stp_get_density(vars) ||
