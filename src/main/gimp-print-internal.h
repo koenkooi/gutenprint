@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.34 2001/06/03 18:35:03 rleigh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.35 2001/06/09 02:44:20 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -213,6 +213,7 @@ typedef struct stp_softweave
 		     int width, int missingstartrows, int color);
   int (*pack)(const unsigned char *in, int bytes,
 	      unsigned char *out, unsigned char **optr);
+  int (*compute_linewidth)(const struct stp_softweave *sw, int n);
 } stp_softweave_t;
 
 typedef struct stp_dither_matrix_short
@@ -362,15 +363,16 @@ extern void *stp_initialize_weave(int jets, int separation, int oversample,
 				  int (*pack)(const unsigned char *in,
 					      int bytes, unsigned char *out,
 					      unsigned char **optr),
-				  int (*compute_linewidth)(const stp_softweave_t *sw));
+				  int (*compute_linewidth)(const stp_softweave_t *sw,
+							   int n));
 
 extern void stp_fill_tiff(stp_softweave_t *sw, int row, int subpass,
 			  int width, int missingstartrows, int color);
 extern void stp_fill_uncompressed(stp_softweave_t *sw, int row, int subpass,
 				  int width, int missingstartrows, int color);
 
-extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw);
-extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw);
+extern int stp_compute_tiff_linewidth(const stp_softweave_t *sw, int n);
+extern int stp_compute_uncompressed_linewidth(const stp_softweave_t *sw, int n);
 
 
 
@@ -504,5 +506,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.34 2001/06/03 18:35:03 rleigh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.35 2001/06/09 02:44:20 rlk Exp $".
  */
