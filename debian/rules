@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.8 2001/06/30 03:19:58 sharkey Exp $
+# $Id: rules,v 1.2.2.9 2001/06/30 07:27:08 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -61,7 +61,6 @@ install: build debian/control
 
 # Build architecture-independent files here.
 binary-indep: build install ChangeLog
-	dh_testversion 2
 	dh_testdir -i
 	dh_testroot -i
 #	dh_installdebconf -i
@@ -91,7 +90,6 @@ binary-indep: build install ChangeLog
 
 # Build architecture-dependent files here.
 binary-arch: build install ChangeLog
-	dh_testversion 2
 	dh_testdir -a
 	dh_testroot -a
 #	dh_installdebconf -a
