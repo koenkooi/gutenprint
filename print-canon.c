@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.42 2000/05/05 11:12:36 gandy Exp $"
+ * "$Id: print-canon.c,v 1.43 2000/05/11 05:54:15 gandy Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1427,9 +1427,9 @@ canon_write(FILE          *prn,		/* I - Print file or command */
   if (dmt) {
     if (1) {
       if (caps.features & CANON_CAP_MSB_FIRST) 
-	canon_fold_lsb_msb(line,length,in_fold);
-      else
 	canon_fold_msb_lsb(line,length,in_fold);
+      else
+	canon_fold_lsb_msb(line,length,in_fold);
       in_ptr= in_fold;
     }
     length*= 2;
@@ -1526,6 +1526,9 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 
 /*
  *   $Log: print-canon.c,v $
+ *   Revision 1.43  2000/05/11 05:54:15  gandy
+ *   Fix for variable drop size printing
+ *
  *   Revision 1.42  2000/05/05 11:12:36  gandy
  *   Better handling of canon send buffer
  *
@@ -1705,5 +1708,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
  *   Revision 1.1  2000/02/01 09:01:40  gandy
  *   Add print-canon.c: Support for the BJC 6000 and possibly others
  *
- * End of "$Id: print-canon.c,v 1.42 2000/05/05 11:12:36 gandy Exp $".
+ * End of "$Id: print-canon.c,v 1.43 2000/05/11 05:54:15 gandy Exp $".
  */
