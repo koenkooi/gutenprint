@@ -1,5 +1,5 @@
 /*
- * "$Id: gtk_main_window.c,v 1.8 2000/04/15 11:53:53 mitsch Exp $"
+ * "$Id: gtk_main_window.c,v 1.9 2000/04/16 21:31:32 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1400,6 +1400,7 @@ static void gtk_plist_callback(GtkWidget *widget, /* I - Driver option menu */
   strcpy(vars.media_type, p->v.media_type);
   strcpy(vars.media_source, p->v.media_source);
   strcpy(vars.ink_type, p->v.ink_type);
+  strcpy(vars.dither_algorithm, p->v.dither_algorithm);
   strcpy(vars.resolution, p->v.resolution);
   strcpy(vars.output_to, p->v.output_to);
   gtk_do_misc_updates();

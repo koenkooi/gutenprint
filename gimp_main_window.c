@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.4 2000/04/15 11:53:53 mitsch Exp $"
+ * "$Id: gimp_main_window.c,v 1.5 2000/04/16 21:31:32 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1103,6 +1103,7 @@ gimp_plist_callback (GtkWidget *widget,
   strcpy (vars.media_type, p->v.media_type);
   strcpy (vars.media_source, p->v.media_source);
   strcpy (vars.ink_type, p->v.ink_type);
+  strcpy (vars.dither_algorithm, p->v.dither_algorithm);
   strcpy (vars.resolution, p->v.resolution);
   strcpy (vars.output_to, p->v.output_to);
 

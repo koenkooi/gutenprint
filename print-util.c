@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.87 2000/03/13 13:31:26 rlk Exp $"
+ * "$Id: print-util.c,v 1.88 2000/04/16 21:31:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -654,6 +654,14 @@ compute_lut(const vars_t *pv,
 #endif
 }
 
+char *dither_algo_names[] =
+{
+  "Modified Floyd-Steinberg",
+  "Ordered",
+};
+
+int num_dither_algos = sizeof(dither_algo_names) / sizeof(char *);
+
 /*
  * 'default_media_size()' - Return the size of a default page size.
  */
@@ -791,6 +799,9 @@ get_printer_index_by_driver(const char *driver)
 
 /*
  *   $Log: print-util.c,v $
+ *   Revision 1.88  2000/04/16 21:31:32  rlk
+ *   Choice of dithering algorithms
+ *
  *   Revision 1.87  2000/03/13 13:31:26  rlk
  *   Add monochrome mode
  *
@@ -1169,5 +1180,5 @@ get_printer_index_by_driver(const char *driver)
  *   Revision 1.1  1997/06/19  02:18:15  mike
  *   Initial revision
  *
- * End of "$Id: print-util.c,v 1.87 2000/03/13 13:31:26 rlk Exp $".
+ * End of "$Id: print-util.c,v 1.88 2000/04/16 21:31:32 rlk Exp $".
  */

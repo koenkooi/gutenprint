@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.36 2000/04/16 02:52:39 rlk Exp $"
+ * "$Id: print-canon.c,v 1.37 2000/04/16 21:31:32 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1008,9 +1008,9 @@ canon_print(const printer_t *printer,		/* I - Model */
   fprintf(stderr,"\n");
 
   if (landscape)
-    dither = init_dither(image_height, out_width);
+    dither = init_dither(image_height, out_width, v);
   else
-    dither = init_dither(image_width, out_width);
+    dither = init_dither(image_width, out_width, v);
   switch (v->image_type)
     {
     case IMAGE_LINE_ART:
@@ -1521,6 +1521,9 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 
 /*
  *   $Log: print-canon.c,v $
+ *   Revision 1.37  2000/04/16 21:31:32  rlk
+ *   Choice of dithering algorithms
+ *
  *   Revision 1.36  2000/04/16 02:52:39  rlk
  *   New dithering code
  *
@@ -1667,5 +1670,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
  *   Revision 1.1  2000/02/01 09:01:40  gandy
  *   Add print-canon.c: Support for the BJC 6000 and possibly others
  *
- * End of "$Id: print-canon.c,v 1.36 2000/04/16 02:52:39 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.37 2000/04/16 21:31:32 rlk Exp $".
  */
