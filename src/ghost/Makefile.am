@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2001/02/17 22:42:10 rleigh Exp $
+## $Id: Makefile.am,v 1.7 2001/02/19 02:26:04 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,6 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
 	COPYING \
-	ChangeLog \
 	Makefile \
 	Makefile.am \
 	README \
