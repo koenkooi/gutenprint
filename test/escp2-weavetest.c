@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-weavetest.c,v 1.4 2001/02/02 01:25:33 rleigh Exp $"
+ * "$Id: escp2-weavetest.c,v 1.5 2001/02/03 03:39:09 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -106,7 +106,7 @@ print_header(void)
 static void
 flush_pass(stp_softweave_t *sw, int passno, int model, int width,
 	   int hoffset, int ydpi, int xdpi, int physical_xdpi,
-	   FILE *prn, int vertical_subpass)
+	   int vertical_subpass)
 {
 }
 
