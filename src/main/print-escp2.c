@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.287 2003/09/18 03:00:39 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.288 2003/09/19 01:34:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1572,6 +1572,7 @@ adjust_print_quality(stp_vars_t v, stp_image_t *image)
   const paper_adjustment_t *pt;
   double k_upper = 1.0;
   double k_lower = 0;
+  double k_transition = 1.0;
 
   /*
    * Compute the LUT.  For now, it's 8 bit, but that may eventually
@@ -1583,6 +1584,7 @@ adjust_print_quality(stp_vars_t v, stp_image_t *image)
     {
       k_lower = pt->k_lower;
       k_upper = pt->k_upper;
+      k_transition = pt->k_transition;
       stp_scale_float_parameter(v, "CyanDensity", pt->cyan);
       stp_scale_float_parameter(v, "MagentaDensity", pt->magenta);
       stp_scale_float_parameter(v, "YellowDensity", pt->yellow);
@@ -1596,6 +1598,9 @@ adjust_print_quality(stp_vars_t v, stp_image_t *image)
     stp_set_default_float_parameter(v, "GCRLower", k_lower);
   if (!stp_check_float_parameter(v, "GCRUpper", STP_PARAMETER_ACTIVE))
     stp_set_default_float_parameter(v, "GCRUpper", k_upper);
+  if (!stp_check_float_parameter(v, "BlackGamma", STP_PARAMETER_ACTIVE))
+    stp_set_default_float_parameter(v, "BlackGamma", k_transition);
+    
 
   if (!stp_check_curve_parameter(v, "HueMap", STP_PARAMETER_ACTIVE) &&
       pt->hue_adjustment)
