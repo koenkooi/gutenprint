@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.153 2000/11/19 03:10:09 rlk Exp $"
+ * "$Id: print-util.c,v 1.154 2000/12/16 01:40:56 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -188,7 +188,7 @@ const static papersize_t paper_sizes[] =
   { "Postcard", 283,  416, PAPERSIZE_ENGLISH },	/* 100mm x 147mm */
   { "3x5",	216,  360, PAPERSIZE_ENGLISH },
   { "4x6",      288,  432, PAPERSIZE_ENGLISH },
-  { "Epson 4x6 Photo Paper", 306, 495, PAPERSIZE_ENGLISH },
+  { "Epson 4x6 Photo Paper", 324, 495, PAPERSIZE_ENGLISH },
   { "5x7",      360,  504, PAPERSIZE_ENGLISH },
   { "5x8",      360,  576, PAPERSIZE_ENGLISH },
   { "HalfLetter", 396, 612, PAPERSIZE_ENGLISH },
