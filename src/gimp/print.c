@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.51 2003/02/15 23:10:43 rlk Exp $"
+ * "$Id: print.c,v 1.52 2003/04/09 23:34:08 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -219,6 +219,7 @@ run (char   *name,		/* I - Name of print program. */
   if (strchr(image_filename, '/'))
     image_filename = strrchr(image_filename, '/') + 1;
   stpui_set_image_filename(image_filename);
+  g_free(image_filename);
 
   /*  eventually export the image */
   switch (run_mode)

@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.4 2003/03/30 12:52:37 rleigh Exp $"
+ * "$Id: printrcy.y,v 1.5 2003/04/09 23:34:10 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -243,8 +243,13 @@ Parameter: PARAMETER Typed_Param
 Parameters: Parameters Parameter | Empty
 ;
 
-A_Printer: Printer Destination Scaling Orientation Unit Left Top
-	Custom_Page_Width Custom_Page_Height Output_Type Parameters
+Standard_Value:  Destination | Scaling | Orientation | Unit | Left | Top |
+	Custom_Page_Width | Custom_Page_Height | Output_Type
+
+Standard_Values: Standard_Values Standard_Value | Empty
+;
+
+A_Printer: Printer Standard_Values Parameters
 ;
 
 Printers: Printers A_Printer | Empty
@@ -260,6 +265,7 @@ Show_All_Paper_Sizes: SHOW_ALL_PAPER_SIZES tBOOLEAN
 	    stpui_show_all_paper_sizes = 1;
 	  else
 	    stpui_show_all_paper_sizes = 0;
+	  g_free($2);
 	}
 ;
 
