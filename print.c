@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.25 1999/11/23 01:33:37 rlk Exp $"
+ * "$Id: print.c,v 1.26 1999/11/23 01:45:00 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -49,7 +49,7 @@
  */
 #include <gtk/gtk.h>
 #include <libgimp/gimp.h>
-#define PLUG_IN_VERSION		"3.0 - 25 Oct 1999"
+#define PLUG_IN_VERSION		"3.0 - 22 Nov 1999"
 #define PLUG_IN_NAME		"Print"
 
 #include <math.h>
@@ -679,11 +679,7 @@ run(char   *name,		/* I - Name of print program. */
 	 * close the output file/command...
 	 */
 
-	(*printer->print)(printer->model, vars.ppd_file, vars.resolution,
-			  vars.media_size, vars.media_type, vars.media_source,
-			  vars.output_type, vars.orientation, vars.scaling,
-			  vars.left, vars.top, 1, prn, &image, cmap,
-			  &lut, vars.saturation);
+	(*printer->print)(printer->model, 1, prn, &image, cmap, &lut, &vars);
 
 	if (plist_current > 0)
 #ifndef __EMX__
@@ -3251,5 +3247,5 @@ Image_get_pluginname(Image image)
 }
 
 /*
- * End of "$Id: print.c,v 1.25 1999/11/23 01:33:37 rlk Exp $".
+ * End of "$Id: print.c,v 1.26 1999/11/23 01:45:00 rlk Exp $".
  */
