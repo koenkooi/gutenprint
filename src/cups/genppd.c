@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.99 2004/08/09 21:44:58 rleigh Exp $"
+ * "$Id: genppd.c,v 1.100 2004/08/15 15:34:29 rleigh Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -583,6 +583,42 @@ void printmodels(int verbose)
     }
   exit (EXIT_SUCCESS);
 }
+
+/* Adapted from GNU libc <dirent.h>
+/* These macros extract size information from a `struct dirent *'.
+   They may evaluate their argument multiple times, so it must not
+   have side effects.  Each of these may involve a relatively costly
+   call to `strlen' on some systems, so these values should be cached.
+
+   _D_EXACT_NAMLEN (DP) returns the length of DP->d_name, not including
+   its terminating null character.
+
+   _D_ALLOC_NAMLEN (DP) returns a size at least (_D_EXACT_NAMLEN (DP) + 1);
+   that is, the allocation size needed to hold the DP->d_name string.
+   Use this macro when you don't need the exact length, just an upper bound.
+   This macro is less likely to require calling `strlen' than _D_EXACT_NAMLEN.
+   */
+
+#ifdef _DIRENT_HAVE_D_NAMLEN
+# ifndef _D_EXACT_NAMLEN
+#  define _D_EXACT_NAMLEN(d) ((d)->d_namlen)
+# endif
+# ifndef _D_ALLOC_NAMLEN
+#  define _D_ALLOC_NAMLEN(d) (_D_EXACT_NAMLEN (d) + 1)
+# endif
+#else
+# ifndef _D_EXACT_NAMLEN
+#  define _D_EXACT_NAMLEN(d) (strlen ((d)->d_name))
+# endif
+# ifndef _D_ALLOC_NAMLEN
+#  ifdef _DIRENT_HAVE_D_RECLEN
+#   define _D_ALLOC_NAMLEN(d) (((char *) (d) + (d)->d_reclen) - &(d)->d_name[0])
+#  else
+#   define _D_ALLOC_NAMLEN(d) (sizeof (d)->d_name > 1 ? sizeof (d)->d_name : \
+                               _D_EXACT_NAMLEN (d) + 1)
+#  endif
+# endif
+#endif
 
 /*
  * 'stpi_scandir()' - BSD scandir() replacement.
@@ -1625,5 +1661,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.99 2004/08/09 21:44:58 rleigh Exp $".
+ * End of "$Id: genppd.c,v 1.100 2004/08/15 15:34:29 rleigh Exp $".
  */
