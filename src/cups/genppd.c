@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.71 2003/06/20 12:42:41 rlk Exp $"
+ * "$Id: genppd.c,v 1.72 2003/06/21 01:23:45 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1071,7 +1071,14 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
   stp_describe_parameter(v, "OutputOrder", &desc);
   if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
-    gzprintf(fp, "*DefaultOutputOrder: %s\n\n", desc.deflt.str);
+    {
+      gzputs(fp, "*OpenUI *OutputOrder: PickOne\n");
+      gzputs(fp, "*OrderDependency: 10 AnySetup *OutputOrder\n");
+      gzprintf(fp, "*DefaultOutputOrder: %s\n", desc.deflt.str);
+      gzputs(fp, "*OutputOrder Normal/Normal: \"\"\n");
+      gzputs(fp, "*OutputOrder Reverse/Reverse: \"\"\n");
+      gzputs(fp, "*CloseUI: *OutputOrder\n\n");
+    }
   stp_parameter_description_free(&desc);
 
   param_list = stp_get_parameter_list(v);
@@ -1221,5 +1228,5 @@ write_ppd(stp_const_printer_t p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.71 2003/06/20 12:42:41 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.72 2003/06/21 01:23:45 rlk Exp $".
  */
