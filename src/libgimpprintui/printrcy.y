@@ -1,5 +1,5 @@
 /*
- * "$Id: printrcy.y,v 1.12 2004/05/09 16:06:10 rleigh Exp $"
+ * "$Id: printrcy.y,v 1.13 2004/05/11 02:06:18 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -263,6 +263,7 @@ Parameters: Parameters Parameter | Empty
 Standard_Value:  Destination | Scaling | Orientation | Autosize_Roll_Paper |
 	Unit | Left | Top | Custom_Page_Width | Custom_Page_Height |
 	Output_Type
+;
 
 Standard_Values: Standard_Values Standard_Value | Empty
 ;
@@ -288,6 +289,7 @@ Show_All_Paper_Sizes: SHOW_ALL_PAPER_SIZES tBOOLEAN
 ;
 
 Global: Current_Printer | Show_All_Paper_Sizes
+;
 
 Globals: Globals Global | Empty
 ;
