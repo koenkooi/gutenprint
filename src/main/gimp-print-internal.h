@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.13 2001/02/17 18:51:23 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.14 2001/02/17 22:26:01 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -286,10 +286,6 @@ extern void	stp_dither(const unsigned short *, int, void *,
 extern void *	stp_initialize_weave_params(int S, int J, int O,
 					    int firstrow, int lastrow,
 					    int pageheight, int strategy);
-extern void	stp_calculate_row_parameters(void *w, int row, int subpass,
-					     int *pass, int *jet,
-					     int *startrow, int *phantomrows,
-					     int *jetsused);
 extern void	stp_destroy_weave_params(void *vw);
 
 extern void	stp_fold(const unsigned char *line, int single_height,
@@ -442,5 +438,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.13 2001/02/17 18:51:23 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.14 2001/02/17 22:26:01 rlk Exp $".
  */
