@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.14 2003/01/20 02:53:19 rlk Exp $"
+ * "$Id: print-raw.c,v 1.15 2003/01/20 04:09:53 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -337,8 +337,8 @@ raw_module_exit(void)
 
 
 /* Module header */
-#define stp_module_version stp_raw_LTX_stp_module_version
-#define stp_module_data stp_raw_LTX_stp_module_data
+#define stp_module_version raw_LTX_stp_module_version
+#define stp_module_data raw_LTX_stp_module_data
 
 stp_module_version_t stp_module_version = {0, 0};
 

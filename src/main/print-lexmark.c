@@ -1,5 +1,5 @@
 /*
- * "$Id: print-lexmark.c,v 1.103 2003/01/20 04:06:59 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.104 2003/01/20 04:09:53 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2870,8 +2870,8 @@ lexmark_module_exit(void)
 
 
 /* Module header */
-#define stp_module_version stp_lexmark_LTX_stp_module_version
-#define stp_module_data stp_lexmark_LTX_stp_module_data
+#define stp_module_version lexmark_LTX_stp_module_version
+#define stp_module_data lexmark_LTX_stp_module_data
 
 stp_module_version_t stp_module_version = {0, 0};
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.52 2003/01/20 02:53:18 rlk Exp $"
+ * "$Id: print-ps.c,v 1.53 2003/01/20 04:09:53 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -914,8 +914,8 @@ ps_module_exit(void)
 
 
 /* Module header */
-#define stp_module_version stp_ps_LTX_stp_module_version
-#define stp_module_data stp_ps_LTX_stp_module_data
+#define stp_module_version ps_LTX_stp_module_version
+#define stp_module_data ps_LTX_stp_module_data
 
 stp_module_version_t stp_module_version = {0, 0};
 
