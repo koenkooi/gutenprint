@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.76 2003/06/04 00:04:38 rlk Exp $
+## $Id: Makefile.am,v 1.77 2003/06/19 23:09:22 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -98,6 +98,13 @@ if !BUILD_MODULES
 libgimpprint_modules = $(module_SOURCES)
 endif
 
+mxml_SOURCES =					\
+	mxml-attr.c				\
+	mxml-file.c				\
+	mxml-node.c				\
+	mxml-search.c				\
+	mxml.h
+
 libgimpprint_la_SOURCES = \
 	array.c \
 	bit-ops.c \
@@ -138,6 +145,7 @@ libgimpprint_la_SOURCES = \
 	weave.h \
 	xml.c \
 	xml.h \
+	$(mxml_SOURCES) \
 	$(libgimpprint_modules)
 
 libgimpprint_la_LIBADD = $(GIMPPRINT_LIBDEPS)
