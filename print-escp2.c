@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.48 2000/01/29 02:34:30 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.49 2000/02/02 03:03:55 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,6 +31,12 @@
  * Revision History:
  *
  *   $Log: print-escp2.c,v $
+ *   Revision 1.49  2000/02/02 03:03:55  rlk
+ *   Move all the constants into members of a struct.  This will eventually permit
+ *   us to use different dithering constants for each printer, or even vary them
+ *   on the fly.  Currently there's a static dither_t that contains constants,
+ *   but that's the easy part to fix...
+ *
  *   Revision 1.48  2000/01/29 02:34:30  rlk
  *   1) Remove globals from everything except print.c.
  *
@@ -1368,6 +1374,7 @@ escp2_print(int       model,		/* I - Model */
     if (use_softweave)
       escp2_flush(weave, model, out_width, left, ydpi, xdpi, prn);
   }
+  free_dither();
 
  /*
   * Cleanup...
@@ -2681,5 +2688,5 @@ escp2_write_weave(void *        vsw,
 }
 
 /*
- * End of "$Id: print-escp2.c,v 1.48 2000/01/29 02:34:30 rlk Exp $".
+ * End of "$Id: print-escp2.c,v 1.49 2000/02/02 03:03:55 rlk Exp $".
  */

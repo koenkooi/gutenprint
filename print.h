@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.29 2000/02/01 09:01:40 gandy Exp $"
+ * "$Id: print.h,v 1.30 2000/02/02 03:03:55 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -172,6 +172,7 @@ typedef void 	(*convert_t)(unsigned char *in, unsigned short *out, int width,
  */
 
 extern void	init_dither(void);
+extern void	free_dither(void);
 extern void	dither_black(unsigned short *, int, int, int, unsigned char *,
 			     int);
 
@@ -260,5 +261,5 @@ const printer_t      *get_printer_by_driver(const char *);
 int	              get_printer_index_by_driver(const char *);
 
 /*
- * End of "$Id: print.h,v 1.29 2000/02/01 09:01:40 gandy Exp $".
+ * End of "$Id: print.h,v 1.30 2000/02/02 03:03:55 rlk Exp $".
  */

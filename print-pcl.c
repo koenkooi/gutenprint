@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.18 2000/01/29 02:34:30 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.19 2000/02/02 03:03:55 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -32,6 +32,12 @@
  * Revision History:
  *
  *   $Log: print-pcl.c,v $
+ *   Revision 1.19  2000/02/02 03:03:55  rlk
+ *   Move all the constants into members of a struct.  This will eventually permit
+ *   us to use different dithering constants for each printer, or even vary them
+ *   on the fly.  Currently there's a static dither_t that contains constants,
+ *   but that's the easy part to fix...
+ *
  *   Revision 1.18  2000/01/29 02:34:30  rlk
  *   1) Remove globals from everything except print.c.
  *
@@ -1069,6 +1075,8 @@ pcl_print(int       model,		/* I - Model */
       }
     }
   }
+  free_dither();
+
 
  /*
   * Cleanup...
@@ -1226,5 +1234,5 @@ pcl_mode2(FILE          *prn,		/* I - Print file or command */
 
 
 /*
- * End of "$Id: print-pcl.c,v 1.18 2000/01/29 02:34:30 rlk Exp $".
+ * End of "$Id: print-pcl.c,v 1.19 2000/02/02 03:03:55 rlk Exp $".
  */
