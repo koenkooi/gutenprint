@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-eventone.c,v 1.37 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: dither-eventone.c,v 1.38 2004/04/27 23:23:46 rlk Exp $"
  *
  *   EvenTone dither implementation for Gimp-Print
  *
@@ -82,19 +82,19 @@ free_eventone_data(stpi_dither_t *d)
       if (CHANNEL(d, i).aux_data)
 	{
 	  shade_distance_t *shade = (shade_distance_t *) CHANNEL(d,i).aux_data;
-	  SAFE_FREE(shade->et_dis);
-	  SAFE_FREE(CHANNEL(d, i).aux_data);
+	  STP_SAFE_FREE(shade->et_dis);
+	  STP_SAFE_FREE(CHANNEL(d, i).aux_data);
 	}
     }
   if (et->dummy_channel) {
     stpi_dither_channel_t *dc = et->dummy_channel;
     shade_distance_t *shade = (shade_distance_t *) dc->aux_data;
-    SAFE_FREE(shade->et_dis);
-    SAFE_FREE(dc->aux_data);
+    STP_SAFE_FREE(shade->et_dis);
+    STP_SAFE_FREE(dc->aux_data);
     stpi_dither_channel_destroy(dc);
-    SAFE_FREE(et->dummy_channel);
+    STP_SAFE_FREE(et->dummy_channel);
   }
-  SAFE_FREE(et);
+  STP_SAFE_FREE(et);
 }
 
 static void

@@ -1,5 +1,5 @@
 /*
- * "$Id: weave.h,v 1.1 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: weave.h,v 1.2 2004/04/27 23:23:45 rlk Exp $"
  *
  *   libgimpprint header.
  *
@@ -41,7 +41,7 @@ extern "C" {
 #include <config.h>
 #endif
 
-#define MAX_WEAVE (8)
+#define STP_MAX_WEAVE (8)
 
 
 typedef struct			/* Weave parameters for a specific row */
@@ -171,5 +171,5 @@ stp_weave_parameters_by_row(stp_const_vars_t v, int row,
 
 #endif /* GIMP_PRINT_WEAVE_H */
 /*
- * End of "$Id: weave.h,v 1.1 2004/04/25 12:17:50 rleigh Exp $".
+ * End of "$Id: weave.h,v 1.2 2004/04/27 23:23:45 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.h,v 1.4 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: string-list.h,v 1.5 2004/04/27 23:23:45 rlk Exp $"
  *
  *   libgimpprint string list functions.
  *
@@ -36,6 +36,8 @@ extern "C" {
 *                                                               *
 ****************************************************************/
 
+/* The string_list opaque data type is defined in vars.h */
+
 extern stp_string_list_t stp_string_list_create(void);
 extern void stp_string_list_destroy(stp_string_list_t list);
 
@@ -63,5 +65,5 @@ stp_string_list_is_present(stp_const_string_list_t list, const char *value);
 
 #endif /* GIMP_PRINT_STRING_LIST_H */
 /*
- * End of "$Id: string-list.h,v 1.4 2004/04/25 12:17:50 rleigh Exp $".
+ * End of "$Id: string-list.h,v 1.5 2004/04/27 23:23:45 rlk Exp $".
  */

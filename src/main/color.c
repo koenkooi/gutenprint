@@ -1,5 +1,5 @@
 /*
- * "$Id: color.c,v 1.7 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: color.c,v 1.8 2004/04/27 23:23:46 rlk Exp $"
  *
  *   Gimp-Print color module interface.
  *
@@ -86,11 +86,6 @@ check_color(const stp_color_t *c)
   if (c == NULL)
     {
       stp_erprintf("Null stp_color_t! Please report this bug.\n");
-      stp_abort();
-    }
-  if (c->cookie != COOKIE_COLOR)
-    {
-      stp_erprintf("Bad stp_color_t! Please report this bug.\n");
       stp_abort();
     }
 }

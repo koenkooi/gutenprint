@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.69 2004/04/25 12:17:54 rleigh Exp $"
+ * "$Id: print-vars.c,v 1.70 2004/04/27 23:24:08 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -363,8 +363,8 @@ stp_vars_destroy(stp_vars_t vv)
   for (i = 0; i < STP_PARAMETER_TYPE_INVALID; i++)
     stp_list_destroy(v->params[i]);
   stp_list_destroy(v->internal_data);
-  SAFE_FREE(v->driver);
-  SAFE_FREE(v->color_conversion);
+  STP_SAFE_FREE(v->driver);
+  STP_SAFE_FREE(v->color_conversion);
   stp_free(v);
 }
 
@@ -379,7 +379,7 @@ pre##_set_##s(stp_vars_t vv, const char *val)			\
     stp_dprintf(STP_DBG_VARS, v, "clear %s\n", #s);		\
   if (v->s == val)						\
     return;							\
-  SAFE_FREE(v->s);						\
+  STP_SAFE_FREE(v->s);						\
   v->s = stp_strdup(val);					\
   v->verified = 0;						\
 }								\
@@ -390,7 +390,7 @@ pre##_set_##s##_n(stp_vars_t vv, const char *val, int n)	\
   stpi_internal_vars_t *v = get_vars(vv);			\
   if (v->s == val)						\
     return;							\
-  SAFE_FREE(v->s);						\
+  STP_SAFE_FREE(v->s);						\
   v->s = stp_strndup(val, n);					\
   v->verified = 0;						\
 }								\

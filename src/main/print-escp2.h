@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.79 2004/04/25 12:17:53 rleigh Exp $"
+ * "$Id: print-escp2.h,v 1.80 2004/04/27 23:23:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -31,9 +31,9 @@
 #define PHYSICAL_CHANNEL_LIMIT 8
 #define MAX_DROP_SIZES 3
 
-#define XCOLOR_R     (NCOLORS + 0)
-#define XCOLOR_B     (NCOLORS + 1)
-#define XCOLOR_GLOSS (NCOLORS + 2)
+#define XCOLOR_R     (STP_NCOLORS + 0)
+#define XCOLOR_B     (STP_NCOLORS + 1)
+#define XCOLOR_GLOSS (STP_NCOLORS + 2)
 
 /*
  * Printer capabilities.
@@ -676,5 +676,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t v);
 
 #endif /* GIMP_PRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.79 2004/04/25 12:17:53 rleigh Exp $".
+ * End of "$Id: print-escp2.h,v 1.80 2004/04/27 23:23:52 rlk Exp $".
  */

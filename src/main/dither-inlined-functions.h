@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inlined-functions.h,v 1.4 2003/05/30 01:23:24 rlk Exp $"
+ * "$Id: dither-inlined-functions.h,v 1.5 2004/04/27 23:23:46 rlk Exp $"
  *
  *   Performance-critical functions that should be inlined, based on
  *   measurements.
@@ -33,7 +33,7 @@
  */
 
 static inline unsigned
-ditherpoint(const stpi_dither_t *d, dither_matrix_t *mat, int x)
+ditherpoint(const stpi_dither_t *d, stp_dither_matrix_impl_t *mat, int x)
 {
   if (mat->fast_mask)
     return mat->matrix[(mat->last_y_mod +

@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.4 2004/04/25 12:17:49 rleigh Exp $"
+ * "$Id: color.h,v 1.5 2004/04/27 23:23:44 rlk Exp $"
  *
  *   libgimpprint color functions.
  *
@@ -55,11 +55,8 @@ typedef struct
 } stp_colorfuncs_t;
 
 
-#define COOKIE_COLOR   0x05d892e2
-
 typedef struct stp_color
 {
-  int        cookie;            /* Magic number */
   const char *short_name;       /* Color module name */
   const char *long_name;        /* Long name for UI */
   const stp_colorfuncs_t *colorfuncs;
@@ -137,5 +134,5 @@ stp_color_get_long_name(const stp_color_t *c);
 
 #endif /* GIMP_PRINT_COLOR_H */
 /*
- * End of "$Id: color.h,v 1.4 2004/04/25 12:17:49 rleigh Exp $".
+ * End of "$Id: color.h,v 1.5 2004/04/27 23:23:44 rlk Exp $".
  */

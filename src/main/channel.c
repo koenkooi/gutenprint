@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.11 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: channel.c,v 1.12 2004/04/27 23:23:46 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -77,8 +77,8 @@ clear_a_channel(stpi_channel_group_t *cg, int channel)
 {
   if (channel < cg->channel_count)
     {
-      SAFE_FREE(cg->c[channel].sc);
-      SAFE_FREE(cg->c[channel].lut);
+      STP_SAFE_FREE(cg->c[channel].sc);
+      STP_SAFE_FREE(cg->c[channel].lut);
       cg->c[channel].subchannel_count = 0;
     }
 }
@@ -92,9 +92,9 @@ stpi_channel_clear(void *vc)
     for (i = 0; i < cg->channel_count; i++)
       clear_a_channel(cg, i);
   if (cg->data != cg->input_data)
-    SAFE_FREE(cg->data);
-  SAFE_FREE(cg->input_data);
-  SAFE_FREE(cg->c);
+    STP_SAFE_FREE(cg->data);
+  STP_SAFE_FREE(cg->input_data);
+  STP_SAFE_FREE(cg->c);
   cg->channel_count = 0;
   cg->total_channels = 0;
   cg->input_channels = 0;

@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.4 2004/04/25 12:17:50 rleigh Exp $"
+ * "$Id: util.h,v 1.5 2004/04/27 23:23:45 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -135,7 +135,7 @@ extern void *stp_zalloc (size_t);
 extern void *stp_realloc (void *ptr, size_t);
 extern void stp_free(void *ptr);
 
-#define SAFE_FREE(x)				\
+#define STP_SAFE_FREE(x)			\
 do						\
 {						\
   if ((x))					\
@@ -155,5 +155,5 @@ extern char *stp_strdup(const char *s);
 
 #endif /* GIMP_PRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.4 2004/04/25 12:17:50 rleigh Exp $".
+ * End of "$Id: util.h,v 1.5 2004/04/27 23:23:45 rlk Exp $".
  */
