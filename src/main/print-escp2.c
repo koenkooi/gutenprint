@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.30 2001/02/27 02:33:48 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.31 2001/02/27 03:04:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1018,8 +1018,8 @@ static double x70_lum_adjustment[49] =
   0.85,
   0.95,
   0.85,
-  0.65,
-  0.6,
+  0.59,
+  0.60,
   0.55,				/* B */
   0.6,
   0.65,
@@ -1082,10 +1082,10 @@ static double standard_hue_adjustment[49] =
   1.65,
   1.8,
   2.00,				/* M */
-  2.18,
-  2.29,
-  2.38,
-  2.47,
+  2.1,
+  2.2,
+  2.32,
+  2.45,
   2.56,
   2.65,
   2.74,
