@@ -1,5 +1,5 @@
 /*
- *  $Id: gimp-print.h.in,v 1.14 2002/11/03 20:26:45 rlk Exp $
+ *  $Id: gimp-print.h.in,v 1.15 2002/11/03 20:37:00 rlk Exp $
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -391,7 +391,6 @@ extern void stp_set_ppd_file_n(stp_vars_t v, const char *val, int bytes);
  */
 
 extern void stp_set_output_type(stp_vars_t v, int val);
-extern void stp_set_orientation(stp_vars_t v, int val);
 extern void stp_set_left(stp_vars_t v, int val);
 extern void stp_set_top(stp_vars_t v, int val);
 extern void stp_set_width(stp_vars_t v, int val);
@@ -539,5 +538,5 @@ extern const stp_vars_t stp_minimum_settings(void);
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h.in,v 1.14 2002/11/03 20:26:45 rlk Exp $
+ * End of $Id: gimp-print.h.in,v 1.15 2002/11/03 20:37:00 rlk Exp $
  */
