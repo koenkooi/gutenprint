@@ -48,7 +48,7 @@ that you would like covering, please let me know!
 
  -- Roger Leigh <roger@whinlatter.uklinux.net>
 
- $Id: README.maintaining,v 1.10 2002/01/26 20:43:04 rleigh Exp $
+ $Id: README.maintaining,v 1.11 2002/03/16 16:08:16 rlk Exp $
 
 
 1. Integration of the autotools
@@ -196,7 +196,6 @@ Some of the targets available are:
 	tags			make tags tables
 	dist			make a distribution
 	distcheck		as dist, but test it as well
-	gimp-dist		package the for inclusion in the GIMP tree
 
 Other targets are available. See Makefile.in for details.
 
