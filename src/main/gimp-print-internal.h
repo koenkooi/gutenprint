@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.11 2001/02/17 09:43:58 wollvieh Exp $"
+ * "$Id: gimp-print-internal.h,v 1.12 2001/02/17 18:45:48 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -61,10 +61,10 @@
 	MAX_CARRIAGE_WIDTH / BITS_PER_BYTE)
 
 typedef enum
-  {
+{
   COLOR_JET_ARRANGEMENT_DEFAULT = 0,
   COLOR_JET_ARRANGEMENT_NEW_X80
-  } color_jet_arrangement_t;
+} color_jet_arrangement_t;
 
 typedef struct
 {
@@ -276,12 +276,6 @@ extern void	stp_dither_set_adaptive_divisor(void *vd, unsigned divisor);
 extern void	stp_free_dither(void *);
 
 
-extern void	stp_dither_monochrome(const unsigned short *, int, void *,
-				      unsigned char *, int duplicate_line);
-
-extern void	stp_dither_black(const unsigned short *, int, void *,
-				 unsigned char *, int duplicate_line);
-
 extern void	stp_dither(const unsigned short *, int, void *,
 			   unsigned char *,
 			   unsigned char *, unsigned char *,
@@ -463,5 +457,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.11 2001/02/17 09:43:58 wollvieh Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.12 2001/02/17 18:45:48 rlk Exp $".
  */
