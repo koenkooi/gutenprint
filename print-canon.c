@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.20 2000/02/10 00:28:32 rlk Exp $"
+ * "$Id: print-canon.c,v 1.21 2000/02/10 02:46:25 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -31,6 +31,9 @@
  * Revision History:
  *
  *   $Log: print-canon.c,v $
+ *   Revision 1.21  2000/02/10 02:46:25  rlk
+ *   initialization
+ *
  *   Revision 1.20  2000/02/10 00:28:32  rlk
  *   Fix landscape vs. portrait problem
  *
@@ -1061,6 +1064,11 @@ canon_print(int       model,		/* I - Model */
   if (black)    fputc('K',stderr);
   fprintf(stderr,"\n");
 
+  if (landscape)
+    dither = init_dither(image_height, out_width, 1);
+  else
+    dither = init_dither(image_width, out_width, 1);
+
   if (use_dmt) {
     if (cyan)     dither_set_c_levels(dither,4,the_levels);
     if (lcyan)    dither_set_lc_levels(dither,4,the_levels);
@@ -1076,7 +1084,6 @@ canon_print(int       model,		/* I - Model */
   */
 
   if (landscape) {
-    dither = init_dither(image_height, out_width, 1);
     in  = malloc(image_height * image_bpp);
     out = malloc(image_height * out_bpp * 2);
 
@@ -1143,7 +1150,6 @@ canon_print(int       model,		/* I - Model */
   } 
   else /* portrait */
   {
-    dither = init_dither(image_width, out_width, 1);
     in  = malloc(image_width * image_bpp);
     out = malloc(image_width * out_bpp * 2);
 
@@ -1558,5 +1564,5 @@ canon_write_line(FILE          *prn,	/* I - Print file or command */
 }
 
 /*
- * End of "$Id: print-canon.c,v 1.20 2000/02/10 00:28:32 rlk Exp $".
+ * End of "$Id: print-canon.c,v 1.21 2000/02/10 02:46:25 rlk Exp $".
  */
