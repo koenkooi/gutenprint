@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2001/10/06 18:23:40 rlk Exp $
+## $Id: Makefile.am,v 1.11 2001/10/06 18:31:11 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,10 +34,10 @@ OUTPUTS = \
  $(MANUAL).ps \
  html
 
-STANDARD_TARGETS = $(MANUAL).pdf html-stamp
+STANDARD_TARGETS = $(MANUAL).pdf html-stamp $(MANUAL).ps
 
 DISTHOOKDIRS = figures $(HTMLDIR)
-DISTHOOKFILES = $(MANUAL).pdf html-stamp
+DISTHOOKFILES = $(STANDARD_TARGETS)
 
 PNG_IMAGES = figures/cups_admin.png			\
 	figures/cups_admin_device.png			\
