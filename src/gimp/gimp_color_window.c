@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_color_window.c,v 1.16 2001/08/22 02:06:07 rlk Exp $"
+ * "$Id: gimp_color_window.c,v 1.17 2001/08/23 01:29:21 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -503,7 +503,6 @@ gimp_saturation_update (GtkAdjustment *adjustment)
 static void
 gimp_density_update (GtkAdjustment *adjustment)
 {
-  gimp_invalidate_preview_thumbnail();
   if (stp_get_density(*pv) != adjustment->value)
     {
       stp_set_density(*pv, adjustment->value);
