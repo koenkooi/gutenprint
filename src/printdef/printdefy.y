@@ -1,5 +1,5 @@
 /*
- * "$Id: printdefy.y,v 1.4 2001/06/03 20:53:24 rlk Exp $"
+ * "$Id: printdefy.y,v 1.5 2001/06/04 19:03:13 rleigh Exp $"
  *
  *   Parse printer definition pseudo-XML
  *
@@ -33,6 +33,9 @@ char *quotestrip(const char *i);
 char *endstrip(const char *i);
 
 extern int yylex(void);
+void initialize_the_printer(const char *name, const char *driver);
+void output_the_printer(void);
+int yyerror(const char *s);
 
 const char *printfuncs[] =
 {
