@@ -1,5 +1,5 @@
 /*
-* "$Id: print.c,v 1.33.2.4 2002/11/16 21:47:06 rlk Exp $"
+ * "$Id: print.c,v 1.33.2.5 2002/11/16 21:54:56 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -32,11 +32,6 @@
 #include <signal.h>
 #include <ctype.h>
 #include <sys/wait.h>
-#ifdef __EMX__
-#define INCL_DOSDEVICES
-#define INCL_DOSERRORS
-#include <os2.h>
-#endif
 
 #include <unistd.h>
 #include <stdio.h>
@@ -276,26 +271,6 @@ query (void)
 			  args, NULL);
 }
 
-#ifdef __EMX__
-static char *
-get_tmp_filename()
-{
-  char *tmp_path, *s, filename[80];
-
-  tmp_path = getenv("TMP");
-  if (tmp_path == NULL)
-    tmp_path = "";
-
-  sprintf(filename, "gimp_print_tmp.%d", getpid());
-  s = tmp_path = g_strconcat(tmp_path, "\\", filename, NULL);
-  if (!s)
-    return NULL;
-  for ( ; *s; s++)
-    if (*s == '/') *s = '\\';
-  return tmp_path;
-}
-#endif
-
 /*
  * 'usr1_handler()' - Make a note when we receive SIGUSR1.
  */
@@ -343,9 +318,6 @@ run (char   *name,		/* I - Name of print program. */
   FILE		*prn = NULL;	/* Print file/command */
   int		 ncolors;	/* Number of colors in colormap */
   GimpParam	*values;	/* Return values */
-#ifdef __EMX__
-  char		*tmpfile;	/* temp filename */
-#endif
   gint32         drawable_ID;   /* drawable ID */
   GimpExportReturnType export = GIMP_EXPORT_CANCEL;    /* return value of gimp_export_image() */
   int		ppid = getpid (), /* PID of plugin */
@@ -549,7 +521,6 @@ run (char   *name,		/* I - Name of print program. */
        */
 
       if (plist_current > 0)
-#ifndef __EMX__
       {
 	/*
 	 * The following IPC code is only necessary because the GIMP kills
@@ -620,10 +591,6 @@ run (char   *name,		/* I - Name of print program. */
 	  }
 	}
       }
-#else
-      /* OS/2 PRINT command doesn't support print from stdin, use temp file */
-      prn = (tmpfile = get_tmp_filename ()) ? fopen (tmpfile, "w") : NULL;
-#endif
       else
 	prn = fopen (plist_get_output_to(&gimp_vars), "wb");
 
@@ -678,24 +645,11 @@ run (char   *name,		/* I - Name of print program. */
 	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 
 	  if (plist_current > 0)
-#ifndef __EMX__
 	  {
 	    fclose (prn);
 	    kill (cpid, SIGUSR1);
 	    waitpid (cpid, &dummy, 0);
 	  }
-#else
-	  { /* PRINT temp file */
-	    char *s;
-	    fclose (prn);
-	    s = g_strconcat (stp_get_output_to(gimp_vars.v), tmpfile, NULL);
-	    if (system(s) != 0)
-	      values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
-	    g_free (s);
-	    remove (tmpfile);
-	    g_free (tmpfile);
-	  }
-#endif
 	  else
 	    fclose (prn);
 	  print_finished = 1;
@@ -995,15 +949,7 @@ printrc_load(void)
 
   filename = gimp_personal_rc_file ((BAD_CONST_CHAR) "printrc");
 
-#ifdef __EMX__
-  _fnslashify(filename);
-#endif
-
-#ifndef __EMX__
   if ((fp = fopen(filename, "r")) != NULL)
-#else
-  if ((fp = fopen(filename, "rt")) != NULL)
-#endif
   {
    /*
     * File exists - read the contents and update the printer list...
@@ -1244,15 +1190,7 @@ printrc_save(void)
 
   filename = gimp_personal_rc_file ((BAD_CONST_CHAR) "printrc");
 
-#ifdef __EMX__
-  _fnslashify(filename);
-#endif
-
-#ifndef __EMX__
   if ((fp = fopen(filename, "w")) != NULL)
-#else
-  if ((fp = fopen(filename, "wt")) != NULL)
-#endif
   {
    /*
     * Write the contents of the printer list...
@@ -1356,9 +1294,6 @@ get_system_printers(void)
   char  line[255];		/* Line from status command */
   char	*ptr;			/* Pointer into line */
   char  name[128];		/* Printer name from status command */
-#ifdef __EMX__
-  BYTE  pnum;
-#endif
   static const char	*lpcs[] =	/* Possible locations of LPC... */
 		{
 		  "/etc"
@@ -1503,24 +1438,6 @@ get_system_printers(void)
     }
   }
 
-#ifdef __EMX__
-  if (DosDevConfig(&pnum, DEVINFO_PRINTER) == NO_ERROR)
-    {
-      for (i = 1; i <= pnum; i++)
-	{
-	  check_plist(plist_count + 1);
-	  initialize_printer(&plist[plist_count]);
-	  result = g_strdup_printf("LPT%d:", name);
-	  plist_set_name(&(plist[plist_count]), result);
-	  free(result);
-	  result = g_strdup_printf("PRINT /D:LPT%d /B ", i);
-	  plist_set_ouput_to(&(plist[plist_count]), result);
-	  stp_set_driver(plist[plist_count].v, "ps2");
-          plist_count ++;
-	}
-    }
-#endif
-
   if (plist_count > 2)
     qsort(plist + 1, plist_count - 1, sizeof(gp_plist_t),
           (int (*)(const void *, const void *))compare_printers);
@@ -1537,5 +1454,5 @@ get_system_printers(void)
 }
 
 /*
- * End of "$Id: print.c,v 1.33.2.4 2002/11/16 21:47:06 rlk Exp $".
+ * End of "$Id: print.c,v 1.33.2.5 2002/11/16 21:54:56 rlk Exp $".
  */
