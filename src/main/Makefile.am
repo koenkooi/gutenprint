@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2001/02/17 22:42:10 rleigh Exp $
+## $Id: Makefile.am,v 1.13 2001/02/18 22:08:42 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ libgimpprint_la_LDFLAGS = -release $(VERSION) -rpath $(libdir)
 ##	-rpath $(libdir)
 
 m4datadir = $(datadir)/aclocal
-m4data_DATA = gimpprint.m4
+m4data_DATA = @MAIN_DAT@
 
 $(srcdir)/print-util.c: print-printers.c
 
