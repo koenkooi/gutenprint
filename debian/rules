@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.2.2.26 2002/06/07 00:39:42 sharkey Exp $
+# $Id: rules,v 1.2.2.27 2002/06/07 01:14:25 sharkey Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -26,8 +26,8 @@ UPSTREAM_VERSION = $(shell dpkg-parsechangelog | grep ^Version | sed "s/.* //" |
 #LIBRARY_VERSION =  -$(UPSTREAM_VERSION)
 LIBRARY_VERSION = 1
 
-autoconfigure: autoconfigure-stamp debian/control configure
-autoconfigure-stamp:
+autoconfigure: autoconfigure-stamp debian/control
+autoconfigure-stamp: configure
 	dh_testdir
 
 	cd debian ; \
