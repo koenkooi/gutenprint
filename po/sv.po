@@ -2,12 +2,12 @@
 # Copyright (C) 2001, 2002 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001, 2002.
 #
-# $Id: sv.po,v 1.30.2.7 2002/02/27 02:41:26 rlk Exp $
+# $Id: sv.po,v 1.30.2.8 2002/03/02 18:30:45 rlk Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gimp-print\n"
-"POT-Creation-Date: 2002-02-26 20:42-0500\n"
+"POT-Creation-Date: 2002-03-02 12:39-0500\n"
 "PO-Revision-Date: 2002-02-16 03:18+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
