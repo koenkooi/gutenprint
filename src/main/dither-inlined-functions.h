@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inlined-functions.h,v 1.2 2003/01/20 22:19:14 rlk Exp $"
+ * "$Id: dither-inlined-functions.h,v 1.3 2003/05/26 01:03:56 rlk Exp $"
  *
  *   Performance-critical functions that should be inlined, based on
  *   measurements.
@@ -88,9 +88,9 @@ compute_black(const stpi_dither_t *d)
 }
 
 static inline void
-set_row_ends(stpi_dither_channel_t *dc, int x, int subchannel)
+set_row_ends(stpi_dither_channel_t *dc, int x)
 {
-  if (dc->row_ends[0][subchannel] == -1)
-    dc->row_ends[0][subchannel] = x;
-  dc->row_ends[1][subchannel] = x;
+  if (dc->row_ends[0] == -1)
+    dc->row_ends[0] = x;
+  dc->row_ends[1] = x;
 }

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.71 2003/05/22 15:51:26 m0m Exp $
+## $Id: Makefile.am,v 1.72 2003/05/26 01:03:56 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -89,6 +89,7 @@ endif
 libgimpprint_la_SOURCES = \
 	array.c \
 	bit-ops.c \
+	channel.c \
 	color.h \
 	curve.c \
 	dither.h \
