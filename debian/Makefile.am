@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.10 2004/09/17 18:37:42 rleigh Exp $
+## $Id: Makefile.am,v 1.11 2005/02/06 22:07:33 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -57,8 +57,6 @@ EXTRA_DIST = \
 	libgutenprint.install.in \
 	libgutenprintui2-dev.install \
 	libgutenprintui2.install.in \
-	libgutenprintui-dev.install \
-	libgutenprintui.install.in \
 	README.building \
 	README.Debian \
 	rules
