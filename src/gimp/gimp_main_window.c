@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp_main_window.c,v 1.91 2002/11/28 05:39:13 rlk Exp $"
+ * "$Id: gimp_main_window.c,v 1.92 2002/12/07 05:39:51 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -385,7 +385,7 @@ create_new_combo(list_option_t *list_option, GtkWidget *table,
 		       1.0, 0.5, event_box, 1, TRUE);
 }
 
-static const char *
+const char *
 Combo_get_name(GtkWidget   *combo,
 	       const stp_string_list_t options)
 {
