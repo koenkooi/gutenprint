@@ -1,5 +1,5 @@
 /*
- * "$Id: print.h,v 1.6 1999/10/19 02:04:59 rlk Exp $"
+ * "$Id: print.h,v 1.7 1999/10/21 01:27:37 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -114,11 +114,8 @@ typedef void (*convert16_t)(guchar *in, gushort *out, int width, int bpp,
  * Prototypes...
  */
 
-extern void	dither_black(guchar *, int, int, int, unsigned char *);
 extern void	dither_black16(gushort *, int, int, int, unsigned char *);
 
-extern void	dither_cmyk(guchar *, int, int, int, unsigned char *,
-		            unsigned char *, unsigned char *, unsigned char *);
 extern void	dither_cmyk16(gushort *, int, int, int, unsigned char *,
 			      unsigned char *, unsigned char *,
 			      unsigned char *, unsigned char *,
@@ -211,5 +208,5 @@ extern void calc_rgb_to_hsv(guchar *rgb, double *hue, double *sat,
 			    double *val);
 
 /*
- * End of "$Id: print.h,v 1.6 1999/10/19 02:04:59 rlk Exp $".
+ * End of "$Id: print.h,v 1.7 1999/10/21 01:27:37 rlk Exp $".
  */
