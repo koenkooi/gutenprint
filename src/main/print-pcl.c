@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.62 2002/11/16 18:45:07 davehill Exp $"
+ * "$Id: print-pcl.c,v 1.63 2002/11/17 15:52:28 davehill Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2058,8 +2058,8 @@ pcl_print(const stp_printer_t printer,
   * Set media size
   */
 
-  if (strlen(stp_get_parameter(v, "MediaSize")) > 0)
-    media_size = stp_get_parameter(v, "MediaSize");
+  if (strlen(stp_get_parameter(v, "PageSize")) > 0)
+    media_size = stp_get_parameter(v, "PageSize");
   else if ((pp = stp_get_papersize_by_size(stp_get_page_height(v),
 					   stp_get_page_width(v))) != NULL)
     media_size = stp_papersize_get_name(pp);
