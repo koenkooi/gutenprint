@@ -1,5 +1,5 @@
 /*
- * "$Id: gimp-print-internal.h,v 1.18 2001/02/25 01:58:35 rlk Exp $"
+ * "$Id: gimp-print-internal.h,v 1.19 2001/02/28 03:15:08 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -196,6 +196,7 @@ typedef struct stp_softweave
 				/* quality) */
   int vmod;			/* Number of banks of passes */
   int oversample;		/* Excess precision per row */
+  int repeat_count;		/* How many times a pass is repeated */
   int ncolors;			/* How many colors (1, 4, or 6) */
   int horizontal_width;		/* Line width in output pixels */
   int vertical_height;		/* Image height in output pixels */
@@ -439,5 +440,5 @@ extern void  print_timers(void );
 
 #endif /* _GIMP_PRINT_INTERNAL_H_ */
 /*
- * End of "$Id: gimp-print-internal.h,v 1.18 2001/02/25 01:58:35 rlk Exp $".
+ * End of "$Id: gimp-print-internal.h,v 1.19 2001/02/28 03:15:08 rlk Exp $".
  */
