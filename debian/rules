@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # rules to package GIMP-Print
-# $Id: rules,v 1.30 2001/11/24 20:02:42 rleigh Exp $
+# $Id: rules,v 1.29.2.1 2001/12/01 17:34:39 rleigh Exp $
 #
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
@@ -13,8 +13,8 @@ export DH_OPTIONS
 
 # Get upstream version, and define libgimpprint suffix
 UPSTREAM_VERSION = $(shell dpkg-parsechangelog | grep ^Version | sed "s/.* //" | sed "s/-[^-]*$$//")
-LIBRARY_VERSION = $(UPSTREAM_VERSION)
-#LIBRARY_VERSION = 1
+#LIBRARY_VERSION = $(UPSTREAM_VERSION)
+LIBRARY_VERSION = 1
 
 build: build-stamp debian/control
 build-stamp: configure
