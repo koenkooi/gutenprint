@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.18 2003/01/03 07:51:55 mtomlinson Exp $"
+ * "$Id: print-vars.c,v 1.19 2003/01/03 07:55:50 mtomlinson Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -38,7 +38,6 @@
 #endif
 #include "vars.h"
 #include <string.h>
-#include <stdlib.h>
 
 #define COOKIE_VARS      0x1a18376c
 
