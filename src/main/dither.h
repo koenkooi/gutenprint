@@ -1,5 +1,5 @@
 /*
- * "$Id: dither.h,v 1.10 2003/01/20 22:19:15 rlk Exp $"
+ * "$Id: dither.h,v 1.11 2003/01/26 02:45:50 rlk Exp $"
  *
  *   libgimpprint dither header.
  *
@@ -150,8 +150,8 @@ typedef struct stpi_shade
 {
   double value;
   int subchannel;
-  const stpi_dotsize_t *dot_sizes;
   int numsizes;
+  const stpi_dotsize_t *dot_sizes;
 } stpi_shade_t;
 
 extern stp_parameter_list_t stpi_dither_list_parameters(const stp_vars_t v);
@@ -205,5 +205,5 @@ extern void stpi_dither(stp_vars_t v, int row, const unsigned short *input,
 
 #endif /* GIMP_PRINT_INTERNAL_DITHER_H */
 /*
- * End of "$Id: dither.h,v 1.10 2003/01/20 22:19:15 rlk Exp $".
+ * End of "$Id: dither.h,v 1.11 2003/01/26 02:45:50 rlk Exp $".
  */

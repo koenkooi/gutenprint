@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.91 2003/01/20 22:19:25 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.92 2003/01/26 02:45:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -114,7 +114,7 @@ static const escp2_variable_ink_t name##_ink =				\
 
 #define SHADE(density, subchannel, name)				\
 {  density, subchannel,							\
-   name, sizeof(name)/sizeof(stpi_dotsize_t) }
+   sizeof(name)/sizeof(stpi_dotsize_t), name  }
 
 
 #define PIEZO_0  .25
