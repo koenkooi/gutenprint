@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.76 2003/01/02 02:51:16 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.76.2.1 2003/01/04 02:27:24 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1636,6 +1636,55 @@ pcl_papersize_valid(const stp_papersize_t pt,
 /*
  * 'pcl_parameters()' - Return the parameter values for the given parameter.
  */
+static stp_parameter_list_t
+pcl_list_parameters(const stp_vars_t v)
+{
+  static const stp_parameter_t pcl_parameters[] =
+  {
+    {
+      "PageSize", N_("Page Size"),
+      N_("Size of the paper being printed to"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "MediaType", N_("Media Type"),
+      N_("Type of media (plain paper, photo paper, etc.)"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "InputSlot", N_("Media Source"),
+      N_("Source (input slot) of the media"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "InkType", N_("Ink Type"),
+      N_("Type of ink in the printer"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "Resolution", N_("Resolutions"),
+      N_("Resolution and quality of the print"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "OutputMode", N_("Output Mode"),
+      N_("Choose the output mode (grayscale, monochrome, or black and white).\n"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+  };
+  stp_parameter_list_t *ret = stp_parameter_list_create();
+  int i;
+  for (i = 0; i < (sizeof(pcl_parameters) / sizeof(const stp_parameter_t));
+       i++)
+    stp_parameter_list_add_param(ret, &(pcl_parameters[i]));
+  return ret;
+}  
 
 static void
 pcl_parameters(const stp_vars_t v, const char *name,
@@ -1665,7 +1714,7 @@ pcl_parameters(const stp_vars_t v, const char *name,
   stp_deprintf(STP_DBG_PCL, "Resolutions: %d\n", caps->resolutions);
   stp_deprintf(STP_DBG_PCL, "ColorType = %d, PrinterType = %d\n", caps->color_type, caps->stp_printer_type);
 
-  stp_fill_parameter_settings(description, name);
+  stp_fill_parameter_settings(v, description, name);
   description->deflt.str = NULL;
 
   if (strcmp(name, "PageSize") == 0)
@@ -1751,6 +1800,18 @@ pcl_parameters(const stp_vars_t v, const char *name,
       stp_string_list_add_param(description->bounds.str,
 			       ink_types[1].name,_(ink_types[1].text));
     }
+  }
+  else if (strcmp(name, "OutputMode") == 0)
+  {
+    description->bounds.str = stp_string_list_allocate();
+    stp_string_list_add_param(description->bounds.str,
+			      "Grayscale", _("Grayscale"));
+    stp_string_list_add_param(description->bounds.str,
+			      "Monochrome", _("Monochrome"));
+    if (caps->color_type != PCL_COLOR_NONE)
+      stp_string_list_add_param(description->bounds.str,
+				"Color", _("Color"));
+    description->deflt.str = "Grayscale";
   }
   else
     stp_describe_internal_parameter(v, name, description);
@@ -2621,6 +2682,7 @@ pcl_print(const stp_vars_t v, stp_image_t *image)
 
 const stp_printfuncs_t stp_pcl_printfuncs =
 {
+  pcl_list_parameters,
   pcl_parameters,
   stp_default_media_size,
   pcl_imageable_area,

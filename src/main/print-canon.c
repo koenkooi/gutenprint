@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.94 2003/01/02 02:51:15 rlk Exp $"
+ * "$Id: print-canon.c,v 1.94.2.1 2003/01/04 02:27:23 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1425,6 +1425,55 @@ static stp_param_string_t media_sources[] =
 /*
  * 'canon_parameters()' - Return the parameter values for the given parameter.
  */
+static stp_parameter_list_t
+canon_list_parameters(const stp_vars_t v)
+{
+  static const stp_parameter_t canon_parameters[] =
+  {
+    {
+      "PageSize", N_("Page Size"),
+      N_("Size of the paper being printed to"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "MediaType", N_("Media Type"),
+      N_("Type of media (plain paper, photo paper, etc.)"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "InputSlot", N_("Media Source"),
+      N_("Source (input slot) of the media"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "InkType", N_("Ink Type"),
+      N_("Type of ink in the printer"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "Resolution", N_("Resolutions"),
+      N_("Resolution and quality of the print"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "OutputMode", N_("Output Mode"),
+      N_("Choose the output mode (grayscale, monochrome, or black and white).\n"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+  };
+  stp_parameter_list_t *ret = stp_parameter_list_create();
+  int i;
+  for (i = 0; i < (sizeof(canon_parameters) / sizeof(const stp_parameter_t));
+       i++)
+    stp_parameter_list_add_param(ret, &(canon_parameters[i]));
+  return ret;
+}
 
 static void
 canon_parameters(const stp_vars_t v, const char *name,
@@ -1439,7 +1488,7 @@ canon_parameters(const stp_vars_t v, const char *name,
   if (name == NULL)
     return;
 
-  stp_fill_parameter_settings(description, name);
+  stp_fill_parameter_settings(v, description, name);
   if (strcmp(name, "PageSize") == 0)
   {
     int height_limit, width_limit;
@@ -1536,6 +1585,18 @@ canon_parameters(const stp_vars_t v, const char *name,
       stp_string_list_add_param(description->bounds.str,
 				media_sources[i].name,
 				_(media_sources[i].text));
+  }
+  else if (strcmp(name, "OutputMode") == 0)
+  {
+    description->bounds.str = stp_string_list_allocate();
+    stp_string_list_add_param(description->bounds.str,
+			      "Grayscale", _("Grayscale"));
+    stp_string_list_add_param(description->bounds.str,
+			      "Monochrome", _("Monochrome"));
+    if (caps->inks & ~CANON_INK_K)
+      stp_string_list_add_param(description->bounds.str,
+				"Color", _("Color"));
+    description->deflt.str = "Grayscale";
   }
   else
     stp_describe_internal_parameter(v, name, description);
@@ -2451,6 +2512,7 @@ canon_print(const stp_vars_t v, stp_image_t *image)
 
 const stp_printfuncs_t stp_canon_printfuncs =
 {
+  canon_list_parameters,
   canon_parameters,
   stp_default_media_size,
   canon_imageable_area,

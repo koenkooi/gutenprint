@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.212 2003/01/02 02:51:15 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.212.2.1 2003/01/04 02:27:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -133,6 +133,99 @@ typedef struct escp2_init
   stp_vars_t v;
 } escp2_init_t;
 
+#define PARAMETER_INT(s)					\
+{								\
+  "escp2_" #s, "escp2_" #s, NULL,				\
+  STP_PARAMETER_TYPE_INTEGER, STP_PARAMETER_CLASS_FEATURE,	\
+  STP_PARAMETER_LEVEL_ADVANCED4					\
+}
+
+#define PARAMETER_RAW(s)				\
+{							\
+  "escp2_" #s, "escp2_" #s, NULL,			\
+  STP_PARAMETER_TYPE_RAW, STP_PARAMETER_CLASS_FEATURE,	\
+  STP_PARAMETER_LEVEL_ADVANCED4				\
+}
+
+static const stp_parameter_t the_parameters[] =
+{
+  {
+    "PageSize", N_("Page Size"),
+    N_("Size of the paper being printed to"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  {
+    "MediaType", N_("Media Type"),
+    N_("Type of media (plain paper, photo paper, etc.)"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  {
+    "InputSlot", N_("Media Source"),
+    N_("Source (input slot) of the media"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  {
+    "InkType", N_("Ink Type"),
+    N_("Type of ink in the printer"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  {
+    "Resolution", N_("Resolutions"),
+    N_("Resolution and quality of the print"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  {
+    "OutputMode", N_("Output Mode"),
+    N_("Choose the output mode (grayscale, monochrome, or black and white).\n"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+    STP_PARAMETER_LEVEL_BASIC
+  },
+  PARAMETER_INT(max_hres),
+  PARAMETER_INT(max_vres),
+  PARAMETER_INT(min_hres),
+  PARAMETER_INT(min_vres),
+  PARAMETER_INT(nozzles),
+  PARAMETER_INT(black_nozzles),
+  PARAMETER_INT(fast_nozzles),
+  PARAMETER_INT(min_nozzles),
+  PARAMETER_INT(min_black_nozzles),
+  PARAMETER_INT(min_fast_nozzles),
+  PARAMETER_INT(nozzle_separation),
+  PARAMETER_INT(black_nozzle_separation),
+  PARAMETER_INT(fast_nozzle_separation),
+  PARAMETER_INT(separation_rows),
+  PARAMETER_INT(max_paper_width),
+  PARAMETER_INT(max_paper_height),
+  PARAMETER_INT(min_paper_width),
+  PARAMETER_INT(min_paper_height),
+  PARAMETER_INT(extra_feed),
+  PARAMETER_INT(pseudo_separation_rows),
+  PARAMETER_INT(base_separation),
+  PARAMETER_INT(base_resolution),
+  PARAMETER_INT(enhanced_resolution),
+  PARAMETER_INT(resolution_scale),
+  PARAMETER_INT(initial_vertical_offset),
+  PARAMETER_INT(black_initial_vertical_offset),
+  PARAMETER_INT(max_black_resolution),
+  PARAMETER_INT(zero_margin_offset),
+  PARAMETER_INT(extra_720dpi_separation),
+  PARAMETER_INT(physical_channels),
+  PARAMETER_INT(left_margin),
+  PARAMETER_INT(right_margin),
+  PARAMETER_INT(top_margin),
+  PARAMETER_INT(bottom_margin),
+  PARAMETER_INT(roll_left_margin),
+  PARAMETER_INT(roll_right_margin),
+  PARAMETER_INT(roll_top_margin),
+  PARAMETER_INT(roll_bottom_margin),
+  PARAMETER_RAW(preinit_sequence),
+  PARAMETER_RAW(postinit_remote_sequence)
+}
 
 static int
 escp2_has_cap(int model, escp2_model_option_t feature,
@@ -220,14 +313,6 @@ DEF_SIMPLE_ACCESSOR(zero_margin_offset, int)
 DEF_SIMPLE_ACCESSOR(extra_720dpi_separation, int)
 DEF_SIMPLE_ACCESSOR(physical_channels, int)
 
-DEF_RAW_ACCESSOR(preinit_sequence, const stp_raw_t *)
-DEF_RAW_ACCESSOR(postinit_remote_sequence, const stp_raw_t *)
-
-DEF_COMPOSITE_ACCESSOR(paperlist, const paperlist_t *)
-DEF_COMPOSITE_ACCESSOR(reslist, const res_t *)
-DEF_COMPOSITE_ACCESSOR(inklist, const inklist_t *)
-DEF_COMPOSITE_ACCESSOR(input_slots, const input_slot_list_t *)
-
 DEF_MICROWEAVE_ACCESSOR(left_margin, unsigned)
 DEF_MICROWEAVE_ACCESSOR(right_margin, unsigned)
 DEF_MICROWEAVE_ACCESSOR(top_margin, unsigned)
@@ -236,6 +321,14 @@ DEF_MICROWEAVE_ACCESSOR(roll_left_margin, unsigned)
 DEF_MICROWEAVE_ACCESSOR(roll_right_margin, unsigned)
 DEF_MICROWEAVE_ACCESSOR(roll_top_margin, unsigned)
 DEF_MICROWEAVE_ACCESSOR(roll_bottom_margin, unsigned)
+
+DEF_RAW_ACCESSOR(preinit_sequence, const stp_raw_t *)
+DEF_RAW_ACCESSOR(postinit_remote_sequence, const stp_raw_t *)
+
+DEF_COMPOSITE_ACCESSOR(paperlist, const paperlist_t *)
+DEF_COMPOSITE_ACCESSOR(reslist, const res_t *)
+DEF_COMPOSITE_ACCESSOR(inklist, const inklist_t *)
+DEF_COMPOSITE_ACCESSOR(input_slots, const input_slot_list_t *)
 
 static int
 escp2_ink_type(int model, int resid, const stp_vars_t v)
@@ -383,6 +476,17 @@ verify_inktype(const escp2_inkname_t *inks, int model, const stp_vars_t v)
  * 'escp2_parameters()' - Return the parameter values for the given parameter.
  */
 
+static stp_parameter_list_t
+escp2_list_parameters(const stp_vars_t v)
+{
+  stp_parameter_list_t *ret = stp_parameter_list_create();
+  int i;
+  for (i = 0; i < (sizeof(the_parameters) / sizeof(const stp_parameter_t));
+       i++)
+    stp_parameter_list_add_param(ret, &(the_parameters[i]));
+  return ret;
+}  
+
 static void
 escp2_parameters(const stp_vars_t v, const char *name,
 		 stp_parameter_t *description)
@@ -399,7 +503,7 @@ escp2_parameters(const stp_vars_t v, const char *name,
   if (name == NULL)
     return;
 
-  stp_fill_parameter_settings(description, name);
+  stp_fill_parameter_settings(v, description, name);
   description->deflt.str = NULL;
   if (strcmp(name, "PageSize") == 0)
     {
@@ -478,6 +582,17 @@ escp2_parameters(const stp_vars_t v, const char *name,
 	  description->deflt.str =
 	    stp_string_list_param(description->bounds.str, 0)->name;
 	}
+    }
+  else if (strcmp(name, "OutputMode") == 0)
+    {
+      description->bounds.str = stp_string_list_allocate();
+      stp_string_list_add_param(description->bounds.str,
+				"Grayscale", _("Grayscale"));
+      stp_string_list_add_param(description->bounds.str,
+				"Monochrome", _("Monochrome"));
+      stp_string_list_add_param(description->bounds.str,
+				"Color", _("Color"));
+      description->deflt.str = "Color";
     }
   else
     stp_describe_internal_parameter(v, name, description);
@@ -1621,6 +1736,7 @@ escp2_job_end(const stp_vars_t v, stp_image_t *image)
 
 const stp_printfuncs_t stp_escp2_printfuncs =
 {
+  escp2_list_parameters,
   escp2_parameters,
   stp_default_media_size,
   escp2_imageable_area,

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.19 2003/01/03 07:55:50 mtomlinson Exp $"
+ * "$Id: print-vars.c,v 1.19.2.1 2003/01/04 02:27:24 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -45,20 +45,17 @@ typedef struct					/* Plug-in variables */
 {
   int	cookie;
   const char *driver;		/* Name of printer "driver" */
-  int	output_type;		/* Color or grayscale output */
-  const char *ppd_file;		/* PPD file */
   int	left;			/* Offset from left-upper corner, points */
   int	top;			/* ... */
   int	width;			/* Width of the image, points */
   int	height;			/* ... */
-  int	image_type;		/* Image type (line art etc.) */
   float app_gamma;		/* Application gamma */
   int	page_width;		/* Width of page in points */
   int	page_height;		/* Height of page in points */
-  int	input_color_model;	/* Color model for this device */
-  int	output_color_model;	/* Color model for this device */
   int	page_number;
   stp_job_mode_t job_mode;
+  stp_color_mode_t output_color_mode;
+  int	image_type;		/* Image type (line art etc.) */
   stp_list_t *params[STP_PARAMETER_TYPE_INVALID];
   void  *color_data;		/* Private data of the color module */
   void	*(*copy_color_data_func)(const stp_vars_t);
@@ -79,18 +76,13 @@ static stp_internal_vars_t default_vars =
 {
 	COOKIE_VARS,
 	N_ ("ps2"),	       	/* Name of printer "driver" */
-	OUTPUT_COLOR,		/* Color or grayscale output */
-	"",			/* Name of PPD file */
 	-1,			/* left */
 	-1,			/* top */
 	-1,			/* width */
 	-1,			/* height */
-	IMAGE_CONTINUOUS,	/* Image type */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
-	COLOR_MODEL_RGB,	/* Input color model */
-	COLOR_MODEL_RGB,	/* Output color model */
 	0,			/* Page number */
 	STP_JOB_MODE_PAGE	/* Job mode */
 };
@@ -99,18 +91,13 @@ static stp_internal_vars_t min_vars =
 {
 	COOKIE_VARS,
 	N_ ("ps2"),		/* Name of printer "driver" */
-	0,			/* Color or grayscale output */
-	"",			/* Name of PPD file */
 	-1,			/* left */
 	-1,			/* top */
 	-1,			/* width */
 	-1,			/* height */
-	0,			/* Image type */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
-	0,			/* Input color model */
-	0,			/* Output color model */
 	0,			/* Page number */
 	STP_JOB_MODE_PAGE	/* Job mode */
 };
@@ -119,129 +106,16 @@ static stp_internal_vars_t max_vars =
 {
 	COOKIE_VARS,
 	N_ ("ps2"),		/* Name of printer "driver" */
-	OUTPUT_RAW_PRINTER,	/* Color or grayscale output */
-	"",			/* Name of PPD file */
 	-1,			/* left */
 	-1,			/* top */
 	-1,			/* width */
 	-1,			/* height */
-	NIMAGE_TYPES - 1,	/* Image type */
 	1.0,			/* Application gamma placeholder */
 	0,			/* Page width */
 	0,			/* Page height */
-	NCOLOR_MODELS - 1,	/* Input color model */
-	NCOLOR_MODELS - 1,	/* Output color model */
 	INT_MAX,		/* Page number */
 	STP_JOB_MODE_JOB	/* Job mode */
 };
-
-static const stp_parameter_t global_parameters[] =
-  {
-    {
-      "PageSize", N_("Page Size"),
-      N_("Size of the paper being printed to"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "MediaType", N_("Media Type"),
-      N_("Type of media (plain paper, photo paper, etc.)"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "InputSlot", N_("Media Source"),
-      N_("Source (input slot) of the media"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "InkType", N_("Ink Type"),
-      N_("Type of ink in the printer"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Resolution", N_("Resolutions"),
-      N_("Resolution and quality of the print"),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "DitherAlgorithm", N_("Dither Algorithm"),
-      N_("Choose the dither algorithm to be used.\n"
-	 "Adaptive Hybrid usually produces the best all-around quality.\n"
-	 "EvenTone is a new, experimental algorithm that often produces excellent results.\n"
-	 "Ordered is faster and produces almost as good quality on photographs.\n"
-	 "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
-	 "Hybrid Floyd-Steinberg generally produces inferior output."),
-      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Brightness", N_("Brightness"),
-      N_("Brightness of the print (0 is solid black, 2 is solid white)"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Contrast", N_("Contrast"),
-      N_("Contrast of the print (0 is solid gray)"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Density", N_("Density"),
-      N_("Adjust the density (amount of ink) of the print. "
-	 "Reduce the density if the ink bleeds through the "
-	 "paper or smears; increase the density if black "
-	 "regions are not solid."),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Gamma", N_("Gamma"),
-      N_("Adjust the gamma of the print. Larger values will "
-	 "produce a generally brighter print, while smaller "
-	 "values will produce a generally darker print. "
-	 "Black and white will remain the same, unlike with "
-	 "the brightness adjustment."),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "AppGamma", N_("AppGamma"),
-      N_("Gamma value assumed by application"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED
-    },
-    {
-      "Cyan", N_("Cyan"),
-      N_("Adjust the cyan balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Magenta", N_("Magenta"),
-      N_("Adjust the magenta balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Yellow", N_("Yellow"),
-      N_("Adjust the yellow balance"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-    {
-      "Saturation", N_("Saturation"),
-      N_("Adjust the saturation (color balance) of the print\n"
-	 "Use zero saturation to produce grayscale output "
-	 "using color and black inks"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_BASIC
-    },
-  };
 
 const stp_vars_t
 stp_default_settings(void)
@@ -855,23 +729,22 @@ stp_check_raw_parameter(const stp_vars_t v, const char *parameter)
 }
 
 void
-stp_fill_parameter_settings(stp_parameter_t *desc, const char *name)
+stp_fill_parameter_settings(const stp_vars_t v, stp_parameter_t *desc,
+			    const char *name)
 {
-  const stp_parameter_t *param = global_parameters;
-  while (param->name)
+  stp_parameter_list_t *params = stp_list_parameters(v);
+  const stp_parameter_t *param = stp_parameter_find(params);
+  if (param)
     {
-      if (strcmp(name, param->name) == 0)
-	{
-	  desc->type = param->type;
-	  desc->level = param->level;
-	  desc->class = param->class;
-	  desc->name = stp_strdup(param->name);
-	  desc->text = stp_strdup(param->text);
-	  desc->help = stp_strdup(param->help);
-	  return;
-	}
-      param++;
+      desc->type = param->type;
+      desc->level = param->level;
+      desc->class = param->class;
+      desc->name = stp_strdup(param->name);
+      desc->text = stp_strdup(param->text);
+      desc->help = stp_strdup(param->help);
+      return;
     }
+  stp_parameter_list_destroy(v);
 }
 
 void
@@ -995,7 +868,7 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
   const stp_parameter_t *param;
   if (strcmp(name, "DitherAlgorithm") == 0)
     {
-      stp_fill_parameter_settings(description, name);
+      stp_fill_parameter_settings(v, description, name);
       description->bounds.str = stp_string_list_allocate();
       stp_dither_algorithms(description->bounds.str);
       description->deflt.str =
@@ -1009,7 +882,7 @@ stp_describe_internal_parameter(const stp_vars_t v, const char *name,
   if (param && param->type == STP_PARAMETER_TYPE_DOUBLE &&
       strcmp(name, param->name) == 0)
     {
-      stp_fill_parameter_settings(description, name);
+      stp_fill_parameter_settings(v, description, name);
       if (description->type == STP_PARAMETER_TYPE_DOUBLE)
 	{
 	  description->bounds.dbl.lower =
@@ -1040,23 +913,40 @@ param_longnamefunc(const stp_list_item_t *item)
   return param->text;
 }
 
-static stp_list_t *
+stp_parameter_list_t
 stp_parameter_list_create(void)
 {
   stp_list_t *ret = stp_list_create();
   stp_list_set_namefunc(ret, param_namefunc);
   stp_list_set_long_namefunc(ret, param_longnamefunc);
-  return ret;
+  return (stp_parameter_list_t) ret;
+}
+
+void
+stp_parameter_list_add_param(stp_parameter_list_t list,
+			     const stp_parameter_t *item)
+{
+  stp_list_t *ilist = (stp_list_t *) list;
+  stp_list_item_create(ilist, NULL, item);
 }
 
 stp_parameter_list_t
 stp_list_parameters(const stp_vars_t v)
 {
-  stp_list_t *ret = stp_parameter_list_create();
-  int i;
-  for (i = 0; i < (sizeof(global_parameters) / sizeof(const stp_parameter_t));
-       i++)
-    stp_list_item_create(ret, NULL, (void *) &(global_parameters[i]));
+  stp_parameter_list_t ret = stp_parameter_list_create();
+  stp_parameter_list_t tmp_list;
+
+  tmp_list = stp_color_list_parameters(v);
+  stp_parameter_list_append(ret, tmp_list);
+  stp_parameter_list_destroy(tmp_list);
+  
+  tmp_list = stp_dither_list_parameters(v);
+  stp_parameter_list_append(ret, tmp_list);
+  stp_parameter_list_destroy(tmp_list);
+  
+  tmp_list = stp_printer_list_parameters(v);
+  stp_parameter_list_append(ret, tmp_list);
+  stp_parameter_list_destroy(tmp_list);
   return ret;
 }
 

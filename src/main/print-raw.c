@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.8 2003/01/02 02:51:16 rlk Exp $"
+ * "$Id: print-raw.c,v 1.8.2.1 2003/01/04 02:27:24 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -71,6 +71,38 @@ static const ink_t inks[] =
 
 static const int ink_count = sizeof(inks) / sizeof(ink_t);
 
+static stp_parameter_list_t
+raw_list_parameters(const stp_vars_t v)
+{
+  static const stp_parameter_t raw_parameters[] =
+  {
+    {
+      "PageSize", N_("Page Size"),
+      N_("Size of the paper being printed to"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_PAGE_SIZE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "InkType", N_("Ink Type"),
+      N_("Type of ink in the printer"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+    {
+      "OutputMode", N_("Output Mode"),
+      N_("Choose the output mode (grayscale, monochrome, or black and white).\n"),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+  };
+  stp_parameter_list_t *ret = stp_parameter_list_create();
+  int i;
+  for (i = 0; i < (sizeof(raw_parameters) / sizeof(const stp_parameter_t));
+       i++)
+    stp_parameter_list_add_param(ret, &(raw_parameters[i]));
+  return ret;
+}
+
 static void
 raw_parameters(const stp_vars_t v, const char *name,
 	       stp_parameter_t *description)
@@ -80,7 +112,7 @@ raw_parameters(const stp_vars_t v, const char *name,
   if (name == NULL)
     return;
 
-  stp_fill_parameter_settings(description, name);
+  stp_fill_parameter_settings(v, description, name);
   description->deflt.str = NULL;
   if (strcmp(name, "PageSize") == 0)
     {
@@ -110,15 +142,14 @@ raw_parameters(const stp_vars_t v, const char *name,
       description->deflt.str =
 	stp_string_list_param(description->bounds.str, 0)->name;
     }      
-  else if ((strcmp(name, "Resolution") == 0) ||
-	   (strcmp(name, "MediaType") == 0) ||
-	   (strcmp(name, "InputSlot") == 0))
+  else if (strcmp(name, "OutputMode") == 0)
     {
       description->bounds.str = stp_string_list_allocate();
-	stp_string_list_add_param(description->bounds.str,
-				  "Standard", "Standard");
-      description->deflt.str =
-	stp_string_list_param(description->bounds.str, 0)->name;
+      stp_string_list_add_param(description->bounds.str,
+				"Grayscale", _("Grayscale"));
+      stp_string_list_add_param(description->bounds.str,
+				"Color", _("Color"));
+      description->deflt.str = "Grayscale";
     }
   else
     stp_describe_internal_parameter(v, name, description);
@@ -272,6 +303,7 @@ raw_print(const stp_vars_t v, stp_image_t *image)
 
 const stp_printfuncs_t stp_raw_printfuncs =
 {
+  raw_list_parameters,
   raw_parameters,
   stp_default_media_size,
   raw_imageable_area,

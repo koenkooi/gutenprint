@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither.c,v 1.107 2003/01/01 18:44:08 rlk Exp $"
+ * "$Id: print-dither.c,v 1.107.2.1 2003/01/04 02:27:24 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -274,6 +274,55 @@ stp_dither_algorithms(stp_string_list_t valptrs)
     stp_string_list_add_param(valptrs, dither_algos[i].name,
 			     _(dither_algos[i].text));
 }
+
+stp_parameter_list_t
+stp_dither_list_parameters(const stp_vars_t v)
+{
+  static const stp_parameter_t standard_parameters[] =
+  {
+    {
+      "DitherAlgorithm", N_("Dither Algorithm"),
+      N_("Choose the dither algorithm to be used.\n"
+	 "Adaptive Hybrid usually produces the best all-around quality.\n"
+	 "EvenTone is a new, experimental algorithm that often produces excellent results.\n"
+	 "Ordered is faster and produces almost as good quality on photographs.\n"
+	 "Fast and Very Fast are considerably faster, and work well for text and line art.\n"
+	 "Hybrid Floyd-Steinberg generally produces inferior output."),
+      STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_BASIC
+    },
+  }
+  stp_list_t *ret = stp_parameter_list_create();
+  int i;
+  for (i = 0; i < (sizeof(global_parameters) / sizeof(const stp_parameter_t));
+       i++)
+    stp_list_item_create(ret, NULL, (void *) &(global_parameters[i]));
+  return ret;
+}
+
+void
+stp_dither_describe_parameter(const stp_vars_t v, const char *name,
+			      stp_parameter_t *description)
+{
+  int i;
+  description->type = STP_PARAMETER_TYPE_INVALID;
+  if (name == NULL)
+    return;
+  description->deflt.str = NULL;
+  if (strcmp(name, "DitherAlgorithm") == 0)
+    {
+      stp_fill_parameter_settings(v, description, name);
+      description->bounds.str = stp_string_list_allocate();
+      for (i = 0; i < num_dither_algos; i++)
+	{
+	  const dither_algo_t *dt = &dither_algos[i];
+	  stp_string_list_add_param(description->bounds.str,
+				    dt->name, dt->text);
+	}
+      description->deflt.str =
+	stp_string_list_param(description->bounds.str, 0)->name;
+    }
+}  
 
 /*
  * These really belong with print-dither.c.  However, inlining has yielded

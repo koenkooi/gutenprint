@@ -1,5 +1,5 @@
 /*		-*- Mode: C -*-
- *  $Id: gimp-print.h,v 1.6 2003/01/01 18:44:07 rlk Exp $
+ *  $Id: gimp-print.h,v 1.6.2.1 2003/01/04 02:27:23 rlk Exp $
  *
  *   Gimp-Print header file
  *
@@ -76,20 +76,20 @@ extern const char* stp_check_version(unsigned int required_major,
  * Constants...
  */
 
-#define OUTPUT_GRAY             0       /* Grayscale output */
-#define OUTPUT_COLOR            1       /* Color output */
-#define OUTPUT_MONOCHROME       2       /* Raw monochrome output */
-#define OUTPUT_RAW_CMYK         3       /* Raw CMYK output */
-#define OUTPUT_RAW_PRINTER	4	/* Printer-specific raw output */
+typedef enum
+{
+  STP_COLOR_GRAY,
+  STP_COLOR_WHITE,
+  STP_COLOR_RGB,
+  STP_COLOR_CMY,
+  STP_COLOR_CMYK,
+  STP_COLOR_RAW
+} stp_color_mode_t;
 
 #define IMAGE_LINE_ART          0
 #define IMAGE_SOLID_TONE        1
 #define IMAGE_CONTINUOUS        2
 #define NIMAGE_TYPES            3
-
-#define COLOR_MODEL_RGB         0
-#define COLOR_MODEL_CMY         1
-#define NCOLOR_MODELS           2
 
 /*
  * Abstract data type for interfacing with the image creation program
@@ -166,7 +166,8 @@ typedef struct stp_image
 {
   void (*init)(struct stp_image *image);
   void (*reset)(struct stp_image *image);
-  int  (*bpp)(struct stp_image *image);
+  int  (*image_depth)(struct stp_image *image);
+  stp_color_mode_t (*color_mode)(struct stp_image *image);
   int  (*width)(struct stp_image *image);
   int  (*height)(struct stp_image *image);
   stp_image_status_t (*get_row)(struct stp_image *image, unsigned char *data,
@@ -239,7 +240,12 @@ typedef enum stp_parameter_level
 {
   STP_PARAMETER_LEVEL_INVALID,
   STP_PARAMETER_LEVEL_BASIC,
-  STP_PARAMETER_LEVEL_ADVANCED
+  STP_PARAMETER_LEVEL_ADVANCED,
+  STP_PARAMETER_LEVEL_ADVANCED1,
+  STP_PARAMETER_LEVEL_ADVANCED2,
+  STP_PARAMETER_LEVEL_ADVANCED3,
+  STP_PARAMETER_LEVEL_ADVANCED4,
+  STP_PARAMETER_LEVEL_ADVANCED5
 } stp_parameter_level_t;
 
 /*
@@ -418,31 +424,8 @@ extern void stp_set_page_height(stp_vars_t v, int val);
 extern int stp_get_page_width(const stp_vars_t v);
 extern int stp_get_page_height(const stp_vars_t v);
 
-/*
- * Set output type and image type.  These are likely to change
- * quite drastically, particularly image type.
- */
-extern void stp_set_output_type(stp_vars_t v, int val);
-extern int stp_get_output_type(const stp_vars_t v);
-
 extern void stp_set_image_type(stp_vars_t v, int val);
 extern int stp_get_image_type(const stp_vars_t v);
-
-/*
- * Input color model refers to how the data is being sent to the
- * driver library; the default is RGB.  Output color model refers to
- * the characteristics of the device; the default is CMYK.  The output
- * color model is set by the printer driver and cannot be overridden.
- * It is provided to permit applications to generate previews using
- * the color machinery in Gimp-Print.  If this is done, normally
- * the output color model will be RGB.
- *
- * This is subject to change.
- */
-extern void stp_set_input_color_model(stp_vars_t v, int val);
-extern void stp_set_output_color_model(stp_vars_t v, int val);
-extern int stp_get_input_color_model(const stp_vars_t v);
-extern int stp_get_output_color_model(const stp_vars_t v);
 
 /*
  * These functions are used to print output and diagnostic information
@@ -489,6 +472,11 @@ extern const stp_parameter_t *
 stp_parameter_list_param(const stp_parameter_list_t list, size_t item);
 
 extern void stp_parameter_list_destroy(stp_parameter_list_t list);
+
+stp_parameter_list_t stp_parameter_list_create(void);
+
+extern void stp_parameter_list_add_param(stp_parameter_list_t list,
+					 const stp_parameter_t *item);
 
 extern stp_parameter_list_t
 stp_parameter_list_copy(const stp_parameter_list_t list);
@@ -990,5 +978,5 @@ extern void stp_image_crop(stp_image_t *image, int left, int top,
 
 #endif /* __GIMP_PRINT_H__ */
 /*
- * End of $Id: gimp-print.h,v 1.6 2003/01/01 18:44:07 rlk Exp $
+ * End of $Id: gimp-print.h,v 1.6.2.1 2003/01/04 02:27:23 rlk Exp $
  */
