@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.106.2.19 2004/03/21 23:16:19 rlk Exp $"
+ * "$Id: print-color.c,v 1.106.2.20 2004/03/22 02:50:33 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -1262,7 +1262,7 @@ GENERIC_COLOR_FUNC(rgb, rgb)
 
 #define FAST_RGB_TO_COLOR_FUNC(C, T, bits, offset)			     \
 static unsigned								     \
-fast_rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,     \
+rgb_##bits##_to_##C##_fast(stp_const_vars_t vars, const unsigned char *in,   \
 		         unsigned short *out)				     \
 {									     \
   int i;								     \
@@ -1324,10 +1324,10 @@ fast_rgb_##bits##_to_##C(stp_const_vars_t vars, const unsigned char *in,     \
 
 FAST_RGB_TO_COLOR_FUNC(cmy, unsigned char, 8, 0)
 FAST_RGB_TO_COLOR_FUNC(cmy, unsigned short, 16, 0)
-GENERIC_COLOR_FUNC(fast_rgb, cmy)
+GENERIC_COLOR_FUNC(rgb, cmy_fast)
 FAST_RGB_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
 FAST_RGB_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
-GENERIC_COLOR_FUNC(fast_rgb, rgb)
+GENERIC_COLOR_FUNC(rgb, rgb_fast)
 
 /*
  * 'gray_to_rgb()' - Convert gray image data to RGB.
@@ -1392,34 +1392,34 @@ GRAY_TO_COLOR_FUNC(rgb, unsigned char, 8, CHANNEL_RGB_OFFSET)
 GRAY_TO_COLOR_FUNC(rgb, unsigned short, 16, CHANNEL_RGB_OFFSET)
 GENERIC_COLOR_FUNC(gray, rgb)
 
-#define RGB_TO_KCMY_FUNC(name, bits)					\
-static unsigned								\
-name##_##bits##_to_kcmy(stp_const_vars_t vars, const unsigned char *in,	\
-	                unsigned short *out)				\
-{									\
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	\
-  if (!lut->cmy_tmp)							\
-    lut->cmy_tmp = stpi_malloc(4 * 2 * lut->image_width);		\
-  name##_##bits##_to_rgb(vars, in, lut->cmy_tmp);			\
-  return generic_cmy_to_kcmy(vars, lut->cmy_tmp, out);			\
+#define RGB_TO_KCMY_FUNC(name, name2, name3, bits)			   \
+static unsigned								   \
+name##_##bits##_to_##name2(stp_const_vars_t vars, const unsigned char *in, \
+			   unsigned short *out)				   \
+{									   \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
+  if (!lut->cmy_tmp)							   \
+    lut->cmy_tmp = stpi_malloc(4 * 2 * lut->image_width);		   \
+  name##_##bits##_to_##name3(vars, in, lut->cmy_tmp);			   \
+  return generic_cmy_to_kcmy(vars, lut->cmy_tmp, out);			   \
 }
 
-RGB_TO_KCMY_FUNC(gray, 8)
-RGB_TO_KCMY_FUNC(gray, 16)
+RGB_TO_KCMY_FUNC(gray, kcmy, rgb, 8)
+RGB_TO_KCMY_FUNC(gray, kcmy, rgb, 16)
 GENERIC_COLOR_FUNC(gray, kcmy)
 
-RGB_TO_KCMY_FUNC(rgb, 8)
-RGB_TO_KCMY_FUNC(rgb, 16)
+RGB_TO_KCMY_FUNC(rgb, kcmy, rgb, 8)
+RGB_TO_KCMY_FUNC(rgb, kcmy, rgb, 16)
 GENERIC_COLOR_FUNC(rgb, kcmy)
 
-RGB_TO_KCMY_FUNC(fast_rgb, 8)
-RGB_TO_KCMY_FUNC(fast_rgb, 16)
-GENERIC_COLOR_FUNC(fast_rgb, kcmy)
+RGB_TO_KCMY_FUNC(rgb, kcmy_fast, rgb_fast, 8)
+RGB_TO_KCMY_FUNC(rgb, kcmy_fast, rgb_fast, 16)
+GENERIC_COLOR_FUNC(rgb, kcmy_fast)
 
 
-#define RGB_TO_KCMY_LINE_ART_FUNC(T, name)				\
+#define RGB_TO_KCMY_THRESHOLD_FUNC(T, name)				\
 static unsigned								\
-name##_to_kcmy_line_art(stp_const_vars_t vars,				\
+name##_to_kcmy_threshold(stp_const_vars_t vars,				\
 			const unsigned char *in,			\
 			unsigned short *out)				\
 {									\
@@ -1470,13 +1470,13 @@ name##_to_kcmy_line_art(stp_const_vars_t vars,				\
   return z;								\
 }
 
-RGB_TO_KCMY_LINE_ART_FUNC(unsigned char, rgb_8)
-RGB_TO_KCMY_LINE_ART_FUNC(unsigned short, rgb_16)
-GENERIC_COLOR_FUNC(rgb, kcmy_line_art)
+RGB_TO_KCMY_THRESHOLD_FUNC(unsigned char, rgb_8)
+RGB_TO_KCMY_THRESHOLD_FUNC(unsigned short, rgb_16)
+GENERIC_COLOR_FUNC(rgb, kcmy_threshold)
 
-#define CMYK_TO_KCMY_LINE_ART_FUNC(T, name)				\
+#define CMYK_TO_KCMY_THRESHOLD_FUNC(T, name)				\
 static unsigned								\
-name##_to_kcmy_line_art(stp_const_vars_t vars,				\
+name##_to_kcmy_threshold(stp_const_vars_t vars,				\
 			const unsigned char *in,			\
 			unsigned short *out)				\
 {									\
@@ -1517,13 +1517,13 @@ name##_to_kcmy_line_art(stp_const_vars_t vars,				\
   return z;								\
 }
 
-CMYK_TO_KCMY_LINE_ART_FUNC(unsigned char, cmyk_8)
-CMYK_TO_KCMY_LINE_ART_FUNC(unsigned short, cmyk_16)
-GENERIC_COLOR_FUNC(cmyk, kcmy_line_art)
+CMYK_TO_KCMY_THRESHOLD_FUNC(unsigned char, cmyk_8)
+CMYK_TO_KCMY_THRESHOLD_FUNC(unsigned short, cmyk_16)
+GENERIC_COLOR_FUNC(cmyk, kcmy_threshold)
 
-#define KCMY_TO_KCMY_LINE_ART_FUNC(T, name)				\
+#define KCMY_TO_KCMY_THRESHOLD_FUNC(T, name)				\
 static unsigned								\
-name##_to_kcmy_line_art(stp_const_vars_t vars,				\
+name##_to_kcmy_threshold(stp_const_vars_t vars,				\
 			const unsigned char *in,			\
 			unsigned short *out)				\
 {									\
@@ -1564,13 +1564,13 @@ name##_to_kcmy_line_art(stp_const_vars_t vars,				\
   return z;								\
 }
 
-KCMY_TO_KCMY_LINE_ART_FUNC(unsigned char, kcmy_8)
-KCMY_TO_KCMY_LINE_ART_FUNC(unsigned short, kcmy_16)
-GENERIC_COLOR_FUNC(kcmy, kcmy_line_art)
+KCMY_TO_KCMY_THRESHOLD_FUNC(unsigned char, kcmy_8)
+KCMY_TO_KCMY_THRESHOLD_FUNC(unsigned short, kcmy_16)
+GENERIC_COLOR_FUNC(kcmy, kcmy_threshold)
 
-#define GRAY_TO_COLOR_LINE_ART_FUNC(T, name, bits, channels)		\
+#define GRAY_TO_COLOR_THRESHOLD_FUNC(T, name, bits, channels)		\
 static unsigned								\
-gray_##bits##_to_##name##_line_art(stp_const_vars_t vars,		\
+gray_##bits##_to_##name##_threshold(stp_const_vars_t vars,		\
 				   const unsigned char *in,		\
 				   unsigned short *out)			\
 {									\
@@ -1598,17 +1598,17 @@ gray_##bits##_to_##name##_line_art(stp_const_vars_t vars,		\
   return z;								\
 }
 
-GRAY_TO_COLOR_LINE_ART_FUNC(unsigned char, rgb, 8, 3)
-GRAY_TO_COLOR_LINE_ART_FUNC(unsigned short, rgb, 16, 3)
-GENERIC_COLOR_FUNC(gray, rgb_line_art)
+GRAY_TO_COLOR_THRESHOLD_FUNC(unsigned char, rgb, 8, 3)
+GRAY_TO_COLOR_THRESHOLD_FUNC(unsigned short, rgb, 16, 3)
+GENERIC_COLOR_FUNC(gray, rgb_threshold)
 
-GRAY_TO_COLOR_LINE_ART_FUNC(unsigned char, kcmy, 8, 4)
-GRAY_TO_COLOR_LINE_ART_FUNC(unsigned short, kcmy, 16, 4)
-GENERIC_COLOR_FUNC(gray, kcmy_line_art)
+GRAY_TO_COLOR_THRESHOLD_FUNC(unsigned char, kcmy, 8, 4)
+GRAY_TO_COLOR_THRESHOLD_FUNC(unsigned short, kcmy, 16, 4)
+GENERIC_COLOR_FUNC(gray, kcmy_threshold)
 
-#define RGB_TO_RGB_LINE_ART_FUNC(T, name)				\
+#define RGB_TO_RGB_THRESHOLD_FUNC(T, name)				\
 static unsigned								\
-name##_to_rgb_line_art(stp_const_vars_t vars,				\
+name##_to_rgb_threshold(stp_const_vars_t vars,				\
 		       const unsigned char *in,				\
 		       unsigned short *out)				\
 {									\
@@ -1644,13 +1644,13 @@ name##_to_rgb_line_art(stp_const_vars_t vars,				\
   return z;								\
 }
 
-RGB_TO_RGB_LINE_ART_FUNC(unsigned char, rgb_8)
-RGB_TO_RGB_LINE_ART_FUNC(unsigned short, rgb_16)
-GENERIC_COLOR_FUNC(rgb, rgb_line_art)
+RGB_TO_RGB_THRESHOLD_FUNC(unsigned char, rgb_8)
+RGB_TO_RGB_THRESHOLD_FUNC(unsigned short, rgb_16)
+GENERIC_COLOR_FUNC(rgb, rgb_threshold)
 
-#define COLOR_TO_GRAY_LINE_ART_FUNC(T, name, channels, max_channels)	\
+#define COLOR_TO_GRAY_THRESHOLD_FUNC(T, name, channels, max_channels)	\
 static unsigned								\
-name##_to_gray_line_art(stp_const_vars_t vars,				\
+name##_to_gray_threshold(stp_const_vars_t vars,				\
 			const unsigned char *in,			\
 			unsigned short *out)				\
 {									\
@@ -1681,17 +1681,80 @@ name##_to_gray_line_art(stp_const_vars_t vars,				\
   return z;								\
 }
 
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, cmyk_8, 4, 4)
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, cmyk_16, 4, 4)
-GENERIC_COLOR_FUNC(cmyk, gray_line_art)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, cmyk_8, 4, 4)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, cmyk_16, 4, 4)
+GENERIC_COLOR_FUNC(cmyk, gray_threshold)
 
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, color_8, 3, 4)
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, color_16, 3, 4)
-GENERIC_COLOR_FUNC(color, gray_line_art)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, kcmy_8, 4, 4)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, kcmy_16, 4, 4)
+GENERIC_COLOR_FUNC(kcmy, gray_threshold)
 
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned char, gray_8, 1, 1)
-COLOR_TO_GRAY_LINE_ART_FUNC(unsigned short, gray_16, 1, 1)
-GENERIC_COLOR_FUNC(gray, gray_line_art)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, rgb_8, 3, 4)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, rgb_16, 3, 4)
+GENERIC_COLOR_FUNC(rgb, gray_threshold)
+
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned char, gray_8, 1, 1)
+COLOR_TO_GRAY_THRESHOLD_FUNC(unsigned short, gray_16, 1, 1)
+GENERIC_COLOR_FUNC(gray, gray_threshold)
+
+#define CMYK_TO_RGB_FUNC(namein, name2, T, bits, offset)		     \
+static unsigned								     \
+namein##_##bits##_to_##name2(stp_const_vars_t vars, const unsigned char *in, \
+			   unsigned short *out)				     \
+{									     \
+  int i;								     \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	     \
+  const T *s_in = (const T *) in;					     \
+  unsigned short *tmp = lut->cmy_tmp;					     \
+  int width = lut->image_width;						     \
+  unsigned mask = 0;							     \
+									     \
+  if (!lut->cmy_tmp)							     \
+    lut->cmy_tmp = stpi_malloc(3 * 2 * lut->image_width);		     \
+  memset(lut->cmy_tmp, 0, width * 3 * sizeof(unsigned short));		     \
+  if (lut->invert_output)						     \
+    mask = 0xffff;							     \
+									     \
+  for (i = 0; i < width; i++, tmp += 3, s_in += 4)			     \
+    {									     \
+      unsigned c = (s_in[0 + offset] + s_in[(3 + offset) % 4]) *	     \
+	(65535 / ((1 << bits) - 1));					     \
+      unsigned m = (s_in[1 + offset] + s_in[(3 + offset) % 4]) *	     \
+	(65535 / ((1 << bits) - 1));					     \
+      unsigned y = (s_in[2 + offset] + s_in[(3 + offset) % 4]) *	     \
+	(65535 / ((1 << bits) - 1));					     \
+      if (c > 65535)							     \
+	c = 65535;							     \
+      if (m > 65535)							     \
+	m = 65535;							     \
+      if (y > 65535)							     \
+	y = 65535;							     \
+      tmp[0] = c ^ mask;						     \
+      tmp[1] = m ^ mask;						     \
+      tmp[2] = y ^ mask;						     \
+    }									     \
+  return rgb_16_to_##name2						     \
+    (vars, (const unsigned char *) lut->cmy_tmp, out);			     \
+}
+
+CMYK_TO_RGB_FUNC(cmyk, rgb, unsigned char, 8, 0)
+CMYK_TO_RGB_FUNC(cmyk, rgb, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(cmyk, rgb)
+CMYK_TO_RGB_FUNC(kcmy, rgb, unsigned char, 8, 1)
+CMYK_TO_RGB_FUNC(kcmy, rgb, unsigned short, 16, 1)
+GENERIC_COLOR_FUNC(kcmy, rgb)
+CMYK_TO_RGB_FUNC(cmyk, rgb_threshold, unsigned char, 8, 0)
+CMYK_TO_RGB_FUNC(cmyk, rgb_threshold, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(cmyk, rgb_threshold)
+CMYK_TO_RGB_FUNC(kcmy, rgb_threshold, unsigned char, 8, 1)
+CMYK_TO_RGB_FUNC(kcmy, rgb_threshold, unsigned short, 16, 1)
+GENERIC_COLOR_FUNC(kcmy, rgb_threshold)
+CMYK_TO_RGB_FUNC(cmyk, rgb_fast, unsigned char, 8, 0)
+CMYK_TO_RGB_FUNC(cmyk, rgb_fast, unsigned short, 16, 0)
+GENERIC_COLOR_FUNC(cmyk, rgb_fast)
+CMYK_TO_RGB_FUNC(kcmy, rgb_fast, unsigned char, 8, 1)
+CMYK_TO_RGB_FUNC(kcmy, rgb_fast, unsigned short, 16, 1)
+GENERIC_COLOR_FUNC(kcmy, rgb_fast)
 
 #define CMYK_TO_KCMY_FUNC(T, size)					\
 static unsigned								\
@@ -1827,9 +1890,9 @@ GENERIC_COLOR_FUNC(gray, gray)
 
 #define COLOR_TO_GRAY_FUNC(T, bits)					   \
 static unsigned								   \
-color_##bits##_to_gray(stp_const_vars_t vars,				   \
-		       const unsigned char *in,				   \
-		       unsigned short *out)				   \
+rgb_##bits##_to_gray(stp_const_vars_t vars,				   \
+		     const unsigned char *in,				   \
+		     unsigned short *out)				   \
 {									   \
   int i;								   \
   int i0 = -1;								   \
@@ -1874,7 +1937,7 @@ color_##bits##_to_gray(stp_const_vars_t vars,				   \
 
 COLOR_TO_GRAY_FUNC(unsigned char, 8)
 COLOR_TO_GRAY_FUNC(unsigned short, 16)
-GENERIC_COLOR_FUNC(color, gray)
+GENERIC_COLOR_FUNC(rgb, gray)
 
 
 #define CMYK_TO_GRAY_FUNC(T, bits)					    \
@@ -2085,54 +2148,54 @@ generic_kcmy_to_cmykrb(stp_const_vars_t vars, const unsigned short *in,
   return retval;
 }
 
-#define RGB_TO_CMYKRB_FUNC(name, bits)					  \
-static unsigned								  \
-name##_##bits##_to_cmykrb(stp_const_vars_t vars, const unsigned char *in, \
-			  unsigned short *out)				  \
-{									  \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	  \
-  if (!lut->cmyk_tmp)							  \
-    lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		  \
-  name##_##bits##_to_kcmy(vars, in, lut->cmyk_tmp);			  \
-  return generic_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		  \
-}									  \
-									  \
-static unsigned								  \
-name##_##bits##_to_cmykrb_line_art(stp_const_vars_t vars,		  \
-				   const unsigned char *in,		  \
-				   unsigned short *out)			  \
-{									  \
-  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	  \
-  if (!lut->cmyk_tmp)							  \
-    lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		  \
-  name##_##bits##_to_kcmy(vars, in, lut->cmyk_tmp);			  \
-  return generic_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		  \
+#define RGB_TO_CMYKRB_FUNC(name, name2, bits)				   \
+static unsigned								   \
+name##_##bits##_to_##name2(stp_const_vars_t vars, const unsigned char *in, \
+			  unsigned short *out)				   \
+{									   \
+  lut_t *lut = (lut_t *)(stpi_get_component_data(vars, "Color"));	   \
+  if (!lut->cmyk_tmp)							   \
+    lut->cmyk_tmp = stpi_malloc(4 * 2 * lut->image_width);		   \
+  name##_##bits##_to_##name2(vars, in, lut->cmyk_tmp);			   \
+  return generic_kcmy_to_cmykrb(vars, lut->cmyk_tmp, out);		   \
 }
 
-RGB_TO_CMYKRB_FUNC(gray, 8)
-RGB_TO_CMYKRB_FUNC(gray, 16)
+RGB_TO_CMYKRB_FUNC(gray, cmykrb, 8)
+RGB_TO_CMYKRB_FUNC(gray, cmykrb, 16)
 GENERIC_COLOR_FUNC(gray, cmykrb)
-GENERIC_COLOR_FUNC(gray, cmykrb_line_art)
+RGB_TO_CMYKRB_FUNC(gray, cmykrb_threshold, 8)
+RGB_TO_CMYKRB_FUNC(gray, cmykrb_threshold, 16)
+GENERIC_COLOR_FUNC(gray, cmykrb_threshold)
 
-RGB_TO_CMYKRB_FUNC(rgb, 8)
-RGB_TO_CMYKRB_FUNC(rgb, 16)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb, 8)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb, 16)
 GENERIC_COLOR_FUNC(rgb, cmykrb)
-GENERIC_COLOR_FUNC(rgb, cmykrb_line_art)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb_threshold, 8)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb_threshold, 16)
+GENERIC_COLOR_FUNC(rgb, cmykrb_threshold)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb_fast, 8)
+RGB_TO_CMYKRB_FUNC(rgb, cmykrb_fast, 16)
+GENERIC_COLOR_FUNC(rgb, cmykrb_fast)
 
-RGB_TO_CMYKRB_FUNC(cmyk, 8)
-RGB_TO_CMYKRB_FUNC(cmyk, 16)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb, 8)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb, 16)
 GENERIC_COLOR_FUNC(cmyk, cmykrb)
-GENERIC_COLOR_FUNC(cmyk, cmykrb_line_art)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, 8)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb_threshold, 16)
+GENERIC_COLOR_FUNC(cmyk, cmykrb_threshold)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, 8)
+RGB_TO_CMYKRB_FUNC(cmyk, cmykrb_fast, 16)
+GENERIC_COLOR_FUNC(cmyk, cmykrb_fast)
 
-RGB_TO_CMYKRB_FUNC(kcmy, 8)
-RGB_TO_CMYKRB_FUNC(kcmy, 16)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb, 8)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb, 16)
 GENERIC_COLOR_FUNC(kcmy, cmykrb)
-GENERIC_COLOR_FUNC(kcmy, cmykrb_line_art)
-
-RGB_TO_CMYKRB_FUNC(fast_rgb, 8)
-RGB_TO_CMYKRB_FUNC(fast_rgb, 16)
-GENERIC_COLOR_FUNC(fast_rgb, cmykrb)
-GENERIC_COLOR_FUNC(fast_rgb, cmykrb_line_art)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, 8)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_threshold, 16)
+GENERIC_COLOR_FUNC(kcmy, cmykrb_threshold)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, 8)
+RGB_TO_CMYKRB_FUNC(kcmy, cmykrb_fast, 16)
+GENERIC_COLOR_FUNC(kcmy, cmykrb_fast)
 
 #define RAW_TO_RAW_FUNC(T, bits)					\
 static unsigned								\
