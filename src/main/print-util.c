@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.20 2001/04/29 12:21:47 rlk Exp $"
+ * "$Id: print-util.c,v 1.21 2001/05/01 20:31:57 rleigh Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -217,11 +217,17 @@ static const stp_internal_vars_t max_vars =
 int
 stp_init(void)
 {
-  /* set up gettext */
+  static int stp_is_initialised = 0;
+  if (!stp_is_initialised)
+    {
+      /* Things that are only initialised once */
+      /* Set up gettext */
 #ifdef ENABLE_NLS
-  setlocale (LC_ALL, "");
-  bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+      setlocale (LC_ALL, "");
+      bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
 #endif
+    }
+  stp_is_initialised = 1;
   return (0);
 }
 
