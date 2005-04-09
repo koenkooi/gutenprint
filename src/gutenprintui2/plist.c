@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.2 2005/01/28 03:02:18 rlk Exp $"
+ * "$Id: plist.c,v 1.3 2005/04/09 14:52:34 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -566,11 +566,11 @@ do {									\
 } while (0)
 
 static void *
-psearch(const void *key, const void *base, size_t nmemb, size_t size,
+psearch(const void *key, void *base, size_t nmemb, size_t size,
 	int (*compar)(const void *, const void *))
 {
   int i;
-  const char *cbase = (const char *) base;
+  char *cbase = (char *) base;
   for (i = 0; i < nmemb; i++)
     {
       if ((*compar)(key, (const void *) cbase) == 0)
@@ -910,7 +910,7 @@ stpui_printrc_load_v1(FILE *fp)
     }
 }  
 
-const char *stpui_printrc_current_printer = NULL;
+char *stpui_printrc_current_printer = NULL;
 extern FILE *yyin;
 extern int yyparse(void);
 
@@ -1751,5 +1751,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.2 2005/01/28 03:02:18 rlk Exp $".
+ * End of "$Id: plist.c,v 1.3 2005/04/09 14:52:34 rlk Exp $".
  */
