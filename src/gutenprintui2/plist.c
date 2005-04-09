@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.3 2005/04/09 14:52:34 rlk Exp $"
+ * "$Id: plist.c,v 1.4 2005/04/09 20:26:45 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -195,7 +195,7 @@ stpui_build_standard_print_command(const stpui_plist_t *plist,
   stp_asprintf(&print_cmd, "%s %s %s %s %s%s%s",
 	       global_printing_system->print_command,
 	       queue_name[0] ? global_printing_system->queue_select : "",
-	       queue_name[0] ? queue_name : "",
+	       queue_name[0] ? g_shell_quote(queue_name) : "",
 	       count_string ? count_string : "",
 	       raw ? global_printing_system->raw_flag : "",
 	       extra_options ? " " : "",
@@ -1751,5 +1751,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.3 2005/04/09 14:52:34 rlk Exp $".
+ * End of "$Id: plist.c,v 1.4 2005/04/09 20:26:45 rlk Exp $".
  */
