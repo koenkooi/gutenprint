@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.67 2005/04/09 01:48:43 rlk Exp $"
+ * "$Id: escputil.c,v 1.68 2005/04/09 02:05:41 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -676,14 +676,6 @@ initialize_printer(int quiet)
         }
       if (alarm_interrupt)
 	{
-	  bufpos = 0;
-	  add_resets(2);
-	  alarm_interrupt = 0;
-	  signal(SIGALRM, alarm_handler);
-	  alarm(5);
-	  write(fd, printer_cmd, bufpos);
-	  alarm(0);
-	  signal(SIGALRM, SIG_DFL);
 	  forced_packet_mode = !init_packet(fd, 1);
 	  status = 1;
 	}
