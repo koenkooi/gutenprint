@@ -1,5 +1,5 @@
 /*
- * "$Id: print-version.c,v 1.7 2004/09/17 18:38:26 rleigh Exp $"
+ * "$Id: print-version.c,v 1.8 2005/04/10 23:15:16 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -59,4 +59,18 @@ stp_check_version (unsigned int required_major,
   if (required_micro > STP_MICRO_VERSION)
     return "Gutenprint version too old (micro mismatch)";
   return NULL;
+}
+
+const char *
+stp_get_version(void)
+{
+  static const char *version_id = VERSION;
+  return version_id;
+}
+
+const char *
+stp_get_release_version(void)
+{
+  static const char *release_version_id = GUTENPRINT_RELEASE_VERSION;
+  return release_version_id;
 }

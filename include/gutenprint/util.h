@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: util.h,v 1.2 2005/04/10 23:15:16 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -151,6 +151,20 @@ extern size_t stp_strlen(const char *s);
 extern char *stp_strndup(const char *s, int n);
 extern char *stp_strdup(const char *s);
 
+/**
+ * Get the library version string (x.y.z)
+ * @returns a pointer to the version name of the package, which must not
+ * be modified or freed.
+ */
+extern const char *stp_get_version(void);
+
+/**
+ * Get the library release version string (x.y)
+ * @returns a pointer to the release name of the package, which must not
+ * be modified or freed.
+ */
+extern const char *stp_get_release_version(void);
+
 /** @} */
 
 #ifdef __cplusplus
@@ -159,5 +173,5 @@ extern char *stp_strdup(const char *s);
 
 #endif /* GUTENPRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: util.h,v 1.2 2005/04/10 23:15:16 rlk Exp $".
  */
