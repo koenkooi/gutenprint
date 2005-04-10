@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.50 2004/09/17 18:38:17 rleigh Exp $"
+ * "$Id: curve.c,v 1.51 2005/04/10 22:57:40 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -704,13 +704,13 @@ stp_curve_get_data(const stp_curve_t *curve, size_t *count)
 const stp_curve_point_t *
 stp_curve_get_data_points(const stp_curve_t *curve, size_t *count)
 {
-  const stp_curve_point_t *ret;
+  const double *ret;
   check_curve(curve);
   if (!curve->piecewise)
     return NULL;
-  stp_sequence_get_data(curve->seq, count, (const double **) &ret);
+  stp_sequence_get_data(curve->seq, count, &ret);
   *count = get_point_count(curve);
-  return ret;
+  return (const stp_curve_point_t *) ret;
 }
 
 static const double *
