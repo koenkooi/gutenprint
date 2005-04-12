@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.44 2004/09/17 18:38:11 rleigh Exp $
+## $Id: Makefile.am,v 1.45 2005/04/12 00:45:09 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ all-local: $(INSTALL_DATA_LOCAL_DEPS)
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
-	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gutenprint-ijs ; \
+	  $(MAKE) install-kit FOOMATIC_DB=foomatic-db/gutenprint-ijs.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ ; \
 	fi
 
 install-kit:

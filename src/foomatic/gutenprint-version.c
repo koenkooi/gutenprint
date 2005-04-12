@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprint-version.c,v 1.1 2004/09/17 18:38:12 rleigh Exp $"
+ * "$Id: gutenprint-version.c,v 1.2 2005/04/12 00:45:10 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -30,7 +30,10 @@ int
 main(int argc, char **argv)
 {
 #ifdef VERSION
-  printf("%s\n", VERSION);
+  if (argc > 1)
+    printf("%s\n", GUTENPRINT_RELEASE_VERSION);
+  else
+    printf("%s\n", VERSION);
   return 0;
 #else
   fprintf(stderr, "VERSION not defined!\n");

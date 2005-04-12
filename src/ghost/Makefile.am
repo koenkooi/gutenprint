@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.35 2004/09/17 18:38:12 rleigh Exp $
+## $Id: Makefile.am,v 1.36 2005/04/12 00:45:10 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,8 @@ LOCAL_CPPFLAGS = $(GUTENPRINT_CFLAGS) @IJS_CFLAGS@
 ## Programs
 
 if BUILD_GHOSTSCRIPT
-bin_PROGRAMS = ijsgutenprint
+bin_PROGRAMS = ijsgutenprint.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
+ijsgutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_SOURCES = ijsgutenprint.c
+ijsgutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_LDADD = $(GUTENPRINT_LIBS) $(IJS_LIBS)
+ijsgutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_LDFLAGS = $(STATIC_LDOPTS)
 endif
-
-ijsgutenprint_LDADD = $(GUTENPRINT_LIBS) $(IJS_LIBS)
