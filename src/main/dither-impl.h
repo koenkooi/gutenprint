@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.24 2004/09/17 18:38:18 rleigh Exp $"
+ * "$Id: dither-impl.h,v 1.25 2005/04/12 00:57:01 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -53,9 +53,12 @@ extern "C" {
 #define D_VERY_FAST (D_FAST_BASE + 1)
 #define D_EVENTONE 32
 #define D_UNITONE 64
+#define D_EVENBETTER 128
 #define D_HYBRID_EVENTONE (D_ORDERED_BASE | D_EVENTONE)
 #define D_HYBRID_UNITONE (D_ORDERED_BASE | D_UNITONE)
+#define D_HYBRID_EVENBETTER (D_ORDERED_BASE | D_EVENBETTER)
 #define D_PREDITHERED 128
+#define D_INVALID -2
 
 #define DITHER_FAST_STEPS (6)
 
@@ -256,5 +259,5 @@ do									\
 
 #endif /* GUTENPRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.24 2004/09/17 18:38:18 rleigh Exp $".
+ * End of "$Id: dither-impl.h,v 1.25 2005/04/12 00:57:01 rlk Exp $".
  */
