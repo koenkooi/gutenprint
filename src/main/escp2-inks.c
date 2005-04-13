@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.35 2005/04/02 22:14:19 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.36 2005/04/13 02:35:05 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -107,9 +107,9 @@ static const escp2_dropsize_t escp2_1_5pl_1440_dropsizes =
  * See above comment.  3 pl makes more sense than 2 pl
  */
 /* 1.5, 3, 6 pl */
-/* Looks like 1.5, 3.5, 7 */
+/* Looks like 1.5, 3.25, 6 */
 static const escp2_dropsize_t escp2_1_5pl_2880_dropsizes =
-  { "1_5pl_2880", 3, { 0.23, 0.429, 1.0 } };
+  { "1_5pl_2880", 3, { 0.26, 0.46, 1.0 } };
 
 /* Stylus Photo R300 */
 static const escp2_dropsize_t escp2_r300_360_dropsizes =
