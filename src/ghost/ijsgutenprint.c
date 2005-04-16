@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgutenprint.c,v 1.4 2005/04/10 23:15:16 rlk Exp $
+ *  $Id: ijsgutenprint.c,v 1.5 2005/04/16 19:52:26 rlk Exp $
  *
  *   IJS server for Gutenprint.
  *
@@ -849,6 +849,7 @@ gutenprint_image_get_row(stp_image_t *image, unsigned char *data, size_t byte_li
       unsigned i, j, length;
       switch (img->bps)
 	{
+	case 16:
 	case 8:
 	  memcpy(data, img->row_buf, img->row_width);
 	  break;
