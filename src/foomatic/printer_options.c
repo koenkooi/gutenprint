@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.45 2005/03/25 02:11:53 rlk Exp $"
+ * "$Id: printer_options.c,v 1.46 2005/04/16 23:50:58 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -210,7 +210,6 @@ main(int argc, char **argv)
 			     driver, desc.name, desc.is_mandatory);
 		    }
 		}
-#ifdef FOOMATIC_ENABLE_DIMENSION_PARAMS
 	      else if (desc.p_type == STP_PARAMETER_TYPE_DIMENSION)
 		{
 		  if (desc.bounds.dimension.lower <= desc.deflt.dimension &&
@@ -232,7 +231,6 @@ main(int argc, char **argv)
 			     driver, desc.name, desc.is_mandatory);
 		    }
 		}
-#endif /* FOOMATIC_ENABLE_DIMENSION_PARAMS */
 	      tcount += count;
 	    }
 	  stp_parameter_description_destroy(&desc);
