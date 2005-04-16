@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.94 2005/04/16 03:01:28 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.95 2005/04/16 18:49:32 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -380,7 +380,8 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
 					cups->header.PageSize[0])) != NULL)
     set_string_parameter(v, "PageSize", size->name);
   else
-    fprintf(stderr, "ERROR: Gutenprint Unable to get media size!\n");
+    fprintf(stderr, "DEBUG: Gutenprint Unable to get media size for (%d, %d)\n",
+	    cups->header.PageSize[1], cups->header.PageSize[0]);
 
  /*
   * Duplex
@@ -1064,5 +1065,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.94 2005/04/16 03:01:28 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.95 2005/04/16 18:49:32 rlk Exp $".
  */
