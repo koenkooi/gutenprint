@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.74 2004/09/17 18:38:27 rleigh Exp $"
+ * "$Id: printers.c,v 1.75 2005/04/16 03:02:08 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -761,7 +761,7 @@ stp_verify_printer_params(stp_vars_t *v)
     {
       answer = 0;
       stp_eprintf(v, _("Image is too long for the page: top margin is %d, height %d, bottom edge is %d\n"),
-		  stp_get_left(v), stp_get_width(v), right);
+		  stp_get_top(v), stp_get_height(v), bottom);
     }
 
   params = stp_get_parameter_list(v);
