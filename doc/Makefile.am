@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.37 2005/02/06 20:50:00 rleigh Exp $
+## $Id: Makefile.am,v 1.38 2005/04/17 21:53:18 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ endif
 
 # Rerun doxygen whenever autogen is run
 gutenprint: gutenprint-stamp
-gutenprint-stamp: gutenprint.dox.in $(top_srcdir)/configure
+gutenprint-stamp: gutenprint.dox $(top_srcdir)/configure
 	$(RM) -rf gutenprint/html
 	$(DOXYGEN) gutenprint.dox
 	touch $@
