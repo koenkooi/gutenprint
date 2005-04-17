@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.171 2005/04/15 23:53:15 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.172 2005/04/17 23:08:38 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1798,6 +1798,23 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
     4, 15, 0, 0,
     p1_5pl_dotsizes, p1_5pl_densities, &stpi_escp2_variable_1_5pl_drops,
     stpi_escp2_superfine_reslist, &stpi_escp2_cmykrb_inkgroup,
+    variable_bits, c1_5_base_res, &cd_roll_feed_input_slot_list,
+    &standard_quality_list, &new_init_sequence, &je_deinit_sequence,
+    NULL, &r800_channel_name_list
+  },
+  /* 68: PM-G820 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_XZEROMARGIN_YES | MODEL_VACUUM_NO | MODEL_FAST_360_NO |
+     MODEL_SEND_ZERO_ADVANCE_YES | MODEL_SUPPORTS_INK_CHANGE_NO |
+     MODEL_PACKET_MODE_YES),
+    180, 1, 2, 180, 1, 2, 180, 1, 2, 8,
+    360, 14400, -1, 2880, 2880, 360, 180, 0, 1, 0, 190, 0, 0, 0,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(2),
+    9, 9, 0, 0, 9, 9, 0, 0, 9, 9, 0, 0, 9, 9, 0, 0, 204, 191, 595, 842,
+    4, 15, 0, 0,
+    p1_5pl_dotsizes, p1_5pl_densities, &stpi_escp2_variable_1_5pl_drops,
+    stpi_escp2_superfine_reslist, &stpi_escp2_photo_gen3_inkgroup,
     variable_bits, c1_5_base_res, &cd_roll_feed_input_slot_list,
     &standard_quality_list, &new_init_sequence, &je_deinit_sequence,
     NULL, &r800_channel_name_list
