@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.20 2004/09/17 18:38:02 rleigh Exp $
+## $Id: Makefile.am,v 1.21 2005/04/18 10:54:56 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,19 +46,7 @@ if BUILD_GHOSTSCRIPT
 GHOSTSCRIPT_MAN = ijsgutenprint.1
 endif
 
-MAIN_MAN = \
-	gutenprint.3 \
-	gutenprint-color.7 \
-	gutenprint-dithers.7 \
-	gutenprint-imagetypes.7 \
-	gutenprint-inktypes.7 \
-	gutenprint-mediasizes.7 \
-	gutenprint-mediasources.7 \
-	gutenprint-mediatypes.7 \
-	gutenprint-models.7 \
-	gutenprint-resolutions.7
-
-man_MANS = $(CUPS_MAN) $(ESCPUTIL_MAN) $(GHOSTSCRIPT_MAN) $(MAIN_MAN)
+man_MANS = $(CUPS_MAN) $(ESCPUTIL_MAN) $(GHOSTSCRIPT_MAN)
 
 EXTRA_man_MANS = \
 	cups-calibrate.8 \

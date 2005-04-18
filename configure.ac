@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.120 2005/04/05 02:28:44 rlk Exp $
+dnl $Id: configure.ac,v 1.121 2005/04/18 10:54:56 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.120 $)
+AC_REVISION($Revision: 1.121 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -912,16 +912,6 @@ AC_CONFIG_FILES([man/cups-genppd.8])
 AC_CONFIG_FILES([man/cups-genppdconfig.8])
 AC_CONFIG_FILES([man/cups-genppdupdate.8])
 AC_CONFIG_FILES([man/escputil.1])
-AC_CONFIG_FILES([man/gutenprint.3])
-AC_CONFIG_FILES([man/gutenprint-color.7])
-AC_CONFIG_FILES([man/gutenprint-dithers.7])
-AC_CONFIG_FILES([man/gutenprint-imagetypes.7])
-AC_CONFIG_FILES([man/gutenprint-inktypes.7])
-AC_CONFIG_FILES([man/gutenprint-mediasizes.7])
-AC_CONFIG_FILES([man/gutenprint-mediasources.7])
-AC_CONFIG_FILES([man/gutenprint-mediatypes.7])
-AC_CONFIG_FILES([man/gutenprint-models.7])
-AC_CONFIG_FILES([man/gutenprint-resolutions.7])
 AC_CONFIG_FILES([man/ijsgutenprint.1])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([samples/Makefile])
