@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36 2005/04/12 00:45:10 rlk Exp $
+## $Id: Makefile.am,v 1.37 2005/04/18 11:20:01 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,6 @@ include $(top_srcdir)/scripts/global.mk
 ## Clean
 
 MAINTAINERCLEANFILES = Makefile.in
-
-EXTRA_DIST = README
 
 ## Variables
 
