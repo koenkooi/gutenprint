@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.40 2005/04/19 01:30:20 rlk Exp $
+## $Id: Makefile.am,v 1.41 2005/04/19 01:31:03 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ gutenprintui2: gutenprintui2-stamp
 gutenprintui2-stamp: gutenprintui2.dox $(top_srcdir)/configure
 	$(RM) -rf gutenprintui2/html
 	$(DOXYGEN) gutenprintui2.dox
+	touch $@
 
 gutenprint: gutenprint-stamp
 gutenprint-stamp: gutenprint.dox $(top_srcdir)/configure
