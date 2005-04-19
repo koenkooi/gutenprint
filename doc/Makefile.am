@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.39 2005/04/19 00:56:31 rlk Exp $
+## $Id: Makefile.am,v 1.40 2005/04/19 01:30:20 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -35,18 +35,21 @@ docdir = $(datadir)/doc/$(PACKAGE)
 ## Rules
 
 if MAINTAINER_MODE
-all-local: gutenprint-stamp
+all-local: gutenprint-stamp gutenprintui2-stamp
 else
 all-local:
 endif
 
 # Rerun doxygen whenever autogen is run
-gutenprint: gutenprint-stamp
-gutenprint-stamp: gutenprint.dox gutenprintui2.dox $(top_srcdir)/configure
-	$(RM) -rf gutenprint/html
+gutenprintui2: gutenprintui2-stamp
+gutenprintui2-stamp: gutenprintui2.dox $(top_srcdir)/configure
 	$(RM) -rf gutenprintui2/html
-	$(DOXYGEN) gutenprint.dox
 	$(DOXYGEN) gutenprintui2.dox
+
+gutenprint: gutenprint-stamp
+gutenprint-stamp: gutenprint.dox $(top_srcdir)/configure
+	$(RM) -rf gutenprint/html
+	$(DOXYGEN) gutenprint.dox
 	touch $@
 
 docs: gutenprint-stamp
@@ -82,6 +85,7 @@ EXTRA_DIST = \
 	gutenprintui2.dox.in \
 	gutenprint \
 	gutenprintui2 \
-	gutenprint-stamp
+	gutenprint-stamp \
+	gutenprintui2-stamp
 
 .PHONY: html ps pdf docs
