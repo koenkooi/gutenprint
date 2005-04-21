@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.69 2005/04/09 02:08:29 rlk Exp $"
+ * "$Id: escputil.c,v 1.70 2005/04/21 01:31:23 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -573,9 +573,7 @@ init_packet(int fd, int force)
   if (!force)
     {
       STP_DEBUG(fprintf(stderr, "Flushing data...\n"));
-      status = 1;
-      while (status > 0)
-	status = readAnswer(fd, buf, 1023);
+      flushData(fd);
     }
 
   STP_DEBUG(fprintf(stderr, "EnterIEEE...\n"));
@@ -610,12 +608,7 @@ init_packet(int fd, int force)
   
   status = 1;
   STP_DEBUG(fprintf(stderr, "Flushing data...\n"));
-  oldTimeOut = d4RdTimeout;
-  d4RdTimeout = 200;
-
-  while (status > 0)
-    status = readData(fd, socket_id, buf, 1023);
-  d4RdTimeout = oldTimeOut;
+  flushData(fd);
   return 0;
 }
 
@@ -657,9 +650,7 @@ initialize_printer(int quiet)
     }
 
   STP_DEBUG(fprintf(stderr, "Flushing printer data....\n"));
-  status = 1;
-  while (status > 0)
-    status = readAnswer(fd, buf, 1023);
+  flushData(fd);
 
   do 
     {
@@ -716,7 +707,7 @@ initialize_printer(int quiet)
 	      exit(1);
 	    }
 	  usleep(100000);
-	  readAnswer(fd, buf, 1023);
+	  flushData(fd);
 	  usleep(100000);
 
 	  isnew = !init_packet(fd, 0);
