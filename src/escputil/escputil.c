@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.73 2005/04/25 00:41:02 rlk Exp $"
+ * "$Id: escputil.c,v 1.74 2005/04/26 02:01:09 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -1027,7 +1027,6 @@ do_status_command_internal(status_cmd_t cmd)
               stp_parameter_description_destroy(&desc);
               exit(1);
             }
-          (void) close(fd);
           ind = buf;
 	  if (cmd == CMD_INK_LEVEL)
 	    {
