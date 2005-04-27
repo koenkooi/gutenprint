@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.16 2004/10/31 21:03:12 rleigh Exp $
+# $Id: cups-genppdupdate.in,v 1.17 2005/04/27 13:27:29 rleigh Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -450,6 +450,7 @@ sub find_ppd ($$$$) {
 			}
 		    }
 		    else {
+			$_ = $fn;
 			if (! -d $fn && ! /\/$/) {
 			    print STDERR "$fn: not a regular file, or insecure ownership and permissions.  Skipped\n";
 			}
