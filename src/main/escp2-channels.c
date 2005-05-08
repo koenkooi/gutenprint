@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.48 2005/04/17 18:54:56 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.49 2005/05/08 03:10:36 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -191,14 +191,14 @@ static const physical_subchannel_t standard_blue_subchannels[] =
   { 8, -1, 0, "BlueDensity", NULL }
 };
 
-DECLARE_INK_CHANNEL(standard_blue, 1.2);
+DECLARE_INK_CHANNEL(standard_blue, 1.0);
 
 static const physical_subchannel_t f360_blue_subchannels[] =
 {
   { 8, -1, 1, "BlueDensity", NULL }
 };
 
-DECLARE_INK_CHANNEL(f360_blue, 1.2);
+DECLARE_INK_CHANNEL(f360_blue, 1.0);
 
 static const physical_subchannel_t standard_gloss_subchannels[] =
 {
