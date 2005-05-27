@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.172 2005/04/17 23:08:38 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.173 2005/05/27 02:11:50 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1763,7 +1763,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
     9, 9, 0, 0, 9, 9, 0, 0, 9, 9, 0, 0, 9, 9, 0, 0, 204, 191, 595, 842,
     4, 15, 0, 0,
     p3pl_dotsizes, p3pl_densities, &stpi_escp2_variable_3pl_pmg_drops,
-    stpi_escp2_superfine_reslist, &stpi_escp2_standard_inkgroup,
+    stpi_escp2_superfine_reslist, &stpi_escp2_cx3650_inkgroup,
     variable_bits, variable_base_res, &default_input_slot_list,
     &standard_quality_list, &new_init_sequence, &je_deinit_sequence,
     NULL, &photo_channel_name_list

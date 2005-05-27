@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.91 2005/04/05 00:14:22 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.92 2005/05/27 02:11:51 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -558,6 +558,8 @@ extern const inkgroup_t stpi_escp2_cmy_inkgroup;
 extern const inkgroup_t stpi_escp2_standard_inkgroup;
 extern const inkgroup_t stpi_escp2_c80_inkgroup;
 extern const inkgroup_t stpi_escp2_c64_inkgroup;
+extern const inkgroup_t stpi_escp2_f360_inkgroup;
+extern const inkgroup_t stpi_escp2_cx3650_inkgroup;
 extern const inkgroup_t stpi_escp2_x80_inkgroup;
 extern const inkgroup_t stpi_escp2_photo_gen1_inkgroup;
 extern const inkgroup_t stpi_escp2_photo_gen2_inkgroup;
@@ -692,5 +694,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.91 2005/04/05 00:14:22 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.92 2005/05/27 02:11:51 rlk Exp $".
  */
