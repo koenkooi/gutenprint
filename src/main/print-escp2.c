@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.335 2005/04/05 00:14:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.335.4.1 2005/06/13 02:08:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2157,7 +2157,6 @@ setup_inks(stp_vars_t *v)
 				STP_PARAMETER_DEFAULTED))
     multi_channel_limit =
       stp_get_float_parameter(v, "MultiChannelLimit");
-  stp_channel_set_multi_channel_lower_limit(v, 1.0 - multi_channel_limit);
   for (i = 0; i < pd->logical_channels; i++)
     {
       const ink_channel_t *channel = ink_type->channel_set->channels[i];
@@ -2191,7 +2190,16 @@ setup_inks(stp_vars_t *v)
 		stp_channel_set_cutoff_adjustment(v, i, j,
 						  paper->subchannel_cutoff);
 	    }
-	  stp_channel_set_hue_angle(v, i, channel->hue);
+	  if (channel->hue_curve)
+	    {
+	      stp_curve_t *curve =
+		stp_curve_create_from_string(channel->hue_curve->curve);
+	      if (curve)
+		{
+		  stp_channel_set_curve(v, i, curve);
+		  stp_curve_destroy(curve);
+		}
+	    }
 	}
     }
   if (pd->use_aux_channels)
@@ -2231,7 +2239,16 @@ setup_inks(stp_vars_t *v)
 		    stp_channel_set_cutoff_adjustment(v, ch, j,
 						      paper->subchannel_cutoff);
 		}
-	      stp_channel_set_hue_angle(v, ch, channel->hue);
+	      if (channel->hue_curve)
+		{
+		  stp_curve_t *curve =
+		    stp_curve_create_from_string(channel->hue_curve->curve);
+		  if (curve)
+		    {
+		      stp_channel_set_curve(v, ch, curve);
+		      stp_curve_destroy(curve);
+		    }
+		}
 	    }
 	}
     }
