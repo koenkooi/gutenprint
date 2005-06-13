@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversions.c,v 1.16 2005/05/08 03:10:36 rlk Exp $"
+ * "$Id: color-conversions.c,v 1.16.2.1 2005/06/13 01:57:29 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -244,7 +244,7 @@ adjust_hue(const double *hue_map, double hue, size_t points)
 
 static inline void
 adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
-	   int split_saturation)
+	   int split_saturation, int adjust_hue_only)
 {
   const double *hue_map = CURVE_CACHE_FAST_DOUBLE(&(lut->hue_map));
   const double *lum_map = CURVE_CACHE_FAST_DOUBLE(&(lut->lum_map));
@@ -262,7 +262,7 @@ adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
       rgbout[2] ^= 65535;
       calc_rgb_to_hsl(rgbout, &h, &s, &l);
       s = update_saturation(s, ssat, isat);
-      if (lut->sat_map.d_cache)
+      if (!adjust_hue_only && lut->sat_map.d_cache)
 	{
 	  double nh = h * sat_count / 6.0;
 	  double tmp = interpolate_value(sat_map, nh);
@@ -275,7 +275,7 @@ adjust_hsl(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
       h = adjust_hue(hue_map, h, hue_count);
       calc_hsl_to_rgb(rgbout, h, s, l);
 
-      if (s > 0.00001)
+      if (!adjust_hue_only && s > 0.00001)
 	{
 	  /*
 	   * Perform luminosity adjustment only on color component.
@@ -352,22 +352,78 @@ adjust_hsl_bright(unsigned short *rgbout, lut_t *lut, double ssat, double isat,
 }
 
 static inline void
-lookup_rgb(lut_t *lut, unsigned short *rgbout,
-	   const unsigned short *red, const unsigned short *green,
-	   const unsigned short *blue, unsigned steps)
+lookup_channels(lut_t *lut, unsigned short *rgbout, const unsigned short **luts,
+	   unsigned channels, unsigned steps)
 {
+  int i;
   if (steps == 65536)
+    for (i = 0; i < channels; i++)
+      rgbout[i] = luts[i][rgbout[i]];
+  else
+    for (i = 0; i < channels; i++)
+      rgbout[i] = luts[i][rgbout[i] / 257];
+}
+
+static inline double
+compute_hue(int c, int m, int y, int max, int invert_output)
+{
+  double h;
+  if (max == c)
+    h = (m - y) / (double) max;
+  else if (max == m)
+    h = 2 + ((y - c) / (double) max);
+  else
+    h = 4 + ((c - m) / (double) max);
+  if (h < 0)
+    h += 6;
+  else if (h >= 6)
+    h -= 6;
+  return h;
+}
+
+#define INVERT_COLOR 0
+
+static inline void
+compute_extra_channels(lut_t *lut, unsigned short *out)
+{
+  int j;
+  int c = out[0] ^ INVERT_COLOR;
+  int m = out[1] ^ INVERT_COLOR;
+  int y = out[2] ^ INVERT_COLOR;
+  int min = FMIN(c, FMIN(m, y));
+  int max = FMAX(c, FMAX(m, y));
+  if (max > min)	/* Otherwise it's gray, and we don't care */
     {
-      rgbout[0] = red[rgbout[0]];
-      rgbout[1] = green[rgbout[1]];
-      rgbout[2] = blue[rgbout[2]];
+      double hue;
+      /*
+       * We're only interested in converting color components
+       * to special inks.  We want to compute the hue and
+       * luminosity to determine what we want to convert.
+       * Since we're eliminating all grayscale component, the
+       * computations become simpler.
+       */
+      c -= min;
+      m -= min;
+      y -= min;
+      max -= min;
+      hue = compute_hue(c, m, y, max, lut->invert_output);
+      for (j = 1; j < lut->color_channels + 1; j++)
+	{
+	  const double *map = CURVE_CACHE_FAST_DOUBLE(&(lut->hue_curves[j]));
+	  size_t count = CURVE_CACHE_FAST_COUNT(&(lut->hue_curves[j]));
+	  out[j - 1] = max * interpolate_value(map, hue * count / 6.0);
+	}
+      out[0] += min;
+      out[1] += min;
+      out[2] += min;
     }
   else
     {
-      rgbout[0] = red[rgbout[0] / 257];
-      rgbout[1] = green[rgbout[1] / 257];
-      rgbout[2] = blue[rgbout[2] / 257];
+      for (j = 3; j < lut->out_channels; j++)
+	out[j] = 0;
     }
+  for (j = 0; j < lut->out_channels; j++)
+    out[j] = out[j] ^ INVERT_COLOR;
 }
 
 static inline int
@@ -406,7 +462,7 @@ generic_cmy_to_kcmy(const stp_vars_t *vars, const unsigned short *in,
 
   const unsigned short *gcr_lookup;
   const unsigned short *black_lookup;
-  int i;
+  int i, j;
   int i0 = -1;
   int i1 = -1;
   int i2 = -1;
@@ -414,10 +470,8 @@ generic_cmy_to_kcmy(const stp_vars_t *vars, const unsigned short *in,
   unsigned short o1 = 0;
   unsigned short o2 = 0;
   unsigned short o3 = 0;
-  unsigned short nz0 = 0;
-  unsigned short nz1 = 0;
-  unsigned short nz2 = 0;
-  unsigned short nz3 = 0;
+  unsigned char nz[STP_CHANNEL_LIMIT];
+  unsigned answer;
 
   stp_curve_resample(stp_curve_cache_get_curve(&(lut->gcr_curve)), lut->steps);
   gcr_lookup = stp_curve_cache_get_ushort_data(&(lut->gcr_curve));
@@ -425,8 +479,10 @@ generic_cmy_to_kcmy(const stp_vars_t *vars, const unsigned short *in,
 		     (&(lut->channel_curves[CHANNEL_K])), lut->steps);
   black_lookup =
     stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_K]));
+  memset(nz, 0, sizeof(nz));
 
-  for (i = 0; i < width; i++, out += 4, in += 3)
+  for (i = 0; i < width; i++, out += lut->out_channels,
+	 in += lut->color_channels)
     {
       if (i0 == in[0] && i1 == in[1] && i2 == in[2])
 	{
@@ -488,13 +544,23 @@ generic_cmy_to_kcmy(const stp_vars_t *vars, const unsigned short *in,
 	  o1 = out[1];
 	  o2 = out[2];
 	  o3 = out[3];
-	  nz0 |= o0;
-	  nz1 |= o1;
-	  nz2 |= o2;
-	  nz3 |= o3;
+	  for (j = 0; j < 4; j++)
+	    nz[j] |= (out[j] != 0);
+	}
+      if (lut->out_channels > 4)
+	{
+	  for (j = 4; j < lut->out_channels; j++)
+	    {
+	      out[j] = in[j - 1];
+	      nz[j] |= (out[j] != 0);
+	    }
 	}
     }
-  return (nz0 ? 0 : 1) + (nz1 ? 0 : 2) + (nz2 ? 0 : 4) + (nz3 ? 0 : 8);
+  answer = 0;
+  for (j = 0; j < lut->out_channels; j++)
+    if (!nz[j])
+      answer |= 1 << j;
+  return answer;
 }
 
 static unsigned
@@ -568,102 +634,106 @@ fromname##_to_##toname(const stp_vars_t *vars, const unsigned char *in,	\
     return fromname##_16_to_##toname(vars, in, out);			\
 }
 
-#define COLOR_TO_COLOR_FUNC(T, bits)					     \
-static unsigned								     \
-color_##bits##_to_color(const stp_vars_t *vars, const unsigned char *in,     \
-			unsigned short *out)				     \
-{									     \
-  int i;								     \
-  double isat = 1.0;							     \
-  double ssat = stp_get_float_parameter(vars, "Saturation");		     \
-  double sbright = stp_get_float_parameter(vars, "Brightness");		     \
-  int i0 = -1;								     \
-  int i1 = -1;								     \
-  int i2 = -1;								     \
-  unsigned short o0 = 0;						     \
-  unsigned short o1 = 0;						     \
-  unsigned short o2 = 0;						     \
-  unsigned short nz0 = 0;						     \
-  unsigned short nz1 = 0;						     \
-  unsigned short nz2 = 0;						     \
-  const unsigned short *red;						     \
-  const unsigned short *green;						     \
-  const unsigned short *blue;						     \
-  const unsigned short *brightness;					     \
-  const unsigned short *contrast;					     \
-  const T *s_in = (const T *) in;					     \
-  lut_t *lut = (lut_t *)(stp_get_component_data(vars, "Color"));	     \
-  int compute_saturation = ssat <= .99999 || ssat >= 1.00001;		     \
-  int split_saturation = ssat > 1.4;					     \
-  int bright_color_adjustment = 0;					     \
-  int do_user_adjustment = 0;						     \
-  if (lut->color_correction->correction == COLOR_CORRECTION_BRIGHT)	     \
-    bright_color_adjustment = 1;					     \
-  if (sbright != 1)							     \
-    do_user_adjustment = 1;						     \
-  compute_saturation |= do_user_adjustment;				     \
-									     \
-  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				     \
-    stp_curve_resample(stp_curve_cache_get_curve(&(lut->channel_curves[i])), \
-		       1 << bits);					     \
-  stp_curve_resample							     \
-    (stp_curve_cache_get_curve(&(lut->brightness_correction)), 65536);	     \
-  stp_curve_resample							     \
-    (stp_curve_cache_get_curve(&(lut->contrast_correction)), 1 << bits);     \
-  red =									     \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C]));	     \
-  green =								     \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M]));	     \
-  blue =								     \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y]));	     \
-  brightness=								     \
-    stp_curve_cache_get_ushort_data(&(lut->brightness_correction));	     \
-  contrast =								     \
-    stp_curve_cache_get_ushort_data(&(lut->contrast_correction));	     \
-  (void) stp_curve_cache_get_double_data(&(lut->hue_map));		     \
-  (void) stp_curve_cache_get_double_data(&(lut->lum_map));		     \
-  (void) stp_curve_cache_get_double_data(&(lut->sat_map));		     \
-									     \
-  if (split_saturation)							     \
-    ssat = sqrt(ssat);							     \
-  if (ssat > 1)								     \
-    isat = 1.0 / ssat;							     \
-  for (i = 0; i < lut->image_width; i++)				     \
-    {									     \
-      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		     \
-	{								     \
-	  out[0] = o0;							     \
-	  out[1] = o1;							     \
-	  out[2] = o2;							     \
-	}								     \
-      else								     \
-	{								     \
-	  i0 = s_in[0];							     \
-	  i1 = s_in[1];							     \
-	  i2 = s_in[2];							     \
-	  out[0] = i0 * (65535u / (unsigned) ((1 << bits) - 1));	     \
-	  out[1] = i1 * (65535u / (unsigned) ((1 << bits) - 1));	     \
-	  out[2] = i2 * (65535u / (unsigned) ((1 << bits) - 1));	     \
-	  lookup_rgb(lut, out, contrast, contrast, contrast, 1 << bits);     \
-	  if ((compute_saturation))					     \
-	    update_saturation_from_rgb(out, brightness, ssat, isat,	     \
-				       do_user_adjustment);		     \
-	  if (bright_color_adjustment)					     \
-	    adjust_hsl_bright(out, lut, ssat, isat, split_saturation);	     \
-	  else								     \
-	    adjust_hsl(out, lut, ssat, isat, split_saturation);		     \
-	  lookup_rgb(lut, out, red, green, blue, 1 << bits);		     \
-	  o0 = out[0];							     \
-	  o1 = out[1];							     \
-	  o2 = out[2];							     \
-	  nz0 |= o0;							     \
-	  nz1 |= o1;							     \
-	  nz2 |= o2;							     \
-	}								     \
-      s_in += 3;							     \
-      out += 3;								     \
-    }									     \
-  return (nz0 ? 0 : 1) +  (nz1 ? 0 : 2) +  (nz2 ? 0 : 4);		     \
+#define COLOR_TO_COLOR_FUNC(T, bits)					   \
+static unsigned								   \
+color_##bits##_to_color(const stp_vars_t *vars, const unsigned char *in,   \
+			unsigned short *out)				   \
+{									   \
+  int i, j;								   \
+  unsigned ret = 0;							   \
+  double isat = 1.0;							   \
+  double ssat = stp_get_float_parameter(vars, "Saturation");		   \
+  double sbright = stp_get_float_parameter(vars, "Brightness");		   \
+  int i0 = -1;								   \
+  int i1 = -1;								   \
+  int i2 = -1;								   \
+  unsigned char nz[STP_CHANNEL_LIMIT];					   \
+  const unsigned short *brightness;					   \
+  const unsigned short *contrast[3];					   \
+  const T *s_in = (const T *) in;					   \
+  lut_t *lut = (lut_t *)(stp_get_component_data(vars, "Color"));	   \
+  int compute_saturation = ssat <= .99999 || ssat >= 1.00001;		   \
+  int split_saturation = ssat > 1.4;					   \
+  int bright_color_adjustment = 0;					   \
+  int hue_only_color_adjustment = 0;					   \
+  int do_user_adjustment = 0;						   \
+  int do_extended_conversion = 0;					   \
+									   \
+  if (lut->color_correction->correction == COLOR_CORRECTION_BRIGHT)	   \
+    bright_color_adjustment = 1;					   \
+  if (lut->color_correction->correction == COLOR_CORRECTION_HUE)	   \
+    hue_only_color_adjustment = 1;					   \
+  if (sbright != 1)							   \
+    do_user_adjustment = 1;						   \
+  if (lut->output_color_description->color_id == COLOR_ID_MULTI)	   \
+    do_extended_conversion = 1;						   \
+  compute_saturation |= do_user_adjustment;				   \
+									   \
+  for (i = CHANNEL_C; i < lut->color_channels + 1; i++)			   \
+    {									   \
+      stp_curve_resample						   \
+	(stp_curve_cache_get_curve(&(lut->channel_curves[i])), 1 << bits); \
+      lut->channel_luts[i] =						   \
+	stp_curve_cache_get_ushort_data(&(lut->channel_curves[i]));	   \
+      if (stp_curve_cache_get_curve(&(lut->hue_curves[i])))		   \
+	{								   \
+	  stp_curve_resample						   \
+	    (stp_curve_cache_get_curve(&(lut->hue_curves[i])), 4096);	   \
+	  (void) stp_curve_cache_get_double_data(&(lut->hue_curves[i]));   \
+	}								   \
+    }									   \
+  memset(nz, 0, sizeof(nz));						   \
+  stp_curve_resample							   \
+    (stp_curve_cache_get_curve(&(lut->brightness_correction)), 65536);	   \
+  stp_curve_resample							   \
+    (stp_curve_cache_get_curve(&(lut->contrast_correction)), 1 << bits);   \
+  brightness=								   \
+    stp_curve_cache_get_ushort_data(&(lut->brightness_correction));	   \
+  contrast[0] = contrast[1] = contrast[2] =				   \
+    stp_curve_cache_get_ushort_data(&(lut->contrast_correction));	   \
+  (void) stp_curve_cache_get_double_data(&(lut->hue_map));		   \
+  (void) stp_curve_cache_get_double_data(&(lut->lum_map));		   \
+  (void) stp_curve_cache_get_double_data(&(lut->sat_map));		   \
+									   \
+  if (split_saturation)							   \
+    ssat = sqrt(ssat);							   \
+  if (ssat > 1)								   \
+    isat = 1.0 / ssat;							   \
+  for (i = 0; i < lut->image_width; i++)				   \
+    {									   \
+      if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		   \
+	short_copy(out, out - lut->color_channels, lut->color_channels);   \
+      else								   \
+	{								   \
+	  i0 = s_in[0];							   \
+	  i1 = s_in[1];							   \
+	  i2 = s_in[2];							   \
+	  out[0] = i0 * (65535u / (unsigned) ((1 << bits) - 1));	   \
+	  out[1] = i1 * (65535u / (unsigned) ((1 << bits) - 1));	   \
+	  out[2] = i2 * (65535u / (unsigned) ((1 << bits) - 1));	   \
+	  lookup_channels(lut, out, contrast, 3, 1 << bits);		   \
+	  if (compute_saturation)					   \
+	    update_saturation_from_rgb(out, brightness, ssat, isat,	   \
+				       do_user_adjustment);		   \
+	  if (bright_color_adjustment)					   \
+	    adjust_hsl_bright(out, lut, ssat, isat, split_saturation);	   \
+	  else								   \
+	    adjust_hsl(out, lut, ssat, isat, split_saturation,		   \
+		       hue_only_color_adjustment);			   \
+	  lookup_channels(lut, out, &(lut->channel_luts[1]),		   \
+			  lut->color_channels, 1 << bits);		   \
+	  if (do_extended_conversion)					   \
+	    compute_extra_channels(lut, out);				   \
+	  for (j = 0; j < lut->color_channels; j++)			   \
+	    nz[j] |= (out[j] != 0);					   \
+	}								   \
+      s_in += lut->in_channels;						   \
+      out += lut->color_channels;					   \
+    }									   \
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)				   \
+    if (!nz[i])								   \
+      ret |= 1 << i;							   \
+  return ret;								   \
 }
 
 COLOR_TO_COLOR_FUNC(unsigned char, 8)
@@ -679,21 +749,14 @@ static unsigned								      \
 color_##bits##_to_color_fast(const stp_vars_t *vars, const unsigned char *in, \
 			     unsigned short *out)			      \
 {									      \
-  int i;								      \
+  int i, j;								      \
+  unsigned ret = 0;							      \
   int i0 = -1;								      \
   int i1 = -1;								      \
   int i2 = -1;								      \
-  int o0 = 0;								      \
-  int o1 = 0;								      \
-  int o2 = 0;								      \
-  int nz0 = 0;								      \
-  int nz1 = 0;								      \
-  int nz2 = 0;								      \
+  unsigned char nz[STP_CHANNEL_LIMIT];					      \
   const T *s_in = (const T *) in;					      \
   lut_t *lut = (lut_t *)(stp_get_component_data(vars, "Color"));	      \
-  const unsigned short *red;						      \
-  const unsigned short *green;						      \
-  const unsigned short *blue;						      \
   const unsigned short *brightness;					      \
   const unsigned short *contrast;					      \
   double isat = 1.0;							      \
@@ -701,25 +764,34 @@ color_##bits##_to_color_fast(const stp_vars_t *vars, const unsigned char *in, \
   double sbright = stp_get_float_parameter(vars, "Brightness");		      \
   int compute_saturation = saturation <= .99999 || saturation >= 1.00001;     \
   int do_user_adjustment = 0;						      \
+  int do_extended_conversion = 0;					      \
   if (sbright != 1)							      \
     do_user_adjustment = 1;						      \
+  if (lut->output_color_description->color_id == COLOR_ID_MULTI)	      \
+    do_extended_conversion = 1;						      \
   compute_saturation |= do_user_adjustment;				      \
 									      \
-  for (i = CHANNEL_C; i <= CHANNEL_Y; i++)				      \
-    stp_curve_resample(lut->channel_curves[i].curve, 65536);		      \
+  for (i = CHANNEL_C; i < lut->color_channels + 1; i++)			      \
+    {									      \
+      stp_curve_resample						      \
+	(stp_curve_cache_get_curve(&(lut->channel_curves[i])), 65536);	      \
+      lut->channel_luts[i] =						      \
+	stp_curve_cache_get_ushort_data(&(lut->channel_curves[i]));	      \
+      if (stp_curve_cache_get_curve(&(lut->hue_curves[i])))		      \
+	{								      \
+	  stp_curve_resample						      \
+	    (stp_curve_cache_get_curve(&(lut->hue_curves[i])), 4096);	      \
+	  (void) stp_curve_cache_get_double_data(&(lut->hue_curves[i]));      \
+	}								      \
+    }									      \
+  memset(nz, 0, sizeof(nz));						      \
   stp_curve_resample							      \
     (stp_curve_cache_get_curve(&(lut->brightness_correction)), 65536);	      \
   stp_curve_resample							      \
     (stp_curve_cache_get_curve(&(lut->contrast_correction)), 1 << bits);      \
-  red =									      \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_C]));	      \
-  green =								      \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_M]));	      \
-  blue =								      \
-    stp_curve_cache_get_ushort_data(&(lut->channel_curves[CHANNEL_Y]));	      \
   brightness=								      \
     stp_curve_cache_get_ushort_data(&(lut->brightness_correction));	      \
-  contrast =								      \
+  contrast=								      \
     stp_curve_cache_get_ushort_data(&(lut->contrast_correction));	      \
 									      \
   if (saturation > 1)							      \
@@ -727,11 +799,7 @@ color_##bits##_to_color_fast(const stp_vars_t *vars, const unsigned char *in, \
   for (i = 0; i < lut->image_width; i++)				      \
     {									      \
       if (i0 == s_in[0] && i1 == s_in[1] && i2 == s_in[2])		      \
-	{								      \
-	  out[0] = o0;							      \
-	  out[1] = o1;							      \
-	  out[2] = o2;							      \
-	}								      \
+	short_copy(out, out - lut->color_channels, lut->color_channels);      \
       else								      \
 	{								      \
 	  i0 = s_in[0];							      \
@@ -740,22 +808,22 @@ color_##bits##_to_color_fast(const stp_vars_t *vars, const unsigned char *in, \
 	  out[0] = contrast[s_in[0]];					      \
 	  out[1] = contrast[s_in[1]];					      \
 	  out[2] = contrast[s_in[2]];					      \
-	  if ((compute_saturation))					      \
+	  if (compute_saturation)					      \
 	    update_saturation_from_rgb(out, brightness, saturation, isat, 1); \
-	  out[0] = red[out[0]];						      \
-	  out[1] = green[out[1]];					      \
-	  out[2] = blue[out[2]];					      \
-	  o0 = out[0];							      \
-	  o1 = out[1];							      \
-	  o2 = out[2];							      \
-	  nz0 |= o0;							      \
-	  nz1 |= o1;							      \
-	  nz2 |= o2;							      \
+	  lookup_channels(lut, out, &(lut->channel_luts[1]),		      \
+			  lut->color_channels, 65536);			      \
+	  if (do_extended_conversion)					      \
+	    compute_extra_channels(lut, out);				      \
+	  for (j = 0; j < lut->color_channels; j++)			      \
+	    nz[j] |= (out[j] != 0);					      \
 	}								      \
-      s_in += 3;							      \
-      out += 3;								      \
+      s_in += lut->in_channels;						      \
+      out += lut->color_channels;					      \
     }									      \
-  return (nz0 ? 0 : 1) +  (nz1 ? 0 : 2) +  (nz2 ? 0 : 4);		      \
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)				      \
+    if (!nz[i])								      \
+      ret |= 1 << i;							      \
+  return ret;								      \
 }
 
 FAST_COLOR_TO_COLOR_FUNC(unsigned char, 8)
@@ -903,7 +971,7 @@ name##_##bits##_to_##name2(const stp_vars_t *vars, const unsigned char *in, \
   size_t real_steps = lut->steps;					    \
   unsigned status;							    \
   if (!lut->cmy_tmp)							    \
-    lut->cmy_tmp = stp_malloc(4 * 2 * lut->image_width);		    \
+    lut->cmy_tmp = stp_malloc(lut->out_channels * 2 * lut->image_width);    \
   name##_##bits##_to_##name3(vars, in, lut->cmy_tmp);			    \
   lut->steps = 65536;							    \
   status = name4##_cmy_to_kcmy(vars, lut->cmy_tmp, out);		    \
@@ -963,22 +1031,22 @@ name##_to_kcmy_threshold(const stp_vars_t *vars,			\
 	}								\
       if (k >= high_bit)						\
 	{								\
-	  z &= 0xe;							\
+	  z &= ~1;							\
 	  out[0] = 65535;						\
 	}								\
       if (c >= high_bit)						\
 	{								\
-	  z &= 0xd;							\
+	  z &= ~2;							\
 	  out[1] = 65535;						\
 	}								\
       if (m >= high_bit)						\
 	{								\
-	  z &= 0xb;							\
+	  z &= ~4;							\
 	  out[2] = 65535;						\
 	}								\
       if (y >= high_bit)						\
 	{								\
-	  z &= 0x7;							\
+	  z &= ~8;							\
 	  out[3] = 65535;						\
 	}								\
     }									\
@@ -1010,22 +1078,22 @@ name##_to_kcmy_threshold(const stp_vars_t *vars,			\
     {									\
       if ((s_in[3] & high_bit) == desired_high_bit)			\
 	{								\
-	  z &= 0xe;							\
+	  z &= ~1;							\
 	  out[0] = 65535;						\
 	}								\
       if ((s_in[0] & high_bit) == desired_high_bit)			\
 	{								\
-	  z &= 0xd;							\
+	  z &= ~2;							\
 	  out[1] = 65535;						\
 	}								\
       if ((s_in[1] & high_bit) == desired_high_bit)			\
 	{								\
-	  z &= 0xb;							\
+	  z &= ~4;							\
 	  out[2] = 65535;						\
 	}								\
       if ((s_in[2] & high_bit) == desired_high_bit)			\
 	{								\
-	  z &= 0x7;							\
+	  z &= ~8;							\
 	  out[3] = 65535;						\
 	}								\
     }									\
@@ -2066,6 +2134,7 @@ generic_##from##_to_##to(const stp_vars_t *v,			\
       return from2##_to_##to##_fast(v, in, out);		\
     case COLOR_CORRECTION_ACCURATE:				\
     case COLOR_CORRECTION_BRIGHT:				\
+    case COLOR_CORRECTION_HUE:					\
       return from2##_to_##to(v, in, out);			\
     case COLOR_CORRECTION_DESATURATED:				\
       return from2##_to_##to##_desaturated(v, in, out);		\
@@ -2092,6 +2161,7 @@ generic_##from##_to_##to(const stp_vars_t *v,			\
     case COLOR_CORRECTION_UNCORRECTED:				\
     case COLOR_CORRECTION_ACCURATE:				\
     case COLOR_CORRECTION_BRIGHT:				\
+    case COLOR_CORRECTION_HUE:					\
       return from2##_to_##to(v, in, out);			\
     case COLOR_CORRECTION_DESATURATED:				\
       return from2##_to_##to##_desaturated(v, in, out);		\
@@ -2118,6 +2188,7 @@ generic_##from##_to_##to(const stp_vars_t *v,				\
     case COLOR_CORRECTION_UNCORRECTED:					\
     case COLOR_CORRECTION_ACCURATE:					\
     case COLOR_CORRECTION_BRIGHT:					\
+    case COLOR_CORRECTION_HUE:						\
     case COLOR_CORRECTION_DESATURATED:					\
       return from2##_to_##to(v, in, out);				\
     case COLOR_CORRECTION_THRESHOLD:					\
@@ -2220,6 +2291,7 @@ stpi_color_convert_raw(const stp_vars_t *v,
       return raw_to_raw_threshold(v, in, out);
     case COLOR_CORRECTION_UNCORRECTED:
     case COLOR_CORRECTION_BRIGHT:
+    case COLOR_CORRECTION_HUE:
     case COLOR_CORRECTION_ACCURATE:
     case COLOR_CORRECTION_DESATURATED:
       return raw_to_raw(v, in, out);

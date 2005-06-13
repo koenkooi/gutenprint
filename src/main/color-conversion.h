@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.8 2005/03/22 12:29:04 rlk Exp $"
+ * "$Id: color-conversion.h,v 1.8.2.1 2005/06/13 01:57:29 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gimp-Print algorithm.
  *
@@ -39,6 +39,7 @@ typedef enum
   COLOR_CORRECTION_DEFAULT,
   COLOR_CORRECTION_UNCORRECTED,
   COLOR_CORRECTION_BRIGHT,
+  COLOR_CORRECTION_HUE,
   COLOR_CORRECTION_ACCURATE,
   COLOR_CORRECTION_THRESHOLD,
   COLOR_CORRECTION_DESATURATED,
@@ -66,20 +67,12 @@ typedef enum
 #define CHANNEL_C	1
 #define CHANNEL_M	2
 #define CHANNEL_Y	3
-#define CHANNEL_W	4
-#define CHANNEL_R	5
-#define CHANNEL_G	6
-#define CHANNEL_B	7
-#define CHANNEL_MAX	8
+#define CHANNEL_MAX	4
 
 #define CMASK_K		(1 << CHANNEL_K)
 #define CMASK_C		(1 << CHANNEL_C)
 #define CMASK_M		(1 << CHANNEL_M)
 #define CMASK_Y		(1 << CHANNEL_Y)
-#define CMASK_W		(1 << CHANNEL_W)
-#define CMASK_R		(1 << CHANNEL_R)
-#define CMASK_G		(1 << CHANNEL_G)
-#define CMASK_B		(1 << CHANNEL_B)
 #define CMASK_RAW       (1 << CHANNEL_MAX)
 
 typedef struct
@@ -89,6 +82,7 @@ typedef struct
   const char *curve_name;
   const char *rgb_gamma_name;
   const char *rgb_curve_name;
+  const char *hue_curve_name;
 } channel_param_t;
 
 /* Color conversion function */
@@ -97,10 +91,9 @@ typedef unsigned (*stp_convert_t)(const stp_vars_t *vars,
 				  unsigned short *out);
 
 #define CMASK_NONE   (0)
-#define CMASK_RGB    (CMASK_R | CMASK_G | CMASK_B)
 #define CMASK_CMY    (CMASK_C | CMASK_M | CMASK_Y)
 #define CMASK_CMYK   (CMASK_CMY | CMASK_K)
-#define CMASK_ALL    (CMASK_CMYK | CMASK_RGB | CMASK_W)
+#define CMASK_ALL    (CMASK_CMYK)
 #define CMASK_EVERY  (CMASK_ALL | CMASK_RAW)
 
 typedef enum
@@ -111,6 +104,7 @@ typedef enum
   COLOR_ID_CMY,
   COLOR_ID_CMYK,
   COLOR_ID_KCMY,
+  COLOR_ID_MULTI,
   COLOR_ID_RAW
 } color_id_t;
 
@@ -140,6 +134,7 @@ typedef struct
   int image_width;
   int in_channels;
   int out_channels;
+  int color_channels;
   int channels_are_initialized;
   int invert_output;
   const color_description_t *input_color_description;
@@ -149,9 +144,9 @@ typedef struct
   stp_cached_curve_t contrast_correction;
   stp_cached_curve_t user_color_correction;
   stp_cached_curve_t channel_curves[STP_CHANNEL_LIMIT];
-  stp_cached_curve_t hue_angle;
+  stp_cached_curve_t hue_curves[STP_CHANNEL_LIMIT];
+  const unsigned short *channel_luts[STP_CHANNEL_LIMIT];
   double gamma_values[STP_CHANNEL_LIMIT];
-  double hue_angles[STP_CHANNEL_LIMIT];
   double print_gamma;
   double app_gamma;
   double screen_gamma;
@@ -177,6 +172,9 @@ extern unsigned stpi_color_convert_to_color(const stp_vars_t *v,
 extern unsigned stpi_color_convert_to_kcmy(const stp_vars_t *v,
 					   const unsigned char *,
 					   unsigned short *);
+extern unsigned stpi_color_convert_to_multi(const stp_vars_t *v,
+					    const unsigned char *,
+					    unsigned short *);
 extern unsigned stpi_color_convert_raw(const stp_vars_t *v,
 				       const unsigned char *,
 				       unsigned short *);

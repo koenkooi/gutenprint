@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.126 2005/03/22 12:29:09 rlk Exp $"
+ * "$Id: print-color.c,v 1.126.2.1 2005/06/13 01:57:29 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -46,15 +46,16 @@
 
 static const color_correction_t color_corrections[] =
 {
-  { "None",        N_("Default"),       COLOR_CORRECTION_DEFAULT,     1 },
-  { "Accurate",    N_("High Accuracy"), COLOR_CORRECTION_ACCURATE,    1 },
-  { "Bright",      N_("Bright Colors"), COLOR_CORRECTION_BRIGHT,      1 },
-  { "Uncorrected", N_("Uncorrected"),   COLOR_CORRECTION_UNCORRECTED, 0 },
-  { "Desaturated", N_("Desaturated"),   COLOR_CORRECTION_DESATURATED, 0 },
-  { "Threshold",   N_("Threshold"),     COLOR_CORRECTION_THRESHOLD,   0 },
-  { "Density",     N_("Density"),       COLOR_CORRECTION_DENSITY,     0 },
-  { "Raw",         N_("Raw"),           COLOR_CORRECTION_RAW,         0 },
-  { "Predithered", N_("Pre-Dithered"),  COLOR_CORRECTION_PREDITHERED, 0 },
+  { "None",        N_("Default"),          COLOR_CORRECTION_DEFAULT,     1 },
+  { "Accurate",    N_("High Accuracy"),    COLOR_CORRECTION_ACCURATE,    1 },
+  { "Bright",      N_("Bright Colors"),    COLOR_CORRECTION_BRIGHT,      1 },
+  { "Hue",         N_("Correct Hue Only"), COLOR_CORRECTION_HUE,         1 },
+  { "Uncorrected", N_("Uncorrected"),      COLOR_CORRECTION_UNCORRECTED, 0 },
+  { "Desaturated", N_("Desaturated"),      COLOR_CORRECTION_DESATURATED, 0 },
+  { "Threshold",   N_("Threshold"),        COLOR_CORRECTION_THRESHOLD,   0 },
+  { "Density",     N_("Density"),          COLOR_CORRECTION_DENSITY,     0 },
+  { "Raw",         N_("Raw"),              COLOR_CORRECTION_RAW,         0 },
+  { "Predithered", N_("Pre-Dithered"),     COLOR_CORRECTION_PREDITHERED, 0 },
 };
 
 static const int color_correction_count =
@@ -62,14 +63,14 @@ sizeof(color_corrections) / sizeof(color_correction_t);
 
 static const channel_param_t channel_params[] =
 {
-  { CMASK_K, "BlackGamma",   "BlackCurve",   "WhiteGamma",   "WhiteCurve"   },
-  { CMASK_C, "CyanGamma",    "CyanCurve",    "RedGamma",     "RedCurve"     },
-  { CMASK_M, "MagentaGamma", "MagentaCurve", "GreenGamma",   "GreenCurve"   },
-  { CMASK_Y, "YellowGamma",  "YellowCurve",  "BlueGamma",    "BlueCurve"    },
-  { CMASK_W, "WhiteGamma",   "WhiteCurve",   "BlackGamma",   "BlackCurve"   },
-  { CMASK_R, "RedGamma",     "RedCurve",     "CyanGamma",    "CyanCurve"    },
-  { CMASK_G, "GreenGamma",   "GreenCurve",   "MagentaGamma", "MagentaCurve" },
-  { CMASK_B, "BlueGamma",    "BlueCurve",    "YellowGamma",  "YellowCurve"  },
+  { CMASK_K, "BlackGamma",   "BlackCurve",
+    "WhiteGamma",   "WhiteCurve", NULL },
+  { CMASK_C, "CyanGamma",    "CyanCurve",
+    "RedGamma",     "RedCurve",   NULL },
+  { CMASK_M, "MagentaGamma", "MagentaCurve",
+    "GreenGamma",   "GreenCurve", NULL },
+  { CMASK_Y, "YellowGamma",  "YellowCurve",
+    "BlueGamma",    "BlueCurve",  NULL },
 };
 
 static const int channel_param_count =
@@ -77,38 +78,38 @@ sizeof(channel_params) / sizeof(channel_param_t);
 
 static const channel_param_t raw_channel_params[] =
 {
-  { 0,  "GammaCh0",  "CurveCh0",  "GammaCh0",  "CurveCh0"  },
-  { 1,  "GammaCh1",  "CurveCh1",  "GammaCh1",  "CurveCh1"  },
-  { 2,  "GammaCh2",  "CurveCh2",  "GammaCh2",  "CurveCh2"  },
-  { 3,  "GammaCh3",  "CurveCh3",  "GammaCh3",  "CurveCh3"  },
-  { 4,  "GammaCh4",  "CurveCh4",  "GammaCh4",  "CurveCh4"  },
-  { 5,  "GammaCh5",  "CurveCh5",  "GammaCh5",  "CurveCh5"  },
-  { 6,  "GammaCh6",  "CurveCh6",  "GammaCh6",  "CurveCh6"  },
-  { 7,  "GammaCh7",  "CurveCh7",  "GammaCh7",  "CurveCh7"  },
-  { 8,  "GammaCh8",  "CurveCh8",  "GammaCh8",  "CurveCh8"  },
-  { 9,  "GammaCh9",  "CurveCh9",  "GammaCh9",  "CurveCh9"  },
-  { 10, "GammaCh10", "CurveCh10", "GammaCh10", "CurveCh10" },
-  { 11, "GammaCh11", "CurveCh11", "GammaCh11", "CurveCh11" },
-  { 12, "GammaCh12", "CurveCh12", "GammaCh12", "CurveCh12" },
-  { 13, "GammaCh13", "CurveCh13", "GammaCh13", "CurveCh13" },
-  { 14, "GammaCh14", "CurveCh14", "GammaCh14", "CurveCh14" },
-  { 15, "GammaCh15", "CurveCh15", "GammaCh15", "CurveCh15" },
-  { 16, "GammaCh16", "CurveCh16", "GammaCh16", "CurveCh16" },
-  { 17, "GammaCh17", "CurveCh17", "GammaCh17", "CurveCh17" },
-  { 18, "GammaCh18", "CurveCh18", "GammaCh18", "CurveCh18" },
-  { 19, "GammaCh19", "CurveCh19", "GammaCh19", "CurveCh19" },
-  { 20, "GammaCh20", "CurveCh20", "GammaCh20", "CurveCh20" },
-  { 21, "GammaCh21", "CurveCh21", "GammaCh21", "CurveCh21" },
-  { 22, "GammaCh22", "CurveCh22", "GammaCh22", "CurveCh22" },
-  { 23, "GammaCh23", "CurveCh23", "GammaCh23", "CurveCh23" },
-  { 24, "GammaCh24", "CurveCh24", "GammaCh24", "CurveCh24" },
-  { 25, "GammaCh25", "CurveCh25", "GammaCh25", "CurveCh25" },
-  { 26, "GammaCh26", "CurveCh26", "GammaCh26", "CurveCh26" },
-  { 27, "GammaCh27", "CurveCh27", "GammaCh27", "CurveCh27" },
-  { 28, "GammaCh28", "CurveCh28", "GammaCh28", "CurveCh28" },
-  { 29, "GammaCh29", "CurveCh29", "GammaCh29", "CurveCh29" },
-  { 30, "GammaCh30", "CurveCh30", "GammaCh30", "CurveCh30" },
-  { 31, "GammaCh31", "CurveCh31", "GammaCh31", "CurveCh31" },
+  { 0,  "GammaCh0",  "CurveCh0",  "GammaCh0",  "CurveCh0",  "HueCurveCh0"  },
+  { 1,  "GammaCh1",  "CurveCh1",  "GammaCh1",  "CurveCh1",  "HueCurveCh1"  },
+  { 2,  "GammaCh2",  "CurveCh2",  "GammaCh2",  "CurveCh2",  "HueCurveCh2"  },
+  { 3,  "GammaCh3",  "CurveCh3",  "GammaCh3",  "CurveCh3",  "HueCurveCh3"  },
+  { 4,  "GammaCh4",  "CurveCh4",  "GammaCh4",  "CurveCh4",  "HueCurveCh4"  },
+  { 5,  "GammaCh5",  "CurveCh5",  "GammaCh5",  "CurveCh5",  "HueCurveCh5"  },
+  { 6,  "GammaCh6",  "CurveCh6",  "GammaCh6",  "CurveCh6",  "HueCurveCh6"  },
+  { 7,  "GammaCh7",  "CurveCh7",  "GammaCh7",  "CurveCh7",  "HueCurveCh7"  },
+  { 8,  "GammaCh8",  "CurveCh8",  "GammaCh8",  "CurveCh8",  "HueCurveCh8"  },
+  { 9,  "GammaCh9",  "CurveCh9",  "GammaCh9",  "CurveCh9",  "HueCurveCh9"  },
+  { 10, "GammaCh10", "CurveCh10", "GammaCh10", "CurveCh10", "HueCurveCh10" },
+  { 11, "GammaCh11", "CurveCh11", "GammaCh11", "CurveCh11", "HueCurveCh11" },
+  { 12, "GammaCh12", "CurveCh12", "GammaCh12", "CurveCh12", "HueCurveCh12" },
+  { 13, "GammaCh13", "CurveCh13", "GammaCh13", "CurveCh13", "HueCurveCh13" },
+  { 14, "GammaCh14", "CurveCh14", "GammaCh14", "CurveCh14", "HueCurveCh14" },
+  { 15, "GammaCh15", "CurveCh15", "GammaCh15", "CurveCh15", "HueCurveCh15" },
+  { 16, "GammaCh16", "CurveCh16", "GammaCh16", "CurveCh16", "HueCurveCh16" },
+  { 17, "GammaCh17", "CurveCh17", "GammaCh17", "CurveCh17", "HueCurveCh17" },
+  { 18, "GammaCh18", "CurveCh18", "GammaCh18", "CurveCh18", "HueCurveCh18" },
+  { 19, "GammaCh19", "CurveCh19", "GammaCh19", "CurveCh19", "HueCurveCh19" },
+  { 20, "GammaCh20", "CurveCh20", "GammaCh20", "CurveCh20", "HueCurveCh20" },
+  { 21, "GammaCh21", "CurveCh21", "GammaCh21", "CurveCh21", "HueCurveCh21" },
+  { 22, "GammaCh22", "CurveCh22", "GammaCh22", "CurveCh22", "HueCurveCh22" },
+  { 23, "GammaCh23", "CurveCh23", "GammaCh23", "CurveCh23", "HueCurveCh23" },
+  { 24, "GammaCh24", "CurveCh24", "GammaCh24", "CurveCh24", "HueCurveCh24" },
+  { 25, "GammaCh25", "CurveCh25", "GammaCh25", "CurveCh25", "HueCurveCh25" },
+  { 26, "GammaCh26", "CurveCh26", "GammaCh26", "CurveCh26", "HueCurveCh26" },
+  { 27, "GammaCh27", "CurveCh27", "GammaCh27", "CurveCh27", "HueCurveCh27" },
+  { 28, "GammaCh28", "CurveCh28", "GammaCh28", "CurveCh28", "HueCurveCh28" },
+  { 29, "GammaCh29", "CurveCh29", "GammaCh29", "CurveCh29", "HueCurveCh29" },
+  { 30, "GammaCh30", "CurveCh30", "GammaCh30", "CurveCh30", "HueCurveCh30" },
+  { 31, "GammaCh31", "CurveCh31", "GammaCh31", "CurveCh31", "HueCurveCh31" },
 };
 
 static const int raw_channel_param_count =
@@ -129,6 +130,12 @@ static const color_description_t color_descriptions[] =
     COLOR_CORRECTION_ACCURATE,    &stpi_color_convert_to_kcmy   },
   { "KCMY",       1, 1, COLOR_ID_KCMY,   COLOR_BLACK,   CMASK_CMYK,   4,
     COLOR_CORRECTION_ACCURATE,    &stpi_color_convert_to_kcmy   },
+  { "MultiCMY",   0, 1, COLOR_ID_MULTI,  COLOR_BLACK,   CMASK_CMY,   -1,
+    COLOR_CORRECTION_ACCURATE,    &stpi_color_convert_to_color },
+  { "MultiCMYK",  0, 1, COLOR_ID_MULTI,  COLOR_BLACK,   CMASK_CMYK,  -1,
+    COLOR_CORRECTION_ACCURATE,    &stpi_color_convert_to_kcmy  },
+  { "MultiRGB",   0, 1, COLOR_ID_MULTI,  COLOR_WHITE,   CMASK_CMY,   -1,
+    COLOR_CORRECTION_ACCURATE,    &stpi_color_convert_to_color },
   { "Raw",        1, 1, COLOR_ID_RAW,    COLOR_UNKNOWN, 0,           -1,
     COLOR_CORRECTION_RAW,         &stpi_color_convert_raw       },
 };
@@ -277,30 +284,6 @@ static const float_param_t float_parameters[] =
   },
   {
     {
-      "RedGamma", N_("Red"), N_("Gamma"),
-      N_("Adjust the red gamma"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1, 1, 1, 0
-    }, 0.0, 4.0, 1.0, CMASK_R, 1
-  },
-  {
-    {
-      "GreenGamma", N_("Green"), N_("Gamma"),
-      N_("Adjust the green gamma"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1, 2, 1, 0
-    }, 0.0, 4.0, 1.0, CMASK_G, 1
-  },
-  {
-    {
-      "BlueGamma", N_("Blue"), N_("Gamma"),
-      N_("Adjust the blue gamma"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED1, 0, 1, 3, 1, 0
-    }, 0.0, 4.0, 1.0, CMASK_B, 1
-  },
-  {
-    {
       "BlackGamma", N_("Black"), N_("Gamma"),
       N_("Adjust the black gamma"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
@@ -315,7 +298,7 @@ static const float_param_t float_parameters[] =
 	 "using color and black inks"),
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1, 0
-    }, 0.0, 9.0, 1.0, CMASK_CMY | CMASK_RGB, 1
+    }, 0.0, 9.0, 1.0, CMASK_CMY, 1
   },
   /* Need to think this through a bit more -- rlk 20030712 */
   {
@@ -451,43 +434,11 @@ static curve_param_t curve_parameters[] =
   },
   {
     {
-      "RedCurve", N_("Red Curve"), N_("Output Curves"),
-      N_("Red curve"),
-      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1, 0
-    }, &color_curve_bounds, CMASK_R, 0, 1
-  },
-  {
-    {
-      "GreenCurve", N_("Green Curve"), N_("Output Curves"),
-      N_("Green curve"),
-      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1, 0
-    }, &color_curve_bounds, CMASK_G, 0, 1
-  },
-  {
-    {
-      "BlueCurve", N_("Blue Curve"), N_("Output Curves"),
-      N_("Blue curve"),
-      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1, 0
-    }, &color_curve_bounds, CMASK_B, 0, 1
-  },
-  {
-    {
-      "WhiteCurve", N_("White Curve"), N_("Output Curves"),
-      N_("White curve"),
-      STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, 1, 1, 0
-    }, &color_curve_bounds, CMASK_W, 0, 0
-  },
-  {
-    {
       "HueMap", N_("Hue Map"), N_("Advanced HSL Curves"),
       N_("Hue adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1, 0
-    }, &hue_map_bounds, CMASK_CMY | CMASK_RGB, 1, 1
+    }, &hue_map_bounds, CMASK_CMY, 1, 1
   },
   {
     {
@@ -495,7 +446,7 @@ static curve_param_t curve_parameters[] =
       N_("Saturation adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1, 0
-    }, &sat_map_bounds, CMASK_CMY | CMASK_RGB, 1, 1
+    }, &sat_map_bounds, CMASK_CMY, 1, 1
   },
   {
     {
@@ -503,7 +454,7 @@ static curve_param_t curve_parameters[] =
       N_("Luminosity adjustment curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, -1, 1, 0
-    }, &lum_map_bounds, CMASK_CMY | CMASK_RGB, 1, 1
+    }, &lum_map_bounds, CMASK_CMY, 1, 1
   },
   {
     {
@@ -640,7 +591,10 @@ free_channels(lut_t *lut)
 {
   int i;
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
-    stp_curve_free_curve_cache(&(lut->channel_curves[i]));
+    {
+      stp_curve_free_curve_cache(&(lut->channel_curves[i]));
+      stp_curve_free_curve_cache(&(lut->hue_curves[i]));
+    }
 }
 
 static lut_t *
@@ -675,22 +629,24 @@ copy_lut(void *vlut)
   dest->image_width = src->image_width;
   dest->in_channels = src->in_channels;
   dest->out_channels = src->out_channels;
+  dest->color_channels = src->color_channels;
   /* Don't copy channels_are_initialized */
   dest->invert_output = src->invert_output;
   dest->input_color_description = src->input_color_description;
   dest->output_color_description = src->output_color_description;
   dest->color_correction = src->color_correction;
-  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
-    {
-      stp_curve_cache_copy(&(dest->channel_curves[i]), &(src->channel_curves[i]));
-      dest->gamma_values[i] = src->gamma_values[i];
-    }
   stp_curve_cache_copy(&(dest->brightness_correction),
 		       &(src->brightness_correction));
   stp_curve_cache_copy(&(dest->contrast_correction),
 		       &(src->contrast_correction));
   stp_curve_cache_copy(&(dest->user_color_correction),
 		       &(src->user_color_correction));
+  for (i = 0; i < STP_CHANNEL_LIMIT; i++)
+    {
+      stp_curve_cache_copy(&(dest->channel_curves[i]), &(src->channel_curves[i]));
+      stp_curve_cache_copy(&(dest->hue_curves[i]), &(src->hue_curves[i]));
+      dest->gamma_values[i] = src->gamma_values[i];
+    }
   dest->print_gamma = src->print_gamma;
   dest->app_gamma = src->app_gamma;
   dest->screen_gamma = src->screen_gamma;
@@ -846,7 +802,7 @@ initialize_gcr_curve(const stp_vars_t *vars)
  * 2) If the output is CMY or K only, we never synthesize channels.  We've
  *    now covered raw, black, and CMY/RGB outputs, leaving CMYK and MULTI.
  *
- * 3) Output channels above CMYK are synthesized.
+ * 3) Output channels above CMYK are now *not* synthesized.
  *
  * 4) If the input is CMYK, we do not synthesize channels.
  *
@@ -863,8 +819,8 @@ channel_is_synthesized(lut_t *lut, int channel)
   else if (lut->output_color_description->channels == CMASK_CMY ||
 	   lut->output_color_description->channels == CMASK_K)
     return 0;			/* Case 2 */
-  else if (channel >= CHANNEL_W)
-    return 1;			/* Case 3 */
+  else if (channel >= CHANNEL_MAX)
+    return 0;			/* Case 3 */
   else if (lut->input_color_description->channels == CMASK_CMYK)
     return 0;			/* Case 4 */
   else if (channel == CHANNEL_K)
@@ -975,8 +931,9 @@ compute_user_correction(lut_t *lut)
 }
 
 static void
-compute_a_curve_full(lut_t *lut, int channel)
+compute_a_curve_full(stp_vars_t *v, int channel)
 {
+  lut_t *lut = (lut_t *)(stp_get_component_data(v, "Color"));
   double *tmp;
   double pivot = .25;
   double ipivot = 1.0 - pivot;
@@ -991,6 +948,9 @@ compute_a_curve_full(lut_t *lut, int channel)
   if (isteps > 256)
     isteps = 256;
   tmp = stp_malloc(sizeof(double) * lut->steps);
+  stp_dprintf(STP_DBG_LUT, v,
+	      "compute_a_curve_full channel %d xgamma %f print_gamma %f gamma %f\n",
+	      channel, xgamma, print_gamma, lut->gamma_values[channel]);
   for (i = 0; i < isteps; i ++)
     {
       double pixel = (double) i / (double) (isteps - 1);
@@ -1042,8 +1002,9 @@ compute_a_curve_full(lut_t *lut, int channel)
 }
 
 static void
-compute_a_curve_fast(lut_t *lut, int channel)
+compute_a_curve_fast(stp_vars_t *v, int channel)
 {
+  lut_t *lut = (lut_t *)(stp_get_component_data(v, "Color"));
   double *tmp;
   stp_curve_t *curve = stp_curve_cache_get_curve(&(lut->channel_curves[channel]));
   int i;
@@ -1051,6 +1012,9 @@ compute_a_curve_fast(lut_t *lut, int channel)
   if (isteps > 256)
     isteps = 256;
   tmp = stp_malloc(sizeof(double) * lut->steps);
+  stp_dprintf(STP_DBG_LUT, v,
+	      "compute_a_curve_fast channel %d gamma %f\n",
+	      channel, lut->gamma_values[channel]);
   for (i = 0; i < isteps; i++)
     {
       double pixel = (double) i / (double) (isteps - 1);
@@ -1069,12 +1033,13 @@ compute_a_curve_fast(lut_t *lut, int channel)
  * synthesize the channel), use a simple gamma curve.
  */
 static void
-compute_a_curve(lut_t *lut, int channel)
+compute_a_curve(stp_vars_t *v, int channel)
 {
+  lut_t *lut = (lut_t *)(stp_get_component_data(v, "Color"));
   if (channel_is_synthesized(lut, channel))
-    compute_a_curve_fast(lut, channel);
+    compute_a_curve_fast(v, channel);
   else
-    compute_a_curve_full(lut, channel);
+    compute_a_curve_full(v, channel);
 }
 
 static void
@@ -1109,8 +1074,9 @@ invert_curve(stp_curve_t *curve, int invert_output)
 }
 
 static void
-compute_one_lut(lut_t *lut, int i)
+compute_one_lut(stp_vars_t *v, int i)
 {
+  lut_t *lut = (lut_t *)(stp_get_component_data(v, "Color"));
   stp_curve_t *curve =
     stp_curve_cache_get_curve(&(lut->channel_curves[i]));
   if (curve)
@@ -1130,7 +1096,7 @@ compute_one_lut(lut_t *lut, int i)
       stp_curve_rescale(curve, 65535.0, STP_CURVE_COMPOSE_MULTIPLY,
 			STP_CURVE_BOUNDS_RESCALE);
       stp_curve_cache_set_curve(&(lut->channel_curves[i]), curve);
-      compute_a_curve(lut, i);
+      compute_a_curve(v, i);
     }
 }
 
@@ -1144,19 +1110,24 @@ setup_channel(stp_vars_t *v, int i, const channel_param_t *p)
   const char *curve_name =
     (lut->output_color_description->color_model == COLOR_BLACK ?
      p->curve_name : p->rgb_curve_name);
-  if (stp_check_float_parameter(v, p->gamma_name, STP_PARAMETER_DEFAULTED))
+  const char *hue_curve_name = p->hue_curve_name;
+  if (gamma_name &&
+      stp_check_float_parameter(v, p->gamma_name, STP_PARAMETER_DEFAULTED))
     lut->gamma_values[i] = stp_get_float_parameter(v, gamma_name);
 
-  if (stp_get_curve_parameter_active(v, curve_name) > 0 &&
+  if (curve_name &&
+      stp_get_curve_parameter_active(v, curve_name) > 0 &&
       stp_get_curve_parameter_active(v, curve_name) >=
       stp_get_float_parameter_active(v, gamma_name))
     stp_curve_cache_set_curve_copy
       (&(lut->channel_curves[i]), stp_get_curve_parameter(v, curve_name));
 
-  stp_dprintf(STP_DBG_LUT, v, " %s %.3f\n", gamma_name, lut->gamma_values[i]);
-  compute_one_lut(lut, i);
-}
+  if (hue_curve_name && stp_get_curve_parameter(v, hue_curve_name))
+    stp_curve_cache_set_curve_copy
+      (&(lut->hue_curves[i]), stp_get_curve_parameter(v, hue_curve_name));
 
+  compute_one_lut(v, i);
+}
 
 static void
 stpi_compute_lut(stp_vars_t *v)
@@ -1243,8 +1214,9 @@ stpi_compute_lut(stp_vars_t *v)
 
   for (i = 0; i < STP_CHANNEL_LIMIT; i++)
     {
-      if (lut->output_color_description->channel_count < 1 &&
-	  i < lut->out_channels)
+      if ((lut->output_color_description->color_id == COLOR_ID_RAW ||
+	   lut->output_color_description->color_id == COLOR_ID_MULTI) &&
+	  i < lut->color_channels + 1)
 	setup_channel(v, i, &(raw_channel_params[i]));
       else if (i < channel_param_count &&
 	       lut->output_color_description->channels & (1 << i))
@@ -1264,7 +1236,7 @@ stpi_color_traditional_init(stp_vars_t *v,
 			    stp_image_t *image,
 			    size_t steps)
 {
-  lut_t *lut;
+  lut_t *lut = (lut_t *)(stp_get_component_data(v, "Color"));
   const char *image_type = stp_get_string_parameter(v, "ImageType");
   const char *color_correction = stp_get_string_parameter(v, "ColorCorrection");
   const channel_depth_t *channel_depth =
@@ -1276,7 +1248,11 @@ stpi_color_traditional_init(stp_vars_t *v,
   if (!channel_depth)
     return -1;
 
-  lut = allocate_lut();
+  if (!lut)
+    {
+      lut = allocate_lut();
+      stp_allocate_component_data(v, "Color", copy_lut, free_lut, lut);
+    }
   lut->input_color_description =
     get_color_description(stp_get_string_parameter(v, "InputImageType"));
   lut->output_color_description =
@@ -1288,7 +1264,8 @@ stpi_color_traditional_init(stp_vars_t *v,
       return -1;
     }
 
-  if (lut->input_color_description->color_id == COLOR_ID_RAW)
+  if (lut->output_color_description->color_id == COLOR_ID_RAW ||
+      lut->output_color_description->color_id == COLOR_ID_MULTI)
     {
       if (stp_verify_parameter(v, "STPIRawChannels", 1) != PARAMETER_OK)
 	{
@@ -1296,15 +1273,21 @@ stpi_color_traditional_init(stp_vars_t *v,
 	  return -1;
 	}
       lut->out_channels = stp_get_int_parameter(v, "STPIRawChannels");
-      lut->in_channels = lut->out_channels;
+      if (lut->output_color_description->color_id == COLOR_ID_RAW)
+	lut->in_channels = lut->out_channels;
+      else
+	lut->in_channels = lut->input_color_description->channel_count;
+      lut->color_channels = lut->out_channels;
     }
   else
     {
       lut->out_channels = lut->output_color_description->channel_count;
+      lut->color_channels = lut->out_channels;
       lut->in_channels = lut->input_color_description->channel_count;
     }
+  if (lut->output_color_description->channels & CMASK_K)
+    lut->color_channels--;
 
-  stp_allocate_component_data(v, "Color", copy_lut, free_lut, lut);
   lut->steps = steps;
   lut->channel_depth = channel_depth->bits;
 
@@ -1325,6 +1308,22 @@ stpi_color_traditional_init(stp_vars_t *v,
        (lut->output_color_description->default_correction));
 
   stpi_compute_lut(v);
+
+  /*
+   * All extended channels must have an associated curve, with the
+   * exception of the black channel (if any)
+   */
+  if (lut->output_color_description->color_id == COLOR_ID_MULTI)
+    {
+      int i = 1;
+      if (lut->out_channels <= i)
+	return -1;
+      for (i = 1; i < lut->color_channels + 1; i++)
+	{
+	  if (!stp_curve_cache_get_curve(&(lut->hue_curves[i])))
+	    return -1;
+	}
+    }
 
   lut->image_width = stp_image_width(image);
   total_channel_bits = lut->in_channels * lut->channel_depth;

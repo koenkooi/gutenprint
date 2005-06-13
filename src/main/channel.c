@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.25 2005/05/08 03:10:35 rlk Exp $"
+ * "$Id: channel.c,v 1.25.2.1 2005/06/13 01:57:28 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -40,9 +40,6 @@
 #define inline __inline__
 #endif
 
-#define FMAX(a, b) ((a) > (b) ? (a) : (b))
-#define FMIN(a, b) ((a) < (b) ? (a) : (b))
-
 typedef struct
 {
   double value;
@@ -57,14 +54,7 @@ typedef struct
   unsigned subchannel_count;
   stpi_subchannel_t *sc;
   unsigned short *lut;
-  double hue_angle;
 } stpi_channel_t;
-
-typedef struct
-{
-  int channel_id;
-  double hue_angle;
-} stpi_channel_angle_t;
 
 typedef struct
 {
@@ -76,17 +66,12 @@ typedef struct
   unsigned ink_limit;
   unsigned max_density;
   stpi_channel_t *c;
-  unsigned lower_multi_limit;
-  unsigned angle_count;
-  stpi_channel_angle_t *angles;
   unsigned gloss_limit;
   unsigned short *input_data;
-  unsigned short *multi_tmp;
   unsigned short *split_input;
   unsigned short *output_data;
   unsigned short *alloc_data_1;
   unsigned short *alloc_data_2;
-  unsigned short *alloc_data_3;
   int black_channel;
   int gloss_channel;
   int gloss_physical_channel;
@@ -115,14 +100,10 @@ stpi_channel_clear(void *vc)
   
   STP_SAFE_FREE(cg->alloc_data_1);
   STP_SAFE_FREE(cg->alloc_data_2);
-  STP_SAFE_FREE(cg->alloc_data_3);
   STP_SAFE_FREE(cg->c);
-  STP_SAFE_FREE(cg->angles);
   cg->channel_count = 0;
   cg->total_channels = 0;
   cg->input_channels = 0;
-  cg->angle_count = 0;
-  cg->lower_multi_limit = 0;
   cg->initialized = 0;
 }
 
@@ -204,6 +185,16 @@ stp_channel_add(stp_vars_t *v, unsigned channel, unsigned subchannel,
   chan->sc[subchannel].cutoff = 0.75;
 }
 
+double
+stp_channel_get_value(stp_vars_t *v, unsigned color, unsigned subchannel)
+{
+  stpi_subchannel_t *sch = get_channel(v, color, subchannel);
+  if (sch)
+    return sch->value;
+  else
+    return -1;
+}
+
 void
 stp_channel_set_density_adjustment(stp_vars_t *v, int color, int subchannel,
 				   double adjustment)
@@ -228,6 +219,16 @@ stp_channel_set_density_adjustment(stp_vars_t *v, int color, int subchannel,
     }
 }
 
+double
+stp_channel_get_density_adjustment(stp_vars_t *v, int color, int subchannel)
+{
+  stpi_subchannel_t *sch = get_channel(v, color, subchannel);
+  if (sch)
+    return sch->s_density / 65535.0;
+  else
+    return -1;
+}
+
 void
 stp_channel_set_ink_limit(stp_vars_t *v, double limit)
 {
@@ -238,14 +239,12 @@ stp_channel_set_ink_limit(stp_vars_t *v, double limit)
     cg->ink_limit = 65535 * limit;
 }
 
-void
-stp_channel_set_multi_channel_lower_limit(stp_vars_t *v, double limit)
+double
+stp_channel_get_ink_limit(stp_vars_t *v)
 {
   stpi_channel_group_t *cg =
     ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
-  stp_dprintf(STP_DBG_INK, v, "multi_lower_limit %f\n", limit);
-  if (limit > 0)
-    cg->lower_multi_limit = 65535 * limit;
+  return cg->ink_limit / 65535.0;
 }
 
 void
@@ -257,6 +256,14 @@ stp_channel_set_black_channel(stp_vars_t *v, int channel)
   cg->black_channel = channel;
 }
 
+int
+stp_channel_get_black_channel(stp_vars_t *v)
+{
+  stpi_channel_group_t *cg =
+    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
+  return cg->black_channel;
+}
+
 void
 stp_channel_set_gloss_channel(stp_vars_t *v, int channel)
 {
@@ -264,6 +271,14 @@ stp_channel_set_gloss_channel(stp_vars_t *v, int channel)
     ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
   stp_dprintf(STP_DBG_INK, v, "gloss_channel %d\n", channel);
   cg->gloss_channel = channel;
+}
+
+int
+stp_channel_get_gloss_channel(stp_vars_t *v)
+{
+  stpi_channel_group_t *cg =
+    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
+  return cg->gloss_channel;
 }
 
 void
@@ -274,6 +289,14 @@ stp_channel_set_gloss_limit(stp_vars_t *v, double limit)
   stp_dprintf(STP_DBG_INK, v, "gloss_limit %f\n", limit);
   if (limit > 0)
     cg->gloss_limit = 65535 * limit;
+}
+
+double
+stp_channel_get_gloss_limit(stp_vars_t *v)
+{
+  stpi_channel_group_t *cg =
+    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
+  return cg->gloss_limit / 65535.0;
 }
 
 void
@@ -288,26 +311,14 @@ stp_channel_set_cutoff_adjustment(stp_vars_t *v, int color, int subchannel,
     sch->cutoff = adjustment;
 }
 
-void
-stp_channel_set_hue_angle(stp_vars_t *v, int color, double angle)
+double
+stp_channel_get_cutoff_adjustment(stp_vars_t *v, int color, int subchannel)
 {
-  stpi_channel_t *ch;
-  stpi_channel_group_t *cg =
-    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
-  if (!cg || color >= cg->channel_count)
-    return;
-  ch = &(cg->c[color]);
-  stp_dprintf(STP_DBG_INK, v, "hue_angle channel %d angle %f\n", color, angle);
-  if (ch && (angle == -1 || (angle >= 0 && angle < 6)))
-    ch->hue_angle = angle;
-}
-
-static int
-input_has_special_channels(const stp_vars_t *v)
-{
-  const stpi_channel_group_t *cg =
-    ((const stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
-  return (cg->angle_count > 0);
+  stpi_subchannel_t *sch = get_channel(v, color, subchannel);
+  if (sch)
+    return sch->cutoff;
+  else
+    return -1.0;
 }
 
 static int
@@ -338,68 +349,6 @@ input_needs_splitting(const stp_vars_t *v)
 #endif
 }
 
-static void
-stp_initialize_special_channels(stp_vars_t *v, int angle_count)
-{
-  stpi_channel_group_t *cg =
-    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
-  int i, j;
-  /* Store the hue angles as a sorted array */
-  double current_angle = 0.0;
-  double angle_candidate = 6.0;
-  int channel_candidate = -1;
-  int slot = 0;
-  angle_count += 4;		/* One for end point, 3 for CMY/RGB */
-  cg->angles = stp_malloc(sizeof(stpi_channel_angle_t) * angle_count);
-  /* The maximum number of channels is 32; not enough to get fancy
-     with our sorting */
-  cg->angles[slot].hue_angle = 0.0;
-  cg->angles[slot].channel_id = STP_ECOLOR_C; /* cyan/red */
-  slot++;
-  /* We really should check if two channels have the same angle and
-     complain about it.  For now, we simply ignore the other channel.
-  */
-  for (i = 0; i < angle_count - 2; i++)
-    {
-      angle_candidate = 6.0;
-      for (j = 0; j < cg->channel_count; j++)
-	{
-	  stpi_channel_t *c = &(cg->c[j]);
-	  if (c->hue_angle > current_angle && c->hue_angle < angle_candidate)
-	    {
-	      angle_candidate = c->hue_angle;
-	      channel_candidate = j;
-	    }
-	}
-      if (current_angle < 2 && angle_candidate > 2)
-	{
-	  cg->angles[slot].hue_angle = 2.0;
-	  cg->angles[slot].channel_id = STP_ECOLOR_M; /* magenta/green */
-	  current_angle = 2.0;
-	  slot++;
-	}
-      if (current_angle < 4 && angle_candidate > 4)
-	{
-	  cg->angles[slot].hue_angle = 4.0;
-	  cg->angles[slot].channel_id = STP_ECOLOR_Y; /* yellow/blue */
-	  current_angle = 4.0;
-	  slot++;
-	}
-      if (angle_candidate < 6.0 && angle_candidate > current_angle)
-	{
-	  cg->angles[slot].hue_angle = angle_candidate;
-	  cg->angles[slot].channel_id = channel_candidate;
-	  slot++;
-	  current_angle = angle_candidate;
-	}
-    }
-  cg->angles[slot].hue_angle = 6.0;
-  cg->angles[slot].channel_id = STP_ECOLOR_C;
-  slot++;
-  cg->angle_count = slot;
-}
-  
-
 void
 stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
 		       int input_channel_count)
@@ -407,7 +356,6 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
   stpi_channel_group_t *cg =
     ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
   int width = stp_image_width(image);
-  int angle_count = 0;
   int i, j, k;
   if (!cg)
     {
@@ -425,9 +373,6 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
     {
       stpi_channel_t *c = &(cg->c[i]);
       int sc = c->subchannel_count;
-      if (c->hue_angle > 0 && c->hue_angle < 6 && c->hue_angle != 2 &&
-	  c->hue_angle != 4)
-	angle_count++;
       if (sc > 1)
 	{
 	  int val = 0;
@@ -492,43 +437,21 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
   cg->alloc_data_1 =
     stp_malloc(sizeof(unsigned short) * cg->total_channels * width);
   cg->output_data = cg->alloc_data_1;
-  if (angle_count == 0)
-    {
-      if (input_needs_splitting(v))
-	{
-	  cg->alloc_data_2 =
-	    stp_malloc(sizeof(unsigned short) * cg->input_channels * width);
-	  cg->input_data = cg->alloc_data_2;
-	  cg->split_input = cg->input_data;
-	}
-      else if (cg->gloss_channel != -1)
-	{
-	  cg->alloc_data_2 =
-	    stp_malloc(sizeof(unsigned short) * cg->input_channels * width);
-	  cg->input_data = cg->alloc_data_2;
-	}
-      else
-	cg->input_data = cg->output_data;
-    }
-  else
+  if (input_needs_splitting(v))
     {
       cg->alloc_data_2 =
 	stp_malloc(sizeof(unsigned short) * cg->input_channels * width);
       cg->input_data = cg->alloc_data_2;
-      if (input_needs_splitting(v))
-	{
-	  cg->alloc_data_3 =
-	    stp_malloc(sizeof(unsigned short) * cg->channel_count * width);
-	  cg->multi_tmp = cg->alloc_data_3;
-	  cg->split_input = cg->multi_tmp;
-	}
-      else
-	{
-	  cg->multi_tmp = cg->alloc_data_1;
-	}
+      cg->split_input = cg->input_data;
     }
-  if (angle_count > 0)
-    stp_initialize_special_channels(v, angle_count);
+  else if (cg->gloss_channel != -1)
+    {
+      cg->alloc_data_2 =
+	stp_malloc(sizeof(unsigned short) * cg->input_channels * width);
+      cg->input_data = cg->alloc_data_2;
+    }
+  else
+    cg->input_data = cg->output_data;
   stp_dprintf(STP_DBG_INK, v, "stp_channel_initialize:\n");
   stp_dprintf(STP_DBG_INK, v, "   channel_count  %d\n", cg->channel_count);
   stp_dprintf(STP_DBG_INK, v, "   total_channels %d\n", cg->total_channels);
@@ -537,14 +460,10 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
   stp_dprintf(STP_DBG_INK, v, "   ink_limit      %d\n", cg->ink_limit);
   stp_dprintf(STP_DBG_INK, v, "   gloss_limit    %d\n", cg->gloss_limit);
   stp_dprintf(STP_DBG_INK, v, "   max_density    %d\n", cg->max_density);
-  stp_dprintf(STP_DBG_INK, v, "   multi_limit    %d\n", cg->lower_multi_limit);
-  stp_dprintf(STP_DBG_INK, v, "   angle_count    %d\n", cg->angle_count);
   stp_dprintf(STP_DBG_INK, v, "   black_channel  %d\n", cg->black_channel);
   stp_dprintf(STP_DBG_INK, v, "   gloss_channel  %d\n", cg->gloss_channel);
   stp_dprintf(STP_DBG_INK, v, "   input_data     %p\n",
 	      (void *) cg->input_data);
-  stp_dprintf(STP_DBG_INK, v, "   multi_tmp      %p\n",
-	      (void *) cg->multi_tmp);
   stp_dprintf(STP_DBG_INK, v, "   split_input    %p\n",
 	      (void *) cg->split_input);
   stp_dprintf(STP_DBG_INK, v, "   output_data    %p\n",
@@ -553,12 +472,9 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
 	      (void *) cg->alloc_data_1);
   stp_dprintf(STP_DBG_INK, v, "   alloc_data_2   %p\n",
 	      (void *) cg->alloc_data_2);
-  stp_dprintf(STP_DBG_INK, v, "   alloc_data_3   %p\n",
-	      (void *) cg->alloc_data_3);
   for (i = 0; i < cg->channel_count; i++)
     {
       stp_dprintf(STP_DBG_INK, v, "   Channel %d:\n", i);
-      stp_dprintf(STP_DBG_INK, v, "      hue %.3f\n", cg->c[i].hue_angle);
       for (j = 0; j < cg->c[i].subchannel_count; j++)
 	{
 	  stpi_subchannel_t *sch = &(cg->c[i].sc[j]);
@@ -570,15 +486,6 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
 	  stp_dprintf(STP_DBG_INK, v, "         density %d:\n", sch->s_density);
 	}
     }
-  if (cg->angle_count > 0)
-    for (j = 0; j < cg->angle_count; j++)
-      {
-	stp_dprintf(STP_DBG_INK, v, "   Angle %d:\n", j);
-	stp_dprintf(STP_DBG_INK, v, "      value   %.3f:\n",
-		    cg->angles[j].hue_angle);
-	stp_dprintf(STP_DBG_INK, v, "      id      %d:\n",
-		    cg->angles[j].channel_id);
-      }
 }
 
 static void
@@ -705,170 +612,6 @@ copy_channels(const stp_vars_t *v)
 	      output++;
 	    }
 	}	  
-    }
-}
-
-static void
-generate_special_channels(const stp_vars_t *v)
-{
-  stpi_channel_group_t *cg =
-    ((stpi_channel_group_t *) stp_get_component_data(v, "Channel"));
-  int i, j;
-  const unsigned short *input_cache = NULL;
-  const unsigned short *output_cache = NULL;
-  const unsigned short *input = cg->input_data;
-  unsigned short *output = cg->multi_tmp;
-  int outbytes = cg->channel_count * sizeof(unsigned short);
-  for (i = 0; i < cg->width;
-       input += cg->input_channels, output += cg->channel_count, i++)
-    {
-      if (input_cache && mem_eq(input_cache, input, cg->input_channels))
-	{
-	  memcpy(output, output_cache, outbytes);
-	}
-      else if (cg->lower_multi_limit < 65535)
-	{
-	  int c = input[STP_ECOLOR_C];
-	  int m = input[STP_ECOLOR_M];
-	  int y = input[STP_ECOLOR_Y];
-	  int min = FMIN(c, FMIN(m, y));
-	  int max = FMAX(c, FMAX(m, y));
-	  if (max > min)	/* Otherwise it's gray, and we don't care */
-	    {
-	      int cadd = 0;
-	      int madd = 0;
-	      int yadd = 0;
-	      double hue;
-	      min += cg->lower_multi_limit;
-	      /*
-	       * We're only interested in converting color components
-	       * to special inks.  We want to compute the hue and
-	       * luminosity to determine what we want to convert.
-	       * Since we're eliminating all grayscale component, the
-	       * computations become simpler.
-	       */
-	      c -= min;
-	      if (c < 0)
-		{
-		  cadd = c;
-		  c = 0;
-		}
-	      m -= min;
-	      if (m < 0)
-		{
-		  madd = m;
-		  m = 0;
-		}
-	      y -= min;
-	      if (y < 0)
-		{
-		  yadd = y;
-		  y = 0;
-		}
-	      max -= min;
-	      output[STP_ECOLOR_K] = input[STP_ECOLOR_K];
-	      /* If only one component is non-zero, we have nothing to do. */
-	      if (max > 0 && (c + m + y) > max)
-		{
-		  int total = c + m + y;
-		  for (j = 1; j < cg->total_channels; j++)
-		    output[j] = 0;
-		  if (c == max)
-		    hue = (m - y) / (double) max;
-		  else if (m == max)
-		    hue = 2.0 + ((y - c) / (double) max);
-		  else
-		    hue = 4.0 + ((c - m) / (double) max);
-		  if (hue < 0)
-		    hue += 6;
-		  else if (hue > 6)
-		    hue -= 6;
-		  /* Now find the two inks bracketing the hue */
-		  for (j = 0; j < cg->angle_count - 1; j++)
-		    {
-		      if (cg->angles[j].hue_angle <= hue &&
-			  cg->angles[j + 1].hue_angle > hue)
-			{
-			  /* Found it! */
-			  double where = ((hue - cg->angles[j].hue_angle) /
-					  (cg->angles[j + 1].hue_angle -
-					   cg->angles[j].hue_angle));
-			  int upper, lower, sum;
-			  if (where <= .5)
-			    {
-			      upper = max * .5 * pow(where * 2, 1.2);
-			      lower = max - upper;
-			    }
-			  else
-			    {
-			      lower = max * .5 * pow(2 * (1.0 - where), 1.2);
-			      upper = max - lower;
-			    }
-			  sum = upper + lower;
-			  if (sum < total)
-			    /* We need more ink! */
-			    {
-			      int delta = total - sum; /* How much more? */
-			      double frac = (double) delta / total;
-			      c *= frac;
-			      m *= frac;
-			      y *= frac;
-			    }
-			  else
-			    {
-			      if (sum > total)
-				{
-				  double frac = (double) total / sum;
-				  upper *= frac;
-				  lower *= frac;
-				}
-			      c = 0;
-			      m = 0;
-			      y = 0;
-			    }
-			  output[cg->angles[j].channel_id] = lower;
-			  output[cg->angles[j + 1].channel_id] = upper;
-			  c = output[STP_ECOLOR_C] + c + cadd + min;
-			  if (c > 65535)
-			    c = 65535;
-			  m = output[STP_ECOLOR_M] + m + madd + min;
-			  if (m > 65535)
-			    m = 65535;
-			  y = output[STP_ECOLOR_Y] + y + yadd + min;
-			  if (y > 65535)
-			    y = 65535;
-			  output[STP_ECOLOR_C] = c;
-			  output[STP_ECOLOR_M] = m;
-			  output[STP_ECOLOR_Y] = y;
-			  break;
-			}
-		    }
-		}
-	      else
-		{
-		  for (j = 1; j < 4; j++)
-		    output[j] = input[j];
-		  for (j = 4; j < cg->channel_count; j++)
-		    output[j] = 0;
-		}
-	    }
-	  else
-	    {
-	      for (j = 0; j < 4; j++)
-		output[j] = input[j];
-	      for (j = 4; j < cg->channel_count; j++)
-		output[j] = 0;
-	    }
-	}
-      else
-	{
-	  for (j = 0; j < 4; j++)
-	    output[j] = input[j];
-	  for (j = 4; j < cg->channel_count; j++)
-	    output[j] = 0;
-	}
-      input_cache = input;
-      output_cache = output;
     }
 }
 
@@ -1059,9 +802,7 @@ generate_gloss(const stp_vars_t *v, unsigned *zero_mask)
 void
 stp_channel_convert(const stp_vars_t *v, unsigned *zero_mask)
 {
-  if (input_has_special_channels(v))
-    generate_special_channels(v);
-  else if (output_has_gloss(v) && !input_needs_splitting(v))
+  if (output_has_gloss(v) && !input_needs_splitting(v))
     copy_channels(v);
   if (input_needs_splitting(v))
     split_channels(v, zero_mask);
