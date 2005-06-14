@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.4 2005/04/09 20:26:45 rlk Exp $"
+ * "$Id: plist.c,v 1.5 2005/06/14 02:47:13 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -213,11 +213,7 @@ stpui_set_printrc_file(const char *name)
   if (name)
     printrc_name = g_strdup(name);
   else
-    {
-      const char *where = getenv("HOME");
-      if (where)
-	printrc_name = g_strconcat(where, "/.gimpprintrc");
-    }
+    printrc_name = g_build_filename(g_get_home_dir(), ".gutenprintrc", NULL);
 }
 
 const char *
@@ -1751,5 +1747,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.4 2005/04/09 20:26:45 rlk Exp $".
+ * End of "$Id: plist.c,v 1.5 2005/06/14 02:47:13 rlk Exp $".
  */
