@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.51.4.1 2005/06/13 02:08:41 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.51.4.2 2005/06/14 00:58:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -48,7 +48,7 @@ static const ink_channel_t name##_channel =			\
   &name##_curve							\
 }
 
-static const hue_curve_t generic_cyan_curve =
+static hue_curve_t generic_cyan_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -66,7 +66,7 @@ static const hue_curve_t generic_cyan_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t generic_magenta_curve =
+static hue_curve_t generic_magenta_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -84,7 +84,7 @@ static const hue_curve_t generic_magenta_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t generic_yellow_curve =
+static hue_curve_t generic_yellow_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -102,7 +102,7 @@ static const hue_curve_t generic_yellow_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t r800_cyan_curve =
+static hue_curve_t r800_cyan_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -110,7 +110,7 @@ static const hue_curve_t r800_cyan_curve =
   "<curve wrap=\"wrap\" type=\"linear\" gamma=\"0\">\n"
   "<sequence count=\"48\" lower-bound=\"0\" upper-bound=\"4\">\n"
   /* C */  "1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 "  /* B */
-  /* B */  "1.000 0.875 0.700 0.550 0.400 0.200 0.100 0.000 "  /* M */
+  /* B */  "1.000 0.875 0.700 0.550 0.400 0.300 0.200 0.100 "  /* M */
   /* M */  "0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 "  /* R */
   /* R */  "0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 "  /* Y */
   /* Y */  "0.000 0.125 0.250 0.375 0.500 0.625 0.750 0.875 "  /* G */
@@ -120,7 +120,7 @@ static const hue_curve_t r800_cyan_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t r800_magenta_curve =
+static hue_curve_t r800_magenta_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -138,7 +138,7 @@ static const hue_curve_t r800_magenta_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t r800_yellow_curve =
+static hue_curve_t r800_yellow_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -156,7 +156,7 @@ static const hue_curve_t r800_yellow_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t r800_red_curve =
+static hue_curve_t r800_red_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -174,7 +174,7 @@ static const hue_curve_t r800_red_curve =
   "</gutenprint>\n"
 };
 
-static const hue_curve_t r800_blue_curve =
+static hue_curve_t r800_blue_curve =
 {
   "CyanCurve",
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -182,7 +182,7 @@ static const hue_curve_t r800_blue_curve =
   "<curve wrap=\"wrap\" type=\"linear\" gamma=\"0\">\n"
   "<sequence count=\"48\" lower-bound=\"0\" upper-bound=\"4\">\n"
   /* C */  "0.000 0.125 0.250 0.375 0.500 0.625 0.750 0.875 "  /* B */
-  /* B */  "1.000 1.000 1.000 1.000 0.900 0.800 0.700 0.450 "  /* M */
+  /* B */  "1.000 1.000 1.000 1.000 0.900 0.800 0.550 0.300 "  /* M */
   /* M */  "0.075 0.005 0.001 0.000 0.000 0.000 0.000 0.000 "  /* R */
   /* R */  "0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 "  /* Y */
   /* Y */  "0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 "  /* G */
@@ -1220,6 +1220,62 @@ static const escp2_inkname_t f360_j_seven_color_enhanced_inkset =
 /*
  ****************************************************************
  *                                                              *
+ * Five color CMYRB                                             *
+ *                                                              *
+ ****************************************************************
+ */
+
+static const ink_channel_t *const five_color_r800_channels[] =
+{
+  NULL, &r800_cyan_channel,
+  &r800_magenta_channel, &r800_yellow_channel,
+  &r800_red_channel, &r800_blue_channel
+};
+
+DECLARE_CHANNEL_SET(five_color_r800);
+
+static const escp2_inkname_t five_color_r800_inkset =
+{
+  "CMYRB", N_("Five Color Photo Composite"), INKSET_CMYKRB,
+  &five_color_r800_channel_set
+};
+
+static const ink_channel_t *const five_color_r800_photo_channels[] =
+{
+  NULL, &r800_cyan_channel,
+  &r800_magenta_channel, &r800_yellow_channel,
+  &r800_red_channel, &r800_blue_channel
+};
+
+DECLARE_CHANNEL_SET(five_color_r800_photo);
+
+static const escp2_inkname_t five_color_r800_photo_inkset =
+{
+  "CMYRB", N_("Five Color Photo Composite"), INKSET_CMYKRB,
+  &five_color_r800_photo_channel_set
+};
+
+static const ink_channel_t *const five_color_r800_photo_gloss_channels[] =
+{
+  NULL, &f360_standard_cyan_channel,
+  &r800_magenta_channel, &r800_yellow_channel,
+  &r800_red_channel, &r800_blue_channel,
+  &standard_gloss_channel
+};
+
+DECLARE_CHANNEL_SET(five_color_r800_photo_gloss);
+DECLARE_AUX_CHANNEL_SET(five_color_r800_photo, standard_gloss);
+
+static const escp2_inkname_t five_color_r800_photo_gloss_inkset =
+{
+  "CMYRBG", N_("Five Color Photo Composite"), INKSET_CMYKRB,
+  &five_color_r800_photo_standard_gloss_channel_set
+};
+
+
+/*
+ ****************************************************************
+ *                                                              *
  * Six color CMYKRB                                             *
  *                                                              *
  ****************************************************************
@@ -1985,6 +2041,7 @@ DECLARE_INKLIST("ultramatte", ultra_matte7, photo7,
 static const escp2_inkname_t *const cmykrb_matte_ink_types[] =
 {
   &six_color_r800_inkset,
+  &five_color_r800_inkset,
   &four_color_r800_matte_inkset,
   &three_color_r800_composite_inkset,
   &one_color_extended_inkset,
@@ -1999,6 +2056,7 @@ DECLARE_INKLIST("cmykrbmatte", cmykrb_matte, cmykrb_matte,
 static const escp2_inkname_t *const cmykrb_photo_ink_types[] =
 {
   &six_color_r800_photo_gloss_inkset,
+  &five_color_r800_photo_gloss_inkset,
   &four_color_r800_photo_gloss_inkset,
   &three_color_r800_gloss_inkset,
   &one_color_extended_inkset,
