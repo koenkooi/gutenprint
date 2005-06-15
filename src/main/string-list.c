@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.18 2004/09/17 18:38:27 rleigh Exp $"
+ * "$Id: string-list.c,v 1.19 2005/06/15 01:13:41 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -82,15 +82,23 @@ stp_string_list_destroy(stp_string_list_t *list)
 stp_param_string_t *
 stp_string_list_param(const stp_string_list_t *list, size_t element)
 {
-  return (stp_param_string_t *) stp_list_item_get_data
-    (stp_list_get_item_by_index((const stp_list_t *)list, element));
+  stp_list_item_t *answer =
+    stp_list_get_item_by_index((const stp_list_t *)list, element);
+  if (answer)
+    return (stp_param_string_t *) stp_list_item_get_data(answer);
+  else
+    return NULL;
 }
 
 stp_param_string_t *
 stp_string_list_find(const stp_string_list_t *list, const char *name)
 {
-  return (stp_param_string_t *) stp_list_item_get_data
-    (stp_list_get_item_by_name((const stp_list_t *)list, name));
+  stp_list_item_t *answer =
+    stp_list_get_item_by_name((const stp_list_t *)list, name);
+  if (answer)
+    return (stp_param_string_t *) stp_list_item_get_data(answer);
+  else
+    return NULL;
 }
 
 size_t
