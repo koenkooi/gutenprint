@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.119 2005/06/02 00:44:22 rlk Exp $"
+   "$Id: printers.xml,v 1.119.2.1 2005/06/18 01:53:18 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -527,6 +527,10 @@
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
       <printer name="EPSON Stylus Photo RX420" driver="escp2-rx420" manufacturer="Epson" model="63">
+        <parameter type="float" name="Gamma">0.636</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
+      <printer name="EPSON Stylus Photo RX425" driver="escp2-rx425" manufacturer="Epson" model="63">
         <parameter type="float" name="Gamma">0.636</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>

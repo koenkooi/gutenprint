@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.335.2.1 2005/06/13 01:57:29 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.335.2.2 2005/06/18 01:53:17 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1876,7 +1876,7 @@ escp2_parameters(const stp_vars_t *v, const char *name,
 	  using_automatic_settings(v, AUTO_MODE_MANUAL))
 	{
 	  const escp2_inkname_t *ink_name = get_inktype(v);
-	  if (ink_name && (ink_name->inkset == INKSET_CMYKRB))
+	  if (ink_name && ink_name->inkset == INKSET_CMYKRB)
 	    description->is_active = 1;
 	}
       else
