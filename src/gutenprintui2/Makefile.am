@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2005/02/06 20:48:38 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2005/06/26 10:56:51 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -54,12 +54,12 @@ libgutenprintui2_la_SOURCES =			\
 libgutenprintui2_la_LIBADD = $(GUTENPRINTUI2_LIBDEPS)
 # Uncommment to build an unversioned library (version in soname)
 libgutenprintui2_la_CFLAGS = $(AM_CFLAGS) $(CFLAGS) $(GUTENPRINT_CFLAGS) $(GTK2_CFLAGS)
-libgutenprintui2_la_LDFLAGS = -release $(GUTENPRINT_VERSION) \
-	-rpath $(libdir) -no-undefined
+#libgutenprintui2_la_LDFLAGS = -release $(GUTENPRINT_VERSION) \
+#	-rpath $(libdir) -no-undefined
 # Uncomment to build a versioned library
-#libgutenprintui2_la_LDFLAGS = \
-# -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-# -rpath $(libdir)
+libgutenprintui2_la_LDFLAGS = \
+ -version-info  $(GUTENPRINTUI2_CURRENT_INTERFACE):$(GUTENPRINTUI2_INTERFACE_AGE):$(GUTENPRINTUI2_BINARY_AGE) \
+ -rpath $(libdir) -no-undefined
 
 AM_LFLAGS = -i
 AM_YFLAGS = -d
