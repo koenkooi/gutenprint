@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.26 2005/06/02 00:44:23 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.27 2005/06/29 01:42:34 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -182,6 +182,7 @@ const res_t *const stpi_escp2_1440dpi_reslist[] =
   &r_720x360sw,
 
   &r_720sw,
+  &r_720hq,
 
   &r_1440x720sw,
   &r_1440x720hq2,
@@ -208,6 +209,7 @@ const res_t *const stpi_escp2_2880dpi_reslist[] =
   &r_720sw,
 
   &r_1440x720sw,
+  &r_1440x720hq2,
 
   &r_2880x720sw,
   &r_2880x720hq2,

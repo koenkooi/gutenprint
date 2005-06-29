@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: bit-ops.h,v 1.2 2005/06/29 01:42:34 rlk Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -54,6 +54,16 @@ extern void	stp_unpack_8(int height, int bits, const unsigned char *in,
 			     unsigned char *out2, unsigned char *out3,
 			     unsigned char *out4, unsigned char *out5,
 			     unsigned char *out6, unsigned char *out7);
+
+extern void	stp_unpack_16(int height, int bits, const unsigned char *in,
+			      unsigned char *out0, unsigned char *out1,
+			      unsigned char *out2, unsigned char *out3,
+			      unsigned char *out4, unsigned char *out5,
+			      unsigned char *out6, unsigned char *out7,
+			      unsigned char *out8, unsigned char *out9,
+			      unsigned char *out10, unsigned char *out11,
+			      unsigned char *out12, unsigned char *out13,
+			      unsigned char *out14, unsigned char *out15);
 
 #ifdef __cplusplus
   }

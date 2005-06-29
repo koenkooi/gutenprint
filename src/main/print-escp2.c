@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.338 2005/06/26 23:01:33 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.339 2005/06/29 01:42:34 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1016,7 +1016,7 @@ verify_resolution(const stp_vars_t *v, const res_t *res)
 	horizontal_passes = 1;
       if (oversample < 1)
 	oversample = 1;
-      if (((horizontal_passes * res->vertical_passes) <= 8) &&
+      if (((horizontal_passes * res->vertical_passes) <= STP_MAX_WEAVE) &&
 	  (! res->softweave || (nozzles > 1 && nozzles > oversample)))
 	return 1;
     }
