@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.20 2005/06/14 02:44:24 rlk Exp $"
+ * "$Id: sequence.c,v 1.21 2005/06/30 02:11:49 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -68,6 +68,12 @@ check_sequence(const stp_sequence_t *v)
       stp_erprintf("Null stp_sequence_t! Please report this bug.\n");
       stp_abort();
     }
+}
+
+static stp_sequence_t *
+deconst_sequence(const stp_sequence_t *sequence)
+{
+  return (stp_sequence_t *) sequence;
 }
 
 static void
@@ -192,7 +198,7 @@ stp_sequence_get_range(const stp_sequence_t *sequence,
 {
   if (sequence->recompute_range) /* Don't recompute the range if we don't
 			       need to. */
-    scan_sequence_range((stp_sequence_t *) sequence);
+    scan_sequence_range(deconst_sequence(sequence));
   *low = sequence->rlo;
   *high = sequence->rhi;
 }
@@ -496,7 +502,6 @@ DEFINE_DATA_SETTER(unsigned int, uint)
 DEFINE_DATA_SETTER(short, short)
 DEFINE_DATA_SETTER(unsigned short, ushort)
 
-
 #define DEFINE_DATA_ACCESSOR(t, lb, ub, name)				      \
 const t *								      \
 stp_sequence_get_##name##_data(const stp_sequence_t *sequence, size_t *count) \
@@ -506,7 +511,7 @@ stp_sequence_get_##name##_data(const stp_sequence_t *sequence, size_t *count) \
     return NULL;							      \
   if (!sequence->name##_data)						      \
     {									      \
-      stp_sequence_t *seq = (stp_sequence_t *) (sequence);		      \
+      stp_sequence_t *seq = deconst_sequence(sequence);			      \
       seq->name##_data = stp_zalloc(sizeof(t) * sequence->size);	      \
       for (i = 0; i < sequence->size; i++)				      \
 	seq->name##_data[i] = (t) sequence->data[i];			      \
