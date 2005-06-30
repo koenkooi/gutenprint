@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.8 2005/03/22 12:29:04 rlk Exp $"
+ * "$Id: color-conversion.h,v 1.9 2005/06/30 01:34:58 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gimp-Print algorithm.
  *
@@ -39,6 +39,7 @@ typedef enum
   COLOR_CORRECTION_DEFAULT,
   COLOR_CORRECTION_UNCORRECTED,
   COLOR_CORRECTION_BRIGHT,
+  COLOR_CORRECTION_HUE,
   COLOR_CORRECTION_ACCURATE,
   COLOR_CORRECTION_THRESHOLD,
   COLOR_CORRECTION_DESATURATED,
