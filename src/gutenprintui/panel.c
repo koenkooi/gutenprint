@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.2 2005/01/28 03:02:18 rlk Exp $"
+ * "$Id: panel.c,v 1.3 2005/06/30 01:42:56 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -1977,7 +1977,7 @@ create_scaling_frame (void)
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (event_box);
 
-  label = gtk_label_new ("Scale by:");
+  label = gtk_label_new (_("Scale by:"));
   gtk_container_add (GTK_CONTAINER (event_box), label);
   gtk_widget_show (label);
 
