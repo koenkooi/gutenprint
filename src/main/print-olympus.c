@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.54 2005/02/02 13:44:44 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.55 2005/07/01 09:56:12 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1084,7 +1084,7 @@ static const olympus_cap_t olympus_model_capabilities[] =
     cpx00_adj_cyan, cpx00_adj_magenta, cpx00_adj_yellow,
     NULL,
   },
-  { /* Canon CP-220, CP-330, SELPHY CP-400, SELPHY CP-500 */
+  { /* Canon CP-220, CP-330, SELPHY CP-400, SELPHY CP-500, SELPHY CP-600 */
     1001,
     &ymc_ink_list,
     &res_314dpi_list,
