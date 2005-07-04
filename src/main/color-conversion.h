@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.9 2005/06/30 01:34:58 rlk Exp $"
+ * "$Id: color-conversion.h,v 1.10 2005/07/04 00:23:54 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gimp-Print algorithm.
  *
@@ -163,7 +163,6 @@ typedef struct
   stp_cached_curve_t hue_map;
   stp_cached_curve_t lum_map;
   stp_cached_curve_t sat_map;
-  stp_cached_curve_t gcr_curve;
   unsigned short *gray_tmp;	/* Color -> Gray */
   unsigned short *cmy_tmp;	/* CMY -> CMYK */
   unsigned char *in_data;
