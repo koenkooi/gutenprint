@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.28 2005/07/04 00:18:45 rlk Exp $"
+ * "$Id: channel.c,v 1.29 2005/07/14 23:43:30 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -517,6 +517,8 @@ stp_channel_initialize(stp_vars_t *v, stp_image_t *image,
 		  double lower_val = base * (1.0 - where);
 		  double lower_amount = lower_val / this_val;
 		  double upper_amount = (val - lower_val) / next_val;
+		  if (lower_amount > 65535.0)
+		    lower_amount = 65535.0;
 		  c->lut[val * sc + sc - k - 2] = upper_amount;
 		  c->lut[val * sc + sc - k - 1] = lower_amount;
 		  val++;
