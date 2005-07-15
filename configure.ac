@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.127 2005/07/01 22:48:27 rleigh Exp $
+dnl $Id: configure.ac,v 1.128 2005/07/15 00:31:54 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.127 $)
+AC_REVISION($Revision: 1.128 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -215,6 +215,7 @@ STP_ARG_WITH_DETAILED(
   ])
 
 BUILD_CUPS_PPDS="${BUILD_CUPS}"
+BUILD_TRANSLATED_CUPS_PPDS="${BUILD_CUPS}"
 
 STP_ARG_ENABLE([cups-ppds],
                [build CUPS PPD files],
@@ -224,7 +225,7 @@ STP_ARG_ENABLE([cups-ppds],
 STP_ARG_ENABLE([translated-cups-ppds],
                [build translated CUPS PPD files],
                [BUILD_TRANSLATED_CUPS_PPDS],
-               [no])
+               [yes])
 
 USE_LEVEL3_PS=no
 if test -n "${CUPS_CONFIG}" -a "${BUILD_CUPS}" = "yes" ; then
@@ -233,6 +234,7 @@ dnl Quote to protect sed regexes
   [cups_major=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\1/'`]
   [cups_minor=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
   [cups_point=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\3/'`]
+dnl There was no CUPS 1.0.15 or the like
   if test "$cups_major" -gt 1 -o "$cups_minor" -gt 1 -o "$cups_point" -gt 14 ; then
     USE_LEVEL3_PS=yes
   fi
