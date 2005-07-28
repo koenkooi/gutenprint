@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.16 2004/04/14 02:21:21 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.17 2005/07/28 00:58:45 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -48,7 +48,7 @@ c_strstrip(char *s)
       return sn;
     }
   else
-    return (char *) s;
+    return strdup(s);
 }
 
 #define DBG(x)						\
