@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.122 2005/06/25 21:40:27 rlk Exp $"
+   "$Id: printers.xml,v 1.123 2005/07/30 13:18:31 faust3 Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -116,6 +116,10 @@
       </printer>
       <printer name="Canon S4500" driver="bjc-s4500" manufacturer="Canon" model="6500">
         <parameter type="float" name="Gamma">0.750</parameter>
+        <parameter type="float" name="Density">1.000</parameter>
+      </printer>
+      <printer name="Canon PIXMA iP4000" driver="bjc-iP4000" manufacturer="Canon" model="4000">
+        <parameter type="float" name="Gamma">1.000</parameter>
         <parameter type="float" name="Density">1.000</parameter>
       </printer>
     </family>
