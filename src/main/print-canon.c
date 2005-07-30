@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.156 2005/07/03 22:13:36 rlk Exp $"
+ * "$Id: print-canon.c,v 1.157 2005/07/30 09:39:18 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -648,7 +648,7 @@ static void canon_write_line(stp_vars_t *v);
 #define CANON_MODES(A) 0
 #endif
 
-#define CANON_INK(A) A,sizeof(A)/sizeof(canon_variable_inklist_t*)
+#define CANON_INK(A) A,sizeof(A)/sizeof(canon_variable_inklist_t)
 
 
 #ifdef EXPERIMENTAL_STUFF
