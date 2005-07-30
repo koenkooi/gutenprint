@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.160 2005/07/30 13:18:32 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.161 2005/07/30 15:23:51 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2374,7 +2374,7 @@ canon_init_setImage(const stp_vars_t *v, canon_init_t *init)
     stp_zfwrite(ESC28,2,1,v);
     stp_putc(0x74,v);
     stp_put16_le(30,v);
-    stp_zfwrite(buf,30,1,v);
+    stp_zfwrite((char*)buf,30,1,v);
     return;
   }
 
