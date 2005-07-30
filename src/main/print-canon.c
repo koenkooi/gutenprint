@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.158 2005/07/30 09:44:57 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.159 2005/07/30 09:51:04 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2626,7 +2626,7 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
 
   if ((inks = canon_inks(caps, res_code, colormode, bits))!=0)
     {
-      set_ink_ranges(v, inks->c, STP_ECOLOR_C, "MagentaDensity",
+      set_ink_ranges(v, inks->c, STP_ECOLOR_C, "CyanDensity",
 		     "LightCyanTransition");
       set_ink_ranges(v, inks->m, STP_ECOLOR_M, "MagentaDensity",
 		     "LightMagentaTransition");
