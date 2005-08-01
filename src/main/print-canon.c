@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.161 2005/07/30 15:23:51 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.162 2005/08/01 08:54:04 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -3292,7 +3292,7 @@ canon_write(stp_vars_t *v,		/* I - Print file or command */
   }
 
 
-  if((pd->color_info[coloridx].level == 3) && (caps->features & CANON_CAP_5pixelin1byte))
+  if((caps->features & CANON_CAP_5pixelin1byte) && (pd->color_info[coloridx].level == 3))
     length = pack_pixels(in_ptr,length);
 
   stp_pack_tiff(v, in_ptr, length, comp_data, &comp_ptr, NULL, NULL);
