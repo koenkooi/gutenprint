@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdconfig.in,v 1.11 2005/05/05 10:36:58 rleigh Exp $
+# $Id: cups-genppdconfig.in,v 1.12 2005/08/02 20:27:31 rleigh Exp $
 # A user-friendly dialog-based wrapper for cups-genppd(8).
 # Copyright (C) 2002 Roger Leigh <rleigh@debian.org>
 #
@@ -24,7 +24,6 @@ use File::Temp qw(tempfile unlink0);
 use IO::Handle;
 use Getopt::Std;
 use POSIX;
-use Locale::gettext;
 
 sub init_data();
 sub init_defaults();
