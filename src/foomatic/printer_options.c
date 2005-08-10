@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.47 2005/04/17 01:58:16 rlk Exp $"
+ * "$Id: printer_options.c,v 1.48 2005/08/10 11:29:46 rlk Exp $"
  *
  *   Dump the per-printer options for Grant Taylor's *-omatic database
  *
@@ -170,9 +170,9 @@ main(int argc, char **argv)
 			     driver, desc.name, "None", "None");
 		    }
 		    
-		  printf("$stpdata{'%s'}{'STP_%s'}{'0'} = 'False';\n",
+		  printf("$stpdata{'%s'}{'STP_%s'}{'False'} = 'False';\n",
 			 driver, desc.name);
-		  printf("$stpdata{'%s'}{'STP_%s'}{'1'} = 'True';\n",
+		  printf("$stpdata{'%s'}{'STP_%s'}{'True'} = 'True';\n",
 			 driver, desc.name);
 		}
 	      else if (desc.p_type == STP_PARAMETER_TYPE_DOUBLE)
