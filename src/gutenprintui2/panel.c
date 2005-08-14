@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.4 2005/06/30 01:42:56 rlk Exp $"
+ * "$Id: panel.c,v 1.5 2005/08/14 16:08:29 rleigh Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -2641,8 +2641,18 @@ stpui_compute_orientation(void)
 }
 
 static void
+compute_printable_region(void)
+{
+  stp_get_media_size(pv->v, &paper_width, &paper_height);
+  stp_get_imageable_area(pv->v, &left, &right, &bottom, &top);
+  printable_width  = right - left;
+  printable_height = bottom - top;
+}  
+
+static void
 set_orientation(int orientation)
 {
+  compute_printable_region();
   pv->orientation = orientation;
   if (orientation == ORIENT_AUTO)
     orientation = stpui_compute_orientation();
@@ -4463,12 +4473,7 @@ preview_update (void)
   gdouble min_ppi_scaling;   /* Minimum PPI for current page size */
 
   suppress_preview_update++;
-  stp_get_media_size(pv->v, &paper_width, &paper_height);
-
-  stp_get_imageable_area(pv->v, &left, &right, &bottom, &top);
-
-  printable_width  = right - left;
-  printable_height = bottom - top;
+  compute_printable_region();
 
   if (pv->scaling < 0)
     {
