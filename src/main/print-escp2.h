@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.94 2005/06/14 02:49:10 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -53,7 +53,8 @@ typedef unsigned long model_featureset_t;
 #define RES_2880_720	 5
 #define RES_2880_1440	 6
 #define RES_2880_2880	 7
-#define RES_N		 8
+#define RES_5760_2880	 8
+#define RES_N		 9
 
 /*
  ****************************************************************
@@ -704,5 +705,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.94 2005/06/14 02:49:10 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $".
  */

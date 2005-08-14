@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.341 2005/07/03 22:13:37 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.342 2005/08/14 01:27:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -849,6 +849,7 @@ compute_internal_resid(int hres, int vres)
       1440 * 1440,
       2880 * 1440,
       2880 * 2880,
+      5760 * 2880,
     };
   int total_resolution = hres * vres;
   int i;
