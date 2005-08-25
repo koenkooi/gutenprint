@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.162 2005/08/01 08:54:04 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.163 2005/08/25 23:40:40 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1391,7 +1391,7 @@ typedef struct {
 
 static const paper_t canon_paper_list[] = {
   { "Plain",		N_ ("Plain Paper"),                0x00, 0.50, 0.25, 0.500, 0, 0, 0 },
-  { "Plain PIXMA",	N_ ("Plain Paper PIXMA"),          0x00, 0.78, 0.25, 0.500, 0, 0, 0 },
+  { "PlainPIXMA",	N_ ("Plain Paper PIXMA"),          0x00, 0.78, 0.25, 0.500, 0, 0, 0 },
   { "Transparency",	N_ ("Transparencies"),             0x02, 1.00, 1.00, 0.900, 0, 0, 0 },
   { "BackPrint",	N_ ("Back Print Film"),            0x03, 1.00, 1.00, 0.900, 0, 0, 0 },
   { "Fabric",		N_ ("Fabric Sheets"),              0x04, 0.50, 0.25, 0.500, 0, 0, 0 },
