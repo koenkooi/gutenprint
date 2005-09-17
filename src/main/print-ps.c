@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.79 2004/09/17 18:38:26 rleigh Exp $"
+ * "$Id: print-ps.c,v 1.80 2005/09/17 21:54:34 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -622,6 +622,8 @@ ps_print_internal(const stp_vars_t *v, stp_image_t *image)
     }
   else
     stp_set_string_parameter(nv, "STPIOutputType", "Whitescale");
+
+  stp_set_boolean_parameter(nv, "SimpleGamma", 1);
 
   out_channels = stp_color_init(nv, image, 256);
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.36 2004/09/17 18:38:26 rleigh Exp $"
+ * "$Id: print-raw.c,v 1.37 2005/09/17 21:54:34 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -237,6 +237,7 @@ raw_print(const stp_vars_t *v, stp_image_t *image)
     }
 
   stp_set_float_parameter(nv, "Density", 1.0);
+  stp_set_boolean_parameter(nv, "SimpleGamma", 1);
   stp_channel_reset(nv);
   for (i = 0; i < ink_channels; i++)
     stp_channel_add(nv, i, 0, 1.0);

@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprintui-internal.h,v 1.1 2004/09/17 18:38:13 rleigh Exp $"
+ * "$Id: gutenprintui-internal.h,v 1.2 2005/09/17 21:54:33 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -109,6 +109,7 @@ typedef struct
 typedef struct
 {
   unsigned char *base_addr;
+  const char *output_type;
   int bpp;
   off_t offset;
   off_t limit;
