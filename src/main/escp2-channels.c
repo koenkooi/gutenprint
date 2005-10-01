@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.56 2005/07/03 22:13:36 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.56.4.1 2005/10/01 21:43:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -424,6 +424,13 @@ static const physical_subchannel_t extended_black_subchannels[] =
 
 DECLARE_INK_CHANNEL(extended_black);
 
+static const physical_subchannel_t f360_extended_black_subchannels[] =
+{
+  { 0, 1, 1, "BlackDensity", NULL }
+};
+
+DECLARE_INK_CHANNEL(f360_extended_black);
+
 static const physical_subchannel_t photo_cyan_subchannels[] =
 {
   { 2, 0, 0, "CyanDensity", NULL },
@@ -454,6 +461,13 @@ static const physical_subchannel_t extended_magenta_subchannels[] =
 
 DECLARE_INK_CHANNEL(extended_magenta);
 
+static const physical_subchannel_t f360_extended_magenta_subchannels[] =
+{
+  { 1, 1, 1, "MagentaDensity", NULL }
+};
+
+DECLARE_INK_CHANNEL(f360_extended_magenta);
+
 static const physical_subchannel_t photo_yellow_subchannels[] =
 {
   { 4, 0, 0, "YellowDensity", NULL }
@@ -474,6 +488,13 @@ static const physical_subchannel_t j_extended_yellow_subchannels[] =
 };
 
 DECLARE_INK_CHANNEL(j_extended_yellow);
+
+static const physical_subchannel_t extended_photo3_black_subchannels[] =
+{
+  { 0, 3, 0, "BlackDensity", NULL }
+};
+
+DECLARE_INK_CHANNEL(extended_photo3_black);
 
 /* For Japanese 7-color printers, with dark yellow */
 static const physical_subchannel_t photo2_yellow_subchannels[] =
@@ -507,6 +528,24 @@ static const physical_subchannel_t f360_photo2_black_subchannels[] =
 };
 
 DECLARE_INK_CHANNEL(f360_photo2_black);
+
+static const physical_subchannel_t photo3_black_subchannels[] =
+{
+  { 0, 0, 0, "BlackDensity", NULL },
+  { 0, 1, 0, "BlackDensity", "GrayTransition" },
+  { 0, 3, 0, "BlackDensity", "LightGrayTransition" }
+};
+
+DECLARE_INK_CHANNEL(photo3_black);
+
+static const physical_subchannel_t f360_photo3_black_subchannels[] =
+{
+  { 0, 0, 1, "BlackDensity", NULL },
+  { 0, 1, 0, "BlackDensity", "GrayTransition" },
+  { 0, 3, 1, "BlackDensity", "LightGrayTransition" }
+};
+
+DECLARE_INK_CHANNEL(f360_photo3_black);
 
 static const physical_subchannel_t quadtone_subchannels[] =
 {
@@ -573,6 +612,14 @@ static const physical_subchannel_t f360_photo_magenta_subchannels[] =
 };
 
 DECLARE_INK_CHANNEL(f360_photo_magenta);
+
+static const physical_subchannel_t f360x_photo_magenta_subchannels[] =
+{
+  { 1, 0, 0, "MagentaDensity", NULL },
+  { 1, 1, 1, "MagentaDensity", "LightMagentaTransition" }
+};
+
+DECLARE_INK_CHANNEL(f360x_photo_magenta);
 
 
 #define DECLARE_CHANNEL_SET(name)			\
@@ -687,6 +734,41 @@ static const escp2_inkname_t f360_two_color_grayscale_inkset =
 {
   "Gray2", N_("Two Level Grayscale"), INKSET_CcMmYKk,
   &f360_photo2_black_channel_set
+};
+
+
+/*
+ ****************************************************************
+ *                                                              *
+ * Three shade gray                                             *
+ *                                                              *
+ ****************************************************************
+ */
+
+static const ink_channel_t *const photo3_black_channels[] =
+{
+  &photo3_black_channel
+};
+
+DECLARE_CHANNEL_SET(photo3_black);
+
+static const escp2_inkname_t three_color_grayscale_inkset =
+{
+  "Gray3", N_("Three Level Grayscale"), INKSET_CcMmYKk,
+  &photo3_black_channel_set
+};
+
+static const ink_channel_t *const f360_photo3_black_channels[] =
+{
+  &f360_photo3_black_channel
+};
+
+DECLARE_CHANNEL_SET(f360_photo3_black);
+
+static const escp2_inkname_t f360_three_color_grayscale_inkset =
+{
+  "Gray3", N_("Three Level Grayscale"), INKSET_CcMmYKk,
+  &f360_photo3_black_channel_set
 };
 
 
@@ -1220,6 +1302,29 @@ static const escp2_inkname_t f360_j_seven_color_enhanced_inkset =
 /*
  ****************************************************************
  *                                                              *
+ * Eight color CcMmYKkk                                         *
+ *                                                              *
+ ****************************************************************
+ */
+
+static const ink_channel_t *const photo3_channels[] =
+{
+  &f360_photo3_black_channel, &f360_photo_cyan_channel,
+  &f360_photo_magenta_channel, &f360_photo_yellow_channel
+};
+
+DECLARE_CHANNEL_SET(photo3);
+
+static const escp2_inkname_t eight_color_enhanced_inkset =
+{
+  "PhotoCMYK8", N_("Eight Color Photo"), INKSET_CcMmYKk,
+  &photo3_channel_set
+};
+
+
+/*
+ ****************************************************************
+ *                                                              *
  * Five color CMYRB                                             *
  *                                                              *
  ****************************************************************
@@ -1685,6 +1790,23 @@ static const escp2_inkname_t seven_color_r800_gloss_extended_inkset =
 };
 
 
+static const ink_channel_t *const eight_color_extended_channels[] =
+{
+  &photo_black_channel, &f360_extended_black_channel,
+  &extended_photo3_black_channel,
+  &f360_standard_cyan_channel, &extended_cyan_channel,
+  &standard_magenta_channel, &f360_extended_magenta_channel,
+  &f360_photo_yellow_channel
+};
+
+DECLARE_CHANNEL_SET(eight_color_extended);
+
+static const escp2_inkname_t eight_color_extended_inkset =
+{
+  "PhysicalCMYKkk", N_("Eight Color Raw"), INKSET_EXTENDED,
+  &eight_color_extended_channel_set
+};
+
 
 static const shade_set_t standard_shades =
 {
@@ -1773,6 +1895,30 @@ static const shade_set_t ultrachrome_photo_shades =	/* Ultrachrome with photo bl
 static const shade_set_t ultrachrome_matte_shades =	/* Ultrachrome with matte black ink */
 {
   { 2, { 1.0, 0.33 }},
+  { 2, { 1.0, 0.33 }},
+  { 2, { 1.0, 0.25 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+};
+
+static const shade_set_t ultra3_photo_shades =	/* R2400 with photo black ink */
+{
+  { 3, { 1.0, 0.5, 0.2 }},
+  { 2, { 1.0, 0.33 }},
+  { 2, { 1.0, 0.25 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+  { 1, { 1.0 }},
+};
+
+static const shade_set_t ultra3_matte_shades =	/* R2400 with matte black ink */
+{
+  { 3, { 1.0, 0.33, 0.165 }},
   { 2, { 1.0, 0.33 }},
   { 2, { 1.0, 0.25 }},
   { 1, { 1.0 }},
@@ -2038,6 +2184,23 @@ DECLARE_INKLIST("ultramatte", ultra_matte7, photo7,
 		N_("UltraChrome Matte Black"), ultrachrome,
 		ultrachrome_matte, ultrachrome_matte);
 
+static const escp2_inkname_t *const f360_photo8_ink_types[] =
+{
+  &eight_color_enhanced_inkset,
+  &four_color_standard_inkset,
+  &three_color_composite_inkset,
+  &f360_three_color_grayscale_inkset,
+  &eight_color_extended_inkset,
+};
+
+DECLARE_INKLIST("ultra3photo", f360_ultra_photo8, f360_photo8,
+		N_("UltraChrome K3 Photo Black"), ultrachrome,
+		ultrachrome_photo, ultra3_photo);
+
+DECLARE_INKLIST("ultra3matte", f360_ultra_matte8, f360_photo8,
+		N_("UltraChrome K3 Matte Black"), ultrachrome,
+		ultrachrome_matte, ultra3_matte);
+
 static const escp2_inkname_t *const cmykrb_matte_ink_types[] =
 {
   &six_color_r800_inkset,
@@ -2202,6 +2365,14 @@ static const inklist_t *const ultrachrome_group[] =
 };
 
 DECLARE_INKGROUP(ultrachrome);
+
+static const inklist_t *const f360_ultrachrome_k3_group[] =
+{
+  &f360_ultra_photo8_inklist,
+  &f360_ultra_matte8_inklist
+};
+
+DECLARE_INKGROUP(f360_ultrachrome_k3);
 
 static const inklist_t *const cmykrb_group[] =
 {

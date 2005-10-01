@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.95.4.1 2005/10/01 21:43:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -525,6 +525,7 @@ extern const escp2_drop_list_t stpi_escp2_variable_3pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_pigment_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_pigment_c66_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_3pl_pmg_drops;
+extern const escp2_drop_list_t stpi_escp2_variable_r2400_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_1440_4pl_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_ultrachrome_drops;
 extern const escp2_drop_list_t stpi_escp2_variable_2880_4pl_drops;
@@ -581,6 +582,7 @@ extern const inkgroup_t stpi_escp2_ultrachrome_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_photo7_japan_inkgroup;
 extern const inkgroup_t stpi_escp2_f360_ultrachrome_inkgroup;
+extern const inkgroup_t stpi_escp2_f360_ultrachrome_k3_inkgroup;
 extern const inkgroup_t stpi_escp2_cmykrb_inkgroup;
 
 extern const escp2_inkname_t stpi_escp2_default_black_inkset;
@@ -705,5 +707,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.95.4.1 2005/10/01 21:43:00 rlk Exp $".
  */
