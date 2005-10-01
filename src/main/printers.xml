@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.127 2005/09/18 15:50:12 rlk Exp $"
+   "$Id: printers.xml,v 1.128 2005/10/01 13:23:53 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -661,6 +661,10 @@
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
+      <printer name="EPSON Stylus CX3700" driver="escp2-cx3700" manufacturer="Epson" model="66">
+        <parameter type="float" name="Gamma">0.470</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
       <printer name="EPSON Stylus CX3810" driver="escp2-cx3810" manufacturer="Epson" model="66">
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
@@ -673,6 +677,13 @@
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
       <printer name="EPSON Stylus CX4600" driver="escp2-cx4600" manufacturer="Epson" model="65">
+        <parameter type="float" name="CyanGamma">0.96</parameter>
+        <parameter type="float" name="MagentaGamma">1.02</parameter>
+        <parameter type="float" name="YellowGamma">1.02</parameter>
+        <parameter type="float" name="Gamma">0.500</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
+      <printer name="EPSON Stylus CX4700" driver="escp2-cx4700" manufacturer="Epson" model="65">
         <parameter type="float" name="CyanGamma">0.96</parameter>
         <parameter type="float" name="MagentaGamma">1.02</parameter>
         <parameter type="float" name="YellowGamma">1.02</parameter>
@@ -749,6 +760,13 @@
         <parameter type="float" name="Gamma">0.500</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
+      <printer name="EPSON Stylus CX7700" driver="escp2-cx7700" manufacturer="Epson" model="65">
+        <parameter type="float" name="CyanGamma">0.96</parameter>
+        <parameter type="float" name="MagentaGamma">1.02</parameter>
+        <parameter type="float" name="YellowGamma">1.02</parameter>
+        <parameter type="float" name="Gamma">0.500</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
       <printer name="EPSON Stylus CX7800" driver="escp2-cx7800" manufacturer="Epson" model="65">
         <parameter type="float" name="CyanGamma">0.96</parameter>
         <parameter type="float" name="MagentaGamma">1.02</parameter>
@@ -775,6 +793,10 @@
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
       <printer name="EPSON Stylus DX3800" driver="escp2-dx3800" manufacturer="Epson" model="66">
+        <parameter type="float" name="Gamma">0.470</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
+      <printer name="EPSON Stylus DX3850" driver="escp2-dx3850" manufacturer="Epson" model="66">
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
