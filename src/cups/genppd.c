@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.107 2005/04/23 00:26:07 rlk Exp $"
+ * "$Id: genppd.c,v 1.108 2005/10/02 17:17:10 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -30,8 +30,6 @@
  * Contents:
  *
  *   main()                   - Process files on the command-line...
- *   initialize_stp_options() - Initialize the min/max values for
- *                              each STP numeric option.
  *   usage()                  - Show program usage.
  *   help()                   - Show detailed program usage.
  *   getlangs()               - Get available translations.
@@ -1709,5 +1707,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.107 2005/04/23 00:26:07 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.108 2005/10/02 17:17:10 rlk Exp $".
  */
