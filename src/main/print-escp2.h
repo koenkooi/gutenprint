@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.95.4.1 2005/10/01 21:43:00 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.95.4.2 2005/10/09 16:56:02 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -537,6 +537,7 @@ extern const paperlist_t stpi_escp2_standard_paper_list;
 extern const paperlist_t stpi_escp2_durabrite_paper_list;
 extern const paperlist_t stpi_escp2_durabrite2_paper_list;
 extern const paperlist_t stpi_escp2_ultrachrome_paper_list;
+extern const paperlist_t stpi_escp2_ultrachrome_k3_paper_list;
 extern const paperlist_t stpi_escp2_r800_paper_list;
 
 extern const paper_adjustment_list_t stpi_escp2_standard_paper_adjustment_list;
@@ -548,6 +549,8 @@ extern const paper_adjustment_list_t stpi_escp2_photo3_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_sp960_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_ultrachrome_matte_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_ultrachrome_k3_photo_paper_adjustment_list;
+extern const paper_adjustment_list_t stpi_escp2_ultrachrome_k3_matte_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_r800_photo_paper_adjustment_list;
 extern const paper_adjustment_list_t stpi_escp2_r800_matte_paper_adjustment_list;
 
@@ -707,5 +710,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.95.4.1 2005/10/01 21:43:00 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.95.4.2 2005/10/09 16:56:02 rlk Exp $".
  */
