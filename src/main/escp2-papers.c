@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.80.4.1 2005/10/09 16:56:01 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.80.4.2 2005/10/09 18:22:37 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -885,7 +885,7 @@ static const paper_adjustment_t ultrachrome_k3_photo_adjustments[] =
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
   { "Coated", 0.83, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
-  { "Photo", 1.0, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
+  { "Photo", 1.0, .2, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
   { "GlossyPhoto", 0.72, 1, 1, .01, 1.8, 1, 1, 1, 1, 1, .92,
     ultra_k3_glossy_hue_adj, ultra_k3_glossy_lum_adj, ultra_k3_glossy_sat_adj },
