@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.80.4.2 2005/10/09 18:22:37 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.80.4.3 2005/10/11 01:23:52 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -373,8 +373,8 @@ static const char ultra_k3_matte_lum_adj[] =
 /* B */  "0.83 0.80 0.76 0.76 0.78 0.79 0.83 0.86 "  /* M */
 /* M */  "0.93 0.95 0.97 0.97 0.97 0.97 0.96 0.96 "  /* R */
 /* R */  "0.96 0.97 0.97 0.98 0.99 1.00 1.00 1.00 "  /* Y */
-/* Y */  "1.00 0.98 0.97 0.95 0.94 0.93 0.90 0.86 "  /* G */
-/* G */  "0.82 0.69 0.60 0.54 0.52 0.51 0.50 0.49 "  /* C */
+/* Y */  "1.00 0.98 0.97 0.95 0.93 0.91 0.88 0.83 "  /* G */
+/* G */  "0.75 0.64 0.58 0.54 0.52 0.51 0.50 0.49 "  /* C */
 "</sequence>\n"
 "</curve>\n"
 "</gutenprint>\n";
@@ -388,8 +388,8 @@ static const char ultra_k3_matte_hue_adj[] =
 /* B */  "-.18 -.21 -.22 -.22 -.22 -.22 -.22 -.22 "  /* M */
 /* M */  "-.22 -.28 -.34 -.40 -.50 -.40 -.30 -.20 "  /* R */
 /* R */  "-.12 -.07 -.04 -.02 0.00 0.00 0.00 0.00 "  /* Y */
-/* Y */  "0.00 -.00 -.03 -.07 -.11 -.15 -.19 -.22 "  /* G */
-/* G */  "-.25 -.22 -.19 -.15 -.12 -.10 -.06 -.03 "  /* C */
+/* Y */  "0.00 -.00 -.03 -.07 -.11 -.15 -.17 -.18 "  /* G */
+/* G */  "-.19 -.20 -.19 -.18 -.16 -.12 -.08 -.04 "  /* C */
 "</sequence>\n"
 "</curve>\n"
 "</gutenprint>\n";
@@ -414,8 +414,8 @@ static const char ultra_k3_glossy_lum_adj[] =
 "<gutenprint>\n"
 "<curve wrap=\"wrap\" type=\"linear\" gamma=\"0\">\n"
 "<sequence count=\"48\" lower-bound=\"0\" upper-bound=\"4\">\n"
-/* C */  "0.49 0.53 0.60 0.64 0.69 0.73 0.77 0.80 "  /* B */
-/* B */  "0.84 0.81 0.77 0.77 0.78 0.80 0.84 0.87 "  /* M */
+/* C */  "0.49 0.53 0.60 0.64 0.67 0.69 0.72 0.75 "  /* B */
+/* B */  "0.75 0.71 0.70 0.70 0.72 0.76 0.81 0.87 "  /* M */
 /* M */  "0.93 0.95 0.97 0.98 0.98 0.97 0.96 0.96 "  /* R */
 /* R */  "0.96 0.97 0.98 0.98 0.99 1.00 1.00 1.00 "  /* Y */
 /* Y */  "1.00 0.98 0.97 0.96 0.95 0.93 0.90 0.87 "  /* G */
@@ -885,7 +885,7 @@ static const paper_adjustment_t ultrachrome_k3_photo_adjustments[] =
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
   { "Coated", 0.83, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
-  { "Photo", 1.0, .2, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
+  { "Photo", 1.0, .5, 1, .01, 1.5, 1, 1, 1, 1, 1, 1.0,
     ultra_k3_matte_hue_adj, ultra_k3_matte_lum_adj, ultra_k3_matte_sat_adj },
   { "GlossyPhoto", 0.72, 1, 1, .01, 1.8, 1, 1, 1, 1, 1, .92,
     ultra_k3_glossy_hue_adj, ultra_k3_glossy_lum_adj, ultra_k3_glossy_sat_adj },
