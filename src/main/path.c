@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.17 2004/09/17 18:38:21 rleigh Exp $"
+ * "$Id: path.c,v 1.18 2005/10/18 02:08:17 rlk Exp $"
  *
  *   Gutenprint path functions - split and search paths.
  *
@@ -63,7 +63,7 @@ stp_path_search(stp_list_t *dirlist, /* List of directories to search */
 {
   stp_list_t *findlist;              /* List of files to return */
   stp_list_item_t *diritem;          /* Current directory */
-  struct dirent** module_dir;        /* Current directory contents */
+  struct dirent** module_dir = NULL; /* Current directory contents */
   char *module_name;                 /* File name to check */
   int n;                             /* Number of directory entries */
 

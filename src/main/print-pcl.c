@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.139 2005/07/03 22:13:39 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.140 2005/10/18 02:08:17 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -1446,7 +1446,7 @@ static const stp_param_string_t duplex_types[] =
  * 'pcl_papersize_valid()' - Is the paper size valid for this printer.
  */
 
-static const int
+static int
 pcl_papersize_valid(const stp_papersize_t *pt,
 		    int model)
 {

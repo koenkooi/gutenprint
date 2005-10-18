@@ -1,5 +1,5 @@
 /*
- * "$Id: color.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: color.h,v 1.2 2005/10/18 02:08:16 rlk Exp $"
  *
  *   libgimpprint color functions.
  *
@@ -130,9 +130,14 @@ stp_color_get_name(const stp_color_t *c);
 extern const char *
 stp_color_get_long_name(const stp_color_t *c);
 
+  /** @} */
+
+#ifdef __cplusplus
+  }
+#endif
 
 
 #endif /* GUTENPRINT_COLOR_H */
 /*
- * End of "$Id: color.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: color.h,v 1.2 2005/10/18 02:08:16 rlk Exp $".
  */

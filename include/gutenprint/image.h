@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: image.h,v 1.2 2005/10/18 02:08:16 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -134,11 +134,13 @@ extern stp_image_status_t stp_image_get_row(stp_image_t *image,
 extern const char *stp_image_get_appname(stp_image_t *image);
 extern void stp_image_conclude(stp_image_t *image);
 
+  /** @} */
+
 #ifdef __cplusplus
   }
 #endif
 
 #endif /* GUTENPRINT_IMAGE_H */
 /*
- * End of "$Id: image.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: image.h,v 1.2 2005/10/18 02:08:16 rlk Exp $".
  */

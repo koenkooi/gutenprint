@@ -1,5 +1,5 @@
 /*
- * "$Id: curve-cache.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: curve-cache.h,v 1.2 2005/10/18 02:08:16 rlk Exp $"
  *
  *   Gimp-Print color management module - traditional Gimp-Print algorithm.
  *
@@ -62,7 +62,7 @@ extern void stp_curve_cache_set_curve(stp_cached_curve_t *cache,
 extern void stp_curve_cache_set_curve_copy(stp_cached_curve_t *cache,
 					   const stp_curve_t *curve);
 
-extern const size_t stp_curve_cache_get_count(stp_cached_curve_t *cache);
+extern size_t stp_curve_cache_get_count(stp_cached_curve_t *cache);
 
 extern const unsigned short *stp_curve_cache_get_ushort_data(stp_cached_curve_t *cache);
 

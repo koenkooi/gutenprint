@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.96 2005/10/18 02:08:17 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -71,7 +71,7 @@ typedef struct
   const double dropsizes[MAX_DROP_SIZES];
 } escp2_dropsize_t;
 
-typedef const escp2_dropsize_t *const escp2_drop_list_t[RES_N];
+typedef const escp2_dropsize_t *escp2_drop_list_t[RES_N];
 
 /*
  ****************************************************************
@@ -705,5 +705,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.95 2005/08/14 01:27:44 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.96 2005/10/18 02:08:17 rlk Exp $".
  */

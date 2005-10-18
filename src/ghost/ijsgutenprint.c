@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgutenprint.c,v 1.10 2005/08/10 11:29:46 rlk Exp $
+ *  $Id: ijsgutenprint.c,v 1.11 2005/10/18 02:08:16 rlk Exp $
  *
  *   IJS server for Gutenprint.
  *
@@ -90,7 +90,7 @@ static const char DeviceCMYK[] = "DeviceCMYK";
 
 static const char *version_id;
 static int version_is_ok = 1;
-static const char version_mismatch[] = N_("\
+static const char *version_mismatch = N_("\
 ijsgutenprint: the version of Gutenprint software installed (%s)\n\
   does not match the PPD file (%s).  If you have upgraded your version\n\
   of Gutenprint recently, you must reinstall all printer queues.\n\
@@ -577,7 +577,7 @@ gutenprint_set_cb (void *set_cb_data, IjsServerCtx *ctx, IjsJobId jobid,
   int code = 0;
   char vbuf[256];
   int i;
-  double z;
+  double z = 0;
   IMAGE *img = (IMAGE *)set_cb_data;
   STP_DEBUG(print_debug_setcb(key, value, value_size));
   if (value_size > sizeof(vbuf)-1)
