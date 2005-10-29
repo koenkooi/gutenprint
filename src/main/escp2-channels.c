@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.57 2005/10/23 19:43:14 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.58 2005/10/29 21:31:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1937,8 +1937,8 @@ static const shade_set_t photo_gen2_shades =	/* Stylus 870 and newer */
 static const shade_set_t photo_gen3_shades =	/* Stylus R300 and newer */
 {
   { 1, { 1.0 }},
-  { 2, { 1.0, 0.3 }},
-  { 2, { 1.0, 0.3 }},
+  { 2, { 1.0, 0.35 }},
+  { 2, { 1.0, 0.35 }},
   { 1, { 1.0 }},
   { 1, { 1.0 }},
   { 1, { 1.0 }},
