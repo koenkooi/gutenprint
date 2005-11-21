@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.41 2005/04/19 01:31:03 rlk Exp $
+## $Id: Makefile.am,v 1.42 2005/11/21 11:16:22 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -17,11 +17,7 @@
 
 ## Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = 1.4 gnu
-
 @SET_MAKE@
-
-MAINT_CHARSET = latin1
 
 SUBDIRS = developer users_guide
 

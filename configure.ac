@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.130 2005/08/11 03:10:18 rlk Exp $
+dnl $Id: configure.ac,v 1.131 2005/11/21 11:16:22 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ pushdef([GUTENPRINT_NAME],              [gutenprint])
 pushdef([GUTENPRINT_MAJOR_VERSION],     [5])
 pushdef([GUTENPRINT_MINOR_VERSION],     [0])
 pushdef([GUTENPRINT_MICRO_VERSION],     [0])
-pushdef([GUTENPRINT_EXTRA_VERSION],     [-rc1])
+pushdef([GUTENPRINT_EXTRA_VERSION],     [-rc2])
 pushdef([GUTENPRINT_CURRENT_INTERFACE], [2])
 pushdef([GUTENPRINT_INTERFACE_AGE],     [0])
 pushdef([GUTENPRINT_BINARY_AGE],        [0])
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.130 $)
+AC_REVISION($Revision: 1.131 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -117,7 +117,7 @@ AC_SUBST([GUTENPRINTUI2_INTERFACE_AGE])
 AC_SUBST([GUTENPRINTUI2_BINARY_AGE])
 
 dnl Initialize automake stuff.
-AM_INIT_AUTOMAKE(GUTENPRINT_NAME, GUTENPRINT_VERSION)
+AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-dist-gzip tar-ustar check-news gnu no-dependencies)
 popdef([GUTENPRINT_NAME])
 popdef([GUTENPRINT_VERSION])
 
