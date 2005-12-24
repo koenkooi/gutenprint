@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.96 2005/04/23 00:26:07 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.97 2005/12/24 23:15:23 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -131,7 +131,13 @@ set_special_parameter(stp_vars_t *v, const char *name, int choice)
   stp_describe_parameter(v, name, &desc);
   if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
     {
-      if (choice >= stp_string_list_count(desc.bounds.str))
+      if (choice < 0)
+	{
+	  stp_clear_string_parameter(v, name);
+	  fprintf(stderr, "DEBUG: Gutenprint clear special parameter %s\n",
+		  name);
+	}
+      else if (choice >= stp_string_list_count(desc.bounds.str))
 	fprintf(stderr, "ERROR: Gutenprint unable to set %s!\n", name);
       else
 	{
@@ -368,8 +374,9 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
       break;
     }
 
-  if (cups->header.cupsCompression >= 0)
-    set_special_parameter(v, "Resolution", cups->header.cupsCompression);
+  set_special_parameter(v, "Resolution", cups->header.cupsCompression - 1);
+
+  set_special_parameter(v, "Quality", cups->header.cupsRowFeed - 1);
 
   if (cups->header.MediaClass && strlen(cups->header.MediaClass) > 0)
     set_string_parameter(v, "InputSlot", cups->header.MediaClass);
@@ -1091,5 +1098,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.96 2005/04/23 00:26:07 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.97 2005/12/24 23:15:23 rlk Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.109 2005/10/18 02:08:16 rlk Exp $"
+ * "$Id: genppd.c,v 1.110 2005/12/24 23:15:23 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1234,10 +1234,20 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 	  stp_set_string_parameter(v, "Quality", opt->name);
 	  stp_describe_resolution(v, &xdpi, &ydpi);
 	  if (xdpi == -1 || ydpi == -1)
-	    gzprintf(fp, "*StpQuality %s/%s: \"\"\n", opt->name, opt->text);
+	    {
+	      stp_parameter_t res_desc;
+	      stp_clear_string_parameter(v, "Quality");
+	      stp_describe_parameter(v, "Resolution", &res_desc);
+	      stp_set_string_parameter(v, "Resolution", res_desc.deflt.str);
+	      stp_describe_resolution(v, &xdpi, &ydpi);
+	      stp_clear_string_parameter(v, "Resolution");
+	      stp_parameter_description_destroy(&res_desc);
+	      gzprintf(fp, "*StpQuality %s/%s:\t\"<</HWResolution[%d %d]>>setpagedevice\"\n",
+		       opt->name, opt->text, xdpi, ydpi);
+	    }
 	  else
-	    gzprintf(fp, "*StpQuality %s/%s:\t\"<</HWResolution[%d %d]>>setpagedevice\"\n",
-		     opt->name, opt->text, xdpi, ydpi);
+	    gzprintf(fp, "*StpQuality %s/%s:\t\"<</HWResolution[%d %d]/cupsRowFeed %d>>setpagedevice\"\n",
+		     opt->name, opt->text, xdpi, ydpi, i + 1);
 	}
       gzputs(fp, "*CloseUI: *StpQuality\n\n");
     }
@@ -1300,7 +1310,7 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
     */
 
     gzprintf(fp, "*Resolution %s/%s:\t\"<</HWResolution[%d %d]/cupsCompression %d>>setpagedevice\"\n",
-             opt->name, opt->text, xdpi, ydpi, i);
+             opt->name, opt->text, xdpi, ydpi, i + 1);
   }
 
   stp_parameter_description_destroy(&desc);
@@ -1707,5 +1717,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.109 2005/10/18 02:08:16 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.110 2005/12/24 23:15:23 rlk Exp $".
  */
