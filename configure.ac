@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.131 2005/11/21 11:16:22 rleigh Exp $
+dnl $Id: configure.ac,v 1.132 2005/12/29 00:41:23 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.131 $)
+AC_REVISION($Revision: 1.132 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -899,12 +899,15 @@ AC_SUBST(GUTENPRINTUI2_VERSION)
 AC_SUBST(gutenprint_cflags)
 gutenprint_libs="${GUTENPRINT_LIBS} ${gutenprint_libdeps}"
 AC_SUBST(gutenprint_libs)
+AC_SUBST(gutenprint_libdeps)
 AC_SUBST(gutenprintui_cflags)
 gutenprintui_libs="${GUTENPRINTUI_LIBS} ${gutenprintui_libdeps}"
 AC_SUBST(gutenprintui_libs)
+AC_SUBST(gutenprintui_libdeps)
 AC_SUBST(gutenprintui2_cflags)
 gutenprintui2_libs="${GUTENPRINTUI2_LIBS} ${gutenprintui2_libdeps}"
 AC_SUBST(gutenprintui2_libs)
+AC_SUBST(gutenprintui2_libdeps)
 AC_SUBST(LIBREADLINE_DEPS)
 AC_SUBST(MAINTAINER_CFLAGS)
 AC_SUBST(PLUG_IN_PATH)
