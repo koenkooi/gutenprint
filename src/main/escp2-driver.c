@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.25 2005/04/17 23:13:59 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.26 2005/12/29 04:07:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -101,6 +101,8 @@ print_debug_params(stp_vars_t *v)
   print_remote_int_param(v, "Model", stp_get_model_id(v));
   print_remote_int_param(v, "Ydpi", pd->res->vres);
   print_remote_int_param(v, "Xdpi", pd->res->hres);
+  print_remote_int_param(v, "Printed_ydpi", pd->res->printed_vres);
+  print_remote_int_param(v, "Printed_xdpi", pd->res->printed_hres);
   print_remote_int_param(v, "Use_softweave", pd->res->softweave);
   print_remote_int_param(v, "Use_printer_weave", pd->res->printer_weave);
   print_remote_int_param(v, "Use_printer_weave", pd->use_printer_weave);
