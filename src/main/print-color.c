@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.133 2005/12/29 04:07:46 rlk Exp $"
+ * "$Id: print-color.c,v 1.134 2005/12/30 20:31:35 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -545,7 +545,7 @@ static curve_param_t curve_parameters[] =
       "GCRCurve", N_("Gray Component Reduction"), N_("Advanced Output Control"),
       N_("Gray component reduction curve"),
       STP_PARAMETER_TYPE_CURVE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED3, 0, 1, 0, 1, 0
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1, 0
     }, &gcr_curve_bounds, CMASK_K, 0, 1, -1
   },
   RAW_CURVE_CHANNEL(0),
