@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.76 2005/10/01 18:47:29 rlk Exp $"
+ * "$Id: escputil.c,v 1.77 2005/12/31 00:32:44 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -503,7 +503,7 @@ read_from_printer(int fd, char *buf, int bufsize, int quiet)
       status = read(fd, buf, bufsize - 1);
       if (status == 0 || (status < 0 && errno == EAGAIN))
 	{
-	  usleep(20000);
+	  usleep(2000);
 	  status = 0; /* not an error (read would have blocked) */
 	}
     }
