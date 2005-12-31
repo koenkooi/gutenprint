@@ -4,7 +4,7 @@
    XML description of papers known to libgutenprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.18 2005/03/29 00:23:43 rlk Exp $"
+   "$Id: papers.xml,v 1.19 2005/12/31 17:22:32 rlk Exp $"
 -->
 
 <!--
@@ -78,7 +78,7 @@
       <description value="4x6"/>
       <width value="288"/>
       <height value="432"/>
-      <unit value="english-extended"/>
+      <unit value="english"/>
     </paper>
     <paper name="w324h495">
       <description value="Epson 4x6 Photo Paper"/>
