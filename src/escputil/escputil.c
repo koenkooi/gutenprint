@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.78 2005/12/31 21:17:20 rlk Exp $"
+ * "$Id: escputil.c,v 1.79 2005/12/31 21:23:08 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -1151,6 +1151,9 @@ do_extended_ink_info(int extended_output)
       printvars = stp_printer_get_defaults(printer);
       stp_describe_parameter(printvars, "ChannelNames", &desc);
     }
+  else
+    printf("Warning! Printer %s is not known; information may be incomplete or incorrect\n",
+	   printer_model);
 
   fd = open(raw_device, O_RDWR, 0666);
   if (fd == -1)
