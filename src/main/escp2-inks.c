@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.44 2005/12/31 20:24:07 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.45 2006/01/06 22:10:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -117,11 +117,11 @@ static const escp2_dropsize_t escp2_1_5pl_5760_dropsizes =
 
 /* E-100/Picturemate */
 static const escp2_dropsize_t escp2_picturemate_1440_dropsizes =
-  { "picturemate_1440", 3, { 0.25, 0.47, 1.0 } };
+  { "picturemate_1440", 3, { 0.4, 0.65, 1.0 } };
 static const escp2_dropsize_t escp2_picturemate_2880_dropsizes =
-  { "picturemate_2880", 3, { 0.25, 0.47, 1.0 } };
+  { "picturemate_2880", 3, { 0.4, 0.65, 1.0 } };
 static const escp2_dropsize_t escp2_picturemate_2880_1440_dropsizes =
-  { "picturemate_2880_1440", 3, { 0.25, 0.47, 1.0 } };
+  { "picturemate_2880_1440", 3, { 0.4, 0.65, 1.0 } };
 
 /* Stylus Photo R300 */
 static const escp2_dropsize_t escp2_r300_360_dropsizes =

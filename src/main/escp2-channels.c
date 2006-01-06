@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.59 2005/12/31 20:24:07 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.60 2006/01/06 22:10:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2478,7 +2478,7 @@ static const escp2_inkname_t *const picturemate_photo_ink_types[] =
   &six_color_picturemate_extended_inkset,
 };
 
-DECLARE_INKLIST("picturemate", picturemate, standard,
+DECLARE_INKLIST("picturemate", picturemate, picturemate_photo,
 		N_("Standard"), picturemate, picturemate, standard);
 
 
