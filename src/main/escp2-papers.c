@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.86 2005/12/31 20:24:07 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.87 2006/01/07 02:43:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1059,9 +1059,9 @@ DECLARE_PAPER_ADJUSTMENTS(r800_matte);
 
 static const paper_adjustment_t picturemate_adjustments[] =
 {
-  { "GlossyPhoto", 0.82, 1, 1, .02, 1.4, .882, 1, .300, 1, 1, 0.92,
+  { "GlossyPhoto", 1.00, 1, 1, .02, 1.4, .882, 1, .300, 1, 1, 0.92,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
-  { "Other", 0.72, .1, 1, .02, 1.4, .882, 1, .300, 1, 1, 1.0,
+  { "Other", 0.878, .1, 1, .02, 1.4, .882, 1, .300, 1, 1, 1.0,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
 };
 
