@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.90 2006/01/08 01:18:21 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.91 2006/01/08 02:33:16 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -985,11 +985,11 @@ static const paper_adjustment_t r800_photo_adjustments[] =
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
   { "Photo", 1.0, .75, 1, .02, 1.4, .882, 1, .250, 1, 1, 1.0,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
-  { "GlossyPhoto", 0.546, 1, 1, .02, 1.4, .882, 1, .250, 1, 1, 0.92,
+  { "GlossyPhoto", 0.600, 1, 1, .02, 2.0, .882, 1, .250, 1, 1, 0.92,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
-  { "Semigloss", 0.546, .8, 1, .02, 1.4, .882, 1, .250, 1, 1, 0.92,
+  { "Semigloss", 0.600, .8, 1, .02, 2.0, .882, 1, .250, 1, 1, 0.92,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
-  { "Luster", 0.546, .8, 1, .02, 1.4, .882, 1, .250, 1, 1, 0.92,
+  { "Luster", 0.600, .8, 1, .02, 2.0, .882, 1, .250, 1, 1, 0.92,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
   { "ArchivalGlossy", 0.92, .4, 1, .02, 1.4, .882, 1, .250, 1, 1, 1.0,
     r800_glossy_hue_adj, r800_glossy_lum_adj, r800_glossy_sat_adj },
