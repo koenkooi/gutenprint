@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.88 2006/01/07 17:24:44 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.89 2006/01/08 00:29:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -705,11 +705,11 @@ static const paper_adjustment_t photo3_adjustments[] =
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
   { "Photo",        0.833, .5, 0.5, .25, .999, 1, .59, .7, .9, 1, 1,
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
-  { "GlossyPhoto",  0.833, .75, 0.5, .25, .999, 1, .85, .85, .66, 1, 0.92,
+  { "GlossyPhoto",  0.75, .5, 0.3, .25, 1.05, 1, .85, .85, .66, 1, 0.92,
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
-  { "Semigloss",    0.833, .75, 0.5, .25, .999, 1, .85, .85, .66, 1, 0.92,
+  { "Semigloss",    0.75, .5, 0.3, .25, .999, 1, .85, .85, .66, 1, 0.92,
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
-  { "Luster",       0.833, .75, 0.5, .25, .999, 1, .85, .85, .66, 1, 0.92,
+  { "Luster",       0.75, .5, 0.3, .25, .999, 1, .85, .85, .66, 1, 0.92,
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
   { "GlossyPaper",  0.833, .5, 0.75, .2, .999, 1, .59, .7, .9, 1, 1,
     photo3_hue_adj, photo3_lum_adj, photo3_sat_adj },
