@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.346 2005/12/29 04:07:47 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.347 2006/01/09 12:20:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -526,14 +526,6 @@ static const float_param_t float_parameters[] =
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1, 0
     }, 0.0, 5.0, 1.0, 1
-  },
-  {
-    {
-      "MultiChannelLimit", N_("Red and Blue Ink Usage"), N_("Advanced Ink Adjustment"),
-      N_("Amount of red and blue ink to use"),
-      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, -1, 1, 0
-    }, 0.0, 1.0, 1.0, 1
   },
 };
 
@@ -2271,16 +2263,11 @@ setup_inks(stp_vars_t *v)
   const escp2_dropsize_t *drops;
   const escp2_inkname_t *ink_type = pd->inkname;
   const paper_adjustment_t *paper = pd->paper_adjustment;
-  double multi_channel_limit = 1.0;
   int gloss_channel = -1;
   double gloss_scale = get_double_param(v, "Density");
 
   drops = escp2_dropsizes(v, pd->ink_resid);
   stp_init_debug_messages(v);
-  if (stp_check_float_parameter(v, "MultiChannelLimit",
-				STP_PARAMETER_DEFAULTED))
-    multi_channel_limit =
-      stp_get_float_parameter(v, "MultiChannelLimit");
   for (i = 0; i < pd->logical_channels; i++)
     {
       const ink_channel_t *channel = ink_type->channel_set->channels[i];
