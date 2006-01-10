@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.139 2005/12/31 21:51:07 rlk Exp $"
+   "$Id: printers.xml,v 1.140 2006/01/10 03:15:30 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -1105,6 +1105,10 @@
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
+      <printer name="EPSON PM-A900" driver="escp2-pma900" manufacturer="Epson" model="70">
+        <parameter type="float" name="Gamma">0.470</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
       <printer name="EPSON PM-D750" driver="escp2-pmd750" manufacturer="Epson" model="63">
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
@@ -1157,6 +1161,10 @@
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
       <printer name="EPSON PX-V600" driver="escp2-pxv600" manufacturer="Epson" model="69">
+        <parameter type="float" name="Gamma">0.470</parameter>
+        <parameter type="float" name="Density">1.0</parameter>
+      </printer>
+      <printer name="EPSON PX-5500" driver="escp2-px5500" manufacturer="Epson" model="71">
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="Density">1.0</parameter>
       </printer>
