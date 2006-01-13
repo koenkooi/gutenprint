@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.132 2005/12/29 00:41:23 rleigh Exp $
+dnl $Id: configure.ac,v 1.133 2006/01/13 16:09:14 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.132 $)
+AC_REVISION($Revision: 1.133 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -617,6 +617,25 @@ if test x$ENABLE_PROFILE = xyes ; then
   STP_ADD_COMPILER_ARG([-pg])
 fi
 AC_SUBST(GNUCFLAGS)
+
+AH_TEMPLATE([HAVE_GCC_ATTRIBUTES],
+            [Define to 1 if GCC special attributes are supported])
+AC_MSG_CHECKING([if $CC supports __attribute__ syntax])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([typedef struct __attribute__((__packed__)) {
+   unsigned char foo;
+   char bar;
+   long baz;
+} test_struct_t;],
+                                   [test_struct_t mystruct;])],
+                  [AC_MSG_RESULT([yes])]
+                   AC_DEFINE([HAVE_GCC_ATTRIBUTES], 1),
+                  [AC_MSG_RESULT([no])])
+
+AH_VERBATIM([HAVE_GCC_ATTRIBUTES_BOILERPLATE],
+[#ifndef HAVE_GCC_ATTRIBUTES
+/* This should really be a C99 anonymous variadic macro. */
+#define __attribute__(attr)
+#endif])
 
 dnl Checks for libraries.
 dnl When checking readline, check using extra libraries first.

@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.32 2004/09/17 18:38:27 rleigh Exp $"
+ * "$Id: util.h,v 1.33 2006/01/13 16:09:14 rleigh Exp $"
  *
  *   Gutenprint header.
  *
@@ -42,12 +42,6 @@
 extern "C" {
 #endif
 
-#ifndef __GNUC__
-#ifndef __attribute__
-#define __attribute__(ignore)
-#endif
-#endif
-
 /**
  * Utility functions (internal).
  *
@@ -73,5 +67,5 @@ extern void stpi_init_printer(void);
 
 #endif /* GUTENPRINT_INTERNAL_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.32 2004/09/17 18:38:27 rleigh Exp $".
+ * End of "$Id: util.h,v 1.33 2006/01/13 16:09:14 rleigh Exp $".
  */
