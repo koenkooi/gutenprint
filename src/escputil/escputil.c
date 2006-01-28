@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.80 2006/01/28 21:54:23 rlk Exp $"
+ * "$Id: escputil.c,v 1.81 2006/01/28 22:44:06 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -452,7 +452,7 @@ do_print_cmd(void)
 	    fprintf(stderr, "\n%4d: ", i);
 	  else if (i % 4 == 0)
 	    fprintf(stderr, " ");
-	  if (isprint(printer_cmd[i]))
+	  if (isgraph(printer_cmd[i]))
 	    fprintf(stderr, "  %c", (unsigned) printer_cmd[i]);
 	  else
 	    fprintf(stderr, " %02x", (unsigned) printer_cmd[i]);
