@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.82 2006/02/04 22:07:06 rlk Exp $"
+ * "$Id: escputil.c,v 1.83 2006/02/07 12:12:46 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <ctype.h>
 #if defined(HAVE_VARARGS_H) && !defined(HAVE_STDARG_H)
 #include <varargs.h>
 #else
