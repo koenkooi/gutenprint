@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.75.10.1 2006/02/28 03:09:10 rlk Exp $"
+ * "$Id: printers.c,v 1.75.10.2 2006/02/28 03:12:16 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1043,7 +1043,7 @@ stp_printer_create_from_xmltree(stp_mxml_node_t *printer, /* The printer node */
   stmp = stp_mxmlElementGetAttr(printer, "parameters");
   if (stmp && !stp_find_params(stmp, family))
     stp_erprintf("stp_printer_create_from_xmltree: cannot find parameters %s::%s\n",
-		 stmp, family);
+		 family, stmp);
   if (stmp && stp_find_params(stmp, family))
     outprinter->printvars = stp_vars_create_copy(stp_find_params(stmp, family));
   else
