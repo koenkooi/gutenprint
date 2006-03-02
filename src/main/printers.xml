@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.142.2.3 2006/03/02 04:08:19 rlk Exp $"
+   "$Id: printers.xml,v 1.142.2.4 2006/03/02 04:21:10 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -420,9 +420,6 @@
       <printer name="Generic PCL 5c Printer" driver="generic-pcl_5c_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
       <printer name="Generic PCL 5e Printer" driver="generic-pcl_5e_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
       <printer name="Generic PCL 6/PCL XL Printer" driver="generic-pcl_6_pcl_xl_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
-      <printer name="HP 2000C" driver="pcl-2000" manufacturer="HP" model="2000" parameters="pcl_inkjet_params" />
-      <printer name="HP 2500C" driver="pcl-2500" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
-      <printer name="HP 2500CM" driver="hp-2500cm" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
       <printer name="HP Business Inkjet 2200" driver="hp-business_inkjet_2200" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP Business Inkjet 2230" driver="hp-business_inkjet_2230" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP Business Inkjet 2250" driver="hp-business_inkjet_2250" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
@@ -450,7 +447,6 @@
       <printer name="HP DesignJet 2500CP" driver="pcl-desnj-2500" manufacturer="HP" model="12500" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 3500CP" driver="pcl-desnj-3500" manufacturer="HP" model="13500" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet ColorPro CAD" driver="hp-designjet_colorpro_cad" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 340" driver="pcl-340" manufacturer="HP" model="340" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 400" driver="pcl-400" manufacturer="HP" model="400" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 420C" driver="hp-deskjet_420c" manufacturer="HP" model="540" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 450" driver="hp-deskjet_450" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
@@ -473,7 +469,7 @@
       <printer name="HP DeskJet 612C" driver="hp-deskjet_612c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 640C" driver="hp-deskjet_640c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 648C" driver="hp-deskjet_648c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 660C" driver="pcl-601" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 660C" driver="hp-deskjet_660c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 670C" driver="hp-deskjet_670c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 670TV" driver="hp-deskjet_670tv" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 672C" driver="hp-deskjet_672c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
@@ -534,6 +530,7 @@
       <printer name="HP DeskJet 1600CM" driver="hp-deskjet_1600cm" manufacturer="HP" model="1600" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 2000" driver="pcl-2000" manufacturer="HP" model="2000" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 2500" driver="pcl-2500" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 2500CM" driver="hp-2500cm" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 340C" driver="pcl-340" manufacturer="HP" model="340" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 3810" driver="hp-deskjet_3810" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 3816" driver="hp-deskjet_3816" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />

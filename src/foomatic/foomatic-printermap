@@ -414,6 +414,7 @@
 #gptofoo hp-deskjet_5551 printer/HP-DeskJet_5551
 #gptofoo pcl-560 printer/HP-DeskJet_560C
 #gptofoo pcl-600 printer/HP-DeskJet_600
+#gptofoo pcl-601 printer/HP-DeskJet_600C
 #gptofoo hp-deskjet_610c printer/HP-DeskJet_610C
 #gptofoo hp-deskjet_610cl printer/HP-DeskJet_610CL
 #gptofoo hp-deskjet_6122 printer/HP-DeskJet_6122
@@ -421,7 +422,7 @@
 #gptofoo hp-deskjet_612c printer/HP-DeskJet_612C
 #gptofoo hp-deskjet_640c printer/HP-DeskJet_640C
 #gptofoo hp-deskjet_648c printer/HP-DeskJet_648C
-#gptofoo pcl-601 printer/HP-DeskJet_660C
+#gptofoo hp-deskjet_660c printer/HP-DeskJet_660C
 #gptofoo hp-deskjet_670c printer/HP-DeskJet_670C
 #gptofoo hp-deskjet_670tv printer/HP-DeskJet_670TV
 #gptofoo hp-deskjet_672c printer/HP-DeskJet_672C
