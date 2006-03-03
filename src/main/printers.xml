@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.142.2.4 2006/03/02 04:21:10 rlk Exp $"
+   "$Id: printers.xml,v 1.142.2.5 2006/03/03 00:19:48 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -388,18 +388,18 @@
       <printer name="Canon LBP-1000" driver="canon-lbp-1000" manufacturer="Canon" model="6" parameters="pcl_laser_params" />
       <printer name="Canon LBP-1260" driver="canon-lbp-1260" manufacturer="Canon" model="6" parameters="pcl_laser_params" />
       <printer name="Canon LBP-1760" driver="canon-lbp-1760" manufacturer="Canon" model="6" parameters="pcl_laser_params" />
-      <printer name="Canon imageRunner 330s" driver="canon-imagerunner_330s" manufacturer="Canon" model="6" parameters="pcl_laser_params" />
+      <printer name="Canon imageRunner 330s" driver="canon-ir_330s" manufacturer="Canon" model="6" parameters="pcl_laser_params" />
       <printer name="Citizen ProJet II" driver="citizen-projet_ii" manufacturer="Citizen" model="2" parameters="pcl_laser_params" />
       <printer name="DEC 1800" driver="dec-1800" manufacturer="DEC" model="3" parameters="pcl_laser_params" />
       <printer name="DEC LN17" driver="dec-ln17" manufacturer="DEC" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson ActionLaser 1100" driver="epson-actionlaser_1100" manufacturer="Epson" model="3" parameters="pcl_laser_params" />
-      <printer name="Epson ActionLaser II" driver="epson-actionlaser_ii" manufacturer="Epson" model="2" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C2000" driver="epson-aculaser_c2000" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C2000PS" driver="epson-aculaser_c2000ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C8500" driver="epson-aculaser_c8500" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C8500PS" driver="epson-aculaser_c8500ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C8600" driver="epson-aculaser_c8600" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
-      <printer name="Epson AcuLaser C8600PS" driver="epson-aculaser_c8600ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson ActionLaser 1100" driver="epson-actl_1100" manufacturer="Epson" model="3" parameters="pcl_laser_params" />
+      <printer name="Epson ActionLaser II" driver="epson-actl_ii" manufacturer="Epson" model="2" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C2000" driver="epson-acl_c2000" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C2000PS" driver="epson-acl_c2000ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C8500" driver="epson-acl_c8500" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C8500PS" driver="epson-acl_c8500ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C8600" driver="epson-acl_c8600" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
+      <printer name="Epson AcuLaser C8600PS" driver="epson-acl_c8600ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
       <printer name="Epson EPL-5200" driver="epson-epl-5200" manufacturer="Epson" model="3" parameters="pcl_laser_params" />
       <printer name="Epson EPL-5200+" driver="epson-epl-5200plus" manufacturer="Epson" model="3" parameters="pcl_laser_params" />
       <printer name="Epson EPL-5700" driver="epson-epl-5700" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
@@ -411,30 +411,30 @@
       <printer name="Epson EPL-6100" driver="epson-epl-6100" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
       <printer name="Epson EPL-6100PS" driver="epson-epl-6100ps" manufacturer="Epson" model="6" parameters="pcl_laser_params" />
       <printer name="Epson EPL-7100" driver="epson-epl-7100" manufacturer="Epson" model="2" parameters="pcl_laser_params" />
-      <printer name="Fujitsu PrintPartner 10V" driver="fujitsu-printpartner_10v" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
-      <printer name="Fujitsu PrintPartner 16DV" driver="fujitsu-printpartner_16dv" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
-      <printer name="Fujitsu PrintPartner 20W" driver="fujitsu-printpartner_20w" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
-      <printer name="Fujitsu PrintPartner 8000" driver="fujitsu-printpartner_8000" manufacturer="Fujitsu" model="3" parameters="pcl_laser_params" />
-      <printer name="Generic PCL 4 Printer" driver="generic-pcl_4_printer" manufacturer="Generic" model="2" parameters="pcl_laser_params" />
-      <printer name="Generic PCL 5 Printer" driver="generic-pcl_5_printer" manufacturer="Generic" model="3" parameters="pcl_laser_params" />
-      <printer name="Generic PCL 5c Printer" driver="generic-pcl_5c_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
-      <printer name="Generic PCL 5e Printer" driver="generic-pcl_5e_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
-      <printer name="Generic PCL 6/PCL XL Printer" driver="generic-pcl_6_pcl_xl_printer" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Business Inkjet 2200" driver="hp-business_inkjet_2200" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Business Inkjet 2230" driver="hp-business_inkjet_2230" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Business Inkjet 2250" driver="hp-business_inkjet_2250" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Business Inkjet 2250TN" driver="hp-business_inkjet_2250tn" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Business Inkjet 2280" driver="hp-business_inkjet_2280" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Color Inkjet Printer CP1160" driver="hp-color_inkjet_printer_cp1160" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP Color Inkjet Printer CP1700" driver="hp-color_inkjet_printer_cp1700" manufacturer="HP" model="901" parameters="pcl_inkjet_params" />
-      <printer name="HP Color LaserJet 2500" driver="hp-color_laserjet_2500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 4500" driver="hp-color_laserjet_4500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 4550" driver="hp-color_laserjet_4550" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 4600" driver="hp-color_laserjet_4600" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 5" driver="hp-color_laserjet_5" manufacturer="HP" model="3" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 5000" driver="hp-color_laserjet_5000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 5500" driver="hp-color_laserjet_5500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP Color LaserJet 8550GN" driver="hp-color_laserjet_8550gn" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="Fujitsu PrintPartner 10V" driver="fujitsu-pp_10v" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
+      <printer name="Fujitsu PrintPartner 16DV" driver="fujitsu-pp_16dv" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
+      <printer name="Fujitsu PrintPartner 20W" driver="fujitsu-pp_20w" manufacturer="Fujitsu" model="6" parameters="pcl_laser_params" />
+      <printer name="Fujitsu PrintPartner 8000" driver="fujitsu-pp_8000" manufacturer="Fujitsu" model="3" parameters="pcl_laser_params" />
+      <printer name="Generic PCL 4 Printer" driver="pcl-g_4" manufacturer="Generic" model="2" parameters="pcl_laser_params" />
+      <printer name="Generic PCL 5 Printer" driver="pcl-g_5" manufacturer="Generic" model="3" parameters="pcl_laser_params" />
+      <printer name="Generic PCL 5c Printer" driver="pcl-g_5c" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
+      <printer name="Generic PCL 5e Printer" driver="pcl-g_5e" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
+      <printer name="Generic PCL 6/PCL XL Printer" driver="pcl-g_6" manufacturer="Generic" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Business Inkjet 2200" driver="hp-bij_2200" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Business Inkjet 2230" driver="hp-bij_2230" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Business Inkjet 2250" driver="hp-bij_2250" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Business Inkjet 2250TN" driver="hp-bij_2250tn" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Business Inkjet 2280" driver="hp-bij_2280" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Color Inkjet Printer CP1160" driver="hp-cij_cp1160" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP Color Inkjet Printer CP1700" driver="hp-cij_cp1700" manufacturer="HP" model="901" parameters="pcl_inkjet_params" />
+      <printer name="HP Color LaserJet 2500" driver="hp-clj_2500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 4500" driver="hp-clj_4500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 4550" driver="hp-clj_4550" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 4600" driver="hp-clj_4600" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 5" driver="hp-clj_5" manufacturer="HP" model="3" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 5000" driver="hp-clj_5000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 5500" driver="hp-clj_5500" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP Color LaserJet 8550GN" driver="hp-clj_8550gn" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP DesignJet 230" driver="pcl-desnj-230" manufacturer="HP" model="10230" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 250C" driver="pcl-desnj-250" manufacturer="HP" model="10250" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 430" driver="pcl-desnj-430" manufacturer="HP" model="10230" parameters="pcl_inkjet_params" />
@@ -442,210 +442,210 @@
       <printer name="HP DesignJet 455CA" driver="pcl-desnj-455" manufacturer="HP" model="10250" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 488CA" driver="pcl-desnj-488" manufacturer="HP" model="10250" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 700" driver="pcl-desnj-700" manufacturer="HP" model="10700" parameters="pcl_inkjet_params" />
-      <printer name="HP DesignJet 750C Plus" driver="hp-designjet_750c_plus" manufacturer="HP" model="10750" parameters="pcl_inkjet_params" />
+      <printer name="HP DesignJet 750C Plus" driver="hp-desnj_750c_plus" manufacturer="HP" model="10750" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 750C" driver="pcl-750" manufacturer="HP" model="10750" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 2500CP" driver="pcl-desnj-2500" manufacturer="HP" model="12500" parameters="pcl_inkjet_params" />
       <printer name="HP DesignJet 3500CP" driver="pcl-desnj-3500" manufacturer="HP" model="13500" parameters="pcl_inkjet_params" />
-      <printer name="HP DesignJet ColorPro CAD" driver="hp-designjet_colorpro_cad" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
+      <printer name="HP DesignJet ColorPro CAD" driver="hp-desnj_cp_cad" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 400" driver="pcl-400" manufacturer="HP" model="400" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 420C" driver="hp-deskjet_420c" manufacturer="HP" model="540" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 450" driver="hp-deskjet_450" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 420C" driver="hp-dj_420c" manufacturer="HP" model="540" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 450" driver="hp-dj_450" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 500" driver="pcl-500" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 500C" driver="pcl-501" manufacturer="HP" model="501" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 505J Plus" driver="hp-deskjet_505j_plus" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 510" driver="hp-deskjet_510" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 505J Plus" driver="hp-dj_505j_plus" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 510" driver="hp-dj_510" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 520" driver="pcl-520" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 540C" driver="pcl-540" manufacturer="HP" model="540" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 550C" driver="pcl-550" manufacturer="HP" model="550" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 5550" driver="hp-deskjet_5550" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 5551" driver="hp-deskjet_5551" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 5550" driver="hp-dj_5550" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 5551" driver="hp-dj_5551" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 560C" driver="pcl-560" manufacturer="HP" model="550" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 600" driver="pcl-600" manufacturer="HP" model="600" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 600C" driver="pcl-601" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 610C" driver="hp-deskjet_610c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 610CL" driver="hp-deskjet_610cl" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 6122" driver="hp-deskjet_6122" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 6127" driver="hp-deskjet_6127" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 612C" driver="hp-deskjet_612c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 640C" driver="hp-deskjet_640c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 648C" driver="hp-deskjet_648c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 660C" driver="hp-deskjet_660c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 670C" driver="hp-deskjet_670c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 670TV" driver="hp-deskjet_670tv" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 672C" driver="hp-deskjet_672c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 680C" driver="hp-deskjet_680c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 682C" driver="hp-deskjet_682c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 610C" driver="hp-dj_610c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 610CL" driver="hp-dj_610cl" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 6122" driver="hp-dj_6122" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 6127" driver="hp-dj_6127" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 612C" driver="hp-dj_612c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 640C" driver="hp-dj_640c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 648C" driver="hp-dj_648c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 660C" driver="hp-dj_660c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 670C" driver="hp-dj_670c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 670TV" driver="hp-dj_670tv" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 672C" driver="hp-dj_672c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 680C" driver="hp-dj_680c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 682C" driver="hp-dj_682c" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 690C" driver="pcl-690" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 692C" driver="hp-deskjet_692c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 693C" driver="hp-deskjet_693c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 694C" driver="hp-deskjet_694c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 695C" driver="hp-deskjet_695c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 697C" driver="hp-deskjet_697c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 692C" driver="hp-dj_692c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 693C" driver="hp-dj_693c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 694C" driver="hp-dj_694c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 695C" driver="hp-dj_695c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 697C" driver="hp-dj_697c" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 810C" driver="pcl-810" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
       <printer name="HP DeskJet 812C" driver="pcl-812" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
-      <printer name="HP DeskJet 815C" driver="hp-deskjet_815c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 816C" driver="hp-deskjet_816c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 825C" driver="hp-deskjet_825c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 830C" driver="hp-deskjet_830c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 832C" driver="hp-deskjet_832c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 815C" driver="hp-dj_815c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 816C" driver="hp-dj_816c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 825C" driver="hp-dj_825c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 830C" driver="hp-dj_830c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 832C" driver="hp-dj_832c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 840C" driver="pcl-840" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
-      <printer name="HP DeskJet 841C" driver="hp-deskjet_841c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 841C" driver="hp-dj_841c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 842C" driver="pcl-842" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
-      <printer name="HP DeskJet 843C" driver="hp-deskjet_843c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 843C" driver="hp-dj_843c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 845C" driver="pcl-845" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
       <printer name="HP DeskJet 850C" driver="pcl-850" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 855C" driver="pcl-855" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 870C" driver="pcl-870" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 880C" driver="hp-deskjet_880c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 882C" driver="hp-deskjet_882c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 880C" driver="hp-dj_880c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 882C" driver="hp-dj_882c" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 890C" driver="pcl-890" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 895C" driver="pcl-895" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />  <!-- Uses 840 driver -->
       <printer name="HP DeskJet 916C" driver="pcl-900" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 920C" driver="hp-deskjet_920c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 9300" driver="hp-deskjet_9300" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 930C" driver="hp-deskjet_930c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 932C" driver="hp-deskjet_932c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 933C" driver="hp-deskjet_933c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 934C" driver="hp-deskjet_934c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 935C" driver="hp-deskjet_935c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 940C" driver="hp-deskjet_940c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 948C" driver="hp-deskjet_948c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 950C" driver="hp-deskjet_950c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 952C" driver="hp-deskjet_952c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 955C" driver="hp-deskjet_955c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 957C" driver="hp-deskjet_957c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 959C" driver="hp-deskjet_959c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 960C" driver="hp-deskjet_960c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 970C" driver="hp-deskjet_970c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 975C" driver="hp-deskjet_975c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 980C" driver="hp-deskjet_980c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 990C" driver="hp-deskjet_990c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 995C" driver="hp-deskjet_995c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 920C" driver="hp-dj_920c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 9300" driver="hp-dj_9300" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 930C" driver="hp-dj_930c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 932C" driver="hp-dj_932c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 933C" driver="hp-dj_933c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 934C" driver="hp-dj_934c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 935C" driver="hp-dj_935c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 940C" driver="hp-dj_940c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 948C" driver="hp-dj_948c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 950C" driver="hp-dj_950c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 952C" driver="hp-dj_952c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 955C" driver="hp-dj_955c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 957C" driver="hp-dj_957c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 959C" driver="hp-dj_959c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 960C" driver="hp-dj_960c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 970C" driver="hp-dj_970c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 975C" driver="hp-dj_975c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 980C" driver="hp-dj_980c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 990C" driver="hp-dj_990c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 995C" driver="hp-dj_995c" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 1100C" driver="pcl-1100" manufacturer="HP" model="1100" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 1120C" driver="pcl-1120" manufacturer="HP" model="1100" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 1125C" driver="hp-deskjet_1125c" manufacturer="HP" model="1100" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 1125C" driver="hp-dj_1125c" manufacturer="HP" model="1100" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 1200C" driver="pcl-1200" manufacturer="HP" model="1200" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 1220C" driver="pcl-1220" manufacturer="HP" model="901" parameters="pcl_inkjet_params" />  <!-- Uses 900 series driver (large) -->
       <printer name="HP DeskJet 1600C" driver="pcl-1600" manufacturer="HP" model="1600" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 1600CM" driver="hp-deskjet_1600cm" manufacturer="HP" model="1600" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 1600CM" driver="hp-dj_1600cm" manufacturer="HP" model="1600" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 2000" driver="pcl-2000" manufacturer="HP" model="2000" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 2500" driver="pcl-2500" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 2500CM" driver="hp-2500cm" manufacturer="HP" model="2500" parameters="pcl_inkjet_params" />
       <printer name="HP DeskJet 340C" driver="pcl-340" manufacturer="HP" model="340" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 3810" driver="hp-deskjet_3810" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 3816" driver="hp-deskjet_3816" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 3820" driver="hp-deskjet_3820" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP DeskJet 3822" driver="hp-deskjet_3822" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 3810" driver="hp-dj_3810" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 3816" driver="hp-dj_3816" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 3820" driver="hp-dj_3820" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP DeskJet 3822" driver="hp-dj_3822" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP LaserJet 2" driver="pcl-2" manufacturer="HP" model="2" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2D" driver="hp-laserjet_2d" manufacturer="HP" model="2" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2P Plus" driver="hp-laserjet_2p_plus" manufacturer="HP" model="21" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2D" driver="hp-lj_2d" manufacturer="HP" model="2" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2P Plus" driver="hp-lj_2p_plus" manufacturer="HP" model="21" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 2P" driver="pcl-2p" manufacturer="HP" model="21" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 3" driver="pcl-3" manufacturer="HP" model="3" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3D" driver="hp-laserjet_3d" manufacturer="HP" model="3" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3P w/ PCL5" driver="hp-laserjet_3p_w_pcl5" manufacturer="HP" model="4" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3P w/PS" driver="hp-laserjet_3p_w_ps" manufacturer="HP" model="3" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4 Plus" driver="hp-laserjet_4_plus" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3D" driver="hp-lj_3d" manufacturer="HP" model="3" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3P w/ PCL5" driver="hp-lj_3p_w_pcl5" manufacturer="HP" model="4" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3P w/PS" driver="hp-lj_3p_w_ps" manufacturer="HP" model="3" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4 Plus" driver="hp-lj_4_plus" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 4" driver="pcl-4" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 4L" driver="pcl-4l" manufacturer="HP" model="4" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4M" driver="hp-laserjet_4m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4ML" driver="hp-laserjet_4ml" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4P" driver="hp-laserjet_4p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4M" driver="hp-lj_4m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4ML" driver="hp-lj_4ml" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4P" driver="hp-lj_4p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 4Si" driver="pcl-4si" manufacturer="HP" model="51" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 4V" driver="pcl-4v" manufacturer="HP" model="5" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 5" driver="pcl-5" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5L" driver="hp-laserjet_5l" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5M" driver="hp-laserjet_5m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5MP" driver="hp-laserjet_5mp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5P" driver="hp-laserjet_5p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5L" driver="hp-lj_5l" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5M" driver="hp-lj_5m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5MP" driver="hp-lj_5mp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5P" driver="hp-lj_5p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 5Si" driver="pcl-5si" manufacturer="HP" model="7" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 6" driver="pcl-6" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 6L" driver="hp-laserjet_6l" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 6MP" driver="hp-laserjet_6mp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 6P" driver="hp-laserjet_6p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1010" driver="hp-laserjet_1010" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1012" driver="hp-laserjet_1012" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1015" driver="hp-laserjet_1015" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1100" driver="hp-laserjet_1100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1100A" driver="hp-laserjet_1100a" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1150" driver="hp-laserjet_1150" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1200" driver="hp-laserjet_1200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1220" driver="hp-laserjet_1220" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 1300" driver="hp-laserjet_1300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2100" driver="hp-laserjet_2100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2100M" driver="hp-laserjet_2100m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2200" driver="hp-laserjet_2200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 2300" driver="hp-laserjet_2300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3200" driver="hp-laserjet_3200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3200m" driver="hp-laserjet_3200m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3200se" driver="hp-laserjet_3200se" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3300 MFP" driver="hp-laserjet_3300_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3310 MFP" driver="hp-laserjet_3310_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3320 MFP" driver="hp-laserjet_3320_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3320N MFP" driver="hp-laserjet_3320n_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 3330 MFP" driver="hp-laserjet_3330_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4000" driver="hp-laserjet_4000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4050" driver="hp-laserjet_4050" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4100" driver="hp-laserjet_4100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4200" driver="hp-laserjet_4200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 4300" driver="hp-laserjet_4300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5000" driver="hp-laserjet_5000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 5100" driver="hp-laserjet_5100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 8000" driver="hp-laserjet_8000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 8100" driver="hp-laserjet_8100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 8150" driver="hp-laserjet_8150" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP LaserJet 9000" driver="hp-laserjet_9000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 6L" driver="hp-lj_6l" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 6MP" driver="hp-lj_6mp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 6P" driver="hp-lj_6p" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1010" driver="hp-lj_1010" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1012" driver="hp-lj_1012" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1015" driver="hp-lj_1015" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1100" driver="hp-lj_1100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1100A" driver="hp-lj_1100a" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1150" driver="hp-lj_1150" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1200" driver="hp-lj_1200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1220" driver="hp-lj_1220" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1300" driver="hp-lj_1300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2100" driver="hp-lj_2100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2100M" driver="hp-lj_2100m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2200" driver="hp-lj_2200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 2300" driver="hp-lj_2300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3200" driver="hp-lj_3200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3200m" driver="hp-lj_3200m" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3200se" driver="hp-lj_3200se" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3300 MFP" driver="hp-lj_3300_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3310 MFP" driver="hp-lj_3310_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3320 MFP" driver="hp-lj_3320_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3320N MFP" driver="hp-lj_3320n_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 3330 MFP" driver="hp-lj_3330_mfp" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4000" driver="hp-lj_4000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4050" driver="hp-lj_4050" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4100" driver="hp-lj_4100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4200" driver="hp-lj_4200" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 4300" driver="hp-lj_4300" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5000" driver="hp-lj_5000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 5100" driver="hp-lj_5100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 8000" driver="hp-lj_8000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 8100" driver="hp-lj_8100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 8150" driver="hp-lj_8150" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 9000" driver="hp-lj_9000" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP Mopier 240" driver="hp-mopier_240" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP Mopier 320" driver="hp-mopier_320" manufacturer="HP" model="6" parameters="pcl_laser_params" />
-      <printer name="HP OfficeJet 300" driver="hp-officejet_300" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 330" driver="hp-officejet_330" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 350" driver="hp-officejet_350" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 500" driver="hp-officejet_500" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 520" driver="hp-officejet_520" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 570" driver="hp-officejet_570" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 580" driver="hp-officejet_580" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 590" driver="hp-officejet_590" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 600" driver="hp-officejet_600" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 610" driver="hp-officejet_610" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 625" driver="hp-officejet_625" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 630" driver="hp-officejet_630" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 635" driver="hp-officejet_635" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 700" driver="hp-officejet_700" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 710" driver="hp-officejet_710" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 720" driver="hp-officejet_720" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 725" driver="hp-officejet_725" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 5105" driver="hp-officejet_5105" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 5110" driver="hp-officejet_5110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 5110xi" driver="hp-officejet_5110xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 6105" driver="hp-officejet_6105" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 6110" driver="hp-officejet_6110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 7110" driver="hp-officejet_7110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 7130" driver="hp-officejet_7130" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet 7140" driver="hp-officejet_7140" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet D125" driver="hp-officejet_d125" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet D135" driver="hp-officejet_d135" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet D145" driver="hp-officejet_d145" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet D155" driver="hp-officejet_d155" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet G55" driver="hp-officejet_g55" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet G85" driver="hp-officejet_g85" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet G95" driver="hp-officejet_g95" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet K60" driver="hp-officejet_k60" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet K60xi" driver="hp-officejet_k60xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet K80" driver="hp-officejet_k80" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet K80xi" driver="hp-officejet_k80xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet LX" driver="hp-officejet_lx" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet Pro 1150C" driver="hp-officejet_pro_1150c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet Pro 1170C" driver="hp-officejet_pro_1170c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet Pro 1175C" driver="hp-officejet_pro_1175c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet R40" driver="hp-officejet_r40" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet R45" driver="hp-officejet_r45" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet R60" driver="hp-officejet_r60" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet R65" driver="hp-officejet_r65" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet R80" driver="hp-officejet_r80" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet T45" driver="hp-officejet_t45" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet T65" driver="hp-officejet_t65" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet V40" driver="hp-officejet_v40" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet V40xi" driver="hp-officejet_v40xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP OfficeJet" driver="hp-officejet" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 300" driver="hp-oj_300" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 330" driver="hp-oj_330" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 350" driver="hp-oj_350" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 500" driver="hp-oj_500" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 520" driver="hp-oj_520" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 570" driver="hp-oj_570" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 580" driver="hp-oj_580" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 590" driver="hp-oj_590" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 600" driver="hp-oj_600" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 610" driver="hp-oj_610" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 625" driver="hp-oj_625" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 630" driver="hp-oj_630" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 635" driver="hp-oj_635" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 700" driver="hp-oj_700" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 710" driver="hp-oj_710" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 720" driver="hp-oj_720" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 725" driver="hp-oj_725" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 5105" driver="hp-oj_5105" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 5110" driver="hp-oj_5110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 5110xi" driver="hp-oj_5110xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 6105" driver="hp-oj_6105" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 6110" driver="hp-oj_6110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 7110" driver="hp-oj_7110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 7130" driver="hp-oj_7130" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet 7140" driver="hp-oj_7140" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet D125" driver="hp-oj_d125" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet D135" driver="hp-oj_d135" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet D145" driver="hp-oj_d145" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet D155" driver="hp-oj_d155" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet G55" driver="hp-oj_g55" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet G85" driver="hp-oj_g85" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet G95" driver="hp-oj_g95" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet K60" driver="hp-oj_k60" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet K60xi" driver="hp-oj_k60xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet K80" driver="hp-oj_k80" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet K80xi" driver="hp-oj_k80xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet LX" driver="hp-oj_lx" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet Pro 1150C" driver="hp-oj_pro_1150c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet Pro 1170C" driver="hp-oj_pro_1170c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet Pro 1175C" driver="hp-oj_pro_1175c" manufacturer="HP" model="800" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet R40" driver="hp-oj_r40" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet R45" driver="hp-oj_r45" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet R60" driver="hp-oj_r60" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet R65" driver="hp-oj_r65" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet R80" driver="hp-oj_r80" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet T45" driver="hp-oj_t45" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet T65" driver="hp-oj_t65" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet V40" driver="hp-oj_v40" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet V40xi" driver="hp-oj_v40xi" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP OfficeJet" driver="hp-oj" manufacturer="HP" model="500" parameters="pcl_inkjet_params" />
       <printer name="HP PSC 370" driver="hp-psc_370" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
       <printer name="HP PSC 380" driver="hp-psc_380" manufacturer="HP" model="690" parameters="pcl_inkjet_params" />
       <printer name="HP PSC 500" driver="hp-psc_500" manufacturer="HP" model="840" parameters="pcl_inkjet_params" />
@@ -655,25 +655,25 @@
       <printer name="HP PSC 2110" driver="hp-psc_2110" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP PSC 2150" driver="hp-psc_2150" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP PSC 2210" driver="hp-psc_2210" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart 7150" driver="hp-photosmart_7150" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart 7345" driver="hp-photosmart_7345" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart 7350" driver="hp-photosmart_7350" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart 7550" driver="hp-photosmart_7550" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P100" driver="hp-photosmart_p100" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P130" driver="hp-photosmart_p130" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P230" driver="hp-photosmart_p230" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart 7150" driver="hp-psc_7150" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart 7345" driver="hp-psc_7345" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart 7350" driver="hp-psc_7350" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart 7550" driver="hp-psc_7550" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P100" driver="hp-psc_p100" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P130" driver="hp-psc_p130" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P230" driver="hp-psc_p230" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP PhotoSmart P1000" driver="pcl-P1000" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />  <!-- Uses 900 series driver -->
       <printer name="HP PhotoSmart P1100" driver="pcl-P1100" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />  <!-- Uses 900 series driver -->
-      <printer name="HP PhotoSmart P1115" driver="hp-photosmart_p1115" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P1215" driver="hp-photosmart_p1215" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P1218" driver="hp-photosmart_p1218" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
-      <printer name="HP PhotoSmart P1315" driver="hp-photosmart_p1315" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P1115" driver="hp-psc_p1115" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P1215" driver="hp-psc_p1215" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P1218" driver="hp-psc_p1218" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
+      <printer name="HP PhotoSmart P1315" driver="hp-psc_p1315" manufacturer="HP" model="900" parameters="pcl_inkjet_params" />
       <printer name="HP e-printer e20" driver="hp-e-printer_e20" manufacturer="HP" model="601" parameters="pcl_inkjet_params" />
       <printer name="IBM 4019" driver="ibm-4019" manufacturer="IBM" model="2" parameters="pcl_laser_params" />
-      <printer name="IBM 4029 030 LaserPrinter 10" driver="ibm-4029_030_laserprinter_10" manufacturer="IBM" model="3" parameters="pcl_laser_params" />
+      <printer name="IBM 4029 030 LaserPrinter 10" driver="ibm-4029_030_lp_10" manufacturer="IBM" model="3" parameters="pcl_laser_params" />
       <printer name="IBM 4312" driver="ibm-4312" manufacturer="IBM" model="2" parameters="pcl_laser_params" />
       <printer name="IBM Infoprint 12" driver="ibm-infoprint_12" manufacturer="IBM" model="6" parameters="pcl_laser_params" />
-      <printer name="IBM Page Printer 3112" driver="ibm-page_printer_3112" manufacturer="IBM" model="6" parameters="pcl_laser_params" />
+      <printer name="IBM Page Printer 3112" driver="ibm-pp_3112" manufacturer="IBM" model="6" parameters="pcl_laser_params" />
       <printer name="Infotec 4651 MF" driver="infotec-4651_mf" manufacturer="Infotec" model="6" parameters="pcl_laser_params" />
       <printer name="Kyocera F-1010" driver="kyocera-f-1010" manufacturer="Kyocera" model="2" parameters="pcl_laser_params" />
       <printer name="Kyocera FS-600 (KPDL-2)" driver="kyocera-fs-600_kpdl-2" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
@@ -724,19 +724,19 @@
       <printer name="Lexmark 4076" driver="lexmark-4076" manufacturer="Lexmark" model="500" parameters="pcl_inkjet_params" />
       <printer name="Lexmark Optra E" driver="lexmark-optra_e" manufacturer="Lexmark" model="6" parameters="pcl_laser_params" />
       <printer name="Lexmark Optra E+" driver="lexmark-optra_eplus" manufacturer="Lexmark" model="6" parameters="pcl_laser_params" />
-      <printer name="Lexmark Valuewriter 300" driver="lexmark-valuewriter_300" manufacturer="Lexmark" model="2" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 1100" driver="minolta-pagepro_1100" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 6" driver="minolta-pagepro_6" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 6e" driver="minolta-pagepro_6e" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 6ex" driver="minolta-pagepro_6ex" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 8" driver="minolta-pagepro_8" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
-      <printer name="Minolta PagePro 8L" driver="minolta-pagepro_8l" manufacturer="Minolta" model="2" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 1260" driver="nec-superscript_1260" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 1400" driver="nec-superscript_1400" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 1800" driver="nec-superscript_1800" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 660i" driver="nec-superscript_660i" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 860" driver="nec-superscript_860" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
-      <printer name="NEC SuperScript 870" driver="nec-superscript_870" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
+      <printer name="Lexmark Valuewriter 300" driver="lexmark-vw_300" manufacturer="Lexmark" model="2" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 1100" driver="minolta-pp_1100" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 6" driver="minolta-pp_6" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 6e" driver="minolta-pp_6e" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 6ex" driver="minolta-pp_6ex" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 8" driver="minolta-pp_8" manufacturer="Minolta" model="6" parameters="pcl_laser_params" />
+      <printer name="Minolta PagePro 8L" driver="minolta-pp_8l" manufacturer="Minolta" model="2" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 1260" driver="nec-ssc_1260" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 1400" driver="nec-ssc_1400" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 1800" driver="nec-ssc_1800" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 660i" driver="nec-ssc_660i" manufacturer="NEC" model="6" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 860" driver="nec-ssc_860" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
+      <printer name="NEC SuperScript 870" driver="nec-ssc_870" manufacturer="NEC" model="2" parameters="pcl_laser_params" />
       <printer name="Okidata OL400" driver="okidata-ol400" manufacturer="Okidata" model="2" parameters="pcl_laser_params" />
       <printer name="Okidata OL400e" driver="okidata-ol400e" manufacturer="Okidata" model="2" parameters="pcl_laser_params" />
       <printer name="Okidata OL400ex" driver="okidata-ol400ex" manufacturer="Okidata" model="2" parameters="pcl_laser_params" />
@@ -745,12 +745,12 @@
       <printer name="Okidata OL610e/S" driver="okidata-ol610e_s" manufacturer="Okidata" model="2" parameters="pcl_laser_params" />
       <printer name="Okidata OL800" driver="okidata-ol800" manufacturer="Okidata" model="2" parameters="pcl_laser_params" />
       <printer name="Okidata OL810ex" driver="okidata-ol810ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 6e" driver="okidata-okipage_6e" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 6ex" driver="okidata-okipage_6ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 8p" driver="okidata-okipage_8p" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 10e" driver="okidata-okipage_10e" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 10ex" driver="okidata-okipage_10ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
-      <printer name="Okidata Okipage 14ex" driver="okidata-okipage_14ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 6e" driver="okidata-okp_6e" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 6ex" driver="okidata-okp_6ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 8p" driver="okidata-okp_8p" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 10e" driver="okidata-okp_10e" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 10ex" driver="okidata-okp_10ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
+      <printer name="Okidata Okipage 14ex" driver="okidata-okp_14ex" manufacturer="Okidata" model="6" parameters="pcl_laser_params" />
       <printer name="Okidata Super 6e" driver="okidata-super_6e" manufacturer="Okidata" model="4" parameters="pcl_laser_params" />
       <printer name="Olivetti JP350S" driver="olivetti-jp350s" manufacturer="Olivetti" model="2" parameters="pcl_laser_params" />
       <printer name="Olivetti PG 306" driver="olivetti-pg_306" manufacturer="Olivetti" model="2" parameters="pcl_laser_params" />
@@ -760,9 +760,9 @@
       <printer name="Panasonic KX-P6150" driver="panasonic-kx-p6150" manufacturer="Panasonic" model="2" parameters="pcl_laser_params" />
       <printer name="Panasonic KX-P6500" driver="panasonic-kx-p6500" manufacturer="Panasonic" model="2" parameters="pcl_laser_params" />
       <printer name="Raven LP-410" driver="raven-lp-410" manufacturer="Raven" model="2" parameters="pcl_laser_params" />
-      <printer name="Ricoh Aficio 220" driver="ricoh-aficio_220" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
-      <printer name="Ricoh Aficio 401" driver="ricoh-aficio_401" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
-      <printer name="Ricoh Aficio 700" driver="ricoh-aficio_700" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
+      <printer name="Ricoh Aficio 220" driver="ricoh-afc_220" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
+      <printer name="Ricoh Aficio 401" driver="ricoh-afc_401" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
+      <printer name="Ricoh Aficio 700" driver="ricoh-afc_700" manufacturer="Ricoh" model="6" parameters="pcl_laser_params" />
       <printer name="Samsung ML-85" driver="samsung-ml-85" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
       <printer name="Samsung ML-4600" driver="samsung-ml-4600" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
       <printer name="Samsung ML-5000a" driver="samsung-ml-5000a" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
@@ -774,21 +774,21 @@
       <printer name="Samsung ML-7050" driver="samsung-ml-7050" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
       <printer name="Samsung QL-5100A" driver="samsung-ql-5100a" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
       <printer name="Samsung QL-6050" driver="samsung-ql-6050" manufacturer="Samsung" model="6" parameters="pcl_laser_params" />
-      <printer name="Seiko SpeedJET 200" driver="seiko-speedjet_200" manufacturer="Seiko" model="2" parameters="pcl_laser_params" />
+      <printer name="Seiko SpeedJET 200" driver="seiko-sj_200" manufacturer="Seiko" model="2" parameters="pcl_laser_params" />
       <printer name="Sharp AR-161" driver="sharp-ar-161" manufacturer="Sharp" model="6" parameters="pcl_laser_params" />
       <printer name="Sony IJP-V100" driver="sony-ijp-v100" manufacturer="Sony" model="601" parameters="pcl_inkjet_params" />
       <printer name="Star LS-04" driver="star-ls-04" manufacturer="Star" model="2" parameters="pcl_laser_params" />
-      <printer name="Star LaserPrinter 8" driver="star-laserprinter_8" manufacturer="Star" model="2" parameters="pcl_laser_params" />
+      <printer name="Star LaserPrinter 8" driver="star-lp_8" manufacturer="Star" model="2" parameters="pcl_laser_params" />
       <printer name="Tally MT908" driver="tally-mt908" manufacturer="Tally" model="3" parameters="pcl_laser_params" />
       <printer name="Xerox Able 1406" driver="xerox-able_1406" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint 4508" driver="xerox-docuprint_4508" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint C20" driver="xerox-docuprint_c20" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint N4512" driver="xerox-docuprint_n4512" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint N4512PS" driver="xerox-docuprint_n4512ps" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint P12" driver="xerox-docuprint_p12" manufacturer="Xerox" model="2" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint P1202" driver="xerox-docuprint_p1202" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox DocuPrint P8e" driver="xerox-docuprint_p8e" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
-      <printer name="Xerox Document Centre 400" driver="xerox-document_centre_400" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint 4508" driver="xerox-dp_4508" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint C20" driver="xerox-dp_c20" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint N4512" driver="xerox-dp_n4512" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint N4512PS" driver="xerox-dp_n4512ps" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint P12" driver="xerox-dp_p12" manufacturer="Xerox" model="2" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint P1202" driver="xerox-dp_p1202" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox DocuPrint P8e" driver="xerox-dp_p8e" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox Document Centre 400" driver="xerox-dc_400" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
     </family>
     <family name="lexmark">
       <parameters name="standard_params">

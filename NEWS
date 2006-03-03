@@ -1422,18 +1422,18 @@ Canon SELPHY-CP-510            canon-cp510
 Canon SELPHY-CP-600            canon-cp600
 Canon SELPHY-CP-710            canon-cp710
 Canon iP4000                   bjc-iP4000                      Experimental
-Canon imageRunner 330s         canon-imagerunner_330s
+Canon imageRunner 330s         canon-ir_330s
 Citizen ProJet II              citizen-projet_ii
 DEC 1800                       dec-1800
 DEC LN17                       dec-ln17
-Epson ActionLaser 1100         epson-actionlaser_1100
-Epson ActionLaser II           epson-actionlaser_ii
-Epson AcuLaser C2000           epson-aculaser_c2000
-Epson AcuLaser C2000PS         epson-aculaser_c2000ps
-Epson AcuLaser C8500           epson-aculaser_c8500
-Epson AcuLaser C8500PS         epson-aculaser_c8500ps
-Epson AcuLaser C8600           epson-aculaser_c8600
-Epson AcuLaser C8600PS         epson-aculaser_c8600ps
+Epson ActionLaser 1100         epson-actl_1100
+Epson ActionLaser II           epson-actl_ii
+Epson AcuLaser C2000           epson-acl_c2000
+Epson AcuLaser C2000PS         epson-acl_c2000ps
+Epson AcuLaser C8500           epson-acl_c8500
+Epson AcuLaser C8500PS         epson-acl_c8500ps
+Epson AcuLaser C8600           epson-acl_c8600
+Epson AcuLaser C8600PS         epson-acl_c8600ps
 Epson EPL-5200                 epson-epl-5200
 Epson EPL-5200+                epson-epl-5200plus
 Epson EPL-5700                 epson-epl-5700
@@ -1687,30 +1687,30 @@ Epson PX 7000                  escp2-px7000
 Epson PX 9000                  escp2-px9000
 Fujifilm Printpix-CX-400       fujifilm-cx400
 Fujifilm Printpix-CX-550       fujifilm-cx550
-Fujitsu PrintPartner 10V       fujitsu-printpartner_10v
-Fujitsu PrintPartner 16DV      fujitsu-printpartner_16dv
-Fujitsu PrintPartner 20W       fujitsu-printpartner_20w
-Fujitsu PrintPartner 8000      fujitsu-printpartner_8000
-Generic PCL 4 Printer          generic-pcl_4_printer
-Generic PCL 5 Printer          generic-pcl_5_printer
-Generic PCL 5c Printer         generic-pcl_5c_printer
-Generic PCL 5e Printer         generic-pcl_5e_printer
-Generic PCL 6/PCL XL Printer   generic-pcl_6_pcl_xl_printer
-HP Business Inkjet 2200        hp-business_inkjet_2200
-HP Business Inkjet 2230        hp-business_inkjet_2230
-HP Business Inkjet 2250        hp-business_inkjet_2250
-HP Business Inkjet 2250TN      hp-business_inkjet_2250tn
-HP Business Inkjet 2280        hp-business_inkjet_2280
-HP Color Inkjet Printer CP1160 hp-color_inkjet_printer_cp1160
-HP Color Inkjet Printer CP1700 hp-color_inkjet_printer_cp1700
-HP Color LaserJet 2500         hp-color_laserjet_2500
-HP Color LaserJet 4500         hp-color_laserjet_4500
-HP Color LaserJet 4550         hp-color_laserjet_4550
-HP Color LaserJet 4600         hp-color_laserjet_4600
-HP Color LaserJet 5            hp-color_laserjet_5
-HP Color LaserJet 5000         hp-color_laserjet_5000
-HP Color LaserJet 5500         hp-color_laserjet_5500
-HP Color LaserJet 8550GN       hp-color_laserjet_8550gn
+Fujitsu PrintPartner 10V       fujitsu-pp_10v
+Fujitsu PrintPartner 16DV      fujitsu-pp_16dv
+Fujitsu PrintPartner 20W       fujitsu-pp_20w
+Fujitsu PrintPartner 8000      fujitsu-pp_8000
+Generic PCL 4 Printer          pcl-g_4
+Generic PCL 5 Printer          pcl-g_5
+Generic PCL 5c Printer         pcl-g_5c
+Generic PCL 5e Printer         pcl-g_5e
+Generic PCL 6/PCL XL Printer   pcl-g_6
+HP Business Inkjet 2200        hp-bij_2200
+HP Business Inkjet 2230        hp-bij_2230
+HP Business Inkjet 2250        hp-bij_2250
+HP Business Inkjet 2250TN      hp-bij_2250tn
+HP Business Inkjet 2280        hp-bij_2280
+HP Color Inkjet Printer CP1160 hp-cij_cp1160
+HP Color Inkjet Printer CP1700 hp-cij_cp1700
+HP Color LaserJet 2500         hp-clj_2500
+HP Color LaserJet 4500         hp-clj_4500
+HP Color LaserJet 4550         hp-clj_4550
+HP Color LaserJet 4600         hp-clj_4600
+HP Color LaserJet 5            hp-clj_5
+HP Color LaserJet 5000         hp-clj_5000
+HP Color LaserJet 5500         hp-clj_5500
+HP Color LaserJet 8550GN       hp-clj_8550gn
 HP DesignJet 230               pcl-desnj-230
 HP DesignJet 250C              pcl-desnj-250
 HP DesignJet 430               pcl-desnj-430
@@ -1718,210 +1718,210 @@ HP DesignJet 450C              pcl-desnj-450
 HP DesignJet 455CA             pcl-desnj-455
 HP DesignJet 488CA             pcl-desnj-488
 HP DesignJet 700               pcl-desnj-700
-HP DesignJet 750C Plus         hp-designjet_750c_plus
+HP DesignJet 750C Plus         hp-desnj_750c_plus
 HP DesignJet 750C              pcl-750
 HP DesignJet 2500CP            pcl-desnj-2500
 HP DesignJet 3500CP            pcl-desnj-3500
-HP DesignJet ColorPro CAD      hp-designjet_colorpro_cad
+HP DesignJet ColorPro CAD      hp-desnj_cp_cad
 HP DeskJet 400                 pcl-400
-HP DeskJet 420C                hp-deskjet_420c
-HP DeskJet 450                 hp-deskjet_450
+HP DeskJet 420C                hp-dj_420c
+HP DeskJet 450                 hp-dj_450
 HP DeskJet 500                 pcl-500
 HP DeskJet 500C                pcl-501
-HP DeskJet 505J Plus           hp-deskjet_505j_plus
-HP DeskJet 510                 hp-deskjet_510
+HP DeskJet 505J Plus           hp-dj_505j_plus
+HP DeskJet 510                 hp-dj_510
 HP DeskJet 520                 pcl-520
 HP DeskJet 540C                pcl-540
 HP DeskJet 550C                pcl-550
-HP DeskJet 5550                hp-deskjet_5550
-HP DeskJet 5551                hp-deskjet_5551
+HP DeskJet 5550                hp-dj_5550
+HP DeskJet 5551                hp-dj_5551
 HP DeskJet 560C                pcl-560
 HP DeskJet 600                 pcl-600
 HP DeskJet 600C                pcl-601
-HP DeskJet 610C                hp-deskjet_610c
-HP DeskJet 610CL               hp-deskjet_610cl
-HP DeskJet 6122                hp-deskjet_6122
-HP DeskJet 6127                hp-deskjet_6127
-HP DeskJet 612C                hp-deskjet_612c
-HP DeskJet 640C                hp-deskjet_640c
-HP DeskJet 648C                hp-deskjet_648c
-HP DeskJet 660C                hp-deskjet_660c
-HP DeskJet 670C                hp-deskjet_670c
-HP DeskJet 670TV               hp-deskjet_670tv
-HP DeskJet 672C                hp-deskjet_672c
-HP DeskJet 680C                hp-deskjet_680c
-HP DeskJet 682C                hp-deskjet_682c
+HP DeskJet 610C                hp-dj_610c
+HP DeskJet 610CL               hp-dj_610cl
+HP DeskJet 6122                hp-dj_6122
+HP DeskJet 6127                hp-dj_6127
+HP DeskJet 612C                hp-dj_612c
+HP DeskJet 640C                hp-dj_640c
+HP DeskJet 648C                hp-dj_648c
+HP DeskJet 660C                hp-dj_660c
+HP DeskJet 670C                hp-dj_670c
+HP DeskJet 670TV               hp-dj_670tv
+HP DeskJet 672C                hp-dj_672c
+HP DeskJet 680C                hp-dj_680c
+HP DeskJet 682C                hp-dj_682c
 HP DeskJet 690C                pcl-690
-HP DeskJet 692C                hp-deskjet_692c
-HP DeskJet 693C                hp-deskjet_693c
-HP DeskJet 694C                hp-deskjet_694c
-HP DeskJet 695C                hp-deskjet_695c
-HP DeskJet 697C                hp-deskjet_697c
+HP DeskJet 692C                hp-dj_692c
+HP DeskJet 693C                hp-dj_693c
+HP DeskJet 694C                hp-dj_694c
+HP DeskJet 695C                hp-dj_695c
+HP DeskJet 697C                hp-dj_697c
 HP DeskJet 810C                pcl-810
 HP DeskJet 812C                pcl-812
-HP DeskJet 815C                hp-deskjet_815c
-HP DeskJet 816C                hp-deskjet_816c
-HP DeskJet 825C                hp-deskjet_825c
-HP DeskJet 830C                hp-deskjet_830c
-HP DeskJet 832C                hp-deskjet_832c
+HP DeskJet 815C                hp-dj_815c
+HP DeskJet 816C                hp-dj_816c
+HP DeskJet 825C                hp-dj_825c
+HP DeskJet 830C                hp-dj_830c
+HP DeskJet 832C                hp-dj_832c
 HP DeskJet 840C                pcl-840
-HP DeskJet 841C                hp-deskjet_841c
+HP DeskJet 841C                hp-dj_841c
 HP DeskJet 842C                pcl-842
-HP DeskJet 843C                hp-deskjet_843c
+HP DeskJet 843C                hp-dj_843c
 HP DeskJet 845C                pcl-845
 HP DeskJet 850C                pcl-850
 HP DeskJet 855C                pcl-855
 HP DeskJet 870C                pcl-870
-HP DeskJet 880C                hp-deskjet_880c
-HP DeskJet 882C                hp-deskjet_882c
+HP DeskJet 880C                hp-dj_880c
+HP DeskJet 882C                hp-dj_882c
 HP DeskJet 890C                pcl-890
 HP DeskJet 895C                pcl-895
 HP DeskJet 916C                pcl-900
-HP DeskJet 920C                hp-deskjet_920c
-HP DeskJet 9300                hp-deskjet_9300
-HP DeskJet 930C                hp-deskjet_930c
-HP DeskJet 932C                hp-deskjet_932c
-HP DeskJet 933C                hp-deskjet_933c
-HP DeskJet 934C                hp-deskjet_934c
-HP DeskJet 935C                hp-deskjet_935c
-HP DeskJet 940C                hp-deskjet_940c
-HP DeskJet 948C                hp-deskjet_948c
-HP DeskJet 950C                hp-deskjet_950c
-HP DeskJet 952C                hp-deskjet_952c
-HP DeskJet 955C                hp-deskjet_955c
-HP DeskJet 957C                hp-deskjet_957c
-HP DeskJet 959C                hp-deskjet_959c
-HP DeskJet 960C                hp-deskjet_960c
-HP DeskJet 970C                hp-deskjet_970c
-HP DeskJet 975C                hp-deskjet_975c
-HP DeskJet 980C                hp-deskjet_980c
-HP DeskJet 990C                hp-deskjet_990c
-HP DeskJet 995C                hp-deskjet_995c
+HP DeskJet 920C                hp-dj_920c
+HP DeskJet 9300                hp-dj_9300
+HP DeskJet 930C                hp-dj_930c
+HP DeskJet 932C                hp-dj_932c
+HP DeskJet 933C                hp-dj_933c
+HP DeskJet 934C                hp-dj_934c
+HP DeskJet 935C                hp-dj_935c
+HP DeskJet 940C                hp-dj_940c
+HP DeskJet 948C                hp-dj_948c
+HP DeskJet 950C                hp-dj_950c
+HP DeskJet 952C                hp-dj_952c
+HP DeskJet 955C                hp-dj_955c
+HP DeskJet 957C                hp-dj_957c
+HP DeskJet 959C                hp-dj_959c
+HP DeskJet 960C                hp-dj_960c
+HP DeskJet 970C                hp-dj_970c
+HP DeskJet 975C                hp-dj_975c
+HP DeskJet 980C                hp-dj_980c
+HP DeskJet 990C                hp-dj_990c
+HP DeskJet 995C                hp-dj_995c
 HP DeskJet 1100C               pcl-1100
 HP DeskJet 1120C               pcl-1120
-HP DeskJet 1125C               hp-deskjet_1125c
+HP DeskJet 1125C               hp-dj_1125c
 HP DeskJet 1200C               pcl-1200
 HP DeskJet 1220C               pcl-1220
 HP DeskJet 1600C               pcl-1600
-HP DeskJet 1600CM              hp-deskjet_1600cm
+HP DeskJet 1600CM              hp-dj_1600cm
 HP DeskJet 2000                pcl-2000
 HP DeskJet 2500                pcl-2500
 HP DeskJet 2500CM              hp-2500cm
 HP DeskJet 340C                pcl-340
-HP DeskJet 3810                hp-deskjet_3810
-HP DeskJet 3816                hp-deskjet_3816
-HP DeskJet 3820                hp-deskjet_3820
-HP DeskJet 3822                hp-deskjet_3822
+HP DeskJet 3810                hp-dj_3810
+HP DeskJet 3816                hp-dj_3816
+HP DeskJet 3820                hp-dj_3820
+HP DeskJet 3822                hp-dj_3822
 HP LaserJet 2                  pcl-2
-HP LaserJet 2D                 hp-laserjet_2d
-HP LaserJet 2P Plus            hp-laserjet_2p_plus
+HP LaserJet 2D                 hp-lj_2d
+HP LaserJet 2P Plus            hp-lj_2p_plus
 HP LaserJet 2P                 pcl-2p
 HP LaserJet 3                  pcl-3
-HP LaserJet 3D                 hp-laserjet_3d
-HP LaserJet 3P w/ PCL5         hp-laserjet_3p_w_pcl5
-HP LaserJet 3P w/PS            hp-laserjet_3p_w_ps
-HP LaserJet 4 Plus             hp-laserjet_4_plus
+HP LaserJet 3D                 hp-lj_3d
+HP LaserJet 3P w/ PCL5         hp-lj_3p_w_pcl5
+HP LaserJet 3P w/PS            hp-lj_3p_w_ps
+HP LaserJet 4 Plus             hp-lj_4_plus
 HP LaserJet 4                  pcl-4
 HP LaserJet 4L                 pcl-4l
-HP LaserJet 4M                 hp-laserjet_4m
-HP LaserJet 4ML                hp-laserjet_4ml
-HP LaserJet 4P                 hp-laserjet_4p
+HP LaserJet 4M                 hp-lj_4m
+HP LaserJet 4ML                hp-lj_4ml
+HP LaserJet 4P                 hp-lj_4p
 HP LaserJet 4Si                pcl-4si
 HP LaserJet 4V                 pcl-4v
 HP LaserJet 5                  pcl-5
-HP LaserJet 5L                 hp-laserjet_5l
-HP LaserJet 5M                 hp-laserjet_5m
-HP LaserJet 5MP                hp-laserjet_5mp
-HP LaserJet 5P                 hp-laserjet_5p
+HP LaserJet 5L                 hp-lj_5l
+HP LaserJet 5M                 hp-lj_5m
+HP LaserJet 5MP                hp-lj_5mp
+HP LaserJet 5P                 hp-lj_5p
 HP LaserJet 5Si                pcl-5si
 HP LaserJet 6                  pcl-6
-HP LaserJet 6L                 hp-laserjet_6l
-HP LaserJet 6MP                hp-laserjet_6mp
-HP LaserJet 6P                 hp-laserjet_6p
-HP LaserJet 1010               hp-laserjet_1010
-HP LaserJet 1012               hp-laserjet_1012
-HP LaserJet 1015               hp-laserjet_1015
-HP LaserJet 1100               hp-laserjet_1100
-HP LaserJet 1100A              hp-laserjet_1100a
-HP LaserJet 1150               hp-laserjet_1150
-HP LaserJet 1200               hp-laserjet_1200
-HP LaserJet 1220               hp-laserjet_1220
-HP LaserJet 1300               hp-laserjet_1300
-HP LaserJet 2100               hp-laserjet_2100
-HP LaserJet 2100M              hp-laserjet_2100m
-HP LaserJet 2200               hp-laserjet_2200
-HP LaserJet 2300               hp-laserjet_2300
-HP LaserJet 3200               hp-laserjet_3200
-HP LaserJet 3200m              hp-laserjet_3200m
-HP LaserJet 3200se             hp-laserjet_3200se
-HP LaserJet 3300 MFP           hp-laserjet_3300_mfp
-HP LaserJet 3310 MFP           hp-laserjet_3310_mfp
-HP LaserJet 3320 MFP           hp-laserjet_3320_mfp
-HP LaserJet 3320N MFP          hp-laserjet_3320n_mfp
-HP LaserJet 3330 MFP           hp-laserjet_3330_mfp
-HP LaserJet 4000               hp-laserjet_4000
-HP LaserJet 4050               hp-laserjet_4050
-HP LaserJet 4100               hp-laserjet_4100
-HP LaserJet 4200               hp-laserjet_4200
-HP LaserJet 4300               hp-laserjet_4300
-HP LaserJet 5000               hp-laserjet_5000
-HP LaserJet 5100               hp-laserjet_5100
-HP LaserJet 8000               hp-laserjet_8000
-HP LaserJet 8100               hp-laserjet_8100
-HP LaserJet 8150               hp-laserjet_8150
-HP LaserJet 9000               hp-laserjet_9000
+HP LaserJet 6L                 hp-lj_6l
+HP LaserJet 6MP                hp-lj_6mp
+HP LaserJet 6P                 hp-lj_6p
+HP LaserJet 1010               hp-lj_1010
+HP LaserJet 1012               hp-lj_1012
+HP LaserJet 1015               hp-lj_1015
+HP LaserJet 1100               hp-lj_1100
+HP LaserJet 1100A              hp-lj_1100a
+HP LaserJet 1150               hp-lj_1150
+HP LaserJet 1200               hp-lj_1200
+HP LaserJet 1220               hp-lj_1220
+HP LaserJet 1300               hp-lj_1300
+HP LaserJet 2100               hp-lj_2100
+HP LaserJet 2100M              hp-lj_2100m
+HP LaserJet 2200               hp-lj_2200
+HP LaserJet 2300               hp-lj_2300
+HP LaserJet 3200               hp-lj_3200
+HP LaserJet 3200m              hp-lj_3200m
+HP LaserJet 3200se             hp-lj_3200se
+HP LaserJet 3300 MFP           hp-lj_3300_mfp
+HP LaserJet 3310 MFP           hp-lj_3310_mfp
+HP LaserJet 3320 MFP           hp-lj_3320_mfp
+HP LaserJet 3320N MFP          hp-lj_3320n_mfp
+HP LaserJet 3330 MFP           hp-lj_3330_mfp
+HP LaserJet 4000               hp-lj_4000
+HP LaserJet 4050               hp-lj_4050
+HP LaserJet 4100               hp-lj_4100
+HP LaserJet 4200               hp-lj_4200
+HP LaserJet 4300               hp-lj_4300
+HP LaserJet 5000               hp-lj_5000
+HP LaserJet 5100               hp-lj_5100
+HP LaserJet 8000               hp-lj_8000
+HP LaserJet 8100               hp-lj_8100
+HP LaserJet 8150               hp-lj_8150
+HP LaserJet 9000               hp-lj_9000
 HP Mopier 240                  hp-mopier_240
 HP Mopier 320                  hp-mopier_320
-HP OfficeJet 300               hp-officejet_300
-HP OfficeJet 330               hp-officejet_330
-HP OfficeJet 350               hp-officejet_350
-HP OfficeJet 500               hp-officejet_500
-HP OfficeJet 520               hp-officejet_520
-HP OfficeJet 570               hp-officejet_570
-HP OfficeJet 580               hp-officejet_580
-HP OfficeJet 590               hp-officejet_590
-HP OfficeJet 600               hp-officejet_600
-HP OfficeJet 610               hp-officejet_610
-HP OfficeJet 625               hp-officejet_625
-HP OfficeJet 630               hp-officejet_630
-HP OfficeJet 635               hp-officejet_635
-HP OfficeJet 700               hp-officejet_700
-HP OfficeJet 710               hp-officejet_710
-HP OfficeJet 720               hp-officejet_720
-HP OfficeJet 725               hp-officejet_725
-HP OfficeJet 5105              hp-officejet_5105
-HP OfficeJet 5110              hp-officejet_5110
-HP OfficeJet 5110xi            hp-officejet_5110xi
-HP OfficeJet 6105              hp-officejet_6105
-HP OfficeJet 6110              hp-officejet_6110
-HP OfficeJet 7110              hp-officejet_7110
-HP OfficeJet 7130              hp-officejet_7130
-HP OfficeJet 7140              hp-officejet_7140
-HP OfficeJet D125              hp-officejet_d125
-HP OfficeJet D135              hp-officejet_d135
-HP OfficeJet D145              hp-officejet_d145
-HP OfficeJet D155              hp-officejet_d155
-HP OfficeJet G55               hp-officejet_g55
-HP OfficeJet G85               hp-officejet_g85
-HP OfficeJet G95               hp-officejet_g95
-HP OfficeJet K60               hp-officejet_k60
-HP OfficeJet K60xi             hp-officejet_k60xi
-HP OfficeJet K80               hp-officejet_k80
-HP OfficeJet K80xi             hp-officejet_k80xi
-HP OfficeJet LX                hp-officejet_lx
-HP OfficeJet Pro 1150C         hp-officejet_pro_1150c
-HP OfficeJet Pro 1170C         hp-officejet_pro_1170c
-HP OfficeJet Pro 1175C         hp-officejet_pro_1175c
-HP OfficeJet R40               hp-officejet_r40
-HP OfficeJet R45               hp-officejet_r45
-HP OfficeJet R60               hp-officejet_r60
-HP OfficeJet R65               hp-officejet_r65
-HP OfficeJet R80               hp-officejet_r80
-HP OfficeJet T45               hp-officejet_t45
-HP OfficeJet T65               hp-officejet_t65
-HP OfficeJet V40               hp-officejet_v40
-HP OfficeJet V40xi             hp-officejet_v40xi
-HP OfficeJet                   hp-officejet
+HP OfficeJet 300               hp-oj_300
+HP OfficeJet 330               hp-oj_330
+HP OfficeJet 350               hp-oj_350
+HP OfficeJet 500               hp-oj_500
+HP OfficeJet 520               hp-oj_520
+HP OfficeJet 570               hp-oj_570
+HP OfficeJet 580               hp-oj_580
+HP OfficeJet 590               hp-oj_590
+HP OfficeJet 600               hp-oj_600
+HP OfficeJet 610               hp-oj_610
+HP OfficeJet 625               hp-oj_625
+HP OfficeJet 630               hp-oj_630
+HP OfficeJet 635               hp-oj_635
+HP OfficeJet 700               hp-oj_700
+HP OfficeJet 710               hp-oj_710
+HP OfficeJet 720               hp-oj_720
+HP OfficeJet 725               hp-oj_725
+HP OfficeJet 5105              hp-oj_5105
+HP OfficeJet 5110              hp-oj_5110
+HP OfficeJet 5110xi            hp-oj_5110xi
+HP OfficeJet 6105              hp-oj_6105
+HP OfficeJet 6110              hp-oj_6110
+HP OfficeJet 7110              hp-oj_7110
+HP OfficeJet 7130              hp-oj_7130
+HP OfficeJet 7140              hp-oj_7140
+HP OfficeJet D125              hp-oj_d125
+HP OfficeJet D135              hp-oj_d135
+HP OfficeJet D145              hp-oj_d145
+HP OfficeJet D155              hp-oj_d155
+HP OfficeJet G55               hp-oj_g55
+HP OfficeJet G85               hp-oj_g85
+HP OfficeJet G95               hp-oj_g95
+HP OfficeJet K60               hp-oj_k60
+HP OfficeJet K60xi             hp-oj_k60xi
+HP OfficeJet K80               hp-oj_k80
+HP OfficeJet K80xi             hp-oj_k80xi
+HP OfficeJet LX                hp-oj_lx
+HP OfficeJet Pro 1150C         hp-oj_pro_1150c
+HP OfficeJet Pro 1170C         hp-oj_pro_1170c
+HP OfficeJet Pro 1175C         hp-oj_pro_1175c
+HP OfficeJet R40               hp-oj_r40
+HP OfficeJet R45               hp-oj_r45
+HP OfficeJet R60               hp-oj_r60
+HP OfficeJet R65               hp-oj_r65
+HP OfficeJet R80               hp-oj_r80
+HP OfficeJet T45               hp-oj_t45
+HP OfficeJet T65               hp-oj_t65
+HP OfficeJet V40               hp-oj_v40
+HP OfficeJet V40xi             hp-oj_v40xi
+HP OfficeJet                   hp-oj
 HP PSC 370                     hp-psc_370
 HP PSC 380                     hp-psc_380
 HP PSC 500                     hp-psc_500
@@ -1931,25 +1931,25 @@ HP PSC 950xi                   hp-psc_950xi
 HP PSC 2110                    hp-psc_2110
 HP PSC 2150                    hp-psc_2150
 HP PSC 2210                    hp-psc_2210
-HP PhotoSmart 7150             hp-photosmart_7150
-HP PhotoSmart 7345             hp-photosmart_7345
-HP PhotoSmart 7350             hp-photosmart_7350
-HP PhotoSmart 7550             hp-photosmart_7550
-HP PhotoSmart P100             hp-photosmart_p100
-HP PhotoSmart P130             hp-photosmart_p130
-HP PhotoSmart P230             hp-photosmart_p230
+HP PhotoSmart 7150             hp-psc_7150
+HP PhotoSmart 7345             hp-psc_7345
+HP PhotoSmart 7350             hp-psc_7350
+HP PhotoSmart 7550             hp-psc_7550
+HP PhotoSmart P100             hp-psc_p100
+HP PhotoSmart P130             hp-psc_p130
+HP PhotoSmart P230             hp-psc_p230
 HP PhotoSmart P1000            pcl-P1000
 HP PhotoSmart P1100            pcl-P1100
-HP PhotoSmart P1115            hp-photosmart_p1115
-HP PhotoSmart P1215            hp-photosmart_p1215
-HP PhotoSmart P1218            hp-photosmart_p1218
-HP PhotoSmart P1315            hp-photosmart_p1315
+HP PhotoSmart P1115            hp-psc_p1115
+HP PhotoSmart P1215            hp-psc_p1215
+HP PhotoSmart P1218            hp-psc_p1218
+HP PhotoSmart P1315            hp-psc_p1315
 HP e-printer e20               hp-e-printer_e20
 IBM 4019                       ibm-4019
-IBM 4029 030 LaserPrinter 10   ibm-4029_030_laserprinter_10
+IBM 4029 030 LaserPrinter 10   ibm-4029_030_lp_10
 IBM 4312                       ibm-4312
 IBM Infoprint 12               ibm-infoprint_12
-IBM Page Printer 3112          ibm-page_printer_3112
+IBM Page Printer 3112          ibm-pp_3112
 Infotec 4651 MF                infotec-4651_mf
 Kyocera F-1010                 kyocera-f-1010
 Kyocera FS-600 (KPDL-2)        kyocera-fs-600_kpdl-2
@@ -2000,23 +2000,23 @@ Kyocera KM-6230                kyocera-km-6230
 Lexmark 4076                   lexmark-4076
 Lexmark Optra E                lexmark-optra_e
 Lexmark Optra E+               lexmark-optra_eplus
-Lexmark Valuewriter 300        lexmark-valuewriter_300
+Lexmark Valuewriter 300        lexmark-vw_300
 Lexmark Z42                    lexmark-z42
 Lexmark Z43                    lexmark-z43
 Lexmark Z52                    lexmark-z52
 Lexmark Z53                    lexmark-z53
-Minolta PagePro 1100           minolta-pagepro_1100
-Minolta PagePro 6              minolta-pagepro_6
-Minolta PagePro 6e             minolta-pagepro_6e
-Minolta PagePro 6ex            minolta-pagepro_6ex
-Minolta PagePro 8              minolta-pagepro_8
-Minolta PagePro 8L             minolta-pagepro_8l
-NEC SuperScript 1260           nec-superscript_1260
-NEC SuperScript 1400           nec-superscript_1400
-NEC SuperScript 1800           nec-superscript_1800
-NEC SuperScript 660i           nec-superscript_660i
-NEC SuperScript 860            nec-superscript_860
-NEC SuperScript 870            nec-superscript_870
+Minolta PagePro 1100           minolta-pp_1100
+Minolta PagePro 6              minolta-pp_6
+Minolta PagePro 6e             minolta-pp_6e
+Minolta PagePro 6ex            minolta-pp_6ex
+Minolta PagePro 8              minolta-pp_8
+Minolta PagePro 8L             minolta-pp_8l
+NEC SuperScript 1260           nec-ssc_1260
+NEC SuperScript 1400           nec-ssc_1400
+NEC SuperScript 1800           nec-ssc_1800
+NEC SuperScript 660i           nec-ssc_660i
+NEC SuperScript 860            nec-ssc_860
+NEC SuperScript 870            nec-ssc_870
 Okidata OL400                  okidata-ol400
 Okidata OL400e                 okidata-ol400e
 Okidata OL400ex                okidata-ol400ex
@@ -2025,12 +2025,12 @@ Okidata OL600e                 okidata-ol600e
 Okidata OL610e/S               okidata-ol610e_s
 Okidata OL800                  okidata-ol800
 Okidata OL810ex                okidata-ol810ex
-Okidata Okipage 6e             okidata-okipage_6e
-Okidata Okipage 6ex            okidata-okipage_6ex
-Okidata Okipage 8p             okidata-okipage_8p
-Okidata Okipage 10e            okidata-okipage_10e
-Okidata Okipage 10ex           okidata-okipage_10ex
-Okidata Okipage 14ex           okidata-okipage_14ex
+Okidata Okipage 6e             okidata-okp_6e
+Okidata Okipage 6ex            okidata-okp_6ex
+Okidata Okipage 8p             okidata-okp_8p
+Okidata Okipage 10e            okidata-okp_10e
+Okidata Okipage 10ex           okidata-okp_10ex
+Okidata Okipage 14ex           okidata-okp_14ex
 Okidata Super 6e               okidata-super_6e
 Olivetti JP350S                olivetti-jp350s
 Olivetti PG 306                olivetti-pg_306
@@ -2050,9 +2050,9 @@ Panasonic KX-P4450             panasonic-kx-p4450
 Panasonic KX-P6150             panasonic-kx-p6150
 Panasonic KX-P6500             panasonic-kx-p6500
 Raven LP-410                   raven-lp-410
-Ricoh Aficio 220               ricoh-aficio_220
-Ricoh Aficio 401               ricoh-aficio_401
-Ricoh Aficio 700               ricoh-aficio_700
+Ricoh Aficio 220               ricoh-afc_220
+Ricoh Aficio 401               ricoh-afc_401
+Ricoh Aficio 700               ricoh-afc_700
 Samsung ML-85                  samsung-ml-85
 Samsung ML-4600                samsung-ml-4600
 Samsung ML-5000a               samsung-ml-5000a
@@ -2064,23 +2064,23 @@ Samsung ML-7000P               samsung-ml-7000p
 Samsung ML-7050                samsung-ml-7050
 Samsung QL-5100A               samsung-ql-5100a
 Samsung QL-6050                samsung-ql-6050
-Seiko SpeedJET 200             seiko-speedjet_200
+Seiko SpeedJET 200             seiko-sj_200
 Sharp AR-161                   sharp-ar-161
 Sony IJP-V100                  sony-ijp-v100
 Sony UP-DP10                   sony-updp10                     Experimental
 Sony UP-DR150                  sony-updr150                    Experimental
 Star LS-04                     star-ls-04
-Star LaserPrinter 8            star-laserprinter_8
+Star LaserPrinter 8            star-lp_8
 Tally MT908                    tally-mt908
 Xerox Able 1406                xerox-able_1406
-Xerox DocuPrint 4508           xerox-docuprint_4508
-Xerox DocuPrint C20            xerox-docuprint_c20
-Xerox DocuPrint N4512          xerox-docuprint_n4512
-Xerox DocuPrint N4512PS        xerox-docuprint_n4512ps
-Xerox DocuPrint P12            xerox-docuprint_p12
-Xerox DocuPrint P1202          xerox-docuprint_p1202
-Xerox DocuPrint P8e            xerox-docuprint_p8e
-Xerox Document Centre 400      xerox-document_centre_400
+Xerox DocuPrint 4508           xerox-dp_4508
+Xerox DocuPrint C20            xerox-dp_c20
+Xerox DocuPrint N4512          xerox-dp_n4512
+Xerox DocuPrint N4512PS        xerox-dp_n4512ps
+Xerox DocuPrint P12            xerox-dp_p12
+Xerox DocuPrint P1202          xerox-dp_p1202
+Xerox DocuPrint P8e            xerox-dp_p8e
+Xerox Document Centre 400      xerox-dc_400
 ================================================================
 
 Printer-Specific Notes:
