@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.81 2005/10/10 12:52:29 rlk Exp $"
+ * "$Id: print-ps.c,v 1.82 2006/03/04 17:49:33 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -189,6 +189,8 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
 	    stp_string_list_param(description->bounds.str, 0)->name;
 	  description->is_active = 1;
 	}
+      else if (strcmp(name, "PPDFile") == 0)
+	description->is_active = 1;
       else
 	description->is_active = 0;
       return;
