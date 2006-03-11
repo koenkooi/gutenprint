@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.97 2005/12/24 23:15:23 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.98 2006/03/11 19:12:06 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -659,7 +659,14 @@ main(int  argc,				/* I - Number of command-line arguments */
     return (1);
   }
   else if (strcmp(ppd->nickname + strlen(ppd->modelname) +
-		  strlen(CUPS_PPD_NICKNAME_STRING), version_id) != 0)
+		  strlen(CUPS_PPD_NICKNAME_STRING), version_id) != 0 &&
+	   (strlen(ppd->nickname + strlen(ppd->modelname) +
+		   strlen(CUPS_PPD_NICKNAME_STRING)) < strlen(version_id) ||
+	    !((strncmp(ppd->nickname + strlen(ppd->modelname) +
+		      strlen(CUPS_PPD_NICKNAME_STRING), version_id,
+		      strlen(version_id)) == 0) &&
+	      *(ppd->nickname + strlen(ppd->modelname) +
+		strlen(CUPS_PPD_NICKNAME_STRING)) != ' ')))
   {
     fprintf(stderr, "ERROR: Gutenprint: The version of Gutenprint software installed (%s) does not match the PPD file (%s).\n",
 	    version_id,
@@ -1098,5 +1105,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.97 2005/12/24 23:15:23 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.98 2006/03/11 19:12:06 rlk Exp $".
  */

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.135 2006/03/11 15:09:27 rlk Exp $
+dnl $Id: configure.ac,v 1.136 2006/03/11 19:12:06 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.135 $)
+AC_REVISION($Revision: 1.136 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -226,6 +226,19 @@ STP_ARG_ENABLE([translated-cups-ppds],
                [build translated CUPS PPD files],
                [BUILD_TRANSLATED_CUPS_PPDS],
                [yes])
+
+STP_ARG_ENABLE_DETAILED([simplified-cups-ppds],
+			[],
+			[build simplified CUPS PPD files],
+			[(options: yes, no, only)],
+			[BUILD_SIMPLIFIED_CUPS_PPDS],
+			[no],
+			[
+    yes) [WHICH_PPDS]="-a"; AC_MSG_RESULT([yes]) ;;
+    no) [WHICH_PPDS]=""; AC_MSG_RESULT([no]) ;;
+    only) [WHICH_PPDS]="-s"; AC_MSG_RESULT([only]) ;;
+    *) AC_MSG_ERROR([${enableval}: not a valid option ('yes', 'no', or 'only')]) ;;
+				   ])
 
 USE_LEVEL3_PS=no
 if test -n "${CUPS_CONFIG}" -a "${BUILD_CUPS}" = "yes" ; then
@@ -930,6 +943,7 @@ AC_SUBST(gutenprintui2_libdeps)
 AC_SUBST(LIBREADLINE_DEPS)
 AC_SUBST(MAINTAINER_CFLAGS)
 AC_SUBST(PLUG_IN_PATH)
+AC_SUBST(WHICH_PPDS)
 
 dnl Output files
 
