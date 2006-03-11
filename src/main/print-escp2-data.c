@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.192 2006/03/02 02:53:06 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.193 2006/03/11 15:09:27 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -879,7 +879,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
     360, 14400, -1, 1440, 720, 90, 90, 0, 1, 0, 0, 0, 0, 8,
     INCH(17 / 2), INCH(44), INCH(2), INCH(2),
     9, 9, 0, 30, 9, 9, 0, 30, 9, 9, 0, 0, 9, 9, 0, 0, -1, -1, 0, 0,
-    1, 7, 0, 0,
+    1, 15, 0, 0,		/* Is it really 15 pairs??? */
     sp700_dotsizes, sp700_densities, &stpi_escp2_simple_drops,
     stpi_escp2_g3_reslist, &stpi_escp2_photo_gen1_inkgroup,
     standard_bits, g3_base_res, &default_input_slot_list,
