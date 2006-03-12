@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.143 2006/03/03 02:01:07 rlk Exp $"
+   "$Id: printers.xml,v 1.144 2006/03/12 22:22:12 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -676,7 +676,7 @@
       <printer name="IBM Page Printer 3112" driver="ibm-pp_3112" manufacturer="IBM" model="6" parameters="pcl_laser_params" />
       <printer name="Infotec 4651 MF" driver="infotec-4651_mf" manufacturer="Infotec" model="6" parameters="pcl_laser_params" />
       <printer name="Kyocera F-1010" driver="kyocera-f-1010" manufacturer="Kyocera" model="2" parameters="pcl_laser_params" />
-      <printer name="Kyocera FS-600 (KPDL-2)" driver="kyocera-fs-600_kpdl-2" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
+      <printer name="Kyocera FS-600 - KPDL-2" driver="kyocera-fs-600_kpdl-2" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
       <printer name="Kyocera FS-600" driver="kyocera-fs-600" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
       <printer name="Kyocera FS-680" driver="kyocera-fs-680" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
       <printer name="Kyocera FS-800" driver="kyocera-fs-800" manufacturer="Kyocera" model="6" parameters="pcl_laser_params" />
