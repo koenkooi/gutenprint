@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.9 2005/12/30 20:32:07 rlk Exp $"
+ * "$Id: panel.c,v 1.10 2006/03/18 23:56:37 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3990,11 +3990,11 @@ fill_buffer_writefunc(void *priv, const char *buffer, size_t bytes)
       for (i = 0; i < pixels; i++)
 	{
 	  if (mask & 1)
-	    where[0] = -xbuffer[0];
+	    where[0] = ~xbuffer[0];
 	  if (mask & 2)
-	    where[1] = -xbuffer[1];
+	    where[1] = ~xbuffer[1];
 	  if (mask & 4)
-	    where[2] = -xbuffer[2];
+	    where[2] = ~xbuffer[2];
 	  where += 3;
 	  xbuffer += 3;
 	}
