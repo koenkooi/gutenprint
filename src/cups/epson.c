@@ -1,5 +1,5 @@
 /*
- * "$Id: epson.c,v 1.6 2002/12/22 21:03:32 rleigh Exp $"
+ * "$Id: epson.c,v 1.7 2006/03/18 23:54:49 rlk Exp $"
  *
  *   EPSON backend for the Common UNIX Printing System.
  *
@@ -324,9 +324,10 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 
       while (nbytes > 0)
       {
-	if ((wbytes = write(fd_out, bufptr, nbytes)) < 0 && errno == EAGAIN)
+	if ((wbytes = write(fd_out, bufptr, nbytes)) < 0 &&
+	    (errno == EAGAIN || errno == EINTR))
 	  {
-	    /* Write would block, so sleep 0.2s and retry... */
+	    /* Write would block, so sleep 0.002s and retry... */
 
 	    /*
 	     * Check for possible data coming back from the printer...
@@ -340,13 +341,13 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 	    read_backchannel(fd_out);
 #if defined(HAVE_TIME_H) && defined(HAVE_NANOSLEEP)
 	    sleeptime.tv_sec = 0;
-	    sleeptime.tv_nsec = 200000000;
+	    sleeptime.tv_nsec = 2000000;
 	    nanosleep(&sleeptime, &sleeptime);
 #elif defined(HAVE_UNISTD_H) && defined(HAVE_USLEEP)
 	    usleep(200000);
 #else
 	    timeout.tv_sec = 0;
-	    timeout.tv_usec = 200000;
+	    timeout.tv_usec = 2000;
 	    select(1, NULL, NULL, NULL, &timeout);
 #endif
 	    continue;
@@ -765,5 +766,5 @@ list_devices(void)
 
 
 /*
- * End of "$Id: epson.c,v 1.6 2002/12/22 21:03:32 rleigh Exp $".
+ * End of "$Id: epson.c,v 1.7 2006/03/18 23:54:49 rlk Exp $".
  */
