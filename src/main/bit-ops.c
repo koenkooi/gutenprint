@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.c,v 1.8 2005/06/29 01:42:34 rlk Exp $"
+ * "$Id: bit-ops.c,v 1.9 2006/03/28 03:27:57 rlk Exp $"
  *
  *   Softweave calculator for Gutenprint.
  *
@@ -1087,7 +1087,7 @@ stp_pack_uncompressed(stp_vars_t *v,
   find_first_and_last(line, length, first, last);
   memcpy(comp_buf, line, length);
   *comp_ptr = comp_buf + length;
-  if (first > last)
+  if (first && last && *first > *last)
     return 0;
   else
     return 1;
