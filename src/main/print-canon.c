@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.169 2006/03/19 00:00:49 rlk Exp $"
+ * "$Id: print-canon.c,v 1.170 2006/03/28 16:50:31 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1344,7 +1344,7 @@ static const canon_cap_t canon_model_capabilities[] =
     CANON_CAP_STD0|CANON_CAP_extended_t|CANON_CAP_5pixelin1byte|CANON_CAP_DUPLEX,  /*features */
     CANON_MODES(canon_nomodes),
 #ifndef EXPERIMENTAL_STUFF
-    {-1,0,0,-1,-1,-1}, /*150x150 300x300 600x600 1200x600 1200x1200 2400x2400*/
+    {-1,-1,0,-1,-1,-1}, /*150x150 300x300 600x600 1200x600 1200x1200 2400x2400*/
     {1,1,1,1,1,1},    /*------- 300x300 600x600 1200x600 --------- ---------*/
     CANON_INK(canon_ink_standard_pixma),
 #endif
