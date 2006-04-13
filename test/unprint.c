@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.36 2005/10/23 19:43:14 rlk Exp $ */
+/* $Id: unprint.c,v 1.37 2006/04/13 12:09:15 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -432,8 +432,8 @@ write_output(FILE *fp_w, int dontwrite, int allblack)
   right = pstate.right_edge;
   height = oversample * (last - first + 1);
 
-  fprintf(stderr, "Image from (%d,%d) to (%d,%d).\n",
-	  left, first, right, last);
+  fprintf(stderr, "Image from (%d,%d) to (%d,%d) (%dx%d).\n",
+	  left, first, right, last, right - left, last - first);
 
   width = right - left + 1;
   if (width < 0)
