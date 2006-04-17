@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.2 2004/11/28 15:59:29 rleigh Exp $"
+ * "$Id: printers.h,v 1.3 2006/04/17 02:06:18 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -192,6 +192,8 @@ typedef struct
   void  (*media_size)(const stp_vars_t *v, int *width, int *height);
   void  (*imageable_area)(const stp_vars_t *v,
 			  int *left, int *right, int *bottom, int *top);
+  void  (*maximum_imageable_area)(const stp_vars_t *v, int *left, int *right,
+				  int *bottom, int *top);
   void  (*limit)(const stp_vars_t *v, int *max_width, int *max_height,
                  int *min_width, int *min_height);
   int   (*print)(const stp_vars_t *v, stp_image_t *image);
@@ -232,5 +234,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GUTENPRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.2 2004/11/28 15:59:29 rleigh Exp $".
+ * End of "$Id: printers.h,v 1.3 2006/04/17 02:06:18 rlk Exp $".
  */

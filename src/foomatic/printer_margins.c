@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_margins.c,v 1.16 2006/03/13 13:29:02 rlk Exp $"
+ * "$Id: printer_margins.c,v 1.17 2006/04/17 02:06:18 rlk Exp $"
  *
  *   Dump the per-printer margins for Grant Taylor's *-omatic database
  *
@@ -85,7 +85,17 @@ main(int argc, char **argv) {
       stp_set_string_parameter(pv, "PageSize", opt->name);
       
       stp_get_media_size(pv, &width, &height);
-      stp_get_imageable_area(pv, &left, &right, &bottom, &top);
+      stp_get_maximum_imageable_area(pv, &left, &right, &bottom, &top);
+
+      if (left < 0)
+	left = 0;
+      if (right > width)
+	right = width;
+      if (bottom > height)
+	bottom = height;
+      if (top < 0)
+	top = 0;
+      
       bottom = height - bottom;
       top    = height - top;
 

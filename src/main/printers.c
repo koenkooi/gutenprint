@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.76 2006/03/03 02:01:07 rlk Exp $"
+ * "$Id: printers.c,v 1.77 2006/04/17 02:06:19 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -389,6 +389,15 @@ stp_get_imageable_area(const stp_vars_t *v,
   const stp_printfuncs_t *printfuncs =
     stpi_get_printfuncs(stp_get_printer(v));
   (printfuncs->imageable_area)(v, left, right, bottom, top);
+}
+
+void
+stp_get_maximum_imageable_area(const stp_vars_t *v,
+			       int *left, int *right, int *bottom, int *top)
+{
+  const stp_printfuncs_t *printfuncs =
+    stpi_get_printfuncs(stp_get_printer(v));
+  (printfuncs->maximum_imageable_area)(v, left, right, bottom, top);
 }
 
 void

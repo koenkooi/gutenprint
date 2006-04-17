@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.170 2006/03/28 16:50:31 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.171 2006/04/17 02:06:18 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -3440,6 +3440,7 @@ static const stp_printfuncs_t print_canon_printfuncs =
   canon_list_parameters,
   canon_parameters,
   stp_default_media_size,
+  canon_imageable_area,
   canon_imageable_area,
   canon_limit,
   canon_print,

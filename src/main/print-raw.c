@@ -1,5 +1,5 @@
 /*
- * "$Id: print-raw.c,v 1.37 2005/09/17 21:54:34 rlk Exp $"
+ * "$Id: print-raw.c,v 1.38 2006/04/17 02:06:19 rlk Exp $"
  *
  *   Print plug-in RAW driver for the GIMP.
  *
@@ -324,6 +324,7 @@ static const stp_printfuncs_t print_raw_printfuncs =
   raw_list_parameters,
   raw_parameters,
   stp_default_media_size,
+  raw_imageable_area,
   raw_imageable_area,
   raw_limit,
   raw_print,

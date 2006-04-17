@@ -1,6 +1,6 @@
 
 /*
- * "$Id: print-lexmark.c,v 1.151 2006/03/28 03:28:29 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.152 2006/04/17 02:06:19 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2164,6 +2164,7 @@ static const stp_printfuncs_t print_lexmark_printfuncs =
   lexmark_list_parameters,
   lexmark_parameters,
   stp_default_media_size,
+  lexmark_imageable_area,
   lexmark_imageable_area,
   lexmark_limit,
   lexmark_print,
