@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.43 2006/01/15 22:00:57 rlk Exp $"
+ * "$Id: testpattern.c,v 1.44 2006/04/18 12:30:57 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -39,6 +39,7 @@
 #include <math.h>
 #include <string.h>
 #include "testpattern.h"
+#include <gutenprint/gutenprint-intl.h>
 
 extern int yyparse(void);
 
@@ -239,7 +240,9 @@ do_print(void)
   stp_set_outdata(global_vars, stdout);
   stp_set_errdata(global_vars, stderr);
 
+  setlocale(LC_ALL, "C");
   retval = yyparse();
+  setlocale(LC_ALL, "");
   if (retval)
     return retval + 1;
 
