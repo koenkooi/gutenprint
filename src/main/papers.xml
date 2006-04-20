@@ -4,7 +4,7 @@
    XML description of papers known to libgutenprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.20 2006/03/12 22:22:48 rlk Exp $"
+   "$Id: papers.xml,v 1.21 2006/04/20 00:33:41 rlk Exp $"
 -->
 
 <!--
@@ -952,6 +952,27 @@
       <comment value="100mm x 200mm"/>
       <width value="283"/>
       <height value="566"/>
+      <unit value="english-extended"/>
+    </paper>
+    <paper name="w612h935">
+      <description value="Chilean Office"/>
+      <comment value="215.9mm x 330mm"/>
+      <width value="612"/>
+      <height value="935"/>
+      <unit value="english-extended"/>
+    </paper>
+    <paper name="w1224h1584">
+      <description value="Chilean Double Letter"/>
+      <comment value="431.8mm x 558.8mm"/>
+      <width value="1224"/>
+      <height value="1584"/>
+      <unit value="english-extended"/>
+    </paper>
+    <paper name="w1224h1871">
+      <description value="Chilean Double Office"/>
+      <comment value="215.9mm x 660mm"/>
+      <width value="1224"/>
+      <height value="1871"/>
       <unit value="english-extended"/>
     </paper>
 <!--
