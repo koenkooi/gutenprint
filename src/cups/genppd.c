@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.116 2006/04/17 02:06:18 rlk Exp $"
+ * "$Id: genppd.c,v 1.117 2006/04/22 00:41:04 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1123,7 +1123,15 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 			       &min_width, &min_height);
     stp_set_string_parameter(v, "PageSize", "Custom");
     stp_get_media_size(v, &width, &height);
-    stp_get_imageable_area(v, &left, &right, &bottom, &top);
+    stp_get_maximum_imageable_area(v, &left, &right, &bottom, &top);
+    if (left < 0)
+      left = 0;
+    if (top < 0)
+      top = 0;
+    if (bottom > height)
+      bottom = height;
+    if (right > width)
+      width = right;
 
     gzprintf(fp, "*MaxMediaWidth:  \"%d\"\n", max_width);
     gzprintf(fp, "*MaxMediaHeight: \"%d\"\n", max_height);
@@ -1586,5 +1594,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.116 2006/04/17 02:06:18 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.117 2006/04/22 00:41:04 rlk Exp $".
  */
