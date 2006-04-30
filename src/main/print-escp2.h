@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.101 2006/04/22 16:54:14 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.102 2006/04/30 21:29:55 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -455,6 +455,8 @@ typedef struct escp2_printer
   short		initial_vertical_offset;
   short		black_initial_vertical_offset;
   short		extra_720dpi_separation;
+  short		horizontal_position_alignment; /* Horizontal alignment */
+					       /* for good performance */
 /*****************************************************************************/
   /* Paper size limits */
   int		max_paper_width; /* Maximum paper width, in points */
@@ -560,6 +562,7 @@ extern const paper_adjustment_list_t stpi_escp2_r800_matte_paper_adjustment_list
 extern const paper_adjustment_list_t stpi_escp2_picturemate_paper_adjustment_list;
 
 extern const res_t *const stpi_escp2_superfine_reslist[];
+extern const res_t *const stpi_escp2_r2400_reslist[];
 extern const res_t *const stpi_escp2_no_printer_weave_reslist[];
 extern const res_t *const stpi_escp2_pro_reslist[];
 extern const res_t *const stpi_escp2_sp5000_reslist[];
@@ -717,5 +720,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.101 2006/04/22 16:54:14 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.102 2006/04/30 21:29:55 rlk Exp $".
  */
