@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.6 2004/11/01 20:46:34 rleigh Exp $"
+ * "$Id: print.c,v 1.7 2006/05/04 11:10:58 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -133,6 +133,7 @@ query (void)
 			  (BAD_CONST_CHAR) auth,
 			  (BAD_CONST_CHAR) copy,
 			  (BAD_CONST_CHAR) VERSION " - " RELEASE_DATE,
+			  /* Do not translate the prefix "<Image>" */
 			  (BAD_CONST_CHAR) N_("<Image>/File/Print..."),
 			  (BAD_CONST_CHAR) types,
 			  GIMP_PLUGIN,
