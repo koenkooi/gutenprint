@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.172 2006/04/17 23:34:38 rlk Exp $"
+ * "$Id: print-canon.c,v 1.173 2006/05/12 22:43:23 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2100,13 +2100,8 @@ canon_parameters(const stp_vars_t *v, const char *name,
   }
   else if (strcmp(name, "PrintingMode") == 0)
   {
-    const char *ink_type = stp_get_string_parameter(v, "InkType");
-    colormode_t colormode = canon_printhead_colors(ink_type,caps);
-    int printhead= canon_printhead_type(ink_type,caps);
-    if (printhead == 0 && caps->inks == CANON_INK_K)
-      colormode = COLOR_MONOCHROME;
     description->bounds.str = stp_string_list_create();
-    if (colormode != COLOR_MONOCHROME)
+    if (caps->inks != CANON_INK_K)
       stp_string_list_add_string
 	(description->bounds.str, "Color", _("Color"));
     stp_string_list_add_string
