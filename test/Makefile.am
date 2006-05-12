@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45 2006/05/06 01:11:38 rlk Exp $
+## $Id: Makefile.am,v 1.46 2006/05/12 01:10:19 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,6 @@ include $(top_srcdir)/scripts/global.mk
 LOCAL_CPPFLAGS = -I$(top_srcdir)/src/main $(GUTENPRINT_CFLAGS)
 
 TESTS = curve run-testdither run-weavetest
-
-export STP_MODULE_PATH = $(top_builddir)/src/main/.libs:$(top_builddir)/src/main
-export STP_DATA_PATH = $(top_srcdir)/src/main
-
 
 ## Programs
 
