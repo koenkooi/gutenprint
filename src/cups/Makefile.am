@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.85 2006/05/06 01:11:38 rlk Exp $
+## $Id: Makefile.am,v 1.86 2006/05/14 00:00:48 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,8 @@ endif
 LOCAL_CPPFLAGS = $(GUTENPRINT_CFLAGS) $(CUPS_CFLAGS)
 
 STP_ENV= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/main
+
+TESTS= test-ppds
 
 ## Programs
 
