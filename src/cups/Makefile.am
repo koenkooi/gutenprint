@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.86 2006/05/14 00:00:48 rlk Exp $
+## $Id: Makefile.am,v 1.87 2006/05/14 16:46:03 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -216,5 +216,7 @@ EXTRA_DIST = \
 	README \
 	calibrate.ppm \
 	command.txt \
-	command.types
+	command.types \
+	test-ppds
+
 
