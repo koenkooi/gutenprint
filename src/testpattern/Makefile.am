@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.24 2006/05/12 01:10:19 rlk Exp $
+## $Id: Makefile.am,v 1.25 2006/05/28 19:17:26 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ TESTS = run-testpattern run-testpattern-1 run-testpattern-2
 if BUILD_TESTPATTERN
 bin_PROGRAMS = testpattern
 noinst_PROGRAMS = printers printer_options
+noinst_SCRIPTS = run-testpattern-2
 endif
 
 AM_LFLAGS = -i
