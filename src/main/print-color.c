@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.134 2005/12/30 20:31:35 rlk Exp $"
+ * "$Id: print-color.c,v 1.135 2006/05/28 16:59:04 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -1547,7 +1547,7 @@ stpi_color_traditional_describe_parameter(const stp_vars_t *v,
 		  for (j = 0; j < color_correction_count; j++)
 		    stp_string_list_add_string
 		      (description->bounds.str, color_corrections[j].name,
-		       _(color_corrections[j].text));
+		       gettext(color_corrections[j].text));
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
@@ -1575,14 +1575,14 @@ stpi_color_traditional_describe_parameter(const stp_vars_t *v,
 			      stp_string_list_add_string
 				(description->bounds.str,
 				 color_descriptions[j].name,
-				 _(color_descriptions[j].name));
+				 gettext(color_descriptions[j].name));
 			    stp_parameter_description_destroy(&desc);
 			  }
 			else
 			  stp_string_list_add_string
 			    (description->bounds.str,
 			     color_descriptions[j].name,
-			     _(color_descriptions[j].name));
+			     gettext(color_descriptions[j].name));
 		      }
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
@@ -1594,7 +1594,7 @@ stpi_color_traditional_describe_parameter(const stp_vars_t *v,
 		    if (color_descriptions[j].output)
 		      stp_string_list_add_string
 			(description->bounds.str, color_descriptions[j].name,
-			 _(color_descriptions[j].name));
+			 gettext(color_descriptions[j].name));
 		  description->deflt.str =
 		    stp_string_list_param(description->bounds.str, 0)->name;
 		}
