@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.45 2006/03/21 01:42:58 rlk Exp $
+## $Id: Makefile.am,v 1.46 2006/05/28 20:53:15 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,11 @@ html:
 	cd developer; $(MAKE) html
 	cd users_guide; $(MAKE) html
 
+install-data-local:
+	if test -f FAQ.html ; then \
+	  $(mkdir_p) $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
+	  $(INSTALL_DATA) FAQ.html $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
+	fi
 
 ## Clean
 
