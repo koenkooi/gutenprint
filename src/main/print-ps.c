@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.85 2006/05/28 16:59:05 rlk Exp $"
+ * "$Id: print-ps.c,v 1.86 2006/05/30 00:31:35 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -159,6 +159,8 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
 	stp_fill_parameter_settings(description, &(the_parameters[i]));
 	break;
       }
+  if (strcmp(name, "PPDFile") == 0)
+    return;
 
   if (strcmp(name, "PrintingMode") == 0)
     {
