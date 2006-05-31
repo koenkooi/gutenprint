@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.100 2006/05/30 02:14:10 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.101 2006/05/31 02:08:36 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -415,15 +415,23 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
   set_string_parameter(v, "JobMode", "Job");
   validate_options(v, cups);
   stp_get_media_size(v, &(cups->width), &(cups->height));
+  stp_get_maximum_imageable_area(v, &tmp_left, &tmp_right,
+				 &tmp_bottom, &tmp_top);
   stp_get_imageable_area(v, &(cups->left), &(cups->right),
 			 &(cups->bottom), &(cups->top));
   fprintf(stderr, "DEBUG: Gutenprint limits w %d l %d r %d  h %d t %d b %d\n",
 	  cups->width, cups->left, cups->right, cups->height, cups->top, cups->bottom);
+  fprintf(stderr, "DEBUG: Gutenprint max limits l %d r %d t %d b %d\n",
+	  tmp_left, tmp_right, tmp_top, tmp_bottom);
 
-  tmp_left = 0;
-  tmp_top = 0;
-  tmp_right = cups->width;
-  tmp_bottom = cups->height;
+  if (tmp_left < 0)
+    tmp_left = 0;
+  if (tmp_top < 0)
+    tmp_top = 0;
+  if (tmp_right > tmp_left + cups->width)
+    tmp_right = cups->width;
+  if (tmp_bottom > tmp_top + cups->height)
+    tmp_bottom = cups->height;
   tmp_width = cups->right - cups->left;
   tmp_height = cups->bottom - cups->top;
   if (tmp_left < cups->left)
@@ -1189,5 +1197,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.100 2006/05/30 02:14:10 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.101 2006/05/31 02:08:36 rlk Exp $".
  */
