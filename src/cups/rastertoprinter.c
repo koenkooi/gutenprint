@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.101 2006/05/31 02:08:36 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.102 2006/06/25 00:25:42 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -290,8 +290,9 @@ validate_options(stp_vars_t *v, cups_image_t *cups)
 	  if (!stp_string_list_is_present
 	      (desc.bounds.str, stp_get_string_parameter(v, desc.name)))
 	    {
+	      const char *val = stp_get_string_parameter(v, desc.name);
 	      fprintf(stderr, "DEBUG: Gutenprint clearing string %s (%s)\n",
-		      desc.name, stp_get_string_parameter(v, desc.name));
+		      desc.name, val ? val : "(null)");
 	      stp_clear_string_parameter(v, desc.name);
 	      if (desc.is_mandatory)
 		{
@@ -1197,5 +1198,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.101 2006/05/31 02:08:36 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.102 2006/06/25 00:25:42 rlk Exp $".
  */
