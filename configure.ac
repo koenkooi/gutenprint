@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.140 2006/05/28 23:50:25 rlk Exp $
+dnl $Id: configure.ac,v 1.141 2006/06/25 00:10:59 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.140 $)
+AC_REVISION($Revision: 1.141 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -265,7 +265,7 @@ STP_ARG_ENABLE([cups-level3-ppds],
 
 STATIC_GENPPD="$enable_static"
 STP_ARG_ENABLE([static-genppd],
-               [build a statically-linked cups-genppd and rastertogutenprint.  WARNING: Please read the README and NEWS (release notes) CAREFULLY before using this!],
+               [build a statically-linked cups-genppd and rastertogutenprint.  WARNING: Please read the README and NEWS (release notes) CAREFULLY before disabling this!],
 	       [STATIC_GENPPD],
 	       [(automatic)])
 
