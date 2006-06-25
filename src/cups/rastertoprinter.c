@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.102 2006/06/25 00:25:42 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.103 2006/06/25 14:22:52 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -633,9 +633,12 @@ set_all_options(stp_vars_t *v, cups_option_t *options, int num_options,
 		  break;
 		}
 	    }
-	  else
-	    fprintf(stderr, "DEBUG: Gutenprint NOT setting %s to %s\n",
+	  else if (val)
+	    fprintf(stderr, "DEBUG: Gutenprint NOT setting %s to '%s'\n",
 		    desc.name, val);
+	  else
+	    fprintf(stderr, "DEBUG: Gutenprint NOT setting %s to (null)\n",
+		    desc.name);
 	}
       stp_parameter_description_destroy(&desc);
       stp_free(ppd_option_name);
@@ -1198,5 +1201,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.102 2006/06/25 00:25:42 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.103 2006/06/25 14:22:52 rlk Exp $".
  */
