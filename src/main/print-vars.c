@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.74 2005/10/26 01:28:35 rlk Exp $"
+ * "$Id: print-vars.c,v 1.75 2006/06/25 00:25:14 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -144,8 +144,14 @@ create_vars_list(void)
 static void
 copy_to_raw(stp_raw_t *raw, const void *data, size_t bytes)
 {
-  char *ndata = stp_malloc(bytes + 1);
-  memcpy(ndata, data, bytes);
+  char *ndata = NULL;
+  if (data)
+    {
+      ndata = stp_malloc(bytes + 1);
+      memcpy(ndata, data, bytes);
+    }
+  else
+    bytes = 0;
   ndata[bytes] = '\0';
   raw->data = (void *) ndata;
   raw->bytes = bytes;
