@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.103 2006/06/25 14:22:52 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.104 2006/07/04 02:19:14 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -294,10 +294,10 @@ validate_options(stp_vars_t *v, cups_image_t *cups)
 	      fprintf(stderr, "DEBUG: Gutenprint clearing string %s (%s)\n",
 		      desc.name, val ? val : "(null)");
 	      stp_clear_string_parameter(v, desc.name);
-	      if (desc.is_mandatory)
+	      if (!desc.read_only && desc.is_mandatory && desc.is_active)
 		{
 		  fprintf(stderr, "DEBUG: Gutenprint setting default string %s to %s\n",
-			  desc.name, desc.deflt.str);
+			  desc.name, desc.deflt.str ? desc.deflt.str : "(null)");
 		  stp_set_string_parameter(v, desc.name, desc.deflt.str);
 		  if (strcmp(desc.name, "PageSize") == 0)
 		    {
@@ -1201,5 +1201,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.103 2006/06/25 14:22:52 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.104 2006/07/04 02:19:14 rlk Exp $".
  */
