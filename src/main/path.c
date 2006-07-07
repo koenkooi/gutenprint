@@ -1,5 +1,5 @@
 /*
- * "$Id: path.c,v 1.18 2005/10/18 02:08:17 rlk Exp $"
+ * "$Id: path.c,v 1.19 2006/07/07 21:31:02 rleigh Exp $"
  *
  *   Gutenprint path functions - split and search paths.
  *
@@ -49,8 +49,8 @@ static int
 dirent_sort(const void *a,
 	    const void *b)
 {
-  return strcoll ((*(const struct dirent **) a)->d_name,
-		  (*(const struct dirent **) b)->d_name);
+  return strcoll ((*(const struct dirent * const *) a)->d_name,
+		  (*(const struct dirent * const *) b)->d_name);
 }
 
 

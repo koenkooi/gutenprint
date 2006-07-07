@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: string-list.h,v 1.2 2006/07/07 21:31:03 rleigh Exp $"
  *
  *   libgimpprint string list functions.
  *
@@ -45,8 +45,8 @@ typedef struct stp_string_list stp_string_list_t;
  */
 typedef struct
 {
-  const char	*name,	/*!< Option name (key, untranslated). */
-		*text;	/*!< Human-readable (translated) text. */
+  char	*name,	/*!< Option name (key, untranslated). */
+	*text;	/*!< Human-readable (translated) text. */
 } stp_param_string_t;
 
 /****************************************************************
@@ -96,5 +96,5 @@ stp_string_list_is_present(const stp_string_list_t *list,
 
 #endif /* GUTENPRINT_STRING_LIST_H */
 /*
- * End of "$Id: string-list.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: string-list.h,v 1.2 2006/07/07 21:31:03 rleigh Exp $".
  */

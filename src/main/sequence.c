@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.21 2005/06/30 02:11:49 rlk Exp $"
+ * "$Id: sequence.c,v 1.22 2006/07/07 21:31:02 rleigh Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -70,7 +70,7 @@ check_sequence(const stp_sequence_t *v)
     }
 }
 
-static stp_sequence_t *
+static inline stp_sequence_t *
 deconst_sequence(const stp_sequence_t *sequence)
 {
   return (stp_sequence_t *) sequence;
