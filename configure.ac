@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.143 2006/07/16 22:50:46 rlk Exp $
+dnl $Id: configure.ac,v 1.144 2006/07/16 22:57:23 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.143 $)
+AC_REVISION($Revision: 1.144 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -447,11 +447,6 @@ STP_ARG_ENABLE([samples],
                [INSTALL_SAMPLES],
                [yes])
 
-STP_ARG_ENABLE([user-guide],
-               [install user guide],
-               [INSTALL_USER_GUIDE],
-               [yes])
-
 STP_ARG_ENABLE([escputil],
                [build escputil],
                [BUILD_ESCPUTIL],
@@ -501,7 +496,7 @@ AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
 AC_PATH_PROG([CONVERT], [convert])
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${CONVERT} = x ; then
-    AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+    AC_MSG_WARN([PostScript developer's guide cannot be regenerated!])
   fi
 fi
 AC_PATH_PROG(TEXI2HTML, texi2html)
@@ -519,7 +514,7 @@ fi
 AC_PATH_PROG(DB2PDF, db2pdf)
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${DB2PDF} = x ; then
-    AC_MSG_WARN([PDF user's guide cannot be regenerated!])
+    AC_MSG_WARN([PDF developer's guide cannot be regenerated!])
   fi
 fi
 AC_PATH_PROGS(DVIPDF, dvipdf dvipdfm)
@@ -531,19 +526,19 @@ fi
 AC_PATH_PROG(DB2PS, db2ps)
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${DB2PS} = x ; then
-    AC_MSG_WARN([PostScript user's guide cannot be regenerated!])
+    AC_MSG_WARN([PostScript developer's guide cannot be regenerated!])
   fi
 fi
 AC_PATH_PROG(DB2HTML, db2html)
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${DB2HTML} = x ; then
-    AC_MSG_WARN([HTML user's guide cannot be regenerated!])
+    AC_MSG_WARN([HTML developer's guide cannot be regenerated!])
   fi
 fi
 AC_PATH_PROG(DOXYGEN, doxygen)
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   if test x${DOXYGEN} = x ; then
-    AC_MSG_WARN([HTML user's guide cannot be regenerated!])
+    AC_MSG_WARN([HTML developer's guide cannot be regenerated!])
   fi
 fi
 

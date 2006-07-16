@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.18 2005/11/22 14:43:04 rleigh Exp $
+## $Id: Makefile.am,v 1.19 2006/07/16 22:57:23 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,9 +38,7 @@ MANUAL_SRC_FILES = \
 
 HTMLDIR = reference-html
 
-if INSTALL_USER_GUIDE
 STANDARD_TARGETS = html
-endif
 
 DISTHOOKDIRS = $(HTMLDIR)
 
