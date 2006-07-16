@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.46 2006/05/28 20:53:15 rlk Exp $
+## $Id: Makefile.am,v 1.47 2006/07/16 22:50:46 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 
 @SET_MAKE@
 
-SUBDIRS = developer users_guide
+SUBDIRS = developer
 
 include $(top_srcdir)/scripts/global.mk
 
 
 ## Variables
 
-docdir = $(datadir)/doc/$(PACKAGE)
+docdir = $(datadir)/$(PACKAGE)/doc
 
 ## Rules
 
@@ -51,25 +51,22 @@ gutenprint-stamp: gutenprint.dox $(top_srcdir)/configure
 
 docs: gutenprint-stamp
 	cd developer; $(MAKE)
-	cd users_guide; $(MAKE)
 
 ps: $(MANUAL).ps
 	cd developer; $(MAKE) ps
-	cd users_guide; $(MAKE) ps
 
 pdf: $(MANUAL).pdf
 	cd developer; $(MAKE) pdf
-	cd users_guide; $(MAKE) pdf
 
 html: 
 	cd developer; $(MAKE) html
-	cd users_guide; $(MAKE) html
 
 install-data-local:
-	if test -f FAQ.html ; then \
-	  $(mkdir_p) $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
-	  $(INSTALL_DATA) FAQ.html $(DESTDIR)$(datadir)/$(PACKAGE)/doc ; \
-	fi
+	$(mkdir_p) $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) FAQ.html $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) gutenprint-users-manual.odt $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) gutenprint-users-manual.pdf $(DESTDIR)$(docdir)
+
 
 ## Clean
 
@@ -83,6 +80,8 @@ MAINTAINERCLEANFILES = \
 EXTRA_DIST = \
 	FAQ.html \
 	README.maintaining \
+	gutenprint-users-manual.odt \
+	gutenprint-users-manual.pdf \
 	gutenprint.dox.in \
 	gutenprintui2.dox.in \
 	gutenprint \
