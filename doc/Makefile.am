@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.48 2006/07/16 22:59:53 rlk Exp $
+## $Id: Makefile.am,v 1.49 2006/07/30 23:24:38 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -63,9 +63,9 @@ html:
 
 install-data-local: FAQ.html gutenprint-users-manual.odt gutenprint-users-manual.pdf
 	$(mkdir_p) $(DESTDIR)$(docdir)
-	$(INSTALL_DATA) FAQ.html $(DESTDIR)$(docdir)
-	$(INSTALL_DATA) gutenprint-users-manual.odt $(DESTDIR)$(docdir)
-	$(INSTALL_DATA) gutenprint-users-manual.pdf $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(srcdir)/FAQ.html $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(srcdir)/gutenprint-users-manual.odt $(DESTDIR)$(docdir)
+	$(INSTALL_DATA) $(srcdir)/gutenprint-users-manual.pdf $(DESTDIR)$(docdir)
 
 
 ## Clean
