@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.145 2006/07/16 22:59:20 rlk Exp $
+dnl $Id: configure.ac,v 1.146 2006/08/07 09:49:30 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.145 $)
+AC_REVISION($Revision: 1.146 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -586,6 +586,16 @@ if test "x${datadir}" = 'x${prefix}/share'; then
     PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
   else
     PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
+  fi
+elif test "x${datadir}" = 'x${datarootdir}'; then
+  if test "x${datarootdir}" = 'x${prefix}/share'; then
+    if test "x${prefix}" = "xNONE"; then
+      PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
+    else
+      PACKAGE_DATA_DIR="${prefix}/share/${PACKAGE}"
+    fi
+  else
+    PACKAGE_DATA_DIR="${datarootdir}/${PACKAGE}"
   fi
 else
   PACKAGE_DATA_DIR="${datadir}/${PACKAGE}"
