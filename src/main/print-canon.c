@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.175.2.2 2006/08/07 17:49:19 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.175.2.3 2006/08/09 16:09:16 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -900,7 +900,7 @@ get_media_type(const canon_cap_t* caps,const char *name)
 {
   int i;
   if (name && caps->paperlist)
-    for (i = 0; i < caps->paperlist->paper_count; i++)
+    for (i = 0; i < caps->paperlist->count; i++)
       {
 	/* translate paper_t.name */
 	if (!strcmp(name, caps->paperlist->papers[i].name))
@@ -1366,7 +1366,7 @@ canon_parameters(const stp_vars_t *v, const char *name,
   else if (strcmp(name, "MediaType") == 0)
   {
     const canon_paper_t * canon_paper_list = caps->paperlist->papers;
-    int count = caps->paperlist->paper_count;
+    int count = caps->paperlist->count;
     description->bounds.str= stp_string_list_create();
     description->deflt.str= canon_paper_list[0].name;
 

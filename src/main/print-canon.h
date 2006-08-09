@@ -23,36 +23,6 @@
 #ifndef GUTENPRINT_INTERNAL_CANON_H
 #define GUTENPRINT_INTERNAL_CANON_H
 
-
-/* media related structs */
-typedef struct {
-  const char *name;                        /* Internal Name may not contain spaces */
-  const char *text;                        /* Translateable name */
-  unsigned char media_code_c;              /* Media Code used for the ESC (c (SetColor) command */
-  unsigned char media_code_l;              /* Media Code used for the ESC (l (SetTray) command */
-  unsigned int supported_qualities;
-#define Q0        0                        /* lowest quality */
-#define Q1        1
-#define Q2        2
-#define Q3        4
-#define Q4        8                        /* highest quality */
-  double base_density;
-  double k_lower_scale;
-  double k_upper;
-  const char *hue_adjustment;
-  const char *lum_adjustment;
-  const char *sat_adjustment;
-} canon_paper_t;
-
-typedef struct
-{
-  const char *listname;
-  short paper_count;
-  const canon_paper_t *papers;
-} canon_paperlist_t;
-
-
-
 /* the PIXMA iP4000 and maybe other printers use following table to store
    5 pixels with 3 levels in 1 byte, All possible pixel combinations are given
    numbers from 0 (=00,00,00,00,00) to 242 (=10,10,10,10,10)
