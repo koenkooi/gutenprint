@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.1 2006/08/24 14:23:46 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.2 2006/08/24 14:29:03 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1678,33 +1678,6 @@ olympus_describe_output(const stp_vars_t *v)
   return "CMY";
 }
 
-#ifdef ORIG_CODE
-static unsigned short *
-olympus_get_cached_output(stp_vars_t *v,
-             stp_image_t *image,
-	     unsigned short **cache,
-             int line, int size)
-{
-  unsigned zero_mask;
-
-  stp_deprintf(STP_DBG_OLYMPUS, "olympus: get row %d", line);
-  if (cache[line] == NULL)
-    {
-      stp_deprintf(STP_DBG_OLYMPUS, " (calling stp_color_get_row())\n");
-      if (!stp_color_get_row(v, image, line, &zero_mask))
-        {
-          cache[line] = stp_malloc(size);
-          memcpy(cache[line], stp_channel_get_output(v), size);
-        }
-    }
-  else
-    {
-      stp_deprintf(STP_DBG_OLYMPUS, " (cached)\n");
-    }
-  return cache[line];
-}
-#endif
-
 static void
 olympus_free_image(int** image_data, stp_image_t *image)
 {
@@ -1735,10 +1708,6 @@ olympus_read_image(stp_vars_t *v,
   if (!image_data)
     return NULL;	/* ? out of memory ? */
 
-  stp_deprintf(STP_DBG_OLYMPUS, "image_px_width\t= %d\n"
-  	"image_px_height\t= %d\n"
-	"row_size\t= %d\n"
-	, image_px_width, image_px_height, row_size);
   for (i = 0; i <image_px_height; i++)
     {
       if (stp_color_get_row(v, image, i, &zero_mask))
@@ -1759,13 +1728,7 @@ olympus_read_image(stp_vars_t *v,
 	  return NULL;
 	}	
       memcpy(image_data[i], stp_channel_get_output(v), row_size);
-      /* ^ tady je nekde chyba, mozna souvisi s tim, ze bytes_per_channel = 1
-       * a ne 2 jak mu to posilam z nadrazene procedury
-       * nebo mozna mix out_channels vs. ink_channels
-       */
-  stp_deprintf(STP_DBG_OLYMPUS, "xxx5 %d\n", i);
     }
-  stp_deprintf(STP_DBG_OLYMPUS, "xxx2\n");
   stp_image_conclude(image);
 
   return image_data;
@@ -1785,7 +1748,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   unsigned char  *char_out = NULL;
   unsigned short *real_out = NULL;
   unsigned short *err_out = NULL;
-  unsigned short **rows = NULL;		/* "cache" of rows read from image */
   int **image_data = NULL;		/* rgb data of image */
   int char_out_width;
   int status = 1;
@@ -1974,7 +1936,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   image_data = olympus_read_image(v, image, ink_channels, 2);
 
-  rows = stp_zalloc(image_px_height * sizeof(unsigned short *));
   err_out = stp_malloc(print_px_width * ink_channels * 2);
   if (out_channels != ink_channels)
     final_out = stp_malloc(print_px_width * ink_channels * 2);
@@ -2106,10 +2067,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   	          duplicate_line = 0;
 		}
 
-#ifdef ORIG_CODE
-	      out = olympus_get_cached_output(v, image, rows, r_errline,
-	                                  image_px_width * ink_channels * 2);
-#endif
 	      out = image_data[r_errline];
 
 	      if (out == NULL)
@@ -2220,19 +2177,13 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
       stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->printer_end\n");
       (*(caps->printer_end_func))(v);
     }
-  stp_image_conclude(image);
   if (final_out)
     stp_free(final_out);
   if (err_out)
     stp_free(err_out);
   if (zeros)
     stp_free(zeros);
-  if (rows)
-    {
-      for (i = 0; i <image_px_height; i++)
-        stp_free(rows[i]);
-      stp_free(rows);
-    }
+  olympus_free_image(image_data, image);
   return status;
 }
 
