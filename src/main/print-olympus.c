@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.2 2006/08/24 14:29:03 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.3 2006/08/26 19:11:27 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -55,6 +55,9 @@
 
 #define MIN(a,b)	(((a) < (b)) ? (a) : (b))
 #define MAX(a,b)	(((a) > (b)) ? (a) : (b))
+
+#define MAX_INK_CHANNELS	3
+#define MAX_BYTES_PER_CHANNEL	2
 
 static const char *zero = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
@@ -1678,8 +1681,18 @@ olympus_describe_output(const stp_vars_t *v)
   return "CMY";
 }
 
+static int
+olympus_interpolate(int oldval, int oldsize, int newsize)
+{
+  /* 
+   * This is simple linear interpolation algorithm.
+   * When imagesize <> printsize I need rescale image somehow... :-/ 
+   */
+  return (int)(oldval * newsize / oldsize);
+}
+
 static void
-olympus_free_image(int** image_data, stp_image_t *image)
+olympus_free_image(unsigned short** image_data, stp_image_t *image)
 {
   int image_px_height = stp_image_height(image);
   int i;
@@ -1691,24 +1704,24 @@ olympus_free_image(int** image_data, stp_image_t *image)
     stp_free(image_data);
 }
 
-static int*
+static unsigned short **
 olympus_read_image(stp_vars_t *v,
 		stp_image_t *image,
 		int ink_channels,
-		int bytes_per_channel)
+		int bytes_per_ink_channel)
 {
   int image_px_width  = stp_image_width(image);
   int image_px_height = stp_image_height(image);
-  int row_size = image_px_width * ink_channels * bytes_per_channel;
-  int  **image_data;
+  int row_size = image_px_width * ink_channels * bytes_per_ink_channel;
+  unsigned short **image_data;
   unsigned int zero_mask;
   int i;
 
-  image_data = stp_zalloc(image_px_height * sizeof(int *));
+  image_data = stp_zalloc(image_px_height * sizeof(unsigned short *));
   if (!image_data)
     return NULL;	/* ? out of memory ? */
 
-  for (i = 0; i <image_px_height; i++)
+  for (i = 0; i < image_px_height; i++)
     {
       if (stp_color_get_row(v, image, i, &zero_mask))
         {
@@ -1734,22 +1747,96 @@ olympus_read_image(stp_vars_t *v,
   return image_data;
 }
 
+static int
+olympus_print_pixel(stp_vars_t *v,
+		unsigned short **image_data,
+		int row,
+		int col,
+		int out_channels,
+		int ink_channels,
+		int bytes_per_ink_channel,
+		int interlacing_plane,
+		int plane)
+{
+  unsigned short ink[MAX_INK_CHANNELS * MAX_BYTES_PER_CHANNEL], *out;
+  unsigned char *ink_u8;
+  int i, j;
+  
+  out = &(image_data[row][col * out_channels]);
+
+  for (i = 0; i < ink_channels; i++)
+    {
+      if (out_channels == ink_channels)
+        { /* copy out_channel (image) to equiv ink_channel (printer) */
+          ink[i] = out[i];
+        }
+      else if (out_channels < ink_channels)
+        { /* several ink_channels (printer) "share" same out_channel (image) */
+          ink[i] = out[i * out_channels / ink_channels];
+        }
+      else /* (out_channels > ink_channels) */
+        { /* merge several out_channels (image) into ink_channel (printer) */
+          int avg = 0;
+          for (j = 0; j < out_channels / ink_channels; j++)
+            avg += out[j + i * out_channels / ink_channels];
+	  ink[i] = avg * ink_channels / out_channels;
+	}
+    }
+   
+  if (bytes_per_ink_channel == 1) /* convert 16bits to 8bit */
+    {
+      ink_u8 = (unsigned char *) ink;
+      for (i = 0; i < ink_channels; i++)
+        ink_u8[i] = ink[i] / 257;
+    }
+	
+  if (interlacing_plane)
+    stp_zfwrite((char *) ink + plane, bytes_per_ink_channel, 1, v);
+  else
+    stp_zfwrite((char *) ink, bytes_per_ink_channel, ink_channels, v);
+
+  return 1;
+}
+
+static int
+olympus_print_row(stp_vars_t *v,
+		unsigned short **image_data,
+		int row,
+		int out_px_width,
+		int imgw_px,
+		int out_channels,
+		int ink_channels,
+		int bytes_per_ink_channel,
+		int interlacing_plane,
+		int plane)
+{
+  int ret = 0;
+  int w, col;
+  
+  for (w = 0; w < out_px_width; w++)
+    {
+      col = olympus_interpolate(w, out_px_width, imgw_px);
+      ret = olympus_print_pixel(v, image_data, row, col,
+      			out_channels, ink_channels, bytes_per_ink_channel,
+			interlacing_plane, plane);
+      if (ret > 1)
+      	break;
+    }
+  return ret;
+}
+
+
 /*
  * olympus_print()
  */
 static int
 olympus_do_print(stp_vars_t *v, stp_image_t *image)
 {
-  int i, j;
-  int y, min_y, max_y;			/* Looping vars */
-  int min_x, max_x;
+  int i;
+  int y, y_min, y_max;			/* Looping vars */
+  int x_min, x_max;
   int out_channels, out_bytes;
-  unsigned short *final_out = NULL;
-  unsigned char  *char_out = NULL;
-  unsigned short *real_out = NULL;
-  unsigned short *err_out = NULL;
-  int **image_data = NULL;		/* rgb data of image */
-  int char_out_width;
+  unsigned short **image_data = NULL;	/* rgb data of image */
   int status = 1;
   int ink_channels = 1;
   const char *ink_order = NULL;
@@ -1759,10 +1846,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   int r_errval  = 0;
   int r_errlast = -1;
   int r_errline = 0;
-  int c_errdiv, c_errmod;
-  int c_errval  = 0;
-  int c_errlast = -1;
-  int c_errcol = 0;
 
   const int model           = stp_get_model_id(v); 
   const char *ink_type      = stp_get_string_parameter(v, "InkType");
@@ -1799,6 +1882,9 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   
   int pl;
   unsigned char *zeros = NULL;
+
+  int bytes_per_ink_channel = 1;	/* FIXME: this is printer dependent */
+
 
   if (!stp_verify(v))
     {
@@ -1926,19 +2012,8 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   out_channels = stp_color_init(v, image, 65536);
 
-#if 0
-  if (out_channels != ink_channels && out_channels != 1 && ink_channels != 1)
-    {
-      stp_eprintf(v, "Internal error!  Output channels or input channels must be 1\n");
-      return 0;
-    }
-#endif
 
   image_data = olympus_read_image(v, image, ink_channels, 2);
-
-  err_out = stp_malloc(print_px_width * ink_channels * 2);
-  if (out_channels != ink_channels)
-    final_out = stp_malloc(print_px_width * ink_channels * 2);
 
   stp_set_float_parameter(v, "Density", 1.0);
 
@@ -1962,38 +2037,36 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_HEIGHT))
     {
-      min_y = 0;
-      max_y = print_px_height - 1;
+      y_min = 0;
+      y_max = print_px_height - 1;
     }
   else if (olympus_feature(caps, OLYMPUS_FEATURE_BLOCK_ALIGN))
     {
-      min_y = out_px_top - (out_px_top % caps->block_size);
+      y_min = out_px_top - (out_px_top % caps->block_size);
       				/* floor to multiple of block_size */
-      max_y = (out_px_bottom - 1) + (caps->block_size - 1)
+      y_max = (out_px_bottom - 1) + (caps->block_size - 1)
       		- ((out_px_bottom - 1) % caps->block_size);
 				/* ceil to multiple of block_size */
     }
   else
     {
-      min_y = out_px_top;
-      max_y = out_px_bottom - 1;
+      y_min = out_px_top;
+      y_max = out_px_bottom - 1;
     }
   
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_WIDTH))
     {
-      min_x = 0;
-      max_x = print_px_width - 1;
+      x_min = 0;
+      x_max = print_px_width - 1;
     }
   else
     {
-      min_x = out_px_left;
-      max_x = out_px_right;
+      x_min = out_px_left;
+      x_max = out_px_right;
     }
       
   r_errdiv  = image_px_height / out_px_height;
   r_errmod  = image_px_height % out_px_height; 
-  c_errdiv = image_px_width / out_px_width;
-  c_errmod = image_px_width % out_px_width;
 
   for (pl = 0; pl < (caps->interlacing == OLYMPUS_INTERLACE_PLANE
 			? ink_channels : 1); pl++)
@@ -2012,19 +2085,18 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
           (*(caps->plane_init_func))(v);
         }
   
-      for (y = min_y; y <= max_y; y++)
+      for (y = y_min; y <= y_max; y++)
         {
-          unsigned short *out;
           int duplicate_line = 1;
 /*          unsigned zero_mask; */
     
-          if (((y - min_y) % caps->block_size) == 0)
+          if (((y - y_min) % caps->block_size) == 0)
 	    {
               /* block init */
               privdata.block_min_y = y;
-              privdata.block_min_x = min_x;
-              privdata.block_max_y = MIN(y + caps->block_size - 1, max_y);
-              privdata.block_max_x = max_x;
+              privdata.block_min_x = x_min;
+              privdata.block_max_y = MIN(y + caps->block_size - 1, y_max);
+              privdata.block_max_x = x_max;
     
               if (caps->block_init_func)
 	        {
@@ -2045,95 +2117,18 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
                   /* stp_erprintf("left %d ", out_px_left); */
   	        }
   
-#if 0
-              if (r_errline != r_errlast)
-                {
-  	          r_errlast = r_errline;
-  	          duplicate_line = 0;
-
-                  /* stp_erprintf("r_errline %d, ", r_errline); */
-                  if (stp_color_get_row(v, image, r_errline, &zero_mask))
-                    {
-    	              status = 2;
-                      break;
-                    }
-                }
-
-              out = stp_channel_get_output(v);
-#endif
               if (r_errline != r_errlast)
                 {
   	          r_errlast = r_errline;
   	          duplicate_line = 0;
 		}
 
-	      out = image_data[r_errline];
+	      olympus_print_row(v, image_data, r_errline,
+	      		out_px_width, image_px_width,
+			out_channels, ink_channels, bytes_per_ink_channel,
+			(caps->interlacing == OLYMPUS_INTERLACE_PLANE),
+			ink_order[pl] - 1);
 
-	      if (out == NULL)
-	        {
-		  status = 2;
-		  break;
-		}
-
-              c_errval  = 0;
-              c_errlast = -1;
-              c_errcol  = 0;
-              for (i = 0; i < out_px_width; i++)
-                {
-                  if (c_errcol != c_errlast)
-        	    c_errlast = c_errcol;
-        	  for (j = 0; j < ink_channels; j++)
-          	    err_out[i * ink_channels + j] =
-      				out[c_errcol * ink_channels + ink_order[j]-1];
-
-                  c_errval += c_errmod;
-                  c_errcol += c_errdiv;
-                  if (c_errval >= out_px_width)
-                    {
-                      c_errval -= out_px_width;
-        	      c_errcol ++;
-                    }
-                }
-
-              real_out = err_out;
-              if (out_channels != ink_channels)
-                {
-                  real_out = final_out;
-                  if (out_channels < ink_channels)
-                    {
-        	      for (i = 0; i < out_px_width; i++)
-         		{
-    	        	  for (j = 0; j < ink_channels; j++)
-    		            final_out[i * ink_channels + j] = err_out[i];
-    		        }
-    	            }
-          	  else
-    	            {
-    	              for (i = 0; i < out_px_width; i++)
-    		        {
-    		          int avg = 0;
-    		          for (j = 0; j < out_channels; j++)
-    		            avg += err_out[i * out_channels + j];
-    		          final_out[i] = avg / out_channels;
-    		        }
-    	            }
-    	        }
-              char_out = (unsigned char *) real_out;
-     	      char_out_width = (caps->interlacing == OLYMPUS_INTERLACE_PLANE ?
-  				out_px_width : out_px_width * out_channels);
-    	      for (i = 0; i < char_out_width; i++)
-	        {
-                  if (caps->interlacing == OLYMPUS_INTERLACE_PLANE)
-  	            j = i * ink_channels + pl;
-  	          else if (caps->interlacing == OLYMPUS_INTERLACE_LINE)
-  	            j = (i % out_px_width) + (i / out_px_width);
-  	          else  /* OLYMPUS_INTERLACE_NONE */
-  	            j = i;
-    	  
-  	          char_out[i] = real_out[j] / 257;
-                }
-	      
-  	      stp_zfwrite((char *) real_out, 1, char_out_width, v);
               /* stp_erprintf("data %d ", out_px_width); */
               if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_WIDTH)
 	        && out_px_right < print_px_width)
@@ -2177,10 +2172,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
       stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->printer_end\n");
       (*(caps->printer_end_func))(v);
     }
-  if (final_out)
-    stp_free(final_out);
-  if (err_out)
-    stp_free(err_out);
   if (zeros)
     stp_free(zeros);
   olympus_free_image(image_data, image);
