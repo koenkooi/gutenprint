@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.108 2004/09/17 18:38:26 rleigh Exp $"
+ * "$Id: print-util.c,v 1.109 2006/08/31 09:20:19 faust3 Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -549,7 +549,8 @@ stp_read_and_compose_curves(const char *s1, const char *s2,
     }
   else if (t1)
     {
-      stp_curve_destroy(t2);
+      if(t2)
+        stp_curve_destroy(t2);
       return t1;
     }
   else
