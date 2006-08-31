@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.180 2006/08/31 17:21:19 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.181 2006/08/31 18:03:10 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -147,7 +147,6 @@ static const double ink_darknesses[] =
 #define CANON_CAP_l         0x400ul
 #define CANON_CAP_r         0x800ul
 #define CANON_CAP_g         0x1000ul
-#define CANON_CAP_ACKSHORT  0x2000ul
 #define CANON_CAP_rr        0x4000ul
 #define CANON_CAP_DUPLEX    0x40000ul
 
@@ -818,14 +817,17 @@ canon_cmd(const stp_vars_t *v, /* I - the printer         */
 static void
 canon_init_resetPrinter(const stp_vars_t *v, canon_init_t *init)
 {
-  unsigned long f=init->caps->features;
-  if (f & (CANON_CAP_ACKSHORT))
-    {
+  if ( init->caps->control_cmdlist ){
+    int i=0;
+    while(init->caps->control_cmdlist[i]){
       canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x1f);
       stp_puts("BJLSTART\nControlMode=Common\n",v);
-      if (f & CANON_CAP_ACKSHORT) stp_puts("AckTime=Short\n",v);
+      stp_puts(init->caps->control_cmdlist[i],v);
+      stp_putc('\n',v);
       stp_puts("BJLEND\n",v);
+      ++i;
     }
+  }
   canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x0f);
 }
 
