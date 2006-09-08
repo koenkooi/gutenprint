@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.151 2006/08/31 10:00:57 faust3 Exp $"
+   "$Id: printers.xml,v 1.152 2006/09/08 09:25:49 faust3 Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -81,6 +81,7 @@
       <printer name="Canon PIXMA iP5000" driver="bjc-PIXMA-iP5000" manufacturer="Canon" model="4000" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA iP5200" driver="bjc-PIXMA-iP5200" manufacturer="Canon" model="4200" parameters="PIXMA_iP4000_params" />
       <printer name="Canon MULTIPASS MP150" driver="bjc-MULTIPASS-MP150" manufacturer="Canon" model="4201" parameters="PIXMA_iP4000_params" />
+      <printer name="Canon MULTIPASS MP830" driver="bjc-MULTIPASS-MP830" manufacturer="Canon" model="9000" parameters="PIXMA_iP4000_params" />
     </family>
     <family name="escp2">
       <parameters name="standard_params">
