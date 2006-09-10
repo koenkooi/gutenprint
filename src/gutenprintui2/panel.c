@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.11.6.1 2006/09/10 21:24:59 rlk Exp $"
+ * "$Id: panel.c,v 1.11.6.2 2006/09/10 23:01:09 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -194,6 +194,7 @@ static void combo_callback        (GtkWidget *widget, gpointer data);
 static void output_type_callback  (GtkWidget *widget, gpointer data);
 static void unit_callback         (GtkWidget *widget, gpointer data);
 static void orientation_callback  (GtkWidget *widget, gpointer data);
+static void ppd_file_callback     (GtkWidget *widget, gpointer data);
 static void printandsave_callback (void);
 static void about_callback        (void);
 static void print_callback        (void);
@@ -1649,6 +1650,8 @@ create_printer_dialog (void)
                     GTK_FILL, GTK_FILL, 0, 0);
 
   ppd_file = gtk_entry_new ();
+  g_signal_connect(G_OBJECT(ppd_file), "activate",
+		   G_CALLBACK(ppd_file_callback), NULL);
   gtk_box_pack_start (GTK_BOX (ppd_box), ppd_file, TRUE, TRUE, 0);
   gtk_widget_show (ppd_file);
 
@@ -1672,6 +1675,7 @@ create_printer_dialog (void)
   gtk_widget_show (ppd_model_label);
 
   ppd_model = gtk_label_new ("");
+  gtk_misc_set_alignment (GTK_MISC (ppd_model), 0.0, 0.5);
   gtk_table_attach (GTK_TABLE (table), ppd_model, 2, 7, 4, 5,
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (ppd_model);
@@ -3654,13 +3658,11 @@ setup_update (void)
       strcat(label_text, ")");
       gtk_label_set_text (GTK_LABEL (printer_model_label), label_text);
       g_free(label_text);
-      gtk_label_set_text (GTK_LABEL (ppd_model), extra_printer_model);
     }
   else
     {
       gtk_label_set_text (GTK_LABEL (printer_model_label),
 			  gettext (stp_printer_get_long_name (tmp_printer)));
-      gtk_label_set_text (GTK_LABEL (ppd_model), "");
     }
   stp_parameter_description_destroy(&desc);
 
@@ -3668,6 +3670,7 @@ setup_update (void)
     gtk_entry_set_text (GTK_ENTRY (ppd_file), ppd_file_name);
   else
     gtk_entry_set_text (GTK_ENTRY (ppd_file), "");
+  ppd_file_callback(ppd_file, NULL);
 
   if (stp_parameter_find_in_settings(pv->v, "PPDFile"))
     {
@@ -3697,6 +3700,27 @@ setup_update (void)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(command_options[i].button),
 				 TRUE);
 }
+
+static void
+ppd_file_callback(GtkWidget *widget, gpointer data)
+{
+  const gchar *name = gtk_entry_get_text(GTK_ENTRY(widget));
+  if (name && pv && pv->v)
+    {
+      stp_parameter_t desc;
+      stp_vars_t *v = stp_vars_create_copy(pv->v);
+      stp_set_file_parameter(v, "PPDFile", name);
+      stp_describe_parameter(v, "ModelName", &desc);
+      if (desc.is_active)
+	gtk_label_set_text(GTK_LABEL(ppd_model), desc.deflt.str);
+      else
+	gtk_label_set_text(GTK_LABEL(ppd_model), "");
+      stp_parameter_description_destroy(&desc);
+      stp_vars_destroy(v);
+    }
+  else
+    gtk_label_set_text(GTK_LABEL(ppd_model), "");
+}  
 
 /*
  *  setup_open_callback() -
@@ -3744,6 +3768,8 @@ set_printer(void)
     (pv, gtk_entry_get_text (GTK_ENTRY (custom_command_entry)));
   stpui_plist_set_output_filename
     (pv, gtk_entry_get_text (GTK_ENTRY (file_entry)));
+  stp_set_file_parameter (pv->v, "PPDFile",
+			  gtk_entry_get_text (GTK_ENTRY (ppd_file)));
   gtk_label_set_text (GTK_LABEL (printer_model_label),
                       gettext (stp_printer_get_long_name (tmp_printer)));
 
@@ -3928,6 +3954,7 @@ ppd_ok_callback (void)
   gtk_entry_set_text
     (GTK_ENTRY (ppd_file),
      gtk_file_selection_get_filename (GTK_FILE_SELECTION (ppd_browser)));
+  ppd_file_callback(ppd_file, NULL);
   update_options();
 }
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.87.6.2 2006/09/10 21:25:00 rlk Exp $"
+ * "$Id: print-ps.c,v 1.87.6.3 2006/09/10 23:01:09 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -170,7 +170,7 @@ check_ppd_file(const stp_vars_t *v)
 
       if ((m_ppd = stpi_ppdOpenFile(ppd_file)) == NULL)
 	{
-	  stp_eprintf(v, "unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
+	  stp_eprintf(v, "Unable to open PPD file %s\n", ppd_file);
 	  return 0;
 	}
 
@@ -218,7 +218,7 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
   int		i;
   ppd_option_t *option;
   ppd_choice_t *choice;
-  int status = check_ppd_file(v);
+  int status = 0;
 
   description->p_type = STP_PARAMETER_TYPE_INVALID;
   description->deflt.str = 0;
@@ -227,40 +227,46 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
   if (name == NULL)
     return;
 
+  status = check_ppd_file(v);
+
   for (i = 0; i < the_parameter_count; i++)
   {
     if (strcmp(name, the_parameters[i].name) == 0)
-    {
-      stp_fill_parameter_settings(description, &(the_parameters[i]));
-      if (strcmp(name, "PPDFile") == 0)
-        description->is_active = 1;
-      else if (m_ppd && m_ppd->modelname && strcmp(name, "ModelName") == 0)
-	{
-	  description->bounds.str = stp_string_list_create();
-	  stp_string_list_add_string(description->bounds.str,
-				     m_ppd->nickname, m_ppd->nickname);
-	  description->deflt.str = m_ppd->nickname;
+      {
+	stp_fill_parameter_settings(description, &(the_parameters[i]));
+	if (strcmp(name, "PPDFile") == 0)
 	  description->is_active = 1;
-	}
-      return;
-    }
+	else if (strcmp(name, "ModelName") == 0)
+	  {
+	    if (m_ppd && m_ppd->modelname)
+	      {
+		description->bounds.str = stp_string_list_create();
+		stp_string_list_add_string(description->bounds.str,
+					   m_ppd->nickname, m_ppd->nickname);
+		description->deflt.str = m_ppd->nickname;
+		description->is_active = status;
+	      }
+	    else
+	      description->is_active = 0;
+	    return;
+	  }
+      }
   }
 
   if (!status)
     return;
   if ((option = stpi_ppdFindOption(m_ppd, name)) == NULL)
   {
-    stp_dprintf(STP_DBG_PS, v, "no parameter %s: %s %d\n", name, __FILE__, __LINE__);
+    stp_dprintf(STP_DBG_PS, v, "no parameter %s", name);
     return;
   }
 
   ps_option_to_param(description, NULL, option);
   description->bounds.str = stp_string_list_create();
 
-  stp_dprintf(STP_DBG_PS, v, "describe parameter %s, output name=[%s] text=[%s] category=[%s] choices=[%d]: %s %d\n",
+  stp_dprintf(STP_DBG_PS, v, "describe parameter %s, output name=[%s] text=[%s] category=[%s] choices=[%d]",
 	      name, description->name, description->text,
-	      description->category, option->num_choices,
-	      __FILE__, __LINE__);
+	      description->category, option->num_choices);
 
   /* Describe all choices for specified option. */
   for (i=0; i < option->num_choices; i++)
