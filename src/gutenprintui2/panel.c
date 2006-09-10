@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.11.6.2 2006/09/10 23:01:09 rlk Exp $"
+ * "$Id: panel.c,v 1.11.6.3 2006/09/10 23:24:41 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -3644,7 +3644,8 @@ setup_update (void)
 */
   gtk_clist_select_row (GTK_CLIST (printer_driver), idx, 0);
   stp_describe_parameter(pv->v, "ModelName", &desc);
-  if (desc.is_active)
+  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST && desc.is_active &&
+      desc.deflt.str)
     {
       const char *extra_printer_model = desc.deflt.str;
       char *label_text =
@@ -3652,9 +3653,9 @@ setup_update (void)
 		 2 +		/* " (" */
 		 strlen(extra_printer_model) +
 		 2);		/* ")" + null terminator */
-      strcpy(label_text, gettext (stp_printer_get_long_name (tmp_printer)));
+      strcpy(label_text, extra_printer_model);
       strcat(label_text, " (");
-      strcat(label_text, extra_printer_model);
+      strcat(label_text, gettext (stp_printer_get_long_name (tmp_printer)));
       strcat(label_text, ")");
       gtk_label_set_text (GTK_LABEL (printer_model_label), label_text);
       g_free(label_text);
