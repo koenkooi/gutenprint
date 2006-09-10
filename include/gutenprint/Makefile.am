@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2.8.1 2006/09/10 18:43:11 rlk Exp $
+## $Id: Makefile.am,v 1.2.8.2 2006/09/10 21:24:58 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -49,8 +49,7 @@ pkginclude_HEADERS = \
 	util.h \
 	vars.h \
 	weave.h \
-	xml.h \
-	ppd.h
+	xml.h
 
 nodist_pkginclude_HEADERS = gutenprint-version.h
 

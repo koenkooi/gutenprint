@@ -1,5 +1,5 @@
 /*
- * "$Id: page.c,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $"
+ * "$Id: page.c,v 1.1.2.2 2006/09/10 21:25:00 rlk Exp $"
  *
  *   Page size functions for the Common UNIX Printing System (CUPS).
  *
@@ -27,26 +27,26 @@
  *
  * Contents:
  *
- *   ppdPageSize()   - Get the page size record for the given size.
- *   ppdPageWidth()  - Get the page width for the given size.
- *   ppdPageLength() - Get the page length for the given size.
+ *   stpi_ppdPageSize()   - Get the page size record for the given size.
+ *   stpi_ppdPageWidth()  - Get the page width for the given size.
+ *   stpi_ppdPageLength() - Get the page length for the given size.
  */
 
 /*
  * Include necessary headers...
  */
 
-#include "gutenprint/ppd.h"
-#include "string.h"
+#include "ppd.h"
+#include <string.h>
 #include <ctype.h>
 
 
 /*
- * 'ppdPageSize()' - Get the page size record for the given size.
+ * 'stpi_ppdPageSize()' - Get the page size record for the given size.
  */
 
 ppd_size_t *			/* O - Size record for page or NULL */
-ppdPageSize(ppd_file_t *ppd,	/* I - PPD file record */
+stpi_ppdPageSize(ppd_file_t *ppd,	/* I - PPD file record */
             const char *name)	/* I - Size name */
 {
   int	i;			/* Looping var */
@@ -151,17 +151,17 @@ ppdPageSize(ppd_file_t *ppd,	/* I - PPD file record */
 
 
 /*
- * 'ppdPageWidth()' - Get the page width for the given size.
+ * 'stpi_ppdPageWidth()' - Get the page width for the given size.
  */
 
 float				/* O - Width of page in points or 0.0 */
-ppdPageWidth(ppd_file_t *ppd,	/* I - PPD file record */
+stpi_ppdPageWidth(ppd_file_t *ppd,	/* I - PPD file record */
              const char *name)	/* I - Size name */
 {
   ppd_size_t	*size;		/* Page size */
 
 
-  if ((size = ppdPageSize(ppd, name)) == NULL)
+  if ((size = stpi_ppdPageSize(ppd, name)) == NULL)
     return (0.0);
   else
     return (size->width);
@@ -169,17 +169,17 @@ ppdPageWidth(ppd_file_t *ppd,	/* I - PPD file record */
 
 
 /*
- * 'ppdPageLength()' - Get the page length for the given size.
+ * 'stpi_ppdPageLength()' - Get the page length for the given size.
  */
 
 float				/* O - Length of page in points or 0.0 */
-ppdPageLength(ppd_file_t *ppd,	/* I - PPD file */
+stpi_ppdPageLength(ppd_file_t *ppd,	/* I - PPD file */
               const char *name)	/* I - Size name */
 {
   ppd_size_t	*size;		/* Page size */
 
 
-  if ((size = ppdPageSize(ppd, name)) == NULL)
+  if ((size = stpi_ppdPageSize(ppd, name)) == NULL)
     return (0.0);
   else
     return (size->length);
@@ -187,5 +187,5 @@ ppdPageLength(ppd_file_t *ppd,	/* I - PPD file */
 
 
 /*
- * End of "$Id: page.c,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $".
+ * End of "$Id: page.c,v 1.1.2.2 2006/09/10 21:25:00 rlk Exp $".
  */

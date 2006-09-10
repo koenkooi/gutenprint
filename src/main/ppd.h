@@ -1,5 +1,5 @@
 /*
- * "$Id: ppd.h,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $"
+ * "$Id: ppd.h,v 1.1.2.1 2006/09/10 21:25:00 rlk Exp $"
  *
  *   PostScript Printer Description definitions for the Common UNIX Printing
  *   System (CUPS).
@@ -294,41 +294,41 @@ typedef struct			/**** Files ****/
  * Prototypes...
  */
 
-extern void		ppdClose(ppd_file_t *ppd);
-extern int		ppdCollect(ppd_file_t *ppd, ppd_section_t section,
+extern void		stpi_ppdClose(ppd_file_t *ppd);
+extern int		stpi_ppdCollect(ppd_file_t *ppd, ppd_section_t section,
 			           ppd_choice_t  ***choices);
-extern int		ppdConflicts(ppd_file_t *ppd);
-extern int		ppdEmit(ppd_file_t *ppd, FILE *fp,
+extern int		stpi_ppdConflicts(ppd_file_t *ppd);
+extern int		stpi_ppdEmit(ppd_file_t *ppd, FILE *fp,
 			        ppd_section_t section);
-extern int		ppdEmitFd(ppd_file_t *ppd, int fd,
+extern int		stpi_ppdEmitFd(ppd_file_t *ppd, int fd,
 			          ppd_section_t section);
-extern int		ppdEmitJCL(ppd_file_t *ppd, FILE *fp, int job_id,
+extern int		stpi_ppdEmitJCL(ppd_file_t *ppd, FILE *fp, int job_id,
 			           const char *user, const char *title);
-extern ppd_choice_t	*ppdFindChoice(ppd_option_t *o, const char *option);
-extern ppd_choice_t	*ppdFindMarkedChoice(ppd_file_t *ppd, const char *keyword);
-extern ppd_option_t	*ppdFindOption(ppd_file_t *ppd, const char *keyword);
-extern int		ppdIsMarked(ppd_file_t *ppd, const char *keyword,
+extern ppd_choice_t	*stpi_ppdFindChoice(ppd_option_t *o, const char *option);
+extern ppd_choice_t	*stpi_ppdFindMarkedChoice(ppd_file_t *ppd, const char *keyword);
+extern ppd_option_t	*stpi_ppdFindOption(ppd_file_t *ppd, const char *keyword);
+extern int		stpi_ppdIsMarked(ppd_file_t *ppd, const char *keyword,
 			            const char *option);
-extern void		ppdMarkDefaults(ppd_file_t *ppd);
-extern int		ppdMarkOption(ppd_file_t *ppd, const char *keyword,
+extern void		stpi_ppdMarkDefaults(ppd_file_t *ppd);
+extern int		stpi_ppdMarkOption(ppd_file_t *ppd, const char *keyword,
 			              const char *option);
-extern ppd_file_t	*ppdOpen(FILE *fp);
-extern ppd_file_t	*ppdOpenFd(int fd);
-extern ppd_file_t	*ppdOpenFile(const char *filename);
-extern float		ppdPageLength(ppd_file_t *ppd, const char *name);
-extern ppd_size_t	*ppdPageSize(ppd_file_t *ppd, const char *name);
-extern float		ppdPageWidth(ppd_file_t *ppd, const char *name);
+extern ppd_file_t	*stpi_ppdOpen(FILE *fp);
+extern ppd_file_t	*stpi_ppdOpenFd(int fd);
+extern ppd_file_t	*stpi_ppdOpenFile(const char *filename);
+extern float		stpi_ppdPageLength(ppd_file_t *ppd, const char *name);
+extern ppd_size_t	*stpi_ppdPageSize(ppd_file_t *ppd, const char *name);
+extern float		stpi_ppdPageWidth(ppd_file_t *ppd, const char *name);
 
 /**** New in CUPS 1.1.19 ****/
-extern const char	*ppdErrorString(ppd_status_t status);
-extern ppd_attr_t	*ppdFindAttr(ppd_file_t *ppd, const char *name,
+extern const char	*stpi_ppdErrorString(ppd_status_t status);
+extern ppd_attr_t	*stpi_ppdFindAttr(ppd_file_t *ppd, const char *name,
 			             const char *spec);
-extern ppd_attr_t	*ppdFindNextAttr(ppd_file_t *ppd, const char *name,
+extern ppd_attr_t	*stpi_ppdFindNextAttr(ppd_file_t *ppd, const char *name,
 			                 const char *spec);
-extern ppd_status_t	ppdLastError(int *line);
+extern ppd_status_t	stpi_ppdLastError(int *line);
 
 /**** New in CUPS 1.1.20 ****/
-extern void		ppdSetConformance(ppd_conform_t c);
+extern void		stpi_ppdSetConformance(ppd_conform_t c);
 
 
 /*
@@ -341,5 +341,5 @@ extern void		ppdSetConformance(ppd_conform_t c);
 #endif /* !_CUPS_PPD_H_ */
 
 /*
- * End of "$Id: ppd.h,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $".
+ * End of "$Id: ppd.h,v 1.1.2.1 2006/09/10 21:25:00 rlk Exp $".
  */

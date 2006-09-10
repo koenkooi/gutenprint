@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.87.6.1 2006/09/10 18:43:11 rlk Exp $"
+ * "$Id: print-ps.c,v 1.87.6.2 2006/09/10 21:25:00 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -40,7 +40,7 @@
 #endif
 #include <stdio.h>
 #include <unistd.h>
-#include "gutenprint/ppd.h"
+#include "ppd.h"
 
 #ifdef _MSC_VER
 #define strncasecmp(s,t,n) _strnicmp(s,t,n)
@@ -51,7 +51,7 @@
  * Local variables...
  */
 
-static const char *m_ppd_file = NULL;
+static char *m_ppd_file = NULL;
 static ppd_file_t *m_ppd = NULL;
 
 
@@ -69,6 +69,12 @@ static const stp_parameter_t the_parameters[] =
     N_("PPD File"),
     STP_PARAMETER_TYPE_FILE, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1, 0
+  },
+  {
+    "ModelName", N_("Model Name"), N_("Basic Printer Setup"),
+    N_("PPD File Model Name"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_CORE,
+    STP_PARAMETER_LEVEL_INTERNAL, 0, 0, -1, 0, 0
   },
 };
 
@@ -116,7 +122,10 @@ static int ps_option_to_param(stp_parameter_t *param, ppd_group_t *group, ppd_op
       param->p_type = STP_PARAMETER_TYPE_STRING_LIST;
       break;
   } 
-  param->p_class = STP_PARAMETER_CLASS_FEATURE;
+  if (strcmp(param->name, "PageSize") == 0)
+    param->p_class = STP_PARAMETER_CLASS_CORE;
+  else
+    param->p_class = STP_PARAMETER_CLASS_FEATURE;
   param->p_level = STP_PARAMETER_LEVEL_BASIC;
   param->is_mandatory = 1;
   param->is_active = 1;
@@ -131,50 +140,74 @@ static int ps_option_to_param(stp_parameter_t *param, ppd_group_t *group, ppd_op
  * 'ps_parameters()' - Return the parameter values for the given parameter.
  */
 
+static int
+check_ppd_file(const stp_vars_t *v)
+{
+  const char *ppd_file = stp_get_file_parameter(v, "PPDFile");
+
+  if (ppd_file == NULL || ppd_file[0] == 0)
+    {
+      stp_dprintf(STP_DBG_PS, v, "Empty PPD file\n");
+      return 0;
+    }
+  else if (m_ppd_file && strcmp(m_ppd_file, ppd_file) == 0)
+    {
+      stp_dprintf(STP_DBG_PS, v, "Not replacing PPD file %s\n", m_ppd_file);
+      return 1;
+    }
+  else
+    {
+      stp_dprintf(STP_DBG_PS, v, "Replacing PPD file %s with %s\n",
+		  m_ppd_file ? m_ppd_file : "(null)",
+		  ppd_file ? ppd_file : "(null)");
+      if (m_ppd != NULL)
+	stpi_ppdClose(m_ppd);
+      m_ppd = NULL;
+
+      if (m_ppd_file)
+	stp_free(m_ppd_file);
+      m_ppd_file = NULL;
+
+      if ((m_ppd = stpi_ppdOpenFile(ppd_file)) == NULL)
+	{
+	  stp_eprintf(v, "unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
+	  return 0;
+	}
+
+      m_ppd_file = stp_strdup(ppd_file);
+      return 1;
+    }
+}    
+  
+
 static stp_parameter_list_t
 ps_list_parameters(const stp_vars_t *v)
 {
   stp_parameter_list_t *ret = stp_parameter_list_create();
-  const char *ppd_file = stp_get_file_parameter(v, "PPDFile");
   ppd_group_t *group;	
   ppd_option_t *option;
-  stp_parameter_t param;
   int i, j;
+  int status = check_ppd_file(v);
+  stp_dprintf(STP_DBG_PS, v, "Adding parameters from %s\n",
+	      m_ppd_file ? m_ppd_file : "(null)");
 
   for (i = 0; i < the_parameter_count; i++)
     stp_parameter_list_add_param(ret, &(the_parameters[i]));
 
-  if (ppd_file == NULL || ppd_file[0] == 0)
-    goto bugout;
-
-  if ((m_ppd_file == NULL || strcmp(m_ppd_file, ppd_file) != 0))
-  {
-    if (m_ppd != NULL)
-      ppdClose(m_ppd);
-
-    m_ppd_file = NULL;
-
-    if ((m_ppd = ppdOpenFile(ppd_file)) == NULL)
-    {
-      stp_erprintf("unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
-      goto bugout;
-    }
-
-    m_ppd_file = ppd_file;
-  }
-
-  for (i=0; i < m_ppd->num_groups; i++)
-  {
-    group = m_ppd->groups + i;
-    for (j=0; j < group->num_options; j++)
-    {
-      option = group->options + j;
-      ps_option_to_param(&param, group, option);
-      stp_parameter_list_add_param(ret, &param);
-    }
-  }
-
-bugout:
+  if (status)
+    for (i=0; i < m_ppd->num_groups; i++)
+      {
+	group = m_ppd->groups + i;
+	for (j=0; j < group->num_options; j++)
+	  {
+	    stp_parameter_t *param = stp_malloc(sizeof(stp_parameter_t));
+	    option = group->options + j;
+	    ps_option_to_param(param, group, option);
+	    stp_dprintf(STP_DBG_PS, v, "Adding parameter %s %s\n",
+			param->name, param->text);
+	    stp_parameter_list_add_param(ret, param);
+	  }
+      }
   return ret;
 }
 
@@ -183,9 +216,9 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
 		       stp_parameter_t *description)
 {
   int		i;
-  const char *ppd_file = stp_get_file_parameter(v, "PPDFile");
   ppd_option_t *option;
   ppd_choice_t *choice;
+  int status = check_ppd_file(v);
 
   description->p_type = STP_PARAMETER_TYPE_INVALID;
   description->deflt.str = 0;
@@ -201,39 +234,33 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
       stp_fill_parameter_settings(description, &(the_parameters[i]));
       if (strcmp(name, "PPDFile") == 0)
         description->is_active = 1;
+      else if (m_ppd && m_ppd->modelname && strcmp(name, "ModelName") == 0)
+	{
+	  description->bounds.str = stp_string_list_create();
+	  stp_string_list_add_string(description->bounds.str,
+				     m_ppd->nickname, m_ppd->nickname);
+	  description->deflt.str = m_ppd->nickname;
+	  description->is_active = 1;
+	}
       return;
     }
   }
 
-  if (ppd_file == NULL || ppd_file[0] == 0)
+  if (!status)
     return;
-
-  if ((m_ppd_file == NULL || strcmp(m_ppd_file, ppd_file) != 0))
+  if ((option = stpi_ppdFindOption(m_ppd, name)) == NULL)
   {
-    if (m_ppd != NULL)
-      ppdClose(m_ppd);
-
-    m_ppd_file = NULL;
-
-    if ((m_ppd = ppdOpenFile(ppd_file)) == NULL)
-    {
-      stp_erprintf("unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
-      return;
-    }
-
-    m_ppd_file = ppd_file;
-  }
-
-  if ((option = ppdFindOption(m_ppd, name)) == NULL)
-  {
-    stp_erprintf("no parameter %s: %s %d\n", name, __FILE__, __LINE__);
+    stp_dprintf(STP_DBG_PS, v, "no parameter %s: %s %d\n", name, __FILE__, __LINE__);
     return;
   }
 
   ps_option_to_param(description, NULL, option);
   description->bounds.str = stp_string_list_create();
 
-  stp_erprintf("describe parameter %s, output name=[%s] text=[%s] category=[%s]: %s %d\n", name, description->name, description->text, description->category, __FILE__, __LINE__);
+  stp_dprintf(STP_DBG_PS, v, "describe parameter %s, output name=[%s] text=[%s] category=[%s] choices=[%d]: %s %d\n",
+	      name, description->name, description->text,
+	      description->category, option->num_choices,
+	      __FILE__, __LINE__);
 
   /* Describe all choices for specified option. */
   for (i=0; i < option->num_choices; i++)
@@ -244,6 +271,8 @@ ps_parameters_internal(const stp_vars_t *v, const char *name,
       description->deflt.str = choice->choice;
   }
 
+  if (!description->deflt.str)
+    description->deflt.str = option->choices[0].choice;
   if (stp_string_list_count(description->bounds.str) > 0)
     description->is_active = 1;
   return;
@@ -268,45 +297,24 @@ ps_media_size_internal(const stp_vars_t *v,		/* I */
 		       int  *height)		/* O - Height in points */
 {
   const char *pagesize = stp_get_string_parameter(v, "PageSize");
-  const char *ppd_file = stp_get_file_parameter(v, "PPDFile");
+  int status = check_ppd_file(v);
   if (!pagesize)
     pagesize = "";
 
   stp_dprintf(STP_DBG_PS, v,
 	      "ps_media_size(%d, \'%s\', \'%s\', %p, %p)\n",
-	      stp_get_model_id(v), ppd_file, pagesize,
+	      stp_get_model_id(v), m_ppd_file, pagesize,
 	      (void *) width, (void *) height);
 
   stp_default_media_size(v, width, height);
 
-  if (ppd_file == NULL || strlen(ppd_file) == 0)
-  {
-    /* stp_erprintf("no ppd file: %s %d\n", __FILE__, __LINE__); */
-    goto bugout;
-  }
-
-  if ((m_ppd_file == NULL || strcmp(m_ppd_file, ppd_file) != 0))
-  {
-    if (m_ppd != NULL)
-      ppdClose(m_ppd);
-
-    m_ppd_file = NULL;
-
-    if ((m_ppd = ppdOpenFile(ppd_file)) == NULL)
+  if (status)
     {
-      stp_erprintf("unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
-      goto bugout;
+      *width = stpi_ppdPageWidth(m_ppd, pagesize);
+      *height = stpi_ppdPageLength(m_ppd, pagesize);
     }
 
-    m_ppd_file = ppd_file;
-  } 
-
-  *width = ppdPageWidth(m_ppd, pagesize);
-  *height = ppdPageLength(m_ppd, pagesize);
-
   stp_dprintf(STP_DBG_PS, v, "dimensions %d %d\n", *width, *height);
-
-bugout:
   return;
 }
 
@@ -332,7 +340,6 @@ ps_imageable_area_internal(const stp_vars_t *v,      /* I */
 {
   int width, height;
   ppd_size_t *size;
-  const char *ppd_file = stp_get_file_parameter(v, "PPDFile");
   const char *pagesize = stp_get_string_parameter(v, "PageSize");
   if (!pagesize)
     pagesize = "";
@@ -344,33 +351,19 @@ ps_imageable_area_internal(const stp_vars_t *v,      /* I */
   *top    = 0;
   *bottom = height;
 
-  if (ppd_file == NULL || strlen(ppd_file) == 0)
-  {
-    /* stp_erprintf("no ppd file: %s %d\n", __FILE__, __LINE__); */
-    goto bugout;
-  }
-
-  if ((m_ppd_file == NULL || strcmp(m_ppd_file, ppd_file) != 0))
-  {
-    if (m_ppd != NULL)
-      ppdClose(m_ppd);
-
-    m_ppd_file = NULL;
-
-    if ((m_ppd = ppdOpenFile(ppd_file)) == NULL)
+  if (check_ppd_file(v))
     {
-      stp_erprintf("unable to open %s: %s %d\n", ppd_file, __FILE__, __LINE__);
-      goto bugout;
+      size = stpi_ppdPageSize(m_ppd, pagesize);
+      if (size)
+	{
+	  stp_dprintf(STP_DBG_PS, v, "size=l %f r %f b %f t %f h %d w %d\n",
+		      size->left, size->right, size->top, size->bottom, height, width);
+	  *left = (int)size->left;
+	  *right = (int)size->right;
+	  *top = height - (int)size->top;
+	  *bottom = height - (int)size->bottom;
+	}
     }
-
-    m_ppd_file = ppd_file;
-  } 
-
-  size = ppdPageSize(m_ppd, pagesize);
-  *left = (int)size->left;
-  *right = (int)size->right;
-  *top = (int)size->top;
-  *bottom = (int)size->bottom;
 
   if (use_max_area)
   {
@@ -384,10 +377,10 @@ ps_imageable_area_internal(const stp_vars_t *v,      /* I */
       *bottom = height;
   }
 
-  stp_dprintf(STP_DBG_PS, v, "max_area=%d l %d r %d b %d t %d h %d w %d\n",
-		  use_max_area, *left, *right, *bottom, *top, width, height);
+  stp_dprintf(STP_DBG_PS, v, "pagesize %s max_area=%d l %d r %d b %d t %d h %d w %d\n",
+	      pagesize ? pagesize : "(null)",
+	      use_max_area, *left, *right, *bottom, *top, width, height);
 
-bugout:
   return;
 }
 
@@ -568,7 +561,7 @@ ps_print_internal(const stp_vars_t *v, stp_image_t *image)
 
   num_commands = 0;
 
-  if ((command = ppd_find(ppd_file, "PageSize", media_size, &order)) != NULL)
+  if ((command = ppd_find(m_ppd_file, "PageSize", media_size, &order)) != NULL)
   {
     commands[num_commands].keyword = "PageSize";
     commands[num_commands].choice  = media_size;
@@ -578,7 +571,7 @@ ps_print_internal(const stp_vars_t *v, stp_image_t *image)
     num_commands ++;
   }
 
-  if ((command = ppd_find(ppd_file, "InputSlot", media_source, &order)) != NULL)
+  if ((command = ppd_find(m_ppd_file, "InputSlot", media_source, &order)) != NULL)
   {
     commands[num_commands].keyword = "InputSlot";
     commands[num_commands].choice  = media_source;
@@ -588,7 +581,7 @@ ps_print_internal(const stp_vars_t *v, stp_image_t *image)
     num_commands ++;
   }
 
-  if ((command = ppd_find(ppd_file, "MediaType", media_type, &order)) != NULL)
+  if ((command = ppd_find(m_ppd_file, "MediaType", media_type, &order)) != NULL)
   {
     commands[num_commands].keyword = "MediaType";
     commands[num_commands].choice  = media_type;
@@ -598,7 +591,7 @@ ps_print_internal(const stp_vars_t *v, stp_image_t *image)
     num_commands ++;
   }
 
-  if ((command = ppd_find(ppd_file, "Resolution", resolution, &order)) != NULL)
+  if ((command = ppd_find(m_ppd_file, "Resolution", resolution, &order)) != NULL)
   {
     commands[num_commands].keyword = "Resolution";
     commands[num_commands].choice  = resolution;

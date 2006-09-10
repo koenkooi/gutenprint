@@ -1,5 +1,5 @@
 /*
- * "$Id: mark.c,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $"
+ * "$Id: mark.c,v 1.1.2.2 2006/09/10 21:25:00 rlk Exp $"
  *
  *   Option marking routines for the Common UNIX Printing System (CUPS).
  *
@@ -27,13 +27,13 @@
  *
  * Contents:
  *
- *   ppdConflicts()        - Check to see if there are any conflicts.
- *   ppdFindChoice()       - Return a pointer to an option choice.
- *   ppdFindMarkedChoice() - Return the marked choice for the specified option.
- *   ppdFindOption()       - Return a pointer to the specified option.
- *   ppdIsMarked()         - Check to see if an option is marked...
- *   ppdMarkDefaults()     - Mark all default options in the PPD file.
- *   ppdMarkOption()       - Mark an option in a PPD file.
+ *   stpi_ppdConflicts()        - Check to see if there are any conflicts.
+ *   stpi_ppdFindChoice()       - Return a pointer to an option choice.
+ *   stpi_ppdFindMarkedChoice() - Return the marked choice for the specified option.
+ *   stpi_ppdFindOption()       - Return a pointer to the specified option.
+ *   stpi_ppdIsMarked()         - Check to see if an option is marked...
+ *   stpi_ppdMarkDefaults()     - Mark all default options in the PPD file.
+ *   stpi_ppdMarkOption()       - Mark an option in a PPD file.
  *   ppd_defaults()        - Set the defaults for this group and all sub-groups.
  */
 
@@ -41,8 +41,9 @@
  * Include necessary headers...
  */
 
-#include "gutenprint/ppd.h"
-#include "string.h"
+#include <gutenprint/gutenprint.h>
+#include "ppd.h"
+#include <string.h>
 
 /*
  * Local functions...
@@ -52,11 +53,11 @@ static void	ppd_defaults(ppd_file_t *ppd, ppd_group_t *g);
 
 
 /*
- * 'ppdConflicts()' - Check to see if there are any conflicts.
+ * 'stpi_ppdConflicts()' - Check to see if there are any conflicts.
  */
 
 int				/* O - Number of conflicts found */
-ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
+stpi_ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
 {
   int		i, j, k,	/* Looping variables */
 		conflicts;	/* Number of conflicts */
@@ -96,7 +97,7 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
     * Grab pointers to the first option...
     */
 
-    o1 = ppdFindOption(ppd, c->option1);
+    o1 = stpi_ppdFindOption(ppd, c->option1);
 
     if (o1 == NULL)
       continue;
@@ -106,7 +107,7 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
       * This constraint maps to a specific choice.
       */
 
-      c1 = ppdFindChoice(o1, c->choice1);
+      c1 = stpi_ppdFindChoice(o1, c->choice1);
     }
     else
     {
@@ -129,7 +130,7 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
     * Grab pointers to the second option...
     */
 
-    o2 = ppdFindOption(ppd, c->option2);
+    o2 = stpi_ppdFindOption(ppd, c->option2);
 
     if (o2 == NULL)
       continue;
@@ -139,7 +140,7 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
       * This constraint maps to a specific choice.
       */
 
-      c2 = ppdFindChoice(o2, c->choice2);
+      c2 = stpi_ppdFindChoice(o2, c->choice2);
     }
     else
     {
@@ -165,9 +166,9 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
     if (c1 != NULL && c1->marked &&
         c2 != NULL && c2->marked)
     {
-      DEBUG_printf(("%s->%s conflicts with %s->%s (%s %s %s %s)\n",
+      stp_deprintf(STP_DBG_PS, "%s->%s conflicts with %s->%s (%s %s %s %s)\n",
                     o1->keyword, c1->choice, o2->keyword, c2->choice,
-		    c->option1, c->choice1, c->option2, c->choice2));
+		    c->option1, c->choice1, c->option2, c->choice2);
       conflicts ++;
       o1->conflicted = 1;
       o2->conflicted = 1;
@@ -183,11 +184,11 @@ ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
 
 
 /*
- * 'ppdFindChoice()' - Return a pointer to an option choice.
+ * 'stpi_ppdFindChoice()' - Return a pointer to an option choice.
  */
 
 ppd_choice_t *				/* O - Choice pointer or NULL */
-ppdFindChoice(ppd_option_t *o,		/* I - Pointer to option */
+stpi_ppdFindChoice(ppd_option_t *o,		/* I - Pointer to option */
               const char   *choice)	/* I - Name of choice */
 {
   int		i;		/* Looping var */
@@ -206,11 +207,11 @@ ppdFindChoice(ppd_option_t *o,		/* I - Pointer to option */
 
 
 /*
- * 'ppdFindMarkedChoice()' - Return the marked choice for the specified option.
+ * 'stpi_ppdFindMarkedChoice()' - Return the marked choice for the specified option.
  */
 
 ppd_choice_t *				/* O - Pointer to choice or NULL */
-ppdFindMarkedChoice(ppd_file_t *ppd,	/* I - PPD file */
+stpi_ppdFindMarkedChoice(ppd_file_t *ppd,	/* I - PPD file */
                     const char *option)	/* I - Keyword/option name */
 {
   int		i;		/* Looping var */
@@ -218,7 +219,7 @@ ppdFindMarkedChoice(ppd_file_t *ppd,	/* I - PPD file */
   ppd_choice_t	*c;		/* Pointer to choice */
 
 
-  if ((o = ppdFindOption(ppd, option)) == NULL)
+  if ((o = stpi_ppdFindOption(ppd, option)) == NULL)
     return (NULL);
 
   for (i = o->num_choices, c = o->choices; i > 0; i --, c ++)
@@ -230,11 +231,11 @@ ppdFindMarkedChoice(ppd_file_t *ppd,	/* I - PPD file */
 
 
 /*
- * 'ppdFindOption()' - Return a pointer to the specified option.
+ * 'stpi_ppdFindOption()' - Return a pointer to the specified option.
  */
 
 ppd_option_t *				/* O - Pointer to option or NULL */
-ppdFindOption(ppd_file_t *ppd,		/* I - PPD file data */
+stpi_ppdFindOption(ppd_file_t *ppd,		/* I - PPD file data */
               const char *option)	/* I - Option/Keyword name */
 {
   int		i, j, k;	/* Looping vars */
@@ -263,11 +264,11 @@ ppdFindOption(ppd_file_t *ppd,		/* I - PPD file data */
 
 
 /*
- * 'ppdIsMarked()' - Check to see if an option is marked...
+ * 'stpi_ppdIsMarked()' - Check to see if an option is marked...
  */
 
 int				/* O - Non-zero if option is marked */
-ppdIsMarked(ppd_file_t *ppd,	/* I - PPD file data */
+stpi_ppdIsMarked(ppd_file_t *ppd,	/* I - PPD file data */
             const char *option,	/* I - Option/Keyword name */
             const char *choice)	/* I - Choice name */
 {
@@ -278,10 +279,10 @@ ppdIsMarked(ppd_file_t *ppd,	/* I - PPD file data */
   if (ppd == NULL)
     return (0);
 
-  if ((o = ppdFindOption(ppd, option)) == NULL)
+  if ((o = stpi_ppdFindOption(ppd, option)) == NULL)
     return (0);
 
-  if ((c = ppdFindChoice(o, choice)) == NULL)
+  if ((c = stpi_ppdFindChoice(o, choice)) == NULL)
     return (0);
 
   return (c->marked);
@@ -289,11 +290,11 @@ ppdIsMarked(ppd_file_t *ppd,	/* I - PPD file data */
 
 
 /*
- * 'ppdMarkDefaults()' - Mark all default options in the PPD file.
+ * 'stpi_ppdMarkDefaults()' - Mark all default options in the PPD file.
  */
 
 void
-ppdMarkDefaults(ppd_file_t *ppd)/* I - PPD file record */
+stpi_ppdMarkDefaults(ppd_file_t *ppd)/* I - PPD file record */
 {
   int		i;		/* Looping variables */
   ppd_group_t	*g;		/* Current group */
@@ -308,7 +309,7 @@ ppdMarkDefaults(ppd_file_t *ppd)/* I - PPD file record */
 
 
 /*
- * 'ppdMarkOption()' - Mark an option in a PPD file.
+ * 'stpi_ppdMarkOption()' - Mark an option in a PPD file.
  *
  * Notes:
  *
@@ -317,7 +318,7 @@ ppdMarkDefaults(ppd_file_t *ppd)/* I - PPD file record */
  */
 
 int					/* O - Number of conflicts */
-ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
+stpi_ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
               const char *option,	/* I - Keyword */
               const char *choice)	/* I - Option name */
 {
@@ -335,11 +336,11 @@ ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
     * Handle variable page sizes...
     */
 
-    ppdPageSize(ppd, choice);
+    stpi_ppdPageSize(ppd, choice);
     choice = "Custom";
   }
 
-  if ((o = ppdFindOption(ppd, option)) == NULL)
+  if ((o = stpi_ppdFindOption(ppd, option)) == NULL)
     return (0);
 
   for (i = o->num_choices, c = o->choices; i > 0; i --, c ++)
@@ -374,13 +375,13 @@ ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
 
       if (strcasecmp(option, "PageSize") == 0)
       {
-	if ((o = ppdFindOption(ppd, "PageRegion")) != NULL)
+	if ((o = stpi_ppdFindOption(ppd, "PageRegion")) != NULL)
 	  for (i = 0; i < o->num_choices; i ++)
             o->choices[i].marked = 0;
       }
       else
       {
-	if ((o = ppdFindOption(ppd, "PageSize")) != NULL)
+	if ((o = stpi_ppdFindOption(ppd, "PageSize")) != NULL)
 	  for (i = 0; i < o->num_choices; i ++)
             o->choices[i].marked = 0;
       }
@@ -391,7 +392,7 @@ ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
       * Unmark ManualFeed option...
       */
 
-      if ((o = ppdFindOption(ppd, "ManualFeed")) != NULL)
+      if ((o = stpi_ppdFindOption(ppd, "ManualFeed")) != NULL)
 	for (i = 0; i < o->num_choices; i ++)
           o->choices[i].marked = 0;
     }
@@ -401,13 +402,13 @@ ppdMarkOption(ppd_file_t *ppd,		/* I - PPD file record */
       * Unmark InputSlot option...
       */
 
-      if ((o = ppdFindOption(ppd, "InputSlot")) != NULL)
+      if ((o = stpi_ppdFindOption(ppd, "InputSlot")) != NULL)
 	for (i = 0; i < o->num_choices; i ++)
           o->choices[i].marked = 0;
     }
   }
 
-  return (ppdConflicts(ppd));
+  return (stpi_ppdConflicts(ppd));
 }
 
 
@@ -429,7 +430,7 @@ ppd_defaults(ppd_file_t  *ppd,	/* I - PPD file */
 
   for (i = g->num_options, o = g->options; i > 0; i --, o ++)
     if (strcasecmp(o->keyword, "PageRegion") != 0)
-      ppdMarkOption(ppd, o->keyword, o->defchoice);
+      stpi_ppdMarkOption(ppd, o->keyword, o->defchoice);
 
   for (i = g->num_subgroups, sg = g->subgroups; i > 0; i --, sg ++)
     ppd_defaults(ppd, sg);
@@ -437,5 +438,5 @@ ppd_defaults(ppd_file_t  *ppd,	/* I - PPD file */
 
 
 /*
- * End of "$Id: mark.c,v 1.1.2.1 2006/09/10 18:43:11 rlk Exp $".
+ * End of "$Id: mark.c,v 1.1.2.2 2006/09/10 21:25:00 rlk Exp $".
  */
