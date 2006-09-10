@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.188 2006/09/10 09:27:39 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.189 2006/09/10 10:11:29 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2202,6 +2202,8 @@ canon_write(stp_vars_t *v,		/* I - Print file or command */
   unsigned char color;
   int newlength = canon_compress(v,pd,line,length,offset,pd->comp_buf,bits,ink_flags);
 
+  if(!newlength)
+      return 0;
   /* send packed empty lines if any */
 
   if (*empty) {
