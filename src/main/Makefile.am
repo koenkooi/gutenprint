@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.92 2005/11/21 11:16:23 rleigh Exp $
+## $Id: Makefile.am,v 1.92.8.1 2006/09/10 18:43:11 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,7 @@ print_lexmark_la_LDFLAGS = -module -avoid-version
 print_pcl_la_SOURCES = print-pcl.c
 print_pcl_la_LDFLAGS = -module -avoid-version
 
-print_ps_la_SOURCES = print-ps.c
+print_ps_la_SOURCES = print-ps.c ppd.c page.c mark.c
 print_ps_la_LDFLAGS = -module -avoid-version
 
 print_olympus_la_SOURCES = print-olympus.c
