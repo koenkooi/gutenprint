@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.4 2006/09/10 13:17:24 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.5 2006/09/10 15:58:37 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -1764,6 +1764,35 @@ olympus_describe_output(const stp_vars_t *v)
   return "CMY";
 }
 
+static void
+olympus_adjust_curve(stp_vars_t *v,
+		const char *color_adj,
+		const char *color_curve)
+{
+  stp_curve_t   *adjustment = NULL;
+
+  if (color_adj &&
+        !stp_check_curve_parameter(v, color_curve, STP_PARAMETER_ACTIVE))
+    {
+      adjustment = stp_curve_create_from_string(color_adj);
+      stp_set_curve_parameter(v, color_curve, adjustment);
+      stp_set_curve_parameter_active(v, color_curve, STP_PARAMETER_ACTIVE);
+      stp_curve_destroy(adjustment);
+    }
+}
+
+static void
+olympus_exec(stp_vars_t *v,
+		void (*func)(stp_vars_t *),
+		const char *debug_string)
+{
+  if (func)
+    {
+      stp_deprintf(STP_DBG_OLYMPUS, "olympus: %s\n", debug_string);
+      (*func)(v);
+    }
+}
+
 static int
 olympus_interpolate(int oldval, int oldsize, int newsize)
 {
@@ -1908,6 +1937,19 @@ olympus_print_row(stp_vars_t *v,
   return ret;
 }
 
+/*
+static int
+olympus_print_plane(stp_vars_t *v,
+		unsigned short **image_data,
+		int plane)
+{
+  int h;
+  for (h = 0; h < out_px_height; h++)
+    {
+      ;
+    }
+}
+*/
 
 /*
  * olympus_print()
@@ -1923,7 +1965,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   int status = 1;
   int ink_channels = 1;
   const char *ink_order = NULL;
-  stp_curve_t   *adjustment = NULL;
 
   int r_errdiv, r_errmod;
   int r_errval  = 0;
@@ -2051,30 +2092,9 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   stp_set_string_parameter(v, "STPIOutputType", "CMY");
   
-  if (caps->adj_cyan &&
-        !stp_check_curve_parameter(v, "CyanCurve", STP_PARAMETER_ACTIVE))
-    {
-      adjustment = stp_curve_create_from_string(caps->adj_cyan);
-      stp_set_curve_parameter(v, "CyanCurve", adjustment);
-      stp_set_curve_parameter_active(v, "CyanCurve", STP_PARAMETER_ACTIVE);
-      stp_curve_destroy(adjustment);
-    }
-  if (caps->adj_magenta &&
-        !stp_check_curve_parameter(v, "MagentaCurve", STP_PARAMETER_ACTIVE))
-    {
-      adjustment = stp_curve_create_from_string(caps->adj_magenta);
-      stp_set_curve_parameter(v, "MagentaCurve", adjustment);
-      stp_set_curve_parameter_active(v, "MagentaCurve", STP_PARAMETER_ACTIVE);
-      stp_curve_destroy(adjustment);
-    }
-  if (caps->adj_yellow &&
-        !stp_check_curve_parameter(v, "YellowCurve", STP_PARAMETER_ACTIVE))
-    {
-      adjustment = stp_curve_create_from_string(caps->adj_yellow);
-      stp_set_curve_parameter(v, "YellowCurve", adjustment);
-      stp_set_curve_parameter_active(v, "YellowCurve", STP_PARAMETER_ACTIVE);
-      stp_curve_destroy(adjustment);
-    }
+  olympus_adjust_curve(v, caps->adj_cyan, "CyanCurve");
+  olympus_adjust_curve(v, caps->adj_magenta, "MagentaCurve");
+  olympus_adjust_curve(v, caps->adj_yellow, "YellowCurve");
 
   if (ink_type)
     {
@@ -2112,11 +2132,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   out_bytes = (caps->interlacing == OLYMPUS_INTERLACE_PLANE ? 1 : ink_channels);
 
   /* printer init */
-  if (caps->printer_init_func)
-    {
-      stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->printer_init\n");
-      (*(caps->printer_init_func))(v);
-    }
+  olympus_exec(v, caps->printer_init_func, "caps->printer_init");
 
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_HEIGHT))
     {
@@ -2162,11 +2178,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
       stp_deprintf(STP_DBG_OLYMPUS, "olympus: plane %d\n", privdata.plane);
 
       /* plane init */
-      if (caps->plane_init_func)
-        {
-          stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->plane_init\n");
-          (*(caps->plane_init_func))(v);
-        }
+      olympus_exec(v, caps->plane_init_func, "caps->plane_init");
   
       for (y = y_min; y <= y_max; y++)
         {
@@ -2181,12 +2193,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
               privdata.block_max_y = MIN(y + caps->block_size - 1, y_max);
               privdata.block_max_x = x_max;
     
-              if (caps->block_init_func)
-	        {
-                  stp_deprintf(STP_DBG_OLYMPUS,
-			       "olympus: caps->block_init\n");
-                  (*(caps->block_init_func))(v);
-                }
+	      olympus_exec(v, caps->block_init_func, "caps->block_init");
             }
         
           if (y < out_px_top || y >= out_px_bottom)
@@ -2234,27 +2241,16 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
           if (y == privdata.block_max_y)
 	    {
               /* block end */
-              if (caps->block_end_func)
-	        {
-                  stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->block_end\n");
-                  (*(caps->block_end_func))(v);
-  	        }
+	      olympus_exec(v, caps->block_end_func, "caps->block_end");
             }
         }
 
       /* plane end */
-      if (caps->plane_end_func) {
-        stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->plane_end\n");
-        (*(caps->plane_end_func))(v);
-      }
+      olympus_exec(v, caps->plane_end_func, "caps->plane_end");
     }
 
   /* printer end */
-  if (caps->printer_end_func)
-    {
-      stp_deprintf(STP_DBG_OLYMPUS, "olympus: caps->printer_end\n");
-      (*(caps->printer_end_func))(v);
-    }
+  olympus_exec(v, caps->printer_end_func, "caps->printer_end");
   if (zeros)
     stp_free(zeros);
   olympus_free_image(image_data, image);
