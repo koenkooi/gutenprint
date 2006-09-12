@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.144 2006/07/07 13:11:42 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.145 2006/09/12 19:03:33 easysw Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -45,7 +45,10 @@
  */
 static void	pcl_mode0(stp_vars_t *, unsigned char *, int, int);
 static void	pcl_mode2(stp_vars_t *, unsigned char *, int, int);
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif /* !MAX */
 
 typedef struct
 {

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.147 2006/09/12 14:26:33 easysw Exp $
+dnl $Id: configure.ac,v 1.148 2006/09/12 19:03:32 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.147 $)
+AC_REVISION($Revision: 1.148 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -666,7 +666,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([typedef struct __attribute__((__packed__)) {
                   [AC_MSG_RESULT([no])])
 
 AH_VERBATIM([HAVE_GCC_ATTRIBUTES_BOILERPLATE],
-[#ifndef HAVE_GCC_ATTRIBUTES
+[#if !defined(HAVE_GCC_ATTRIBUTES) && !defined(__attribute__)
 /* This should really be a C99 anonymous variadic macro. */
 #define __attribute__(attr)
 #endif])
@@ -783,6 +783,9 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS([nanosleep poll usleep])
 AC_CHECK_FUNCS([getopt_long])
 
+dnl finite() is non-standard, isfinite() is ISO-standard, figure out
+dnl which to use...
+AC_SEARCH_LIBS(finite, m, CFLAGS="-Disfinite=finite $CFLAGS")
 
 dnl Define what has to be built
 AM_CONDITIONAL(BUILD_FOOMATIC, test x${BUILD_FOOMATIC} = xyes)

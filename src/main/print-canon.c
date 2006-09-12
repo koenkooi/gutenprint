@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.189 2006/09/10 10:11:29 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.190 2006/09/12 19:03:32 easysw Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -59,8 +59,12 @@
 
 #include "print-canon.h"
 
-#define MIN(a,b) (((a)<(b)) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#ifndef MIN
+#  define MIN(a,b) (((a)<(b)) ? (a) : (b))
+#endif /* !MIN */
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif /* !MAX */
 
 
 

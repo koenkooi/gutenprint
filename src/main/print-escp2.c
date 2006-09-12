@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.354 2006/07/22 20:28:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.355 2006/09/12 19:03:33 easysw Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -45,7 +45,9 @@
 #define OP_JOB_PRINT 2
 #define OP_JOB_END   4
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif /* !MAX */
 
 typedef struct
 {

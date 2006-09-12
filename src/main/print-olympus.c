@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.60 2006/09/10 11:15:44 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.61 2006/09/12 19:03:33 easysw Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -53,8 +53,12 @@
 #define OLYMPUS_FEATURE_BORDERLESS	0x00000008
 #define OLYMPUS_FEATURE_WHITE_BORDER	0x00000010
 
-#define MIN(a,b)	(((a) < (b)) ? (a) : (b))
-#define MAX(a,b)	(((a) > (b)) ? (a) : (b))
+#ifndef MIN
+#  define MIN(a,b) (((a)<(b)) ? (a) : (b))
+#endif /* !MIN */
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif /* !MAX */
 
 static const char *zero = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
