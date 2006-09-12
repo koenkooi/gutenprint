@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.146 2006/08/07 09:49:30 rleigh Exp $
+dnl $Id: configure.ac,v 1.147 2006/09/12 14:26:33 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.146 $)
+AC_REVISION($Revision: 1.147 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -635,11 +635,16 @@ if test x$ac_compiler_gnu = "xyes"; then
   if test x${USE_MAINTAINER_MODE} = xyes ; then
     STP_ADD_COMPILER_ARGS([-pedantic -Waggregate-return -Wcast-qual -Wshadow -Wredundant-decls],, [GNUCFLAGS])
   fi
-else
   if test x$ENABLE_DEBUG = xyes ; then
     STP_ADD_COMPILER_ARG([-g])
   else
     STP_ADD_FIRST_COMPILER_ARG([-O6 -O3 -O2 -O1 -O])
+  fi
+else
+  if test x$ENABLE_DEBUG = xyes ; then
+    STP_ADD_COMPILER_ARG([-g])
+  else
+    STP_ADD_FIRST_COMPILER_ARG([-O])
   fi
 fi
 if test x$ENABLE_PROFILE = xyes ; then

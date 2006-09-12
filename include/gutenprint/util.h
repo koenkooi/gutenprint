@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.2 2005/04/10 23:15:16 rlk Exp $"
+ * "$Id: util.h,v 1.3 2006/09/12 14:26:33 easysw Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -35,6 +35,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if !defined(__GNUC__) && !defined(__attribute__)
+#  define __attribute__(x)
+#endif /* !__GNUC__ && !__attribute__ */
 
 /**
  * Utility functions.
@@ -173,5 +177,5 @@ extern const char *stp_get_release_version(void);
 
 #endif /* GUTENPRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.2 2005/04/10 23:15:16 rlk Exp $".
+ * End of "$Id: util.h,v 1.3 2006/09/12 14:26:33 easysw Exp $".
  */

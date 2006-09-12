@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.118 2006/05/28 16:59:03 rlk Exp $"
+ * "$Id: genppd.c,v 1.119 2006/09/12 14:26:33 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -339,21 +339,10 @@ main(int  argc,			    /* I - Number of command-line arguments */
   * Set the language...
   */
 
-  if (language)
-    {
-      unsetenv("LC_CTYPE");
-      unsetenv("LC_COLLATE");
-      unsetenv("LC_TIME");
-      unsetenv("LC_NUMERIC");
-      unsetenv("LC_MONETARY");
-      unsetenv("LC_MESSAGES");
-      unsetenv("LC_ALL");
-      unsetenv("LANG");
-      setenv("LC_ALL", language, 1);
-      setenv("LANG", language, 1);
-    }
-  setlocale(LC_ALL, "");
-
+  setlocale(LC_ALL, language ? language : "");
+#ifdef LC_CTYPE
+  setlocale(LC_CTYPE, language ? language : "");
+#endif /* LC_CTYPE */
 #ifdef LC_NUMERIC
   setlocale(LC_NUMERIC, "C");
 #endif /* LC_NUMERIC */
@@ -1592,5 +1581,5 @@ write_ppd(const stp_printer_t *p,	/* I - Printer driver */
 
 
 /*
- * End of "$Id: genppd.c,v 1.118 2006/05/28 16:59:03 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.119 2006/09/12 14:26:33 easysw Exp $".
  */
