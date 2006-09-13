@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.148 2006/09/12 19:03:32 easysw Exp $
+dnl $Id: configure.ac,v 1.149 2006/09/13 12:40:05 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.148 $)
+AC_REVISION($Revision: 1.149 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -115,6 +115,13 @@ AC_SUBST([GUTENPRINTUI_BINARY_AGE])
 AC_SUBST([GUTENPRINTUI2_CURRENT_INTERFACE])
 AC_SUBST([GUTENPRINTUI2_INTERFACE_AGE])
 AC_SUBST([GUTENPRINTUI2_BINARY_AGE])
+
+dnl Make sure we inherit common compiler options from the environment...
+CFLAGS="${CFLAGS:=}"
+CPPFLAGS="${CPPFLAGS:=}"
+CXXFLAGS="${CXXFLAGS:=}"
+LDFLAGS="${LDFLAGS:=}"
+LIBS="${LIBS:=}"
 
 dnl Initialize automake stuff.
 AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-dist-gzip tar-ustar check-news gnu no-dependencies)
