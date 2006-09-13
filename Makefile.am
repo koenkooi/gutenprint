@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.144 2005/11/21 11:16:22 rleigh Exp $
+## $Id: Makefile.am,v 1.145 2006/09/13 19:42:44 easysw Exp $
 ## Copyright (C) 2000-2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -199,3 +199,29 @@ MAINTAINERCLEANFILES = \
 EXTRA_DIST = autogen.sh ChangeLogStamp
 
 .PHONY: deb html install-cups install-gimp install-ghost snapshot ChangeLogPhony dist-time-check
+
+# Make software distributions using EPM (http://www.easysw.com/epm/)...
+EPMFLAGS	=	-v --output-dir dist $(EPMARCH)
+
+aix bsd deb depot inst pkg rpm setld slackware swinstall tardist:
+	epm $(EPMFLAGS) -f $@ cups-gutenprint packaging/cups-gutenprint.list
+
+epm:
+	epm $(EPMFLAGS) -s packaging/cups-gutenprint.gif cups-gutenprint packaging/cups-gutenprint.list
+
+osx:
+	epm $(EPMFLAGS) -f osx -s packaging/cups-gutenprint.gif cups-gutenprint packaging/cups-gutenprint.list
+
+.PHONEY:	dist
+dist:	all
+	$(RM) -r dist
+	$(MAKE) $(MFLAGS) epm
+	case `uname` in \
+		*BSD*) $(MAKE) $(MFLAGS) bsd;; \
+		Darwin*) $(MAKE) $(MFLAGS) osx;; \
+		IRIX*) $(MAKE) $(MFLAGS) tardist;; \
+		Linux*) $(MAKE) $(MFLAGS) rpm;; \
+		SunOS*) $(MAKE) $(MFLAGS) pkg;; \
+	esac
+
+
