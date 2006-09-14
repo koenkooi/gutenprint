@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.150 2006/09/13 19:42:44 easysw Exp $
+dnl $Id: configure.ac,v 1.151 2006/09/14 13:24:49 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.150 $)
+AC_REVISION($Revision: 1.151 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1021,7 +1021,6 @@ AC_CONFIG_FILES([src/gutenprintui/Makefile])
 AC_CONFIG_FILES([src/gutenprintui/gutenprintui.pc])
 AC_CONFIG_FILES([src/gutenprintui2/Makefile])
 AC_CONFIG_FILES([src/gutenprintui2/gutenprintui2.pc])
-AC_CONFIG_FILES([packaging/cups-gutenprint.list])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([scripts/Makefile])
 AC_CONFIG_COMMANDS([default], [
