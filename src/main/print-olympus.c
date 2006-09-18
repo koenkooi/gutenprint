@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.6 2006/09/13 22:37:09 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.7 2006/09/18 20:27:23 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -59,7 +59,6 @@
 #define MAX_INK_CHANNELS	3
 #define MAX_BYTES_PER_CHANNEL	2
 
-static const char *zero = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
 typedef struct
 {
@@ -163,6 +162,7 @@ typedef struct /* printer specific parameters */
 
 static const olympus_cap_t* olympus_get_model_capabilities(int model);
 static const laminate_t* olympus_get_laminate_pattern(stp_vars_t *v);
+static void  olympus_print_bytes(stp_vars_t *v, char byte, int count);
 
 
 static const ink_t cmy_inks[] =
@@ -477,10 +477,10 @@ static void p400_printer_init_func(stp_vars_t *v)
   int wide = (strcmp(privdata.pagesize, "c8x10") == 0
 		  || strcmp(privdata.pagesize, "C6") == 0);
 
-  stp_zprintf(v, "\033ZQ"); stp_zfwrite(zero, 1, 61, v);
-  stp_zprintf(v, "\033FP"); stp_zfwrite(zero, 1, 61, v);
+  stp_zprintf(v, "\033ZQ"); olympus_print_bytes(v, '\0', 61);
+  stp_zprintf(v, "\033FP"); olympus_print_bytes(v, '\0', 61);
   stp_zprintf(v, "\033ZF");
-  stp_putc((wide ? '\x40' : '\x00'), v); stp_zfwrite(zero, 1, 60, v);
+  stp_putc((wide ? '\x40' : '\x00'), v); olympus_print_bytes(v, '\0', 60);
   stp_zprintf(v, "\033ZS");
   if (wide)
     {
@@ -492,18 +492,18 @@ static void p400_printer_init_func(stp_vars_t *v)
       stp_put16_be(privdata.xsize, v);
       stp_put16_be(privdata.ysize, v);
     }
-  stp_zfwrite(zero, 1, 57, v);
-  stp_zprintf(v, "\033ZP"); stp_zfwrite(zero, 1, 61, v);
+  olympus_print_bytes(v, '\0', 57);
+  stp_zprintf(v, "\033ZP"); olympus_print_bytes(v, '\0', 61);
 }
 
 static void p400_plane_init_func(stp_vars_t *v)
 {
-  stp_zprintf(v, "\033ZC"); stp_zfwrite(zero, 1, 61, v);
+  stp_zprintf(v, "\033ZC"); olympus_print_bytes(v, '\0', 61);
 }
 
 static void p400_plane_end_func(stp_vars_t *v)
 {
-  stp_zprintf(v, "\033P"); stp_zfwrite(zero, 1, 62, v);
+  stp_zprintf(v, "\033P"); olympus_print_bytes(v, '\0', 62);
 }
 
 static void p400_block_init_func(stp_vars_t *v)
@@ -526,7 +526,7 @@ static void p400_block_init_func(stp_vars_t *v)
       stp_put16_be(privdata.block_max_x - privdata.block_min_x + 1, v);
       stp_put16_be(privdata.block_max_y - privdata.block_min_y + 1, v);
     }
-  stp_zfwrite(zero, 1, 53, v);
+  olympus_print_bytes(v, '\0', 53);
 }
 
 static const char p400_adj_cyan[] =
@@ -603,15 +603,15 @@ static void p440_printer_init_func(stp_vars_t *v)
   int wide = ! (strcmp(privdata.pagesize, "A4") == 0
 		  || strcmp(privdata.pagesize, "Custom") == 0);
 
-  stp_zprintf(v, "\033FP"); stp_zfwrite(zero, 1, 61, v);
+  stp_zprintf(v, "\033FP"); olympus_print_bytes(v, '\0', 61);
   stp_zprintf(v, "\033Y");
   stp_zfwrite((privdata.laminate->seq).data, 1,
 		  (privdata.laminate->seq).bytes, v); /* laminate */ 
-  stp_zfwrite(zero, 1, 61, v);
-  stp_zprintf(v, "\033FC"); stp_zfwrite(zero, 1, 61, v);
+  olympus_print_bytes(v, '\0', 61);
+  stp_zprintf(v, "\033FC"); olympus_print_bytes(v, '\0', 61);
   stp_zprintf(v, "\033ZF");
-  stp_putc((wide ? '\x40' : '\x00'), v); stp_zfwrite(zero, 1, 60, v);
-  stp_zprintf(v, "\033N\1"); stp_zfwrite(zero, 1, 61, v);
+  stp_putc((wide ? '\x40' : '\x00'), v); olympus_print_bytes(v, '\0', 60);
+  stp_zprintf(v, "\033N\1"); olympus_print_bytes(v, '\0', 61);
   stp_zprintf(v, "\033ZS");
   if (wide)
     {
@@ -623,16 +623,16 @@ static void p440_printer_init_func(stp_vars_t *v)
       stp_put16_be(privdata.xsize, v);
       stp_put16_be(privdata.ysize, v);
     }
-  stp_zfwrite(zero, 1, 57, v);
+  olympus_print_bytes(v, '\0', 57);
   if (strcmp(privdata.pagesize, "C6") == 0)
     {
-      stp_zprintf(v, "\033ZC"); stp_zfwrite(zero, 1, 61, v);
+      stp_zprintf(v, "\033ZC"); olympus_print_bytes(v, '\0', 61);
     }
 }
 
 static void p440_printer_end_func(stp_vars_t *v)
 {
-  stp_zprintf(v, "\033P"); stp_zfwrite(zero, 1, 62, v);
+  stp_zprintf(v, "\033P"); olympus_print_bytes(v, '\0', 62);
 }
 
 static void p440_block_init_func(stp_vars_t *v)
@@ -655,7 +655,7 @@ static void p440_block_init_func(stp_vars_t *v)
       stp_put16_be(privdata.block_max_x - privdata.block_min_x + 1, v);
       stp_put16_be(privdata.block_max_y - privdata.block_min_y + 1, v);
     }
-  stp_zfwrite(zero, 1, 53, v);
+  olympus_print_bytes(v, '\0', 53);
 }
 
 static void p440_block_end_func(stp_vars_t *v)
@@ -667,7 +667,7 @@ static void p440_block_end_func(stp_vars_t *v)
   		  privdata.block_max_x, privdata.block_min_x,
 	  	  privdata.block_max_y, privdata.block_min_y);
   stp_deprintf(STP_DBG_OLYMPUS, "olympus: olympus-p440 padding=%d\n", pad);
-  stp_zfwrite(zero, 1, pad, v);
+  olympus_print_bytes(v, '\0', pad);
 }
 
 
@@ -698,29 +698,29 @@ static const olymp_printsize_list_t ps100_printsize_list =
 
 static void ps100_printer_init_func(stp_vars_t *v)
 {
-  stp_zprintf(v, "\033U"); stp_zfwrite(zero, 1, 62, v);
+  stp_zprintf(v, "\033U"); olympus_print_bytes(v, '\0', 62);
   
-  /* stp_zprintf(v, "\033ZC"); stp_zfwrite(zero, 1, 61, v); */
+  /* stp_zprintf(v, "\033ZC"); olympus_print_bytes(v, '\0', 61); */
   
-  stp_zprintf(v, "\033W"); stp_zfwrite(zero, 1, 62, v);
+  stp_zprintf(v, "\033W"); olympus_print_bytes(v, '\0', 62);
   
   stp_zfwrite("\x30\x2e\x00\xa2\x00\xa0\x00\xa0", 1, 8, v);
   stp_put16_be(privdata.ysize, v);	/* paper height (px) */
   stp_put16_be(privdata.xsize, v);	/* paper width (px) */
-  stp_zfwrite(zero, 1, 3, v);
+  olympus_print_bytes(v, '\0', 3);
   stp_putc('\1', v);	/* number of copies */
-  stp_zfwrite(zero, 1, 8, v);
+  olympus_print_bytes(v, '\0', 8);
   stp_putc('\1', v);
-  stp_zfwrite(zero, 1, 15, v);
+  olympus_print_bytes(v, '\0', 15);
   stp_putc('\6', v);
-  stp_zfwrite(zero, 1, 23, v);
+  olympus_print_bytes(v, '\0', 23);
 
   stp_zfwrite("\033ZT\0", 1, 4, v);
   stp_put16_be(0, v);			/* image width offset (px) */
   stp_put16_be(0, v);			/* image height offset (px) */
   stp_put16_be(privdata.xsize, v);	/* image width (px) */
   stp_put16_be(privdata.ysize, v);	/* image height (px) */
-  stp_zfwrite(zero, 1, 52, v);
+  olympus_print_bytes(v, '\0', 52);
 }
 
 static void ps100_printer_end_func(stp_vars_t *v)
@@ -732,10 +732,10 @@ static void ps100_printer_end_func(stp_vars_t *v)
   		  privdata.block_max_x, privdata.block_min_x,
 	  	  privdata.block_max_y, privdata.block_min_y);
   stp_deprintf(STP_DBG_OLYMPUS, "olympus: olympus-ps100 padding=%d\n", pad);
-  stp_zfwrite(zero, 1, pad, v);		/* padding to 64B blocks */
+  olympus_print_bytes(v, '\0', pad);		/* padding to 64B blocks */
 
-  stp_zprintf(v, "\033PY"); stp_zfwrite(zero, 1, 61, v);
-  stp_zprintf(v, "\033u"); stp_zfwrite(zero, 1, 62, v);
+  stp_zprintf(v, "\033PY"); olympus_print_bytes(v, '\0', 61);
+  stp_zprintf(v, "\033u"); olympus_print_bytes(v, '\0', 62);
 }
 
 
@@ -777,7 +777,7 @@ static void cpx00_printer_init_func(stp_vars_t *v)
   stp_put16_be(0x4000, v);
   stp_putc('\0', v);
   stp_putc(pg, v);
-  stp_zfwrite(zero, 1, 8, v);
+  olympus_print_bytes(v, '\0', 8);
 }
 
 static void cpx00_plane_init_func(stp_vars_t *v)
@@ -785,7 +785,7 @@ static void cpx00_plane_init_func(stp_vars_t *v)
   stp_put16_be(0x4001, v);
   stp_put16_le(3 - privdata.plane, v);
   stp_put32_le(privdata.xsize * privdata.ysize, v);
-  stp_zfwrite(zero, 1, 4, v);
+  olympus_print_bytes(v, '\0', 4);
 }
 
 static const char cpx00_adj_cyan[] =
