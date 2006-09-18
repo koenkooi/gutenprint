@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2005/11/21 11:16:22 rleigh Exp $
+## $Id: Makefile.am,v 1.3 2006/09/18 01:48:58 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
