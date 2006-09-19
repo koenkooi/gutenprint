@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.8 2006/09/18 23:08:49 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.9 2006/09/19 14:46:32 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -52,6 +52,8 @@
 
 #define MIN(a,b)	(((a) < (b)) ? (a) : (b))
 #define MAX(a,b)	(((a) > (b)) ? (a) : (b))
+#define PX(pt,dpi)	((pt) * (dpi) / 72)
+#define PT(px,dpi)	((px) * 72 / (dpi))
 
 #define MAX_INK_CHANNELS	3
 #define MAX_BYTES_PER_CHANNEL	2
@@ -143,7 +145,7 @@ typedef struct {
   char empty_byte;
   unsigned short **image_data;
   int outh_px, outw_px, outt_px, outb_px, outl_px, outr_px;
-  int imgh_px, imgw_px, imgt_px, imgb_px, imgl_px, imgr_px;
+  int imgh_px, imgw_px;
   int prnh_px, prnw_px, prnt_px, prnb_px, prnl_px, prnr_px;
 } olympus_print_vars_t;
 
@@ -1939,8 +1941,6 @@ static int
 olympus_print_plane(stp_vars_t *v,
 		olympus_print_vars_t *pv,
 		olympus_cap_t *caps,
-		int y_min, int y_max,
-		int x_min, int x_max,
 		int plane)
 {
   int ret = 0;
@@ -1949,19 +1949,20 @@ olympus_print_plane(stp_vars_t *v,
   					* pv->bytes_per_ink_channel;
 
 
-  for (h = 0; h <= y_max - y_min; h++)
+  for (h = 0; h <= pv->prnb_px - pv->prnt_px; h++)
     {
       if (h % caps->block_size == 0)
         { /* block init */
-	  privdata.block_min_y = h + y_min;
-	  privdata.block_min_x = x_min;
-	  privdata.block_max_y = MIN(h + y_min + caps->block_size - 1, y_max);
-	  privdata.block_max_x = x_max;
+	  privdata.block_min_y = h + pv->prnt_px;
+	  privdata.block_min_x = pv->prnl_px;
+	  privdata.block_max_y = MIN(h + pv->prnt_px + caps->block_size - 1,
+	  					pv->prnb_px);
+	  privdata.block_max_x = pv->prnr_px;
 
 	  olympus_exec(v, caps->block_init_func, "caps->block_init");
 	}
 
-      if (h + y_min < pv->outt_px || h + y_min >= pv->outb_px)
+      if (h + pv->prnt_px < pv->outt_px || h + pv->prnt_px >= pv->outb_px)
         { /* empty part above or below image area */
           olympus_print_bytes(v, pv->empty_byte, out_bytes * pv->prnw_px);
 	}
@@ -1973,7 +1974,8 @@ olympus_print_plane(stp_vars_t *v,
               olympus_print_bytes(v, pv->empty_byte, out_bytes * pv->outl_px);
 	    }
 
-	  row = olympus_interpolate(h + y_min - pv->outt_px, pv->outh_px, pv->imgh_px);
+	  row = olympus_interpolate(h + pv->prnt_px - pv->outt_px,
+	  					pv->outh_px, pv->imgh_px);
 	  stp_deprintf(STP_DBG_OLYMPUS,
 	  	"olympus_print_plane: h = %d, row = %d\n", h, row);
 	  ret = olympus_print_row(v, pv, row, plane);
@@ -1986,7 +1988,7 @@ olympus_print_plane(stp_vars_t *v,
 	    }
 	}
 
-      if (h + y_min == privdata.block_max_y)
+      if (h + pv->prnt_px == privdata.block_max_y)
         { /* block end */
 	  olympus_exec(v, caps->block_end_func, "caps->block_end");
 	}
@@ -2001,8 +2003,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 {
   int i;
   olympus_print_vars_t pv;
-  int y_min, y_max;			/* Looping vars */
-  int x_min, x_max;
   int status = 1;
   const char *ink_order = NULL;
 
@@ -2055,28 +2055,24 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 	&page_pt_bottom, &page_pt_top);
   
   pv.prnw_px = MIN(max_print_px_width,
-		  	(page_pt_right - page_pt_left) * xdpi / 72);
+		  	PX(page_pt_right - page_pt_left, xdpi));
   pv.prnh_px = MIN(max_print_px_height,
-			(page_pt_bottom - page_pt_top) * ydpi / 72);
-  pv.outw_px = out_pt_width  * xdpi / 72;
-  pv.outh_px = out_pt_height * ydpi / 72;
+			PX(page_pt_bottom - page_pt_top, ydpi));
+  pv.outw_px = PX(out_pt_width, xdpi);
+  pv.outh_px = PX(out_pt_height, ydpi);
 
 
   /* if image size is close enough to output size send out original size */
-  if (pv.outw_px - pv.imgw_px > -5
-      && pv.outw_px - pv.imgw_px < 5
-      && pv.outh_px - pv.imgh_px > -5
-      && pv.outh_px - pv.imgh_px < 5)
-    {
+  if (abs(pv.outw_px - pv.imgw_px) < 5)
       pv.outw_px  = pv.imgw_px;
+  if (abs(pv.outh_px - pv.imgh_px) < 5)
       pv.outh_px = pv.imgh_px;
-    }
 
   pv.outw_px = MIN(pv.outw_px, pv.prnw_px);
   pv.outh_px = MIN(pv.outh_px, pv.prnh_px);
-  pv.outl_px = MIN(((out_pt_left - page_pt_left) * xdpi / 72),
+  pv.outl_px = MIN(PX(out_pt_left - page_pt_left, xdpi),
 			pv.prnw_px - pv.outw_px);
-  pv.outt_px = MIN(((out_pt_top  - page_pt_top)  * ydpi / 72),
+  pv.outt_px = MIN(PX(out_pt_top  - page_pt_top, ydpi),
 			pv.prnh_px - pv.outh_px);
   pv.outr_px = pv.outl_px + pv.outw_px;
   pv.outb_px = pv.outt_px  + pv.outh_px;
@@ -2095,7 +2091,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 	      "res (dpi)               %d x %d\n",
 	      page_pt_width, page_pt_height,
 	      pv.imgw_px, pv.imgh_px,
-	      pv.imgw_px * 72 / xdpi, pv.imgh_px * 72 / ydpi,
+	      PT(pv.imgw_px, xdpi), PT(pv.imgh_px, ydpi),
 	      out_pt_width, out_pt_height,
 	      pv.outw_px, pv.outh_px,
 	      out_pt_left, out_pt_top,
@@ -2143,6 +2139,9 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
  		(strcmp(ink_type, "RGB") == 0 || strcmp(ink_type, "BGR") == 0)
 		? '\xff' : '\0');
   pv.plane_interlacing = olympus_feature(caps, OLYMPUS_FEATURE_PLANE_INTERLACE);
+
+  if (!pv.image_data)
+      return 2;	
   /* /FIXME */
 
 
@@ -2154,32 +2153,32 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_HEIGHT))
     {
-      y_min = 0;
-      y_max = pv.prnh_px - 1;
+      pv.prnt_px = 0;
+      pv.prnb_px = pv.prnh_px - 1;
     }
   else if (olympus_feature(caps, OLYMPUS_FEATURE_BLOCK_ALIGN))
     {
-      y_min = pv.outt_px - (pv.outt_px % caps->block_size);
+      pv.prnt_px = pv.outt_px - (pv.outt_px % caps->block_size);
       				/* floor to multiple of block_size */
-      y_max = (pv.outb_px - 1) + (caps->block_size - 1)
+      pv.prnb_px = (pv.outb_px - 1) + (caps->block_size - 1)
       		- ((pv.outb_px - 1) % caps->block_size);
 				/* ceil to multiple of block_size */
     }
   else
     {
-      y_min = pv.outt_px;
-      y_max = pv.outb_px - 1;
+      pv.prnt_px = pv.outt_px;
+      pv.prnb_px = pv.outb_px - 1;
     }
   
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_WIDTH))
     {
-      x_min = 0;
-      x_max = pv.prnw_px - 1;
+      pv.prnl_px = 0;
+      pv.prnr_px = pv.prnw_px - 1;
     }
   else
     {
-      x_min = pv.outl_px;
-      x_max = pv.outr_px;
+      pv.prnl_px = pv.outl_px;
+      pv.prnr_px = pv.outr_px;
     }
       
 
@@ -2191,10 +2190,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
       /* plane init */
       olympus_exec(v, caps->plane_init_func, "caps->plane_init");
   
-      olympus_print_plane(v, &pv, caps,
-		y_min, y_max,
-		x_min, x_max,
-		(int) ink_order[pl] - 1);
+      olympus_print_plane(v, &pv, caps, (int) ink_order[pl] - 1);
 
       /* plane end */
       olympus_exec(v, caps->plane_end_func, "caps->plane_end");
