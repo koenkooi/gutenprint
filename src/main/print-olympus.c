@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.59.2.9 2006/09/19 14:46:32 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.59.2.10 2006/09/20 23:34:12 m0m Exp $"
  *
  *   Print plug-in Olympus driver for the GIMP.
  *
@@ -50,6 +50,9 @@
 #define OLYMPUS_FEATURE_WHITE_BORDER	0x00000010
 #define OLYMPUS_FEATURE_PLANE_INTERLACE	0x00000020
 
+#define OLYMPUS_PORTRAIT	0
+#define OLYMPUS_LANDSCAPE	1
+
 #define MIN(a,b)	(((a) < (b)) ? (a) : (b))
 #define MAX(a,b)	(((a) > (b)) ? (a) : (b))
 #define PX(pt,dpi)	((pt) * (dpi) / 72)
@@ -92,6 +95,7 @@ typedef struct {
   int border_pt_right;
   int border_pt_top;
   int border_pt_bottom;
+  int print_mode;
 } olymp_pagesize_t;
 
 typedef struct {
@@ -147,6 +151,7 @@ typedef struct {
   int outh_px, outw_px, outt_px, outb_px, outl_px, outr_px;
   int imgh_px, imgw_px;
   int prnh_px, prnw_px, prnt_px, prnb_px, prnl_px, prnr_px;
+  int print_mode;	/* portrait or landscape */
 } olympus_print_vars_t;
 
 typedef struct /* printer specific parameters */
@@ -230,9 +235,9 @@ static const olymp_resolution_list_t res_320dpi_list =
 
 static const olymp_pagesize_t p10_page[] =
 {
-  { "w288h432", "4 x 6", -1, -1, 0, 0, 16, 0},	/* 4x6" */
-  { "B7", "3.5 x 5", -1, -1, 0, 0, 4, 0},	/* 3.5x5" */
-  { "Custom", NULL, -1, -1, 28, 28, 48, 48},
+  { "w288h432", "4 x 6", -1, -1, 0, 0, 16, 0, OLYMPUS_PORTRAIT}, /* 4x6" */
+  { "B7", "3.5 x 5", -1, -1, 0, 0, 4, 0, OLYMPUS_PORTRAIT},	 /* 3.5x5" */
+  { "Custom", NULL, -1, -1, 28, 28, 48, 48, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t p10_page_list =
@@ -289,8 +294,8 @@ static const laminate_list_t p10_laminate_list =
 /* Olympus P-200 series */
 static const olymp_pagesize_t p200_page[] =
 {
-  { "ISOB7", "80x125mm", -1, -1, 16, 17, 33, 33},
-  { "Custom", NULL, -1, -1, 16, 17, 33, 33},
+  { "ISOB7", "80x125mm", -1, -1, 16, 17, 33, 33, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 16, 17, 33, 33, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t p200_page_list =
@@ -354,8 +359,8 @@ static const olymp_resolution_list_t p300_res_list =
 
 static const olymp_pagesize_t p300_page[] =
 {
-  { "A6", NULL, -1, -1, 28, 28, 48, 48},
-  { "Custom", NULL, -1, -1, 28, 28, 48, 48},
+  { "A6", NULL, -1, -1, 28, 28, 48, 48, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 28, 28, 48, 48, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t p300_page_list =
@@ -368,7 +373,7 @@ static const olymp_printsize_t p300_printsize[] =
   { "306x306", "A6", 1024, 1376},
   { "153x153", "A6",  512,  688},
   { "306x306", "Custom", 1024, 1376},
-  { "153x153", "Custom", 1024, 1376},
+  { "153x153", "Custom", 512, 688},
 };
 
 static const olymp_printsize_list_t p300_printsize_list =
@@ -459,10 +464,10 @@ static const olymp_resolution_list_t res_314dpi_list =
 
 static const olymp_pagesize_t p400_page[] =
 {
-  { "A4", NULL, -1, -1, 22, 22, 54, 54},
-  { "c8x10", "A5 wide", -1, -1, 58, 59, 84, 85},
-  { "C6", "2 Postcards (A4)", -1, -1, 9, 9, 9, 9},
-  { "Custom", NULL, -1, -1, 22, 22, 54, 54},
+  { "A4", NULL, -1, -1, 22, 22, 54, 54, OLYMPUS_PORTRAIT},
+  { "c8x10", "A5 wide", -1, -1, 58, 59, 84, 85, OLYMPUS_PORTRAIT},
+  { "C6", "2 Postcards (A4)", -1, -1, 9, 9, 9, 9, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 22, 22, 54, 54, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t p400_page_list =
@@ -583,11 +588,11 @@ static const char p400_adj_yellow[] =
 /* Olympus P-440 series */
 static const olymp_pagesize_t p440_page[] =
 {
-  { "A4", NULL, -1, -1, 10, 9, 54, 54},
-  { "c8x10", "A5 wide", -1, -1, 58, 59, 72, 72},
-  { "C6", "2 Postcards (A4)", -1, -1, 9, 9, 9, 9},
-  { "w255h581", "A6 wide", -1, -1, 25, 25, 25, 24},
-  { "Custom", NULL, -1, -1, 22, 22, 54, 54},
+  { "A4", NULL, -1, -1, 10, 9, 54, 54, OLYMPUS_PORTRAIT},
+  { "c8x10", "A5 wide", -1, -1, 58, 59, 72, 72, OLYMPUS_PORTRAIT},
+  { "C6", "2 Postcards (A4)", -1, -1, 9, 9, 9, 9, OLYMPUS_PORTRAIT},
+  { "w255h581", "A6 wide", -1, -1, 25, 25, 25, 24, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 22, 22, 54, 54, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t p440_page_list =
@@ -685,9 +690,9 @@ static void p440_block_end_func(stp_vars_t *v)
 /* Olympus PS-100 */
 static const olymp_pagesize_t ps100_page[] =
 {
-  { "w288h432", "4 x 6", -1, -1, 0, 0, 17, 0},	/* 4x6" */
-  { "B7", "3.5 x 5", -1, -1, 0, 0, 5, 0},	/* 3.5x5" */
-  { "Custom", NULL, -1, -1, 0, 0, 17, 0},
+  { "w288h432", "4 x 6", -1, -1, 0, 0, 17, 0, OLYMPUS_PORTRAIT},	/* 4x6" */
+  { "B7", "3.5 x 5", -1, -1, 0, 0, 5, 0, OLYMPUS_PORTRAIT},	/* 3.5x5" */
+  { "Custom", NULL, -1, -1, 0, 0, 17, 0, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t ps100_page_list =
@@ -753,10 +758,11 @@ static void ps100_printer_end_func(stp_vars_t *v)
 /* Canon CP-100 series */
 static const olymp_pagesize_t cpx00_page[] =
 {
-  { "Postcard", "Postcard 148x100mm", -1, -1, 13, 13, 16, 18},
-  { "w253h337", "CP_L 89x119mm", -1, -1, 13, 13, 15, 15},
-  { "w244h155", "Card 54x86mm", -1, -1, 15, 15, 13, 13},
-  { "Custom", NULL, -1, -1, 13, 13, 16, 18},
+  { "Postcard", "Postcard 100x148mm", -1, -1, 13, 13, 16, 18, OLYMPUS_PORTRAIT},
+  { "w253h337", "CP_L 89x119mm", -1, -1, 13, 13, 15, 15, OLYMPUS_PORTRAIT},
+  { "w244h155", "Card 54x86mm", -1, -1, 15, 15, 13, 13, OLYMPUS_PORTRAIT},
+  	/* FIXME: Card size should be  w155h244 and LANDSCAPE */
+  { "Custom", NULL, -1, -1, 13, 13, 16, 18, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t cpx00_page_list =
@@ -768,7 +774,7 @@ static const olymp_printsize_t cpx00_printsize[] =
 {
   { "314x314", "Postcard", 1232, 1808},
   { "314x314", "w253h337", 1100, 1456},
-  { "314x314", "w244h155", 1040, 672},
+  { "314x314", "w244h155", 1040, 672},	/* FIXME: LANDSCAPE, see above */
   { "314x314", "Custom", 1232, 1808},
 };
 
@@ -842,11 +848,12 @@ static const char cpx00_adj_yellow[] =
 /* Canon CP-220 series */
 static const olymp_pagesize_t cp220_page[] =
 {
-  { "Postcard", "Postcard 148x100mm", -1, -1, 13, 13, 16, 18},
-  { "w253h337", "CP_L 89x119mm", -1, -1, 13, 13, 15, 15},
-  { "w244h155", "Card 54x86mm", -1, -1, 15, 15, 13, 13},
-  { "w283h566", "Wide 200x100mm", -1, -1, 13, 13, 20, 20},
-  { "Custom", NULL, -1, -1, 13, 13, 16, 18},
+  { "Postcard", "Postcard 100x148mm", -1, -1, 13, 13, 16, 18, OLYMPUS_PORTRAIT},
+  { "w253h337", "CP_L 89x119mm", -1, -1, 13, 13, 15, 15, OLYMPUS_PORTRAIT},
+  { "w244h155", "Card 54x86mm", -1, -1, 15, 15, 13, 13, OLYMPUS_PORTRAIT},
+  	/* FIXME: Card size should be  w155h244 and LANDSCAPE */
+  { "w283h566", "Wide 100x200mm", -1, -1, 13, 13, 20, 20, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 13, 13, 16, 18, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t cp220_page_list =
@@ -858,7 +865,7 @@ static const olymp_printsize_t cp220_printsize[] =
 {
   { "314x314", "Postcard", 1232, 1808},
   { "314x314", "w253h337", 1100, 1456},
-  { "314x314", "w244h155", 1040, 672},
+  { "314x314", "w244h155", 1040, 672},	/* FIXME: LANDSCAPE, see above */
   { "314x314", "w283h566", 1232, 2416},
   { "314x314", "Custom", 1232, 1808},
 };
@@ -882,10 +889,10 @@ static const olymp_resolution_list_t updp10_res_list =
 
 static const olymp_pagesize_t updp10_page[] =
 {
-  { "w288h432", "UPC-10P23 (2:3)", -1, -1, 12, 12, 18, 18},
-  { "w288h387", "UPC-10P34 (3:4)", -1, -1, 12, 12, 16, 16},
-  { "w288h432", "UPC-10S01 (Sticker)", -1, -1, 12, 12, 18, 18},
-  { "Custom", NULL, -1, -1, 12, 12, 0, 0},
+  { "w288h432", "UPC-10P23 (2:3)", -1, -1, 12, 12, 18, 18, OLYMPUS_LANDSCAPE},
+  { "w288h387", "UPC-10P34 (3:4)", -1, -1, 12, 12, 16, 16, OLYMPUS_LANDSCAPE},
+  { "w288h432", "UPC-10S01 (Sticker)", -1, -1, 12, 12, 18, 18, OLYMPUS_LANDSCAPE},
+  { "Custom", NULL, -1, -1, 12, 12, 0, 0, OLYMPUS_LANDSCAPE},
 };
 
 static const olymp_pagesize_list_t updp10_page_list =
@@ -908,11 +915,18 @@ static const olymp_printsize_list_t updp10_printsize_list =
 static void updp10_printer_init_func(stp_vars_t *v)
 {
   stp_zfwrite("\x98\xff\xff\xff\xff\xff\xff\xff"
-	      "\x14\x00\x00\x00\x1b\x15\x00\x00"
-	      "\x00\x0d\x00\x00\x00\x00\x00\xc7"
-	      "\x00\x00\x00\x00", 1, 28, v);
-  stp_put16_be(privdata.xsize, v);
+	      "\x09\x00\x00\x00\x1b\xee\x00\x00"
+	      "\x00\x04", 1, 34, v);
+  stp_zfwrite((privdata.laminate->seq).data, 1,
+			(privdata.laminate->seq).bytes, v); /*laminate pattern*/
+  stp_zfwrite("\x00\x00\x00\x00", 1, 4, v);
   stp_put16_be(privdata.ysize, v);
+  stp_put16_be(privdata.xsize, v);
+  stp_zfwrite("\x14\x00\x00\x00\x1b\x15\x00\x00"
+	      "\x00\x0d\x00\x00\x00\x00\x00\x07"
+	      "\x00\x00\x00\x00", 1, 20, v);
+  stp_put16_be(privdata.ysize, v);
+  stp_put16_be(privdata.xsize, v);
   stp_put32_le(privdata.xsize*privdata.ysize*3+11, v);
   stp_zfwrite("\x1b\xea\x00\x00\x00\x00", 1, 6, v);
   stp_put32_be(privdata.xsize*privdata.ysize*3, v);
@@ -921,19 +935,10 @@ static void updp10_printer_init_func(stp_vars_t *v)
 
 static void updp10_printer_end_func(stp_vars_t *v)
 {
-	stp_zfwrite("\x12\x00\x00\x00\x1b\xe1\x00\x00"
-		    "\x00\xb0\x00\x00\04", 1, 13, v);
-	stp_zfwrite((privdata.laminate->seq).data, 1,
-			(privdata.laminate->seq).bytes, v); /*laminate pattern*/
-	stp_zfwrite("\x00\x00\x00\x00" , 1, 4, v);
-        stp_put16_be(privdata.ysize, v);
-        stp_put16_be(privdata.xsize, v);
-	stp_zfwrite("\xff\xff\xff\xff\x09\x00\x00\x00"
-		    "\x1b\xee\x00\x00\x00\x02\x00\x00"
-		    "\x01\x07\x00\x00\x00\x1b\x0a\x00"
-		    "\x00\x00\x00\x00\xfd\xff\xff\xff"
-		    "\xff\xff\xff\xff\xf8\xff\xff\xff"
-		    , 1, 40, v);
+	stp_zfwrite("\xff\xff\xff\xff\x07\x00\x00\x00"
+		    "\x1b\x0a\x00\x00\x00\x00\x00\xfd"
+		    "\xff\xff\xff\xff\xff\xff\xff"
+		    , 1, 23, v);
 }
 
 static const laminate_t updp10_laminate[] =
@@ -1004,11 +1009,11 @@ static const olymp_resolution_list_t updr150_res_list =
 
 static const olymp_pagesize_t updr150_page[] =
 {
-  { "w288h432",	"2UPC-153 (4x6)", -1, -1, 0, 0, 3, 2},
-  { "B7",	"2UPC-154 (3.5x5)", -1, -1, 3, 2, 0, 0},
-  { "w360h504",	"2UPC-155 (5x7)", -1, -1, 0, 0, 4, 4},
-  { "w432h576",	"2UPC-156 (6x8)", -1, -1, 3, 2, 5, 4},
-  { "Custom", NULL, -1, -1, 0, 0, 3, 2},
+  { "w288h432",	"2UPC-153 (4x6)", -1, -1, 0, 0, 3, 2, OLYMPUS_LANDSCAPE},
+  { "B7",	"2UPC-154 (3.5x5)", -1, -1, 3, 2, 0, 0, OLYMPUS_LANDSCAPE},
+  { "w360h504",	"2UPC-155 (5x7)", -1, -1, 0, 0, 4, 4, OLYMPUS_PORTRAIT},
+  { "w432h576",	"2UPC-156 (6x8)", -1, -1, 3, 2, 5, 4, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 0, 0, 3, 2, OLYMPUS_LANDSCAPE},
 };
 
 static const olymp_pagesize_list_t updr150_page_list =
@@ -1057,14 +1062,14 @@ static void updr150_printer_init_func(stp_vars_t *v)
 	      "\x1b\x15\x00\x00\x00\x0d\x00\x0d"
 	      "\x00\x00\x00\x00\x00\x00\x00\x07"
 	      "\x00\x00\x00\x00", 1, 91, v);
-  stp_put16_be(privdata.xsize, v);
   stp_put16_be(privdata.ysize, v);
+  stp_put16_be(privdata.xsize, v);
   stp_zfwrite("\xf9\xff\xff\xff\x07\x00\x00\x00"
 	      "\x1b\xe1\x00\x00\x00\x0b\x00\x0b"
 	      "\x00\x00\x00\x00\x80\x00\x00\x00"
 	      "\x00\x00", 1, 26, v);
-  stp_put16_be(privdata.xsize, v);
   stp_put16_be(privdata.ysize, v);
+  stp_put16_be(privdata.xsize, v);
   stp_zfwrite("\xf8\xff\xff\xff\x0b\x00\x00\x00\x1b\xea"
 	      "\x00\x00\x00\x00", 1, 14, v);
   stp_put32_be(privdata.xsize*privdata.ysize*3, v);
@@ -1095,10 +1100,10 @@ static const olymp_resolution_list_t cx400_res_list =
 
 static const olymp_pagesize_t cx400_page[] =
 {
-  { "w288h432", NULL, -1, -1, 23, 23, 28, 28},
-  { "w288h387", "4x5 3/8 (Digital Camera 3:4)", -1, -1, 23, 23, 27, 26},
-  { "w288h504", NULL, -1, -1, 23, 23, 23, 22},
-  { "Custom", NULL, -1, -1, 0, 0, 0, 0},
+  { "w288h432", NULL, -1, -1, 23, 23, 28, 28, OLYMPUS_PORTRAIT},
+  { "w288h387", "4x5 3/8 (Digital Camera 3:4)", -1, -1, 23, 23, 27, 26, OLYMPUS_PORTRAIT},
+  { "w288h504", NULL, -1, -1, 23, 23, 23, 22, OLYMPUS_PORTRAIT},
+  { "Custom", NULL, -1, -1, 0, 0, 0, 0, OLYMPUS_PORTRAIT},
 };
 
 static const olymp_pagesize_list_t cx400_page_list =
@@ -1665,7 +1670,8 @@ olympus_imageable_area_internal(const stp_vars_t *v,
 				int  *left,
 				int  *right,
 				int  *bottom,
-				int  *top)
+				int  *top,
+				int  *print_mode)
 {
   int width, height;
   int i;
@@ -1705,6 +1711,7 @@ olympus_imageable_area_internal(const stp_vars_t *v,
               *right  = width  - p->item[i].border_pt_right;
               *bottom = height - p->item[i].border_pt_bottom;
 	    }
+	  *print_mode = p->item[i].print_mode;
           break;
         }
     }
@@ -1717,7 +1724,8 @@ olympus_imageable_area(const stp_vars_t *v,
 		       int  *bottom,
 		       int  *top)
 {
-  olympus_imageable_area_internal(v, 0, left, right, bottom, top);
+  int not_used;
+  olympus_imageable_area_internal(v, 0, left, right, bottom, top, &not_used);
 }
 
 static void
@@ -1727,7 +1735,8 @@ olympus_maximum_imageable_area(const stp_vars_t *v,
 			       int  *bottom,
 			       int  *top)
 {
-  olympus_imageable_area_internal(v, 1, left, right, bottom, top);
+  int not_used;
+  olympus_imageable_area_internal(v, 1, left, right, bottom, top, &not_used);
 }
 
 static void
@@ -1775,6 +1784,14 @@ olympus_print_bytes(stp_vars_t *v, char byte, int count)
   int i;
   for (i = 0; i < count; i++)
     stp_putc(byte, v);
+}
+
+static void
+olympus_swap_ints(int *a, int *b)
+{
+  int t = *a;
+  *a = *b; 
+  *b = t;
 }
 
 static void
@@ -1882,6 +1899,12 @@ olympus_print_pixel(stp_vars_t *v,
   unsigned char *ink_u8;
   int i, j;
   
+  if (pv->print_mode == OLYMPUS_LANDSCAPE)
+    { /* "rotate" image */
+      olympus_swap_ints(&col, &row);
+      row = (pv->imgw_px - 1) - row;
+    }
+
   out = &(pv->image_data[row][col * pv->out_channels]);
 
   for (i = 0; i < pv->ink_channels; i++)
@@ -2026,6 +2049,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   int page_pt_right = 0;
   int page_pt_top = 0;
   int page_pt_bottom = 0;
+  int page_mode;	
 
   int pl;
 
@@ -2051,8 +2075,8 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
   if (olympus_feature(caps, OLYMPUS_FEATURE_WHITE_BORDER))
     stp_default_media_size(v, &page_pt_right, &page_pt_bottom);
   else
-    olympus_imageable_area(v, &page_pt_left, &page_pt_right,
-	&page_pt_bottom, &page_pt_top);
+    olympus_imageable_area_internal(v, 0, &page_pt_left, &page_pt_right,
+	&page_pt_bottom, &page_pt_top, &page_mode);
   
   pv.prnw_px = MIN(max_print_px_width,
 		  	PX(page_pt_right - page_pt_left, xdpi));
@@ -2139,7 +2163,7 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
  		(strcmp(ink_type, "RGB") == 0 || strcmp(ink_type, "BGR") == 0)
 		? '\xff' : '\0');
   pv.plane_interlacing = olympus_feature(caps, OLYMPUS_FEATURE_PLANE_INTERLACE);
-
+  pv.print_mode = page_mode;
   if (!pv.image_data)
       return 2;	
   /* /FIXME */
@@ -2147,9 +2171,6 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
 
   stp_set_float_parameter(v, "Density", 1.0);
 
-
-  /* printer init */
-  olympus_exec(v, caps->printer_init_func, "caps->printer_init");
 
   if (olympus_feature(caps, OLYMPUS_FEATURE_FULL_HEIGHT))
     {
@@ -2181,6 +2202,21 @@ olympus_do_print(stp_vars_t *v, stp_image_t *image)
       pv.prnr_px = pv.outr_px;
     }
       
+  if (pv.print_mode == OLYMPUS_LANDSCAPE)
+    {
+      olympus_swap_ints(&pv.outh_px, &pv.outw_px);
+      olympus_swap_ints(&pv.outt_px, &pv.outl_px);
+      olympus_swap_ints(&pv.outb_px, &pv.outr_px);
+      
+      olympus_swap_ints(&pv.prnh_px, &pv.prnw_px);
+      olympus_swap_ints(&pv.prnt_px, &pv.prnl_px);
+      olympus_swap_ints(&pv.prnb_px, &pv.prnr_px);
+      
+      olympus_swap_ints(&pv.imgh_px, &pv.imgw_px);
+    }
+
+  /* printer init */
+  olympus_exec(v, caps->printer_init_func, "caps->printer_init");
 
   for (pl = 0; pl < (pv.plane_interlacing ? pv.ink_channels : 1); pl++)
     {
