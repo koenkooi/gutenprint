@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2005/11/21 11:16:22 rleigh Exp $
+## $Id: Makefile.am,v 1.8 2006/09/22 13:29:50 faust3 Exp $
 ## Copyright (C) 2000,2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 @SET_MAKE@
 
-SUBDIRS = gutenprint gutenprintui gutenprintui2
+SUBDIRS = gutenprint gutenprintui2
 
 include $(top_srcdir)/scripts/global.mk
 
