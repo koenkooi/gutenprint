@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.146 2006/09/14 13:35:45 easysw Exp $
+## $Id: Makefile.am,v 1.147 2006/09/22 08:42:53 m0m Exp $
 ## Copyright (C) 2000-2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ include $(top_srcdir)/scripts/global.mk
 
 ## Variables
 
-SUBDIRS = include src samples test po man doc scripts
+SUBDIRS = include src samples test po man scripts
 DISTDIRS = m4 m4extra
 
 
