@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.155 2006/09/22 01:59:09 rlk Exp $
+dnl $Id: configure.ac,v 1.156 2006/09/22 15:13:35 rleigh Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.155 $)
+AC_REVISION($Revision: 1.156 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -712,7 +712,6 @@ AC_CHECK_LIB(m,pow,
 STP_CUPS_LIBS
 
 STP_GIMP2_LIBS
-dnl STP_GIMP2_PLUG_IN_DIR is obsolete
 
 dnl Checks for header files.
 AC_HEADER_STDC
