@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.160 2006/09/28 13:39:50 m0m Exp $"
+   "$Id: printers.xml,v 1.161 2006/09/28 15:40:06 m0m Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -827,7 +827,7 @@
       <printer name="Lexmark Z52" driver="lexmark-z52" manufacturer="Lexmark" model="10052" parameters="standard_params" />
       <printer name="Lexmark Z53" driver="lexmark-z53" manufacturer="Lexmark" model="10052" parameters="standard_params" />
     </family>
-    <family name="olympus">
+    <family name="dyesub">
       <printer name="Olympus P-10" driver="olympus-p10" manufacturer="Olympus" model="2" />
       <printer name="Olympus P-11" driver="olympus-p11" manufacturer="Olympus" model="2" />
       <printer name="Olympus P-200" driver="olympus-p200" manufacturer="Olympus" model="4" />

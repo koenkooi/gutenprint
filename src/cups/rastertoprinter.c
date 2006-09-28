@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.105 2006/09/12 19:03:32 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.106 2006/09/28 15:40:05 m0m Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -347,13 +347,13 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings)
   switch (cups->header.cupsColorSpace)
     {
     case CUPS_CSPACE_W :
-      /* Olympus photo printers don't support black & white ink! */
+      /* DyeSub photo printers don't support black & white ink! */
       if (printer_supports_bw(v))
 	set_string_parameter(v, "PrintingMode", "BW");
       set_string_parameter(v, "InputImageType", "Whitescale");
       break;
     case CUPS_CSPACE_K :
-      /* Olympus photo printers don't support black & white ink! */
+      /* DyeSub photo printers don't support black & white ink! */
       if (printer_supports_bw(v))
 	set_string_parameter(v, "PrintingMode", "BW");
       set_string_parameter(v, "InputImageType", "Grayscale");
@@ -1201,5 +1201,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.105 2006/09/12 19:03:32 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.106 2006/09/28 15:40:05 m0m Exp $".
  */
