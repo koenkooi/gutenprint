@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.192 2006/09/29 13:32:13 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.193 2006/09/29 14:42:51 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -794,6 +794,15 @@ canon_cmd(const stp_vars_t *v, /* I - the printer         */
 #define ESC5b "\033\133"
 #define ESC40 "\033\100"
 
+static void canon_control_cmd(const stp_vars_t*v,const char* cmd){
+      canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x1f);
+      stp_puts("BJLSTART\nControlMode=Common\n",v);
+      stp_puts(cmd,v);
+      stp_putc('\n',v);
+      stp_puts("BJLEND\n",v);
+}
+
+
 /* ESC [K --  -- reset printer:
  */
 static void
@@ -802,14 +811,12 @@ canon_init_resetPrinter(const stp_vars_t *v, canon_init_t *init)
   if ( init->caps->control_cmdlist ){
     int i=0;
     while(init->caps->control_cmdlist[i]){
-      canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x1f);
-      stp_puts("BJLSTART\nControlMode=Common\n",v);
-      stp_puts(init->caps->control_cmdlist[i],v);
-      stp_putc('\n',v);
-      stp_puts("BJLEND\n",v);
+      canon_control_cmd(v,init->caps->control_cmdlist[i]);
       ++i;
     }
   }
+  if(!strcmp(init->slot->name,"CD"))
+    canon_control_cmd(v,"MediaDetection=ON");
   canon_cmd(v,ESC5b,0x4b, 2, 0x00,0x0f);
 }
 
