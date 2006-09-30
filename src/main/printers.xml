@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.161 2006/09/28 15:40:06 m0m Exp $"
+   "$Id: printers.xml,v 1.162 2006/09/30 21:56:50 m0m Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -855,6 +855,8 @@
       <printer name="Fujifilm Printpix-CX-400" driver="fujifilm-cx400" manufacturer="Fujifilm" model="3000" />
       <printer name="Fujifilm Printpix-CX-550" driver="fujifilm-cx550" manufacturer="Fujifilm" model="3001" />
       <printer name="Fujifilm FinePix-NX-500" driver="fujifilm-nx500" manufacturer="Fujifilm" model="3002" />
+      <printer name="Kodak Easyshare-Printer-Dock" driver="kodak-dock"
+      manufacturer="Kodak" model="4000" />
     </family>
     <family name="raw">
       <printer name="RAW DATA 16 bit" driver="raw-data-16" manufacturer="" model="0" />
