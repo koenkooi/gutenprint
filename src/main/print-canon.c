@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.193 2006/09/29 14:42:51 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.194 2006/09/30 13:45:32 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1224,7 +1224,8 @@ canon_init_printer(const stp_vars_t *v, canon_init_t *init)
   /* some linefeeds */
 
   mytop= (init->top*init->mode->ydpi)/72;
-  canon_cmd(v,ESC28,0x65, 2, (mytop >> 8 ),(mytop & 255));
+  if(mytop)
+    canon_cmd(v,ESC28,0x65, 2, (mytop >> 8 ),(mytop & 255));
 }
 
 static void
