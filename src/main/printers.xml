@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.162 2006/09/30 21:56:50 m0m Exp $"
+   "$Id: printers.xml,v 1.163 2006/10/01 12:58:06 m0m Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -850,13 +850,14 @@
       <printer name="Canon SELPHY-CP-510" driver="canon-cp510" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-600" driver="canon-cp600" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-710" driver="canon-cp710" manufacturer="Canon" model="1001" />
+      <printer name="Sony DPP-EX5" driver="sony-dppex5" manufacturer="Sony" model="2002" />
+      <printer name="Sony DPP-EX7" driver="sony-dppex5" manufacturer="Sony" model="2002" />
       <printer name="Sony UP-DP10" driver="sony-updp10" manufacturer="Sony" model="2000" />
       <printer name="Sony UP-DR150" driver="sony-updr150" manufacturer="Sony" model="2001" />
       <printer name="Fujifilm Printpix-CX-400" driver="fujifilm-cx400" manufacturer="Fujifilm" model="3000" />
       <printer name="Fujifilm Printpix-CX-550" driver="fujifilm-cx550" manufacturer="Fujifilm" model="3001" />
       <printer name="Fujifilm FinePix-NX-500" driver="fujifilm-nx500" manufacturer="Fujifilm" model="3002" />
-      <printer name="Kodak Easyshare-Printer-Dock" driver="kodak-dock"
-      manufacturer="Kodak" model="4000" />
+      <printer name="Kodak Easyshare-Printer-Dock" driver="kodak-dock" manufacturer="Kodak" model="4000"/>
     </family>
     <family name="raw">
       <printer name="RAW DATA 16 bit" driver="raw-data-16" manufacturer="" model="0" />
