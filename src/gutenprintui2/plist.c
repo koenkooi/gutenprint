@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.6 2005/10/26 01:28:35 rlk Exp $"
+ * "$Id: plist.c,v 1.7 2006/11/15 12:56:24 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -624,6 +624,8 @@ stpui_plist_add(const stpui_plist_t *key, int add_only)
    * always first in the list, else call psearch.
    */
   stpui_plist_t *p;
+  if (!stp_get_printer(key->v))
+    stp_set_driver(key->v, "ps2");
   if (stp_get_printer(key->v))
     {
       p = psearch(key, stpui_plist, stpui_plist_count,
@@ -653,8 +655,13 @@ stpui_plist_add(const stpui_plist_t *key, int add_only)
 #endif
 	  stpui_plist_copy(p, key);
 	}
+      return 1;
     }
-  return 1;
+  else
+    {
+      fprintf(stderr, "No printer found!\n");
+      return 0;
+    }
 }
 
 static void
@@ -1751,5 +1758,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.6 2005/10/26 01:28:35 rlk Exp $".
+ * End of "$Id: plist.c,v 1.7 2006/11/15 12:56:24 rlk Exp $".
  */
