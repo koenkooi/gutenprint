@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.197 2006/11/04 19:44:22 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.198 2006/11/19 20:04:51 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1657,7 +1657,7 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
 
   /* Allocate compression buffer */
   if(caps->features & CANON_CAP_I)
-      privdata.comp_buf = stp_zalloc(privdata.buf_length_max * 2 * RASTER_LINES_PER_BLOCK * 4); /* for multiraster we need to buffer 8 lines for every color */
+      privdata.comp_buf = stp_zalloc(privdata.buf_length_max * 2 * RASTER_LINES_PER_BLOCK * privdata.num_channels); /* for multiraster we need to buffer 8 lines for every color */
   else
       privdata.comp_buf = stp_zalloc(privdata.buf_length_max * 2);
   /* Allocate fold buffer */
