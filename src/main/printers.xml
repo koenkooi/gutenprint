@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.167 2006/12/19 15:53:40 tillkamppeter Exp $"
+   "$Id: printers.xml,v 1.168 2006/12/19 17:01:38 tillkamppeter Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -824,10 +824,10 @@
         <parameter type="float" name="Gamma">0.5</parameter>
         <parameter type="float" name="Density">2.0</parameter>
       </parameters>
+      <printer name="Compaq IJ1200" driver="compaq-ij1200" manufacturer="Compaq" model="10042" parameters="standard_params" />
+      <printer name="Lexmark X73" driver="lexmark-x73" manufacturer="Lexmark" model="10042" parameters="standard_params" />
       <printer name="Lexmark Z42" driver="lexmark-z42" manufacturer="Lexmark" model="10042" parameters="standard_params" />
       <printer name="Lexmark Z43" driver="lexmark-z43" manufacturer="Lexmark" model="10042" parameters="standard_params" />
-      <printer name="Lexmark X73" driver="lexmark-x73" manufacturer="Lexmark" model="10042" parameters="standard_params" />
-      <printer name="Compaq IJ1200" driver="compaq-ij1200" manufacturer="Compaq" model="10042" parameters="standard_params" />
       <printer name="Lexmark Z52" driver="lexmark-z52" manufacturer="Lexmark" model="10052" parameters="standard_params" />
       <printer name="Lexmark Z53" driver="lexmark-z53" manufacturer="Lexmark" model="10052" parameters="standard_params" />
     </family>
