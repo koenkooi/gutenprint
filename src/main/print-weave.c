@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.65 2006/07/07 22:34:43 rleigh Exp $"
+ * "$Id: print-weave.c,v 1.66 2007/01/23 01:16:37 rlk Exp $"
  *
  *   Softweave calculator for Gutenprint.
  *
@@ -1151,9 +1151,9 @@ stp_initialize_weave(stp_vars_t *v,
 	      sw->separation, sw->jets, sw->virtual_jets, osample,
 	      v_subpasses, v_subsample);
   stp_dprintf(STP_DBG_WEAVE_PARAMS, v,
-	      "      ncolors %d bpp %d width %d (%d) line_count %d first %d last %d\n",
+	      "      ncolors %d bpp %d width %d (%d) line_count %d first %d last %d max_offset %d\n",
 	      sw->ncolors, sw->bitwidth, linewidth, sw->horizontal_width,
-	      sw->vertical_height, first_line, last_line);
+	      sw->vertical_height, first_line, last_line, maxHeadOffset);
   stp_dprintf(STP_DBG_WEAVE_PARAMS, v,
 	      "      oversample %d line buffer count %d total buffer %d\n",
 	      sw->oversample, sw->vmod,
