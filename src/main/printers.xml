@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.169 2007/01/23 01:16:37 rlk Exp $"
+   "$Id: printers.xml,v 1.170 2007/01/24 02:29:04 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -818,6 +818,7 @@
       <printer name="Xerox DocuPrint P1202" driver="xerox-dp_p1202" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
       <printer name="Xerox DocuPrint P8e" driver="xerox-dp_p8e" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
       <printer name="Xerox Document Centre 400" driver="xerox-dc_400" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
+      <printer name="Xerox WorkCentre M118" driver="xerox-wc_m118" manufacturer="Xerox" model="6" parameters="pcl_laser_params" />
     </family>
     <family name="lexmark">
       <parameters name="standard_params">
