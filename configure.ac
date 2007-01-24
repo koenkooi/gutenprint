@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.157 2007/01/23 01:19:35 rlk Exp $
+dnl $Id: configure.ac,v 1.158 2007/01/24 02:28:34 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.157 $)
+AC_REVISION($Revision: 1.158 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -982,8 +982,8 @@ echo "================================================================"
 echo "  Release: $PACKAGE_STRING generated on $RELEASE_DATE"
 echo
 echo "  Features:"
-echo "    Build CUPS:                                 $BUILD_CUPS, installing in $cups_prefix"
 if test "$BUILD_CUPS" != "no" ; then
+    echo "    Build CUPS:                                 $BUILD_CUPS, installing in $cups_prefix"
     echo "        Build CUPS 1.2 enhancements:            $BUILD_CUPS_1_2"
     echo "        Build CUPS PPD files:                   $BUILD_CUPS_PPDS"
     if test "$BUILD_CUPS_PPDS" != "no" ; then
@@ -1004,6 +1004,8 @@ if test "$BUILD_CUPS" != "no" ; then
 	echo "                        Please review the README and release notes carefully!"
 	warnings_emitted=1
     fi
+else
+    echo "    Build CUPS:                                 $BUILD_CUPS"
 fi
 echo "    Build Ghostscript IJS driver:               $BUILD_GHOSTSCRIPT"
 echo "    Build Foomatic data:                        $BUILD_FOOMATIC"
