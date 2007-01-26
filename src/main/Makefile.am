@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.94 2007/01/24 23:36:39 rlk Exp $
+## $Id: Makefile.am,v 1.95 2007/01/26 01:04:52 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,14 @@ color_traditional_la_SOURCES = \
 
 color_traditional_la_LDFLAGS = -module -avoid-version
 
-print_canon_la_SOURCES = print-canon.c print-canon.h
+print_canon_la_SOURCES = \
+	print-canon.c \
+	print-canon.h \
+	canon-inks.h \
+	canon-media.h \
+	canon-modes.h \
+	canon-printers.h
+
 print_canon_la_LDFLAGS = -module -avoid-version
 
 print_escp2_la_SOURCES = \

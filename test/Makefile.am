@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.47 2006/09/30 14:31:26 faust3 Exp $
+## $Id: Makefile.am,v 1.48 2007/01/26 01:04:52 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ testdither_LDADD = $(GUTENPRINT_LIBS)
 xml_curve_SOURCES = xml-curve.c
 xml_curve_LDADD = $(GUTENPRINT_LIBS)
 
-pixma_parse_SOURCES = pixma_parse.c
+pixma_parse_SOURCES = pixma_parse.c pixma_parse.h
 
 ## Rules
 
