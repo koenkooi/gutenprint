@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.108 2007/01/25 02:44:35 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.109 2007/01/27 19:40:20 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -440,6 +440,7 @@ typedef struct escp2_printer
   short		max_vres;
   short		min_hres;
   short		min_vres;
+/*****************************************************************************/
   /* Miscellaneous printer-specific data */
   short		extra_feed;	/* Extra distance the paper can be spaced */
 				/* beyond the bottom margin, in 1/360". */
@@ -455,7 +456,9 @@ typedef struct escp2_printer
   short		initial_vertical_offset;
   short		black_initial_vertical_offset;
   short		extra_720dpi_separation;
-  short		horizontal_position_alignment; /* Horizontal alignment */
+  short		min_horizontal_position_alignment; /* Horizontal alignment */
+					       /* for good performance */
+  short		base_horizontal_position_alignment; /* Horizontal alignment */
 					       /* for good performance */
   int		bidirectional_upper_limit;     /* Highest total resolution */
 					       /* for bidirectional printing */
@@ -657,5 +660,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.108 2007/01/25 02:44:35 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.109 2007/01/27 19:40:20 rlk Exp $".
  */
