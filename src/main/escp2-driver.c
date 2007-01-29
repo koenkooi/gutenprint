@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.34 2007/01/28 02:09:45 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.35 2007/01/29 01:17:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -241,7 +241,8 @@ escp2_set_remote_sequence(stp_vars_t *v)
 	  stp_send_command(v, "SN", "bccc", 0, 0, feed_sequence);
 	  if (stp_get_boolean_parameter(v, "FullBleed"))
 	    {
-	      stp_send_command(v, "FP", "bch", 0, 0xffb0);
+	      stp_send_command(v, "FP", "bch", 0,
+			       (unsigned short) -pd->zero_margin_offset);
 	      if (pd->borderless_sequence)
 		stp_zfwrite(pd->borderless_sequence->data,
 			    pd->borderless_sequence->bytes,

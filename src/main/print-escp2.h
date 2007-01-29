@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.109 2007/01/27 19:40:20 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.110 2007/01/29 01:17:23 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -453,6 +453,7 @@ typedef struct escp2_printer
 
   short         zero_margin_offset;   /* Offset to use to achieve */
 				      /* zero-margin printing */
+  short		micro_left_margin; /* Precise left margin (base separation) */
   short		initial_vertical_offset;
   short		black_initial_vertical_offset;
   short		extra_720dpi_separation;
@@ -555,6 +556,7 @@ typedef struct
   int micro_units;		/* Micro-units for horizontal positioning */
   int unit_scale;		/* Scale factor for units */
   int send_zero_pass_advance;	/* Send explicit command for zero advance */
+  int zero_margin_offset;	/* Zero margin offset */
 
   /* Ink parameters */
   int bitwidth;			/* Number of bits per ink drop */
@@ -660,5 +662,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.109 2007/01/27 19:40:20 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.110 2007/01/29 01:17:23 rlk Exp $".
  */
