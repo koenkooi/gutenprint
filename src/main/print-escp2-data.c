@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.210 2007/01/30 02:09:12 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.211 2007/02/04 22:54:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1197,7 +1197,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
   /* 46: Stylus Photo 950/960 */
   {
     (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
-     MODEL_ZEROMARGIN_FULL | MODEL_VACUUM_NO | MODEL_FAST_360_YES |
+     MODEL_ZEROMARGIN_YES | MODEL_VACUUM_NO | MODEL_FAST_360_YES |
      MODEL_SEND_ZERO_ADVANCE_YES | MODEL_SUPPORTS_INK_CHANGE_NO |
      MODEL_PACKET_MODE_YES),
     96, 96, 2, 96, 96, 2, 24, 24, 1, 6,
