@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.25 2006/05/22 20:25:51 rleigh Exp $
+# $Id: cups-genppdupdate.in,v 1.26 2007/02/10 21:12:20 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -412,12 +412,10 @@ default_loop:
 			next default_loop;
 		    }
 		}
-		printf STDERR
-		    "$ppd_source_filename: Invalid option: *$default_option: $defaults{$default_option}.  Skipped.\n";
+		warn "Warning: $ppd_source_filename: Invalid option: *$default_option: $defaults{$default_option}.  Using default setting.\n";
 		next;
 	    }
-	    print STDERR
-		"$ppd_source_filename: PPD OpenUI method $new_default_types{$_} not understood.  Skipped\n";
+	    warn "Warning: $ppd_source_filename: PPD OpenUI method $new_default_types{$_} not understood.\n";
 	}
     }
 
