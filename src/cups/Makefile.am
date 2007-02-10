@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.90 2006/09/22 01:59:09 rlk Exp $
+## $Id: Makefile.am,v 1.91 2007/02/10 21:12:49 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -123,7 +123,7 @@ endif
 ## Rules
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
-	if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
+	if test -n "$(CUPS_PKG)" -a -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	  $(mkdir_p) $(DESTDIR)$(cups_modeldir); \
 	  cd ppd ; \
 	  for language in * ; do \
