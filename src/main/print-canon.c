@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.199 2007/02/24 21:45:37 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.200 2007/02/24 22:04:26 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1498,7 +1498,7 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
 
 
   /* rotate even pages for DuplexNoTumble */
-  if((page_number & 1) && !strcmp(duplex_mode,"DuplexNoTumble"))
+  if((page_number & 1) && duplex_mode && !strcmp(duplex_mode,"DuplexNoTumble"))
   	image = stpi_buffer_image(image,BUFFER_FLAG_FLIP_X | BUFFER_FLAG_FLIP_Y);
 
   memset(&privdata,0,sizeof(canon_privdata_t));
