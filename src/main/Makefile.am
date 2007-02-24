@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.96 2007/01/27 01:19:23 rlk Exp $
+## $Id: Makefile.am,v 1.97 2007/02/24 21:43:49 faust3 Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -131,6 +131,7 @@ libgutenprint_la_SOURCES =			\
 	dither-predithered.c			\
 	generic-options.c			\
 	image.c					\
+	buffer-image.c				\
 	module.c				\
 	path.c					\
 	print-dither-matrices.c			\
