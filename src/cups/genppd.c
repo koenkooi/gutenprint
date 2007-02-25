@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.128 2007/02/25 18:57:29 rlk Exp $"
+ * "$Id: genppd.c,v 1.129 2007/02/25 22:44:56 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1638,6 +1638,16 @@ write_ppd(
     }
   stp_parameter_description_destroy(&desc);
 
+  gzprintf(fp, "*OpenUI *StpiShrinkOutput/%s: PickOne\n",
+	   _("Shrink Page If Necessary to Fit Borders"));
+  gzputs(fp, "*OrderDependency: 10 AnySetup *StpiShrinkOutput\n");
+  gzputs(fp, "*DefaultStpiShrinkOutput: Shrink\n");
+  gzputs(fp, "*StpDefaultStpiShrinkOutput: Shrink\n");
+  gzprintf(fp, "*StpiShrinkOutput %s/%s: \"\"\n", "Shrink", _("Shrink (print the whole page)"));
+  gzprintf(fp, "*StpiShrinkOutput %s/%s: \"\"\n", "Crop", _("Crop (preserve dimensions)"));
+  gzprintf(fp, "*StpiShrinkOutput %s/%s: \"\"\n", "Expand", _("Expand (use maximum page area)"));
+  gzputs(fp, "*CloseUI: *StpiShrinkOutput\n\n");
+
   param_list = stp_get_parameter_list(v);
 
   for (j = 0; j <= STP_PARAMETER_CLASS_OUTPUT; j++)
@@ -1889,5 +1899,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.128 2007/02/25 18:57:29 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.129 2007/02/25 22:44:56 rlk Exp $".
  */
