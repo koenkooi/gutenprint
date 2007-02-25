@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.126 2007/02/24 18:36:59 rlk Exp $"
+ * "$Id: genppd.c,v 1.127 2007/02/25 01:46:52 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -209,6 +209,11 @@ main(int  argc,			    /* I - Number of command-line arguments */
     return (list_ppds(argv[0]));
   else if (argc == 3 && !strcmp(argv[1], "cat"))
     return (cat_ppd(argv[2]));
+  else if (argc == 2 && !strcmp(argv[1], "VERSION"))
+    {
+      printf("%s\n", VERSION);
+      return (0);
+    }
   else
   {
     fprintf(stderr, "Usage: %s list\n", argv[0]);
@@ -1723,5 +1728,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.126 2007/02/24 18:36:59 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.127 2007/02/25 01:46:52 rlk Exp $".
  */
