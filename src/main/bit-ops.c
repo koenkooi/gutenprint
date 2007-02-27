@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.c,v 1.9 2006/03/28 03:27:57 rlk Exp $"
+ * "$Id: bit-ops.c,v 1.10 2007/02/27 01:43:23 rlk Exp $"
  *
  *   Softweave calculator for Gutenprint.
  *
@@ -915,6 +915,8 @@ stpi_unpack_16_2(int length,
 {
   unsigned char	tempin, shift;
   unsigned char temp[16];
+
+  length /= 2;
 
   if (length <= 0)
     return;
