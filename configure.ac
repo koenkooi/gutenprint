@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.160 2007/02/28 23:50:01 rlk Exp $
+dnl $Id: configure.ac,v 1.161 2007/03/01 00:15:13 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.160 $)
+AC_REVISION($Revision: 1.161 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -222,7 +222,6 @@ dnl There was no CUPS 1.0.15 or the like
   fi
   if test "$cups_major" -gt 1 -o "$cups_minor" -gt 1 ; then
     BUILD_CUPS_PPDS="no"
-    BUILD_TRANSLATED_CUPS_PPDS="no"
     BUILD_CUPS_1_2="yes"
   fi
 fi
@@ -766,6 +765,8 @@ AM_CONDITIONAL(BUILD_CUPS_PPDS, test x${BUILD_CUPS_PPDS} = xyes)
 AM_CONDITIONAL(CUPS_PPDS_AT_TOP_LEVEL, test x${CUPS_PPDS_AT_TOP_LEVEL} = xyes)
 
 AM_CONDITIONAL(BUILD_TRANSLATED_CUPS_PPDS, test x${BUILD_TRANSLATED_CUPS_PPDS} = xyes)
+
+AM_CONDITIONAL(BUILD_SIMPLIFIED_CUPS_PPDS, test x${BUILD_SIMPLIFIED_CUPS_PPDS} = xyes)
 
 if test x${USE_LEVEL3_PS} = xno ; then
   CUPS_PPD_PS_LEVEL=2
