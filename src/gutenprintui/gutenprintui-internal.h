@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprintui-internal.h,v 1.2 2005/09/17 21:54:33 rlk Exp $"
+ * "$Id: gutenprintui-internal.h,v 1.2.12.1 2007/03/02 12:01:17 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -139,7 +139,7 @@ typedef struct
 extern gint stpui_plist_count;	   /* Number of system printers */
 extern gint stpui_plist_current;     /* Current system printer */
 extern stpui_plist_t *stpui_plist;		  /* System printers */
-extern const char *stpui_printrc_current_printer;
+extern char *stpui_printrc_current_printer;
 extern int stpui_show_all_paper_sizes;
 extern stp_string_list_t *stpui_system_print_queues;
 

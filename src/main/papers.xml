@@ -4,7 +4,7 @@
    XML description of papers known to libgutenprint.
    It should be edited by hand.
 
-   "$Id: papers.xml,v 1.21 2006/04/20 00:33:41 rlk Exp $"
+   "$Id: papers.xml,v 1.21.8.1 2007/03/02 12:01:26 rlk Exp $"
 -->
 
 <!--
@@ -66,6 +66,13 @@
       <comment value="CD, 65mm diameter"/>
       <width value="184"/>
       <height value="184"/>
+      <unit value="english"/>
+    </paper>
+    <paper name="CDCustom">
+      <description value="CD - Custom"/>
+      <comment value="CD, custom diameter"/>
+      <width value="337"/>
+      <height value="337"/>
       <unit value="english"/>
     </paper>
     <paper name="w216h360">
@@ -940,11 +947,11 @@
       <height value="337"/>
       <unit value="metric-extended"/>
     </paper>
-    <paper name="w244h155">
+    <paper name="w155h244">
       <description value="Card"/>
       <comment value="86mm x 54mm"/>
-      <width value="244"/>
-      <height value="155"/>
+      <width value="155"/>
+      <height value="244"/>
       <unit value="metric-extended"/>
     </paper>
     <paper name="w283h566">

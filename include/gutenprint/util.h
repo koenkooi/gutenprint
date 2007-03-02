@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.3 2006/09/12 14:26:33 easysw Exp $"
+ * "$Id: util.h,v 1.3.2.1 2007/03/02 12:01:13 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -92,6 +92,7 @@ extern void stp_put16_be(unsigned short sh, const stp_vars_t *v);
 extern void stp_put32_le(unsigned int sh, const stp_vars_t *v);
 extern void stp_put32_be(unsigned int sh, const stp_vars_t *v);
 extern void stp_puts(const char *s, const stp_vars_t *v);
+extern void stp_putraw(const stp_raw_t *r, const stp_vars_t *v);
 extern void stp_send_command(const stp_vars_t *v, const char *command,
 			     const char *format, ...);
 
@@ -177,5 +178,5 @@ extern const char *stp_get_release_version(void);
 
 #endif /* GUTENPRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.3 2006/09/12 14:26:33 easysw Exp $".
+ * End of "$Id: util.h,v 1.3.2.1 2007/03/02 12:01:13 rlk Exp $".
  */

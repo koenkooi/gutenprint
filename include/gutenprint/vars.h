@@ -129,6 +129,9 @@ typedef struct
   const void *data; /*!< Raw data. */
 } stp_raw_t;
 
+#define STP_RAW(x) { sizeof((x)), (x) }
+#define STP_RAW_STRING(x) { sizeof((x)) - 1, (x) }
+
 /** double_bound (range) parameter. */
 typedef struct
 {
@@ -1380,5 +1383,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GUTENPRINT_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.3 2006/04/17 02:06:18 rlk Exp $".
+ * End of "$Id: vars.h,v 1.3.8.1 2007/03/02 12:01:14 rlk Exp $".
  */

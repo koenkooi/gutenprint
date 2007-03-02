@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.46 2006/05/12 01:10:19 rlk Exp $
+## $Id: Makefile.am,v 1.46.8.1 2007/03/02 12:01:35 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ TESTS = curve run-testdither run-weavetest
 ## Programs
 
 if BUILD_TEST
-noinst_PROGRAMS = testdither escp2-weavetest unprint pcl-unprint bjc-unprint curve xml-curve
+noinst_PROGRAMS = testdither escp2-weavetest unprint pcl-unprint bjc-unprint curve xml-curve pixma_parse
 endif
 
 escp2_weavetest_SOURCES = escp2-weavetest.c
@@ -54,6 +54,8 @@ testdither_LDADD = $(GUTENPRINT_LIBS)
 
 xml_curve_SOURCES = xml-curve.c
 xml_curve_LDADD = $(GUTENPRINT_LIBS)
+
+pixma_parse_SOURCES = pixma_parse.c pixma_parse.h
 
 ## Rules
 

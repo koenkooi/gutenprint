@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.19 2006/07/16 22:57:23 rlk Exp $
+## $Id: Makefile.am,v 1.19.6.1 2007/03/02 12:01:12 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -163,7 +163,7 @@ clean-local:
 	  $(RM) -f $(MANUAL_SRC_FILES) ; \
 	fi
 	-$(RM) -rf *.tex *.log *.aux *.dvi *.gz *.out *.junk *.out *.fot
-	-$(RM) -rf db2html* DB2HTML*
+	-$(RM) -rf db2html* DB2HTML* CATALOG.local
 
 veryclean:
 	$(MAKE) MAINT_MODE=true clean

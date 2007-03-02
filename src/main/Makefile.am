@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.93 2006/09/18 01:48:58 rlk Exp $
+## $Id: Makefile.am,v 1.92.10.1 2007/03/02 12:01:20 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,14 @@ color_traditional_la_SOURCES = \
 
 color_traditional_la_LDFLAGS = -module -avoid-version
 
-print_canon_la_SOURCES = print-canon.c
+print_canon_la_SOURCES = \
+	print-canon.c \
+	print-canon.h \
+	canon-inks.h \
+	canon-media.h \
+	canon-modes.h \
+	canon-printers.h
+
 print_canon_la_LDFLAGS = -module -avoid-version
 
 print_escp2_la_SOURCES = \
@@ -70,7 +77,7 @@ print_lexmark_la_LDFLAGS = -module -avoid-version
 print_pcl_la_SOURCES = print-pcl.c
 print_pcl_la_LDFLAGS = -module -avoid-version
 
-print_ps_la_SOURCES = print-ps.c ppd.c page.c mark.c ppd.h
+print_ps_la_SOURCES = print-ps.c
 print_ps_la_LDFLAGS = -module -avoid-version
 
 print_olympus_la_SOURCES = print-olympus.c
@@ -124,6 +131,7 @@ libgutenprint_la_SOURCES =			\
 	dither-predithered.c			\
 	generic-options.c			\
 	image.c					\
+	buffer-image.c				\
 	module.c				\
 	path.c					\
 	print-dither-matrices.c			\

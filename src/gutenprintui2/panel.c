@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.12 2006/09/18 01:48:58 rlk Exp $"
+ * "$Id: panel.c,v 1.11.8.1 2007/03/02 12:01:19 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
