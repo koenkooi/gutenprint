@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.368 2007/02/27 02:36:31 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.369 2007/03/02 02:26:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3277,7 +3277,8 @@ escp2_print_page(stp_vars_t *v, stp_image_t *image)
      pd->bitwidth,
      pd->image_printed_width,
      pd->image_printed_height,
-     pd->page_extra_height + (pd->image_top * pd->res->vres / 72),
+     ((pd->page_extra_height * pd->res->vres / pd->vertical_units) +
+      (pd->image_top * pd->res->vres / 72)),
      (pd->page_extra_height +
       (pd->page_height + escp2_extra_feed(v)) * pd->res->vres / 72),
      pd->head_offset,
