@@ -1,7 +1,7 @@
 /*
- * "$Id: paper_sizes.c,v 1.8 2004/09/17 18:38:12 rleigh Exp $"
+ * "$Id: paper_sizes.c,v 1.8.18.1 2007/03/04 23:57:48 tillkamppeter Exp $"
  *
- *   Dump the per-printer options for Grant Taylor's *-omatic database
+ *   Dump the per-printer options for the OpenPrinting database
  *
  *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
  *
