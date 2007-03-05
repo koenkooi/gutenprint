@@ -1,7 +1,7 @@
 /*
- * "$Id: printer_margins.c,v 1.18 2007/03/04 15:14:32 rlk Exp $"
+ * "$Id: printer_margins.c,v 1.19 2007/03/05 00:04:00 tillkamppeter Exp $"
  *
- *   Dump the per-printer margins for Grant Taylor's *-omatic database
+ *   Dump the per-printer margins for the OpenPrinting database
  *
  *   Copyright 2000, 2003 Robert Krawitz (rlk@alum.mit.edu) and
  *                        Till Kamppeter (till.kamppeter@gmail.com)

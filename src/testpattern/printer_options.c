@@ -1,7 +1,7 @@
 /*
- * "$Id: printer_options.c,v 1.3 2006/10/08 01:02:12 rlk Exp $"
+ * "$Id: printer_options.c,v 1.4 2007/03/05 00:04:00 tillkamppeter Exp $"
  *
- *   Dump the per-printer options for Grant Taylor's *-omatic database
+ *   Dump the per-printer options for the OpenPrinting database
  *
  *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
  *

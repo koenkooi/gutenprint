@@ -1,7 +1,7 @@
 /*
- * "$Id: gutenprint-version.c,v 1.2 2005/04/12 00:45:10 rlk Exp $"
+ * "$Id: gutenprint-version.c,v 1.3 2007/03/05 00:04:00 tillkamppeter Exp $"
  *
- *   Dump the per-printer options for Grant Taylor's *-omatic database
+ *   Dump the per-printer options for the OpenPrinting database
  *
  *   Copyright 2000 Robert Krawitz (rlk@alum.mit.edu)
  *
