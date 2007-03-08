@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.h,v 1.2 2005/06/29 01:42:34 rlk Exp $"
+ * "$Id: bit-ops.h,v 1.3 2007/03/08 13:34:27 faust3 Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -32,7 +32,16 @@
 extern "C" {
 #endif
 
-extern void	stp_fold(const unsigned char *line, int single_height,
+extern void	stp_fold(const unsigned char *line, int single_length,
+			 unsigned char *outbuf);
+
+extern void	stp_fold_3bit(const unsigned char *line, int single_length,
+			 unsigned char *outbuf);
+
+extern void	stp_fold_3bit_323(const unsigned char *line, int single_length,
+			 unsigned char *outbuf);
+
+extern void	stp_fold_4bit(const unsigned char *line, int single_length,
 			 unsigned char *outbuf);
 
 extern void	stp_split_2(int height, int bits, const unsigned char *in,
