@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.130 2007/03/01 00:15:13 rlk Exp $"
+ * "$Id: genppd.c,v 1.131 2007/03/11 18:39:34 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1219,6 +1219,7 @@ write_ppd(
     the_papers[cur_opt].top    = height - top;
 
     cur_opt++;
+    stp_clear_string_parameter(v, "PageSize");
   }
 
  /*
@@ -1305,6 +1306,7 @@ write_ppd(
     gzputs(fp, "*ParamCustomPageSize WidthOffset:  3 points 0 0\n");
     gzputs(fp, "*ParamCustomPageSize HeightOffset: 4 points 0 0\n");
     gzputs(fp, "*ParamCustomPageSize Orientation:  5 int 0 0\n\n");
+    stp_clear_string_parameter(v, "PageSize");
   }
 
   stp_parameter_description_destroy(&desc);
@@ -1903,5 +1905,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.130 2007/03/01 00:15:13 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.131 2007/03/11 18:39:34 rlk Exp $".
  */
