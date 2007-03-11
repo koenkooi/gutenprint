@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.12 2006/09/18 01:48:58 rlk Exp $"
+ * "$Id: panel.c,v 1.13 2007/03/11 18:56:56 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -4976,12 +4976,13 @@ dimension_update (GtkAdjustment *adjustment)
 	  opt->info.flt.adjustment &&
 	  adjustment == GTK_ADJUSTMENT(opt->info.flt.adjustment))
 	{
+	  int new_value = (adjustment->value + (.5 / unit_scaler)) * unit_scaler;
 	  invalidate_preview_thumbnail ();
 	  if (stp_get_dimension_parameter(pv->v, opt->fast_desc->name) !=
-	      adjustment->value * unit_scaler)
+	      new_value)
 	    {
 	      stp_set_dimension_parameter(pv->v, opt->fast_desc->name,
-					  adjustment->value * unit_scaler);
+					  new_value);
 	      update_adjusted_thumbnail(FALSE);
 	    }
 	}
