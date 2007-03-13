@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.7 2006/11/15 12:56:24 rlk Exp $"
+ * "$Id: plist.c,v 1.8 2007/03/13 23:26:23 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1209,6 +1209,8 @@ stpui_get_system_printers(void)
   identify_print_system();
   if (global_printing_system)
   {
+    const char *old_locale = getenv("LC_ALL");
+    (void) setenv("LC_ALL", "C", 1);
     if ((pfile = popen(global_printing_system->scan_command, "r")) != NULL)
     {
      /*
@@ -1230,6 +1232,10 @@ stpui_get_system_printers(void)
 	    }
 	}
       pclose(pfile);
+      if (old_locale)
+	setenv("LC_ALL", old_locale, 1);
+      else
+	unsetenv("LC_ALL");
     }
   }
 }
@@ -1758,5 +1764,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.7 2006/11/15 12:56:24 rlk Exp $".
+ * End of "$Id: plist.c,v 1.8 2007/03/13 23:26:23 rlk Exp $".
  */
