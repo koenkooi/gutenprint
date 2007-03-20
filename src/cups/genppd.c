@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.131 2007/03/11 18:39:34 rlk Exp $"
+ * "$Id: genppd.c,v 1.132 2007/03/20 18:01:52 tillkamppeter Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -276,7 +276,9 @@ cat_ppd(int argc, char **argv)	/* I - Driver URI */
   const stp_printer_t	*p;		/* Printer driver */
   const char		*lang = "C";
   char			*s;
+#ifdef ENABLE_NLS
   char			**all_langs = getlangs();
+#endif
   char			filename[1024],		/* Filename */
 			ppd_location[1024];	/* Installed location */
 
@@ -474,9 +476,11 @@ main(int  argc,			    /* I - Number of command-line arguments */
       verbose = 0;
       break;
     case 'c':
+#  ifdef ENABLE_NLS
       baselocaledir = optarg;
 #  ifdef DEBUG
       fprintf(stderr, "DEBUG: baselocaledir: %s\n", baselocaledir);
+#  endif
 #  endif
       break;
     case 'p':
@@ -1905,5 +1909,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.131 2007/03/11 18:39:34 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.132 2007/03/20 18:01:52 tillkamppeter Exp $".
  */
