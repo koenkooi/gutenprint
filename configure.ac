@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.162 2007/03/03 19:47:48 rlk Exp $
+dnl $Id: configure.ac,v 1.163 2007/03/24 20:17:35 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.162 $)
+AC_REVISION($Revision: 1.163 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -112,7 +112,7 @@ LDFLAGS="${LDFLAGS:=}"
 LIBS="${LIBS:=}"
 
 dnl Initialize automake stuff.
-AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-dist-gzip tar-ustar check-news gnu no-dependencies)
+AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-dist-gzip tar-ustar check-news gnu)
 popdef([GUTENPRINT_NAME])
 popdef([GUTENPRINT_VERSION])
 
