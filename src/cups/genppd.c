@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.132 2007/03/20 18:01:52 tillkamppeter Exp $"
+ * "$Id: genppd.c,v 1.133 2007/04/17 13:50:08 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -63,6 +63,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <libgen.h>
 
 #ifdef CUPS_DRIVER_INTERFACE
 #  ifdef HAVE_LIBZ
@@ -720,7 +721,7 @@ generate_ppd(
 	   cups_modeldir,
 	   cups_modeldir[strlen(cups_modeldir) - 1] == '/' ? "" : "/",
 	   language ? language : "C",
-	   filename);
+	   basename(filename));
 
   status = write_ppd(fp, p, language, ppd_location, simplified);
 
@@ -1909,5 +1910,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.132 2007/03/20 18:01:52 tillkamppeter Exp $".
+ * End of "$Id: genppd.c,v 1.133 2007/04/17 13:50:08 easysw Exp $".
  */
