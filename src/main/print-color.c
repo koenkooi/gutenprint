@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.135 2006/05/28 16:59:04 rlk Exp $"
+ * "$Id: print-color.c,v 1.136 2007/05/05 23:25:34 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -785,6 +785,8 @@ compute_gcr_curve(const stp_vars_t *vars)
     k_trans = stp_get_float_parameter(vars, "BlackTrans");
   k_upper *= lut->steps;
   k_lower *= lut->steps;
+  stp_dprintf(STP_DBG_LUT, vars, " k_lower %.3f\n", k_lower);
+  stp_dprintf(STP_DBG_LUT, vars, " k_upper %.3f\n", k_upper);
 
   if (k_lower > lut->steps)
     k_lower = lut->steps;
