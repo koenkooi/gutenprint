@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.66 2007/03/03 19:47:48 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.67 2007/05/05 17:26:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2370,6 +2370,8 @@ static const escp2_inkname_t *const standard_ink_types[] =
 
 DECLARE_INKLIST("None", standard, standard, N_("EPSON Standard Inks"),
 		standard, standard, standard);
+DECLARE_INKLIST("None", photo_gen3_4, standard, N_("EPSON Standard Inks"),
+		standard, photo3, standard);
 
 static const escp2_inkname_t *const quadtone_ink_types[] =
 {
@@ -2753,6 +2755,14 @@ static const inklist_t *const photo_gen3_group[] =
 
 DECLARE_INKGROUP(photo_gen3);
 
+static const inklist_t *const photo_gen3_4_group[] =
+{
+  &photo_gen3_4_inklist,
+  &quadtone_inklist
+};
+
+DECLARE_INKGROUP(photo_gen3_4);
+
 static const inklist_t *const photo_pigment_group[] =
 {
   &pigment_inklist
@@ -2839,6 +2849,7 @@ static const ink_t the_inks[] =
   { "photo_gen1", &photo_gen1_inkgroup },
   { "photo_gen2", &photo_gen2_inkgroup },
   { "photo_gen3", &photo_gen3_inkgroup },
+  { "photo_gen3_4", &photo_gen3_4_inkgroup },
   { "photo_pigment", &photo_pigment_inkgroup },
   { "ultrachrome", &ultrachrome_inkgroup },
   { "f360_photo", &f360_photo_inkgroup },

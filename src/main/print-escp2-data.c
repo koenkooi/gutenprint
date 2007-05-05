@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.214 2007/03/03 19:47:49 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.215 2007/05/05 17:26:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1865,6 +1865,24 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
     variable_bits, c1_5_base_res, "cd_roll_feed",
     "standard", &new_init_sequence, &je_deinit_sequence,
     NULL, NULL, "photo"
+  },
+  /* 83: Stylus Photo R240 */
+  {
+    (MODEL_VARIABLE_YES | MODEL_COMMAND_2000 | MODEL_GRAYMODE_YES |
+     MODEL_ZEROMARGIN_FULL | MODEL_VACUUM_NO | MODEL_FAST_360_NO |
+     MODEL_SEND_ZERO_ADVANCE_YES | MODEL_SUPPORTS_INK_CHANGE_NO |
+     MODEL_PACKET_MODE_YES),
+    90, 1, 3, 90, 1, 3, 90, 1, 3, 4,
+    360, 14400, -1, 5760, 1440, 360, 120,
+    0, 1, 0, 80, 42, 0, 0, 0, 1, 28800, 1440 * 1440,
+    INCH(17 / 2), INCH(1200), INCH(2), INCH(2),
+    9, 9, 0, 9, 9, 9, 0, 9, 9, 9, 0, 0, 9, 9, 0, 0, 204, 191, 595, 842, 24,
+    4, 15, 0, 0,
+    p3pl_dotsizes, p3pl_densities, "variable_3pl_pmg",
+    "superfine", "photo_gen3_4",
+    variable_bits, variable_base_res, "cd_roll_feed",
+    "standard", &new_init_sequence, &je_deinit_sequence,
+    &spr300_borderless_sequence, NULL, "standard"
   },
 };
 
