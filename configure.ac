@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.163 2007/03/24 20:17:35 rlk Exp $
+dnl $Id: configure.ac,v 1.164 2007/05/06 17:02:12 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.163 $)
+AC_REVISION($Revision: 1.164 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1046,6 +1046,7 @@ fi
 echo "    Build static libraries:                     $enable_static"
 echo "    Build shared libraries:                     $enable_shared"
 echo "    Maintainer mode:                            $USE_MAINTAINER_MODE"
+echo "    Use i18n:                                   $USE_NLS"
 echo "    Generate profiling information:             $ENABLE_PROFILE"
 echo "    Generate debugging symbols:                 $ENABLE_DEBUG"
 echo "    Use modules:                                $WITH_MODULES"
