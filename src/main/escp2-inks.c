@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.50 2007/05/05 23:37:01 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.51 2007/05/09 01:33:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -158,7 +158,7 @@ static const escp2_dropsize_t escp2_claria_720_dropsizes =
  *    720 DPI, so printing takes as long as it would at 1440x720
  *    DPI.  That rather defeats the purpose of using 720 DPI.
  */
-  { "claria_720", 3, { 0.0, 0.4, 1.0 } };
+  { "claria_720", 3, { 0.08, 0.3, 1.0 } };
 static const escp2_dropsize_t escp2_claria_1440_dropsizes =
   { "claria_1440", 3, { 0.18, 0.45, 1.0 } };
 static const escp2_dropsize_t escp2_claria_2880_dropsizes =
