@@ -1,31 +1,6 @@
 /*
- * "$Id: epson.c,v 1.7.8.1 2007/05/12 19:32:08 faust3 Exp $"
+ *   CANON backend for the Common UNIX Printing System.
  *
- *   EPSON backend for the Common UNIX Printing System.
- *
- *   Copyright 1993-2000 by Easy Software Products.
- *
- *   This program is free software; you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License,
- *   version 2, as published by the Free Software Foundation.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, please contact Easy Software
- *   Products at:
- *
- *       Attn: CUPS Licensing Information
- *       Easy Software Products
- *       44141 Airport View Drive, Suite 204
- *       Hollywood, Maryland 20636-3111 USA
- *
- *       Voice: (301) 373-9603
- *       EMail: cups-info@cups.org
- *         WWW: http://www.cups.org
  *
  * Contents:
  *
@@ -37,17 +12,11 @@
  * Include necessary headers.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #include <cups/cups.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <signal.h>
 #include <ctype.h>
-#ifdef HAVE_TIME_H
-#  include <time.h>
-#endif
 
 #if defined(WIN32) || defined(__EMX__)
 #  include <io.h>
@@ -91,7 +60,7 @@
  */
 
 void	list_devices(void);
-void    read_backchannel(int fd_out);
+
 
 /*
  * 'main()' - Send a file to the specified parallel port.
@@ -114,7 +83,8 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
   int		copies;		/* Number of copies to print */
   int		fd_out,		/* Parallel/USB device or socket */
   		fd_in,		/* Print file */
-		error;		/* Last error */
+		error,		/* Last error */
+		backchannel;	/* Read backchannel data? */
   struct sockaddr_in addr;	/* Socket address */
   struct hostent *hostaddr;	/* Host address */
   int		wbytes;		/* Number of bytes written */
@@ -122,6 +92,8 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 		tbytes;		/* Total number of bytes written */
   char		buffer[8192],	/* Output buffer */
 		*bufptr;	/* Pointer into buffer */
+  struct timeval timeout;	/* Timeout for select() */
+  fd_set	input;		/* Input set for select() */
   struct termios opts;		/* Parallel port options */
 #if defined(HAVE_SIGACTION) && !defined(HAVE_SIGSET)
   struct sigaction action;	/* Actions for POSIX signals */
@@ -135,7 +107,7 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
   }
   else if (argc < 6 || argc > 7)
   {
-    fputs("Usage: epson job-id user title copies options [file]\n", stderr);
+    fputs("Usage: canon job-id user title copies options [file]\n", stderr);
     return (1);
   }
 
@@ -198,7 +170,7 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
     }
 
     if (port == 0)
-      port = 9100;	/* Default for EPSON NIC */
+      port = 9100;	/* Default for CANON NIC */
 
     fprintf(stderr, "INFO: Attempting to connect to printer %s on port %d\n",
             hostname, port);
@@ -252,7 +224,7 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 
     do
     {
-      if ((fd_out = open(resource, O_RDWR | O_EXCL | O_NONBLOCK)) == -1)
+      if ((fd_out = open(resource, O_RDWR | O_EXCL)) == -1)
       {
 	if (errno == EBUSY)
 	{
@@ -282,12 +254,6 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
     tcsetattr(fd_out, TCSANOW, &opts);
   }
 
-  /*
-   * Set nonblocking I/O, if possible (might already be set).
-   */
-  fcntl(fd_out, F_SETFL,
-	O_NONBLOCK | fcntl(fd_out, F_GETFL));
-
  /*
   * Now that we are "connected" to the port, ignore SIGTERM so that we
   * can finish out any page data the driver sends (e.g. to eject the
@@ -309,6 +275,8 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
  /*
   * Finally, send the print file...
   */
+
+  backchannel = 1;
 
   while (copies > 0)
   {
@@ -332,50 +300,125 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
 
       while (nbytes > 0)
       {
-	if ((wbytes = write(fd_out, bufptr, nbytes)) < 0 &&
-	    (errno == EAGAIN || errno == EINTR))
-	  {
-	    /* Write would block, so sleep 0.002s and retry... */
-
-	    /*
-	     * Check for possible data coming back from the printer...
-	     */
-#if defined(HAVE_TIME_H) && defined(HAVE_NANOSLEEP)
-	    struct timespec sleeptime;
-#elif defined(HAVE_UNISTD_H) && defined(HAVE_USLEEP)
-#else
-	    struct timeval timeout;
-#endif
-	    read_backchannel(fd_out);
-#if defined(HAVE_TIME_H) && defined(HAVE_NANOSLEEP)
-	    sleeptime.tv_sec = 0;
-	    sleeptime.tv_nsec = 2000000;
-	    nanosleep(&sleeptime, &sleeptime);
-#elif defined(HAVE_UNISTD_H) && defined(HAVE_USLEEP)
-	    usleep(200000);
-#else
-	    timeout.tv_sec = 0;
-	    timeout.tv_usec = 2000;
-	    select(1, NULL, NULL, NULL, &timeout);
-#endif
-	    continue;
-	  }
-	else if (wbytes < 0) /* write error */
+	if ((wbytes = write(fd_out, bufptr, nbytes)) < 0)
+	{
+	  perror("ERROR: Unable to send print file to printer");
 	  break;
+	}
 
 	nbytes -= wbytes;
 	bufptr += wbytes;
       }
 
       if (nbytes > 0)
+	break;
+
+     /*
+      * Check for possible data coming back from the printer...
+      */
+
+      if (!backchannel)
+        continue;
+
+      timeout.tv_sec = 0;
+      timeout.tv_usec = 0;
+      FD_ZERO(&input);
+      FD_SET(fd_out, &input);
+      if (select(fd_out + 1, &input, NULL, NULL, &timeout) > 0)
+      {
+       /*
+	* Grab the data coming back and spit it out to stderr...
+	*/
+
+	if ((nbytes = read(fd_out, buffer, sizeof(buffer) - 1)) < 0)
 	{
-	  perror("ERROR: Unable to send print file to printer");
-	  break;
+	  fprintf(stderr, "ERROR: Back-channel read error - %s!\n",
+	          strerror(errno));
+          backchannel = 0;
+          continue;
 	}
 
-    if (argc > 6)
-      fprintf(stderr, "INFO: Sending print file, %u bytes...\n", tbytes);
+       /*
+	* Some devices report themselves permanently ready to read...
+	*/
 
+	if (nbytes == 0)
+	  continue;
+
+        buffer[nbytes] = '\0';
+	if (strncmp(buffer, "@BDC ", 5) != 0)
+	  fprintf(stderr, "WARNING: Received %d bytes of unknown back-channel data!\n",
+	          nbytes);
+	else
+	{
+	 /*
+	  * Skip initial report line...
+	  */
+
+	  for (bufptr = buffer; *bufptr && *bufptr != '\n'; bufptr ++);
+
+	  if (*bufptr == '\n')
+	    bufptr ++;
+
+         /*
+	  * Get status data...
+	  */
+
+          strcpy(buffer, bufptr);
+	  for (bufptr = buffer; *bufptr && *bufptr != ';'; bufptr ++);
+	  *bufptr = '\0';
+
+	  if (strncmp(buffer, "IQ:", 3) == 0)
+	  {
+	   /*
+	    * Report ink level...
+	    */
+
+            int i;
+            int levels[6];
+
+            buffer[12] = '\0'; /* Limit to 6 inks */
+	    for (i = 0, bufptr = buffer; i < 6; i ++, bufptr += 2)
+	    {
+	      if (isalpha(bufptr[0]))
+	        levels[i] = (tolower(bufptr[0]) - 'a' + 10) << 16;
+	      else
+	        levels[i] = (bufptr[0] - '0') << 16;
+
+	      if (isalpha(bufptr[1]))
+	        levels[i] |= tolower(bufptr[1]) - 'a' + 10;
+	      else
+	        levels[i] |= bufptr[1] - '0';
+            }
+
+            switch (i)
+	    {
+	      case 1 :
+	      case 2 :
+	          fprintf(stderr, "K=%d\n", levels[0]);
+		  break;
+	      case 3 :
+	          fprintf(stderr, "C=%d M=%d Y=%d\n", levels[0], levels[1],
+		          levels[2]);
+		  break;
+	      case 4 :
+	      case 5 :
+	          fprintf(stderr, "K=%d C=%d M=%d Y=%d\n", levels[0],
+		          levels[1], levels[2], levels[3]);
+		  break;
+	      case 6 :
+	          fprintf(stderr, "K=%d C=%d M=%d Y=%d LC=%d LM=%d\n",
+		          levels[0], levels[1], levels[2], levels[3],
+			  levels[4], levels[5]);
+		  break;
+            }
+	  }
+	  else
+	    fprintf(stderr, "INFO: %s\n", buffer);
+        }
+      }
+      else if (argc > 6)
+	fprintf(stderr, "INFO: Sending print file, %u bytes...\n", tbytes);
     }
   }
 
@@ -391,125 +434,6 @@ main(int  argc,		/* I - Number of command-line arguments (6 or 7) */
   return (0);
 }
 
-
-/*
- * 'read_backchannel()' - read data sent back from printer.
- */
-void
-read_backchannel(int fd_out)
-{
-  static int    backchannel = 1; /* Read backchannel data? */
-  int		nbytes;		 /* Number of bytes read */
-  int           ninks = 0;       /* Number of inks */
-  char		buffer[8192],	 /* Output buffer */
-		*bufptr;	 /* Pointer into buffer */
-
-
-  if (!backchannel)
-    return;
-
-  if ((nbytes = read(fd_out, buffer, sizeof(buffer) - 1)) < 0 && errno != EAGAIN)
-    {
-      fprintf(stderr, "ERROR: Back-channel read error - %s!\n",
-	      strerror(errno));
-      backchannel = 0;
-      return;
-    }
-
-  /*
-   * Some devices report themselves permanently ready to read...
-   */
-
-  /*fprintf(stderr, "Backchannel read: %d bytes\n", nbytes);*/
-
-  if (nbytes <= 0)
-    return;
-
-  buffer[nbytes] = '\0';
-  if (strncmp(buffer, "@BDC ", 5) != 0)
-    fprintf(stderr, "WARNING: Received %d bytes of unknown back-channel data!\n",
-	    nbytes);
-  else
-    {
-
-      /*
-       * Get status data...
-       */
-
-      bufptr = strstr(&buffer[0], "IQ:");
-      /*fprintf(stderr, "READBACK: %20s\n", bufptr);*/
-
-      if (bufptr)
-	{
-	  /*
-	   * Report ink level...
-	   */
-
-	  int i;
-	  int levels[7];
-
-	  bufptr += 3;
-
-	  for (i = 0; i < 7 && bufptr < &buffer[sizeof(buffer)-1];
-	       i ++, bufptr += 2)
-	    {
-	      int j, inkend = 0;
-
-	      if (!bufptr[0] || bufptr[0] == ';')
-		break;
-
-	      for (j = 0; j < 2; j++)
-		{
-		  if (bufptr[j] >= '0' && bufptr[j] <= '9')
-		    bufptr[j] -= '0';
-		  else if (bufptr[j] >= 'A' && bufptr[j] <= 'F')
-		    bufptr[j] = bufptr[j] - 'A' + 10;
-		  else if (bufptr[j] >= 'a' && bufptr[j] <= 'f')
-		    bufptr[j] = bufptr[j] - 'a' + 10;
-		  else
-		    {
-		      inkend = 1;
-		      break;
-		    }
-		}
-	      levels[i] = (bufptr[0] << 4) + bufptr[1];
-
-	      if (inkend)
-		break;
-
-	      ninks++;
-            }
-
-	  switch (ninks)
-	    {
-	    case 1 :
-	    case 2 :
-	      fprintf(stderr, "K=%d\n", levels[0]);
-	      break;
-	    case 3 :
-	      fprintf(stderr, "C=%d M=%d Y=%d\n", levels[0], levels[1],
-		      levels[2]);
-	      break;
-	    case 4 :
-	    case 5 :
-	      fprintf(stderr, "K=%d C=%d M=%d Y=%d\n", levels[0],
-		      levels[1], levels[2], levels[3]);
-	      break;
-	    case 6 :
-	      fprintf(stderr, "K=%d C=%d M=%d Y=%d LC=%d LM=%d\n",
-		      levels[0], levels[1], levels[2], levels[3],
-		      levels[4], levels[5]);
-	      break;
-	    case 7 :
-	      fprintf(stderr, "K=%d C=%d M=%d Y=%d LC=%d LM=%d GY=%d\n",
-		      levels[0], levels[1], levels[2], levels[3],
-		      levels[4], levels[5], levels[6]);
-            }
-	}
-      else
-	fprintf(stderr, "INFO: %s\n", buffer);
-    }
-}
 
 /*
  * 'list_devices()' - List all parallel devices.
@@ -542,7 +466,7 @@ list_devices(void)
     {
       sprintf(device, "/proc/parport/%d/autoprobe", i);
       probe = fopen(device, "r");
-    } 
+    }
     if ( probe != NULL )
     {
       memset(make, 0, sizeof(make));
@@ -573,8 +497,8 @@ list_devices(void)
 
       fclose(probe);
 
-      if (strcasecmp(make, "EPSON") == 0)
-	printf("direct epson:/dev/lp%d \"%s %s\" \"Gutenprint Parallel Port #%d\"\n",
+      if (strcasecmp(make, "CANON") == 0)
+	printf("direct canon:/dev/lp%d \"%s %s\" \"Gutenprint Parallel Port #%d\"\n",
 	       i, make, model, i + 1);
     }
     else
@@ -583,7 +507,7 @@ list_devices(void)
       if ((fd = open(device, O_RDWR)) >= 0)
       {
 	close(fd);
-	printf("direct epson:%s \"EPSON\" \"Gutenprint Parallel Port #%d\"\n", device, i + 1);
+	printf("direct canon:%s \"CANON\" \"Gutenprint Parallel Port #%d\"\n", device, i + 1);
       }
     }
   }
@@ -658,8 +582,8 @@ list_devices(void)
 	  *cptr = '\0';
 	}
 
-	/* next entry, if manufacturer is not EPSON */
-        if (strcasecmp(make, "EPSON") != 0)
+	/* next entry, if manufacturer is not CANON */
+        if (strcasecmp(make, "CANON") != 0)
 	  continue;
 
 	/* read product name */
@@ -689,7 +613,7 @@ list_devices(void)
 	    sprintf(device, "/dev/usb%s", dirent->d_name);
 	}
 
-	printf("direct epson:%s \"%s %s\" \"Gutenprint USB Printer #%d\"\n",
+	printf("direct canon:%s \"%s %s\" \"Gutenprint USB Printer #%d\"\n",
 	       device, make, model, ++i);
       }
     }
@@ -738,7 +662,7 @@ list_devices(void)
         * We were processing a printer device; send the info out...
 	*/
 
-        if (strcmp(make, "EPSON") == 0)
+        if (strcmp(make, "CANON") == 0)
 	{
           sprintf(device, "/dev/usb/lp%d", i);
 	  if (access(device, 0))
@@ -749,7 +673,7 @@ list_devices(void)
 	      sprintf(device, "/dev/usblp%d", i);
 	  }
 
-	  printf("direct epson:%s \"%s %s\" \"Gutenprint USB Printer #%d\"\n",
+	  printf("direct canon:%s \"%s %s\" \"Gutenprint USB Printer #%d\"\n",
 		 device, make, model, i + 1);
         }
 
@@ -770,21 +694,21 @@ list_devices(void)
       if ((fd = open(device, O_RDWR)) >= 0)
       {
 	close(fd);
-	printf("direct epson:%s \"EPSON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
+	printf("direct canon:%s \"CANON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
       }
 
       sprintf(device, "/dev/usb/usblp%d", i);
       if ((fd = open(device, O_RDWR)) >= 0)
       {
 	close(fd);
-	printf("direct epson:%s \"EPSON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
+	printf("direct canon:%s \"CANON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
       }
 
       sprintf(device, "/dev/usblp%d", i);
       if ((fd = open(device, O_RDWR)) >= 0)
       {
 	close(fd);
-	printf("direct epson:%s \"EPSON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
+	printf("direct canon:%s \"CANON\" \"Gutenprint USB Printer #%d\"\n", device, i + 1);
       }
     }
   }
@@ -808,7 +732,7 @@ list_devices(void)
       * Standard parallel port...
       */
 
-      puts("direct epson:/dev/plpbi \"EPSON\" \"Gutenprint Onboard Parallel Port\"");
+      puts("direct canon:/dev/plpbi \"CANON\" \"Gutenprint Onboard Parallel Port\"");
     }
   }
 
@@ -826,7 +750,7 @@ list_devices(void)
   {
     sprintf(device, "/dev/ecpp%d", i);
     if (access(device, 0) == 0)
-      printf("direct epson:%s \"EPSON\" \"Gutenprint Sun IEEE-1284 Parallel Port #%d\"\n",
+      printf("direct canon:%s \"CANON\" \"Gutenprint Sun IEEE-1284 Parallel Port #%d\"\n",
              device, i + 1);
   }
 
@@ -835,7 +759,7 @@ list_devices(void)
     sprintf(device, "/dev/lp%d", i);
 
     if (access(device, 0) == 0)
-      printf("direct epson:%s \"EPSON\" \"Gutenprint PC Parallel Port #%d\"\n",
+      printf("direct canon:%s \"CANON\" \"Gutenprint PC Parallel Port #%d\"\n",
              device, i + 1);
   }
 #elif defined(FreeBSD) || defined(OpenBSD) || defined(NetBSD)
@@ -854,14 +778,14 @@ list_devices(void)
     if ((fd = open(device, O_RDWR)) >= 0)
     {
       close(fd);
-      printf("direct epson:%s \"EPSON\" \"Gutenprint Parallel Port #%d (interrupt-driven)\"\n", device, i + 1);
+      printf("direct canon:%s \"CANON\" \"Gutenprint Parallel Port #%d (interrupt-driven)\"\n", device, i + 1);
     }
 
     sprintf(device, "/dev/lpa%d", i);
     if ((fd = open(device, O_RDWR)) >= 0)
     {
       close(fd);
-      printf("direct epson:%s \"EPSON\" \"Gutenprint Parallel Port #%d (polled)\"\n", device, i + 1);
+      printf("direct canon:%s \"CANON\" \"Gutenprint Parallel Port #%d (polled)\"\n", device, i + 1);
     }
   }
 
@@ -875,7 +799,7 @@ list_devices(void)
     if ((fd = open(device, O_RDWR)) >= 0)
     {
       close(fd);
-      printf("direct epson:%s \"EPSON\" \"Gutenprint USB Port #%d\"\n", device, i + 1);
+      printf("direct canon:%s \"CANON\" \"Gutenprint USB Port #%d\"\n", device, i + 1);
     }
   }
 #endif
@@ -883,5 +807,4 @@ list_devices(void)
 
 
 /*
- * End of "$Id: epson.c,v 1.7.8.1 2007/05/12 19:32:08 faust3 Exp $".
  */
