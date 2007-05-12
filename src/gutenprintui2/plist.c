@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.8 2007/03/13 23:26:23 rlk Exp $"
+ * "$Id: plist.c,v 1.9 2007/05/12 16:00:59 faust3 Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -321,7 +321,7 @@ writefunc(void *file, const char *buf, size_t bytes)
 static void
 stpui_errfunc(void *file, const char *buf, size_t bytes)
 {
-  g_message(buf);
+  g_message("%s",buf);
 }
 
 void
@@ -1764,5 +1764,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.8 2007/03/13 23:26:23 rlk Exp $".
+ * End of "$Id: plist.c,v 1.9 2007/05/12 16:00:59 faust3 Exp $".
  */
