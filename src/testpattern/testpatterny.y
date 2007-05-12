@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.27 2007/05/12 16:07:16 faust3 Exp $"
+ * "$Id: testpatterny.y,v 1.28 2007/05/12 16:25:09 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -361,7 +361,7 @@ parameter_curve: PARAMETER_CURVE tSTRING tSTRING
 	}
 ;
 
-parameter: parameter_string | parameter_int | parameter_float
+parameter: parameter_string | parameter_int | parameter_float | parameter_curve
 ;
 density: DENSITY tDOUBLE
 	{
