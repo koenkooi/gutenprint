@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.52 2007/05/09 02:22:34 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.53 2007/05/13 02:47:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -165,6 +165,20 @@ static const escp2_dropsize_t escp2_claria_2880_dropsizes =
   { "claria_2880", 2, { 0.4, 1.0 } };
 static const escp2_dropsize_t escp2_claria_5760_dropsizes =
   { "claria_5760", 1, { 1.0 } };
+
+/* Stylus Photo 1400 */
+static const escp2_dropsize_t escp2_claria_1400_360_dropsizes =
+  { "claria_1400_360", 3, { 0, 0, 1.0 } };
+static const escp2_dropsize_t escp2_claria_1400_720_360_dropsizes =
+  { "claria_1400_720_360", 3, { 0.4, .7, 1.0 } };
+static const escp2_dropsize_t escp2_claria_1400_720_dropsizes =
+  { "claria_1400_720", 3, { 0.35, 0.7, 1.0 } };
+static const escp2_dropsize_t escp2_claria_1400_1440_dropsizes =
+  { "claria_1400_1440", 3, { 0.277, 0.45, 1.0 } };
+static const escp2_dropsize_t escp2_claria_1400_2880_dropsizes =
+  { "claria_1400_2880", 3, { 0.277, 0.45, 1.0 } };
+static const escp2_dropsize_t escp2_claria_1400_5760_dropsizes =
+  { "claria_1400_5760", 1, { 1.0 } };
 
 /* Stylus Photo R2400 */
 static const escp2_dropsize_t escp2_r2400_360_dropsizes =
@@ -341,6 +355,19 @@ static const escp2_drop_list_t claria_drops =
   &escp2_claria_5760_dropsizes,
 };
 
+static const escp2_drop_list_t claria_1400_drops =
+{
+  &escp2_claria_1400_360_dropsizes,
+  &escp2_claria_1400_360_dropsizes,
+  &escp2_claria_1400_720_360_dropsizes,
+  &escp2_claria_1400_720_dropsizes,
+  &escp2_claria_1400_720_dropsizes,
+  &escp2_claria_1400_1440_dropsizes,
+  &escp2_claria_1400_2880_dropsizes,
+  &escp2_claria_1400_5760_dropsizes,
+  &escp2_claria_1400_5760_dropsizes,
+};
+
 static const escp2_drop_list_t variable_r2400_drops =
 {
   &escp2_r2400_360_dropsizes,
@@ -463,6 +490,7 @@ static const drop_list_t the_drop_lists[] =
   { "variable_3pl_pigment_c66", &variable_3pl_pigment_c66_drops },
   { "variable_3pl_pmg", &variable_3pl_pmg_drops },
   { "variable_claria", &claria_drops },
+  { "variable_claria_1400", &claria_1400_drops },
   { "variable_r2400", &variable_r2400_drops },
   { "variable_picturemate", &variable_picturemate_drops },
   { "variable_1440_4pl", &variable_1440_4pl_drops },
