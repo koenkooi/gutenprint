@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.133 2007/04/17 13:50:08 easysw Exp $"
+ * "$Id: genppd.c,v 1.134 2007/05/15 01:05:59 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -561,9 +561,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
  * Initialise libgutenprint
  */
 
-  fprintf(stderr, "About to call stp_init\n");
   stp_init();
-  fprintf(stderr, "Called stp_init\n");
 
  /*
   * Set the language...
@@ -1910,5 +1908,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.133 2007/04/17 13:50:08 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.134 2007/05/15 01:05:59 rlk Exp $".
  */
