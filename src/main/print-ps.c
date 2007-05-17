@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.90 2007/05/08 00:10:29 rlk Exp $"
+ * "$Id: print-ps.c,v 1.91 2007/05/17 02:21:31 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -200,6 +200,7 @@ ps_list_parameters(const stp_vars_t *v)
 	group = m_ppd->groups + i;
 	for (j=0; j < group->num_options; j++)
 	  {
+	    /* MEMORY LEAK!!! */
 	    stp_parameter_t *param = stp_malloc(sizeof(stp_parameter_t));
 	    option = group->options + j;
 	    ps_option_to_param(param, group, option);
