@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.10 2007/05/17 02:25:18 rlk Exp $"
+ * "$Id: plist.c,v 1.11 2007/05/20 17:30:35 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
-
 
 typedef enum
 {
@@ -942,11 +941,18 @@ stpui_printrc_load_v2(FILE *fp)
 {
   int retval;
   yyin = fp;
+  char *locale;
 
   stpui_printrc_current_printer = NULL;
-  setlocale(LC_ALL, "C");
+#ifdef ENABLE_NLS
+  locale = stp_strdup(setlocale(LC_NUMERIC, NULL));
+  setlocale(LC_NUMERIC, "C");
+#endif
   retval = yyparse();
-  setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+  setlocale(LC_NUMERIC, locale);
+  free(locale);
+#endif
   if (stpui_printrc_current_printer)
     {
       int i;
@@ -988,17 +994,23 @@ stpui_printrc_load(void)
       (void) memset(line, 0, 1024);
       if (fgets(line, sizeof(line), fp) != NULL)
 	{
-	  /* Force locale to "C", so that numbers scan correctly */
-	  setlocale(LC_ALL, "C");
+#ifdef ENABLE_NLS
+	  char *locale = stp_strdup(setlocale(LC_NUMERIC, NULL));
+	  setlocale(LC_NUMERIC, "C");
+#endif
 	  if (strncmp("#PRINTRCv", line, 9) == 0)
 	    {
+	      /* Force locale to "C", so that numbers scan correctly */
 #ifdef DEBUG
 	      fprintf(stderr, "Found printrc version tag: `%s'\n", line);
 	      fprintf(stderr, "Version number: `%s'\n", &(line[9]));
 #endif
 	      (void) sscanf(&(line[9]), "%d", &format);
 	    }
-	  setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+	  setlocale(LC_NUMERIC, locale);
+	  free(locale);
+#endif
 	}
       rewind(fp);
       switch (format)
@@ -1041,7 +1053,10 @@ stpui_printrc_save(void)
        */
 
       /* Force locale to "C", so that numbers print correctly */
-      setlocale(LC_ALL, "C");
+#ifdef ENABLE_NLS
+      char *locale = stp_strdup(setlocale(LC_NUMERIC, NULL));
+      setlocale(LC_NUMERIC, "C");
+#endif
 #ifdef DEBUG
       fprintf(stderr, "Number of printers: %d\n", stpui_plist_count);
 #endif
@@ -1176,7 +1191,10 @@ stpui_printrc_save(void)
 	  fprintf(stderr, "Wrote printer %d: %s\n", i, p->name);
 #endif
 	}
-      setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+      setlocale(LC_NUMERIC, locale);
+      free(locale);
+#endif
       fclose(fp);
     }
   else
@@ -1769,5 +1787,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.10 2007/05/17 02:25:18 rlk Exp $".
+ * End of "$Id: plist.c,v 1.11 2007/05/20 17:30:35 rlk Exp $".
  */
