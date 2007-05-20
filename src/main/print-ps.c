@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.92 2007/05/20 17:30:35 rlk Exp $"
+ * "$Id: print-ps.c,v 1.93 2007/05/20 22:45:52 rlk Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -296,7 +296,7 @@ ps_parameters(const stp_vars_t *v, const char *name,
   ps_parameters_internal(v, name, description);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
 }
 
@@ -341,7 +341,7 @@ ps_media_size(const stp_vars_t *v, int *width, int *height)
   ps_media_size_internal(v, width, height);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
 }
 
@@ -417,7 +417,7 @@ ps_imageable_area(const stp_vars_t *v,      /* I */
   ps_imageable_area_internal(v, 0, left, right, bottom, top);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
 }
 
@@ -435,7 +435,7 @@ ps_maximum_imageable_area(const stp_vars_t *v,      /* I */
   ps_imageable_area_internal(v, 1, left, right, bottom, top);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
 }
 
@@ -476,7 +476,7 @@ ps_describe_resolution(const stp_vars_t *v, int *x, int *y)
   ps_describe_resolution_internal(v, x, y);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
 }
 
@@ -896,7 +896,7 @@ ps_print(const stp_vars_t *v, stp_image_t *image)
   int status = ps_print_internal(nv, image);
 #ifdef ENABLE_NLS
   setlocale(LC_ALL, locale);
-  free(locale);
+  stp_free(locale);
 #endif
   stp_vars_destroy(nv);
   return status;
