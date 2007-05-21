@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.36 2007/05/20 22:45:52 rlk Exp $"
+ * "$Id: xml.c,v 1.37 2007/05/21 00:20:20 rlk Exp $"
  *
  *   XML parser - process Gutenprint XML data with mxml.
  *
@@ -161,7 +161,7 @@ stp_xml_init(void)
     }
 
   /* Set some locale facets to "C" */
-#ifdef ENABLE_NLS
+#ifdef HAVE_LOCALE_H
   saved_lc_collate = stp_strdup(setlocale(LC_COLLATE, NULL));
   saved_lc_ctype = stp_strdup(setlocale(LC_CTYPE, NULL));
   saved_lc_numeric = stp_strdup(setlocale(LC_NUMERIC, NULL));
@@ -189,7 +189,7 @@ stp_xml_exit(void)
     return;
 
   /* Restore locale */
-#ifdef ENABLE_NLS
+#ifdef HAVE_LOCALE_H
   setlocale(LC_COLLATE, saved_lc_collate);
   setlocale(LC_CTYPE, saved_lc_ctype);
   setlocale(LC_NUMERIC, saved_lc_numeric);
