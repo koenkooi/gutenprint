@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.111 2007/05/21 00:20:19 rlk Exp $"
+ * "$Id: print-util.c,v 1.112 2007/05/26 15:53:06 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -460,8 +460,14 @@ stp_init(void)
       /* Things that are only initialised once */
       /* Set up gettext */
 #ifdef HAVE_LOCALE_H
-      setlocale (LC_ALL, "");
+      char *locale = stp_strdup(setlocale (LC_ALL, ""));
+#endif
+#ifdef ENABLE_NLS
       bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
+#endif
+#ifdef HAVE_LOCALE_H
+      setlocale(LC_ALL, locale);
+      stp_free(locale);
 #endif
       stpi_init_debug();
       stp_xml_preinit();
