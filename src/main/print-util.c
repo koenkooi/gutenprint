@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.112 2007/05/26 15:53:06 rlk Exp $"
+ * "$Id: print-util.c,v 1.113 2007/05/27 13:19:05 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -583,6 +583,8 @@ stp_merge_printvars(stp_vars_t *user, const stp_vars_t *print)
   int i;
   stp_parameter_list_t params = stp_get_parameter_list(print);
   int count = stp_parameter_list_count(params);
+  stp_deprintf(STP_DBG_VARS, "Merging printvars from %s\n",
+	       stp_get_driver(print));
   for (i = 0; i < count; i++)
     {
       const stp_parameter_t *p = stp_parameter_list_param(params, i);
@@ -616,6 +618,7 @@ stp_merge_printvars(stp_vars_t *user, const stp_vars_t *print)
 	  stp_parameter_description_destroy(&desc);
 	}
     }
+  stp_deprintf(STP_DBG_VARS, "Exiting merge printvars\n");
   stp_parameter_list_destroy(params);
 }
 
