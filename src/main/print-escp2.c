@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.375 2007/05/28 14:49:35 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.376 2007/05/28 18:46:45 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1685,7 +1685,7 @@ escp2_parameters(const stp_vars_t *v, const char *name,
   else if (strcmp(name, "CDOuterDiameter") == 0 )
     {
       const input_slot_t *slot = get_input_slot(v);
-      description->bounds.dimension.lower = 80 * 10 * 72 / 254;
+      description->bounds.dimension.lower = 65 * 10 * 72 / 254;
       description->bounds.dimension.upper = 120 * 10 * 72 / 254;
       description->deflt.dimension = 329;
       if (printer_supports_print_to_cd(v) &&

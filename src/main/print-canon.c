@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.209 2007/05/12 18:31:09 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.210 2007/05/28 18:46:45 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -637,7 +637,7 @@ canon_parameters(const stp_vars_t *v, const char *name,
   else if (strcmp(name, "CDOuterDiameter") == 0 )
     {
       const char* input_slot = stp_get_string_parameter(v, "InputSlot");
-      description->bounds.dimension.lower = 80 * 10 * 72 / 254;
+      description->bounds.dimension.lower = 65 * 10 * 72 / 254;
       description->bounds.dimension.upper = 120 * 10 * 72 / 254;
       description->deflt.dimension = 329;
       if (input_slot && !strcmp(input_slot,"CD") &&
