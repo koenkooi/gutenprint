@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.374 2007/05/26 00:51:23 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.375 2007/05/28 14:49:35 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1350,7 +1350,12 @@ set_density_parameter(const stp_vars_t *v,
       if (ink_name &&
 	  ink_name->channel_set->channel_count > color &&
 	  ink_name->channel_set->channels[color])
-	description->is_active = 1;
+	{
+	  description->is_active = 1;
+	  description->bounds.dbl.lower = 0;
+	  description->bounds.dbl.upper = 2.0;
+	  description->deflt.dbl = 1.0;
+	}
     }
 }
 
