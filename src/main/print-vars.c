@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.79 2007/05/27 16:26:21 rlk Exp $"
+ * "$Id: print-vars.c,v 1.80 2007/05/28 14:41:53 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1458,6 +1458,9 @@ debug_print_parameter_description(const stp_parameter_t *desc, const char *who,
       break;
     case STP_PARAMETER_TYPE_FILE:
       stp_deprintf(STP_DBG_VARS, "   File (no default)\n");
+      break;
+    case STP_PARAMETER_TYPE_RAW:
+      stp_deprintf(STP_DBG_VARS, "   Raw (no default)\n");
       break;
     case STP_PARAMETER_TYPE_CURVE:
       curve = stp_curve_write_string(desc->deflt.curve);
