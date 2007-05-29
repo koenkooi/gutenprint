@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.119.2.2 2007/03/20 18:03:38 tillkamppeter Exp $"
+ * "$Id: genppd.c,v 1.119.2.3 2007/05/29 01:47:26 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -63,6 +63,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <libgen.h>
 
 #ifdef CUPS_DRIVER_INTERFACE
 #  ifdef HAVE_LIBZ
@@ -560,9 +561,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
  * Initialise libgutenprint
  */
 
-  fprintf(stderr, "About to call stp_init\n");
   stp_init();
-  fprintf(stderr, "Called stp_init\n");
 
  /*
   * Set the language...
@@ -720,7 +719,7 @@ generate_ppd(
 	   cups_modeldir,
 	   cups_modeldir[strlen(cups_modeldir) - 1] == '/' ? "" : "/",
 	   language ? language : "C",
-	   filename);
+	   basename(filename));
 
   status = write_ppd(fp, p, language, ppd_location, simplified);
 
@@ -1224,6 +1223,7 @@ write_ppd(
     the_papers[cur_opt].top    = height - top;
 
     cur_opt++;
+    stp_clear_string_parameter(v, "PageSize");
   }
 
  /*
@@ -1307,6 +1307,7 @@ write_ppd(
     gzputs(fp, "*ParamCustomPageSize WidthOffset:  3 points 0 0\n");
     gzputs(fp, "*ParamCustomPageSize HeightOffset: 4 points 0 0\n");
     gzputs(fp, "*ParamCustomPageSize Orientation:  5 int 0 0\n\n");
+    stp_clear_string_parameter(v, "PageSize");
   }
 
   stp_parameter_description_destroy(&desc);
@@ -1870,5 +1871,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.119.2.2 2007/03/20 18:03:38 tillkamppeter Exp $".
+ * End of "$Id: genppd.c,v 1.119.2.3 2007/05/29 01:47:26 rlk Exp $".
  */

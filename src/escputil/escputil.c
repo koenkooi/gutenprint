@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.87 2006/05/31 08:31:59 rleigh Exp $"
+ * "$Id: escputil.c,v 1.87.8.1 2007/05/29 01:47:27 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -285,7 +285,7 @@ main(int argc, char **argv)
   int c;
 
   /* Set up gettext */
-#ifdef ENABLE_NLS
+#ifdef HAVE_LOCALE_H
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, PACKAGE_LOCALE_DIR);
 #endif
