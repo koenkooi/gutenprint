@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.183 2007/06/17 09:29:47 faust3 Exp $"
+   "$Id: printers.xml,v 1.184 2007/06/21 12:15:58 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -353,6 +353,7 @@
       <printer name="Epson MJ 5100C" driver="escp2-mj5100c" manufacturer="Epson" model="39" parameters="standard_params" />
       <printer name="Epson MJ 6000C" driver="escp2-mj6000c" manufacturer="Epson" model="6" parameters="standard_params" />
       <printer name="Epson MJ 8000C" driver="escp2-mj8000c" manufacturer="Epson" model="24" parameters="standard_params" />
+      <printer name="Epson PM 670C" driver="escp2-pm670c" manufacturer="Epson" model="7" parameters="standard_params" />
       <printer name="Epson PM 700C" driver="escp2-pm700c" manufacturer="Epson" model="9" parameters="standard_params" />
       <printer name="Epson PM 730C" driver="escp2-pm730c" manufacturer="Epson" model="35" parameters="standard_params" />
       <printer name="Epson PM 740C" driver="escp2-pm740c" manufacturer="Epson" model="35" parameters="standard_params" />
