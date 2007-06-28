@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.210 2007/05/28 18:46:45 rlk Exp $"
+ * "$Id: print-canon.c,v 1.211 2007/06/28 10:32:55 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1152,7 +1152,7 @@ canon_init_setPageMargins2(const stp_vars_t *v, const canon_privdata_t *init)
 
   if ((init->caps->features & CANON_CAP_px) && !(input_slot && !strcmp(input_slot,"CD")))
   {
-    unsigned int unit = init->mode->xdpi;
+    unsigned int unit = 600;
     stp_zfwrite(ESC28,2,1,v); /* ESC( */
     stp_putc(0x70,v);         /* p    */
     stp_put16_le(46, v);      /* len  */
