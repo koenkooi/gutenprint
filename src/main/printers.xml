@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.186 2007/06/28 17:59:43 faust3 Exp $"
+   "$Id: printers.xml,v 1.187 2007/08/05 14:32:51 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -641,6 +641,7 @@
       <printer name="HP LaserJet 1010" driver="hp-lj_1010" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 1012" driver="hp-lj_1012" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 1015" driver="hp-lj_1015" manufacturer="HP" model="6" parameters="pcl_laser_params" />
+      <printer name="HP LaserJet 1022" driver="hp-lj_1022" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 1100" driver="hp-lj_1100" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 1100A" driver="hp-lj_1100a" manufacturer="HP" model="6" parameters="pcl_laser_params" />
       <printer name="HP LaserJet 1150" driver="hp-lj_1150" manufacturer="HP" model="6" parameters="pcl_laser_params" />
