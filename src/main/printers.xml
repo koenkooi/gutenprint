@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.187 2007/08/05 14:32:51 rlk Exp $"
+   "$Id: printers.xml,v 1.188 2007/08/11 14:39:27 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -299,6 +299,7 @@
       <printer name="Epson Stylus CX3810" driver="escp2-cx3810" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer name="Epson Stylus CX4100" driver="escp2-cx4100" manufacturer="Epson" model="65" parameters="cx3500_params" />
       <printer name="Epson Stylus CX4200" driver="escp2-cx4200" manufacturer="Epson" model="65" parameters="cx3500_params" />
+      <printer name="Epson Stylus CX4400" driver="escp2-cx4400" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer name="Epson Stylus CX4500" driver="escp2-cx4500" manufacturer="Epson" model="65" parameters="cx3500_params" />
       <printer name="Epson Stylus CX4600" driver="escp2-cx4600" manufacturer="Epson" model="65" parameters="cx3500_params" />
       <printer name="Epson Stylus CX4700" driver="escp2-cx4700" manufacturer="Epson" model="65" parameters="cx3500_params" />
