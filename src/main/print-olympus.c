@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.72 2006/10/01 19:14:28 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.73 2007/08/27 00:44:12 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -2495,6 +2495,7 @@ static const stp_printfuncs_t print_dyesub_printfuncs =
   dyesub_describe_resolution,
   dyesub_describe_output,
   stp_verify_printer_params,
+  NULL,
   NULL,
   NULL
 };

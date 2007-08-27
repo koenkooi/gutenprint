@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.80 2007/05/26 15:53:06 rlk Exp $"
+ * "$Id: printers.c,v 1.81 2007/08/27 00:44:13 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -476,6 +476,17 @@ stp_end_job(const stp_vars_t *v, stp_image_t *image)
     return (printfuncs->end_job)(v, image);
   else
     return 1;
+}
+
+stp_string_list_t *
+stp_get_external_options(const stp_vars_t *v)
+{
+  const stp_printfuncs_t *printfuncs =
+    stpi_get_printfuncs(stp_get_printer(v));
+  if (printfuncs->get_external_options)
+    return (printfuncs->get_external_options)(v);
+  else
+    return NULL;
 }
 
 static int

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.211 2007/06/28 10:32:55 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.212 2007/08/27 00:44:12 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2072,7 +2072,8 @@ static const stp_printfuncs_t print_canon_printfuncs =
   canon_describe_output,
   stp_verify_printer_params,
   canon_start_job,
-  canon_end_job
+  canon_end_job,
+  NULL
 };
 
 static void
