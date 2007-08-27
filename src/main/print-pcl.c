@@ -1,5 +1,5 @@
 /*
- * "$Id: print-pcl.c,v 1.146 2007/08/27 00:44:12 rlk Exp $"
+ * "$Id: print-pcl.c,v 1.147 2007/08/27 00:46:16 rlk Exp $"
  *
  *   Print plug-in HP PCL driver for the GIMP.
  *
@@ -2219,8 +2219,6 @@ pcl_do_print(stp_vars_t *v, stp_image_t *image)
           if ((strcmp(duplex_mode, "DuplexTumble") == 0))
             privdata.tumble=1;
         }
-      else
-        stp_erprintf("pcl: cannot duplex on this hardware.\n");
     }
 
  /*
