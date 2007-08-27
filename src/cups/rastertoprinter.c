@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.108 2007/02/25 22:44:57 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.109 2007/08/27 00:43:06 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -698,7 +698,7 @@ set_all_options(stp_vars_t *v, cups_option_t *options, int num_options,
 		  fprintf(stderr, "DEBUG: Gutenprint set bool %s to %s\n",
 			  desc.name, val);
 		  stp_set_boolean_parameter
-		    (v, desc.name, strcmp(val, "True") == 0 ? 1 : 0);
+		    (v, desc.name, strcasecmp(val, "true") == 0 ? 1 : 0);
 		  break;
 		case STP_PARAMETER_TYPE_CURVE: /* figure this out later... */
 		case STP_PARAMETER_TYPE_FILE: /* Probably not, security hole */
@@ -1278,5 +1278,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.108 2007/02/25 22:44:57 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.109 2007/08/27 00:43:06 rlk Exp $".
  */
