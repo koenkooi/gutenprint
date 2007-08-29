@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.136 2007/05/05 23:25:34 rlk Exp $"
+ * "$Id: print-color.c,v 1.137 2007/08/29 15:03:32 faust3 Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -657,7 +657,7 @@ stpi_color_traditional_get_row(stp_vars_t *v,
   const lut_t *lut = (const lut_t *)(stp_get_component_data(v, "Color"));
   unsigned zero;
   if (stp_image_get_row(image, lut->in_data,
-			lut->image_width * lut->in_channels, row)
+			lut->image_width * lut->in_channels * lut->channel_depth / 8, row)
       != STP_IMAGE_STATUS_OK)
     return 2;
   if (!lut->channels_are_initialized)
