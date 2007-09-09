@@ -1,5 +1,5 @@
 /*
- * "$Id: mark.c,v 1.2 2006/09/18 01:48:58 rlk Exp $"
+ * "$Id: mark.c,v 1.3 2007/09/09 21:13:56 rlk Exp $"
  *
  *   Option marking routines for the Common UNIX Printing System (CUPS).
  *
@@ -166,7 +166,7 @@ stpi_ppdConflicts(ppd_file_t *ppd)	/* I - PPD to check */
     if (c1 != NULL && c1->marked &&
         c2 != NULL && c2->marked)
     {
-      stp_deprintf(STP_DBG_PS, "%s->%s conflicts with %s->%s (%s %s %s %s)\n",
+      stp_deprintf(STP_DBG_PPD, "%s->%s conflicts with %s->%s (%s %s %s %s)\n",
                     o1->keyword, c1->choice, o2->keyword, c2->choice,
 		    c->option1, c->choice1, c->option2, c->choice2);
       conflicts ++;
@@ -438,5 +438,5 @@ ppd_defaults(ppd_file_t  *ppd,	/* I - PPD file */
 
 
 /*
- * End of "$Id: mark.c,v 1.2 2006/09/18 01:48:58 rlk Exp $".
+ * End of "$Id: mark.c,v 1.3 2007/09/09 21:13:56 rlk Exp $".
  */

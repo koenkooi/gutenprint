@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.134 2007/05/15 01:05:59 rlk Exp $"
+ * "$Id: genppd.c,v 1.135 2007/09/09 21:13:55 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1234,9 +1234,9 @@ write_ppd(
 
   gzputs(fp, "*OpenUI *PageSize: PickOne\n");
   gzputs(fp, "*OrderDependency: 10 AnySetup *PageSize\n");
-  gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+  gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 	   desc.name, desc.p_type, desc.is_mandatory,
-	   desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+	   desc.p_class, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
   gzprintf(fp, "*DefaultPageSize: %s\n", desc.deflt.str);
   gzprintf(fp, "*StpDefaultPageSize: %s\n", desc.deflt.str);
   for (i = 0; i < cur_opt; i ++)
@@ -1411,9 +1411,9 @@ write_ppd(
   {
     gzprintf(fp, "*OpenUI *MediaType/%s: PickOne\n", _("Media Type"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *MediaType\n");
-    gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+    gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 	     desc.name, desc.p_type, desc.is_mandatory,
-	     desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+	     desc.p_class, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
     gzprintf(fp, "*DefaultMediaType: %s\n", desc.deflt.str);
     gzprintf(fp, "*StpDefaultMediaType: %s\n", desc.deflt.str);
 
@@ -1439,9 +1439,9 @@ write_ppd(
   {
     gzprintf(fp, "*OpenUI *InputSlot/%s: PickOne\n", _("Media Source"));
     gzputs(fp, "*OrderDependency: 10 AnySetup *InputSlot\n");
-    gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+    gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 	     desc.name, desc.p_type, desc.is_mandatory,
-	     desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+	     desc.p_class, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
     gzprintf(fp, "*DefaultInputSlot: %s\n", desc.deflt.str);
     gzprintf(fp, "*StpDefaultInputSlot: %s\n", desc.deflt.str);
 
@@ -1467,9 +1467,9 @@ write_ppd(
       has_quality_parameter = 1;
       gzprintf(fp, "*OpenUI *StpQuality/%s: PickOne\n", gettext(desc.text));
       gzputs(fp, "*OrderDependency: 10 AnySetup *StpQuality\n");
-      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 	       desc.name, desc.p_type, desc.is_mandatory,
-	       desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+	       desc.p_type, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
       gzprintf(fp, "*DefaultStpQuality: %s\n", desc.deflt.str);
       gzprintf(fp, "*StpDefaultStpQuality: %s\n", desc.deflt.str);
       num_opts = stp_string_list_count(desc.bounds.str);
@@ -1514,9 +1514,9 @@ write_ppd(
 
       gzprintf(fp, "*OpenUI *Resolution/%s: PickOne\n", _("Resolution"));
       gzputs(fp, "*OrderDependency: 10 AnySetup *Resolution\n");
-      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 	       desc.name, desc.p_type, desc.is_mandatory,
-	       desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+	       desc.p_class, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
       if (has_quality_parameter)
 	{
 	  gzprintf(fp, "*DefaultResolution: None\n");
@@ -1626,9 +1626,9 @@ write_ppd(
       {
         gzprintf(fp, "*OpenUI *Duplex/%s: PickOne\n", _("2-Sided Printing"));
         gzputs(fp, "*OrderDependency: 10 AnySetup *Duplex\n");
-	gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+	gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 		 desc.name, desc.p_type, desc.is_mandatory,
-		 desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+		 desc.p_class, desc.p_level, desc.channel, 0.0, 0.0, 0.0);
         gzprintf(fp, "*DefaultDuplex: %s\n", desc.deflt.str);
         gzprintf(fp, "*StpDefaultDuplex: %s\n", desc.deflt.str);
 
@@ -1693,9 +1693,10 @@ write_ppd(
 		  switch (desc.p_type)
 		    {
 		    case STP_PARAMETER_TYPE_STRING_LIST:
-		      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+		      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 			       desc.name, desc.p_type, desc.is_mandatory,
-			       desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+			       desc.p_class, desc.p_level, desc.channel,
+			       0.0, 0.0, 0.0);
 		      if (desc.is_mandatory)
 			{
 			  gzprintf(fp, "*DefaultStp%s: %s\n",
@@ -1719,9 +1720,10 @@ write_ppd(
 			}
 		      break;
 		    case STP_PARAMETER_TYPE_BOOLEAN:
-		      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+		      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 			       desc.name, desc.p_type, desc.is_mandatory,
-			       desc.p_type, desc.p_level, 0.0, 0.0, 0.0);
+			       desc.p_class, desc.p_level, desc.channel,
+			       0.0, 0.0, desc.deflt.boolean ? 1.0 : 0.0);
 		      if (desc.is_mandatory)
 			{
 			  gzprintf(fp, "*DefaultStp%s: %s\n", desc.name,
@@ -1742,9 +1744,9 @@ write_ppd(
 			       desc.name, "True", _("Yes"));
 		      break;
 		    case STP_PARAMETER_TYPE_DOUBLE:
-		      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+		      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 			       desc.name, desc.p_type, desc.is_mandatory,
-			       desc.p_type, desc.p_level,
+			       desc.p_class, desc.p_level, desc.channel,
 			       desc.bounds.dbl.lower, desc.bounds.dbl.upper,
 			       desc.deflt.dbl);
 		      gzprintf(fp, "*DefaultStp%s: None\n", desc.name);
@@ -1782,9 +1784,9 @@ write_ppd(
 			{
 			  gzprintf(fp, "*OpenUI *StpFine%s/%s %s: PickOne\n",
 				   desc.name, gettext(desc.text), _("Fine Adjustment"));
-			  gzprintf(fp, "*StpStpFine%s: %d %d %d %d %.3f %.3f %.3f\n",
+			  gzprintf(fp, "*StpStpFine%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 				   desc.name, STP_PARAMETER_TYPE_INVALID, 0,
-				   0, 0, 0.0, 0.0, 0.0);
+				   0, 0, -1, 0.0, 0.0, 0.0);
 			  gzprintf(fp, "*DefaultStpFine%s:None\n", desc.name);
 			  gzprintf(fp, "*StpDefaultStpFine%s:None\n", desc.name);
 			  gzprintf(fp, "*StpFine%s None/0.000: \"\"\n", desc.name);
@@ -1797,9 +1799,9 @@ write_ppd(
 
 		      break;
 		    case STP_PARAMETER_TYPE_DIMENSION:
-		      gzprintf(fp, "*StpStp%s: %d %d %d %d %.3f %.3f %.3f\n",
+		      gzprintf(fp, "*StpStp%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 			       desc.name, desc.p_type, desc.is_mandatory,
-			       desc.p_type, desc.p_level,
+			       desc.p_class, desc.p_level, desc.channel,
 			       (double) desc.bounds.dimension.lower,
 			       (double) desc.bounds.dimension.upper,
 			       (double) desc.deflt.dimension);
@@ -1908,5 +1910,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.134 2007/05/15 01:05:59 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.135 2007/09/09 21:13:55 rlk Exp $".
  */

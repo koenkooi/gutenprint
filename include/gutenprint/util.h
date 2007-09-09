@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.5 2007/01/23 01:17:57 rlk Exp $"
+ * "$Id: util.h,v 1.6 2007/09/09 21:13:55 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -128,6 +128,7 @@ extern void stp_catprintf(char **strp, const char *format, ...)
 #define STP_DBG_DYESUB		0x40000
 #define STP_DBG_CURVE		0x80000
 #define STP_DBG_CURVE_ERRORS	0x100000
+#define STP_DBG_PPD		0x200000
 
 extern unsigned long stp_get_debug_level(void);
 extern void stp_dprintf(unsigned long level, const stp_vars_t *v,
@@ -178,5 +179,5 @@ extern const char *stp_get_release_version(void);
 
 #endif /* GUTENPRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.5 2007/01/23 01:17:57 rlk Exp $".
+ * End of "$Id: util.h,v 1.6 2007/09/09 21:13:55 rlk Exp $".
  */

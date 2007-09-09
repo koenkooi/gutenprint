@@ -1,5 +1,5 @@
 /*
- * "$Id: ppd.h,v 1.2 2006/09/18 01:48:59 rlk Exp $"
+ * "$Id: ppd.h,v 1.3 2007/09/09 21:13:56 rlk Exp $"
  *
  *   PostScript Printer Description definitions for the Common UNIX Printing
  *   System (CUPS).
@@ -42,6 +42,8 @@
  */
 
 #  include <stdio.h>
+
+#  include <gutenprint/vars.h>
 
 
 /*
@@ -173,6 +175,16 @@ typedef struct			/**** Options ****/
   float		order;		/* Order number */
   int		num_choices;	/* Number of option choices */
   ppd_choice_t	*choices;	/* Option choices */
+  int		has_gutenprint_data; /* Does this option have Gutenprint data? */
+  char		gutenprint_name[PPD_MAX_NAME];
+  stp_parameter_type_t	p_type;
+  int			is_mandatory;
+  stp_parameter_class_t p_class;
+  stp_parameter_level_t p_level;
+  int			channel;
+  float			lower_bound;
+  float			upper_bound;
+  float			default_value;
 } ppd_option_t;
 
 typedef struct ppd_group_str	/**** Groups ****/
@@ -341,5 +353,5 @@ extern void		stpi_ppdSetConformance(ppd_conform_t c);
 #endif /* !_CUPS_PPD_H_ */
 
 /*
- * End of "$Id: ppd.h,v 1.2 2006/09/18 01:48:59 rlk Exp $".
+ * End of "$Id: ppd.h,v 1.3 2007/09/09 21:13:56 rlk Exp $".
  */
