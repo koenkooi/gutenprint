@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.192 2007/09/12 09:15:09 faust3 Exp $"
+   "$Id: printers.xml,v 1.193 2007/09/12 11:44:40 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -333,6 +333,7 @@
       <printer name="Epson Stylus D88" driver="escp2-d88" manufacturer="Epson" model="69" parameters="standard_params" />
       <printer name="Epson Stylus DX3800" driver="escp2-dx3800" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer name="Epson Stylus DX3850" driver="escp2-dx3850" manufacturer="Epson" model="72" parameters="standard_params" />
+      <printer name="Epson Stylus DX4050" driver="escp2-dx4050" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer name="Epson Stylus DX4200" driver="escp2-dx4200" manufacturer="Epson" model="65" parameters="cx3500_params" />
       <printer name="Epson Stylus DX4250" driver="escp2-dx4250" manufacturer="Epson" model="65" parameters="cx3500_params" />
       <printer name="Epson Stylus DX4800" driver="escp2-dx4800" manufacturer="Epson" model="65" parameters="standard_params" />
