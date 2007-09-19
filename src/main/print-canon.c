@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.215 2007/09/19 18:37:59 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.216 2007/09/19 19:08:47 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2113,7 +2113,7 @@ static int canon_compress(stp_vars_t *v, canon_privdata_t *pd, unsigned char* li
 
   /* Don't send blank lines... */
 
-  if (line[0] == 0 && memcmp(line, line + 1, length - 1) == 0)
+  if (line[0] == 0 && memcmp(line, line + 1, (length * bits)  - 1) == 0)
     return 0;
 
   offset2 = offset / 8;
