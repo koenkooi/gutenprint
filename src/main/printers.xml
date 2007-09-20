@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.194 2007/09/18 10:45:25 faust3 Exp $"
+   "$Id: printers.xml,v 1.195 2007/09/20 21:08:38 faust3 Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -39,7 +39,7 @@
         <parameter type="float" name="Gamma">0.75</parameter>
       </parameters>
       <parameters name="PIXMA_iP4000_params">
-        <parameter type="float" name="Gamma">0.4</parameter>
+        <parameter type="float" name="Gamma">0.60</parameter>
       </parameters>
       <parameters name="PIXMA_iP4300_params">
         <parameter type="float" name="Brightness">0.7</parameter>
