@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.216 2007/09/19 19:08:47 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.217 2007/09/23 11:25:00 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1140,8 +1140,8 @@ canon_init_setPageMargins2(const stp_vars_t *v, const canon_privdata_t *init)
    * Is it the printable length or the bottom border?
    * Is is the printable width or the right border?
    */
-  int printable_width=  init->page_width*5/6;
-  int printable_length= init->page_height*5/6;
+  int printable_width=  (init->page_width + 1)*5/6;
+  int printable_length= (init->page_height + 1)*5/6;
 
   unsigned char arg_70_1= (printable_length >> 8) & 0xff;
   unsigned char arg_70_2= (printable_length) & 0xff;
