@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.197 2007/09/24 01:21:13 rlk Exp $"
+   "$Id: printers.xml,v 1.198 2007/10/01 13:13:14 m0m Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -744,6 +744,10 @@
       <printer name="Canon SELPHY-CP-510" driver="canon-cp510" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-600" driver="canon-cp600" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-710" driver="canon-cp710" manufacturer="Canon" model="1001" />
+      <printer name="Canon SELPHY-CP-720" driver="canon-cp720" manufacturer="Canon" model="1001" />
+      <printer name="Canon SELPHY-CP-730" driver="canon-cp730" manufacturer="Canon" model="1001" />
+      <printer name="Canon SELPHY-CP-740" driver="canon-cp740" manufacturer="Canon" model="1001" />
+      <printer name="Canon SELPHY-CP-750" driver="canon-cp750" manufacturer="Canon" model="1001" />
       <printer name="Sony DPP-EX5" driver="sony-dppex5" manufacturer="Sony" model="2002" />
       <printer name="Sony DPP-EX7" driver="sony-dppex5" manufacturer="Sony" model="2002" />
       <printer name="Sony UP-DP10" driver="sony-updp10" manufacturer="Sony" model="2000" />
