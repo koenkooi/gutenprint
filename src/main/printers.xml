@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.199 2007/10/06 13:48:29 faust3 Exp $"
+   "$Id: printers.xml,v 1.200 2007/10/16 17:48:12 faust3 Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -104,7 +104,7 @@
       <printer name="Canon PIXMA MP180" driver="bjc-MULTIPASS-MP180" manufacturer="Canon" model="4201" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA MP500" driver="bjc-MULTIPASS-MP500" manufacturer="Canon" model="4200" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA MP700" driver="bjc-MULTIPASS-MP700" manufacturer="Canon" model="3999" parameters="PIXMA_iP4000_params" />
-      <printer name="Canon PIXMA MP710" driver="bjc-MULTIPASS-MP710" manufacturer="Canon" model="4001" parameters="PIXMA_iP4000_params" />
+      <printer name="Canon PIXMA MP710" driver="bjc-MULTIPASS-MP710" manufacturer="Canon" model="4201" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA MP730" driver="bjc-MULTIPASS-MP730" manufacturer="Canon" model="3999" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA MP740" driver="bjc-MULTIPASS-MP740" manufacturer="Canon" model="4001" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA MP750" driver="bjc-MULTIPASS-MP750" manufacturer="Canon" model="4000" parameters="PIXMA_iP4000_params" />
