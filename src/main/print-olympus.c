@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.77 2007/10/17 14:43:37 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.78 2007/10/18 09:05:56 m0m Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -949,6 +949,8 @@ static void updp10_printer_init_func(stp_vars_t *v)
 {
   stp_zfwrite("\x98\xff\xff\xff\xff\xff\xff\xff"
 	      "\x09\x00\x00\x00\x1b\xee\x00\x00"
+	      "\x00\x02\x00\x00\x01\x12\x00\x00"
+	      "\x00\x1b\xe1\x00\x00\x00\x0b\x00"
 	      "\x00\x04", 1, 34, v);
   stp_zfwrite((privdata.laminate->seq).data, 1,
 			(privdata.laminate->seq).bytes, v); /*laminate pattern*/
