@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.206 2007/10/27 16:38:19 faust3 Exp $"
+   "$Id: printers.xml,v 1.207 2007/11/10 20:37:10 faust3 Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -100,6 +100,7 @@
       <printer name="Canon PIXMA iP4300" driver="bjc-PIXMA-iP4300" manufacturer="Canon" model="3004200" parameters="PIXMA_iP4300_params" />
       <printer name="Canon PIXMA iP5000" driver="bjc-PIXMA-iP5000" manufacturer="Canon" model="3004000" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA iP5200" driver="bjc-PIXMA-iP5200" manufacturer="Canon" model="3004200" parameters="PIXMA_iP4000_params" />
+      <printer name="Canon PIXMA iP5300" driver="bjc-PIXMA-iP5300" manufacturer="Canon" model="3005300" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA iP6700" driver="bjc-PIXMA-iP6700" manufacturer="Canon" model="3006700" parameters="PIXMA_iP4000_params" />
       <printer name="Canon PIXMA iX5000" driver="bjc-PIXMA-iX5000" manufacturer="Canon" model="4005000" parameters="PIXMA_iX5000_params" />
       <printer name="Canon PIXMA MP150" driver="bjc-MULTIPASS-MP150" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" />
