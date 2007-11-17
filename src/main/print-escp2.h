@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.112 2007/05/15 01:05:40 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.113 2007/11/17 21:53:14 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -373,6 +373,7 @@ typedef struct
 #define MODEL_ZEROMARGIN_NO	0x00ul /* zero margin mode? */
 #define MODEL_ZEROMARGIN_YES	0x10ul /* (print to edge of the paper) */
 #define MODEL_ZEROMARGIN_FULL	0x20ul /* (print to edge of the paper) */
+#define MODEL_ZEROMARGIN_H_ONLY	0x30ul /* (print to edge of the paper) */
 
 #define MODEL_VARIABLE_DOT_MASK	0x40ul /* Does this printer support var */
 #define MODEL_VARIABLE_NO	0x00ul /* dot size printing? The newest */
@@ -665,5 +666,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.112 2007/05/15 01:05:40 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.113 2007/11/17 21:53:14 rlk Exp $".
  */
