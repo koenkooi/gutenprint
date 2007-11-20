@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.208 2007/11/11 23:26:18 m0m Exp $"
+   "$Id: printers.xml,v 1.209 2007/11/20 22:08:12 m0m Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -752,9 +752,9 @@
       <printer name="Canon SELPHY-CP-730" driver="canon-cp730" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-740" driver="canon-cp740" manufacturer="Canon" model="1001" />
       <printer name="Canon SELPHY-CP-750" driver="canon-cp750" manufacturer="Canon" model="1001" />
-      <printer name="Canon SELPHY ES1" driver="canon-es1" manufacturer="Canon" model="1002" />
-      <printer name="Canon SELPHY ES2" driver="canon-es2" manufacturer="Canon" model="1002" />
-      <printer name="Canon SELPHY ES20" driver="canon-es20" manufacturer="Canon" model="1002" />
+      <printer name="Canon SELPHY ES1" driver="canon-es1" manufacturer="Canon" model="1003" />
+      <printer name="Canon SELPHY ES2" driver="canon-es2" manufacturer="Canon" model="1003" />
+      <printer name="Canon SELPHY ES20" driver="canon-es20" manufacturer="Canon" model="1003" />
       <printer name="Sony DPP-EX5" driver="sony-dppex5" manufacturer="Sony" model="2002" />
       <printer name="Sony DPP-EX7" driver="sony-dppex5" manufacturer="Sony" model="2002" />
       <printer name="Sony UP-DP10" driver="sony-updp10" manufacturer="Sony" model="2000" />
