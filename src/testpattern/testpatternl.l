@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.17 2005/07/28 00:58:45 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.18 2007/11/21 12:16:36 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -112,6 +112,7 @@ cmy			yylval.ival = RGB;DBG(CMY); return CMY;
 grey			yylval.ival = GRAY;DBG(GRAY); return GRAY;
 gray			yylval.ival = GRAY;DBG(GRAY); return GRAY;
 white			yylval.ival = WHITE;DBG(WHITE); return WHITE;
+output			DBG(OUTPUT); return OUTPUT;
 message			DBG(MESSAGE); return MESSAGE;
 end			DBG(END); return END;
 
