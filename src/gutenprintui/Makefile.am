@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2005/11/21 11:16:23 rleigh Exp $
+## $Id: Makefile.am,v 1.5.10.1 2007/12/02 02:40:39 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,9 @@ plist.o: printrcy.o
 
 ## Data
 
+if BUILD_LIBGUTENPRINTUI
 pkgconfigdata_DATA = gutenprintui.pc
+endif
 
 
 ## Rules
