@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.167 2007/08/11 14:39:27 rlk Exp $
+dnl $Id: configure.ac,v 1.168 2007/12/02 03:00:29 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.167 $)
+AC_REVISION($Revision: 1.168 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1015,7 +1015,7 @@ if test "$BUILD_FOOMATIC" != "no" ; then
     echo "        Build Foomatic 3.x data:                $BUILD_FOOMATIC_3"
 fi
 if test "$BUILD_GIMP2" != "no" ; then
-    echo "    Build enhanced Print plugin for the GIMP:   yes"
+    echo "    Build enhanced Print plugin for GIMP:       yes"
     if test "$BUILD_GIMP2_AS_GUTENPRINT" != "no" ; then
 	echo "        GIMP plugin will be named:              gutenprint"
     else
@@ -1023,7 +1023,7 @@ if test "$BUILD_GIMP2" != "no" ; then
     fi
     echo "        Install plugin(s) in home directory:    $USER_INSTALL"
 else
-    echo "    Build enhanced Print plugin for the GIMP:   no"
+    echo "    Build enhanced Print plugin for GIMP:       no"
 fi
 echo "    Build EPSON Stylus utility:                 $BUILD_ESCPUTIL"
 echo "    Build test programs:                        $BUILD_TEST"
