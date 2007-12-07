@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.111 2007/09/09 21:13:55 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.112 2007/12/07 02:53:16 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -692,22 +692,22 @@ set_all_options(stp_vars_t *v, cups_option_t *options, int num_options,
                   if (!strncasecmp(val, "Custom.", 7))
 		    val += 7;
 
-		  fprintf(stderr, "DEBUG: Gutenprint set int %s to %s\n",
-			  desc.name, val);
+		  fprintf(stderr, "DEBUG: Gutenprint set int %s to %s (%d)\n",
+			  desc.name, val, atoi(val));
 		  stp_set_int_parameter(v, desc.name, atoi(val));
 		  break;
 		case STP_PARAMETER_TYPE_DIMENSION:
                   if (!strncasecmp(val, "Custom.", 7))
 		    val += 7;
 
-		  fprintf(stderr, "DEBUG: Gutenprint set dimension %s to %s\n",
-			  desc.name, val);
+		  fprintf(stderr, "DEBUG: Gutenprint set dimension %s to %s (%d)\n",
+			  desc.name, val, atoi(val));
 
 		  stp_set_dimension_parameter(v, desc.name, atoi(val));
 		  break;
 		case STP_PARAMETER_TYPE_BOOLEAN:
-		  fprintf(stderr, "DEBUG: Gutenprint set bool %s to %s\n",
-			  desc.name, val);
+		  fprintf(stderr, "DEBUG: Gutenprint set bool %s to %s (%d)\n",
+			  desc.name, val, strcasecmp(val, "true") == 0 ? 1 : 0);
 		  stp_set_boolean_parameter
 		    (v, desc.name, strcasecmp(val, "true") == 0 ? 1 : 0);
 		  break;
@@ -1294,5 +1294,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.111 2007/09/09 21:13:55 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.112 2007/12/07 02:53:16 rlk Exp $".
  */
