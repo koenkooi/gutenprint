@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.112 2007/12/07 02:53:16 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.113 2007/12/08 20:55:22 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -1005,6 +1005,7 @@ main(int  argc,				/* I - Number of command-line arguments */
   fputs("INFO: Gutenprint Ready to print.\n", stderr);
   if (fd != 0)
     close(fd);
+  stp_vars_destroy(default_settings);
   return 0;
 
 cups_abort:
@@ -1027,6 +1028,7 @@ cups_abort:
 	  ((double) (t2.tv_usec - t1.tv_usec)) / 1000000.0);
   fputs("ERROR: Gutenprint No pages found!\n", stderr);
   fputs("ERROR: Gutenprint Invalid printer settings!\n", stderr);
+  stp_vars_destroy(default_settings);
   if (fd != 0)
     close(fd);
   return 1;
@@ -1294,5 +1296,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.112 2007/12/07 02:53:16 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.113 2007/12/08 20:55:22 rlk Exp $".
  */
