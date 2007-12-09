@@ -1,5 +1,5 @@
 /*
- *  $Id: ijsgutenprint.c,v 1.18 2006/07/04 02:19:15 rlk Exp $
+ *  $Id: ijsgutenprint.c,v 1.19 2007/12/09 00:38:48 rlk Exp $
  *
  *   IJS server for Gutenprint.
  *
@@ -385,10 +385,10 @@ list_all_parameters(void)
 			stp_malloc(strlen(param->name) + strlen("STP_Enable") + 1);
 		      sprintf(tmp1, "STP_Enable%s", param->name);
 		      stp_string_list_add_string(sl, tmp1, NULL);
-		      free(tmp1);
+		      stp_free(tmp1);
 		    }
 		}
-	      free(tmp);
+	      stp_free(tmp);
 	    }
 	  stp_parameter_list_destroy(params);
 	}
