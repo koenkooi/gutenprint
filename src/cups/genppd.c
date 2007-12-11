@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.138 2007/11/24 17:11:08 rlk Exp $"
+ * "$Id: genppd.c,v 1.139 2007/12/11 00:01:36 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1003,6 +1003,8 @@ write_ppd(
 		bottom, left,
 		top, right;
   const char	*driver;		/* Driver name */
+  const char	*family;		/* Printer family */
+  int		model;			/* Internal model ID */
   const char	*long_name;		/* Driver long name */
   const char	*manufacturer;		/* Manufacturer of printer */
   const stp_vars_t *printvars;		/* Printer option names */
@@ -1027,6 +1029,8 @@ write_ppd(
   */
 
   driver     = stp_printer_get_driver(p);
+  family     = stp_printer_get_family(p);
+  model      = stp_printer_get_model(p);
   long_name  = stp_printer_get_long_name(p);
   manufacturer = stp_printer_get_manufacturer(p);
   printvars  = stp_printer_get_defaults(p);
@@ -1160,6 +1164,7 @@ write_ppd(
     gzputs(fp, "*cupsFilter:	\"application/vnd.cups-command 33 commandtoepson\"\n");
   gzputs(fp, "\n");
   gzprintf(fp, "*StpDriverName:	\"%s\"\n", driver);
+  gzprintf(fp, "*StpDriverModelFamily:	\"%d_%s\"\n", model, family);
   gzprintf(fp, "*StpPPDLocation: \"%s\"\n", ppd_location);
   gzprintf(fp, "*StpLocale:	\"%s\"\n", language ? language : "C");
 
@@ -1926,5 +1931,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.138 2007/11/24 17:11:08 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.139 2007/12/11 00:01:36 rlk Exp $".
  */
