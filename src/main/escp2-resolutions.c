@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.33.8.2 2007/05/29 01:47:28 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.33.8.3 2007/12/15 20:35:44 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -641,8 +641,8 @@ static const quality_t standard_qualities[] =
   { "High",        N_("High"),         0, 0, 0, 0, 720, 720 },
   { "Photo",       N_("Photo"),        1440, 720, 2880, 720, 1440, 720 },
   { "HighPhoto",   N_("Super Photo"),  1440, 1440, 2880, 1440, 1440, 1440 },
-  { "UltraPhoto",  N_("Ultra Photo"),  2880, 2880, 2880, 2880, 2880, 2880 },
-  { "Best",        N_("Best"),         720, 360, 0, 0, -1, -1 },
+  { "UltraPhoto",  N_("Ultra Photo"),  2880, 1440, 2880, 1440, 2880, 1440 },
+  { "Best",        N_("Best"),         720, 360, 0, 1440, -1, -1 },
 };
 
 DECLARE_QUALITY_LIST(standard);
@@ -656,8 +656,8 @@ static const quality_t p1_5_qualities[] =
   { "High",        N_("High"),         0, 0, 0, 0, 720, 720 },
   { "Photo",       N_("Photo"),        1440, 720, 1440, 720, 1440, 720 },
   { "HighPhoto",   N_("Super Photo"),  1440, 1440, 2880, 1440, 1440, 1440 },
-  { "UltraPhoto",  N_("Ultra Photo"),  2880, 2880, 2880, 2880, 2880, 2880 },
-  { "Best",        N_("Best"),         720, 360, 0, 0, -1, -1 },
+  { "UltraPhoto",  N_("Ultra Photo"),  2880, 1440, 2880, 1440, 2880, 1440 },
+  { "Best",        N_("Best"),         720, 360, 0, 1440, -1, -1 },
 };
 
 DECLARE_QUALITY_LIST(p1_5);

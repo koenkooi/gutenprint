@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.146 2006/09/14 13:35:45 easysw Exp $
+## $Id: Makefile.am,v 1.146.2.1 2007/12/15 20:35:34 rlk Exp $
 ## Copyright (C) 2000-2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -45,14 +45,14 @@ libtool: $(LIBTOOL_DEPS)
 ChangeLogPhony:
 	@cd $(top_srcdir) ; \
 	for f in `find . -name Entries -print | grep CVS` ; do \
-	  if /usr/bin/test ! -f ChangeLogStamp -o ChangeLogStamp -ot $$f ; then \
+	  if @TEST@ ! -f ChangeLogStamp -o ChangeLogStamp -ot $$f ; then \
 	    rm -f ChangeLogStamp ; \
 	    touch ChangeLogStamp ; \
 	  fi ; \
 	done
 
 ChangeLogStamp: ChangeLogPhony
-	@/bin/true
+	@@TRUE@
 
 ChangeLog: ChangeLogStamp
 	@cd $(top_srcdir) ; \

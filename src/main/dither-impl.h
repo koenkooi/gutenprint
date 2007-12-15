@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.25 2005/04/12 00:57:01 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.25.18.1 2007/12/15 20:35:44 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -259,5 +259,5 @@ do									\
 
 #endif /* GUTENPRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.25 2005/04/12 00:57:01 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.25.18.1 2007/12/15 20:35:44 rlk Exp $".
  */

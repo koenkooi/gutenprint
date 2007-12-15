@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.17 2004/09/17 18:38:20 rleigh Exp $"
+ * "$Id: dither-ordered.c,v 1.17.18.1 2007/12/15 20:35:44 rlk Exp $"
  *
  *   Ordered dither algorithm
  *

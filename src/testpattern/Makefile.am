@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.25 2006/05/28 19:17:26 rlk Exp $
+## $Id: Makefile.am,v 1.25.8.1 2007/12/15 20:35:51 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ include $(top_srcdir)/scripts/global.mk
 
 pkgdatadir = $(datadir)/$(PACKAGE)/samples
 
-TESTS = run-testpattern run-testpattern-1 run-testpattern-2
+TESTS = run-testpattern-1 run-testpattern-2
 
 
 ## Programs
@@ -52,7 +52,9 @@ printer_options_LDADD = $(GUTENPRINT_LIBS)
 
 ## Data
 
+if INSTALL_SAMPLES
 pkgdata_DATA = testpattern.sample extended.sample
+endif
 
 
 ## Clean

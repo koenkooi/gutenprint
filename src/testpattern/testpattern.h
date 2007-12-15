@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.15 2004/09/17 18:38:27 rleigh Exp $"
+ * "$Id: testpattern.h,v 1.15.18.1 2007/12/15 20:35:52 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -25,6 +25,7 @@
 #endif
 
 #include <gutenprint/gutenprint.h>
+#include <stdio.h>
 
 typedef struct
 {
@@ -80,6 +81,7 @@ extern int global_bit_depth;
 extern int global_channel_depth;
 extern int global_did_something;
 extern int global_invert_data;
+extern char *global_output;
 
 
 extern char *c_strdup(const char *s);
