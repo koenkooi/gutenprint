@@ -1,32 +1,24 @@
 /*
- * "$Id: cups-calibrate.c,v 1.5 2004/09/17 18:38:10 rleigh Exp $"
+ * "$Id: cups-calibrate.c,v 1.6 2007/12/23 17:31:51 easysw Exp $"
  *
  *   Super simple color calibration program for the Common UNIX
  *   Printing System.
  *
  *   Copyright 1993-2000 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License,
- *   version 2, as published by the Free Software Foundation.
+ *   This program is free software; you can redistribute it and/or modify it
+ *   under the terms of the GNU General Public License as published by the Free
+ *   Software Foundation; either version 2 of the License, or (at your option)
+ *   any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ *   This program is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ *   for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, please contact Easy Software
- *   Products at:
- *
- *       Attn: CUPS Licensing Information
- *       Easy Software Products
- *       44141 Airport View Drive, Suite 204
- *       Hollywood, Maryland 20636-3111 USA
- *
- *       Voice: (301) 373-9603
- *       EMail: cups-info@cups.org
- *         WWW: http://www.cups.org
+ *   along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * Contents:
  *
