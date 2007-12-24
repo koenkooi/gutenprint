@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.115 2007/12/23 17:31:51 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.116 2007/12/24 02:54:12 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -662,7 +662,7 @@ set_all_options(stp_vars_t *v, cups_option_t *options, int num_options,
 	  else if (val && strlen(val) > 0 && strcmp(val, "None") != 0)
 	    {
 	      double fine_val = 0;
-	      if (index(val, (int) '.'))
+	      if (strchr(val, (int) '.'))
 		{
 		  fine_val = atof(val);
 		  if (! suppress_messages)
@@ -1359,5 +1359,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.115 2007/12/23 17:31:51 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.116 2007/12/24 02:54:12 rlk Exp $".
  */
