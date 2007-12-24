@@ -1,7 +1,7 @@
 /*
- * "$Id: xmlppd.h,v 1.1 2007/12/24 00:22:26 rlk Exp $"
+ * "$Id: xmlppd.h,v 1.2 2007/12/24 03:05:52 rlk Exp $"
  *
- *   Copyright 2003 Robert Krawitz (rlk@alum.mit.edu)
+ *   Copyright 2007 by Michael R Sweet and Robert Krawitz
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
