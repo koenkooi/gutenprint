@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.231 2007/12/26 01:52:47 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.232 2007/12/26 17:20:16 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1935,7 +1935,7 @@ const stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
     "superfine", "c120",
     variable_bits, variable_base_res, "default",
     "standard", &new_init_sequence, &je_deinit_sequence,
-    &sc120_borderless_sequence, NULL, "standard"
+    &sc120_borderless_sequence, NULL, "c120"
   },
 };
 
