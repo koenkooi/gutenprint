@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.70 2007/12/25 19:44:53 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.71 2007/12/26 01:52:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2538,7 +2538,7 @@ static const escp2_inkname_t *const c120_ink_types[] =
 };
 
 DECLARE_INKLIST("None", c120, c120, N_("EPSON Standard Inks"),
-		durabrite2, durabrite2, standard);
+		durabrite2, durabrite3, standard);
 
 static const escp2_inkname_t *const c120_quadtone_ink_types[] =
 {
