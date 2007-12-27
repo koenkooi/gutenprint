@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.82 2007/12/09 03:28:58 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.83 2007/12/27 20:34:28 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -884,8 +884,8 @@ static void es1_plane_init_func(stp_vars_t *v)
   }
 
   stp_put16_be(0x4001, v);
-  stp_putc(plane, v);
   stp_putc(0x1, v);
+  stp_putc(plane, v);
   stp_put32_le(privdata.w_size * privdata.h_size, v);
   dyesub_nputc(v, '\0', 4);
 }
