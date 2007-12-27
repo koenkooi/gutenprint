@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.59 2007/12/26 01:52:47 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.60 2007/12/27 00:31:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -236,12 +236,12 @@ static const escp2_dropsize_t escp2_3pl_pigment_c66_5760_dropsizes =
   { "3pl_pigment_c66_5760", 1, { 1.0 } };
 
 /* Stylus C120 */
-static const escp2_dropsize_t escp2_economy_pigment_c120_dropsizes =
-  { "economy_pigment_c120", 3, { 0, 0, 1.0 } };
 static const escp2_dropsize_t escp2_low_pigment_c120_dropsizes =
-  { "low_pigment_c120", 3, { 0.18, 0.333, 1.0 } };
+  { "low_pigment_c120", 3, { 0.25, 0.5, 1.0 } };
 static const escp2_dropsize_t escp2_6pl_pigment_c120_dropsizes =
-  { "6pl_pigment_c120", 3, { 0.18, 0.333, 1.0 } };
+  { "6pl_pigment_c120", 3, { 0.12, 0.3, 1.0 } };
+/*  { "6pl_pigment_c120", 3, { 0.15, 0.3, 1.0 } }; */
+/*  { "6pl_pigment_c120", 3, { 0.18, 0.333, 1.0 } }; */
 static const escp2_dropsize_t escp2_3pl_pigment_c120_dropsizes =
   { "3pl_pigment_c120", 3, { 0.25, 0.5, 1.0 } };
 static const escp2_dropsize_t escp2_3pl_pigment_c120_2880_dropsizes =
@@ -488,9 +488,9 @@ static const escp2_drop_list_t variable_3pl_pigment_c66_drops =
 
 static const escp2_drop_list_t variable_3pl_pigment_c120_drops =
 {
-  &escp2_economy_pigment_c120_dropsizes,
   &escp2_low_pigment_c120_dropsizes,
   &escp2_low_pigment_c120_dropsizes,
+  &escp2_6pl_pigment_c120_dropsizes,
   &escp2_6pl_pigment_c120_dropsizes,
   &escp2_3pl_pigment_c120_dropsizes,
   &escp2_3pl_pigment_c120_2880_dropsizes,
