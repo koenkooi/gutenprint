@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.117 2007/12/27 23:44:34 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.118 2007/12/28 00:00:53 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -837,13 +837,13 @@ main(int  argc,				/* I - Number of command-line arguments */
   }
   if (! suppress_messages)
     {
-      fprintf(stderr, "INFO: Gutenprint command line: %s '%s' '%s' '%s' '%s' '%s'%s%s%s\n",
+      fprintf(stderr, "DEBUG: Gutenprint command line: %s '%s' '%s' '%s' '%s' '%s'%s%s%s\n",
 	      argv[0], argv[1], argv[2], argv[3], argv[4], argv[5],
 	      argc >= 7 ? " '" : "",
 	      argc >= 7 ? argv[6] : "",
 	      argc >= 7 ? "'" : "");
-      fprintf(stderr, "INFO: Gutenprint using PPD file %s\n", ppdfile);
-      fprintf(stderr, "INFO: Gutenprint %s Starting\n", version_id);
+      fprintf(stderr, "DEBUG: Gutenprint using PPD file %s\n", ppdfile);
+      fprintf(stderr, "DEBUG: Gutenprint %s Starting\n", version_id);
     }
 
   if ((ppd = ppdOpenFile(ppdfile)) == NULL)
@@ -1365,5 +1365,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.117 2007/12/27 23:44:34 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.118 2007/12/28 00:00:53 rlk Exp $".
  */
