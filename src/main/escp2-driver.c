@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.30.6.2 2007/12/29 20:42:26 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.30.6.3 2007/12/30 05:37:55 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -655,7 +655,7 @@ stpi_escp2_flush_pass(stp_vars_t *v, int passno, int vertical_subpass)
 		      for (l = 0; l < lc; l++)
 			{
 			  int sp = (l * sc) + k;
-			  off_t offset = sp * pd->split_channel_width;
+			  unsigned long offset = sp * pd->split_channel_width;
 			  if (COMPRESSION)
 			    {
 			      unsigned char *comp_ptr;
