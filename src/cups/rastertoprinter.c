@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.119 2007/12/31 23:35:10 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.120 2008/01/02 01:39:06 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -848,8 +848,8 @@ main(int  argc,				/* I - Number of command-line arguments */
   if (! suppress_messages)
     {
       fprintf(stderr, "DEBUG: Gutenprint %s Starting\n", version_id);
-      fprintf(stderr, "DEBUG: Gutenprint command line: %s '%s' '%s' '%s' '%s' '%s'%s%s%s\n",
-	      argv[0], argv[1], argv[2], argv[3], argv[4], argv[5],
+      fprintf(stderr, "DEBUG: Gutenprint command line: %s '%s' '%s' '%s' '%s' %s%s%s%s\n",
+	      argv[0], argv[1], argv[2], argv[3], argv[4], "<args>",
 	      argc >= 7 ? " '" : "",
 	      argc >= 7 ? argv[6] : "",
 	      argc >= 7 ? "'" : "");
@@ -1389,5 +1389,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.119 2007/12/31 23:35:10 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.120 2008/01/02 01:39:06 rlk Exp $".
  */
