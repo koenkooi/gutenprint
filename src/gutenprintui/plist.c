@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.3.6.2 2007/12/15 20:35:42 rlk Exp $"
+ * "$Id: plist.c,v 1.3.6.3 2008/01/05 22:32:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
-
 
 typedef enum
 {
@@ -347,7 +346,7 @@ writefunc(void *file, const char *buf, size_t bytes)
 static void
 stpui_errfunc(void *file, const char *buf, size_t bytes)
 {
-  g_message(buf);
+  g_message("%s",buf);
 }
 
 void
@@ -966,9 +965,15 @@ stpui_printrc_load_v2(FILE *fp)
   yyin = fp;
 
   stpui_printrc_current_printer = NULL;
-  setlocale(LC_ALL, "C");
+#ifdef HAVE_LOCALE_H
+  locale = g_strdup(setlocale(LC_NUMERIC, NULL));
+  setlocale(LC_NUMERIC, "C");
+#endif
   retval = yyparse();
-  setlocale(LC_ALL, "");
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_NUMERIC, locale);
+  SAFE_FREE(locale);
+#endif
   if (stpui_printrc_current_printer)
     {
       int i;
@@ -1010,17 +1015,23 @@ stpui_printrc_load(void)
       (void) memset(line, 0, 1024);
       if (fgets(line, sizeof(line), fp) != NULL)
 	{
-	  /* Force locale to "C", so that numbers scan correctly */
-	  setlocale(LC_ALL, "C");
+#ifdef HAVE_LOCALE_H
+	  char *locale = g_strdup(setlocale(LC_NUMERIC, NULL));
+	  setlocale(LC_NUMERIC, "C");
+#endif
 	  if (strncmp("#PRINTRCv", line, 9) == 0)
 	    {
+	      /* Force locale to "C", so that numbers scan correctly */
 #ifdef DEBUG
 	      fprintf(stderr, "Found printrc version tag: `%s'\n", line);
 	      fprintf(stderr, "Version number: `%s'\n", &(line[9]));
 #endif
 	      (void) sscanf(&(line[9]), "%d", &format);
 	    }
-	  setlocale(LC_ALL, "");
+#ifdef HAVE_LOCALE_H
+	  setlocale(LC_NUMERIC, locale);
+	  SAFE_FREE(locale);
+#endif
 	}
       rewind(fp);
       switch (format)
@@ -1063,7 +1074,10 @@ stpui_printrc_save(void)
        */
 
       /* Force locale to "C", so that numbers print correctly */
-      setlocale(LC_ALL, "C");
+#ifdef HAVE_LOCALE_H
+      char *locale = g_strdup(setlocale(LC_NUMERIC, NULL));
+      setlocale(LC_NUMERIC, "C");
+#endif
 #ifdef DEBUG
       fprintf(stderr, "Number of printers: %d\n", stpui_plist_count);
 #endif
@@ -1198,7 +1212,10 @@ stpui_printrc_save(void)
 	  fprintf(stderr, "Wrote printer %d: %s\n", i, p->name);
 #endif
 	}
-      setlocale(LC_ALL, "");
+#ifdef HAVE_LOCALE_H
+      setlocale(LC_NUMERIC, locale);
+      SAFE_FREE(locale);
+#endif
       fclose(fp);
     }
   else
@@ -1236,6 +1253,8 @@ stpui_get_system_printers(void)
   identify_print_system();
   if (global_printing_system)
   {
+    const char *old_locale = getenv("LC_ALL");
+    (void) setenv("LC_ALL", "C", 1);
     if ((pfile = popen(global_printing_system->scan_command, "r")) != NULL)
     {
      /*
@@ -1257,6 +1276,10 @@ stpui_get_system_printers(void)
 	    }
 	}
       pclose(pfile);
+      if (old_locale)
+	setenv("LC_ALL", old_locale, 1);
+      else
+	unsetenv("LC_ALL");
     }
   }
 }
@@ -1597,6 +1620,7 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 		      else	/* Child 2 (printer command) */
 			{
 			  char *command;
+			  char *locale;
 			  if (stpui_plist_get_command_type(printer) ==
 			      COMMAND_TYPE_DEFAULT)
 			    {
@@ -1616,6 +1640,10 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 			  close (pipefd[0]);
 			  close (pipefd[1]);
 			  close(syncfd[1]);
+#ifdef HAVE_LOCALE_H
+			  locale = g_strdup(setlocale(LC_NUMERIC, NULL));
+			  setlocale(LC_NUMERIC, "C");
+#endif
 			  execl("/bin/sh", "/bin/sh", "-c", command, NULL);
 			  /* NOTREACHED */
 			  _exit (1);
@@ -1789,5 +1817,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.3.6.2 2007/12/15 20:35:42 rlk Exp $".
+ * End of "$Id: plist.c,v 1.3.6.3 2008/01/05 22:32:28 rlk Exp $".
  */

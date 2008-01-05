@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.6.10.4 2007/12/15 20:35:43 rlk Exp $"
+ * "$Id: plist.c,v 1.6.10.5 2008/01/05 22:32:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1623,6 +1623,7 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 		      else	/* Child 2 (printer command) */
 			{
 			  char *command;
+			  char *locale;
 			  if (stpui_plist_get_command_type(printer) ==
 			      COMMAND_TYPE_DEFAULT)
 			    {
@@ -1642,6 +1643,10 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 			  close (pipefd[0]);
 			  close (pipefd[1]);
 			  close(syncfd[1]);
+#ifdef HAVE_LOCALE_H
+			  locale = g_strdup(setlocale(LC_NUMERIC, NULL));
+			  setlocale(LC_NUMERIC, "C");
+#endif
 			  execl("/bin/sh", "/bin/sh", "-c", command, NULL);
 			  /* NOTREACHED */
 			  _exit (1);
@@ -1815,5 +1820,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.6.10.4 2007/12/15 20:35:43 rlk Exp $".
+ * End of "$Id: plist.c,v 1.6.10.5 2008/01/05 22:32:28 rlk Exp $".
  */
