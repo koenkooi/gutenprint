@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.140 2007/12/23 17:31:51 easysw Exp $"
+ * "$Id: genppd.c,v 1.141 2008/01/15 13:17:23 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1525,6 +1525,7 @@ write_ppd(
 	  stp_clear_string_parameter(v, "Resolution");
 	  stp_describe_parameter(v, "Quality", &desc1);
 	  stp_set_string_parameter(v, "Quality", desc1.deflt.str);
+	  stp_parameter_description_destroy(&desc1);
 	  stp_describe_resolution(v, &xdpi, &ydpi);
 	  stp_clear_string_parameter(v, "Quality");
 	  tmp_xdpi = xdpi;
@@ -1923,5 +1924,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.140 2007/12/23 17:31:51 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.141 2008/01/15 13:17:23 rlk Exp $".
  */
