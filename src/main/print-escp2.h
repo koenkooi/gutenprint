@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.115 2007/12/26 18:14:05 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.116 2008/01/15 03:48:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -407,7 +407,11 @@ typedef struct
 
 #define MODEL_INTERCHANGEABLE_INK_MASK	0x2000ul
 #define MODEL_INTERCHANGEABLE_INK_NO	0x0000ul
-#define MODEL_INTERCHANGEABLE_INK_YES	0x1000ul
+#define MODEL_INTERCHANGEABLE_INK_YES	0x2000ul
+
+#define MODEL_ENVELOPE_LANDSCAPE_MASK	0x4000ul
+#define MODEL_ENVELOPE_LANDSCAPE_NO	0x0000ul
+#define MODEL_ENVELOPE_LANDSCAPE_YES	0x4000ul
 
 typedef enum
 {
@@ -421,6 +425,7 @@ typedef enum
   MODEL_SUPPORTS_INK_CHANGE,
   MODEL_PACKET_MODE,
   MODEL_INTERCHANGEABLE_INK,
+  MODEL_ENVELOPE_LANDSCAPE,
   MODEL_LIMIT
 } escp2_model_option_t;
 
@@ -481,6 +486,8 @@ typedef struct escp2_printer
   int		max_paper_height; /* Maximum paper height, in points */
   int		min_paper_width; /* Maximum paper width, in points */
   int		min_paper_height; /* Maximum paper height, in points */
+  int		max_imageable_width; /* Maximum imageable area, in points */
+  int		max_imageable_height; /* Maximum imageable area, in points */
 /*****************************************************************************/
   /* Borders */
 				/* SHEET FED: */
@@ -677,5 +684,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.115 2007/12/26 18:14:05 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.116 2008/01/15 03:48:46 rlk Exp $".
  */
