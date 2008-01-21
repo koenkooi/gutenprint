@@ -1,5 +1,5 @@
 /*
- * "$Id: color-conversion.h,v 1.11 2005/09/17 21:54:33 rlk Exp $"
+ * "$Id: color-conversion.h,v 1.12 2008/01/21 23:19:39 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gimp-Print algorithm.
  *
@@ -150,9 +150,7 @@ typedef struct
   stp_cached_curve_t contrast_correction;
   stp_cached_curve_t user_color_correction;
   stp_cached_curve_t channel_curves[STP_CHANNEL_LIMIT];
-  stp_cached_curve_t hue_angle;
   double gamma_values[STP_CHANNEL_LIMIT];
-  double hue_angles[STP_CHANNEL_LIMIT];
   double print_gamma;
   double app_gamma;
   double screen_gamma;
