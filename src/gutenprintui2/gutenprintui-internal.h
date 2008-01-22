@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprintui-internal.h,v 1.4 2008/01/21 23:19:38 rlk Exp $"
+ * "$Id: gutenprintui-internal.h,v 1.5 2008/01/22 02:36:42 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -89,7 +89,9 @@ typedef struct
   const stp_parameter_t *fast_desc;
   int is_active;
   int is_enabled;
+  int reset_all;
   GtkWidget *checkbox;
+  GtkWidget *reset_btn;
   union {
     list_option_t list;
     float_option_t flt;
