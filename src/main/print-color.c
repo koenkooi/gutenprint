@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.138 2008/01/21 23:19:40 rlk Exp $"
+ * "$Id: print-color.c,v 1.139 2008/01/25 00:38:32 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -1272,7 +1272,7 @@ stpi_do_dump_lut_to_file(stp_vars_t *v, FILE *fp)
 			   lut->invert_output && ! channel_is_synthesized(lut, i));
     }
   curve = stp_channel_get_gcr_curve(v);
-  if (v)
+  if (curve)
     {
       fprintf(fp, "GCR curve: '");
       stp_curve_write(fp, curve);
