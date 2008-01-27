@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.38 2007/02/25 22:44:57 rlk Exp $ */
+/* $Id: unprint.c,v 1.39 2008/01/27 21:28:08 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -936,7 +936,7 @@ parse_escp2_extended(FILE *fp_r)
       else
 	{
 	  pstate.dotsize = buf[1];
-	  if (pstate.dotsize & 0x10)
+	  if (pstate.dotsize > 0x10)
 	    pstate.bpp = 2;
 	  else
 	    pstate.bpp = 1;
