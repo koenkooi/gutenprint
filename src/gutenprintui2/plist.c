@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.14 2008/01/05 22:33:11 rlk Exp $"
+ * "$Id: plist.c,v 1.15 2008/01/30 01:41:15 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -84,6 +84,9 @@ typedef struct
 
 /*
  * Generic printing system, based on SysV lp
+ *
+ * CAUTION: Do not use lpstat -t or lpstat -p.
+ * See bug 742187 (huge delays with lpstat -d -p) for an explanation.
  */
 static const print_system_t default_printing_system =
   { "SysV", N_("System V lp"), "lp -s", "-d", "-oraw", "/usr/bin/lp",
@@ -1820,5 +1823,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.14 2008/01/05 22:33:11 rlk Exp $".
+ * End of "$Id: plist.c,v 1.15 2008/01/30 01:41:15 rlk Exp $".
  */
