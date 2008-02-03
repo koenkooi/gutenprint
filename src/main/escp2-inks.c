@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.61 2008/02/03 03:30:17 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.62 2008/02/03 03:41:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -389,7 +389,7 @@ static const escp2_drop_list_t claria_1400_drops =
   &escp2_claria_1400_720_dropsizes,
   &escp2_claria_1400_720_dropsizes,
   &escp2_claria_1400_1440_720_dropsizes,
-  &escp2_claria_1400_1440_dropsizes,
+  &escp2_claria_1400_1440_720_dropsizes,
   &escp2_claria_1400_1440_dropsizes,
   &escp2_claria_1400_2880_dropsizes,
   &escp2_claria_1400_5760_dropsizes,
