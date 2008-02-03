@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.236 2008/01/15 03:48:45 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.237 2008/02/03 03:30:17 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -80,10 +80,10 @@ static const escp2_dot_size_t p1_5pl_dotsizes =
 { 0x10, 0x10, 0x10, 0x11, 0x12, 0x13, 0x13, 0x13, 0x13 };
 
 static const escp2_dot_size_t claria_dotsizes =
-{ 0x33, 0x33, 0x24, 0x24, 0x24, 0x25, 0x25, 0x25, 0x25 };
+{ 0x33, 0x33, 0x24, 0x24, 0x24, 0x24, 0x25, 0x25, 0x25 };
 
 static const escp2_dot_size_t claria_1400_dotsizes =
-{ 0x33, 0x33, 0x21, 0x21, 0x33, 0x25, 0x25, 0x25, 0x25 };
+{ 0x33, 0x33, 0x21, 0x21, 0x33, 0x33, 0x25, 0x25, 0x25 };
 
 static const escp2_dot_size_t c2pl_dotsizes =
 { 0x12, 0x12, 0x12, 0x11, 0x13,   -1, 0x10, 0x10, 0x10 };
@@ -269,10 +269,10 @@ static const escp2_densities_t p1_5pl_densities =
 { 2.8, 1.4,  1.00, 1.000, 0.869, 0.942, 0.471, 0.500, 0.530 };
 
 static const escp2_densities_t claria_densities =
-{ 2.8, 1.4,  2.00, 1.000, 0.500, 0.812, 0.406, 0.546, 0.440 };
+{ 4.0, 4.0,  3.52, 1.760, 0.880, 0.440, 0.586, 0.733, 0.440 };
 
 static const escp2_densities_t claria_1400_densities =
-{ 2.8, 1.4,  2.00, 1.000, 0.500, 0.812, 0.406, 0.546, 0.440 };
+{ 4.0, 4.0,  3.52, 1.760, 0.880, 0.440, 0.586, 0.733, 0.440 };
 
 static const escp2_densities_t p3_5pl_densities =
 { 2.8, 1.4,  1.77, 0.886, 0.443, 0.221, 0.240, 0.293, 0.146 };
