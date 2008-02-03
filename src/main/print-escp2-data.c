@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.237 2008/02/03 03:30:17 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.238 2008/02/03 03:39:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -208,7 +208,7 @@ static const escp2_base_resolutions_t c1_5_base_res =
 {  360,  360,  720,  720,  720,  720,  720,  720,  720 };
 
 static const escp2_base_resolutions_t claria_1400_base_res =
-{  360,  360,  720,  720,  360,  720,  720,  720,  720 };
+{  360,  360,  720,  720,  360,  360,  720,  720,  720 };
 
 static const escp2_base_resolutions_t stc900_base_res =
 {  360,  360,  360,  360,  180,  180,  360,  360,  360 };
