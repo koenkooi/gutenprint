@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-inks.c,v 1.25 2004/09/17 18:38:18 rleigh Exp $"
+ * "$Id: dither-inks.c,v 1.26 2008/02/18 14:20:17 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -114,7 +114,6 @@ initialize_channel(stp_vars_t *v, int channel, int subchannel)
   assert(idx >= 0);
   memset(dc, 0, sizeof(stpi_dither_channel_t));
   stp_dither_matrix_clone(&(d->dither_matrix), &(dc->dithermat), 0, 0);
-  stp_dither_matrix_clone(&(d->transition_matrix), &(dc->pick), 0, 0);
   shade.dot_sizes = &dot;
   shade.value = 1.0;
   shade.numsizes = 1;

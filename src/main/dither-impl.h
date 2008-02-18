@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-impl.h,v 1.31 2008/01/26 14:59:39 rlk Exp $"
+ * "$Id: dither-impl.h,v 1.32 2008/02/18 14:20:17 rlk Exp $"
  *
  *   Internal implementation of dither algorithms
  *
@@ -60,6 +60,7 @@ extern "C" {
 #define D_PREDITHERED 256
 #define D_ORDERED_NEW 512
 #define D_ORDERED_SEGMENTED 1024
+#define D_ORDERED_SEGMENTED_NEW (D_ORDERED_SEGMENTED | D_ORDERED_NEW)
 #define D_INVALID -2
 
 #define DITHER_FAST_STEPS (6)
@@ -150,7 +151,6 @@ typedef struct dither
   int x_aspect;			/* Aspect ratio numerator */
   int y_aspect;			/* Aspect ratio denominator */
 
-  double transition;		/* Exponential scaling for transition region */
 
   int *offset0_table;
   int *offset1_table;
@@ -165,7 +165,6 @@ typedef struct dither
 				 * some things */
 
   stp_dither_matrix_impl_t dither_matrix;
-  stp_dither_matrix_impl_t transition_matrix;
   stpi_dither_channel_t *channel;
   unsigned channel_count;
   unsigned total_channel_count;
@@ -261,5 +260,5 @@ do									\
 
 #endif /* GUTENPRINT_INTERNAL_DITHER_IMPL_H */
 /*
- * End of "$Id: dither-impl.h,v 1.31 2008/01/26 14:59:39 rlk Exp $".
+ * End of "$Id: dither-impl.h,v 1.32 2008/02/18 14:20:17 rlk Exp $".
  */
