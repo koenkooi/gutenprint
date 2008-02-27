@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.386 2008/02/03 01:52:11 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.387 2008/02/27 02:22:26 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2128,8 +2128,12 @@ escp2_parameters(const stp_vars_t *v, const char *name,
     {
       const inklist_t *inks = escp2_inklist(v);
       int ninktypes = inks->n_inks;
+      int verified_inktypes = 0;
+      for (i = 0; i < ninktypes; i++)
+	if (verify_inktype(v, inks->inknames[i]))
+	  verified_inktypes++;
       description->bounds.str = stp_string_list_create();
-      if (ninktypes > 1)
+      if (verified_inktypes > 1)
 	{
 	  stp_string_list_add_string(description->bounds.str, "None",
 				     _("Standard"));
