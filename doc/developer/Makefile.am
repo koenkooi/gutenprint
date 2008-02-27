@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.21 2008/02/03 23:41:38 rlk Exp $
+## $Id: Makefile.am,v 1.22 2008/02/27 12:28:06 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ pdf: gutenprint.pdf
 
 gutenprint.pdf:  $(MANUAL_SRC_FILES)
 	@if [ -z "$(DB2PDF)" ] ; then \
-	  echo "No db2pdf: cannot build documentation!" \
+	  echo "No db2pdf: cannot build documentation!"; \
 	  exit 1; \
 	fi
 	if test $(srcdir) = '.' ; then \
@@ -109,7 +109,7 @@ html: html-stamp
 
 html-stamp: $(MANUAL_SRC_FILES)
 	@if [ -z "$(DB2HTML)" ] ; then \
-	  echo "No db2html: cannot build documentation!" \
+	  echo "No db2html: cannot build documentation!"; \
 	  exit 1; \
 	fi
 	if test $(srcdir) = '.' ; then \
