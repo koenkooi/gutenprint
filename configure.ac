@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.176 2008/03/07 02:33:49 rlk Exp $
+dnl $Id: configure.ac,v 1.177 2008/04/01 00:53:40 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.176 $)
+AC_REVISION($Revision: 1.177 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -934,7 +934,6 @@ AC_CONFIG_FILES([include/gutenprint/gutenprint-version.h])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([man/cups-calibrate.8])
 AC_CONFIG_FILES([man/cups-genppd.8])
-AC_CONFIG_FILES([man/cups-genppdconfig.8])
 AC_CONFIG_FILES([man/cups-genppdupdate.8])
 AC_CONFIG_FILES([man/escputil.1])
 AC_CONFIG_FILES([man/ijsgutenprint.1])
@@ -942,11 +941,6 @@ AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([samples/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/cups/Makefile])
-AC_CONFIG_FILES([src/cups/cups-genppdconfig],
-                [chmod +x src/cups/cups-genppdconfig;
-		 rm -f src/cups/cups-genppdconfig.${GUTENPRINT_RELEASE_VERSION};
-		 mv src/cups/cups-genppdconfig src/cups/cups-genppdconfig.${GUTENPRINT_RELEASE_VERSION};
-		 echo "    *** Ignore any warning that may follow that sed can't read src/cups/cups-genppdconfig"])
 AC_CONFIG_FILES([src/cups/cups-genppdupdate],
                 [chmod +x src/cups/cups-genppdupdate;
 		 rm -f src/cups/cups-genppdupdate.${GUTENPRINT_RELEASE_VERSION};
