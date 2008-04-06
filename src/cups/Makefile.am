@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.95 2008/03/31 12:56:16 rlk Exp $
+## $Id: Makefile.am,v 1.96 2008/04/06 01:10:52 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,7 @@ endif
 if BUILD_CUPS
 bin_PROGRAMS = cups-calibrate
 sbin_PROGRAMS = cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
-sbin_SCRIPTS = cups-genppdupdate.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
+sbin_SCRIPTS = cups-genppdupdate
 cupsexec_filter_PROGRAMS = rastertogutenprint.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ commandtoepson commandtocanon
 
 TESTS= test-ppds test-rastertogutenprint
@@ -99,9 +99,6 @@ gutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_LDFLAGS = $(STA
 rastertogutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_SOURCES = rastertoprinter.c
 rastertogutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_LDADD = $(CUPS_LIBS) $(GUTENPRINT_LIBS)
 rastertogutenprint_@GUTENPRINT_MAJOR_VERSION@_@GUTENPRINT_MINOR_VERSION@_LDFLAGS = $(STATIC_LDOPTS)
-
-cups-genppdupdate.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@: $(top_builddir)/config.status cups-genppdupdate.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/cups-genppdupdate
 
 ## Data
 
@@ -218,7 +215,7 @@ clean-local:
 ## Clean
 
 CLEANFILES = ppd-stamp
-DISTCLEANFILES = cups-genppdupdate.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
+DISTCLEANFILES = cups-genppdupdate
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
