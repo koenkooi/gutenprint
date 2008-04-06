@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.224 2008/04/06 13:57:17 faust3 Exp $"
+ * "$Id: print-canon.c,v 1.225 2008/04/06 14:00:02 faust3 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1598,8 +1598,8 @@ static void canon_setup_channels(stp_vars_t *v,canon_privdata_t* privdata){
     for(channel_idx = 0; channel_idx < STP_NCOLORS ; channel_idx++){
         int i;
         unsigned int subchannel = 0;
-        channel = channel_order[channel_idx];
         stp_shade_t* shades = NULL;
+        channel = channel_order[channel_idx];
         if(channel == STP_ECOLOR_K && privdata->used_inks & CANON_INK_K_MASK){ /* black channel */
             /* find K and k inks */
             for(i=0;i<privdata->mode->num_inks;i++){
