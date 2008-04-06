@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.141 2008/01/15 13:17:23 rlk Exp $"
+ * "$Id: genppd.c,v 1.142 2008/04/06 21:16:08 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -292,6 +292,12 @@ cat_ppd(int argc, char **argv)	/* I - Driver URI */
     fprintf(stderr, "ERROR: Bad ppd-name \"%s\" (%d)!\n", uri, status);
     return (1);
   }
+
+  if (strcmp(scheme, "gutenprint." GUTENPRINT_RELEASE_VERSION) != 0)
+    {
+      fprintf(stderr, "ERROR: Gutenprint version mismatch!\n");
+      return(1);
+    }
 
   s = strchr(resource + 1, '/');
   if (s)
@@ -1924,5 +1930,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.141 2008/01/15 13:17:23 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.142 2008/04/06 21:16:08 rlk Exp $".
  */
