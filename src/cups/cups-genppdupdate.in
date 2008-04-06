@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.36 2008/04/06 01:10:55 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.37 2008/04/06 01:17:10 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -224,6 +224,8 @@ sub HELP_MESSAGE($;$$$) {
     print $fh "  -v          Verbose messages.\n";
     print $fh "  -N          Reset options to defaults.\n";
     print $fh "  -o out_dir  Output PPD files to out_dir.\n";
+    print $fh "  -r version  Use PPD files for Gutenprint major.minor version.\n";
+    print $fh "  -i          Prompt (interactively) for each PPD file.\n";
     exit(0);
 }
 
