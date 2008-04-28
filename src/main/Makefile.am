@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.98 2007/12/24 03:05:52 rlk Exp $
+## $Id: Makefile.am,v 1.99 2008/04/28 02:06:44 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@ include $(top_srcdir)/scripts/global.mk
 ## Variables
 
 pkgconfigdatadir = $(libdir)/pkgconfig
-pkgxmldatadir = $(pkgdatadir)/$(VERSION)/xml
-pkgmoduledir = $(pkglibdir)/$(VERSION)/modules
+pkgxmldatadir = $(pkgdatadir)/@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@/xml
+pkgmoduledir = $(pkglibdir)/@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@/modules
 
 
 ## Programs
