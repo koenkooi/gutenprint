@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.117 2008/01/19 21:08:45 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.118 2008/05/04 17:08:57 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -438,12 +438,15 @@ typedef struct escp2_printer
   /* Basic head configuration */
   short		nozzles;	/* Number of nozzles per color */
   short		min_nozzles;	/* Minimum number of nozzles per color */
+  short		nozzle_start;	/* Starting usable nozzle */
   short		nozzle_separation; /* Separation between rows, in 1/360" */
   short		black_nozzles;	/* Number of black nozzles (may be extra) */
   short		min_black_nozzles;	/* # of black nozzles (may be extra) */
+  short		black_nozzle_start;	/* Starting usable nozzle */
   short		black_nozzle_separation; /* Separation between rows */
   short		fast_nozzles;	/* Number of fast nozzles */
   short		min_fast_nozzles;	/* # of fast nozzles (may be extra) */
+  short		fast_nozzle_start;	/* Starting usable nozzle */
   short		fast_nozzle_separation; /* Separation between rows */
   short		physical_channels; /* Number of ink channels */
 /*****************************************************************************/
@@ -568,6 +571,7 @@ typedef struct
   int nozzles;			/* Number of nozzles */
   int min_nozzles;		/* Fewest nozzles we're allowed to use */
   int nozzle_separation;	/* Nozzle separation, in dots */
+  int nozzle_start;		/* First usable nozzle */
   int *head_offset;		/* Head offset (for C80-type printers) */
   int max_head_offset;		/* Largest head offset */
   int page_management_units;	/* Page management units (dpi) */
@@ -686,5 +690,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.117 2008/01/19 21:08:45 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.118 2008/05/04 17:08:57 rlk Exp $".
  */
