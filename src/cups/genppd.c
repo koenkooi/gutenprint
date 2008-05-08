@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.142 2008/04/06 21:16:08 rlk Exp $"
+ * "$Id: genppd.c,v 1.143 2008/05/08 01:06:37 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1166,6 +1166,11 @@ write_ppd(
   gzprintf(fp, "*StpPPDLocation: \"%s\"\n", ppd_location);
   gzprintf(fp, "*StpLocale:	\"%s\"\n", language ? language : "C");
 
+  /* Macintosh color management */
+  gzputs(fp, "*cupsICCProfile Gray../Grayscale:	\"/System/Library/ColorSync/Profiles/sRGB Profile.icc\"\n");
+  gzputs(fp, "*cupsICCProfile RGB../Color:	\"/System/Library/ColorSync/Profiles/sRGB Profile.icc\"\n");
+  gzputs(fp, "*cupsICCProfile CMYK../Color:	\"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc\"\n");
+
  /*
   * Get the page sizes from the driver...
   */
@@ -1620,7 +1625,7 @@ write_ppd(
   stp_parameter_description_destroy(&desc);
 
   stp_describe_parameter(v, "OutputOrder", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+  if (desc.is_active && desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
     {
       gzputs(fp, "*OpenUI *OutputOrder: PickOne\n");
       gzputs(fp, "*OrderDependency: 10 AnySetup *OutputOrder\n");
@@ -1639,7 +1644,7 @@ write_ppd(
   */
 
   stp_describe_parameter(v, "Duplex", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+  if (desc.is_active && desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
     {
       num_opts = stp_string_list_count(desc.bounds.str);
       if (num_opts > 0)
@@ -1930,5 +1935,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.142 2008/04/06 21:16:08 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.143 2008/05/08 01:06:37 rlk Exp $".
  */
