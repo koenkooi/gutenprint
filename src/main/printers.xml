@@ -4,7 +4,7 @@
    XML description of printers known to libgutenprint
    This file was originally generated.  It should be edited by hand.
 
-   "$Id: printers.xml,v 1.229 2008/05/05 11:43:26 rlk Exp $"
+   "$Id: printers.xml,v 1.230 2008/05/11 01:13:01 rlk Exp $"
 -->
 
 <gutenprint xmlns="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0"
@@ -159,6 +159,8 @@
         <parameter type="float" name="Gamma">0.470</parameter>
         <parameter type="float" name="BlackDensity">0.8</parameter>
       </parameters>
+      <printer name="Epson B-300" driver="escp2-b300" manufacturer="Epson" model="87" parameters="standard_params" />
+      <printer name="Epson B-500DN" driver="escp2-b500dn" manufacturer="Epson" model="87" parameters="standard_params" />
       <printer name="Epson Stylus C20" driver="escp2-c20" manufacturer="Epson" model="42" parameters="480_params" />
       <printer name="Epson Stylus C20SX" driver="escp2-c20sx" manufacturer="Epson" model="42" parameters="480_params" />
       <printer name="Epson Stylus C20UX" driver="escp2-c20ux" manufacturer="Epson" model="42" parameters="480_params" />

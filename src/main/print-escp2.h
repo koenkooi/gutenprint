@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.118 2008/05/04 17:08:57 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.119 2008/05/11 01:13:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -310,12 +310,16 @@ typedef float escp2_densities_t[RES_N];
 #define ROLL_FEED_CUT_LAST (2)
 #define ROLL_FEED_DONT_EJECT (4)
 
+#define DUPLEX_NO_TUMBLE (1)
+#define DUPLEX_TUMBLE (2)
+
 typedef struct
 {
   const char *name;
   const char *text;
   short is_cd;
   short is_roll_feed;
+  short duplex;
   unsigned roll_feed_cut_flags;
   const stp_raw_t init_sequence;
   const stp_raw_t deinit_sequence;
@@ -581,8 +585,8 @@ typedef struct
   int unit_scale;		/* Scale factor for units */
   int send_zero_pass_advance;	/* Send explicit command for zero advance */
   int zero_margin_offset;	/* Zero margin offset */
-  int split_channel_count;	/* For split black channels, like C120 */
-  int split_channel_width;	/* Linewidth for split black channels */
+  int split_channel_count;	/* For split channels, like C120 */
+  int split_channel_width;	/* Linewidth for split channels */
   short *split_channels;
 
   /* Ink parameters */
@@ -623,6 +627,7 @@ typedef struct
   int pseudo_separation_rows;	/* Special row separation for some printers */
   int extra_720dpi_separation;	/* Special separation needed at 720 DPI */
   int bidirectional_upper_limit; /* Max total resolution for auto-bidi */
+  int duplex;
 
   /* weave parameters */
   int horizontal_passes;	/* Number of horizontal passes required
@@ -690,5 +695,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.118 2008/05/04 17:08:57 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.119 2008/05/11 01:13:00 rlk Exp $".
  */
