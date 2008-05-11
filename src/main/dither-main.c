@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-main.c,v 1.59 2008/02/18 14:20:17 rlk Exp $"
+ * "$Id: dither-main.c,v 1.60 2008/05/11 00:04:37 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -254,6 +254,8 @@ stpi_set_dither_function(stp_vars_t *v)
 	  (d->x_aspect > 2 || d->y_aspect > 2))
 	d->stpi_dither_type = D_ADAPTIVE_HYBRID;
     }
+  if (d->stpi_dither_type == -1)
+    d->stpi_dither_type = D_ADAPTIVE_HYBRID;
   switch (d->stpi_dither_type)
     {
     case D_PREDITHERED:
