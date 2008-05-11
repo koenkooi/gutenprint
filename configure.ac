@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.180 2008/04/28 02:06:43 rlk Exp $
+dnl $Id: configure.ac,v 1.181 2008/05/11 14:46:26 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.180 $)
+AC_REVISION($Revision: 1.181 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -537,7 +537,7 @@ if test x${BUILD_GHOSTSCRIPT} = xyes ; then
 fi
 
 dnl GNU gettext checks.
-AM_GNU_GETTEXT_VERSION([0.11.5])
+AM_GNU_GETTEXT_VERSION([0.16])
 AM_GNU_GETTEXT([external])
 
 GUTENPRINT_RELEASE_VERSION=${GUTENPRINT_MAJOR_VERSION}.${GUTENPRINT_MINOR_VERSION}
