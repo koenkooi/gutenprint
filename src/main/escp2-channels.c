@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.76 2008/05/11 01:12:57 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.77 2008/05/11 16:56:58 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3233,8 +3233,8 @@ DECLARE_CHANNEL_LIST(standard);
 
 static const char *c120_channel_names[] =
 {
-  N_("Black"),
-  N_("Black"),
+  N_("Black 1"),
+  N_("Black 2"),
   N_("Magenta"),
   N_("Cyan"),
   N_("Yellow")
