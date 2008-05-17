@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-inks.c,v 1.63 2008/05/11 01:12:58 rlk Exp $"
+ * "$Id: escp2-inks.c,v 1.64 2008/05/17 21:13:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -573,11 +573,13 @@ stpi_escp2_get_drop_list_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_drop_lists) / sizeof(drop_list_t); i++)
-      {
-	if (strcmp(n, the_drop_lists[i].name) == 0)
-	  return the_drop_lists[i].drop_list;
-      }
-  stp_erprintf("Cannot find ink drop list named %s\n", n);
+    {
+      for (i = 0; i < sizeof(the_drop_lists) / sizeof(drop_list_t); i++)
+	{
+	  if (strcmp(n, the_drop_lists[i].name) == 0)
+	    return the_drop_lists[i].drop_list;
+	}
+      stp_erprintf("Cannot find ink drop list named %s\n", n);
+    }
   return NULL;
 }

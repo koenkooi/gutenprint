@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.77 2008/05/11 16:56:58 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.78 2008/05/17 21:13:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -3197,12 +3197,14 @@ stpi_escp2_get_inkgroup_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_inks) / sizeof(ink_t); i++)
-      {
-	if (strcmp(n, the_inks[i].name) == 0)
-	  return the_inks[i].inkgroup;
-      }
-  stp_erprintf("Cannot find ink group named %s\n", n);
+    {
+      for (i = 0; i < sizeof(the_inks) / sizeof(ink_t); i++)
+	{
+	  if (strcmp(n, the_inks[i].name) == 0)
+	    return the_inks[i].inkgroup;
+	}
+      stp_erprintf("Cannot find ink group named %s\n", n);
+    }
   return NULL;
 }
 
@@ -3416,11 +3418,13 @@ stpi_escp2_get_channel_names_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_channels) / sizeof(channel_t); i++)
-      {
-	if (strcmp(n, the_channels[i].name) == 0)
-	  return the_channels[i].channel_name;
-      }
-  stp_erprintf("Couldn't find channel set named %s!\n", n);
+    {
+      for (i = 0; i < sizeof(the_channels) / sizeof(channel_t); i++)
+	{
+	  if (strcmp(n, the_channels[i].name) == 0)
+	    return the_channels[i].channel_name;
+	}
+      stp_erprintf("Couldn't find channel set named %s!\n", n);
+    }
   return NULL;
 }

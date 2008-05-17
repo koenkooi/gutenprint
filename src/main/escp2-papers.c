@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.109 2008/05/11 01:12:58 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.110 2008/05/17 21:13:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1654,12 +1654,14 @@ stpi_escp2_get_paperlist_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_papers) / sizeof(paperl_t); i++)
-      {
-	if (strcmp(n, the_papers[i].name) == 0)
-	  return the_papers[i].paper_list;
-      }
-  stp_erprintf("Cannot find paper list named %s\n", n);
+    {
+      for (i = 0; i < sizeof(the_papers) / sizeof(paperl_t); i++)
+	{
+	  if (strcmp(n, the_papers[i].name) == 0)
+	    return the_papers[i].paper_list;
+	}
+      stp_erprintf("Cannot find paper list named %s\n", n);
+    }
   return NULL;
 }
 
@@ -1695,12 +1697,14 @@ stpi_escp2_get_paper_adjustment_list_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_adjustments) / sizeof(paperadj_t); i++)
-      {
-	if (strcmp(n, the_adjustments[i].name) == 0)
-	  return the_adjustments[i].paper_list;
-      }
-  stp_erprintf("Cannot find paper adjustment list named %s\n", n);
+    {
+      for (i = 0; i < sizeof(the_adjustments) / sizeof(paperadj_t); i++)
+	{
+	  if (strcmp(n, the_adjustments[i].name) == 0)
+	    return the_adjustments[i].paper_list;
+	}
+      stp_erprintf("Cannot find paper adjustment list named %s\n", n);
+    }
   return NULL;
 }
 
@@ -2156,11 +2160,13 @@ stpi_escp2_get_input_slot_list_named(const char *n)
 {
   int i;
   if (n)
-    for (i = 0; i < sizeof(the_slots) / sizeof(inslot_t); i++)
-      {
-	if (strcmp(n, the_slots[i].name) == 0)
-	  return the_slots[i].input_slots;
-      }
-  stp_erprintf("Cannot find input slot list named %s\n", n);
+    {
+      for (i = 0; i < sizeof(the_slots) / sizeof(inslot_t); i++)
+	{
+	  if (strcmp(n, the_slots[i].name) == 0)
+	    return the_slots[i].input_slots;
+	}
+      stp_erprintf("Cannot find input slot list named %s\n", n);
+    }
   return NULL;
 }
