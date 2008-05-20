@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.h,v 1.2 2006/08/07 09:52:41 rleigh Exp $"
+ * "$Id: xml.h,v 1.3 2008/05/20 23:36:59 rlk Exp $"
  *
  *   Gutenprint module loader header
  *
@@ -53,6 +53,10 @@ extern int stp_xml_parse_file(const char *file);
 extern long stp_xmlstrtol(const char *value);
 extern unsigned long stp_xmlstrtoul(const char *value);
 extern double stp_xmlstrtod(const char *textval);
+extern stp_raw_t *stp_xmlstrtoraw(const char *textval);
+extern char *stp_rawtoxmlstr(const stp_raw_t *raw);
+extern char *stp_strtoxmlstr(const char *raw);
+extern void stp_prtraw(const stp_raw_t *raw, FILE *fp);
 
 extern void stp_xml_init(void);
 extern void stp_xml_exit(void);
@@ -68,6 +72,10 @@ extern stp_mxml_node_t *stp_xmltree_create_from_curve(const stp_curve_t *curve);
 
 extern stp_array_t *stp_array_create_from_xmltree(stp_mxml_node_t *array);
 extern stp_mxml_node_t *stp_xmltree_create_from_array(const stp_array_t *array);
+extern stp_vars_t *stp_vars_create_from_xmltree(stp_mxml_node_t *da);
+extern void stp_vars_fill_from_xmltree(stp_mxml_node_t *da, stp_vars_t *v);
+extern stp_mxml_node_t *stp_xmltree_create_from_vars(const stp_vars_t *v);
+
 extern void stp_xml_parse_file_named(const char *name);
 
 #ifdef __cplusplus
@@ -76,5 +84,5 @@ extern void stp_xml_parse_file_named(const char *name);
 
 #endif /* GUTENPRINT_XML_H */
 /*
- * End of "$Id: xml.h,v 1.2 2006/08/07 09:52:41 rleigh Exp $".
+ * End of "$Id: xml.h,v 1.3 2008/05/20 23:36:59 rlk Exp $".
  */
