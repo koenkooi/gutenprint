@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.40 2008/06/01 14:41:36 rlk Exp $"
+ * "$Id: xml.c,v 1.41 2008/06/01 18:21:29 rlk Exp $"
  *
  *   XML parser - process Gutenprint XML data with mxml.
  *
@@ -308,7 +308,7 @@ long
 stp_xmlstrtol(const char *textval)
 {
   long val; /* The value to return */
-  val = strtol(textval, (char **)NULL, 10);
+  val = strtol(textval, (char **)NULL, 0);
 
   return val;
 }
@@ -320,7 +320,7 @@ unsigned long
 stp_xmlstrtoul(const char *textval)
 {
   unsigned long val; /* The value to return */
-  val = strtoul(textval, (char **)NULL, 10);
+  val = strtoul(textval, (char **)NULL, 0);
 
   return val;
 }

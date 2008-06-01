@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2008/06/01 14:41:42 rlk Exp $
+## $Id: Makefile.am,v 1.2 2008/06/01 18:21:29 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ pkgxmldata_DATA =				\
 	photo_gen2.xml				\
 	photo_gen3.xml				\
 	photo_gen3_4.xml			\
+	photo_gen4.xml				\
 	photo_pigment.xml			\
 	picturemate_4.xml			\
 	picturemate_6.xml			\
