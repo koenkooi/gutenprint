@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.20 2006/09/18 02:31:57 rlk Exp $
+## $Id: Makefile.am,v 1.21 2008/06/01 14:41:05 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,9 @@
 include $(top_srcdir)/scripts/global.mk
 
 SUBDIRS = 					\
+	xml					\
 	main					\
-	gutenprintui2			\
+	gutenprintui2				\
 	escputil				\
 	gimp2					\
 	cups					\

@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.39 2008/05/20 23:36:57 rlk Exp $"
+ * "$Id: xml.c,v 1.40 2008/06/01 14:41:36 rlk Exp $"
  *
  *   XML parser - process Gutenprint XML data with mxml.
  *
@@ -200,18 +200,8 @@ stp_xml_exit(void)
 void
 stp_xml_parse_file_named(const char *name)
 {
-  stp_list_t *dir_list;                  /* List of directories to scan */
-  stp_list_t *file_list;                 /* List of XML files */
+  stp_list_t *file_list = stpi_list_files_on_data_path(name); /* List of XML files */
   stp_list_item_t *item;                 /* Pointer to current list item */
-  if (!(dir_list = stp_list_create()))
-    return;
-  stp_list_set_freefunc(dir_list, stp_list_node_free_data);
-  if (getenv("STP_DATA_PATH"))
-    stp_path_split(dir_list, getenv("STP_DATA_PATH"));
-  else
-    stp_path_split(dir_list, PKGXMLDATADIR);
-  file_list = stp_path_search(dir_list, name);
-  stp_list_destroy(dir_list);
   item = stp_list_get_start(file_list);
   while (item)
     {

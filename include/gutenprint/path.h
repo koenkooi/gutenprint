@@ -1,5 +1,5 @@
 /*
- * "$Id: path.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $"
+ * "$Id: path.h,v 1.2 2008/06/01 14:41:03 rlk Exp $"
  *
  *   libgimpprint path functions header
  *
@@ -46,6 +46,12 @@ extern stp_list_t *stp_path_search(stp_list_t *dirlist,
 extern void stp_path_split(stp_list_t *list,
 			   const char *path);
 
+extern stp_list_t *stpi_data_path(void);
+
+extern stp_list_t *stpi_list_files_on_data_path(const char *name);
+
+extern char *stpi_path_merge(const char *path, const char *file);
+
 
 #ifdef __cplusplus
   }
@@ -53,5 +59,5 @@ extern void stp_path_split(stp_list_t *list,
 
 #endif /* GUTENPRINT_PATH_H */
 /*
- * End of "$Id: path.h,v 1.1 2004/09/17 18:38:01 rleigh Exp $".
+ * End of "$Id: path.h,v 1.2 2008/06/01 14:41:03 rlk Exp $".
  */
