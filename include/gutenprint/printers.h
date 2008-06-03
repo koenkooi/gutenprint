@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.4 2007/08/27 00:44:12 rlk Exp $"
+ * "$Id: printers.h,v 1.5 2008/06/03 11:40:39 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -148,12 +148,20 @@ extern int stp_printer_get_model(const stp_printer_t *p);
 extern const stp_vars_t *stp_printer_get_defaults(const stp_printer_t *p);
 
 /**
- * Set a vars object to use a particular driver, and set the parameter
- * to its defaults.
+ * Set a vars object to use a particular driver, and set the parameters
+ * to their defaults.
  * @param v the vars to use.
  * @param p the printer model to use.
  */
 extern void stp_set_printer_defaults(stp_vars_t *v, const stp_printer_t *p);
+
+/**
+ * Set a vars object to use a particular driver, and set any unset parameters
+ * to their defaults.
+ * @param v the vars to use.
+ * @param p the printer model to use.
+ */
+extern void stp_set_printer_defaults_soft(stp_vars_t *v, const stp_printer_t *p);
 
 
 /**
@@ -247,5 +255,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GUTENPRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.4 2007/08/27 00:44:12 rlk Exp $".
+ * End of "$Id: printers.h,v 1.5 2008/06/03 11:40:39 rlk Exp $".
  */
