@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.49 2008/06/03 11:40:41 rlk Exp $"
+ * "$Id: testpattern.c,v 1.50 2008/06/07 22:47:36 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -338,6 +338,18 @@ do_print(void)
 	{
 	  int val = stp_get_int_parameter(global_vars, p->name);
 	  stp_set_int_parameter(v, p->name, val);
+	}
+      else if (p->p_type == STP_PARAMETER_TYPE_BOOLEAN &&
+	       stp_check_boolean_parameter(global_vars, p->name, STP_PARAMETER_ACTIVE))
+	{
+	  int val = stp_get_boolean_parameter(global_vars, p->name);
+	  stp_set_boolean_parameter(v, p->name, val);
+	}
+      else if (p->p_type == STP_PARAMETER_TYPE_CURVE &&
+	       stp_check_curve_parameter(global_vars, p->name, STP_PARAMETER_ACTIVE))
+	{
+	  const stp_curve_t *val = stp_get_curve_parameter(global_vars, p->name);
+	  stp_set_curve_parameter(v, p->name, val);
 	}
       else if (p->p_type == STP_PARAMETER_TYPE_DOUBLE &&
 	       stp_check_float_parameter(global_vars, p->name, STP_PARAMETER_ACTIVE))

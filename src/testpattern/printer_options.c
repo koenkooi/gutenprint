@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.4 2007/03/05 00:04:00 tillkamppeter Exp $"
+ * "$Id: printer_options.c,v 1.5 2008/06/07 22:47:35 rlk Exp $"
  *
  *   Dump the per-printer options for the OpenPrinting database
  *
@@ -101,12 +101,14 @@ main(int argc, char **argv)
 	  stp_describe_parameter(pv, p->name, &desc);
 	  if (desc.is_active)
 	    {
-	      printf("$longnames{'%s'} = '%s';\n",
-		     desc.name, desc.text);
-	      printf("$param_classes{'%s'} = %d;\n",
-		     desc.name, desc.p_class);
-	      printf("$param_levels{'%s'} = %d;\n",
-		     desc.name, desc.p_level);
+	      printf("$longnames{'%s'}{'%s'} = '%s';\n",
+		     driver, desc.name, desc.text);
+	      printf("$param_classes{'%s'}{'%s'} = %d;\n",
+		     driver, desc.name, desc.p_class);
+	      printf("$param_types{'%s'}{'%s'} = %d;\n",
+		     driver, desc.name, desc.p_type);
+	      printf("$param_levels{'%s'}{'%s'} = %d;\n",
+		     driver, desc.name, desc.p_level);
 	      if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
 		{
 		  count = stp_string_list_count(desc.bounds.str);
