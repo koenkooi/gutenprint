@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2008/06/01 14:41:41 rlk Exp $
+## $Id: Makefile.am,v 1.2 2008/06/08 15:10:36 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,11 @@
 include $(top_srcdir)/scripts/global.mk
 
 SUBDIRS = 					\
+	inputslots				\
 	model					\
 	media
 
-xml-stamp: media/xml-stamp model/xml-stamp
+xml-stamp: media/xml-stamp model/xml-stamp inputslots/xml-stamp
 	touch xml-stamp
 
 all-local: xml-stamp
