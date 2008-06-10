@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2008/06/09 01:06:09 rlk Exp $
+## $Id: Makefile.am,v 1.4 2008/06/10 13:10:24 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,13 @@ SUBDIRS =					\
 	media					\
 	mediasizes
 
-xml-stamp: media/xml-stamp model/xml-stamp inputslots/xml-stamp
+xml-stamp: media/xml-stamp model/xml-stamp inputslots/xml-stamp mediasizes/xml-stamp Makefile.am
+	-rm -f xml-stamp
 	touch xml-stamp
+	sed 's;^;media/;' media/xml-stamp >> xml-stamp
+	sed 's;^;model/;' model/xml-stamp >> xml-stamp
+	sed 's;^;inputslots/;' inputslots/xml-stamp >> xml-stamp
+	sed 's;^;mediasizes/;' mediasizes/xml-stamp >> xml-stamp
 
 all-local: xml-stamp
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2008/06/01 20:07:24 rlk Exp $
+## $Id: Makefile.am,v 1.4 2008/06/10 13:10:27 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -59,8 +59,10 @@ pkgxmldata_DATA =				\
 	ultrachrome.xml				\
 	x80.xml
 
-xml-stamp: $(pkgxmldata_DATA)
+xml-stamp: $(pkgxmldata_DATA) Makefile.am
+	-rm -f xml-stamp
 	touch xml-stamp
+	for f in $(pkgxmldata_DATA) ; do echo $$f >> xml-stamp; done
 
 all-local: xml-stamp
 

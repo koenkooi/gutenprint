@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2008/06/09 01:06:09 rlk Exp $
+## $Id: Makefile.am,v 1.2 2008/06/10 13:10:51 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,10 @@ pkgxmldatadir = $(pkgdatadir)/@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSI
 pkgxmldata_DATA =				\
 	standard.xml
 
-xml-stamp: $(pkgxmldata_DATA)
+xml-stamp: $(pkgxmldata_DATA) Makefile.am
+	-rm -f xml-stamp
 	touch xml-stamp
+	for f in $(pkgxmldata_DATA) ; do echo $$f >> xml-stamp; done
 
 all-local: xml-stamp
 
