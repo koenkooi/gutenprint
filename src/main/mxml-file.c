@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.8 2008/06/08 15:10:09 rlk Exp $"
+ * "$Id: mxml-file.c,v 1.9 2008/06/11 01:35:52 rlk Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -18,6 +18,7 @@
  * Contents:
  *
  *   stp_mxmlLoadFile()        - Load a file into an XML node tree.
+ *   stp_mxmlLoadFromFile()    - Load a file into an XML node tree.
  *   stp_mxmlLoadString()      - Load a string into an XML node tree.
  *   stp_mxmlSaveAllocString() - Save an XML node tree to an allocated string.
  *   stp_mxmlSaveFile()        - Save an XML tree to a file.
@@ -107,7 +108,7 @@ stp_mxmlLoadFromFile(stp_mxml_node_t *top,	/* I - Top node */
   stp_mxml_node_t *doc;
   if (! fp)
     return NULL;
-  doc = stp_mxmlLoadFile(NULL, fp, STP_MXML_NO_CALLBACK);
+  doc = stp_mxmlLoadFile(top, fp, cb);
   fclose(fp);
   return doc;
 }
@@ -1476,5 +1477,5 @@ mxml_write_ws(stp_mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.8 2008/06/08 15:10:09 rlk Exp $".
+ * End of "$Id: mxml-file.c,v 1.9 2008/06/11 01:35:52 rlk Exp $".
  */
