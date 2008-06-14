@@ -1,5 +1,5 @@
 /*
- * "$Id: extract-strings.c,v 1.1 2008/06/10 13:10:24 rlk Exp $"
+ * "$Id: extract-strings.c,v 1.2 2008/06/14 02:25:25 rlk Exp $"
  *
  * Extract translation strings
  *
@@ -59,4 +59,5 @@ main(int argc, char **argv)
 	}
       argv++;
     }
+  return status;
 }
