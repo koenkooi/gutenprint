@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.123 2008/06/09 01:06:08 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.124 2008/06/15 16:25:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -387,6 +387,20 @@ typedef enum
 
 typedef struct escp2_printer
 {
+/*****************************************************************************/
+  const short *dot_sizes;	/* Vector of dot sizes for resolutions */
+  const float *densities;	/* List of densities for each printer */
+  const short *bits;
+  const short *base_resolutions;
+/*****************************************************************************/
+  const char *drops; /* Drop sizes */
+  const char *reslist;
+  const char *inkgroup;
+  const char *quality_list;
+  const char *printer_weaves;
+  const char *channel_names;
+/*****************************************************************************/
+  /* Data filled in at runtime from XML */
   model_cap_t	flags;		/* Bitmask of flags, see above */
 /*****************************************************************************/
   /* Basic head configuration */
@@ -485,19 +499,6 @@ typedef struct escp2_printer
   short		alternate_alignment_passes;
   short		alternate_alignment_choices;
 /*****************************************************************************/
-  const short *dot_sizes;	/* Vector of dot sizes for resolutions */
-  const float *densities;	/* List of densities for each printer */
-  const short *bits;
-  const short *base_resolutions;
-/*****************************************************************************/
-  const char *drops; /* Drop sizes */
-  const char *reslist;
-  const char *inkgroup;
-  const char *quality_list;
-  const char *printer_weaves;
-  const char *channel_names;
-/*****************************************************************************/
-  /* Data filled in at runtime from XML */
   stp_raw_t *preinit_sequence;
   stp_raw_t *preinit_remote_sequence;
   stp_raw_t *postinit_sequence;
@@ -542,6 +543,9 @@ extern void stp_escp2_set_media_size(stp_vars_t *v, const stp_vars_t *src);
 /* From print-escp2.c: */
 extern const res_t *stp_escp2_find_resolution(const stp_vars_t *v);
 extern const inklist_t *stp_escp2_inklist(const stp_vars_t *v);
+
+/* From print-escp2-data.c: */
+extern void stpi_escp2_load_model(const stp_vars_t *v, int model);
 
 typedef struct
 {
@@ -670,5 +674,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.123 2008/06/09 01:06:08 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.124 2008/06/15 16:25:07 rlk Exp $".
  */
