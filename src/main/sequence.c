@@ -1,5 +1,5 @@
 /*
- * "$Id: sequence.c,v 1.25 2008/01/21 23:19:41 rlk Exp $"
+ * "$Id: sequence.c,v 1.26 2008/06/15 16:23:39 rlk Exp $"
  *
  *   Sequence data type.  This type is designed to be derived from by
  *   the curve and dither matrix types.
@@ -420,8 +420,8 @@ stp_sequence_create_from_xmltree(stp_mxml_node_t *da)
 	      /* Datum was valid, so now add to the sequence */
 	      stp_sequence_set_point(ret, i, tmpval);
 	      i++;
-	      child = child->next;
 	    }
+	  child = child->next;
 	}
       if (i < point_count)
 	{
