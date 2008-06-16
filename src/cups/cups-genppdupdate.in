@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.42 2008/04/12 01:20:33 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.43 2008/06/16 00:14:38 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -19,9 +19,6 @@
 
 use strict;
 use Getopt::Std;
-use Fcntl qw(:mode);
-use File::Temp qw(:POSIX);
-use File::Copy qw(mv);
 
 sub parse_options ();
 sub update_ppd ($); # Original PPD filename
