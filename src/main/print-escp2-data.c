@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.258 2008/06/20 00:03:56 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.259 2008/06/21 21:48:12 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -326,8 +326,6 @@ static const escp2_densities_t spro10000_densities =
 static const escp2_densities_t picturemate_densities =
 {   0,   0,     0,     0, 1.596, 0.798, 0.650, 0.530, 0.0   };
 
-
-#define INCH(x)		(72 * x)
 
 stpi_escp2_printer_t stpi_escp2_model_capabilities[] =
 {
