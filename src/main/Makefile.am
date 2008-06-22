@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.100 2008/06/01 14:41:09 rlk Exp $
+## $Id: Makefile.am,v 1.101 2008/06/22 21:53:39 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,6 @@ print_escp2_la_SOURCES = \
 	print-escp2.h \
 	print-escp2-data.c \
 	escp2-channels.c \
-	escp2-inks.c \
 	escp2-papers.c \
 	escp2-resolutions.c
 print_escp2_la_LDFLAGS = -module -avoid-version
