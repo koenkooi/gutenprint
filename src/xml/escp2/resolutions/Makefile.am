@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2008/06/21 21:51:42 rlk Exp $
+## $Id: Makefile.am,v 1.2 2008/06/28 17:51:04 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -113,7 +113,8 @@ pkgxmldata_DATA =				\
 	resolutions_84.xml				\
 	resolutions_85.xml				\
 	resolutions_86.xml				\
-	resolutions_87.xml
+	resolutions_87.xml				\
+	resolutions_88.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am
 	-rm -f xml-stamp
