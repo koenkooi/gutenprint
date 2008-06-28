@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.38 2008/01/15 03:48:46 rlk Exp $"
+ * "$Id: print-papers.c,v 1.39 2008/06/28 21:23:25 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -187,7 +187,7 @@ paper_size_mismatch(int l, int w, const stp_papersize_t *val)
 {
   int hdiff = abs(l - (int) val->height);
   int vdiff = abs(w - (int) val->width);
-  return hdiff + vdiff;
+  return hdiff > vdiff ? hdiff : vdiff;
 }
 
 const stp_papersize_t *
@@ -207,7 +207,7 @@ stp_get_papersize_by_size(int l, int w)
       else
 	{
 	  int myscore = paper_size_mismatch(l, w, val);
-	  if (myscore < score && myscore < 20)
+	  if (myscore < score && myscore < 5)
 	    {
 	      ref = val;
 	      score = myscore;

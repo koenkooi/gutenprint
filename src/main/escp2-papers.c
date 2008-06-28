@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.114 2008/06/27 14:45:26 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.115 2008/06/28 21:23:22 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -273,7 +273,15 @@ get_media_type_named(const stp_vars_t *v, const char *name,
 	{
 	  if (!strcmp(name, stp_string_list_param(p, i)->name))
 	    {
+#ifdef HAVE_LOCALE_H
+	      char *locale = stp_strdup(setlocale(LC_ALL, NULL));
+	      setlocale(LC_ALL, "C");
+#endif
 	      answer = build_media_type(v, name, inklist, res);
+#ifdef HAVE_LOCALE_H
+	      setlocale(LC_ALL, locale);
+	      stp_free(locale);
+#endif
 	      break;
 	    }
 	}
@@ -486,7 +494,15 @@ get_input_slot_named(const stp_vars_t *v, const char *name)
 	{
 	  if (!strcmp(name, stp_string_list_param(p, i)->name))
 	    {
+#ifdef HAVE_LOCALE_H
+	      char *locale = stp_strdup(setlocale(LC_ALL, NULL));
+	      setlocale(LC_ALL, "C");
+#endif
 	      answer = build_input_slot(v, name);
+#ifdef HAVE_LOCALE_H
+	      setlocale(LC_ALL, locale);
+	      stp_free(locale);
+#endif
 	      break;
 	    }
 	}

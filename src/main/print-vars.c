@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.83 2008/06/01 14:41:21 rlk Exp $"
+ * "$Id: print-vars.c,v 1.84 2008/06/28 21:23:25 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1705,6 +1705,10 @@ stp_parameter_list_append(stp_parameter_list_t list,
 void
 stp_vars_fill_from_xmltree(stp_mxml_node_t *prop, stp_vars_t *v)
 {
+#ifdef HAVE_LOCALE_H
+  char *locale = stp_strdup(setlocale(LC_ALL, NULL));
+  setlocale(LC_ALL, "C");
+#endif
   while (prop)
     {
       if (prop->type == STP_MXML_ELEMENT && prop->child)
@@ -1879,6 +1883,10 @@ stp_vars_fill_from_xmltree(stp_mxml_node_t *prop, stp_vars_t *v)
 	}
       prop = prop->next;
     }
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_ALL, locale);
+  stp_free(locale);
+#endif
 }
 
 stp_vars_t *
