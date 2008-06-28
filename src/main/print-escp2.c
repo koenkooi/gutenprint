@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.403 2008/06/28 13:22:06 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.404 2008/06/28 17:50:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1143,6 +1143,12 @@ stp_escp2_inklist(const stp_vars_t *v)
 	  if (strcmp(ink_list_name, inkgroup->inklists[i].name) == 0)
 	    return &(inkgroup->inklists[i]);
 	}
+    }
+  if (!inkgroup)
+    {
+      stp_erprintf("Cannot find inks for printer %s!\n",
+		   stp_get_driver(v));
+      stp_abort();
     }
   return &(inkgroup->inklists[0]);
 }
