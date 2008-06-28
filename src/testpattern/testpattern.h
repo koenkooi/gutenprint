@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.18 2008/06/08 01:03:51 rlk Exp $"
+ * "$Id: testpattern.h,v 1.19 2008/06/28 15:05:28 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -83,6 +83,7 @@ extern int global_did_something;
 extern int global_invert_data;
 extern int global_noscale;
 extern char *global_output;
+extern int global_quiet;
 extern FILE *output;
 extern int start_job;
 extern int end_job;
