@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2008/06/28 13:22:06 rlk Exp $
+## $Id: Makefile.am,v 1.3 2008/06/29 02:48:03 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,7 @@ pkgxmldata_DATA =				\
 	pro_gen2.xml				\
 	pro_pigment.xml				\
 	pro_ultrachrome.xml			\
+	pro_ultrachrome_k3.xml			\
 	standard.xml				\
 	standard_gen0.xml			\
 	ultrachrome.xml				\
