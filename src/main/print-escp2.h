@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.129 2008/06/28 13:22:06 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.130 2008/07/02 01:07:59 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -180,7 +180,7 @@ typedef enum
   INKSET_CcMmYyK          = 2,
   INKSET_CcMmYKk          = 3,
   INKSET_QUADTONE         = 4,
-  INKSET_CMYKRB		  = 5,
+  INKSET_OTHER		  = 5,
   INKSET_EXTENDED	  = 6
 } inkset_id_t;
 
@@ -605,5 +605,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.129 2008/06/28 13:22:06 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.130 2008/07/02 01:07:59 rlk Exp $".
  */

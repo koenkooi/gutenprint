@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2008/06/29 02:48:03 rlk Exp $
+## $Id: Makefile.am,v 1.4 2008/07/02 01:08:00 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ pkgxmldata_DATA =				\
 	claria.xml				\
 	cmy.xml					\
 	cmykrb.xml				\
+	cmykro.xml				\
 	cx3650.xml				\
 	defaultblack.xml			\
 	f360.xml				\
