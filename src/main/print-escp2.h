@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.130 2008/07/02 01:07:59 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.131 2008/07/03 12:34:39 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -464,8 +464,11 @@ extern void stp_escp2_set_media_size(stp_vars_t *v, const stp_vars_t *src);
 
 /* From escp2-resolutions.c: */
 extern int stp_escp2_load_resolutions(const stp_vars_t *v, const char *name);
+extern int stp_escp2_load_resolutions_from_xml(const stp_vars_t *v, stp_mxml_node_t *node);
 extern int stp_escp2_load_printer_weaves(const stp_vars_t *v, const char *name);
+extern int stp_escp2_load_printer_weaves_from_xml(const stp_vars_t *v, stp_mxml_node_t *node);
 extern int stp_escp2_load_quality_presets(const stp_vars_t *v, const char *name);
+extern int stp_escp2_load_quality_presets_from_xml(const stp_vars_t *v, stp_mxml_node_t *node);
 
 /* From print-escp2.c: */
 extern const res_t *stp_escp2_find_resolution(const stp_vars_t *v);
@@ -605,5 +608,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.130 2008/07/02 01:07:59 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.131 2008/07/03 12:34:39 rlk Exp $".
  */
