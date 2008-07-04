@@ -146,6 +146,8 @@ typedef struct
   int upper; /*!< Upper bound. */
 } stp_int_bound_t;
 
+#define STP_CHANNEL_NONE ((unsigned char) -1)
+
 /** Parameter description. */
 typedef struct
 {
@@ -1499,5 +1501,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GUTENPRINT_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.6 2008/06/02 01:35:35 rlk Exp $".
+ * End of "$Id: vars.h,v 1.7 2008/07/04 14:29:27 rlk Exp $".
  */

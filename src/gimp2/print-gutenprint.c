@@ -1,5 +1,5 @@
 /*
- * "$Id: print-gutenprint.c,v 1.1 2006/07/04 02:57:59 rlk Exp $"
+ * "$Id: print-gutenprint.c,v 1.2 2008/07/04 14:29:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -56,7 +56,8 @@ do_gimp_install_procedure(const char *blurb, const char *help,
   gimp_plugin_menu_register ((BAD_CONST_CHAR) "file_print_gutenprint",
 			     (BAD_CONST_CHAR) "<Image>/File/Send");
   gimp_plugin_icon_register ((BAD_CONST_CHAR) "file_print_gutenprint",
-                             GIMP_ICON_TYPE_STOCK_ID, GTK_STOCK_PRINT);
+                             GIMP_ICON_TYPE_STOCK_ID,
+			     (BAD_CONST_CHAR) GTK_STOCK_PRINT);
 #endif
 }
 			  

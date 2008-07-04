@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.17 2008/01/31 12:56:09 m0m Exp $"
+ * "$Id: plist.c,v 1.18 2008/07/04 14:29:28 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1631,7 +1631,6 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 				  _exit(0);
 				}
 			    }
-			  /* NOTREACHED */
 			  write(syncfd[1], "Done", 5);
 			  _exit(0);
 			}
@@ -1835,5 +1834,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.17 2008/01/31 12:56:09 m0m Exp $".
+ * End of "$Id: plist.c,v 1.18 2008/07/04 14:29:28 rlk Exp $".
  */

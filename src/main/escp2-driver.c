@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.48 2008/06/28 13:22:06 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.49 2008/07/04 14:29:28 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -251,10 +251,6 @@ escp2_set_remote_sequence(stp_vars_t *v)
 	{
 	  int divisor = pd->base_separation / 360;
 	  int height = pd->page_true_height * 5 / divisor;
-	  if (pd->input_slot->init_sequence)
-	    stp_zfwrite(pd->input_slot->init_sequence->data,
-			pd->input_slot->init_sequence->bytes, 1, v);
-	  switch (pd->input_slot->roll_feed_cut_flags)
 	  if (pd->input_slot->init_sequence)
 	    stp_zfwrite(pd->input_slot->init_sequence->data,
 			pd->input_slot->init_sequence->bytes, 1, v);
