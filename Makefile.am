@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.151 2008/04/12 22:41:01 rlk Exp $
+## $Id: Makefile.am,v 1.152 2008/07/05 00:05:47 rlk Exp $
 ## Copyright (C) 2000-2004 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ ChangeLog: ChangeLogStamp
 	  echo "ChangeLog: .noupdate found: NOT updating ChangeLog from CVS" ; \
 	elif test -d CVS ; then \
 	  echo "ChangeLog: Updating ChangeLog from CVS" ; \
-	  cvs log | $(PERL) scripts/mkchlog > ChangeLog.tmp ; \
+	  cvs log | $(PERL) scripts/mkchlog -e @sourceforge.net -X src/xml/escp2/resolutions -s '^(guten|gimp-|)print-[0-9]+_' > ChangeLog.tmp ; \
 	  if test -s ChangeLog.tmp ; then \
 	    mv ChangeLog.tmp ChangeLog ; \
 	  else \
