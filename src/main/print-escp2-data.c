@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.265 2008/07/03 12:34:39 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.266 2008/07/05 18:56:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -29,7 +29,6 @@
 #include <gutenprint/gutenprint-intl-internal.h>
 #include "print-escp2.h"
 #include <limits.h>
-#include <assert.h>
 
 typedef struct
 {
@@ -388,11 +387,15 @@ stp_escp2_load_model(const stp_vars_t *v, int model)
 	  if (node)
 	    {
 	      const char *stmp = stp_mxmlElementGetAttr(node, "id");
-	      assert(stmp && stp_xmlstrtol(stmp) == model);
 	      if (stmp && stp_xmlstrtol(stmp) == model)
 		{
 		  load_model_from_file(v, node, model);
 		  found = 1;
+		}
+	      else
+		{
+		  stp_erprintf("Model id %d does not match definition %s!\n");
+		  stp_abort();
 		}
 	    }
 	  stp_mxmlDelete(doc);

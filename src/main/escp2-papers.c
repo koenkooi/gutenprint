@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.115 2008/06/28 21:23:22 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.116 2008/07/05 18:56:41 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -225,6 +225,12 @@ build_media_type(const stp_vars_t *v, const char *name, const inklist_t *ink,
 						     STP_MXML_DESCEND);
       if (inknode)
 	stp_vars_fill_from_xmltree(inknode->child, vv);
+      else
+	{
+	  stp_erprintf("Cannot find ink %s for media %s, model %s!\n",
+		       ink->name, name, stp_get_driver(v));
+	  stp_abort();
+	}
     }
   if (res && res->name)
     {
