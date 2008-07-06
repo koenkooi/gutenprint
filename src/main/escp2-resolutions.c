@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.50 2008/07/03 12:34:39 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.51 2008/07/06 02:17:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -145,7 +145,7 @@ stp_escp2_load_resolutions_from_xml(const stp_vars_t *v, stp_mxml_node_t *node)
 	    res->name = stp_strdup(wname);
 	  if (wtext)
 	    res->text = stp_strdup(wtext);
-	  stp_vars_fill_from_xmltree(cchild, res->v);
+	  stp_vars_fill_from_xmltree_ref(cchild, node, res->v);
 	  while (cchild)
 	    {
 	      if (cchild->type == STP_MXML_ELEMENT)
