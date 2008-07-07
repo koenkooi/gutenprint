@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.406 2008/07/04 14:29:30 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.407 2008/07/07 00:13:43 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1510,7 +1510,10 @@ get_inktype(const stp_vars_t *v)
       if (strcmp(ink_type, ink_list->inknames[i].name) == 0)
 	return &(ink_list->inknames[i]);
     }
-  return NULL;
+  /*
+   * If even *that* doesn't work, try using the first ink type on the list.
+   */
+  return &(ink_list->inknames[0]);
 }
 
 static const stp_vars_t *
