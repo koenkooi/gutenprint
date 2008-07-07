@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.44 2008/06/17 23:31:10 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.45 2008/07/07 12:24:49 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -427,10 +427,10 @@ sub update_ppd ($) {
     }
     if ($locale) {
 	# Split into the language and territory.
-	($locale, $region) = split(/-/, $locale);
+	($locale, $region) = split(/_/, $locale);
     } else {
 	# Split into the language and territory.
-	($locale, $region) = split(/-/, $lingo);
+	($locale, $region) = split(/_/, $lingo);
 	# Convert language into language code.
 	$locale = $languagemappings{"\L$lingo"};
 	if (!defined($locale)) {
