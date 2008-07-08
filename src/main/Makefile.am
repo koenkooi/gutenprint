@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.101 2008/06/22 21:53:39 rlk Exp $
+## $Id: Makefile.am,v 1.102 2008/07/08 00:02:01 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -129,6 +129,7 @@ libgutenprint_la_SOURCES =			\
 	dither-predithered.c			\
 	generic-options.c			\
 	image.c					\
+	intl.c					\
 	buffer-image.c				\
 	module.c				\
 	path.c					\

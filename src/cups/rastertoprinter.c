@@ -1,9 +1,9 @@
 /*
- * "$Id: rastertoprinter.c,v 1.122 2008/07/05 03:43:26 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.123 2008/07/08 00:02:01 easysw Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
- *   Copyright 1993-2007 by Easy Software Products.
+ *   Copyright 1993-2008 by Mike Sweet.
  *
  *   This program is free software; you can redistribute it and/or modify it
  *   under the terms of the GNU General Public License as published by the Free
@@ -1421,5 +1421,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.122 2008/07/05 03:43:26 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.123 2008/07/08 00:02:01 easysw Exp $".
  */
