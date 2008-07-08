@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.1 2008/07/08 00:02:01 easysw Exp $"
+ * "$Id: intl.c,v 1.2 2008/07/08 00:19:40 rlk Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -23,6 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <string.h>
 #include <gutenprint/gutenprint-intl-internal.h>
 
 #ifdef __APPLE__
