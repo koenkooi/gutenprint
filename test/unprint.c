@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.40 2008/07/05 03:43:31 rlk Exp $ */
+/* $Id: unprint.c,v 1.41 2008/07/08 01:52:50 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -141,10 +141,13 @@ seqcolor(int c)
     case 64:
       return 0;
     case 1:
+    case 65:
       return 1;
     case 2:
+    case 66:
       return 2;
     case 4:
+    case 68:
       return 3;
     case 17:
     case 257:
