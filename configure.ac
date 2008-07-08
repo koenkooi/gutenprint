@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.190 2008/07/08 00:01:52 easysw Exp $
+dnl $Id: configure.ac,v 1.191 2008/07/08 17:32:02 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.190 $)
+AC_REVISION($Revision: 1.191 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -876,7 +876,8 @@ else
   AC_DEFINE_UNQUOTED(CUPS_MODELDIR, "${cups_conf_datadir}/model/${PACKAGE}/${GUTENPRINT_RELEASE_VERSION}/")
 fi
 
-AC_ARG_WITH(nickname, [--with-nickname="nickname suffix" Suffix to add to PPD NickName, default=" - CUPS+Gutenprint v"],
+AC_ARG_WITH(cups_nickname, [  --with-cups-nickname="nickname suffix"
+                          Suffix to add to PPD NickName, default=" - CUPS+Gutenprint v"],
   CUPS_PPD_NICKNAME_STRING="$withval",
   CUPS_PPD_NICKNAME_STRING=" - CUPS+Gutenprint v")
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.115 2007/09/02 18:11:51 rlk Exp $"
+ * "$Id: print-util.c,v 1.116 2008/07/08 17:32:02 easysw Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -541,7 +541,7 @@ stp_strdup(const char *s)
 const char *
 stp_set_output_codeset(const char *codeset)
 {
-#ifdef ENABLE_NLS
+#if defined(ENABLE_NLS) && !defined(__APPLE__)
   return (const char *)(bind_textdomain_codeset(PACKAGE, codeset));
 #else
   return "US-ASCII";
