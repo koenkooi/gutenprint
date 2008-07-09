@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.139 2008/01/25 00:38:32 rlk Exp $"
+ * "$Id: print-color.c,v 1.140 2008/07/09 00:26:52 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -176,7 +176,7 @@ static const float_param_t float_parameters[] =
       "ColorCorrection", N_("Color Correction"), N_("Basic Image Adjustment"),
       N_("Color correction to be applied"),
       STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_OUTPUT,
-      STP_PARAMETER_LEVEL_ADVANCED, 1, 1, -1, 1, 0
+      STP_PARAMETER_LEVEL_BASIC, 1, 1, -1, 1, 0
     }, 0.0, 0.0, 0.0, CMASK_EVERY, 0, -1
   },
   {
