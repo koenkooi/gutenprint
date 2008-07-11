@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.192 2008/07/11 01:55:59 rlk Exp $
+dnl $Id: configure.ac,v 1.193 2008/07/11 02:06:18 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.192 $)
+AC_REVISION($Revision: 1.193 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1027,10 +1027,12 @@ if test "$BUILD_CUPS" != "no" ; then
 	echo "                        Please review the README and release notes carefully!"
 	warnings_emitted=1
     fi
-    if test "x$cups_bundledir" = "x"; then
-        echo "        Install CUPS as bundle:                 no"
-    else
-        echo "        Install CUPS as bundle:                 yes, $cups_bundledir"
+    if test "`uname`" = Darwin ; then
+        if "x$cups_bundledir" = "x"; then
+	    echo "        Install CUPS as bundle:                 no"
+	else
+	    echo "        Install CUPS as bundle:                 yes, $cups_bundledir"
+	fi
     fi
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
@@ -1055,7 +1057,7 @@ echo "    Build EPSON Stylus utility:                 $BUILD_ESCPUTIL"
 echo "    Build test programs:                        $BUILD_TEST"
 echo "    Build testpattern generator:                $BUILD_TESTPATTERN"
 echo
-echo "Installation summary:"
+echo "  Installation summary:"
 echo "    Installation prefix:                        $prefix"
 echo "    Data directory:                             $PACKAGE_DATA_DIR"
 echo "    Library directory:                          $PACKAGE_LIB_DIR"
@@ -1063,7 +1065,7 @@ echo "    XML data directory:                         $PKGXMLDATADIR"
 echo "    Module directory:                           $PKGMODULEDIR"
 echo "    Install sample images:                      $INSTALL_SAMPLES"
 echo
-echo "General configuration:"
+echo "  General configuration:"
 if test x$ac_compiler_gnu = "xyes"; then
     echo "    Compiler options:                           $CFLAGS $GNUCFLAGS"
 else
