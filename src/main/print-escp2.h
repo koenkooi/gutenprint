@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.131 2008/07/03 12:34:39 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.132 2008/07/11 01:24:25 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -541,6 +541,7 @@ typedef struct
   int extra_720dpi_separation;	/* Special separation needed at 720 DPI */
   int bidirectional_upper_limit; /* Max total resolution for auto-bidi */
   int duplex;
+  int extra_vertical_feed;	/* Extra vertical feed */
 
   /* weave parameters */
   int horizontal_passes;	/* Number of horizontal passes required
@@ -608,5 +609,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.131 2008/07/03 12:34:39 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.132 2008/07/11 01:24:25 rlk Exp $".
  */
