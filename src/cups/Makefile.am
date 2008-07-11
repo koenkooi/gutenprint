@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.98 2008/07/08 00:02:00 easysw Exp $
+## $Id: Makefile.am,v 1.99 2008/07/11 01:56:07 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -121,7 +121,8 @@ PPD_NLS_1 = ppd-nls
 endif
 
 
-## Rules
+if MACOSX
+## Rules for OS X
 # Override the default install targets that automake creates, since we need
 # to handle "normal" and "bundled" installs.
 #
@@ -193,6 +194,10 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	    ./po2strings $$file "$(DESTDIR)$(cups_bundledir)/Contents/Resources/$$lang.lproj/Localizable.strings"; \
 	  done \
 	fi
+
+# Use the default automake rules for non-OS X
+endif
+
 uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 # Remove PPDs installed in new PPD location
 	if test -z "DONT_UNINSTALL_PPDS" ; then \

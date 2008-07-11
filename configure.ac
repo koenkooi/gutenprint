@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.191 2008/07/08 17:32:02 easysw Exp $
+dnl $Id: configure.ac,v 1.192 2008/07/11 01:55:59 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.191 $)
+AC_REVISION($Revision: 1.192 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -799,9 +799,11 @@ STP_CUPS_PATH
 
 AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
 
+AM_CONDITIONAL(MACOSX, test "`uname`" = Darwin)
+
 # Mac OS X doesn't have GNU gettext, so instead we'll use CoreFoundation to
 # localize Gutenprint...
-if test `uname` = Darwin; then
+if test "`uname`" = Darwin; then
 	USE_NLS="macosx"
 	LIBS="-framework CoreFoundation $LIBS"
 fi
