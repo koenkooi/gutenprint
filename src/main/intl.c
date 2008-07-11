@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.2 2008/07/08 00:19:40 rlk Exp $"
+ * "$Id: intl.c,v 1.3 2008/07/11 02:10:37 rlk Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -93,7 +93,7 @@ stp_setlocale(const char *lang)		/* I - Locale name or "" for default */
   return (lang);
 }
 
-#elif defined(ENABLE_NLS)
+#elif defined(ENABLE_NLS)	/* __APPLE__ */
 typedef struct {
   const char *lang;
   const char *mapping;
