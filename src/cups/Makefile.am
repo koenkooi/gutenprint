@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.99 2008/07/11 01:56:07 rlk Exp $
+## $Id: Makefile.am,v 1.100 2008/07/12 17:12:36 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -254,7 +254,7 @@ ppd-nls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	  echo "$$language:" ; \
 	  LC_ALL=$$language LANG=$$language LANGUAGE=$$language $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -l $$language -p ppd/$$language -c `pwd`/catalog/share/locale ; \
 	done
-	$(RM) -r catalog
+	-$(RM) -r catalog
 
 dist-hook:
 	for dir in commands ; do \
