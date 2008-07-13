@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.267 2008/07/06 15:44:16 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.268 2008/07/13 18:05:10 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -413,8 +413,6 @@ stp_escp2_load_model(const stp_vars_t *v, int model)
       stp_abort();
     }
 }
-
-static int printer_is_loading = 0;
 
 stpi_escp2_printer_t *
 stp_escp2_get_printer(const stp_vars_t *v)
