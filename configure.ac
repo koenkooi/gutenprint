@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.194 2008/07/12 02:27:51 rlk Exp $
+dnl $Id: configure.ac,v 1.195 2008/07/14 22:22:29 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.194 $)
+AC_REVISION($Revision: 1.195 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -933,6 +933,12 @@ AC_SUBST(MAINTAINER_CFLAGS)
 AC_SUBST(PLUG_IN_PATH)
 AC_SUBST(WHICH_PPDS)
 AC_SUBST(BUILD_CUPS_PPDS)
+
+dnl Optional architecture options to be applied after all autoconf tests
+dnl are done...
+AC_ARG_WITH(archflags, [  --with-archflags="..."  additional options for CFLAGS and LDFLAGS],
+    CFLAGS="$CFLAGS $withval"
+    LDFLAGS="$LDFLAGS $withval")
 
 dnl Output files
 
