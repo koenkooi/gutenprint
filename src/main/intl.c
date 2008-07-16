@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.4 2008/07/12 16:08:23 easysw Exp $"
+ * "$Id: intl.c,v 1.5 2008/07/16 17:08:25 easysw Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -50,8 +50,10 @@ stp_cfgettext(const char *string)	/* I - Original English string */
   if ((cfstring = CFStringCreateWithCString(NULL, string, kCFStringEncodingUTF8)) == NULL)
     return (string);
 
-  cflocstring = CFCopyLocalizedString(cfstring, NULL);
-  locstring   = CFStringGetCStringPtr(cflocstring, kCFStringEncodingUTF8);
+  if ((cflocstring = CFCopyLocalizedString(cfstring, NULL)) == NULL)
+    return (string);
+
+  locstring = CFStringGetCStringPtr(cflocstring, kCFStringEncodingUTF8);
   CFRelease(cfstring);
 
   return (locstring ? locstring : string);
