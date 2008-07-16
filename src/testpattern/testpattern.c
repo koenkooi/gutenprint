@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.52 2008/06/28 15:05:28 rlk Exp $"
+ * "$Id: testpattern.c,v 1.53 2008/07/16 01:58:26 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -63,7 +63,7 @@ static stp_image_t theImage =
   Image_conclude,
   NULL
 };
-stp_vars_t *global_vars;
+stp_vars_t *global_vars = NULL;
 
 double global_levels[STP_CHANNEL_LIMIT];
 double global_gammas[STP_CHANNEL_LIMIT];
