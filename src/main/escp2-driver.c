@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.52 2008/07/18 02:21:01 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.53 2008/07/18 02:53:40 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -743,7 +743,7 @@ stpi_escp2_flush_pass(stp_vars_t *v, int passno, int vertical_subpass)
 	      if (nozzle_start)
 		send_extra_data(v, nozzle_start);
 	      stp_zfwrite((const char *)bufs->v[j], lineoffs->v[j], 1, v);
-	      if (extralines)
+	      if (extralines > 0)
 		send_extra_data(v, extralines);
 	      stp_send_command(v, "\r", "");
 	    }
