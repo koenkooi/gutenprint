@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.6 2008/07/19 01:02:20 easysw Exp $"
+ * "$Id: intl.c,v 1.7 2008/07/20 00:50:52 easysw Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -156,6 +156,8 @@ stp_setlocale(const char *lang)		/* I - Locale name or "" for default */
 #    ifdef LC_NUMERIC
   setlocale(LC_NUMERIC, "C");
 #    endif /* LC_NUMERIC */
+
+  return (l);
 }
 #  endif /* __APPLE__ */
 #endif /* ENABLE_NLS */
