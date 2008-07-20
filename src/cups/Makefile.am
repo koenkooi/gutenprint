@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.101 2008/07/20 20:03:02 rlk Exp $
+## $Id: Makefile.am,v 1.102 2008/07/20 21:12:32 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -187,7 +187,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test ! -z "$(cups_bundledir)"; then \
           $(mkdir_p) "$(DESTDIR)$(cups_bundledir)/Contents"; \
 	  cp Info.plist "$(DESTDIR)$(cups_bundledir)/Contents"; \
-	  gcc -o po2strings po2strings.c; \
+	  gcc -o po2strings po2strings.c -liconv; \
 	  for file in ../../po/*.po; do \
 	    lang=`basename $$file .po`; \
 	    $(mkdir_p) "$(DESTDIR)$(cups_bundledir)/Contents/Resources/$$lang.lproj"; \
