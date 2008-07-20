@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.7 2008/07/20 00:50:52 easysw Exp $"
+ * "$Id: intl.c,v 1.8 2008/07/20 17:23:57 easysw Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -83,7 +83,14 @@ stp_setlocale(const char *lang)		/* I - Locale name or "" for default */
   * Setup the Core Foundation language environment for localized messages.
   */
 
-  if (*lang || (apple_language = getenv("APPLE_LANGUAGE")) == NULL)
+  if (*lang)
+    apple_language = lang;
+  else
+    apple_language = getenv("APPLE_LANGUAGE");
+
+  lang = setlocale(LC_MESSAGES, lang);
+
+  if (!apple_language)
     apple_language = lang;
 
   if (apple_language)
@@ -93,8 +100,6 @@ stp_setlocale(const char *lang)		/* I - Locale name or "" for default */
 
     CFPreferencesSetAppValue(CFSTR("AppleLanguages"), languageArray, kCFPreferencesCurrentApplication);
   }
-
-  lang = setlocale(LC_MESSAGES, lang);
 
   return (lang);
 }
