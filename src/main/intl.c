@@ -1,5 +1,5 @@
 /*
- * "$Id: intl.c,v 1.8 2008/07/20 17:23:57 easysw Exp $"
+ * "$Id: intl.c,v 1.9 2008/07/20 23:51:08 easysw Exp $"
  *
  *   Additional Gutenprint localization code.
  *
@@ -72,12 +72,6 @@ stp_setlocale(const char *lang)		/* I - Locale name or "" for default */
   CFStringRef	language;		/* Language string */
   CFArrayRef	languageArray;		/* Language array */
 
-
- /*
-  * Turn off buffering of stderr...
-  */
-
-  setbuf(stderr, NULL);
 
  /*
   * Setup the Core Foundation language environment for localized messages.
