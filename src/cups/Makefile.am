@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.100 2008/07/12 17:12:36 easysw Exp $
+## $Id: Makefile.am,v 1.101 2008/07/20 20:03:02 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -284,6 +284,8 @@ EXTRA_DIST = \
 	calibrate.ppm \
 	command.txt \
 	command.types \
-	test-ppds
+	test-ppds \
+	po2strings.c
+
 
 
