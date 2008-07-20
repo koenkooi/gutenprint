@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.9 2008/06/11 01:35:52 rlk Exp $"
+ * "$Id: mxml-file.c,v 1.10 2008/07/20 01:12:15 easysw Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -607,7 +607,7 @@ mxml_load_data(stp_mxml_node_t *top,	/* I - Top node */
 	  */
 
 	  fprintf(stderr, "Mismatched close tag <%s> under parent <%s>!\n",
-	          buffer, parent->value.element.name);
+	          buffer, parent ? parent->value.element.name : "(null)");
           break;
 	}
 
@@ -1477,5 +1477,5 @@ mxml_write_ws(stp_mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.9 2008/06/11 01:35:52 rlk Exp $".
+ * End of "$Id: mxml-file.c,v 1.10 2008/07/20 01:12:15 easysw Exp $".
  */
