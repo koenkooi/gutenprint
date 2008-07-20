@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.125 2008/07/19 23:57:34 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.126 2008/07/20 00:29:42 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/times.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
@@ -1422,5 +1423,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.125 2008/07/19 23:57:34 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.126 2008/07/20 00:29:42 rlk Exp $".
  */
