@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.88 2008/07/12 16:46:56 rlk Exp $"
+ * "$Id: print-vars.c,v 1.89 2008/07/21 00:02:32 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -144,10 +144,10 @@ copy_to_raw(stp_raw_t *raw, const void *data, size_t bytes)
     {
       ndata = stp_malloc(bytes + 1);
       memcpy(ndata, data, bytes);
+      ndata[bytes] = '\0';
     }
   else
     bytes = 0;
-  ndata[bytes] = '\0';
   raw->data = (void *) ndata;
   raw->bytes = bytes;
 }
@@ -1843,9 +1843,9 @@ fill_vars_from_xmltree(stp_mxml_node_t *prop, stp_mxml_node_t *root,
 			  type = STP_PARAMETER_TYPE_DOUBLE;
 			  stp_deprintf(STP_DBG_XML, "  Set raw '%s' to '%s'\n",
 				       p_name, cnode->value.text.string);
+			  stp_free((void *) raw->data);
+			  stp_free(raw);
 			}
-		      stp_free((void *) raw->data);
-		      stp_free(raw);
 		    }
 		}
 	      else if (strcmp(p_type, "curve") == 0)
