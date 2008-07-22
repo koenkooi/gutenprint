@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.153 2008/07/21 23:29:50 easysw Exp $"
+ * "$Id: genppd.c,v 1.154 2008/07/22 00:01:45 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -2106,11 +2106,8 @@ write_ppd(
 			       i <= desc.bounds.dbl.upper * 1000 ; i += 100)
 			    {
 			      if (desc.deflt.dbl * 1000 == i && desc.is_mandatory)
-				{
-				  gzprintf(fp, "*%s.Stp%s None/%.3f: \"\"\n", lang,
-					   desc.name, ((double) i) * .001);
-				  printed_default_value = 1;
-				}
+				gzprintf(fp, "*%s.Stp%s None/%.3f: \"\"\n", lang,
+				         desc.name, ((double) i) * .001);
 			      else
 				gzprintf(fp, "*%s.Stp%s %d/%.3f: \"\"\n", lang,
 					 desc.name, i, ((double) i) * .001);
@@ -2118,9 +2115,6 @@ write_ppd(
 			  if (!desc.is_mandatory)
 			    gzprintf(fp, "*%s.Stp%s None/%s: \"\"\n", lang,
 				     desc.name, _("None"));
-			  else if (! printed_default_value)
-			    gzprintf(fp, "*%s.Stp%s None/%.3f: \"\"\n", lang,
-				     desc.name, desc.deflt.dbl);
 			  gzprintf(fp, "*%s.ParamCustomStp%s Value/%s: \"\"\n", lang,
 				   desc.name, _("Value"));
 			  if (!simplified)
@@ -2232,5 +2226,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.153 2008/07/21 23:29:50 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.154 2008/07/22 00:01:45 easysw Exp $".
  */

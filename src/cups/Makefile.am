@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.103 2008/07/21 23:29:50 easysw Exp $
+## $Id: Makefile.am,v 1.104 2008/07/22 00:01:45 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	  lang=`basename $$file .po`; \
 	  $(mkdir_p) "$(DESTDIR)$(cups_bundledir)/Contents/Resources/$$lang.lproj"; \
 	  ./po2strings $$file "$(DESTDIR)$(cups_bundledir)/Contents/Resources/$$lang.lproj/Localizable.strings"; \
-	done \
+	done
 
 # Use the default automake rules for non-OS X
 endif
