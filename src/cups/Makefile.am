@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.104 2008/07/22 00:01:45 easysw Exp $
+## $Id: Makefile.am,v 1.105 2008/07/24 00:15:31 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -215,11 +215,16 @@ ppd-stamp-pre:
 	-mkdir ppd
 
 ppd-nonls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
+	wdir=`pwd` ; \
+	cd $(top_builddir)/po ; \
+	$(MAKE) ; \
+	$(MAKE) DESTDIR= prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
 	for language in C ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
-	  LC_ALL=$$language LANG=$$language LANGUAGE=$$language $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -p ppd/$$language ; \
+	  LC_ALL=$$language LANG=$$language LANGUAGE=$$language $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -p ppd/$$language -c `pwd`/catalog/share/locale ; \
 	done
+	-$(RM) -r catalog
 
 ppd-nls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	wdir=`pwd` ; \
