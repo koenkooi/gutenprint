@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.156 2008/07/24 02:15:37 rlk Exp $"
+ * "$Id: genppd.c,v 1.157 2008/07/24 23:50:53 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -810,7 +810,19 @@ getlangs(void)
 static void
 set_language(const char *lang)		/* I - Locale name */
 {
-  stp_setlocale(lang);
+  char *xlang = NULL;
+  const char *answer;
+  if (lang)
+    {
+      xlang = stp_malloc(strlen(lang) + sizeof(".UTF8") + 1);
+      sprintf(xlang, "%s.UTF8", lang);
+      answer = stp_setlocale(xlang);
+      if (!answer)
+	answer = stp_setlocale(lang);
+      stp_free(xlang);
+    }
+  else
+    stp_setlocale(lang);
 
 #  ifndef __APPLE__
  /*
@@ -940,6 +952,11 @@ write_ppd(
   char		*default_resolution;  /* Default resolution mapped name */
   stp_string_list_t *resolutions = stp_string_list_create();
   char		**all_langs = getlangs();/* All languages */
+
+  if (!language)
+    set_language("C");
+  else
+    set_language(language);
 #endif /* ENABLE_NLS */
 
 
@@ -2267,5 +2284,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.156 2008/07/24 02:15:37 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.157 2008/07/24 23:50:53 rlk Exp $".
  */
