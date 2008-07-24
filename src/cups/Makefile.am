@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.105 2008/07/24 00:15:31 rlk Exp $
+## $Id: Makefile.am,v 1.106 2008/07/24 02:15:37 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ ppd-nonls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	for language in C ; do \
 	  mkdir ppd/$$language ; \
 	  echo "$$language:" ; \
-	  LC_ALL=$$language LANG=$$language LANGUAGE=$$language $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -p ppd/$$language -c `pwd`/catalog/share/locale ; \
+	  LC_ALL= LANG= LANGUAGE= $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -p ppd/$$language -c `pwd`/catalog/share/locale ; \
 	done
 	-$(RM) -r catalog
 
