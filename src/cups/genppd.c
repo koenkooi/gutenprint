@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.157 2008/07/24 23:50:53 rlk Exp $"
+ * "$Id: genppd.c,v 1.158 2008/07/25 23:55:36 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -2155,6 +2155,7 @@ write_ppd(
 			  break;
 
 			case STP_PARAMETER_TYPE_DOUBLE:
+#  ifdef LOCALIZE_NUMBERS
 			  for (i = desc.bounds.dbl.lower * 1000;
 			       i <= desc.bounds.dbl.upper * 1000 ; i += 100)
 			    {
@@ -2165,6 +2166,7 @@ write_ppd(
 				gzprintf(fp, "*%s.Stp%s %d/%.3f: \"\"\n", lang,
 					 desc.name, i, ((double) i) * .001);
 			    }
+#  endif /* LOCALIZE_NUMBERS */
 			  if (!desc.is_mandatory)
 			    gzprintf(fp, "*%s.Stp%s None/%s: \"\"\n", lang,
 				     desc.name, _("None"));
@@ -2176,9 +2178,11 @@ write_ppd(
 				       desc.name, gettext(desc.text), _("Fine Adjustment"));
 			      gzprintf(fp, "*%s.StpFine%s None/%.3f: \"\"\n", lang,
 			               desc.name, 0.0);
+#  ifdef LOCALIZE_NUMBERS
 			      for (i = 0; i < 100; i += 5)
 				gzprintf(fp, "*%s.StpFine%s %d/%.3f: \"\"\n", lang,
 					 desc.name, i, ((double) i) * .001);
+#  endif /* LOCALIZE_NUMBERS */
 			    }
 			  break;
 
@@ -2186,6 +2190,7 @@ write_ppd(
 			  if (!desc.is_mandatory)
 			    gzprintf(fp, "*%s.Stp%s %s/%s: \"\"\n", lang, desc.name,
 				     "None", _("None"));
+#  ifdef LOCALIZE_NUMBERS
 			  for (i = desc.bounds.dimension.lower;
 			       i <= desc.bounds.dimension.upper; i++)
 			    {
@@ -2197,6 +2202,7 @@ write_ppd(
 			      gzprintf(fp, "*%s.Stp%s %d/%.1f mm: \"\"\n", lang,
 				       desc.name, i, ((double) i) * 25.4 / 72);
 			    }
+#  endif /* LOCALIZE_NUMBERS */
 			  gzprintf(fp, "*%s.ParamCustomStp%s Value/%s: \"\"\n", lang,
 				   desc.name, _("Value"));
 			  break;
@@ -2205,12 +2211,14 @@ write_ppd(
 			  if (!desc.is_mandatory)
 			    gzprintf(fp, "*%s.Stp%s %s/%s: \"\"\n", lang, desc.name,
 				     "None", _("None"));
+#  ifdef LOCALIZE_NUMBERS
 			  for (i = desc.bounds.integer.lower;
 			       i <= desc.bounds.integer.upper; i++)
 			    {
 			      gzprintf(fp, "*%s.Stp%s %d/%d: \"\"\n", lang,
 				       desc.name, i, i);
 			    }
+#  endif /* LOCALIZE_NUMBERS */
 			  gzprintf(fp, "*%s.ParamCustomStp%s Value/%s: \"\"\n", lang,
 				   desc.name, _("Value"));
 			  break;
@@ -2284,5 +2292,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.157 2008/07/24 23:50:53 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.158 2008/07/25 23:55:36 easysw Exp $".
  */
