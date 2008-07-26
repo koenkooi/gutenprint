@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.53 2008/07/18 02:53:40 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.54 2008/07/26 23:15:47 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -689,6 +689,7 @@ stpi_escp2_flush_pass(stp_vars_t *v, int passno, int vertical_subpass)
 		  int ml = minlines + (k < minlines_lo ? 1 : 0);
 		  int ns = nozzle_start + (k < nozzle_start_lo ? 1 : 0);
 		  int lc = ((nlines + (sc - k - 1)) / sc);
+		  int base = (pd->nozzle_start + k) % sc;
 		  if (lc < ml)
 		    extralines = ml - lc;
 		  else
@@ -706,7 +707,7 @@ stpi_escp2_flush_pass(stp_vars_t *v, int passno, int vertical_subpass)
 			send_extra_data(v, ns);
 		      for (l = 0; l < lc; l++)
 			{
-			  int sp = (l * sc) + k;
+			  int sp = (l * sc) + base;
 			  unsigned long offset = sp * pd->split_channel_width;
 			  if (!(stp_get_debug_level() & STP_DBG_NO_COMPRESSION))
 			    {
