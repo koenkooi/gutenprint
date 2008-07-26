@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.158 2008/07/25 23:55:36 easysw Exp $"
+ * "$Id: genppd.c,v 1.159 2008/07/26 00:27:34 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -132,6 +132,13 @@ const char *special_options[] =
   "Duplex",
   NULL
 };
+
+/*
+ * TRANSLATORS:
+ * Please keep these translated names SHORT.  The number of characters in
+ * the parameter class name plus the number of characters in the parameter
+ * name must not exceed ~36
+ */
 
 const char *parameter_class_names[] =
 {
@@ -2292,5 +2299,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.158 2008/07/25 23:55:36 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.159 2008/07/26 00:27:34 rlk Exp $".
  */
