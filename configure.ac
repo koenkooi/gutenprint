@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.199 2008/07/30 01:26:39 rlk Exp $
+dnl $Id: configure.ac,v 1.200 2008/07/30 23:43:16 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.199 $)
+AC_REVISION($Revision: 1.200 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -214,9 +214,20 @@ AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
 
 AM_CONDITIONAL(MACOSX, test "`uname`" = Darwin)
 
+if test "`uname`" = Darwin ; then
+   USE_NLS_OSX=yes
+else
+   USE_NLS_OSX=no
+fi
+
+STP_ARG_ENABLE([nls-macosx],
+               [build CUPS PPD files],
+               [USE_NLS_OSX],
+               [(automatic)])
+
 # Mac OS X doesn't have GNU gettext, so instead we'll use CoreFoundation to
 # localize Gutenprint...
-if test "`uname`" = Darwin -a "x$USE_NLS" != xno; then
+if test "`uname`" = Darwin -a "x$USE_NLS_OSX" != xno; then
 	USE_NLS="macosx"
 	LIBS="-framework CoreFoundation $LIBS"
 fi
@@ -1108,6 +1119,7 @@ if test -n "$EXTRA_LIBREADLINE_DEPS" ; then
 else
     echo "    Use readline libraries:                     $USE_READLINE"
 fi
+echo "    uname -a output:                            `uname -a`"
 echo "================================================================"
 if test $warnings_emitted -ne 0 ; then
     echo
