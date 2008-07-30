@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.198 2008/07/29 02:58:15 rlk Exp $
+dnl $Id: configure.ac,v 1.199 2008/07/30 01:26:39 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.198 $)
+AC_REVISION($Revision: 1.199 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -210,6 +210,17 @@ dnl GNU gettext checks.
 AM_GNU_GETTEXT_VERSION([0.16])
 AM_GNU_GETTEXT([external])
 
+AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
+
+AM_CONDITIONAL(MACOSX, test "`uname`" = Darwin)
+
+# Mac OS X doesn't have GNU gettext, so instead we'll use CoreFoundation to
+# localize Gutenprint...
+if test "`uname`" = Darwin -a "x$USE_NLS" != xno; then
+	USE_NLS="macosx"
+	LIBS="-framework CoreFoundation $LIBS"
+fi
+
 USE_LEVEL3_PS=no
 BUILD_CUPS_PPDS="${BUILD_CUPS}"
 BUILD_TRANSLATED_CUPS_PPDS=no
@@ -240,7 +251,7 @@ STP_ARG_ENABLE([cups-1_2-enhancements],
                [BUILD_CUPS_1_2],
                [(automatic)])
 
-if test "$USE_NLS" = yes -a "$BUILD_CUPS_PPDS" = yes ; then
+if test "$USE_NLS" != no -a "$BUILD_CUPS_PPDS" = yes ; then
    BUILD_TRANSLATED_CUPS_PPDS="yes"
 fi
 
@@ -813,17 +824,6 @@ AM_CONDITIONAL(INSTALL_SAMPLES, test x${INSTALL_SAMPLES} = xyes)
 AM_CONDITIONAL(INSTALL_USER_GUIDE, test x${INSTALL_USER_GUIDE} = xyes)
 
 STP_CUPS_PATH
-
-AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
-
-AM_CONDITIONAL(MACOSX, test "`uname`" = Darwin)
-
-# Mac OS X doesn't have GNU gettext, so instead we'll use CoreFoundation to
-# localize Gutenprint...
-if test "`uname`" = Darwin -a "x$USE_NLS" != xno; then
-	USE_NLS="macosx"
-	LIBS="-framework CoreFoundation $LIBS"
-fi
 
 # loadable modules
 # portable sh has no AND test...
