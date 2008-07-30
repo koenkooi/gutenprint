@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.109 2008/07/29 02:58:15 rlk Exp $
+## $Id: Makefile.am,v 1.110 2008/07/30 01:22:13 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -218,7 +218,6 @@ ppd-stamp-phony: ppd-stamp-pre $(PPD)
 
 ppd-stamp-pre:
 	-$(RM) -r ppd
-	-mkdir ppd
 
 ppd-nonls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	-mkdir ppd
@@ -241,6 +240,7 @@ ppd-global-ln: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@
 	cd $(top_builddir)/po ; \
 	$(MAKE) ; \
 	$(MAKE) DESTDIR= prefix=$${wdir}/catalog datadir=$${wdir}/catalog/share install
+	-mkdir ppd
 	-mkdir ppd/Global
 	@echo "Global PPDs (localized numbers for testing):"
 	LC_ALL= LANG= LANGUAGE= $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ @WHICH_PPDS@ -p ppd/Global -c `pwd`/catalog/share/locale -N
