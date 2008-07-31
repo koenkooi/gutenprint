@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.49 2008/07/27 17:09:13 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.50 2008/07/31 21:24:00 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -171,7 +171,7 @@ if (!$quiet || $verbose) {
     } elsif ($updated_ppd_count > 0) {
 	my $plural = $updated_ppd_count == 1 ? "" : "s";
 	print STDOUT "Updated $updated_ppd_count PPD file${plural}.";
-	if ($opt_o ne "") {
+	if (!defined $opt_o || $opt_o ne "") {
 	    print STDOUT "Restart cupsd for the changes to take effect.";
 	}
 	print STDOUT "\n";
