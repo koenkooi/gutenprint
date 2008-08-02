@@ -1,5 +1,5 @@
 /*
- * "$Id: xml-curve.c,v 1.6 2004/09/17 18:38:28 rleigh Exp $"
+ * "$Id: xml-curve.c,v 1.7 2008/08/02 15:10:56 rleigh Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   stp_init();
 
 #ifdef DEBUG
-  fprintf(stderr, "stp-xml-parse: reading  `%s'...\n", file);
+  fprintf(stderr, "stp-xml-parse: reading  `%s'...\n", argv[1]);
 #endif
 
   fprintf(stderr, "Using file: %s\n", argv[1]);
