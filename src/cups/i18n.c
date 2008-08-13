@@ -1,5 +1,5 @@
 /*
- * "$Id: i18n.c,v 1.1 2008/08/13 07:35:52 easysw Exp $"
+ * "$Id: i18n.c,v 1.2 2008/08/13 11:49:35 rlk Exp $"
  *
  *   Internationalization functions for CUPS drivers.
  *
@@ -82,6 +82,13 @@ static void	stpi_unquote(char *s);
 
 static stpi_i18n_t	*stpi_pocache = NULL;
 
+
+static void
+stp_strlcpy(char *dest, const char *src, size_t size)
+{
+  strncpy(dest, src, size);
+  dest[size - 1] = '\0';
+}
 
 /*
  * 'stp_i18n_load()' - Load a message catalog for a locale.
@@ -259,7 +266,7 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
 	  * Extract character set and setup a transcode context...
 	  */
 
-	  strlcpy(fromcode, charset + 8, sizeof(fromcode));
+	  stp_strlcpy(fromcode, charset + 8, sizeof(fromcode));
           for (fromptr = fromcode; *fromptr; fromptr ++)
 	    if (!isalnum(*fromptr & 255) && *fromptr != '-')
 	      break;
@@ -466,5 +473,5 @@ stpi_unquote(char *s)		/* IO - Original string */
 
 
 /*
- * End of "$Id: i18n.c,v 1.1 2008/08/13 07:35:52 easysw Exp $".
+ * End of "$Id: i18n.c,v 1.2 2008/08/13 11:49:35 rlk Exp $".
  */
