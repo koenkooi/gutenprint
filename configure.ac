@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.200 2008/07/30 23:43:16 rlk Exp $
+dnl $Id: configure.ac,v 1.201 2008/08/13 07:35:50 easysw Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.200 $)
+AC_REVISION($Revision: 1.201 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -212,25 +212,10 @@ AM_GNU_GETTEXT([external])
 
 AM_CONDITIONAL(USE_NLS, test x${USE_NLS} = xyes)
 
-AM_CONDITIONAL(MACOSX, test "`uname`" = Darwin)
-
-if test "`uname`" = Darwin ; then
-   USE_NLS_OSX=yes
-else
-   USE_NLS_OSX=no
-fi
-
 STP_ARG_ENABLE([nls-macosx],
                [build CUPS PPD files],
                [USE_NLS_OSX],
                [(automatic)])
-
-# Mac OS X doesn't have GNU gettext, so instead we'll use CoreFoundation to
-# localize Gutenprint...
-if test "`uname`" = Darwin -a "x$USE_NLS_OSX" != xno; then
-	USE_NLS="macosx"
-	LIBS="-framework CoreFoundation $LIBS"
-fi
 
 USE_LEVEL3_PS=no
 BUILD_CUPS_PPDS="${BUILD_CUPS}"
@@ -1062,13 +1047,6 @@ if test "$BUILD_CUPS" != "no" ; then
 	echo "                        build incorrect PPD files or cause other problems."
 	echo "                        Please review the README and release notes carefully!"
 	warnings_emitted=1
-    fi
-    if test "`uname`" = Darwin ; then
-        if test "x$cups_bundledir" = "x"; then
-	    echo "        Install CUPS as bundle:                 no"
-	else
-	    echo "        Install CUPS as bundle:                 yes, $cups_bundledir"
-	fi
     fi
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
