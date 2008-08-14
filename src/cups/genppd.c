@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.167 2008/08/14 00:59:38 rlk Exp $"
+ * "$Id: genppd.c,v 1.168 2008/08/14 02:07:58 easysw Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -950,7 +950,10 @@ write_ppd(
    * Use the English name of your language here, e.g. "Swedish" instead of
    * "Svenska". */
   gzprintf(fp, "*LanguageVersion: %s\n", _("English"));
-  gzputs(fp, "*LanguageEncoding: UTF-8\n");
+  if (language)
+    gzputs(fp, "*LanguageEncoding: UTF-8\n");
+  else
+    gzputs(fp, "*LanguageEncoding: ISOLatin1\n");
 
  /*
   * Strictly speaking, the PCFileName attribute should be a 12 character
@@ -2317,5 +2320,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.167 2008/08/14 00:59:38 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.168 2008/08/14 02:07:58 easysw Exp $".
  */
