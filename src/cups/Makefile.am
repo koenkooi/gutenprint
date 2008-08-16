@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.115 2008/08/15 01:27:15 rlk Exp $
+## $Id: Makefile.am,v 1.116 2008/08/16 00:29:27 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -153,9 +153,6 @@ uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 	if test -z "DONT_UNINSTALL_PPDS" ; then \
 	  if test -n "$(INSTALL_DATA_LOCAL_DEPS)" ; then \
 	    $(RM) -fr $(DESTDIR)$(cups_modeldir)/* ; \
-	  fi \
-	  if test ! -z "$(cups_bundledir)"; then \
-            $(RM) -rf "$(DESTDIR)$(cups_bundledir)"; \
 	  fi \
 	fi
 	for file in ../../po/*.po; do \
