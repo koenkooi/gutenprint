@@ -1,5 +1,5 @@
 /*
- * "$Id: i18n.c,v 1.3 2008/08/13 19:39:23 easysw Exp $"
+ * "$Id: i18n.c,v 1.4 2008/08/16 03:25:24 rlk Exp $"
  *
  *   Internationalization functions for CUPS drivers.
  *
@@ -109,7 +109,7 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
 			outbytes;	/* Number of output buffer bytes */
   char			*inptr,		/* Pointer into input buffer */
 			*outptr;	/* Pointer into output buffer */
-
+  int			skip_message = 0;
 
   if (!locale)
     return (NULL);
@@ -173,7 +173,13 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
     * Skip blank and comment lines...
     */
 
-    if (line[0] == '#' || line[0] == '\n')
+    if (line[0] == '#' && line[1] == ':')
+      skip_message = 0;
+
+    if (strcmp(line, "#, fuzzy\n") == 0)
+      skip_message = 1;
+
+    if (skip_message || line[0] == '#' || line[0] == '\n')
       continue;
 
    /*
@@ -467,5 +473,5 @@ stpi_unquote(char *s)		/* IO - Original string */
 
 
 /*
- * End of "$Id: i18n.c,v 1.3 2008/08/13 19:39:23 easysw Exp $".
+ * End of "$Id: i18n.c,v 1.4 2008/08/16 03:25:24 rlk Exp $".
  */
