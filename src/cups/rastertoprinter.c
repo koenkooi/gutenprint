@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.130 2008/08/13 07:35:53 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.131 2008/08/20 11:47:40 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -426,10 +426,17 @@ initialize_page(cups_image_t *cups, const stp_vars_t *default_settings,
 	}
       else if (stp_get_papersize_by_name(page_size_name))
 	{
+	  const stp_papersize_t *ps;
 	  if (!suppress_messages)
 	    fprintf(stderr, "DEBUG: Gutenprint:   Using page size %s with (%d, %d)\n",
 		    page_size_name, cups->header.PageSize[1], cups->header.PageSize[0]);
 	  set_string_parameter(v, "PageSize", page_size_name);
+	  ps = stp_get_papersize_by_name(page_size_name);
+	  if (ps)
+	    {
+	      stp_set_page_width(v, ps->width);
+	      stp_set_page_height(v, ps->height);
+	    }
 	}
       else
 	{
@@ -1167,7 +1174,12 @@ cups_errfunc(void *file, const char *buf, size_t bytes)
   FILE *prn = (FILE *)file;
   while (where < bytes)
     {
-      if (print_messages_as_errors)
+      if (bytes - where > 6 && strncmp(buf, "ERROR:", 6) == 0)
+	{
+	  fputs("ERROR: Gutenprint error:", prn);
+	  buf += 6;
+	}
+      else if (print_messages_as_errors)
 	fputs("ERROR: Gutenprint error: ", prn);
       else
 	fputs("DEBUG: Gutenprint internal: ", prn);
@@ -1421,5 +1433,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.130 2008/08/13 07:35:53 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.131 2008/08/20 11:47:40 rlk Exp $".
  */
