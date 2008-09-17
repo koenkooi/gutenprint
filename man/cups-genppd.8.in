@@ -1,4 +1,4 @@
-.\" $Id: cups-genppd.8.in,v 1.5 2004/09/17 18:38:02 rleigh Exp $
+.\" $Id: cups-genppd.8.in,v 1.6 2008/09/17 02:35:48 mbroughtn Exp $
 .\" Copyright (C) 2000-2004 Roger Leigh <rleigh@debian.org>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ are commands to find out what printer models and languages are
 supported.
 .SH EXAMPLES
 .TP
-.B cups\-genppd \-v bjc\-6200 'EPSON Stylus Photo 1280' 'HP DeskJet 850C'
+.B cups\-genppd \-v bjc\-6200 'Epson Stylus Photo 1280' 'HP DeskJet 850C'
 verbosely generate three PPD files, listing the driver name in the
 first case, and the full name in the second.
 .TP
