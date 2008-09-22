@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.117 2008/08/16 01:15:39 rlk Exp $
+## $Id: Makefile.am,v 1.118 2008/09/22 03:10:45 easysw Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -142,7 +142,7 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	  done \
 	fi
 	$(mkdir_p) "$(DESTDIR)$(localedir)"
-	for file in ../../po/*.po; do \
+	for file in $(srcdir)/../../po/*.po; do \
 	  lang=`basename $$file .po`; \
 	  $(mkdir_p) "$(DESTDIR)$(localedir)/$$lang"; \
 	  $(INSTALL_DATA) $$file "$(DESTDIR)$(localedir)/$$lang/gutenprint_$$lang.po"; \
@@ -155,7 +155,7 @@ uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 	    $(RM) -fr $(DESTDIR)$(cups_modeldir)/* ; \
 	  fi ; \
 	fi
-	for file in ../../po/*.po; do \
+	for file in $(srcdir)/../../po/*.po; do \
 	  lang=`basename $$file .po`; \
 	  $(RM) "$(DESTDIR)$(localedir)/$$lang/gutenprint_$$lang.po"; \
 	done
@@ -192,7 +192,7 @@ ppd-stamp-pre:
 
 ppd-catalog:
 	$(mkdir_p) catalog
-	for file in ../../po/*.po; do \
+	for file in $(srcdir)/../../po/*.po; do \
 	  lang=`basename $$file .po`; \
 	  $(mkdir_p) "catalog/$$lang"; \
 	  $(INSTALL_DATA) $$file "catalog/$$lang/gutenprint_$$lang.po"; \
