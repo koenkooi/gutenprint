@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# $Id: cups-genppdupdate.in,v 1.52 2008/09/20 18:23:14 rlk Exp $
+# $Id: cups-genppdupdate.in,v 1.53 2008/09/22 11:04:24 rlk Exp $
 # Update CUPS PPDs for Gutenprint queues.
 # Copyright (C) 2002-2003 Roger Leigh (rleigh@debian.org)
 #
@@ -303,6 +303,8 @@ sub parse_options () {
     if ($opt_P) {
 	if (-x $opt_P) {
 	    $driver_bin = "$opt_P";
+	    $driver_version = `$driver_bin VERSION`;
+	    chomp $driver_version;
 	    $use_static_ppd = "no";
 	}
 	else {
