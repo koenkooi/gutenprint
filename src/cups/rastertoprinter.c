@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.135 2008/10/03 18:29:00 easysw Exp $"
+ * "$Id: rastertoprinter.c,v 1.136 2008/10/04 17:47:50 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -1354,9 +1354,11 @@ Image_get_row(stp_image_t   *image,	/* I - Image */
   if (new_percent > cups->last_percent)
     {
       if (! suppress_messages)
-	stp_i18n_printf(po, _("INFO: Printing page %d, %d%%\n"),
-		        cups->page + 1, new_percent);
-      fprintf(stderr, "ATTR: job-media-progress=%d\n", new_percent);
+	{
+	  stp_i18n_printf(po, _("INFO: Printing page %d, %d%%\n"),
+			  cups->page + 1, new_percent);
+	  fprintf(stderr, "ATTR: job-media-progress=%d\n", new_percent);
+	}
       cups->last_percent = new_percent;
     }
 
@@ -1443,5 +1445,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.135 2008/10/03 18:29:00 easysw Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.136 2008/10/04 17:47:50 rlk Exp $".
  */
