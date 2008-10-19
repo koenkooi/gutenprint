@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2008/07/05 18:56:42 rlk Exp $
+## $Id: Makefile.am,v 1.8 2008/10/19 13:57:27 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,7 @@ pkgxmldata_DATA =				\
 	standard.xml				\
 	standard_gen0.xml			\
 	ultrachrome.xml				\
+	wf500.xml				\
 	x80.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am

@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.12 2008/09/13 23:44:24 rlk Exp $"
+ * "$Id: printers.c,v 1.13 2008/10/19 13:57:26 rlk Exp $"
  *
  *   Dump the per-printer options for the OpenPrinting database
  *
@@ -39,6 +39,8 @@ main(int argc, char **argv)
 	     stp_printer_get_long_name(p));
       printf("$printer_make{'%s'} = '%s';\n", stp_printer_get_driver(p),
 	     stp_printer_get_manufacturer(p));
+      printf("$printer_family{'%s'} = '%s';\n", stp_printer_get_driver(p),
+	     stp_printer_get_family(p));
       printf("push @printer_list, '%s';\n", stp_printer_get_driver(p));
     }
   return 0;

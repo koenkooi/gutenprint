@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2008/07/02 01:08:00 rlk Exp $
+## $Id: Makefile.am,v 1.5 2008/10/19 13:57:27 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@ pkgxmldata_DATA =				\
 	f360_photo7_japan.xml			\
 	f360_ultrachrome.xml			\
 	f360_ultrachrome_k3.xml			\
+	nx100.xml				\
 	photo_gen0.xml				\
 	photo_gen1.xml				\
 	photo_gen2.xml				\
@@ -59,6 +60,8 @@ pkgxmldata_DATA =				\
 	standard.xml				\
 	standard_gen0.xml			\
 	ultrachrome.xml				\
+	wf40.xml				\
+	wf500.xml				\
 	x80.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am

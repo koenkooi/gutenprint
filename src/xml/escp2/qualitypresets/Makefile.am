@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2008/06/20 00:11:03 rlk Exp $
+## $Id: Makefile.am,v 1.2 2008/10/19 13:57:27 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,8 @@ pkgxmldata_DATA =				\
 	p1_5.xml				\
 	picturemate.xml				\
 	standard.xml				\
-	v2880.xml
+	v2880.xml				\
+	wf40.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am
 	-rm -f xml-stamp
