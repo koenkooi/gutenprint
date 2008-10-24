@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2008/10/19 13:57:27 rlk Exp $
+## $Id: Makefile.am,v 1.10 2008/10/24 00:37:14 rleigh Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -123,12 +123,13 @@ pkgxmldata_DATA =				\
 	model_94.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am
-	-rm -f xml-stamp
-	touch xml-stamp
-	for f in $(pkgxmldata_DATA) ; do echo $$f >> xml-stamp; done
+	-rm -f $@ $@.tmp
+	touch $@.tmp
+	for f in $(pkgxmldata_DATA) ; do echo $$f >> $@.tmp; done
+	mv $@.tmp $@
 
 all-local: xml-stamp
 
-CLEANFILES = xmli18n-tmp.h xml-stamp
+CLEANFILES = xmli18n-tmp.h xml-stamp xml-stamp.tmp
 
 EXTRA_DIST = $(pkgxmldata_DATA)

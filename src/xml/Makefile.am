@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2008/06/10 13:10:22 rlk Exp $
+## $Id: Makefile.am,v 1.3 2008/10/24 00:37:14 rleigh Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,16 +42,18 @@ extract_strings_SOURCES = extract-strings.c
 extract_strings_LDADD = $(GUTENPRINT_LIBS)
 
 xml-stamp: $(pkgxmldata_DATA) escp2/xml-stamp Makefile.am
-	-rm -f xml-stamp
-	touch xml-stamp
-	sed 's;^;escp2/;' escp2/xml-stamp >> xml-stamp
-	for f in $(pkgxmldata_DATA) ; do echo $$f >> xml-stamp; done
+	-rm -f $@ $@.tmp
+	touch $@.tmp
+	sed 's;^;escp2/;' escp2/xml-stamp >> $@.tmp
+	for f in $(pkgxmldata_DATA) ; do echo $$f >> $@.tmp; done
+	mv $@.tmp $@
 
 all-local: xmli18n-tmp.h xml-stamp
 
 
-xmli18n-tmp.h:  xml-stamp extract-strings
-	./extract-strings `cat xml-stamp` > xmli18n-tmp.h
+xmli18n-tmp.h: xml-stamp extract-strings
+	./extract-strings `cat xml-stamp | sed -e 's/^/$(srcdir)/` > $@.tmp
+	mv $@.tmp $@
 
 
 dist-hook: xmli18n-tmp.h
@@ -59,7 +61,7 @@ dist-hook: xmli18n-tmp.h
 
 ## Clean
 
-CLEANFILES = xmli18n-tmp.h xml-stamp
+CLEANFILES = xmli18n-tmp.h xmli18n-tmp.h.tmp xmli18n-tmp2.h xml-stamp xml-stamp.tmp
 
 EXTRA_DIST = $(pkgxmldata_DATA)
 

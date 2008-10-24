@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2007/12/02 02:39:58 rlk Exp $
+## $Id: Makefile.am,v 1.8 2008/10/24 00:37:14 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -91,9 +91,10 @@ $(srcdir)/typebuiltins.c: $(typebuiltins_extra_deps)
 			--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" \
 			--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 			--vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n" \
-		$(stpui_public_h_sources) ) > $@
+		$(stpui_public_h_sources) ) > $@.tmp
+	mv $@.tmp $@
 
 
 ## Clean
 
-MAINTAINERCLEANFILES = Makefile.in typebuiltins.c printrcl.c printrcy.c printrcy.h
+MAINTAINERCLEANFILES = Makefile.in typebuiltins.c typebuiltins.c.tmp printrcl.c printrcy.c printrcy.h

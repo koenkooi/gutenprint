@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2005/11/21 11:16:22 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2008/10/24 00:37:14 rleigh Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -53,9 +53,10 @@ $(srcdir)/typebuiltins.h: $(stpui_public_h_sources) $(typebuiltins_extra_deps)
 			--fprod "/* enumerations from \"@filename@\" */\n" \
 			--vhead "GType @enum_name@_get_type (void);\n#define STPUI_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n" \
 			--ftail "G_END_DECLS\n\n#endif /* GUTENPRINTUI_TYPE_BUILTINS_H */" \
-		$(stpui_public_h_sources) ) > $@
+		$(stpui_public_h_sources) ) > $@.tmp
+	mv $@.tmp $@
 
 
 ## Clean
 
-MAINTAINERCLEANFILES = Makefile.in typebuiltins.h
+MAINTAINERCLEANFILES = Makefile.in typebuiltins.h typebuiltins.h.tmp

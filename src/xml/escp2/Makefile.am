@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2008/07/03 12:34:39 rlk Exp $
+## $Id: Makefile.am,v 1.8 2008/10/24 00:37:14 rleigh Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -38,15 +38,16 @@ xml-stamp: media/xml-stamp			\
 	   qualitypresets/Makefile.am		\
 	   weaves/Makefile.am			\
 	   Makefile.am
-	-rm -f xml-stamp
-	touch xml-stamp
-	sed 's;^;media/;' media/xml-stamp >> xml-stamp
-	sed 's;^;model/;' model/xml-stamp >> xml-stamp
-	sed 's;^;inputslots/;' inputslots/xml-stamp >> xml-stamp
-	sed 's;^;inks/;' inks/xml-stamp >> xml-stamp
-	sed 's;^;mediasizes/;' mediasizes/xml-stamp >> xml-stamp
-	sed 's;^;weaves/;' weaves/xml-stamp >> xml-stamp
-	sed 's;^;qualitypresets/;' qualitypresets/xml-stamp >> xml-stamp
+	-rm -f $@ $@.tmp
+	touch $@.tmp
+	sed 's;^;media/;' media/xml-stamp >> $@.tmp
+	sed 's;^;model/;' model/xml-stamp >> $@.tmp
+	sed 's;^;inputslots/;' inputslots/xml-stamp >> $@.tmp
+	sed 's;^;inks/;' inks/xml-stamp >> $@.tmp
+	sed 's;^;mediasizes/;' mediasizes/xml-stamp >> $@.tmp
+	sed 's;^;weaves/;' weaves/xml-stamp >> $@.tmp
+	sed 's;^;qualitypresets/;' qualitypresets/xml-stamp >> $@.tmp
+	mv $@.tmp $@
 
 all-local: xml-stamp
 ## Clean
