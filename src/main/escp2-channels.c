@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.86 2008/07/06 15:50:56 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.87 2008/10/29 00:10:42 easysw Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -458,7 +458,7 @@ stpi_escp2_get_default_black_inkset(void)
 	  default_black_inkgroup->n_inklists < 1 ||
 	  default_black_inkgroup->inklists[0].n_inks < 1)
 	{
-	  stp_erprintf("Default black inkgroup: %x\n", (int) default_black_inkgroup);
+	  stp_erprintf("Default black inkgroup: %lx\n", (long) default_black_inkgroup);
 	  stp_erprintf("Unable to load default black ink definition!\n");
 	  stp_abort();
 	}
