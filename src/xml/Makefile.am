@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2008/10/24 00:37:14 rleigh Exp $
+## $Id: Makefile.am,v 1.4 2008/11/01 18:42:11 rleigh Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ all-local: xmli18n-tmp.h xml-stamp
 
 
 xmli18n-tmp.h: xml-stamp extract-strings
-	./extract-strings `cat xml-stamp | sed -e 's/^/$(srcdir)/` > $@.tmp
+	./extract-strings `cat xml-stamp | sed -e 's;^;$(srcdir)/;'` > $@.tmp
 	mv $@.tmp $@
 
 
@@ -61,7 +61,7 @@ dist-hook: xmli18n-tmp.h
 
 ## Clean
 
-CLEANFILES = xmli18n-tmp.h xmli18n-tmp.h.tmp xmli18n-tmp2.h xml-stamp xml-stamp.tmp
+CLEANFILES = xmli18n-tmp.h xmli18n-tmp.h.tmp xml-stamp xml-stamp.tmp
 
 EXTRA_DIST = $(pkgxmldata_DATA)
 
