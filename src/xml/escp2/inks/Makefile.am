@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2008/10/24 00:37:14 rleigh Exp $
+## $Id: Makefile.am,v 1.7 2008/12/07 20:03:09 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@ include $(top_srcdir)/scripts/global.mk
 pkgxmldatadir = $(pkgdatadir)/@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@/xml/escp2/inks
 
 pkgxmldata_DATA =				\
+	artisan.xml				\
 	b500.xml				\
 	c120.xml				\
 	c64.xml					\
