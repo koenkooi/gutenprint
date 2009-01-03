@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.87 2008/10/29 00:10:42 easysw Exp $"
+ * "$Id: escp2-channels.c,v 1.88 2009/01/03 18:17:19 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -47,6 +47,12 @@ load_subchannel(stp_mxml_node_t *node, stp_mxml_node_t *root, physical_subchanne
   name = stp_mxmlElementGetAttr(node, "headOffset");
   if (name)
     icl->head_offset = stp_xmlstrtol(name);
+  name = stp_mxmlElementGetAttr(node, "name");
+  if (name)
+    icl->name = stp_strdup(name);
+  name = stp_mxmlElementGetAttr(node, "text");
+  if (name)
+    icl->text = stp_strdup(name);
   while (child)
     {
       if (child->type == STP_MXML_ELEMENT)
