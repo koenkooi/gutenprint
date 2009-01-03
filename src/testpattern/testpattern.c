@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.54 2008/07/16 23:59:23 rlk Exp $"
+ * "$Id: testpattern.c,v 1.55 2009/01/03 17:27:38 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -249,6 +249,7 @@ initialize_global_parameters(void)
 static int
 do_print(void)
 {
+  int status = 0;
   stp_vars_t *v;
   const stp_printer_t *the_printer;
   int left, right, top, bottom;
@@ -427,7 +428,7 @@ do_print(void)
       start_job = 0;
     }
   if (stp_print(v, &theImage) != 1)
-    return 2;
+    status = 2;
   if (end_job)
     {
       stp_end_job(v, &theImage);
@@ -436,7 +437,7 @@ do_print(void)
   stp_vars_destroy(v);
   stp_free(static_testpatterns);
   static_testpatterns = NULL;
-  return 0;
+  return status;
 }
 
 int
