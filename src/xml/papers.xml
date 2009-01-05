@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: papers.xml,v 1.5 2008/07/28 12:25:23 rlk Exp $"
+   "$Id: papers.xml,v 1.6 2009/01/05 13:49:25 rlk Exp $"
 
    XML description of papers known to libgutenprint.
    You can add additional paper sizes here.
@@ -137,6 +137,16 @@
       <left value="18"/>
       <right value="18"/>
       <bottom value="45"/>
+    </paper>
+    <paper name="w297h421">
+      <description translate="value" value="Epson L Photo Paper (tear-off borders)"/>
+      <width value="252"/>
+      <height value="360"/>
+      <unit value="english-extended"/>
+      <top value="17"/>
+      <left value="22"/>
+      <right value="22"/>
+      <bottom value="43"/>
     </paper>
     <paper name="w360h504">
       <description translate="value" value="5x7"/>
