@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.42 2008/07/18 02:03:48 rlk Exp $ */
+/* $Id: unprint.c,v 1.43 2009/03/01 17:27:58 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -306,7 +306,7 @@ static float ink_colors[MAX_INKS][4] =
  { 1,   1,    .1, 1 },		/* 19 Y */
 };
 
-static float quadtone_inks[] = { 0.0, .25, .5, .75 };
+static float quadtone_inks[] = { 0.0, .5, .25, .75 };
 
 static float bpp_shift[] = { 0, 1, 3, 7, 15, 31, 63, 127, 255 };
 
