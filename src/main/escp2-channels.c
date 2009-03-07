@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.88 2009/01/03 18:17:19 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.89 2009/03/07 19:38:00 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -240,6 +240,8 @@ load_inkname(stp_mxml_node_t *node, stp_mxml_node_t *root, inkname_t *inl)
 	inl->inkset = INKSET_CcMmYKk;
       else if (!strcmp(name, "Quadtone"))
 	inl->inkset = INKSET_QUADTONE;
+      else if (!strcmp(name, "Hextone"))
+	inl->inkset = INKSET_HEXTONE;
       else if (!strcmp(name, "OTHER"))
 	inl->inkset = INKSET_OTHER;
       else if (!strcmp(name, "Extended"))
