@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.209 2008/12/21 00:04:24 rlk Exp $
+dnl $Id: configure.ac,v 1.210 2009/03/22 02:16:11 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.209 $)
+AC_REVISION($Revision: 1.210 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1022,6 +1022,16 @@ echo
 echo "If you have any problems, please report the information below to"
 echo "$PACKAGE_BUGREPORT"
 echo
+echo "VERY IMPORTANT:"
+echo "If you expect to build the CUPS driver or the enhanced Print plugin for"
+echo "GIMP, but the output below indicates that that component will not be built,"
+echo "it almost certainly indicates that development packages required to build"
+echo "that component are not installed on your system.  Please read the README"
+echo "file and install the necessary development packages before reporting any"
+echo "error to the development team.  Depending upon your operating system version,"
+echo "you may have to install packages from the installation medium or over"
+echo "the network."
+echo
 echo "================================================================"
 echo "  Release: $PACKAGE_STRING generated on $RELEASE_DATE"
 echo
@@ -1105,6 +1115,6 @@ if test $warnings_emitted -ne 0 ; then
     echo '*** NOTE: Please review the warnings shown above carefully!'
 fi
 echo
-echo "Finished configuring.  Please review the configuration summary above."
+echo "Finished configuring.  Please review CAREFULLY the configuration summary above."
 echo "Type 'make clean' followed by 'make' to build the package"
 echo "then 'make install' to install it."
