@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.31 2009/03/04 10:53:38 m0m Exp $"
+   "$Id: printers.xml,v 1.32 2009/03/22 01:51:59 rlk Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -343,6 +343,7 @@
       <printer translate="name" name="Epson Stylus Photo R1800" driver="escp2-r1800" manufacturer="Epson" model="67" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo R1900" driver="escp2-r1900" manufacturer="Epson" model="91" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo R2400" driver="escp2-r2400" manufacturer="Epson" model="71" parameters="standard_params" />
+      <printer translate="name" name="Epson Stylus Photo R2880" driver="escp2-r2880" manufacturer="Epson" model="98" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo RX400" driver="escp2-rx400" manufacturer="Epson" model="84" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo RX420" driver="escp2-rx420" manufacturer="Epson" model="84" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo RX425" driver="escp2-rx425" manufacturer="Epson" model="84" parameters="standard_params" />
