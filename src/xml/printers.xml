@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.34 2009/03/27 16:05:43 tillkamppeter Exp $"
+   "$Id: printers.xml,v 1.35 2009/04/05 22:55:04 rleigh Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -280,7 +280,7 @@
       <printer translate="name" name="Epson Stylus Office BX300F" driver="escp2-of-bx300f" manufacturer="Epson" model="94" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Office BX600FW" driver="escp2-of-bx600fw" manufacturer="Epson" model="92" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Office SX600FW" driver="escp2-of-sx600fw" manufacturer="Epson" model="92" parameters="standard_params" />
-      <printer translate="name" name="Epson Stylus Offixe TX300F" driver="escp2-of-tx300f" manufacturer="Epson" model="94" parameters="standard_params" />
+      <printer translate="name" name="Epson Stylus Office TX300F" driver="escp2-of-tx300f" manufacturer="Epson" model="94" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Office TX600FW" driver="escp2-of-tx600fw" manufacturer="Epson" model="92" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo" driver="escp2-photo" manufacturer="Epson" model="9" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus Photo 700" driver="escp2-700" manufacturer="Epson" model="7" parameters="standard_params" />
