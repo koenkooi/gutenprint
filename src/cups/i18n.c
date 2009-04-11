@@ -1,5 +1,5 @@
 /*
- * "$Id: i18n.c,v 1.6 2008/08/16 16:56:06 rlk Exp $"
+ * "$Id: i18n.c,v 1.7 2009/04/11 18:08:36 rlk Exp $"
  *
  *   Internationalization functions for CUPS drivers.
  *
@@ -87,7 +87,7 @@ static stpi_i18n_t	*stpi_pocache = NULL;
  * 'stp_i18n_load()' - Load a message catalog for a locale.
  */
 
-stp_string_list_t *			/* O - Message catalog */
+const stp_string_list_t *		/* O - Message catalog */
 stp_i18n_load(const char *locale)	/* I - Locale name */
 {
   stp_string_list_t	*po;		/* Message catalog */
@@ -385,6 +385,8 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
     stpi_pocache  = pocache;
   }
   
+  if (ic)
+    iconv_close(ic);
   return (po);
 }
 
@@ -477,5 +479,5 @@ stpi_unquote(char *s)		/* IO - Original string */
 
 
 /*
- * End of "$Id: i18n.c,v 1.6 2008/08/16 16:56:06 rlk Exp $".
+ * End of "$Id: i18n.c,v 1.7 2009/04/11 18:08:36 rlk Exp $".
  */

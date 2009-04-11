@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.171 2008/12/05 03:27:20 easysw Exp $"
+ * "$Id: genppd.c,v 1.172 2009/04/11 18:08:36 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -816,7 +816,7 @@ print_group(
 
       for (langnum = 0; all_langs[langnum]; langnum ++)
 	{
-	  stp_string_list_t *altpo;
+	  const stp_string_list_t *altpo;
 
 	  lang = all_langs[langnum];
 
@@ -1878,6 +1878,7 @@ write_ppd(
 	    print_group_close(fp, j, k, language, po);
 	}
     }
+  stp_parameter_list_destroy(param_list);
   stp_describe_parameter(v, "ImageType", &desc);
   if (desc.is_active && desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
     {
@@ -2240,6 +2241,7 @@ write_ppd(
 		}
 	    }
 	}
+      stp_parameter_list_destroy(param_list);
       stp_describe_parameter(v, "ImageType", &desc);
       if (desc.is_active && desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
 	{
@@ -2261,8 +2263,6 @@ write_ppd(
   if (has_quality_parameter)
     stp_free(default_resolution);
   stp_string_list_destroy(resolutions);
-
-  stp_parameter_list_destroy(param_list);
 
 #undef _
 #define _(x) x
@@ -2320,5 +2320,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.171 2008/12/05 03:27:20 easysw Exp $".
+ * End of "$Id: genppd.c,v 1.172 2009/04/11 18:08:36 rlk Exp $".
  */
