@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.118 2008/09/22 03:10:45 easysw Exp $
+## $Id: Makefile.am,v 1.119 2009/04/11 16:16:20 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -182,10 +182,11 @@ all-local: $(INSTALL_DATA_LOCAL_DEPS)
 ppd: ppd-stamp
 
 ppd-stamp: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ $(top_srcdir)/src/xml/xml-stamp
+	$(MAKE) ppd-stamp-pre
 	$(MAKE) ppd-stamp-phony
 	touch ppd-stamp
 
-ppd-stamp-phony: ppd-stamp-pre $(PPD)
+ppd-stamp-phony: $(PPD)
 
 ppd-stamp-pre:
 	-$(RM) -r ppd
