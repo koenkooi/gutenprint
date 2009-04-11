@@ -1,5 +1,5 @@
 /*
- * "$Id: i18n.c,v 1.7 2009/04/11 18:08:36 rlk Exp $"
+ * "$Id: i18n.c,v 1.8 2009/04/11 19:05:12 rlk Exp $"
  *
  *   Internationalization functions for CUPS drivers.
  *
@@ -397,7 +397,7 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
 
 const char *				/* O - Localized message */
 stp_i18n_lookup(
-    stp_string_list_t *po,		/* I - Message catalog */
+    const stp_string_list_t *po,		/* I - Message catalog */
     const char        *message)		/* I - Message */
 {
   stp_param_string_t	*param;		/* Matching message */
@@ -416,7 +416,7 @@ stp_i18n_lookup(
 
 void
 stp_i18n_printf(
-    stp_string_list_t *po,		/* I - Message catalog */
+    const stp_string_list_t *po,		/* I - Message catalog */
     const char        *message,		/* I - Printf-style message */
     ...)				/* I - Additional arguments as needed */
 {
@@ -479,5 +479,5 @@ stpi_unquote(char *s)		/* IO - Original string */
 
 
 /*
- * End of "$Id: i18n.c,v 1.7 2009/04/11 18:08:36 rlk Exp $".
+ * End of "$Id: i18n.c,v 1.8 2009/04/11 19:05:12 rlk Exp $".
  */
