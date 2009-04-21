@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.92 2009/04/11 17:53:44 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.93 2009/04/21 08:34:30 m0m Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -2528,7 +2528,7 @@ dyesub_print_row(stp_vars_t *v,
     {
       col = dyesub_interpolate(w, pv->outw_px, pv->imgw_px);
       if (pv->plane_lefttoright)
-	ret = dyesub_print_pixel(v, pv, row, pv->imgw_px - col, plane);
+	ret = dyesub_print_pixel(v, pv, row, pv->imgw_px - col - 1, plane);
       else
 	ret = dyesub_print_pixel(v, pv, row, col, plane);
       if (ret > 1)
