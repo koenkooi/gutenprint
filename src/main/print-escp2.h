@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.h,v 1.135 2009/03/07 19:38:00 rlk Exp $"
+ * "$Id: print-escp2.h,v 1.136 2009/05/17 19:25:36 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -558,6 +558,7 @@ typedef struct
   const res_t *res;		/* Description of the printing resolution */
   const stp_raw_t *printer_weave; /* Printer weave parameters */
   int use_printer_weave;	/* Use the printer weaving mechanism */
+  int extra_vertical_passes;	/* Quality enhancement */
 
   /* page parameters */		/* Indexed from top left */
   int page_left;		/* Left edge of page (points) */
@@ -617,5 +618,5 @@ extern void stpi_escp2_terminate_page(stp_vars_t *v);
 
 #endif /* GUTENPRINT_INTERNAL_ESCP2_H */
 /*
- * End of "$Id: print-escp2.h,v 1.135 2009/03/07 19:38:00 rlk Exp $".
+ * End of "$Id: print-escp2.h,v 1.136 2009/05/17 19:25:36 rlk Exp $".
  */
