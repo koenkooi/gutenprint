@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.35 2009/04/05 22:55:04 rleigh Exp $"
+   "$Id: printers.xml,v 1.36 2009/05/24 17:02:06 rlk Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -431,6 +431,7 @@
       <printer translate="name" name="Epson Stylus D120" driver="escp2-d120" manufacturer="Epson" model="85" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus DX3800" driver="escp2-dx3800" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus DX3850" driver="escp2-dx3850" manufacturer="Epson" model="72" parameters="standard_params" />
+      <printer translate="name" name="Epson Stylus DX4000" driver="escp2-dx4000" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus DX4050" driver="escp2-dx4050" manufacturer="Epson" model="72" parameters="standard_params" />
       <printer translate="name" name="Epson Stylus DX4200" driver="escp2-dx4200" manufacturer="Epson" model="95" parameters="cx3500_params" />
       <printer translate="name" name="Epson Stylus DX4250" driver="escp2-dx4250" manufacturer="Epson" model="95" parameters="cx3500_params" />
