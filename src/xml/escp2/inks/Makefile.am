@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2009/03/22 01:51:59 rlk Exp $
+## $Id: Makefile.am,v 1.9 2009/05/30 14:10:32 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,7 @@ xml-stamp: $(pkgxmldata_DATA) Makefile.am
 
 all-local: xml-stamp
 
+dist-hook: xml-stamp
 CLEANFILES = xmli18n-tmp.h xml-stamp xml-stamp.tmp
 
 EXTRA_DIST = $(pkgxmldata_DATA)

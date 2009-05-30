@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2008/11/01 18:42:11 rleigh Exp $
+## $Id: Makefile.am,v 1.5 2009/05/30 14:10:31 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ xmli18n-tmp.h: xml-stamp extract-strings
 	mv $@.tmp $@
 
 
-dist-hook: xmli18n-tmp.h
+dist-hook: xmli18n-tmp.h xml-stamp
 # xmli18n-tmp.h is needed by po/POTFILES.in at dist time
 
 ## Clean
