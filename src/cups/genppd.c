@@ -1,5 +1,5 @@
  /*
- * "$Id: genppd.c,v 1.175 2009/05/24 02:05:25 rlk Exp $"
+ * "$Id: genppd.c,v 1.176 2009/06/07 02:34:55 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -234,7 +234,7 @@ main(int  argc,			    /* I - Number of command-line arguments */
     return (list_ppds(argv[0]));
   else if (argc == 3 && !strcmp(argv[1], "cat"))
     return (cat_ppd(argv[2]));
-  else if (argc == 2 && !strcmp(argv[1], "dog"))
+  else if (argc == 2 && !strcmp(argv[1], "org.gutenprint.multicat"))
     {
       char buf[1024];
       int status = 0;
@@ -256,8 +256,9 @@ main(int  argc,			    /* I - Number of command-line arguments */
       printf("%s\n", VERSION);
       return (0);
     }
-  else if (argc == 2 && !strcmp(argv[1], "BREED"))
+  else if (argc == 2 && !strcasecmp(argv[1], "org.gutenprint.extensions"))
     {
+      printf("org.gutenprint.multicat");
       return (0);
     }
   else
@@ -2352,5 +2353,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.175 2009/05/24 02:05:25 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.176 2009/06/07 02:34:55 rlk Exp $".
  */
