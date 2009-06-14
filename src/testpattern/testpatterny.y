@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.37 2009/06/14 17:30:18 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.38 2009/06/14 17:37:21 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -641,7 +641,7 @@ Image: image
 Rules: /* empty */ | Rules Rule
 ;
 
-Output: Patterns | Image
+Print: Patterns | Image
 ;
 
 EOF: /* empty */ | END SEMI
@@ -652,7 +652,7 @@ Thing: 	Rules
 	{
 	  current_testpattern = get_next_testpattern();
 	}
-	Output EOF
+	Print EOF
 ;
 
 %%
