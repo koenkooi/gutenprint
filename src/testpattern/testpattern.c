@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.56 2009/06/08 11:30:39 rlk Exp $"
+ * "$Id: testpattern.c,v 1.57 2009/06/14 17:12:44 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -98,6 +98,7 @@ FILE *output = NULL;
 int write_to_process = 0;
 int start_job = 0;
 int end_job = 0;
+int passes = 0;
 int failures = 0;
 int skipped = 0;
 
@@ -439,6 +440,8 @@ do_print(void)
 	  failures++;
 	  status = 2;
 	}
+      else
+	passes++;
       if (end_job)
 	{
 	  stp_end_job(v, &theImage);
@@ -508,7 +511,7 @@ main(int argc, char **argv)
     }
   close_output();
   if (!global_quiet)
-    fprintf(stderr, "%d fail, %d skipped\n", failures, skipped);
+    fprintf(stderr, "%d pass, %d fail, %d skipped\n", passes, failures, skipped);
   return global_status;
 }
 
