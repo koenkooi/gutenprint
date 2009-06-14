@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatterny.y,v 1.36 2009/06/14 17:25:49 rlk Exp $"
+ * "$Id: testpatterny.y,v 1.37 2009/06/14 17:30:18 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -122,7 +122,6 @@ find_color(const char *name)
 %token CMY
 %token GRAY
 %token WHITE
-%token RAW
 %token MODE
 %token PAGESIZE
 %token MESSAGE
