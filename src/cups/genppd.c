@@ -1,5 +1,5 @@
  /*
- * "$Id: genppd.c,v 1.176 2009/06/07 02:34:55 rlk Exp $"
+ * "$Id: genppd.c,v 1.177 2009/06/22 11:36:16 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1793,7 +1793,7 @@ write_ppd(
 			{
 			  gzprintf(fp, "*OpenUI *StpFine%s/%s %s: PickOne\n",
 				   desc.name, stp_i18n_lookup(po, desc.text), _("Fine Adjustment"));
-			  gzprintf(fp, "*OPOptionHints Stp%s: \"hide\"\n",
+			  gzprintf(fp, "*OPOptionHints StpFine%s: \"hide\"\n",
 				   lparam->name);
 			  gzprintf(fp, "*StpStpFine%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 				   desc.name, STP_PARAMETER_TYPE_INVALID, 0,
@@ -2353,5 +2353,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.176 2009/06/07 02:34:55 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.177 2009/06/22 11:36:16 rlk Exp $".
  */
