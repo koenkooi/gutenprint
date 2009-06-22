@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.93 2009/04/21 08:34:30 m0m Exp $"
+ * "$Id: print-olympus.c,v 1.94 2009/06/22 11:58:34 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -1893,6 +1893,10 @@ static const stp_parameter_t the_parameters[] =
     STP_PARAMETER_LEVEL_BASIC, 1, 1, STP_CHANNEL_NONE, 1, 0
   },
   {
+    /* TRANSLATORS: Some dye sublimation printers are able achieve */
+    /* better durability of output by covering it with transparent */
+    /* laminate surface. This surface can be of different patterns: */
+    /* common are matte, glossy or texture. */
     "Laminate", N_("Laminate Pattern"), N_("Advanced Printer Setup"),
     N_("Laminate Pattern"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
