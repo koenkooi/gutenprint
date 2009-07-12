@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.422 2009/06/20 22:25:19 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.423 2009/07/12 17:58:13 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -319,6 +319,12 @@ static const stp_parameter_t the_parameters[] =
   {
     "RawChannelNames", N_("Raw Channel Names"), N_("Advanced Printer Functionality"),
     N_("Raw Channel Names"),
+    STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
+    STP_PARAMETER_LEVEL_INTERNAL, 0, 0, STP_CHANNEL_NONE, 0, 0
+  },
+  {
+    "ChannelNames", N_("Channel Names"), N_("Advanced Printer Functionality"),
+    N_("Channel Names"),
     STP_PARAMETER_TYPE_STRING_LIST, STP_PARAMETER_CLASS_FEATURE,
     STP_PARAMETER_LEVEL_INTERNAL, 0, 0, STP_CHANNEL_NONE, 0, 0
   },
