@@ -1,5 +1,5 @@
  /*
- * "$Id: genppd.c,v 1.177 2009/06/22 11:36:16 rlk Exp $"
+ * "$Id: genppd.c,v 1.178 2009/07/18 00:55:45 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1568,7 +1568,7 @@ write_ppd(
 		  !stp_string_list_is_present(res_list, res_name))
 		{
 		  resolution_ok = 1;
-		  stp_string_list_add_string(res_list, res_name, res_name);
+		  stp_string_list_add_string(res_list, res_name, opt->text);
 		}
 	      else if (tmp_ydpi > tmp_xdpi &&
 		       tmp_ydpi < MAXIMUM_SAFE_PPD_Y_RESOLUTION)
@@ -1581,7 +1581,7 @@ write_ppd(
 	      else
 		tmp_xdpi /= 2;
 	    } while (!resolution_ok);
-	  stp_string_list_add_string(resolutions, res_name, res_name);
+	  stp_string_list_add_string(resolutions, res_name, opt->text);
 	  gzprintf(fp, "*Resolution %s/%s:\t\"<</HWResolution[%d %d]/cupsCompression %d>>setpagedevice\"\n",
 		   res_name, stp_i18n_lookup(po, opt->text), xdpi, ydpi, i + 1);
 	  if (strcmp(res_name, opt->name) != 0)
@@ -1893,7 +1893,7 @@ write_ppd(
 		      */
 
 		      gzprintf(fp, "*CustomStp%s True: \"pop\"\n", desc.name);
-		      gzprintf(fp, "*ParamCustomStp%s Value/%s: 1 points %d %d\n\n",
+		      gzprintf(fp, "*ParamCustomStp%s Value/%s: 1 int %d %d\n\n",
 		               desc.name, _("Value"),
 			       desc.bounds.dimension.lower,
 			       desc.bounds.dimension.upper);
@@ -2353,5 +2353,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.177 2009/06/22 11:36:16 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.178 2009/07/18 00:55:45 rlk Exp $".
  */
