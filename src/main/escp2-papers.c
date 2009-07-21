@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.117 2008/07/06 02:17:43 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.118 2009/07/21 11:07:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -449,6 +449,9 @@ build_input_slot(const stp_vars_t *v, const char *name)
   n1 = stp_mxmlFindElement(node, node, "DeinitSequence", NULL, NULL, STP_MXML_DESCEND);
   if (n1 && n1->child && n1->child->type == STP_MXML_TEXT)
     answer->deinit_sequence = stp_xmlstrtoraw(n1->child->value.text.string);
+  n1 = stp_mxmlFindElement(node, node, "ExtraHeight", NULL, NULL, STP_MXML_DESCEND);
+  if (n1 && n1->child && n1->child->type == STP_MXML_TEXT)
+    answer->extra_height = stp_xmlstrtoul(n1->child->value.text.string);
   return answer;
 }
 
