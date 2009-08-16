@@ -1,4 +1,4 @@
-/* $Id: unprint.c,v 1.44 2009/03/07 19:38:00 rlk Exp $ */
+/* $Id: unprint.c,v 1.44.2.1 2009/08/16 21:07:07 rlk Exp $ */
 /*
  * Generate PPM files from printer output
  *
@@ -42,6 +42,8 @@ typedef enum {
   QT_MIS
 } quadtone_t;
 
+#define ESCPR_CMDLEN (4)
+
 /*
  * Printer state variable.
  */
@@ -72,6 +74,26 @@ typedef struct {
   int top_edge;
   int bottom_edge;
   quadtone_t quadtone;
+  int is_escpr;
+  struct {
+    int media;
+    int quality;
+    int colormono;
+    int brightness;
+    int contrast;
+    int saturation;
+    int depth;
+    int palette_size;
+    int paper_width;
+    int paper_height;
+    int top;
+    int left;
+    int printable_width;
+    int printable_height;
+    int dpi;
+    int direction;
+    int next_page;
+  } escpr;
 } pstate_t;
 
 /* We'd need about a gigabyte of ram to hold a ppm file of an 8.5 x 11
@@ -109,6 +131,7 @@ unsigned bufsize;
 unsigned save_bufsize;
 unsigned char ch;
 unsigned short sh;
+unsigned int ih;
 int eject = 0;
 int global_counter = 0;
 int global_count = 0;
@@ -195,10 +218,10 @@ extern void write_output (FILE *fp_w, int dontwrite, int allblack);
 extern void find_white (unsigned char *buff,int npix, int *left, int *right);
 extern int update_page (unsigned char *buff, int buffsize, int m, int n,
 			int color, int density);
-extern void parse_escp2 (FILE *fp_r);
+extern void parse_escp2 (FILE *fp_r, FILE *fp_w);
 extern void reverse_bit_order (unsigned char *buff, int n);
-extern int rle_decode (unsigned char *inbuf, int n, int max);
-extern void parse_canon (FILE *fp_r);
+extern int rle_decode (unsigned char *inbuf, int n, int chunk, int max);
+extern void parse_canon (FILE *fp_r, FILE *fp_w);
 
 unsigned get_mask_1[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 unsigned get_mask_2[] = { 6, 4, 2, 0 };
@@ -737,10 +760,10 @@ do									\
     }									\
 } while (0)
 
-#define getn(n,error)							\
+#define get4(error)							\
 do									\
 {									\
-  if (!(global_count = fread(buf, 1, n, fp_r)))				\
+  if (!(global_count = fread(minibuf, 1, 4, fp_r)))			\
     {									\
       fprintf(stderr, "%s at %d (%x), read %d",				\
 	      error, global_counter, global_counter, global_count);	\
@@ -748,25 +771,84 @@ do									\
       continue;								\
     }									\
   else									\
-    global_counter += global_count;					\
+    {									\
+      global_counter += global_count;					\
+      ih = minibuf[0] + minibuf[1] * 256 + minibuf[2] * 65536 +		\
+	minibuf[3] * 16777216;						\
+    }									\
+} while (0)
+
+#define get2_be(error)							\
+do									\
+{									\
+  if (!(global_count = fread(minibuf, 1, 2, fp_r)))			\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    {									\
+      global_counter += global_count;					\
+      sh = minibuf[1] + minibuf[0] * 256;				\
+    }									\
+} while (0)
+
+#define get4_be(error)							\
+do									\
+{									\
+  if (!(global_count = fread(minibuf, 1, 4, fp_r)))			\
+    {									\
+      fprintf(stderr, "%s at %d (%x), read %d",				\
+	      error, global_counter, global_counter, global_count);	\
+      eject = 1;							\
+      continue;								\
+    }									\
+  else									\
+    {									\
+      global_counter += global_count;					\
+      ih = minibuf[3] + minibuf[2] * 256 + minibuf[1] * 65536 +		\
+	minibuf[0] * 16777216;						\
+    }									\
+} while (0)
+
+#define getn(n,error)							\
+do									\
+{									\
+  if (n > 0)								\
+    {									\
+      if (!(global_count = fread(buf, 1, n, fp_r)))			\
+	{								\
+	  fprintf(stderr, "%s at %d (%x), read %d",			\
+		  error, global_counter, global_counter, global_count);	\
+	  eject = 1;							\
+	  continue;							\
+	}								\
+      else								\
+	global_counter += global_count;					\
+    }									\
 } while (0)
 
 #define getnoff(n,offset,error)						\
 do									\
 {									\
-  if (!(global_count = fread(buf + offset, 1, n, fp_r)))		\
+  if (n > 0)								\
     {									\
-      fprintf(stderr, "%s at %d (%x), read %d",				\
-	      error, global_counter, global_counter, global_count);	\
-      eject = 1;							\
-      continue;								\
+      if (!(global_count = fread(buf + offset, 1, n, fp_r)))		\
+	{								\
+	  fprintf(stderr, "%s at %d (%x), read %d",			\
+		  error, global_counter, global_counter, global_count);	\
+	  eject = 1;							\
+	  continue;							\
+	}								\
+      else								\
+	global_counter += global_count;					\
     }									\
-  else									\
-    global_counter += global_count;					\
 } while (0)
 
 static void
-parse_escp2_data(FILE *fp_r)
+parse_escp2_data(FILE *fp_r, FILE *fp_w)
 {
   int i, m = 0, n = 0, c = 0;
   int currentcolor = 0;
@@ -866,7 +948,168 @@ parse_escp2_data(FILE *fp_r)
 }
 
 static void
-parse_escp2_extended(FILE *fp_r)
+parse_escpr(FILE *fp_r, FILE *fp_w)
+{
+  /*
+   * E C nnnn cccc data
+   * E = esc
+   * C = command class
+   * nnnn = payload bytes, excluding command (little endian)
+   * cccc = command
+   * data (nnnn bytes)
+   * Note that sub-field lengths are big endian!
+   */
+  int last_line = -1;
+  do {
+    int cmd_bytes;
+    char cmd[ESCPR_CMDLEN + 1];
+    pstate.is_escpr = 1;
+    get1("Corrupt file.  Incomplete ESC/P-R command.\n");
+    if (ch != 0x1b)
+      break;
+    get1("Corrupt file.  Error reading ESC/P-R command class.\n");
+    if (ch == '@')		/* No command here! */
+      break;
+    get4("Corrupt file.  Unable to read ESC/P-R command payload size.\n");
+    cmd_bytes = ih;
+    if (valid_bufsize < cmd_bytes)
+      {
+	buf = stp_realloc(buf, valid_bufsize + ESCPR_CMDLEN);
+	valid_bufsize = cmd_bytes + ESCPR_CMDLEN;
+      }
+    getn(ESCPR_CMDLEN, "Corrupt file.  Unable to read ESC/P-R command.\n");
+    memcpy(cmd, buf, ESCPR_CMDLEN);
+    cmd[ESCPR_CMDLEN] = '\0';
+    if (strcmp(cmd, "setq") == 0)
+      {
+	get1("Corrupt file.  Unable to read ESC/P-R media type.\n");
+	pstate.escpr.media = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R quality.\n");
+	pstate.escpr.quality = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R color/mono flag.\n");
+	pstate.escpr.colormono = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R brightness.\n");
+	pstate.escpr.brightness = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R contrast.\n");
+	pstate.escpr.contrast = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R saturation.\n");
+	pstate.escpr.saturation = ch;
+	get1("Corrupt file.  Unable to read ESC/P-R color_depth.\n");
+	pstate.escpr.depth = ch ? 1 : 3;
+	get2_be("Corrupt file.  Unable to read ESC/P-R palette size.\n");
+	pstate.escpr.palette_size = ch;
+	if (pstate.escpr.palette_size > 0)
+	  {
+	    fprintf(stderr, "WARNING: Ignoring ESC/P-R palette!\n");
+	    getn(pstate.escpr.palette_size * 3,
+		 "Corrupt file.  Unable to read ESC/P-R palette.\n");
+	  }
+	getn(cmd_bytes - 1 - 1 - 1 - 1 - 1 - 1 - 1 - 2,
+	     "Unable to read ESC/P-R trailer.\n");
+      }
+    else if (strcmp(cmd, "setj") == 0)
+      {
+	get4_be("Corrupt file.  Unable to read ESC/P-R paper width.\n");
+	pstate.escpr.paper_width = ih;
+	get4_be("Corrupt file.  Unable to read ESC/P-R paper height.\n");
+	pstate.escpr.paper_height = ih;
+	get2_be("Corrupt file.  Unable to read ESC/P-R left margin.\n");
+	pstate.escpr.left = ch;
+	get2_be("Corrupt file.  Unable to read ESC/P-R top margin.\n");
+	pstate.escpr.top = ch;
+	get4_be("Corrupt file.  Unable to read ESC/P-R printable width.\n");
+	pstate.escpr.printable_width = ih;
+	get4_be("Corrupt file.  Unable to read ESC/P-R printable height.\n");
+	pstate.escpr.printable_height = ih;
+	get1("Corrupt file.  Unable to read ESC/P-R input resolution.\n");
+	pstate.escpr.dpi = ch ? 720 : 360;
+	get1("Corrupt file.  Unable to read ESC/P-R printing direction.\n");
+	pstate.escpr.direction = ch;
+	getn(cmd_bytes - 4 - 4 - 2 - 2 - 4 - 4 - 1 - 1,
+	     "Corrupt file.  Unable to read ESC/P-R trailer.\n");
+	if (valid_bufsize < pstate.escpr.printable_width * pstate.escpr.depth)
+	  {
+	    buf =
+	      stp_realloc(buf,
+			  pstate.escpr.printable_width * pstate.escpr.depth);
+	    valid_bufsize = pstate.escpr.printable_width * pstate.escpr.depth;
+	  }
+      }
+    else if (strcmp(cmd, "sttp") == 0)
+      {
+	getn(cmd_bytes, "Corrupt file.  Unable to read ESC/P-R command payload.\n");
+	fprintf(stderr, "Writing output...\n");
+	/* write out the PPM header */
+	fprintf(fp_w, "P%d\n", pstate.escpr.depth == 1 ? 5 : 6);
+	fprintf(fp_w, "%d %d\n", pstate.escpr.printable_width,
+		pstate.escpr.printable_height);
+	fprintf(fp_w, "255\n");
+      }
+    else if (strcmp(cmd, "dsnd") == 0)
+      {
+	unsigned short x_off, y_off, compression, bytes;
+	get2_be("Corrupt file.  Unable to read ESC/P-R horizontal offset");
+	x_off = sh;
+	get2_be("Corrupt file.  Unable to read ESC/P-R horizontal offset");
+	y_off = sh;
+	get1("Corrupt file.  Unable to read ESC/P-R compression");
+	compression = ch;
+	get2_be("Corrupt file.  Unable to read ESC/P-R data byte count");
+	bytes = sh;
+	if (bytes > cmd_bytes - 2 - 2 - 1 - 2)
+	  {
+	    fprintf(stderr, "Invalid ESC/P-R data length (%d > %d)!\n",
+		   bytes, cmd_bytes - 2 - 2 - 1 - 2);
+	    break;
+	  }
+	memset(buf, 0xff, pstate.escpr.printable_width * pstate.escpr.depth);
+	if (y_off - last_line > 1)
+	  {
+	    int l;
+	    for (l = 0; l < y_off - last_line - 1; l++)
+	      fwrite(buf, pstate.escpr.depth, pstate.escpr.printable_width, fp_w);
+	  }
+	last_line = y_off;
+	getn(bytes, "Corrupt file.  Unable to read ESC/P-R data.\n");
+	if (x_off > 0)
+	  {
+	    memmove(buf + x_off * pstate.escpr.depth,
+		    buf, (pstate.escpr.printable_width - x_off) * pstate.escpr.depth);
+	    memset(buf, 0xff, x_off * pstate.escpr.depth);
+	  }
+	if (compression)
+	  {
+	    int o = rle_decode(buf, bytes, pstate.escpr.depth,
+			       1 * pstate.escpr.printable_width * pstate.escpr.depth);
+	    if (o + (x_off * pstate.escpr.depth) <
+		pstate.escpr.printable_width * pstate.escpr.depth)
+	      {
+		memset(buf + o + (x_off * pstate.escpr.depth), 0xff,
+		       (pstate.escpr.printable_width * pstate.escpr.depth) -
+		       o + (x_off * pstate.escpr.depth));
+		fprintf(stderr, "  Topping off %d\n",
+			(pstate.escpr.printable_width * pstate.escpr.depth) -
+			o + (x_off * pstate.escpr.depth));
+	      }
+	  }
+	fwrite(buf, pstate.escpr.depth, pstate.escpr.printable_width, fp_w);
+      }
+    else if (strcmp(cmd, "endp") == 0)
+      {
+	get1("Corrupt file.  Unable to read ESC/P-R next page flag.");
+	pstate.escpr.next_page = ch;
+	getn(cmd_bytes - 1, "Unable to read ESC/P-R command payload.\n");
+      }
+    else if (strcmp(cmd, "endj") == 0)
+      {
+	getn(cmd_bytes, "Unable to read ESC/P-R command payload.\n");
+	/* No payload */
+      }
+  } while(!eject);
+}
+
+static void
+parse_escp2_extended(FILE *fp_r, FILE *fp_w)
 {
   int unit_base;
   int i;
@@ -903,6 +1146,10 @@ parse_escp2_extended(FILE *fp_r)
 			rc1,rc2);
 	    }
 	  while (!eject && !(rc1 == 0x1b && rc2 == 0));
+	}
+      else if (bufsize == 6 && memcmp(buf, "\0ESCPR", 6) == 0)
+	{
+	  parse_escpr(fp_r, fp_w);
 	}
       else
 	{
@@ -1172,7 +1419,7 @@ parse_escp2_extended(FILE *fp_r)
 }
 
 static void
-parse_escp2_command(FILE *fp_r)
+parse_escp2_command(FILE *fp_r, FILE *fp_w)
 {
   get1("Corrupt file.  No command found.\n");
   switch (ch)
@@ -1222,7 +1469,7 @@ parse_escp2_command(FILE *fp_r)
     case 'i': /* transfer raster image */
     case '.':
       pstate.got_graphics = 1;
-      parse_escp2_data(fp_r);
+      parse_escp2_data(fp_r, fp_w);
       break;
     case '\\': /* set relative horizontal position */
       get2("Error reading relative horizontal position.\n");
@@ -1259,7 +1506,7 @@ parse_escp2_command(FILE *fp_r)
 	fprintf(stderr, "Invalid color %d.\n", ch);
       break;
     case '(': /* commands with a payload */
-      parse_escp2_extended(fp_r);
+      parse_escp2_extended(fp_r, fp_w);
       break;
     default:
       fprintf(stderr,"Warning: Unknown command ESC 0x%X at 0x%08X.\n",ch,global_counter-2);
@@ -1267,7 +1514,7 @@ parse_escp2_command(FILE *fp_r)
 }
 
 void
-parse_escp2(FILE *fp_r)
+parse_escp2(FILE *fp_r, FILE *fp_w)
 {
   global_counter = 0;
 
@@ -1285,7 +1532,7 @@ parse_escp2(FILE *fp_r)
 	case 0x0:
 	  break;
 	case 0x1b:		/* Command! */
-	  parse_escp2_command(fp_r);
+	  parse_escp2_command(fp_r, fp_w);
 	  break;
 	default:
 	  fprintf(stderr,
@@ -1329,20 +1576,20 @@ reverse_bit_order(unsigned char *buff, int n)
  * not exceeding a size of "max" bytes.
  */
 int
-rle_decode(unsigned char *inbuf, int n, int max)
+rle_decode(unsigned char *inbuf, int n, int chunk, int max)
 {
-  unsigned char outbuf[1440*3];
+  unsigned char outbuf[65536*3];
   signed char *ib= (signed char *)inbuf;
   signed char cnt;
   int num;
-  int i= 0, j;
+  int i= 0, j, k;
   int o= 0;
 
 #ifdef DEBUG_RLE
   fprintf(stderr,"input: %d\n",n);
 #endif
   if (n<=0) return 0;
-  if (max>1440*3) max= 1440*3; /* FIXME: this can be done much better! */
+  if (max>65536*3) max= 65536*3; /* FIXME: this can be done much better! */
 
   while (i<n && o<max) {
     cnt= ib[i];
@@ -1351,21 +1598,24 @@ rle_decode(unsigned char *inbuf, int n, int max)
       /* fprintf(stderr,"rle 0x%02x = %4d = %4d\n",cnt&0xff,cnt,1-cnt); */
       num= 1-cnt;
       /* fprintf (stderr,"+%6d ",num); */
-      for (j=0; j<num && o+j<max; j++) outbuf[o+j]= inbuf[i+1];
-      o+= num;
-      i+= 2;
+      for (j=0; j<num && o<max; j++)
+	for (k=0; k < chunk; k++)
+	  outbuf[o++]= inbuf[i+1+k];
+      i+= 1 + chunk;
     } else {
       /* cnt individual bytes */
       /* fprintf(stderr,"raw 0x%02x = %4d = %4d\n",cnt&0xff,cnt,cnt + 1); */
       num= cnt+1;
       /* fprintf (stderr,"*%6d ",num); */
-      for (j=0; j<num && o+j<max; j++) outbuf[o+j]= inbuf[i+j+1];
-      o+= num;
-      i+= num+1;
+      for (j=0; j<num*chunk && o+j<max; j++)
+	outbuf[o+j]= inbuf[i+j+1];
+      o+= num*chunk;
+      i+= (num*chunk)+1;
     }
   }
-  if (o>=max) {
-    fprintf(stderr,"Warning: rle decompression exceeds output buffer.\n");
+  if (o>max) {
+    fprintf(stderr,"Warning: rle decompression exceeds output buffer (%d, %d).\n",
+	    o, max);
     return 0;
   }
   /* copy decompressed data to inbuf: */
@@ -1378,7 +1628,7 @@ rle_decode(unsigned char *inbuf, int n, int max)
 }
 
 void
-parse_canon(FILE *fp_r)
+parse_canon(FILE *fp_r, FILE *fp_w)
 {
 
   int m=0;
@@ -1506,7 +1756,7 @@ parse_canon(FILE *fp_r)
 	 /* exit(-1); */
        }
        pstate.current_color= currentcolor;
-       m= rle_decode(buf+1,bufsize-1,sizeof(buf)-1);
+       m= rle_decode(buf+1,bufsize-1,1,sizeof(buf)-1);
        /* reverse_bit_order(buf+1,m); */
        pstate.yposition+= currentdelay;
        if (m) update_page(buf+1,m,1,(m*8)/pstate.bpp,currentcolor,
@@ -1737,7 +1987,7 @@ main(int argc,char *argv[])
 	pstate.extraskip = force_extraskip;
       else
 	pstate.extraskip = 1;
-      parse_canon(fp_r);
+      parse_canon(fp_r, fp_w);
     }
   else
     {
@@ -1745,10 +1995,11 @@ main(int argc,char *argv[])
 	pstate.extraskip = force_extraskip;
       else
 	pstate.extraskip = 2;
-      parse_escp2(fp_r);
+      parse_escp2(fp_r, fp_w);
     }
   fprintf(stderr,"Done reading.\n");
-  write_output(fp_w, no_output, all_black);
+  if (! pstate.is_escpr)
+    write_output(fp_w, no_output, all_black);
   fclose(fp_w);
   fprintf(stderr,"Image dump complete.\n");
 
