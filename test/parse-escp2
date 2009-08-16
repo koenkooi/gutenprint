@@ -237,7 +237,7 @@ sub do_escpr() {
 		       get_byte_at(4),
 		       get_byte_at(5),
 		       $colordepth[get_byte_at(6)],
-		       get_short_at(7));
+		       get_bshort_at(7));
 	    }
 	    $bpp = get_byte_at(6) ? 1 : 3;
 	    increment_curpos($skipchars);
@@ -246,7 +246,7 @@ sub do_escpr() {
 	    my (@direction) = qw(bi uni);
 	    printf("%*v02x ", " ", substr($stuff, $curoffset + 0, $skipchars));
 	    if ($opt_v) {
-		printf(" (Set Job: Paper (%d %d) (%.1f %.1f) Top %d Left %d Printable (%d %d) (%.2f %.2f) In Resolution %s Direction %s)",
+		printf(" (Set Job: Paper (%d %d) (%.1f %.1f) Left %d Top %d Printable (%d %d) (%.2f %.2f) In Resolution %s Direction %s)",
 		       get_blong_at(0),
 		       get_blong_at(4),
 		       get_blong_at(0) / $resolution[get_byte_at(20)],
