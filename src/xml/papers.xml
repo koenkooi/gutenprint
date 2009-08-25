@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: papers.xml,v 1.7 2009/04/14 01:09:42 rlk Exp $"
+   "$Id: papers.xml,v 1.8 2009/08/25 12:54:57 rlk Exp $"
 
    XML description of papers known to libgutenprint.
    You can add additional paper sizes here.
@@ -851,6 +851,22 @@
       <comment value="28mm x 40mm landscape"/>
       <width value="113"/>
       <height value="79"/>
+      <unit value="metric-extended"/>
+      <type value="envelope"/>
+    </paper>
+    <paper name="EA5">
+      <description translate="value" value="EA5"/>
+      <comment value="229mm x 156mm"/>
+      <width value="442"/>
+      <height value="649"/>
+      <unit value="metric-extended"/>
+      <type value="envelope"/>
+    </paper>
+    <paper name="EA5_l">
+      <description translate="value" value="EA5 landscape"/>
+      <comment value="229mm x 156mm landscape"/>
+      <width value="649"/>
+      <height value="442"/>
       <unit value="metric-extended"/>
       <type value="envelope"/>
     </paper>
