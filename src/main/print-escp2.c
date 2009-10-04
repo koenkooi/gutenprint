@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.424 2009/07/21 11:07:06 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.425 2009/10/04 14:00:57 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -922,7 +922,7 @@ static const int_param_t int_parameters[] =
 {
   {
     {
-      "QualityEnhancement", N_("Quality Enhancement"), N_("Advanced Printer Functionality"),
+      "BandEnhancement", N_("Quality Enhancement"), N_("Advanced Printer Functionality"),
       N_("Enhance print quality by additional passes"),
       STP_PARAMETER_TYPE_INT, STP_PARAMETER_CLASS_FEATURE,
       STP_PARAMETER_LEVEL_ADVANCED2, 0, 1, STP_CHANNEL_NONE, 1, 0
@@ -3908,7 +3908,10 @@ setup_head_parameters(stp_vars_t *v)
 
   pd->printer_weave = get_printer_weave(v);
 
-  pd->extra_vertical_passes = 1 << stp_get_int_parameter(v, "QualityEnhancement");
+  pd->extra_vertical_passes = 1;
+  if (stp_check_int_parameter(v, "QualityEnhancement", STP_PARAMETER_ACTIVE))
+    pd->extra_vertical_passes =
+      1 << stp_get_int_parameter(v, "QualityEnhancement");
   if (stp_escp2_has_cap(v, MODEL_FAST_360, MODEL_FAST_360_YES) &&
       (pd->inkname->inkset == INKSET_CMYK || pd->physical_channels == 1) &&
       pd->res->hres == pd->physical_xdpi && pd->res->vres == 360)
