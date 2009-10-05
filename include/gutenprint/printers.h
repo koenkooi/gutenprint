@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.5 2008/06/03 11:40:39 rlk Exp $"
+ * "$Id: printers.h,v 1.6 2009/10/05 12:37:30 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -83,6 +83,14 @@ extern const stp_printer_t *stp_get_printer_by_long_name(const char *long_name);
 extern const stp_printer_t *stp_get_printer_by_driver(const char *driver);
 
 /**
+ * Get a printer model by its IEEE 1284 device ID.
+ * @param device_id the printer model's device ID.
+ * @returns a pointer to the printer model, or NULL on failure.  The
+ * pointer should not be freed.
+ */
+extern const stp_printer_t *stp_get_printer_by_device_id(const char *device_id);
+
+/**
  * Get the printer model from a vars object.
  * @param v the vars to use.
  * @returns a pointer to the printer model, or NULL on failure.  The
@@ -111,6 +119,13 @@ extern const char *stp_printer_get_long_name(const stp_printer_t * p);
  * @returns the short name (should never be freed).
  */
 extern const char *stp_printer_get_driver(const stp_printer_t *p);
+
+/**
+ * Get a printer model's IEEE 1284 device ID, if known.
+ * @param p the printer model to use.
+ * @returns the IEEE 1284 device ID, or NULL if not known.
+ */
+extern const char *stp_printer_get_device_id(const stp_printer_t *p);
 
 /**
  * Get a printer model's family name.
@@ -255,5 +270,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GUTENPRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.5 2008/06/03 11:40:39 rlk Exp $".
+ * End of "$Id: printers.h,v 1.6 2009/10/05 12:37:30 rlk Exp $".
  */
