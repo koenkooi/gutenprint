@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.94 2009/06/22 11:58:34 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.95 2010/01/04 14:04:25 m0m Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -1665,7 +1665,7 @@ static const dyesub_cap_t dyesub_model_capabilities[] =
     cpx00_adj_cyan, cpx00_adj_magenta, cpx00_adj_yellow,
     NULL,
   },
-  { /* Canon CP-520 */
+  { /* Canon CP-520, SELPHY CP-530 */
     1004,
     &ymc_ink_list,
     &res_300dpi_list,
