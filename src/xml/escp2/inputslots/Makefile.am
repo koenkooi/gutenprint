@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.7 2009/05/30 14:10:32 rlk Exp $
+## $Id: Makefile.am,v 1.8 2010/01/16 19:53:46 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ pkgxmldatadir = $(pkgdatadir)/@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSI
 pkgxmldata_DATA =				\
 	artisan.xml				\
 	b500.xml				\
+	cd.xml					\
 	cd_cutter_roll_feed.xml			\
 	cd_roll_feed.xml			\
 	cutter_roll_feed.xml			\
