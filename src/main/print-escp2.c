@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.427 2010/06/14 13:02:54 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.428 2010/06/14 13:22:27 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2235,6 +2235,7 @@ escp2_parameters(const stp_vars_t *v, const char *name,
     }
   else if (strcmp(name, "CDAllowOtherMedia") == 0)
     {
+      const input_slot_t *slot = stp_escp2_get_input_slot(v);
       if (stp_escp2_printer_supports_print_to_cd(v) &&
 	  (!slot || slot->is_cd))
 	description->is_active = 1;
