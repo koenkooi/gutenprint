@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.54 2008/07/26 23:15:47 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.55 2010/06/25 11:28:53 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -234,16 +234,16 @@ escp2_set_remote_sequence(stp_vars_t *v)
       if (stp_check_int_parameter(pv, "VacuumIntensity", STP_PARAMETER_ACTIVE))
 	stp_send_command(v, "SN", "bccc", 0, 5,
 			 stp_get_int_parameter(pv, "VacuumIntensity"));
-      if (stp_check_int_parameter(pv, "ScanDryTime", STP_PARAMETER_ACTIVE))
+      if (stp_check_float_parameter(pv, "ScanDryTime", STP_PARAMETER_ACTIVE))
 	stp_send_command(v, "DR", "bcch", 0, 1,
 			 (int) stp_get_float_parameter(pv, "ScanDryTime") * 1000);
-      if (stp_check_int_parameter(pv, "ScanMinDryTime", STP_PARAMETER_ACTIVE))
+      if (stp_check_float_parameter(pv, "ScanMinDryTime", STP_PARAMETER_ACTIVE))
 	{
 	  stp_send_command(v, "DR", "bcccc", 0, 0x41, 0xff, 0xff);
 	  stp_send_command(v, "DR", "bcch", 0, 1,
 			   (int) stp_get_float_parameter(pv, "ScanMinDryTime") * 1000);
 	}
-      if (stp_check_int_parameter(pv, "PageDryTime", STP_PARAMETER_ACTIVE))
+      if (stp_check_float_parameter(pv, "PageDryTime", STP_PARAMETER_ACTIVE))
 	stp_send_command(v, "DR", "bcch", 0, 1,
 			 (int) stp_get_float_parameter(pv, "PageDryTime"));
       /* Next comes paper path */
