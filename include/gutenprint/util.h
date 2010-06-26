@@ -1,5 +1,5 @@
 /*
- * "$Id: util.h,v 1.7 2008/07/13 18:05:10 rlk Exp $"
+ * "$Id: util.h,v 1.8 2010/06/26 20:02:02 rlk Exp $"
  *
  *   libgimpprint utility and miscellaneous functions.
  *
@@ -85,6 +85,8 @@ extern void stp_zprintf(const stp_vars_t *v, const char *format, ...)
 
 extern void stp_zfwrite(const char *buf, size_t bytes, size_t nitems,
 			const stp_vars_t *v);
+
+extern void stp_write_raw(const stp_raw_t *raw, const stp_vars_t *v);
 
 extern void stp_putc(int ch, const stp_vars_t *v);
 extern void stp_put16_le(unsigned short sh, const stp_vars_t *v);
@@ -180,5 +182,5 @@ extern const char *stp_get_release_version(void);
 
 #endif /* GUTENPRINT_UTIL_H */
 /*
- * End of "$Id: util.h,v 1.7 2008/07/13 18:05:10 rlk Exp $".
+ * End of "$Id: util.h,v 1.8 2010/06/26 20:02:02 rlk Exp $".
  */

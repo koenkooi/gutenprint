@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.116 2008/07/08 17:32:02 easysw Exp $"
+ * "$Id: print-util.c,v 1.117 2010/06/26 20:02:02 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -122,6 +122,12 @@ void
 stp_zfwrite(const char *buf, size_t bytes, size_t nitems, const stp_vars_t *v)
 {
   (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), buf, bytes * nitems);
+}
+
+void
+stp_write_raw(const stp_raw_t *raw, const stp_vars_t *v)
+{
+  (stp_get_outfunc(v))((void *)(stp_get_outdata(v)), raw->data, raw->bytes);
 }
 
 void

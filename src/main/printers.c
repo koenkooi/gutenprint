@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.86 2009/10/05 12:37:30 rlk Exp $"
+ * "$Id: printers.c,v 1.87 2010/06/26 20:02:02 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -266,7 +266,7 @@ stp_get_printer_by_device_id(const char *device_id)
   printer_item = stp_list_get_start(printer_list);
   while (printer_item)
     {
-      if (strcmp(((const stp_printer_t *) stp_list_item_get_data(printer_item)),
+      if (strcmp(((const stp_printer_t *) stp_list_item_get_data(printer_item))->device_id,
 		 device_id) == 0)
 	return ((const stp_printer_t *) stp_list_item_get_data(printer_item));
       printer_item = stp_list_item_next(printer_item);
