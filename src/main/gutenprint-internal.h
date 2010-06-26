@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprint-internal.h,v 1.1 2004/09/17 18:38:21 rleigh Exp $"
+ * "$Id: gutenprint-internal.h,v 1.2 2010/06/26 20:10:31 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -43,7 +43,27 @@ extern "C" {
 
 #include <gutenprint/gutenprint-module.h>
 
-#include "util.h"
+/**
+ * Utility functions (internal).
+ *
+ * @defgroup util_internal util-internal
+ * @{
+ */
+
+
+/*
+ * FIXME Need somewhere else to put these initialization routines
+ * which users shouldn't call.
+ */
+
+extern void stpi_init_paper(void);
+extern void stpi_init_dither(void);
+extern void stpi_init_printer(void);
+#define BUFFER_FLAG_FLIP_X	0x1
+#define BUFFER_FLAG_FLIP_Y	0x2
+extern stp_image_t* stpi_buffer_image(stp_image_t* image, unsigned int flags);
+
+/** @} */
 
 
 #ifdef __cplusplus
@@ -52,5 +72,5 @@ extern "C" {
 
 #endif /* GUTENPRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gutenprint-internal.h,v 1.1 2004/09/17 18:38:21 rleigh Exp $".
+ * End of "$Id: gutenprint-internal.h,v 1.2 2010/06/26 20:10:31 rlk Exp $".
  */
