@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2006/09/18 01:48:58 rlk Exp $
+## $Id: Makefile.am,v 1.4 2010/07/05 15:18:08 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,6 @@ pkginclude_HEADERS = \
 	curve-cache.h \
 	curve.h \
 	dither.h \
-	sequence.h \
 	image.h \
 	list.h \
 	module.h \
