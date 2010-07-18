@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.8 2010/01/16 19:53:46 rlk Exp $
+## $Id: Makefile.am,v 1.9 2010/07/18 16:56:18 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ pkgxmldata_DATA =				\
 	cutter_roll_feed.xml			\
 	default.xml				\
 	pro_roll_feed.xml			\
+	pro_cutter_roll_feed.xml		\
 	r1800.xml				\
 	r2400.xml				\
 	r2880.xml				\
