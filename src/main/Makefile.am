@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.103 2008/08/13 07:35:53 easysw Exp $
+## $Id: Makefile.am,v 1.104 2010/07/18 18:05:23 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -110,8 +110,7 @@ libgutenprint_headers =				\
 	dither-impl.h				\
 	dither-inlined-functions.h		\
 	generic-options.h			\
-	gutenprint-internal.h			\
-	util.h
+	gutenprint-internal.h
 
 libgutenprint_la_SOURCES =			\
 	array.c					\
