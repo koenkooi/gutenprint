@@ -1,5 +1,5 @@
 /*
- * "$Id: print-dither-matrices.c,v 1.37 2008/02/18 14:20:17 rlk Exp $"
+ * "$Id: print-dither-matrices.c,v 1.38 2010/08/04 00:33:56 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -33,7 +33,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include "dither-impl.h"
 
 #ifdef __GNUC__
@@ -493,7 +492,7 @@ stp_xml_dither_cache_set(int x, int y, const char *filename)
 {
   stp_xml_dither_cache_t *cacheval;
 
-  assert(x && y && filename);
+  STPI_ASSERT(x && y && filename, NULL);
 
   stp_xml_init();
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.430 2010/07/18 16:40:39 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.431 2010/08/04 00:33:57 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -1327,12 +1327,7 @@ stp_escp2_inklist(const stp_vars_t *v)
 	    return &(inkgroup->inklists[i]);
 	}
     }
-  if (!inkgroup)
-    {
-      stp_erprintf("Cannot find inks for printer %s!\n",
-		   stp_get_driver(v));
-      stp_abort();
-    }
+  STPI_ASSERT(inkgroup, v);
   return &(inkgroup->inklists[0]);
 }
 
@@ -3401,10 +3396,7 @@ setup_inks(stp_vars_t *v)
 	  const char *param = channel->subchannels[0].channel_density;
 	  shade_t *shades = escp2_copy_shades(v, i);
 	  double userval = get_double_param(v, param);
-	  if (shades->n_shades < channel->n_subchannels)
-	    {
-	      stp_erprintf("Not enough shades\n");
-	    }
+	  STPI_ASSERT(shades->n_shades >= channel->n_subchannels, v);
 	  if (ink_type->inkset != INKSET_EXTENDED)
 	    {
 	      if (strcmp(param, "BlackDensity") == 0)
@@ -3480,10 +3472,7 @@ setup_inks(stp_vars_t *v)
 	      const char *param = channel->subchannels[0].channel_density;
 	      shade_t *shades = escp2_copy_shades(v, ch);
 	      double userval = get_double_param(v, param);
-	      if (shades->n_shades < channel->n_subchannels)
-		{
-		  stp_erprintf("Not enough shades!\n");
-		}
+	      STPI_ASSERT(shades->n_shades >= channel->n_subchannels, v);
 	      if (strcmp(param, "GlossDensity") == 0)
 		{
 		  gloss_scale *= get_double_param(v, param);

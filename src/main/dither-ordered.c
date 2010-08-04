@@ -1,5 +1,5 @@
 /*
- * "$Id: dither-ordered.c,v 1.30 2008/06/01 03:30:46 rlk Exp $"
+ * "$Id: dither-ordered.c,v 1.31 2010/08/04 00:33:56 rlk Exp $"
  *
  *   Ordered dither algorithm
  *
@@ -33,7 +33,6 @@
 #include <gutenprint/gutenprint-intl-internal.h>
 #include "dither-impl.h"
 #include "dither-inlined-functions.h"
-#include <assert.h>
 
 
 typedef struct {

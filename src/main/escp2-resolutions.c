@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-resolutions.c,v 1.51 2008/07/06 02:17:43 rlk Exp $"
+ * "$Id: escp2-resolutions.c,v 1.52 2010/08/04 00:33:56 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -101,11 +101,7 @@ stp_escp2_load_printer_weaves(const stp_vars_t *v, const char *name)
       item = stp_list_item_next(item);
     }
   stp_list_destroy(dirlist);
-  if (! found)
-    {
-      stp_erprintf("Unable to load printer weaves from %s!\n", name);
-      stp_abort();
-    }
+  STPI_ASSERT(found, v);
   return found;
 }
 
@@ -220,11 +216,7 @@ stp_escp2_load_resolutions(const stp_vars_t *v, const char *name)
       item = stp_list_item_next(item);
     }
   stp_list_destroy(dirlist);
-  if (! found)
-    {
-      stp_erprintf("Unable to load resolutions from %s!\n", name);
-      stp_abort();
-    }
+  STPI_ASSERT(found, v);
   return found;
 }
 
@@ -326,10 +318,6 @@ stp_escp2_load_quality_presets(const stp_vars_t *v, const char *name)
       item = stp_list_item_next(item);
     }
   stp_list_destroy(dirlist);
-  if (! found)
-    {
-      stp_erprintf("Unable to load quality presets from %s!\n", name);
-      stp_abort();
-    }
+  STPI_ASSERT(found, v);
   return found;
 }

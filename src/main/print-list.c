@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.24 2006/07/07 21:31:02 rleigh Exp $"
+ * "$Id: print-list.c,v 1.25 2010/08/04 00:33:57 rlk Exp $"
  *
  *   Gutenprint list functions.  A doubly-linked list implementation,
  *   with callbacks for freeing, sorting, and retrieving nodes by name
@@ -34,7 +34,6 @@
 #include <gutenprint/gutenprint.h>
 #include "gutenprint-internal.h"
 #include <gutenprint/gutenprint-intl-internal.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -125,7 +124,7 @@ stp_list_node_free_data (void *item)
 }
 
 /** Check the validity of a list. */
-#define check_list(List) assert(List != NULL)
+#define check_list(List) STPI_ASSERT(List != NULL, NULL)
 
 /* List head functions.
  * These functions operate on the list as a whole, and not the

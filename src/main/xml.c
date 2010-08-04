@@ -1,5 +1,5 @@
 /*
- * "$Id: xml.c,v 1.42 2008/06/08 15:10:36 rlk Exp $"
+ * "$Id: xml.c,v 1.43 2010/08/04 00:33:57 rlk Exp $"
  *
  *   XML parser - process Gutenprint XML data with mxml.
  *
@@ -27,7 +27,6 @@
 #include <gutenprint/gutenprint.h>
 #include "gutenprint-internal.h"
 #include <gutenprint/gutenprint-intl-internal.h>
-#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

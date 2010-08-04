@@ -1,6 +1,6 @@
 
 /*
- * "$Id: print-lexmark.c,v 1.158 2008/10/29 00:10:42 easysw Exp $"
+ * "$Id: print-lexmark.c,v 1.159 2010/08/04 00:33:57 rlk Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -2645,11 +2645,7 @@ const stp_vars_t *lex_open_tmp_file() {
   }
       stp_erprintf("Create file %s !\n", tmpstr);
   ofile = fopen(tmpstr, "wb");
-  if (ofile == NULL)
-    {
-      stp_erprintf("Can't create file !\n");
-      stp_abort();
-    }
+  STPI_ASSERT(ofile);
   return ofile;
 }
 

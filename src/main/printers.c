@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.c,v 1.87 2010/06/26 20:02:02 rlk Exp $"
+ * "$Id: printers.c,v 1.88 2010/08/04 00:33:57 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -107,20 +107,6 @@ stp_printer_model_count(void)
       stpi_init_printer_list();
     }
   return stp_list_get_length(printer_list);
-}
-
-static void
-null_printer(void)
-{
-  stp_erprintf("Null stp_printer_t! Please report this bug.\n");
-  stp_abort();
-}
-
-static inline void
-check_printer(const stp_printer_t *p)
-{
-  if (p == NULL)
-    null_printer();
 }
 
 const stp_printer_t *
