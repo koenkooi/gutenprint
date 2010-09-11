@@ -1,5 +1,5 @@
  /*
- * "$Id: genppd.c,v 1.179 2009/10/05 12:37:30 rlk Exp $"
+ * "$Id: genppd.c,v 1.180 2010/09/11 22:39:25 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1806,8 +1806,8 @@ write_ppd(
 			  gzprintf(fp, "*StpStpFine%s: %d %d %d %d %d %.3f %.3f %.3f\n",
 				   desc.name, STP_PARAMETER_TYPE_INVALID, 0,
 				   0, 0, -1, 0.0, 0.0, 0.0);
-			  gzprintf(fp, "*DefaultStpFine%s:None\n", desc.name);
-			  gzprintf(fp, "*StpDefaultStpFine%s:None\n", desc.name);
+			  gzprintf(fp, "*DefaultStpFine%s: None\n", desc.name);
+			  gzprintf(fp, "*StpDefaultStpFine%s: None\n", desc.name);
 			  gzprintf(fp, "*StpFine%s None/0.000: \"\"\n", desc.name);
 			  for (i = 0; i < 100; i += 5)
 			    gzprintf(fp, "*StpFine%s %d/%.3f: \"\"\n",
@@ -2361,5 +2361,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.179 2009/10/05 12:37:30 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.180 2010/09/11 22:39:25 rlk Exp $".
  */
