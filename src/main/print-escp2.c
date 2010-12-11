@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.432 2010/12/05 21:38:14 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.433 2010/12/11 22:04:07 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2654,6 +2654,8 @@ escp2_parameters(const stp_vars_t *v, const char *name,
 	  description->deflt.str =
 	    stp_string_list_param(description->bounds.str, 0)->name;
 	}
+      else
+	description->p_type = STP_PARAMETER_TYPE_INVALID;
     }
   else if (strcmp(name, "SupportsPacketMode") == 0)
     {
