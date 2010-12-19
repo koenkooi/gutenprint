@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.76 2010/12/06 12:54:50 rlk Exp $"
+   "$Id: printers.xml,v 1.77 2010/12/19 02:49:48 rlk Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -223,6 +223,7 @@
       <printer translate="name" name="Epson B-300" driver="escp2-b300" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B300" />
       <printer translate="name" name="Epson B-308" driver="escp2-b308" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B308" />
       <printer translate="name" name="Epson B-310" driver="escp2-b310" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B310" />
+      <printer translate="name" name="Epson B-310N" driver="escp2-b310n" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B310N" />
       <printer translate="name" name="Epson B-500DN" driver="escp2-b500dn" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B500DN" />
       <printer translate="name" name="Epson B-508DN" driver="escp2-b508dn" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B508DN" />
       <printer translate="name" name="Epson B-510DN" driver="escp2-b510dn" manufacturer="Epson" model="87" parameters="standard_params" foomaticid="Epson-B510DN" />
