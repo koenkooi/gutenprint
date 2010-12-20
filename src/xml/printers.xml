@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.77 2010/12/19 02:49:48 rlk Exp $"
+   "$Id: printers.xml,v 1.78 2010/12/20 17:57:06 twaugh Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -729,7 +729,7 @@
       <printer translate="name" name="Brother HL-1870N" driver="brother-hl-1870n" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-1870N" />
       <printer translate="name" name="Brother HL-2030" driver="brother-hl-2030" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2030" />
       <printer translate="name" name="Brother HL-2035" driver="brother-hl-2035" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2035" />
-      <printer translate="name" name="Brother HL-2060" deviceid="MFG:Brother;MDL:HL-2040 series;DES:None;CMD:PJL,HBP;" driver="brother-hl-2060" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2060" />
+      <printer translate="name" name="Brother HL-2060" driver="brother-hl-2060" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2060" />
       <printer translate="name" name="Brother HL-2460" deviceid="MFG:Brother;MDL:Brother HL-2460 series;" driver="brother-hl-2460" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2460" />
       <printer translate="name" name="Brother HL-2460N" driver="brother-hl-2460n" manufacturer="Brother" model="6" parameters="pcl_laser_params" foomaticid="Brother-HL-2460N" />
       <printer translate="name" name="Brother HL-4Ve" driver="brother-hl-4ve" manufacturer="Brother" model="2" parameters="pcl_laser_params" foomaticid="Brother-HL-4Ve" />
