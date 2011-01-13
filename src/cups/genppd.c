@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.183 2011/01/12 03:08:53 rlk Exp $"
+ * "$Id: genppd.c,v 1.184 2011/01/13 03:16:38 mbroughtn Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1863,6 +1863,7 @@ write_ppd(
   gzputs(fp, "*cupsICCProfile RGB../Color:	\"/System/Library/ColorSync/Profiles/sRGB Profile.icc\"\n");
   gzputs(fp, "*cupsICCProfile CMYK../Color:	\"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc\"\n");
   gzputs(fp, "*APSupportsCustomColorMatching: true\n");
+  gzputs(fp, "*APDefaultCustomColorMatchingProfile: sRGB\n");
   gzputs(fp, "*APCustomColorMatchingProfile: sRGB\n");
 
   gzputs(fp, "\n");
@@ -2531,5 +2532,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.183 2011/01/12 03:08:53 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.184 2011/01/13 03:16:38 mbroughtn Exp $".
  */
