@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.243 2011/03/30 13:35:52 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.244 2011/03/31 01:21:23 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1580,8 +1580,8 @@ canon_start_job(const stp_vars_t *v, stp_image_t *image)
 static int
 canon_end_job(const stp_vars_t *v, stp_image_t *image)
 {
-  canon_cmd(v,ESC40,0,0);
   const canon_cap_t * caps = canon_get_model_capabilities(v);
+  canon_cmd(v,ESC40,0,0);
   /* output XML for iP2700 and other devices */
   if (caps->features & CANON_CAP_XML) {
     int length=strlen(postxml_iP2700); /* 263 */
