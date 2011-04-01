@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.58 2010/09/06 17:08:39 rlk Exp $"
+ * "$Id: testpattern.c,v 1.59 2011/04/01 01:21:12 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -449,6 +449,8 @@ do_print(void)
   global_printer_height = height * y / 72;
 
   global_band_height = global_printer_height / global_n_testpatterns;
+  if (global_band_height == 0)
+    global_band_height = 1;
   stp_set_left(v, left);
   stp_set_top(v, top);
 
