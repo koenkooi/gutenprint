@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.245 2011/04/11 04:11:15 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.246 2011/04/20 15:05:51 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1314,7 +1314,7 @@ canon_init_setESC_P(const stp_vars_t *v, const canon_privdata_t *init)
   /* MP493 */
   /* MP550 */
   /* iX6500 */
-  if ( (!strcmp(init->caps->name,"iP2700")) || (!strcmp(init->caps->name,"MX340")) || (!strcmp(init->caps->name,"MX360")) || (!strcmp(init->caps->name,"MX410")) || (!strcmp(init->caps->name,"MX420")) || (!strcmp(init->caps->name,"MX870"))  || (!strcmp(init->caps->name,"MX880"))  || (!strcmp(init->caps->name,"MP550")) || (!strcmp(init->caps->name,"MP493")) || (!strcmp(init->caps->name,"iX6500")) )
+  if ( (!strcmp(init->caps->name,"iP2700")) || (!strcmp(init->caps->name,"MX340")) || (!strcmp(init->caps->name,"MX360")) || (!strcmp(init->caps->name,"MX410")) || (!strcmp(init->caps->name,"MX420")) || (!strcmp(init->caps->name,"MX870"))  || (!strcmp(init->caps->name,"MX880"))  || (!strcmp(init->caps->name,"MP550")) || (!strcmp(init->caps->name,"MP493")) || (!strcmp(init->caps->name,"iX6500")) || (!strcmp(init->caps->name,"iP4700")) || (!strcmp(init->caps->name,"iP4800")) )
  /* add a lot more here: try if(init->caps->model_id >= 3) how to guess for 4 bytes or more */
     {/* the 4th of the 6 bytes is the media type. 2nd byte is media size. Both read from canon-media array. */
 
