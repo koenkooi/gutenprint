@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprint-internal.h,v 1.3 2010/08/04 00:33:56 rlk Exp $"
+ * "$Id: gutenprint-internal.h,v 1.4 2011/05/14 22:05:36 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -53,6 +53,7 @@ extern "C" {
 extern void stpi_init_paper(void);
 extern void stpi_init_dither(void);
 extern void stpi_init_printer(void);
+extern void stpi_vars_print_error(const stp_vars_t *v);
 #define BUFFER_FLAG_FLIP_X	0x1
 #define BUFFER_FLAG_FLIP_Y	0x2
 extern stp_image_t* stpi_buffer_image(stp_image_t* image, unsigned int flags);
@@ -68,6 +69,7 @@ do									\
       stp_erprintf("\nERROR: ***Gutenprint %s assertion %s failed!"	\
 		   " file %s, line %d.  %s\n", PACKAGE_VERSION,		\
 		   #x, __FILE__, __LINE__, "Please report this bug!");	\
+      if ((v)) stpi_vars_print_error((v));				\
       stp_abort();							\
     }									\
 } while (0)
@@ -81,5 +83,5 @@ do									\
 
 #endif /* GUTENPRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gutenprint-internal.h,v 1.3 2010/08/04 00:33:56 rlk Exp $".
+ * End of "$Id: gutenprint-internal.h,v 1.4 2011/05/14 22:05:36 rlk Exp $".
  */

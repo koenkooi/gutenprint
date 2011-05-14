@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.143 2011/03/08 13:03:05 rlk Exp $"
+ * "$Id: print-color.c,v 1.144 2011/05/14 22:05:36 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -831,7 +831,7 @@ compute_gcr_curve(const stp_vars_t *vars)
       }
   curve = stp_curve_create(STP_CURVE_WRAP_NONE);
   stp_curve_set_bounds(curve, 0, 65535);
-  STPI_ASSERT(stp_curve_set_data(curve, lut->steps, tmp_data), v);
+  STPI_ASSERT(stp_curve_set_data(curve, lut->steps, tmp_data), vars);
   stp_free(tmp_data);
   return curve;
 }
