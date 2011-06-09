@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.127 2011/05/07 16:26:37 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.128 2011/06/09 00:38:15 rlk Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -489,6 +489,7 @@
       <printer translate="name" name="Epson Stylus CX3800" deviceid="MFG:EPSON;MDL:Stylus CX3800;DES:EPSON Stylus CX3800;CMD:ESCPL2,BDC,D4;" driver="escp2-cx3800" manufacturer="Epson" model="72" parameters="standard_params" foomaticid="Epson-Stylus_CX3800" />
       <printer translate="name" name="Epson Stylus CX3805" deviceid="MFG:EPSON;MDL:Stylus CX3805;DES:EPSON Stylus CX3805;CMD:ESCPL2,BDC,D4;" driver="escp2-cx3805" manufacturer="Epson" model="72" parameters="standard_params" foomaticid="Epson-Stylus_CX3805" />
       <printer translate="name" name="Epson Stylus CX3810" deviceid="MFG:EPSON;MDL:Stylus CX3810;DES:EPSON Stylus CX3810;CMD:ESCPL2,BDC,D4;" driver="escp2-cx3810" manufacturer="Epson" model="72" parameters="standard_params" foomaticid="Epson-Stylus_CX3810" />
+      <printer translate="name" name="Epson Stylus CX3900" deviceid="MFG:EPSON;MDL:Stylus CX3900;DES:EPSON Stylus CX3900;CMD:ESCPL2,BDC,D4;" driver="escp2-cx3900" manufacturer="Epson" model="72" parameters="standard_params" foomaticid="Epson-Stylus_CX3900" />
       <printer translate="name" name="Epson Stylus CX4100" deviceid="MFG:EPSON;MDL:Stylus CX4100;DES:EPSON Stylus CX4100;CMD:ESCPL2,BDC,D4;" driver="escp2-cx4100" manufacturer="Epson" model="95" parameters="cx3500_params" foomaticid="Epson-Stylus_CX4100" />
       <printer translate="name" name="Epson Stylus CX4200" deviceid="MFG:EPSON;MDL:Stylus CX4200;DES:EPSON Stylus CX4200;CMD:ESCPL2,BDC,D4;" driver="escp2-cx4200" manufacturer="Epson" model="95" parameters="cx3500_params" foomaticid="Epson-Stylus_CX4200" />
       <printer translate="name" name="Epson Stylus CX4400" driver="escp2-cx4400" manufacturer="Epson" model="72" parameters="standard_params" foomaticid="Epson-Stylus_CX4400" />
