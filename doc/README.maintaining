@@ -49,7 +49,7 @@ something that you would like covering, please let me know!
 
  -- Roger Leigh <rleigh@debian.org>
 
- $Id: README.maintaining,v 1.27 2008/07/29 01:52:09 rlk Exp $
+ $Id: README.maintaining,v 1.28 2011/06/12 23:03:20 rlk Exp $
 
 
 1. Setting up the autotools
@@ -76,7 +76,8 @@ vii.  flex/lex (for building the GIMP plugin and the test pattern generator)
 viii. bison/yacc (for building the GIMP plugin and the test pattern generator)
 ix.   doxygen (for building documentation)
 x.    DocBook processors (db2html, db2pdf) (for building documentation)
-xi.   DocBook-toys (for building documentation
+xi.   DocBook-toys (called docbook-utils on some systems) (for building
+      documentation)
 
 These packages are in addition to the packages normally required to
 build Gutenprint, as described in the README at top level.
