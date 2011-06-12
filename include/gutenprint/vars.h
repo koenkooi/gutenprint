@@ -439,10 +439,10 @@ extern void *stp_get_errdata(const stp_vars_t *v);
 extern void stp_merge_printvars(stp_vars_t *user, const stp_vars_t *print);
 
 /**
- * Merge defaults for a printer with user-chosen settings.
- * @deprecated This is likely to go away.
- * @param user the destination vars.
- * @param print the vars to merge into user.
+ * Copy settings from one vars object to another, not modifying anything
+ * unset in the source.
+ * @param to the destination vars.
+ * @param from the vars to merge into user.
  */
 extern void stp_copy_vars_from(stp_vars_t *to, const stp_vars_t *from);
 
@@ -1545,5 +1545,5 @@ stp_fill_parameter_settings(stp_parameter_t *desc,
 
 #endif /* GUTENPRINT_VARS_H */
 /*
- * End of "$Id: vars.h,v 1.9 2011/06/12 00:31:51 rlk Exp $".
+ * End of "$Id: vars.h,v 1.10 2011/06/12 00:47:15 rlk Exp $".
  */
