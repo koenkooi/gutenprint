@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.10 2008/07/20 01:12:15 easysw Exp $"
+ * "$Id: mxml-file.c,v 1.11 2011/06/12 00:29:49 rlk Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -39,7 +39,8 @@
 
 #include <gutenprint/mxml.h>
 #include "config.h"
-
+#define MXML_BUFSIZE (64)
+#define ENTITY_BUFSIZE (64)
 
 /*
  * Local functions...
@@ -390,13 +391,13 @@ mxml_load_data(stp_mxml_node_t *top,	/* I - Top node */
   * Read elements and other nodes from the file...
   */
 
-  if ((buffer = malloc(64)) == NULL)
+  if ((buffer = malloc(MXML_BUFSIZE)) == NULL)
   {
     fputs("Unable to allocate string buffer!\n", stderr);
     return (NULL);
   }
 
-  bufsize    = 64;
+  bufsize    = MXML_BUFSIZE;
   bufptr     = buffer;
   parent     = top;
   whitespace = 0;
@@ -685,7 +686,7 @@ mxml_load_data(stp_mxml_node_t *top,	/* I - Top node */
       * support &lt;, &amp;, &gt;, &nbsp;, &quot;, &#nnn;, and &#xXXXX;...
       */
 
-      char	entity[64],		/* Entity string */
+      char	entity[ENTITY_BUFSIZE],		/* Entity string */
 		*entptr;		/* Pointer into entity */
 
 
@@ -868,22 +869,22 @@ mxml_parse_element(stp_mxml_node_t *node,	/* I - Element node */
   * Initialize the name and value buffers...
   */
 
-  if ((name = malloc(64)) == NULL)
+  if ((name = malloc(MXML_BUFSIZE)) == NULL)
   {
     fputs("Unable to allocate memory for name!\n", stderr);
     return (EOF);
   }
 
-  namesize = 64;
+  namesize = MXML_BUFSIZE;
 
-  if ((value = malloc(64)) == NULL)
+  if ((value = malloc(MXML_BUFSIZE)) == NULL)
   {
     free(name);
     fputs("Unable to allocate memory for value!\n", stderr);
     return (EOF);
   }
 
-  valsize = 64;
+  valsize = MXML_BUFSIZE;
 
  /*
   * Loop until we hit a >, /, ?, or EOF...
@@ -1477,5 +1478,5 @@ mxml_write_ws(stp_mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.10 2008/07/20 01:12:15 easysw Exp $".
+ * End of "$Id: mxml-file.c,v 1.11 2011/06/12 00:29:49 rlk Exp $".
  */
