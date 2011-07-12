@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.135 2011/07/10 15:38:28 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.136 2011/07/12 08:43:41 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -178,6 +178,7 @@
       <printer translate="name" name="Canon PIXMA MP160" driver="bjc-MULTIPASS-MP160" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP160" />
       <printer translate="name" name="Canon PIXMA MP170" driver="bjc-MULTIPASS-MP170" manufacturer="Canon" model="5000170" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP170" />
       <printer translate="name" name="Canon PIXMA MP180" driver="bjc-MULTIPASS-MP180" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP180" />
+      <printer translate="name" name="Canon PIXMA MP190" driver="bjc-MULTIPASS-MP190" manufacturer="Canon" model="5000190" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP190" />
       <printer translate="name" name="Canon PIXMA MP220" driver="bjc-MULTIPASS-MP220" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP220" />
       <printer translate="name" name="Canon PIXMA MP250" driver="bjc-MULTIPASS-MP250" manufacturer="Canon" model="5000250" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP250" />
       <printer translate="name" name="Canon PIXMA MP270" driver="bjc-MULTIPASS-MP270" manufacturer="Canon" model="5000270" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP270" />
