@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.254 2011/07/10 15:35:11 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.255 2011/07/16 16:17:06 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1330,7 +1330,7 @@ canon_init_setESC_P(const stp_vars_t *v, const canon_privdata_t *init)
       /*                             size                media             */
       canon_cmd( v,ESC28,0x50,6,0x00,arg_ESCP_1,0x00,arg_ESCP_2,0x01,0x00);
     }
-  else if ( !(strcmp(init->caps->name,"SELPHY DS700")) )  {
+  else if ( !(strcmp(init->caps->name,"SELPHY DS700")) || !(strcmp(init->caps->name,"PIXMA MP360")) || !(strcmp(init->caps->name,"PIXMA MP370")) || !(strcmp(init->caps->name,"PIXMA MP375R")) || !(strcmp(init->caps->name,"PIXMA MP390")))  {
     /* 2 bytes only */
       canon_cmd( v,ESC28,0x50,2,0x00,arg_ESCP_1 );
     }	
@@ -1418,6 +1418,9 @@ canon_init_setImage(const stp_vars_t *v, const canon_privdata_t *init)
     	buf[2]=0x4;
     }else if(init->mode->flags & MODE_FLAG_IP8500){
     	buf[1]=0x00;
+    	buf[2]=0x01;
+    }else if(init->mode->flags & MODE_FLAG_MP360){
+    	buf[1]=0x84;
     	buf[2]=0x01;
     }else{
     	buf[1]=0x80;
