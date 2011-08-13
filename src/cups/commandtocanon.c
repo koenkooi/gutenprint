@@ -1,23 +1,6 @@
 /*
- * "$Id: commandtoepson.c,v 1.4 2011/08/13 16:24:17 rlk Exp $"
+ *   CANON BJ command filter for the Common UNIX Printing System.
  *
- *   EPSON ESC/P2 command filter for the Common UNIX Printing System.
- *
- *   Copyright 1993-2000 by Easy Software Products.
- *
- *   This program is free software; you can redistribute it and/or modify it
- *   under the terms of the GNU General Public License as published by the Free
- *   Software Foundation; either version 2 of the License, or (at your option)
- *   any later version.
- *
- *   This program is distributed in the hope that it will be useful, but
- *   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- *   for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * Contents:
  *
@@ -31,8 +14,8 @@
 #include <cups/cups.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+
 
 /*
  * Macros...
@@ -66,7 +49,7 @@ main(int  argc,		/* I - Number of command-line arguments */
     * and return.
     */
 
-    fputs("ERROR: commandtoepson job-id user title copies options [file]\n", stderr);
+    fputs("ERROR: commandtocanon job-id user title copies options [file]\n", stderr);
     return (1);
   }
 
@@ -86,16 +69,10 @@ main(int  argc,		/* I - Number of command-line arguments */
     fp = stdin;
 
  /*
-  * Reset the printer...
+  * Reset the printer and initiate BJL mode
   */
 
-  pwrite("\033@", 2);
-
- /*
-  * Enter remote mode...
-  */
-
-  pwrite("\033(R\010\000\000REMOTE1", 13);
+  pwrite("\x1b\x5b\x4b\x02\x00\x00\x1f" "BJLSTART\x0a", 16);
   feedpage = 0;
 
  /*
@@ -135,7 +112,14 @@ main(int  argc,		/* I - Number of command-line arguments */
       * Clean heads...
       */
 
-      pwrite("CH\002\000\000\000", 6);
+      char *what;
+
+      for (what = lineptr + 6; isspace(*what); what ++);
+
+      if (*what == 0)                   pwrite("@Cleaning=1ALL\x0a", 15);
+      if (!strncasecmp(what,"all",3))   pwrite("@Cleaning=1ALL\x0a", 15);
+      if (!strncasecmp(what,"black",5)) pwrite("@Cleaning=1K\x0a", 13);
+
     }
     else if (strncasecmp(lineptr, "PrintAlignmentPage", 18) == 0)
     {
@@ -147,10 +131,11 @@ main(int  argc,		/* I - Number of command-line arguments */
 
       phase = atoi(lineptr + 18);
 
-      pwrite("DT\003\000\000", 5);
-      putchar(phase & 255);
-      putchar(phase >> 8);
-      feedpage = 1;
+      if (phase==0) pwrite("@TestPrint=Auto\x0a", 16);
+      if (phase==1) pwrite("@TestPrint=Manual1\x0a", 19);
+      if (phase==2) pwrite("@TestPrint=Manual2\x0a", 19);
+
+      feedpage = 0;
     }
     else if (strncasecmp(lineptr, "PrintSelfTestPage", 17) == 0)
     {
@@ -158,9 +143,9 @@ main(int  argc,		/* I - Number of command-line arguments */
       * Print version info and nozzle check...
       */
 
-      pwrite("VI\002\000\000\000", 6);
-      pwrite("NC\002\000\000\000", 6);
-      feedpage = 1;
+      pwrite("@TestPrint=NozzleCheck\x0a", 23);
+
+      feedpage = 0;
     }
     else if (strncasecmp(lineptr, "ReportLevels", 12) == 0)
     {
@@ -168,7 +153,6 @@ main(int  argc,		/* I - Number of command-line arguments */
       * Report ink levels...
       */
 
-      pwrite("IQ\001\000\001", 5);
     }
     else if (strncasecmp(lineptr, "SetAlignment", 12) == 0)
     {
@@ -176,20 +160,6 @@ main(int  argc,		/* I - Number of command-line arguments */
       * Set head alignment...
       */
 
-      int phase, x;
-
-      if (sscanf(lineptr + 12, "%d%d", &phase, &x) != 2)
-      {
-        fprintf(stderr, "ERROR: Invalid printer command \"%s\"!\n", lineptr);
-        continue;
-      }
-
-      pwrite("DA\004\000", 4);
-      putchar(0);
-      putchar(phase);
-      putchar(0);
-      putchar(x);
-      pwrite("SV\000\000", 4);
     }
     else
       fprintf(stderr, "ERROR: Invalid printer command \"%s\"!\n", lineptr);
@@ -199,7 +169,7 @@ main(int  argc,		/* I - Number of command-line arguments */
   * Exit remote mode...
   */
 
-  pwrite("\033\000\000\000", 4);
+  pwrite("BJLEND\x0a", 7);
 
  /*
   * Eject the page as needed...
@@ -213,12 +183,6 @@ main(int  argc,		/* I - Number of command-line arguments */
   }
 
  /*
-  * Reset the printer...
-  */
-
-  pwrite("\033@", 2);
-
- /*
   * Close the command file and return...
   */
 
@@ -230,5 +194,4 @@ main(int  argc,		/* I - Number of command-line arguments */
 
 
 /*
- * End of "$Id: commandtoepson.c,v 1.4 2011/08/13 16:24:17 rlk Exp $".
  */
