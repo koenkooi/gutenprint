@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.433 2010/12/11 22:04:07 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.434 2011/09/30 02:00:46 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -896,6 +896,14 @@ static const float_param_t float_parameters[] =
       STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
       STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1, 0
     }, 0.0, 5.0, 0.5, 1
+  },
+  {
+    {
+      "SubchannelCutoff", N_("Subchannel Cutoff"), "Color=Yes,Category=Advanced Output Control",
+      N_("Upper limit for using light ink"),
+      STP_PARAMETER_TYPE_DOUBLE, STP_PARAMETER_CLASS_OUTPUT,
+      STP_PARAMETER_LEVEL_ADVANCED4, 0, 1, 0, 1, 0
+    }, 0.0, 1.0, 1.0, 1
   },
   {
     {
