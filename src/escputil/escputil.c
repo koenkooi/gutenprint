@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.105 2011/06/13 03:15:31 rlk Exp $"
+ * "$Id: escputil.c,v 1.106 2011/10/14 12:12:15 rlk Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -674,7 +674,7 @@ add_resets(int count)
     }
 }
 
-static int
+static void
 send_nulls(int fd)
 {
   char buf[16384];
