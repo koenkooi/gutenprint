@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.153 2011/11/03 08:06:10 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.154 2011/11/03 08:47:02 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -160,6 +160,7 @@
       <printer translate="name" name="Canon PIXMA iP4600" driver="bjc-PIXMA-iP4600" manufacturer="Canon" model="3004600" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-iP4600" />
       <printer translate="name" name="Canon PIXMA iP4700" driver="bjc-PIXMA-iP4700" manufacturer="Canon" model="3004700" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-iP4700" />
       <printer translate="name" name="Canon PIXMA iP4800" driver="bjc-PIXMA-iP4800" manufacturer="Canon" model="3004800" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-iP4800" />
+      <printer translate="name" name="Canon PIXMA iP4900" driver="bjc-PIXMA-iP4900" manufacturer="Canon" model="3004900" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-iP4900" />
       <printer translate="name" name="Canon PIXMA iP5000" driver="bjc-PIXMA-iP5000" manufacturer="Canon" model="3004000" parameters="PIXMA_iP4000_params" foomaticid="Canon-PIXMA-iP5000" />
       <printer translate="name" name="Canon PIXMA iP5200" driver="bjc-PIXMA-iP5200" manufacturer="Canon" model="3004200" parameters="PIXMA_iP4000_params" foomaticid="Canon-PIXMA-iP5200" />
       <printer translate="name" name="Canon PIXMA iP5300" driver="bjc-PIXMA-iP5300" manufacturer="Canon" model="3005300" parameters="PIXMA_iP4000_params" foomaticid="Canon-PIXMA-iP5300" />
