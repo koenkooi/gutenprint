@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.261 2011/10/26 03:08:50 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.262 2011/11/06 03:11:28 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1828,7 +1828,9 @@ static void canon_setup_channels(stp_vars_t *v,canon_privdata_t* privdata){
             for(i=0;i<privdata->mode->num_inks;i++){
 	      stp_erprintf("canon_setup_channels: loop non-K inks %i\n", i);
                 const canon_inkset_t* ink = &privdata->mode->inks[i];
-                if(ink->channel == primary[channel] || ((privdata->used_inks & CANON_INK_CcMmYyKk_MASK) && (ink->channel == secondary[channel])))
+                /* if(ink->channel == primary[channel] || ((privdata->used_inks & CANON_INK_CcMmYyKk_MASK) && (ink->channel == secondary[channel]))) */
+		/* Gernot: see if this works: use the lowest-level mask that includes secondary channels */
+                if(ink->channel == primary[channel] || ((privdata->used_inks & CANON_INK_CMYKk_MASK) && (ink->channel == secondary[channel])))
                     subchannel += canon_setup_channel(v,privdata,channel,subchannel,ink,&shades);
             } 
         }
