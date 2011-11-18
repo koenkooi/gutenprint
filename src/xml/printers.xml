@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.174 2011/11/18 15:51:49 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.175 2011/11/18 16:46:46 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -277,6 +277,7 @@
       <printer translate="name" name="Canon i860" driver="bjc-i860" manufacturer="Canon" model="3004000" parameters="PIXMA_iP4000_params" foomaticid="Canon-i860" />
       <printer translate="name" name="Canon i860new" driver="bjc-i860new" manufacturer="Canon" model="2000860" parameters="PIXMA_iP4000_params" foomaticid="Canon-i860new" />
       <printer translate="name" name="Canon i865" driver="bjc-i865" manufacturer="Canon" model="3004000" parameters="PIXMA_iP4000_params" foomaticid="Canon-i865" />
+      <printer translate="name" name="Canon i900D" driver="bjc-i900" manufacturer="Canon" model="2000900" parameters="PIXMA_iP4000_params" foomaticid="Canon-i900" />
       <printer translate="name" name="Canon i950" driver="bjc-i950" manufacturer="Canon" model="2000950" parameters="PIXMA_iP4000_params" foomaticid="Canon-i950" />
       <printer translate="name" name="Canon i960" driver="bjc-i960" manufacturer="Canon" model="2000960" parameters="PIXMA_iP4000_params" foomaticid="Canon-i960" />
     </family>
