@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.280 2011/11/20 10:52:54 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.281 2011/11/20 14:11:06 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1512,6 +1512,9 @@ canon_init_setImage(const stp_vars_t *v, const canon_privdata_t *init)
     	buf[2]=0x4;
     }else if(init->mode->flags & MODE_FLAG_IP8500){
     	buf[1]=0x00;
+    	buf[2]=0x01;
+    }else if(init->mode->flags & MODE_FLAG_MP130){
+    	buf[1]=0x04;
     	buf[2]=0x01;
     }else if(init->mode->flags & MODE_FLAG_MP360){
     	buf[1]=0x84;
