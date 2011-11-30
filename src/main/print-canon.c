@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.290 2011/11/30 15:50:35 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.291 2011/11/30 16:12:29 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1682,8 +1682,11 @@ canon_init_setImage(const stp_vars_t *v, const canon_privdata_t *init)
     if (init->used_inks == CANON_INK_CMY) arg_74_3= 0x02; /* for BC-06 cartridge!!! */
     /* example of better way: for BJC-3000 series */
     if  (!strcmp(init->caps->name,"3000")) {
+      /* but if photo cartridge selection, set differently again */
+      if (init->mode->flags & MODE_FLAG_PHOTO)
+	arg_74_3= 0x0a;
       /* T-Shirt (3), Backprint Film (3) or Transparencies (2) */
-      if ((init->pt->media_code_c==2) || (init->pt->media_code_c==3))
+      else if ((init->pt->media_code_c==2) || (init->pt->media_code_c==3))
 	arg_74_3= 0x01;
       else
 	/* other media */
