@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2.c,v 1.434 2011/09/30 02:00:46 rlk Exp $"
+ * "$Id: print-escp2.c,v 1.435 2011/12/06 02:03:06 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -2168,6 +2168,8 @@ escp2_parameters(const stp_vars_t *v, const char *name,
   if (name == NULL)
     return;
 
+  memset(&description->deflt, 0, sizeof(description->deflt));
+
   for (i = 0; i < float_parameter_count; i++)
     if (strcmp(name, float_parameters[i].param.name) == 0)
       {
@@ -2202,7 +2204,6 @@ escp2_parameters(const stp_vars_t *v, const char *name,
 	break;
       }
 
-  description->deflt.str = NULL;
   if (strcmp(name, "AutoMode") == 0)
     {
       description->bounds.str = stp_string_list_create();
