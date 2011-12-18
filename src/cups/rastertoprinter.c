@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.138 2011/12/18 01:01:43 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.139 2011/12/18 16:20:31 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -247,6 +247,7 @@ print_debug_block(const stp_vars_t *v, const cups_image_t *cups)
   fprintf(stderr, "DEBUG: Gutenprint:   cupsRowCount = %d\n", cups->header.cupsRowCount);
   fprintf(stderr, "DEBUG: Gutenprint:   cupsRowFeed = %d\n", cups->header.cupsRowFeed);
   fprintf(stderr, "DEBUG: Gutenprint:   cupsRowStep = %d\n", cups->header.cupsRowStep);
+  fprintf(stderr, "DEBUG: Gutenprint:   shrink page to fit %d\n", cups->shrink_to_fit);
   stpi_vars_print_error(v, "DEBUG");
   fprintf(stderr, "DEBUG: Gutenprint: End page data\n");
 }
@@ -1703,5 +1704,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.138 2011/12/18 01:01:43 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.139 2011/12/18 16:20:31 rlk Exp $".
  */
