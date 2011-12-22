@@ -1,5 +1,5 @@
 /*
- * "$Id: print-papers.c,v 1.41 2008/07/13 18:05:16 rlk Exp $"
+ * "$Id: print-papers.c,v 1.42 2011/12/22 03:07:45 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -284,10 +284,6 @@ stp_xml_process_paper(stp_mxml_node_t *paper) /* The paper node */
     name = 0,			/* Check name is present */
     height = 0,			/* Check height is present */
     width = 0,			/* Check width is present */
-    left = 0,			/* Check left is present */
-    right = 0,			/* Check right is present */
-    bottom = 0,			/* Check bottom is present */
-    top = 0,			/* Check top is present */
     unit = 0;			/* Check unit is present */
 
   if (stp_get_debug_level() & STP_DBG_XML)
@@ -346,25 +342,21 @@ stp_xml_process_paper(stp_mxml_node_t *paper) /* The paper node */
 	    {
 	      stmp = stp_mxmlElementGetAttr(prop, "value");
 	      outpaper->left = stp_xmlstrtoul(stmp);
-	      left = 1;
 	    }
 	  if (!strcmp(prop_name, "right"))
 	    {
 	      stmp = stp_mxmlElementGetAttr(prop, "value");
 	      outpaper->right = stp_xmlstrtoul(stmp);
-	      right = 1;
 	    }
 	  if (!strcmp(prop_name, "bottom"))
 	    {
 	      stmp = stp_mxmlElementGetAttr(prop, "value");
 	      outpaper->bottom = stp_xmlstrtoul(stmp);
-	      bottom = 1;
 	    }
 	  if (!strcmp(prop_name, "top"))
 	    {
 	      stmp = stp_mxmlElementGetAttr(prop, "value");
 	      outpaper->top = stp_xmlstrtoul(stmp);
-	      top = 1;
 	    }
 	  if (!strcmp(prop_name, "unit"))
 	    {
