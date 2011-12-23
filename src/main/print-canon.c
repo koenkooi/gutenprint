@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.296 2011/12/22 02:20:54 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.297 2011/12/23 14:03:28 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1974,7 +1974,7 @@ static int canon_setup_channel(stp_vars_t *v,canon_privdata_t* privdata,int chan
         *shades = stp_realloc(*shades,(subchannel + 1) * sizeof(stp_shade_t));
 	/* move previous shades up one position as set_inks_full expects the subchannels first */
 	if(subchannel)
-		memcpy(*shades + 1,*shades,sizeof(stp_shade_t) * subchannel);
+		memmove(*shades + 1,*shades,sizeof(stp_shade_t) * subchannel);
         (*shades)[0].value = ink->density;
 	stp_dprintf(STP_DBG_CANON, v, "canon_setup_channel: ink->density %.3f\n", ink->density);
         (*shades)[0].numsizes = ink->ink->numsizes;
