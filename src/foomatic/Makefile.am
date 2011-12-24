@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.54 2011/12/18 16:37:35 rlk Exp $
+## $Id: Makefile.am,v 1.55 2011/12/24 02:09:56 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,8 +21,6 @@
 
 include $(top_srcdir)/scripts/global.mk
 
-.PHONY: foomatic-stamp-pre foomatic-stamp-full foomatic-stamp-simple \
-	foomatic-stamp-both
 
 ## Variables
 
@@ -97,18 +95,10 @@ clean-local:
 
 foomatic-data: foomatic-stamp
 
-foomatic-stamp-pre: foomatic-generator $(noinst_PROGRAMS) mk_printerlist $(top_builddir)/src/xml/xml-stamp
+foomatic-stamp: foomatic-generator $(noinst_PROGRAMS) mk_printerlist $(top_builddir)/src/xml/xml-stamp
 	-$(RM) -r foomatic-db
-
-foomatic-stamp-full: foomatic-stamp-pre
 	$(FOOMATIC_GENERATOR) -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS)
-
-foomatic-stamp-simple: foomatic-stamp-pre
 	$(FOOMATIC_GENERATOR) -s -t $(srcdir)/foomatic-templates $(FOOMATIC_GENERATOR_EXTRA_OPTS) $(FOOMATIC_GENERATOR_FOOMATIC_3_OPTS)
-
-foomatic-stamp-both: foomatic-stamp-full foomatic-stamp-simple
-
-foomatic-stamp: foomatic-stamp-both
 	touch foomatic-stamp
 
 dist-hook:
