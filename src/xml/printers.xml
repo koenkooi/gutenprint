@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.208 2011/12/30 01:25:55 rlk Exp $"
+   "$Id: printers.xml,v 1.209 2011/12/30 06:54:44 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -250,7 +250,7 @@
       <printer translate="name" name="Canon PIXMA MG8100" driver="bjc-PIXMA-MG8100" manufacturer="Canon" model="8008100" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-MG8100" />
       <printer translate="name" name="Canon PIXMA MG8200" driver="bjc-PIXMA-MG8200" manufacturer="Canon" model="8008200" parameters="PIXMA_iP4300_params" foomaticid="Canon-PIXMA-MG8200" />
       <printer translate="name" name="Canon PIXMA MX300" driver="bjc-MULTIPASS-MX300" manufacturer="Canon" model="9000300" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX300" />
-      <printer translate="name" name="Canon PIXMA MX310" driver="bjc-MULTIPASS-MX300" manufacturer="Canon" model="9000300" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX310" />
+      <printer translate="name" name="Canon PIXMA MX310" driver="bjc-MULTIPASS-MX310" manufacturer="Canon" model="9000300" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX310" />
       <printer translate="name" name="Canon PIXMA MX330" driver="bjc-MULTIPASS-MX330" manufacturer="Canon" model="9000330" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX330" />
       <printer translate="name" name="Canon PIXMA MX340" driver="bjc-MULTIPASS-MX340" manufacturer="Canon" model="9000340" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX340" />
       <printer translate="name" name="Canon PIXMA MX350" driver="bjc-MULTIPASS-MX350" manufacturer="Canon" model="9000340" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MX350" />
