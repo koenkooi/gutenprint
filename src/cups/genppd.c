@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.188 2011/12/18 00:55:16 rlk Exp $"
+ * "$Id: genppd.c,v 1.189 2011/12/30 01:27:14 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -249,18 +249,17 @@ main(int  argc,			    /* I - Number of command-line arguments */
     {
       char buf[1024];
       int status = 0;
-      while (status == 0 && fgets(buf, sizeof(buf) - 1, stdin))
+      while (fgets(buf, sizeof(buf) - 1, stdin))
 	{
 	  size_t len = strlen(buf);
 	  if (len == 0)
 	    continue;
 	  if (buf[len - 1] == '\n')
 	    buf[len - 1] = '\0';
-	  status = cat_ppd(buf);
+	  status |= cat_ppd(buf);
 	  fputs("*%*%EOFEOF\n", stdout);
 	  (void) fflush(stdout);
 	}
-      return status;
     }
   else if (argc == 2 && !strcmp(argv[1], "VERSION"))
     {
@@ -273,11 +272,12 @@ main(int  argc,			    /* I - Number of command-line arguments */
       return (0);
     }
   else
-  {
-    fprintf(stderr, "Usage: %s list\n", argv[0]);
-    fprintf(stderr, "       %s cat URI\n", argv[0]);
-    return (1);
-  }
+    {
+      fprintf(stderr, "Usage: %s list\n", argv[0]);
+      fprintf(stderr, "       %s cat URI\n", argv[0]);
+      return (1);
+    }
+  return (0);
 }
 
 
@@ -2559,5 +2559,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.188 2011/12/18 00:55:16 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.189 2011/12/30 01:27:14 rlk Exp $".
  */
