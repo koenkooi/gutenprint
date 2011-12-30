@@ -1,5 +1,5 @@
 /*
- * "$Id: channel.c,v 1.34 2011/04/16 15:48:20 rlk Exp $"
+ * "$Id: channel.c,v 1.35 2011/12/30 00:36:10 rlk Exp $"
  *
  *   Dither routine entrypoints
  *
@@ -736,9 +736,10 @@ limit_ink(const stp_vars_t *v)
   int i;
   int retval = 0;
   stpi_channel_group_t *cg = get_channel_group(v);
-  unsigned short *ptr = cg->output_data;
+  unsigned short *ptr;
   if (!cg || cg->ink_limit == 0 || cg->ink_limit >= cg->max_density)
     return 0;
+  ptr = cg->output_data;
   for (i = 0; i < cg->width; i++)
     {
       int total_ink = ink_sum(ptr, cg->total_channels);
@@ -1065,11 +1066,12 @@ static void
 generate_gloss(const stp_vars_t *v, unsigned *zero_mask)
 {
   stpi_channel_group_t *cg = get_channel_group(v);
-  unsigned short *output = cg->output_data;
+  unsigned short *output;
   unsigned gloss_mask;
   int i, j, k;
   if (!cg || cg->gloss_channel == -1 || cg->gloss_limit <= 0)
     return;
+  output = cg->output_data;
   gloss_mask = ~(1 << cg->gloss_physical_channel);
   for (i = 0; i < cg->width; i++)
     {
