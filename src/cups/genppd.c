@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.189 2011/12/30 01:27:14 rlk Exp $"
+ * "$Id: genppd.c,v 1.190 2012/01/01 18:43:26 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -1870,12 +1870,14 @@ write_ppd(
 
   /* Macintosh color management */
 
+#ifdef __APPLE__
   gzputs(fp, "*cupsICCProfile Gray../Grayscale:	\"/System/Library/ColorSync/Profiles/sRGB Profile.icc\"\n");
   gzputs(fp, "*cupsICCProfile RGB../Color:	\"/System/Library/ColorSync/Profiles/sRGB Profile.icc\"\n");
   gzputs(fp, "*cupsICCProfile CMYK../Color:	\"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc\"\n");
   gzputs(fp, "*APSupportsCustomColorMatching: true\n");
   gzputs(fp, "*APDefaultCustomColorMatchingProfile: sRGB\n");
   gzputs(fp, "*APCustomColorMatchingProfile: sRGB\n");
+#endif
 
   gzputs(fp, "\n");
 
@@ -2559,5 +2561,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.189 2011/12/30 01:27:14 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.190 2012/01/01 18:43:26 rlk Exp $".
  */
