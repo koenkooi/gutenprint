@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.302 2012/01/10 16:43:22 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.303 2012/01/10 16:46:25 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2150,11 +2150,8 @@ static void canon_setup_channels(stp_vars_t *v,canon_privdata_t* privdata){
 
 
 /* FIXME move this to printercaps */
-/* #define CANON_CD_X 176*/
-/* #define CANON_CD_Y 405*/
-
-#define CANON_CD_X 188
-#define CANON_CD_Y 534
+#define CANON_CD_X 176
+#define CANON_CD_Y 405
 
 static void setup_page(stp_vars_t* v,canon_privdata_t* privdata){
   const char    *media_source = stp_get_string_parameter(v, "InputSlot");
