@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.106 2011/10/14 12:12:15 rlk Exp $"
+ * "$Id: escputil.c,v 1.107 2012/01/18 20:12:00 m0m Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -1354,10 +1354,15 @@ do_new_status(status_cmd_t cmd, char *buf, int bytes,
   const char *ind;
   const stp_string_list_t *color_list = NULL;
   stp_parameter_t desc;
-  const stp_vars_t *printvars = stp_printer_get_defaults(printer);
-  stp_describe_parameter(printvars, "ChannelNames", &desc);
-  if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
-    color_list = desc.bounds.str;
+
+  const stp_vars_t *printvars = NULL;
+  if (printer)
+    {
+      printvars = stp_printer_get_defaults(printer);
+      stp_describe_parameter(printvars, "ChannelNames", &desc);
+      if (desc.p_type == STP_PARAMETER_TYPE_STRING_LIST)
+        color_list = desc.bounds.str;
+    }
   STP_DEBUG(printf("***New format bytes: %d bytes\n", bytes));
   if (cmd == CMD_STATUS)
     printf(_("Printer Name: %s\n"),
@@ -1442,7 +1447,8 @@ do_new_status(status_cmd_t cmd, char *buf, int bytes,
 	}
       i += total_param_count + 2;
     }
-  stp_parameter_description_destroy(&desc);
+  if (printer)
+    stp_parameter_description_destroy(&desc);
   exit(0);
 }
 
