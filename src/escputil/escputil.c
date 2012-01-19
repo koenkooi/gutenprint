@@ -1,5 +1,5 @@
 /*
- * "$Id: escputil.c,v 1.107 2012/01/18 20:12:00 m0m Exp $"
+ * "$Id: escputil.c,v 1.108 2012/01/19 13:26:57 m0m Exp $"
  *
  *   Printer maintenance utility for EPSON Stylus (R) printers
  *
@@ -634,6 +634,7 @@ do_remote_cmd(const char *cmd, int nargs, ...)
   STP_DEBUG(printf("\n"));
   bufpos += 2 + nargs;
   end_remote_sequence();
+  va_end(args);
 }
 
 static void
@@ -660,6 +661,7 @@ do_remote_cmd_only(const char *cmd, int nargs, ...)
       }
   STP_DEBUG(printf("\n"));
   bufpos += 2 + nargs;
+  va_end(args);
 }
 
 static void

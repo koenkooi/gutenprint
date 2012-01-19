@@ -1,5 +1,5 @@
 /*
- * "$Id: ui-utils.c,v 1.3 2006/05/28 16:59:04 rlk Exp $"
+ * "$Id: ui-utils.c,v 1.4 2012/01/19 13:26:57 m0m Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -214,9 +214,9 @@ stpui_dialog_new (const gchar       *title,
   GtkWidget *dialog;
   va_list    args;
 
-  va_start (args, resizable);
-
   g_return_val_if_fail (title != NULL, NULL);
+
+  va_start (args, resizable);
 
   dialog = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (dialog), title);
