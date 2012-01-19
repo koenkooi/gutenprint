@@ -1,5 +1,5 @@
 /*
- * "$Id: print-vars.c,v 1.93 2011/06/12 00:31:51 rlk Exp $"
+ * "$Id: print-vars.c,v 1.94 2012/01/19 13:26:02 m0m Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -1838,11 +1838,16 @@ const stp_parameter_t *
 stp_parameter_list_param(stp_const_parameter_list_t list, size_t item)
 {
   const stp_list_t *ilist = (const stp_list_t *)list;
+  stp_list_item_t *i = NULL;
   if (item >= stp_list_get_length(ilist))
     return NULL;
   else
-    return (const stp_parameter_t *)
-      stp_list_item_get_data(stp_list_get_item_by_index(ilist, item));
+    {
+      i = stp_list_get_item_by_index(ilist, item);
+      if (i == NULL)
+        return NULL;
+      return (const stp_parameter_t *) stp_list_item_get_data(i);
+    }
 }
 
 void
