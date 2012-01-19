@@ -1,5 +1,5 @@
 /*
- * "$Id: print.c,v 1.8 2006/07/04 02:57:59 rlk Exp $"
+ * "$Id: print.c,v 1.9 2012/01/19 13:25:51 m0m Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -295,6 +295,7 @@ run (const char        *name,		/* I - Name of print program. */
 	    case 0:
 	    default:
 	      stp_set_string_parameter(gimp_vars.v, "PrintingMode", "BW");
+	      break;
 	    case 1:
 	      stp_set_string_parameter(gimp_vars.v, "PrintingMode", "Color");
 	    }

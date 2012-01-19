@@ -1,6 +1,6 @@
 
 /*
- * "$Id: print-lexmark.c,v 1.160 2010/12/05 21:38:14 rlk Exp $"
+ * "$Id: print-lexmark.c,v 1.161 2012/01/19 13:25:51 m0m Exp $"
  *
  *   Print plug-in Lexmark driver for the GIMP.
  *
@@ -1409,6 +1409,8 @@ lexmark_init_printer(const stp_vars_t *v, const lexmark_cap_t * caps,
 #ifdef DEBUG
 			lex_write_tmp_file(dbgfileprn, (void *)startHeader_z52, LXM_Z52_STARTSIZE);
 #endif
+			break;
+
 		case m_z42:
 			stp_zfwrite((const char *) startHeader_z42,
 				    LXM_Z42_STARTSIZE,1,v);
