@@ -1,5 +1,5 @@
 /*
- * "$Id: module.c,v 1.26 2006/09/28 15:40:05 m0m Exp $"
+ * "$Id: module.c,v 1.27 2012/01/19 13:25:40 m0m Exp $"
  *
  *   Gutenprint module loader - load modules with libltdl/libdl.
  *
@@ -96,7 +96,8 @@ module_list_freefunc(void *item /* module to remove */)
   if (module && module->fini) /* Call the module exit function */
     module->fini();
 #if defined(USE_LTDL) || defined(USE_DLOPEN)
-  DLCLOSE(module->handle); /* Close the module if it's not static */
+  if (module && module->handle)
+    DLCLOSE(module->handle); /* Close the module if it's not static */
 #endif
 }
 

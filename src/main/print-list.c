@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.25 2010/08/04 00:33:57 rlk Exp $"
+ * "$Id: print-list.c,v 1.26 2012/01/19 13:25:40 m0m Exp $"
  *
  *   Gutenprint list functions.  A doubly-linked list implementation,
  *   with callbacks for freeing, sorting, and retrieving nodes by name
@@ -346,10 +346,10 @@ stp_list_get_item_by_name(const stp_list_t *list, const char *name)
   stp_list_t *ulist = deconst_list(list);
   check_list(list);
 
-  if (!list->namefunc)
+  if (!list->namefunc || !name)
     return NULL;
 
-  if (list->name_cache && name && list->name_cache_node)
+  if (list->name_cache && list->name_cache_node)
     {
       const char *new_name;
       node = list->name_cache_node;
@@ -420,10 +420,10 @@ stp_list_get_item_by_long_name(const stp_list_t *list, const char *long_name)
   stp_list_t *ulist = deconst_list(list);
   check_list(list);
 
-  if (!list->long_namefunc)
+  if (!list->long_namefunc || !long_name)
     return NULL;
 
-  if (list->long_name_cache && long_name && list->long_name_cache_node)
+  if (list->long_name_cache && list->long_name_cache_node)
     {
       const char *new_long_name;
       node = list->long_name_cache_node;

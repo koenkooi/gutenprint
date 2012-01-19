@@ -1,5 +1,5 @@
 /*
- * "$Id: print-ps.c,v 1.104 2011/03/04 13:05:08 rlk Exp $"
+ * "$Id: print-ps.c,v 1.105 2012/01/19 13:25:40 m0m Exp $"
  *
  *   Print plug-in Adobe PostScript driver for the GIMP.
  *
@@ -821,9 +821,9 @@ ps_print_device_settings(stp_vars_t *v)
 			if(node)
 			  {
 			    node=stp_mxmlFindElement(node,node, "choice", "name", val, STP_MXML_DESCEND);
-			    if(node)
+			    if(node && node->child)
 			      {
-				if(node->child && node->child->value.opaque && (strlen(node->child->value.opaque)>1))
+				if(node->child->value.opaque && (strlen(node->child->value.opaque)>1))
 				  {
 				    /* If we have opaque data for the child, we use %%BeginFeature and copy the code verbatim. */
 				    stp_puts("[{\n", v);

@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.144 2011/05/14 22:05:36 rlk Exp $"
+ * "$Id: print-color.c,v 1.145 2012/01/19 13:25:40 m0m Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -1575,7 +1575,7 @@ stpi_color_traditional_describe_parameter(const stp_vars_t *v,
 		description->is_active = 1;
 	      else
 		description->is_active = 0;
-	      if (param->color_only &&
+	      if (param->color_only && color_description &&
 		  !(color_description->channels & ~CMASK_K))
 		description->is_active = 0;
 	    }
@@ -1698,7 +1698,7 @@ stpi_color_traditional_describe_parameter(const stp_vars_t *v,
 		description->is_active = 1;
 	      else
 		description->is_active = 0;
-	      if (param->color_only &&
+	      if (param->color_only && color_description &&
 		  !(color_description->channels & ~CMASK_K))
 		description->is_active = 0;
 	    }

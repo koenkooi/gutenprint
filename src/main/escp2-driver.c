@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-driver.c,v 1.57 2010/12/19 02:51:37 rlk Exp $"
+ * "$Id: escp2-driver.c,v 1.58 2012/01/19 13:25:40 m0m Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -273,7 +273,7 @@ escp2_set_remote_sequence(stp_vars_t *v)
 	{
 	  /* If there's ever duplex no tumble, we'll need to special
 	     case it, too */
-	  if (pd->duplex == DUPLEX_TUMBLE && (pd->input_slot->duplex & DUPLEX_TUMBLE))
+	  if (pd->duplex == DUPLEX_TUMBLE && pd->input_slot && (pd->input_slot->duplex & DUPLEX_TUMBLE))
 	    stp_send_command(v, "DP", "bcc", 0, 2); /* Auto duplex */
 	  else
 	    stp_send_command(v, "DP", "bcc", 0, 2); /* Auto duplex */
