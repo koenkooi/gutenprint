@@ -1,5 +1,5 @@
 /*
- * "$Id: mxml-file.c,v 1.11 2011/06/12 00:29:49 rlk Exp $"
+ * "$Id: mxml-file.c,v 1.12 2012/01/19 13:26:14 m0m Exp $"
  *
  * File loading code for mini-XML, a small XML-like file parsing library.
  *
@@ -956,6 +956,8 @@ mxml_parse_element(stp_mxml_node_t *node,	/* I - Element node */
       {
         fprintf(stderr, "Missing value for attribute '%s' in element %s!\n",
 	        name, node->value.element.name);
+	free(name);
+	free(value);
         return (EOF);
       }
 
@@ -1478,5 +1480,5 @@ mxml_write_ws(stp_mxml_node_t *node,	/* I - Current node */
 
 
 /*
- * End of "$Id: mxml-file.c,v 1.11 2011/06/12 00:29:49 rlk Exp $".
+ * End of "$Id: mxml-file.c,v 1.12 2012/01/19 13:26:14 m0m Exp $".
  */
