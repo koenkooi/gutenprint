@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.308 2012/02/13 15:08:13 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.309 2012/02/14 15:26:58 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -810,7 +810,8 @@ canon_parameters(const stp_vars_t *v, const char *name,
       if(mode->ink_types & canon_inktypes[i].ink_type){
           stp_string_list_add_string(description->bounds.str,canon_inktypes[i].name,_(canon_inktypes[i].text));
 	  /* GERNOT DEBUG list */
-	  /*printf("Added InkType %s(%s)\n",canon_inktypes[i].name,canon_inktypes[i].text);*/
+	  /* printf("Added InkType %s(%s)\n",canon_inktypes[i].name,canon_inktypes[i].text);
+	     printf("Added InkName %s(%s)\n",canon_inktypes[i].name,canon_inktypes[i].name);*/
       }
     }
     description->deflt.str = stp_string_list_param(description->bounds.str, 0)->name;
