@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.104 2010/07/18 18:05:23 rlk Exp $
+## $Id: Makefile.am,v 1.105 2012/03/18 16:43:34 gernot2270 Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,8 @@ print_canon_la_SOURCES = \
 	canon-inks.h \
 	canon-media.h \
 	canon-modes.h \
-	canon-printers.h
+	canon-printers.h \
+	canon-media-mode.h
 
 print_canon_la_LDFLAGS = -module -avoid-version
 
