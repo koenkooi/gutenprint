@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.328 2012/03/21 11:14:05 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.329 2012/03/21 16:26:49 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -515,10 +515,10 @@ static const canon_mode_t* canon_get_current_mode(const stp_vars_t *v){
     /* beginning of mode replacement code: this can maybe go into the above resolution block */
     if (media_type && resolution) {
 
-      stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) media type selected: '%s'\n",media_type->name);
-
       if ( (!strcmp(caps->name,"PIXMA MP610")) ) {
 	
+	stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) media type selected: '%s'\n",media_type->name);
+
 	/* scroll through modeuse list to find media */
 	for(i=0;i<mlist->count;i++){
 	  if(!strcmp(media_type->name,mlist->modeuses[i].name)){
