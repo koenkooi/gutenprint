@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.327 2012/03/21 06:36:28 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.328 2012/03/21 11:14:05 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -513,7 +513,7 @@ static const canon_mode_t* canon_get_current_mode(const stp_vars_t *v){
 
     
     /* beginning of mode replacement code: this can maybe go into the above resolution block */
-    if (media_type) {
+    if (media_type && resolution) {
 
       stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) media type selected: '%s'\n",media_type->name);
 
@@ -545,12 +545,11 @@ static const canon_mode_t* canon_get_current_mode(const stp_vars_t *v){
 	  stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) first item in the name list: '%s'\n",muse->mode_name_list[0]);
 	  replaceres = muse->mode_name_list[0];
 	  stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) mode searching: replaced mode with: '%s'\n",replaceres);
-	}
-	/* finally, do again with replaceres what we did with resolution */
-	if (resolution) {
+	  /* finally, do again with replaceres what we did with resolution */
 	  for(i=0;i<caps->modelist->count;i++){
 	    if(!strcmp(replaceres,caps->modelist->modes[i].name)){
 	      mode = &caps->modelist->modes[i];
+	      stp_erprintf("DEBUG: Gutenprint:  (stp_erprintf) setting mode finally to be: '%s'\n",mode->name);
 	      break;
 	    }
 	  }
