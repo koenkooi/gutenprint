@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.190 2012/01/01 18:43:26 rlk Exp $"
+ * "$Id: genppd.c,v 1.191 2012/03/25 15:05:37 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -2155,6 +2155,7 @@ write_ppd(
 	}
 
       stp_string_list_destroy(res_list);
+      stp_clear_string_parameter(v, "Resolution");
       gzputs(fp, "*CloseUI: *Resolution\n\n");
     }
 
@@ -2561,5 +2562,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.190 2012/01/01 18:43:26 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.191 2012/03/25 15:05:37 rlk Exp $".
  */
