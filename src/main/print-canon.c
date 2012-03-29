@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.349 2012/03/28 15:39:24 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.350 2012/03/29 02:49:51 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -3125,14 +3125,14 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
       /* check if there is any mode for that media with K-only inktype */
       /* if not, change it to "Both" */
       /* NOTE: User cannot force monochrome printing here, since that would require changing the Color Model */
-      if (!(mlist->modeuses[i].use_flags & INKSET_BLACK)) {
+      if (!(mlist->modeuses[i].use_flags & INKSET_BLACK_SUPPORT)) {
 	stp_set_string_parameter(v, "InkSet", "Both");	
       }
     }
     else if ( !strcmp(stp_get_string_parameter(v, "InkSet"),"Color")) {
       /* check if there is any mode for that media with no K in the inkset at all */
       /* if not, change it to "Both" */
-      if (!(mlist->modeuses[i].use_flags & INKSET_COLOR)) {
+      if (!(mlist->modeuses[i].use_flags & INKSET_COLOR_SUPPORT)) {
 	stp_set_string_parameter(v, "InkSet", "Both");	
       }
     } /* no restriction for "Both" yet --- note there are other cartridge types too! */
