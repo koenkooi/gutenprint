@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.350 2012/03/29 02:49:51 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.351 2012/03/29 04:16:31 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -501,6 +501,18 @@ static const canon_mode_t* canon_get_current_mode(const stp_vars_t *v){
     int i,j;
     int modecheck, quality, modefound;
     char* replaceres;
+
+    /* TODO: handle flags for inkset-specific and duplex-specific mode replacement */
+    /*
+      canon-mode-media:
+       INKSET_BLACK_MODEREPL
+       INKSET_COLOR_MODEREPL
+       DUPLEX_MODEREPL
+      canon-modes.h:
+       MODE_FLAG_BLACK
+       MODE_FLAG_COLOR
+       MODE_FLAG_NOPDUPLEX
+     */
 
     if(resolution){
       stp_dprintf(STP_DBG_CANON, v,"DEBUG: Gutenprint:  get_current_mode --- Resolution already known: '%s'\n",resolution);
