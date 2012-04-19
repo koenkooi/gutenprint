@@ -1,5 +1,5 @@
 /*
- * "$Id: bit-ops.h,v 1.4 2009/05/17 19:25:36 rlk Exp $"
+ * "$Id: bit-ops.h,v 1.5 2012/04/19 14:41:03 gernot2270 Exp $"
  *
  *   Softweave calculator for gimp-print.
  *
@@ -74,6 +74,17 @@ extern void	stp_fold_3bit_323(const unsigned char *line, int single_length,
  * @param outbuf the output.
  */
 extern void	stp_fold_4bit(const unsigned char *line, int single_length,
+			 unsigned char *outbuf);
+
+/**
+ * Interleave a buffer consisting of eight bit strings of length single_length
+ * into one string of packed eight-bit ints.
+ *
+ * @param line the input bit string
+ * @param single_length the length (in bytes) of the input
+ * @param outbuf the output.
+ */
+extern void	stp_fold_8bit(const unsigned char *line, int single_length,
 			 unsigned char *outbuf);
 
 /**
