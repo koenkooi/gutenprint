@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.492 2012/04/26 14:52:31 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.493 2012/04/26 15:09:50 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -4207,8 +4207,9 @@ static void setup_page(stp_vars_t* v,canon_privdata_t* privdata){
   privdata->out_width = stp_get_width(v);
   stp_deprintf(STP_DBG_CANON,"stp_get_width: privdata->out_width is %i\n",privdata->out_width);
   /* Don't use full bleed mode if the paper itself has a margin */
-  if (privdata->left > 0 || privdata->top > 0)
-    stp_set_boolean_parameter(v, "FullBleed", 0);
+  /* Correct this later */
+  /* if (privdata->left > 0 || privdata->top > 0)
+     stp_set_boolean_parameter(v, "FullBleed", 0); */
 
   privdata->out_height = stp_get_height(v);
 
