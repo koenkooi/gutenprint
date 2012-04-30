@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.238 2012/04/30 08:02:16 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.239 2012/04/30 08:03:25 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -320,6 +320,7 @@
       <printer translate="name" name="Canon i6500" driver="bjc-i6500" manufacturer="Canon" model="2006100" parameters="PIXMA_iP4000_params" foomaticid="Canon-i6500" />
       <printer translate="name" name="Canon i9100" driver="bjc-i9100" manufacturer="Canon" model="2009100" parameters="PIXMA_iP4000_params" foomaticid="Canon-i9100" />
       <printer translate="name" name="Canon i9900" driver="bjc-i9900" manufacturer="Canon" model="2009900" parameters="PIXMA_iP4000_params" foomaticid="Canon-i9900" />
+      <printer translate="name" name="Canon i9950" driver="bjc-i9950" manufacturer="Canon" model="2009900" parameters="PIXMA_iP4000_params" foomaticid="Canon-i9950" />
     </family>
     <family name="escp2">
       <parameters name="standard_params">
