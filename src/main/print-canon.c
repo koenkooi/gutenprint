@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.497 2012/05/03 16:49:07 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.498 2012/05/04 15:46:46 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -509,9 +509,10 @@ static const canon_mode_t* canon_get_current_mode(const stp_vars_t *v){
             }
         }
     }
-
+#if 0
     if(!mode)
         mode = &caps->modelist->modes[caps->modelist->default_mode];
+#endif
 
 #if 0
     if(quality && strcmp(quality, "None") == 0)
