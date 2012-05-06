@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.499 2012/05/06 16:30:25 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.500 2012/05/06 17:15:38 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -199,6 +199,17 @@ typedef struct
   double cd_outer_radius;
 } canon_privdata_t;
 
+
+
+const canon_modeuse_t* select_media_modes(stp_vars_t *v, const canon_paper_t* media_type,const canon_modeuselist_t* mlist);
+int compare_mode_valid(stp_vars_t *v,const canon_mode_t* mode,const canon_modeuse_t* muse, const canon_modeuselist_t* mlist);
+const canon_mode_t* suitable_mode_monochrome(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,int quality,const char *duplex_mode);
+const canon_mode_t* find_first_matching_mode_monochrome(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,const char *duplex_mode);
+const canon_mode_t* find_first_matching_mode(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,const char *duplex_mode);
+const canon_mode_t* suitable_mode_color(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,int quality,const char *duplex_mode);
+const canon_mode_t* find_first_matching_mode_color(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,const char *duplex_mode);
+const canon_mode_t* suitable_mode_photo(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,int quality,const char *duplex_mode);
+const canon_mode_t* find_first_matching_mode_photo(stp_vars_t *v,const canon_modeuse_t* muse,const canon_cap_t *caps,const char *duplex_mode);
 const canon_mode_t* canon_check_current_mode(stp_vars_t *v);
 
 static void canon_write_line(stp_vars_t *v);
