@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.500 2012/05/06 17:15:38 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.501 2012/05/08 16:36:33 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -441,6 +441,7 @@ static const char* canon_families[] = {
  "PIXMA MX",
  "SELPHY DS",
  "PIXMA mini",
+ "PIXMA E",
 };
 
 /* canon model ids look like the following
