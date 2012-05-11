@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.1 2004/09/17 18:38:14 rleigh Exp $"
+ * "$Id: printrcl.l,v 1.2 2012/05/11 13:16:12 rlk Exp $"
  *
  *   printrc parser
  *
@@ -38,6 +38,8 @@
 #define YY_NO_UNPUT
 
 int mylineno = 1;
+
+extern YYSTYPE yylval;
 
 #define DBG(x)						\
 do							\

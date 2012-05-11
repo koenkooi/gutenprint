@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.26 2010/09/06 17:08:39 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.27 2012/05/11 13:16:12 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -34,6 +34,8 @@
 #define YY_NO_UNPUT
 
 int mylineno = 1;
+
+extern YYSTYPE yylval;
 
 static char *
 c_strstrip(char *s)
