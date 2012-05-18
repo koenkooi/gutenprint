@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.507 2012/05/18 09:22:29 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.508 2012/05/18 13:37:11 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -2070,9 +2070,9 @@ canon_parameters(const stp_vars_t *v, const char *name,
 	  if(caps->modelist->modes[j].ink_types & canon_inktypes[i].ink_type){
 	    stp_string_list_add_string(description->bounds.str,canon_inktypes[i].name,_(canon_inktypes[i].text));
 	    stp_dprintf(STP_DBG_CANON, v," mode not known");
-	    stp_dprintf(STP_DBG_CANON, v," no mode --- Added InkType %s(%s) for mode (%s) inktype %s\n",canon_inktypes[i].name,canon_inktypes[i].text,caps->modelist->modes[j].name,caps->modelist->modes[j].ink_types);
+	    stp_dprintf(STP_DBG_CANON, v," no mode --- Added InkType %s(%s) for mode (%s) inktype %d\n",canon_inktypes[i].name,canon_inktypes[i].text,caps->modelist->modes[j].name,caps->modelist->modes[j].ink_types);
 	    if (ERRPRINT)
-	      stp_eprintf(v,"no mode --- Added InkType %s(%s) for mode (%s) inktype %s\n",canon_inktypes[i].name,canon_inktypes[i].text,caps->modelist->modes[j].name,caps->modelist->modes[j].ink_types);
+	      stp_eprintf(v,"no mode --- Added InkType %s(%s) for mode (%s) inktype %d\n",canon_inktypes[i].name,canon_inktypes[i].text,caps->modelist->modes[j].name,caps->modelist->modes[j].ink_types);
 	    break;
 	  }      
 	}
