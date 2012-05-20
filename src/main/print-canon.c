@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.512 2012/05/20 15:56:55 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.513 2012/05/20 17:13:20 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -1534,6 +1534,7 @@ const canon_mode_t* canon_check_current_mode(stp_vars_t *v){
       /* no restrictions for InkSet "Both" (non-BJC) or "Color" (BJC) or if no InkSet set yet */
       else {
 	if (printing_mode && !strcmp(printing_mode,"Color")) {
+	  stp_dprintf(STP_DBG_CANON, v,"DEBUG: Gutenprint (InkSet:Both) PrintinMode Color\n");
 	  /* must skip K-only inksets if they exist: they only exist if the option "BW" is also declared but we cannot check if an option exists or not */
 	  if ( (duplex_mode) || (mode->flags & MODE_FLAG_NODUPLEX) ) {
 	    i=0;
@@ -1559,6 +1560,7 @@ const canon_mode_t* canon_check_current_mode(stp_vars_t *v){
 	  }
 	}
 	else if (printing_mode && !strcmp(printing_mode,"BW")) {
+	  stp_dprintf(STP_DBG_CANON, v,"DEBUG: Gutenprint (InkSet:Both) PrintinMode BW\n");
 	  /* need to find K-only inksets: they must exist since we declared the printer to have this capability! */
 	  if ( (duplex_mode) || (mode->flags & MODE_FLAG_NODUPLEX) ) {
 	    i=0;
