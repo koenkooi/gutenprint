@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.517 2012/05/23 16:18:22 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.518 2012/05/24 08:57:34 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -4964,6 +4964,7 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
          }
        else  /* colormode == CMY */
          {
+           privdata.ncolors = 1;
            privdata.head_offset[0] = 0; /* K starts at 0 */
            privdata.head_offset[1] = 0 ;/* how far C starts after K */
            privdata.head_offset[2] = 64;/* how far M starts after K */
@@ -5010,9 +5011,10 @@ canon_do_print(stp_vars_t *v, stp_image_t *image)
        for(i=0;i<4;i++){
            int x;
            for(x=0;x<privdata.num_channels;x++){
-               if(weave_color_order[i] == privdata.channel_order[x])
-                   weave_cols[i] = privdata.channels[x].buf;
-                   privdata.weave_bits[i] = privdata.channels[x].props->bits;
+	     if(weave_color_order[i] == privdata.channel_order[x]){
+	       weave_cols[i] = privdata.channels[x].buf;
+	       privdata.weave_bits[i] = privdata.channels[x].props->bits;
+	     }
            }
        }
   }
