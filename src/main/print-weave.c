@@ -1,5 +1,5 @@
 /*
- * "$Id: print-weave.c,v 1.78 2012/01/19 13:26:28 m0m Exp $"
+ * "$Id: print-weave.c,v 1.79 2012/05/25 09:17:02 gernot2270 Exp $"
  *
  *   Softweave calculator for Gutenprint.
  *
@@ -1421,6 +1421,13 @@ initialize_row(stp_vars_t *v, stpi_softweave_t *sw,
     {
       for (j = 0; j < sw->ncolors; j++)
 	{
+
+	  stp_eprintf(v, "DEBUG print-weave: initialize row (outer loop %d) inner loop %d ,  sw->ncolors=%d\n",
+		      i, j, sw->ncolors);
+
+	  stp_eprintf(v, "DEBUG print-weave: initialize row cols[]: %u, %u, %u, %u\n",
+		      (unsigned int)cols[0],(unsigned int)cols[1],(unsigned int)cols[2],(unsigned int)cols[3]);
+
 	  if (cols[j])
 	    {
 	      stp_lineoff_t *lineoffs =
