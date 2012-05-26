@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.52 2007/05/06 19:38:10 rlk Exp $"
+ * "$Id: printer_options.c,v 1.53 2012/05/26 15:57:35 rlk Exp $"
  *
  *   Dump the per-printer options for the OpenPrinting database
  *
@@ -186,6 +186,7 @@ main(int argc, char **argv)
 				  printf("$$x_t{'%s'} = '%d';",param->name, x);
 				  printf("$$y_t{'%s'} = '%d';",param->name, y);
 				}
+			      stp_clear_string_parameter(pv, "Resolution");
 			    }
 			}
 		      printf("}\n");

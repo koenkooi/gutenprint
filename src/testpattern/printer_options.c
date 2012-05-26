@@ -1,5 +1,5 @@
 /*
- * "$Id: printer_options.c,v 1.5 2008/06/07 22:47:35 rlk Exp $"
+ * "$Id: printer_options.c,v 1.6 2012/05/26 15:56:03 rlk Exp $"
  *
  *   Dump the per-printer options for the OpenPrinting database
  *
@@ -146,6 +146,7 @@ main(int argc, char **argv)
 					 driver, "y_resolution", param->name, y);
 				}
 			    }
+			  stp_clear_string_parameter(pv, "Resolution");
 			}
 		    }
 		}
