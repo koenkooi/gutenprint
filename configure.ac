@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.231 2011/12/24 02:17:06 rlk Exp $
+dnl $Id: configure.ac,v 1.232 2012/05/26 19:09:01 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.231 $)
+AC_REVISION($Revision: 1.232 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -161,6 +161,7 @@ AM_MAINTAINER_MODE
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   MAINTAINER_MODE="true"
   BUILD_TEST="yes"
+  BUILD_DOC="yes"
   AC_DEFINE(HAVE_MAINTAINER_MODE,, [Define if maintainer-mode is to be used.])
 fi
 
@@ -452,6 +453,11 @@ STP_ARG_ENABLE([test],
                [build test programs],
                [BUILD_TEST],
                [yes])
+
+STP_ARG_WITH([doc],
+	     [build Gutenprint documentation],
+	     [BUILD_DOC],
+	     [yes])
 
 if test "$BUILD_TEST" = "yes" ; then
   BUILD_TESTPATTERN="yes"
@@ -813,6 +819,8 @@ AM_CONDITIONAL(BUILD_TESTPATTERN, test x${BUILD_TESTPATTERN} = xyes)
 AM_CONDITIONAL(BUILD_LIBGUTENPRINTUI2, test x${BUILD_LIBGUTENPRINTUI2} = xyes)
 
 AM_CONDITIONAL(BUILD_GIMP2, test x${BUILD_GIMP2} = xyes)
+
+AM_CONDITIONAL(BUILD_DOC, test x${BUILD_DOC} = xyes)
 
 AM_CONDITIONAL(BUILD_GIMP2_AS_GUTENPRINT, test x${BUILD_GIMP2_AS_GUTENPRINT} = xyes)
 

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.22 2008/02/27 12:28:06 rlk Exp $
+## $Id: Makefile.am,v 1.23 2012/05/26 19:09:01 rlk Exp $
 ## Copyright (C) 2001 Andy Stewart and Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -50,9 +50,13 @@ MAINT_MODE = false
 endif
 
 if MAINTAINER_MODE
+if BUILD_DOC
 ALL_LOCAL_TARGETS = docs
+endif
 else
+if BUILD_DOC
 ALL_LOCAL_TARGETS = $(STANDARD_TARGETS)
+endif
 endif
 
 all-local: $(ALL_LOCAL_TARGETS)

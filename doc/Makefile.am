@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.49 2006/07/30 23:24:38 rleigh Exp $
+## $Id: Makefile.am,v 1.50 2012/05/26 19:09:01 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,11 @@ docdir = $(datadir)/$(PACKAGE)/doc
 ## Rules
 
 if MAINTAINER_MODE
+if BUILD_DOC
 all-local: gutenprint-stamp gutenprintui2-stamp
+else
+all-local:
+endif
 else
 all-local:
 endif
