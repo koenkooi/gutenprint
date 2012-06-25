@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27 2007/12/02 02:44:29 rlk Exp $
+## $Id: Makefile.am,v 1.28 2012/06/25 22:22:04 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ AM_LFLAGS = -i
 AM_YFLAGS = -d
 
 testpattern_SOURCES = testpattern.c testpatterny.y testpatternl.l testpattern.h
-testpattern_LDADD = $(GUTENPRINT_LIBS)
+testpattern_LDADD = $(GUTENPRINT_LIBS) $(LIBM)
 
 testpatternl.o: testpatterny.o
 testpattern.o: testpatterny.o
