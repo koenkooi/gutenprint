@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.235 2012/06/25 22:29:47 rlk Exp $
+dnl $Id: configure.ac,v 1.236 2012/07/02 11:47:36 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,15 @@ dnl    or, if interfaces have been removed, set
 dnl      GUTENPRINT_CURRENT_INTERFACE -= GUTENPRINT_BINARY_AGE
 dnl      GUTENPRINT_BINARY_AGE = 0;
 dnl
+dnl The .soname version is
+dnl (GUTENPRINT_CURRENT_INTERFACE - GUTENPRINT_BINARY_AGE).GUTENPRINT_BINARY_AGE
+dnl Example: if GUTENPRINT_CURRENT_INTERFACE is 3 and GUTENPRINT_BINARY_AGE is
+dnl 1, the version is 2.1.  To get 2.2, GUTENPRINT_CURRENT_INTERFACE would be
+dnl incremented to 4 and GUTENPRINT_BINARY_AGE to 2.
+dnl
+dnl *NOTE*: due to an error preparing 5.2.8, we must skip over major version of
+dnl 3 and go directly from 2 to 4.
+dnl
 dnl For more detailed information, see the libtool info documentation.
 dnl
 pushdef([GUTENPRINT_NAME],              [gutenprint])
@@ -46,7 +55,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.235 $)
+AC_REVISION($Revision: 1.236 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
