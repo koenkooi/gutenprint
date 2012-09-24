@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.524 2012/09/23 17:25:34 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.525 2012/09/24 08:46:52 gernot2270 Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -117,7 +117,7 @@ pack_pixels3_5(unsigned char* buf,int len)
       value += buf[read_pos + 1];
     if(shift)
       value >>= shift;
-    /* write 8bit value representing the 10 bit pixel combination */
+    /* write 8bit value representing the 12 bit pixel combination */
     buf[write_pos] = ninetoeight[value & 4095];
     ++write_pos;
     if(shift == 0)
@@ -127,7 +127,7 @@ pack_pixels3_5(unsigned char* buf,int len)
     }
     else
     {
-      shift -= 7;
+      shift -= 1;
       ++read_pos;
     }
   }
@@ -149,7 +149,7 @@ pack_pixels3_6(unsigned char* buf,int len)
       value += buf[read_pos + 1];
     if(shift)
       value >>= shift;
-    /* write 8bit value representing the 10 bit pixel combination */
+    /* write 8bit value representing the 12 bit pixel combination */
     buf[write_pos] = ninetoeight2[value & 4095];
     ++write_pos;
     if(shift == 0)
@@ -159,7 +159,7 @@ pack_pixels3_6(unsigned char* buf,int len)
     }
     else
     {
-      shift -= 7;
+      shift -= 1;
       ++read_pos;
     }
   }
