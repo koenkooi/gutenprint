@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.237 2012/11/18 17:12:20 speachy Exp $
+dnl $Id: configure.ac,v 1.238 2012/12/07 02:44:13 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.237 $)
+AC_REVISION($Revision: 1.238 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -750,8 +750,8 @@ AC_CHECK_LIB(dl, dlopen, [DLOPEN_LIBS="-ldl"])
 AC_CHECK_LIB(m,pow,
              GUTENPRINT_LIBDEPS="${GUTENPRINT_LIBDEPS} -lm"
              gutenprint_libdeps="${gutenprint_libdeps} -lm"
-             GUTENPRINTUI2_LIBDEPS="${GUTENPRINT_LIBDEPS} -lm"
-             gutenprintui2_libdeps="${gutenprint_libdeps} -lm"
+             GUTENPRINTUI2_LIBDEPS="${GUTENPRINTUI2_LIBDEPS} -lm"
+             gutenprintui2_libdeps="${gutenprintui2_libdeps} -lm"
 	     LIBM=-lm
 )
 
