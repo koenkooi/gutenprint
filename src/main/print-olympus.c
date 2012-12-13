@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.101 2012/11/18 17:21:30 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.102 2012/12/13 02:57:15 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -742,7 +742,6 @@ static const dyesub_printsize_t cp10_printsize[] =
 
 LIST(dyesub_printsize_list_t, cp10_printsize_list, dyesub_printsize_t, cp10_printsize);
 
-
 /* Canon CP-100 series */
 static const dyesub_pagesize_t cpx00_page[] =
 {
@@ -763,6 +762,12 @@ static const dyesub_printsize_t cpx00_printsize[] =
 };
 
 LIST(dyesub_printsize_list_t, cpx00_printsize_list, dyesub_printsize_t, cpx00_printsize);
+
+static void cp10_printer_init_func(stp_vars_t *v)
+{
+  stp_put16_be(0x4000, v);
+  dyesub_nputc(v, '\0', 10);
+}
 
 static void cpx00_printer_init_func(stp_vars_t *v)
 {
@@ -1675,7 +1680,7 @@ static const dyesub_cap_t dyesub_model_capabilities[] =
     DYESUB_FEATURE_FULL_WIDTH | DYESUB_FEATURE_FULL_HEIGHT
       | DYESUB_FEATURE_BORDERLESS | DYESUB_FEATURE_WHITE_BORDER
       | DYESUB_FEATURE_PLANE_INTERLACE,
-    &cpx00_printer_init_func, NULL,
+    &cp10_printer_init_func, NULL,
     &cpx00_plane_init_func, NULL,
     NULL, NULL,
     cpx00_adj_cyan, cpx00_adj_magenta, cpx00_adj_yellow,
