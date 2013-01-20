@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.109 2013/01/19 20:02:32 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.110 2013/01/20 04:26:04 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -1618,7 +1618,9 @@ LIST(dyesub_printsize_list_t, kodak_1400_printsize_list, dyesub_printsize_t, kod
 
 static void kodak_1400_printer_init(stp_vars_t *v)
 {
-  stp_zfwrite("PGHD\x00\x0a\x00\x00", 1, 8, v);
+  stp_zfwrite("PGHD", 1, 4, v);
+  stp_put16_le(privdata.w_size, v);
+  dyesub_nputc(v, 0x00, 2);
   stp_put16_le(privdata.h_size, v);
   dyesub_nputc(v, 0x00, 2);
   stp_put32_le(privdata.h_size*privdata.w_size, v);
