@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.238 2012/12/07 02:44:13 rlk Exp $
+dnl $Id: configure.ac,v 1.239 2013/01/26 12:42:53 speachy Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.238 $)
+AC_REVISION($Revision: 1.239 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -395,12 +395,12 @@ dnl if test -z "${[EXTRA_LIBREADLINE_DEPS]}" ; then
 dnl   [EXTRA_LIBREADLINE_DEPS]=""
 dnl fi
 
-# libusb-1.0 (For SELPHY backend)
+# libusb-1.0 (For CUPS backends)
 PKG_CHECK_MODULES([LIBUSB], [libusb-1.0],
                   [HAVE_LIBUSB=yes
-                   BUILD_SELPHY=yes],
+                   BUILD_LIBUSB_BACKENDS=yes],
                   [HAVE_LIBUSB=no
-	           BUILD_SELPHY=no])
+	           BUILD_LIBUSB_BACKENDS=no])
 
 AC_PATH_PROGS([GIMPTOOL2_CHECK], [gimptool-2.0 gimptool])
 if test -z "${GIMPTOOL2_CHECK}" ; then
@@ -843,7 +843,7 @@ AM_CONDITIONAL(INSTALL_SAMPLES, test x${INSTALL_SAMPLES} = xyes)
 
 AM_CONDITIONAL(INSTALL_USER_GUIDE, test x${INSTALL_USER_GUIDE} = xyes)
 
-AM_CONDITIONAL(BUILD_SELPHY, test x${BUILD_SELPHY} = xyes)
+AM_CONDITIONAL(BUILD_LIBUSB_BACKENDS, test x${BUILD_LIBUSB_BACKENDS} = xyes)
 
 STP_CUPS_PATH
 
@@ -1078,7 +1078,7 @@ if test "$BUILD_CUPS" != "no" ; then
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
 fi
-echo "    Build Canon SELPHY spooler/backend:         $BUILD_SELPHY"
+echo "    Build CUPS spoolers/backends:	 	      $BUILD_LIBUSB_BACKENDS"
 echo "    Build Ghostscript IJS driver:               $BUILD_GHOSTSCRIPT"
 echo "    Build Foomatic data:                        $BUILD_FOOMATIC"
 if test "$BUILD_FOOMATIC" != "no" ; then
