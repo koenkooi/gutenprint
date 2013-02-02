@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.114 2013/01/27 20:14:30 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.115 2013/02/02 18:30:47 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -1581,9 +1581,9 @@ static const dyesub_pagesize_t kodak_1400_page[] =
      are actually printed.  35+35 (8x14 paper) or 76+76 (8x12 paper) are 
      effectively discarded (ie ~0.12" and ~0.25" respectively)
   */
-  { "w612h864", "8.5 x 12", PT(2560,301)+1, PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x12 */
-  { "Legal", "8.5 x 14", PT(2560,301)+1, PT(3612,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x14 */
-  { "A4", "A4",       PT(2560,301)+1, PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* A4, indentical to 8x12 */
+  { "w612h864", "8.5 x 12", PT(2560,301), PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x12 */
+  { "Legal", "8.5 x 14", PT(2560,301), PT(3612,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x14 */
+  { "A4", "A4",       PT(2560,301), PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* A4, indentical to 8x12 */
   { "Custom", NULL,   PT(2560,301), PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT},
 };
 
@@ -1637,8 +1637,8 @@ static void kodak_1400_printer_init(stp_vars_t *v)
 static const dyesub_pagesize_t kodak_805_page[] =
 {
   /* Identical to the Kodak 1400 except for the lack of A4 support */
-  { "w612h864", "8.5 x 12", PT(2560,301)+1, PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x12 */
-  { "Legal", "8.5 x 14", PT(2560,301)+1, PT(3612,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x14 */
+  { "w612h864", "8.5 x 12", PT(2560,301), PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x12 */
+  { "Legal", "8.5 x 14", PT(2560,301), PT(3612,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT}, /* 8x14 */
   { "Custom", NULL,   PT(2560,301), PT(3010,301)+72*2, 0, 0, 72, 72, DYESUB_PORTRAIT},
 };
 
