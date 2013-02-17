@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2010/08/11 00:26:09 rlk Exp $
+## $Id: Makefile.am,v 1.11 2013/02/17 15:51:14 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ pkgxmldata_DATA =				\
 	cd_roll_feed.xml			\
 	cutter_roll_feed.xml			\
 	default.xml				\
+	default-duplex.xml			\
 	pro3880.xml				\
 	pro_roll_feed.xml			\
 	pro_cutter_roll_feed.xml		\
