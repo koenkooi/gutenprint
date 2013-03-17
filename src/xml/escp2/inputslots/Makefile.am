@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.11 2013/02/17 15:51:14 rlk Exp $
+## $Id: Makefile.am,v 1.12 2013/03/17 21:17:37 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,8 @@ pkgxmldata_DATA =				\
 	rx680.xml				\
 	rx700.xml				\
 	spro5000.xml				\
-	standard_roll_feed.xml
+	standard_roll_feed.xml			\
+	wf7000.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am
 	-rm -f $@ $@.tmp
