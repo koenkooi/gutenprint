@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.275 2013/04/27 10:38:43 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.276 2013/04/28 00:30:30 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -213,6 +213,12 @@
       <printer translate="name" name="Canon PIXMA MP190" driver="bjc-MULTIPASS-MP190" manufacturer="Canon" model="5000190" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP190" />
       <printer translate="name" name="Canon PIXMA MP210" driver="bjc-MULTIPASS-MP210" manufacturer="Canon" model="5000210" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP210" />
       <printer translate="name" name="Canon PIXMA MP220" driver="bjc-MULTIPASS-MP220" manufacturer="Canon" model="5000210" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP220" />
+      <!-- Canon MP230 family -->
+      <printer translate="name" name="Canon MP230 series Printer" driver="bjc-MULTIPASS-MP230" manufacturer="Canon" model="5000230" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP230" />
+      <printer translate="name" name="Canon PIXMA MP230" driver="bjc-MULTIPASS-MP230" manufacturer="Canon" model="5000230" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP230" />
+      <printer translate="name" name="Canon PIXMA MP236" driver="bjc-MULTIPASS-MP236" manufacturer="Canon" model="5000230" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP236" />
+      <printer translate="name" name="Canon PIXMA MP237" driver="bjc-MULTIPASS-MP237" manufacturer="Canon" model="5000230" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP237" />
+      <!-- -->
       <printer translate="name" name="Canon PIXMA MP240" driver="bjc-MULTIPASS-MP240" manufacturer="Canon" model="5000240" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP240" />
       <printer translate="name" name="Canon PIXMA MP250" driver="bjc-MULTIPASS-MP250" manufacturer="Canon" model="5000250" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP250" />
       <printer translate="name" name="Canon PIXMA MP260" driver="bjc-MULTIPASS-MP260" manufacturer="Canon" model="5000240" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP260" />
