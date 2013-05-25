@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.308 2013/05/25 07:02:34 gernot2270 Exp $"
+   "$Id: printers.xml,v 1.309 2013/05/25 07:20:55 gernot2270 Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -350,7 +350,7 @@
       <printer translate="name" name="Canon MP150 Series Printer" driver="bjc-MULTIPASS-MP150" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP150" />
       <printer translate="name" name="Canon PIXMA MP150" driver="bjc-MULTIPASS-MP150" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP150" />
       <!-- Canon MP160 family (exception: no series) -->
-      <printer translate="name" name="Canon MP160 Printer" driver="bjc-MULTIPASS-MP160" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP160" />
+      <printer translate="name" name="Canon MP160 Printer" deviceid="MFG:Canon;MDL:MP160;CMD:BJL,BJRaster3,BSCCe;" driver="bjc-MULTIPASS-MP160" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP160" />
       <printer translate="name" name="Canon PIXMA MP160" driver="bjc-MULTIPASS-MP160" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP160" />
       <!-- Canon MP170 family (exception: capital S) -->
       <printer translate="name" name="Canon MP170 Series Printer" driver="bjc-MULTIPASS-MP170" manufacturer="Canon" model="5000150" parameters="PIXMA_iP4000_params" foomaticid="Canon-MULTIPASS-MP170" />
