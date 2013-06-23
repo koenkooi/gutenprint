@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.32 2013/03/03 03:38:39 rlk Exp $
+## $Id: Makefile.am,v 1.33 2013/06/23 01:31:40 rlk Exp $
 ## Copyright (C) 2008 Robert Krawitz
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -146,7 +146,8 @@ pkgxmldata_DATA =				\
 	model_117.xml				\
 	model_118.xml				\
 	model_119.xml				\
-	model_120.xml
+	model_120.xml				\
+	model_121.xml
 
 xml-stamp: $(pkgxmldata_DATA) Makefile.am
 	-rm -f $@ $@.tmp

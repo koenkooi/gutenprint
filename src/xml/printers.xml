@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.317 2013/06/13 02:12:07 speachy Exp $"
+   "$Id: printers.xml,v 1.318 2013/06/23 01:31:39 rlk Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -1315,6 +1315,7 @@
       <printer translate="name" name="Epson Stylus SX410" driver="escp2-sx410" manufacturer="Epson" model="93" parameters="standard_params" foomaticid="Epson-Stylus_SX410" />
       <printer translate="name" name="Epson Stylus SX415" driver="escp2-sx415" manufacturer="Epson" model="93" parameters="standard_params" foomaticid="Epson-Stylus_SX415" />
       <printer translate="name" name="Epson Stylus SX420" driver="escp2-sx420" manufacturer="Epson" model="94" parameters="standard_params" foomaticid="Epson-Stylus_SX420" />
+      <printer translate="name" name="Epson Stylus SX445W" driver="escp2-sx445w" manufacturer="Epson" model="121" parameters="standard_params" foomaticid="Epson-Stylus_SX445w" />
       <printer translate="name" name="Epson Stylus SX510W" driver="escp2-sx510w" manufacturer="Epson" model="92" parameters="standard_params" foomaticid="Epson-Stylus_SX510W" />
       <printer translate="name" name="Epson Stylus SX515" driver="escp2-sx515" manufacturer="Epson" model="92" parameters="standard_params" foomaticid="Epson-Stylus_SX515" />
       <printer translate="name" name="Epson Stylus SX525" driver="escp2-sx525" manufacturer="Epson" model="92" parameters="standard_params" foomaticid="Epson-Stylus_SX525" />
