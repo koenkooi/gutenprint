@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.240 2013/02/17 00:23:40 rlk Exp $
+dnl $Id: configure.ac,v 1.241 2013/07/02 11:15:40 speachy Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.240 $)
+AC_REVISION($Revision: 1.241 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1078,7 +1078,7 @@ if test "$BUILD_CUPS" != "no" ; then
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
 fi
-echo "    Build CUPS spoolers/backends:	 	      $BUILD_LIBUSB_BACKENDS"
+echo "    Build CUPS spoolers/backends:               $BUILD_LIBUSB_BACKENDS"
 echo "    Build Ghostscript IJS driver:               $BUILD_GHOSTSCRIPT"
 echo "    Build Foomatic data:                        $BUILD_FOOMATIC"
 if test "$BUILD_FOOMATIC" != "no" ; then
