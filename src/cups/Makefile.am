@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.129 2013/07/06 15:08:37 speachy Exp $
+## $Id: Makefile.am,v 1.130 2013/07/14 11:54:52 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -302,4 +302,5 @@ EXTRA_DIST = \
 	calibrate.ppm \
 	command.txt \
 	command.types \
-	test-ppds
+	test-ppds \
+	backend-common.c
