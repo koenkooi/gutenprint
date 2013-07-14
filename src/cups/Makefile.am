@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.130 2013/07/14 11:54:52 speachy Exp $
+## $Id: Makefile.am,v 1.131 2013/07/14 12:01:25 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -116,7 +116,7 @@ commandtocanon_LDADD = $(CUPS_LIBS)
 commandtoepson_SOURCES = commandtoepson.c
 commandtoepson_LDADD = $(CUPS_LIBS)
 
-selphy_SOURCES = selphy_print.c selphy_print_common.h
+selphy_SOURCES = selphy_print.c
 selphy_CPPFLAGS = $(LIBUSB_CFLAGS)
 selphy_LDADD = $(LIBUSB_LIBS)
 
