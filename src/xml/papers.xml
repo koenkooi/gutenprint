@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: papers.xml,v 1.13 2013/07/06 02:00:07 speachy Exp $"
+   "$Id: papers.xml,v 1.14 2013/11/24 15:15:16 speachy Exp $"
 
    XML description of papers known to libgutenprint.
    You can add additional paper sizes here.
@@ -188,6 +188,12 @@
       <description translate="value" value="5x8"/>
       <width value="360"/>
       <height value="576"/>
+      <unit value="english-extended"/>
+    </paper>
+    <paper name="w432h432">
+      <description translate="value" value="6x6"/>
+      <width value="432"/>
+      <height value="432"/>
       <unit value="english-extended"/>
     </paper>
     <paper name="w432h576">
