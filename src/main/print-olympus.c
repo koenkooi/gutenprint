@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.139 2013/12/11 00:45:34 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.140 2013/12/11 01:22:12 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -2792,8 +2792,8 @@ LIST(dyesub_printsize_list_t, dnpds40_dock_printsize_list, dyesub_printsize_t, d
 
 static const laminate_t dnpds40_laminate[] =
 {
-  {"Glossy",  N_("Glossy"),  {1, "\x00"}},
-  {"Matte", N_("Matte"), {1, "\x01"}},
+  {"Glossy",  N_("Glossy"),  {2, "00"}},
+  {"Matte", N_("Matte"), {2, "01"}},
 };
 
 LIST(laminate_list_t, dnpds40_laminate_list, laminate_t, dnpds40_laminate);
