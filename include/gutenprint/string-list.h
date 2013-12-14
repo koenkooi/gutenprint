@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.h,v 1.3 2006/07/07 22:49:14 rleigh Exp $"
+ * "$Id: string-list.h,v 1.4 2013/12/14 19:30:45 rlk Exp $"
  *
  *   libgimpprint string list functions.
  *
@@ -79,6 +79,11 @@ extern void
 stp_string_list_add_string(stp_string_list_t *list,
 			   const char *name, const char *text);
 
+/* Don't check safety of the string name (no whitespace and such) */
+extern void
+stp_string_list_add_string_unsafe(stp_string_list_t *list,
+				  const char *name, const char *text);
+
 extern void
 stp_string_list_remove_string(stp_string_list_t *list, const char *name);
 
@@ -96,5 +101,5 @@ stp_string_list_is_present(const stp_string_list_t *list,
 
 #endif /* GUTENPRINT_STRING_LIST_H */
 /*
- * End of "$Id: string-list.h,v 1.3 2006/07/07 22:49:14 rleigh Exp $".
+ * End of "$Id: string-list.h,v 1.4 2013/12/14 19:30:45 rlk Exp $".
  */

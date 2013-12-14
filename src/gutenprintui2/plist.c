@@ -1,5 +1,5 @@
 /*
- * "$Id: plist.c,v 1.18 2008/07/04 14:29:28 rlk Exp $"
+ * "$Id: plist.c,v 1.19 2013/12/14 19:30:45 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -1249,8 +1249,8 @@ stpui_get_system_printers(void)
   char  line[1025];		/* Line from status command */
 
   stpui_system_print_queues = stp_string_list_create();
-  stp_string_list_add_string(stpui_system_print_queues, "",
-			     _("(Default Printer)"));
+  stp_string_list_add_string_unsafe(stpui_system_print_queues, "",
+				    _("(Default Printer)"));
 
  /*
   * Run the command, if any, to get the available printers...
@@ -1281,8 +1281,8 @@ stpui_get_system_printers(void)
 	  if (strlen(line) > 0)
 	    {
 	      if (!stp_string_list_is_present(stpui_system_print_queues, line))
-		stp_string_list_add_string(stpui_system_print_queues,
-					   line, line);
+		stp_string_list_add_string_unsafe(stpui_system_print_queues,
+						  line, line);
 	    }
 	}
       pclose(pfile);
@@ -1834,5 +1834,5 @@ stpui_print(const stpui_plist_t *printer, stpui_image_t *image)
 }
 
 /*
- * End of "$Id: plist.c,v 1.18 2008/07/04 14:29:28 rlk Exp $".
+ * End of "$Id: plist.c,v 1.19 2013/12/14 19:30:45 rlk Exp $".
  */
