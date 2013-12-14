@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.140 2013/12/11 01:22:12 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.141 2013/12/14 19:44:15 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -2819,7 +2819,7 @@ static void dnpds40_plane_init(stp_vars_t *v)
   long AdSize = (32 - (RFSize % 32));
   long FSize = RFSize + AdSize;
 
-  // XXX SLP: this is.. unknown in the docs I have.
+  /* XXX SLP: this is.. unknown in the docs I have. */
   stp_zprintf(v, "\033PCNTRL RETENTION       0000000800000000");
 
   stp_zprintf(v, "\033PIMAGE %cPLANE", p); dyesub_nputc(v, ' ', 10);
