@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-papers.c,v 1.119 2010/08/04 00:33:56 rlk Exp $"
+ * "$Id: escp2-papers.c,v 1.120 2013/12/14 19:36:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -121,7 +121,7 @@ stp_escp2_load_media(const stp_vars_t *v, const char *name)
 	  stp_string_list_t **xpapers =
 	    (stp_string_list_t **) &(printdef->papers);
 	  stp_mxml_node_t *node = stp_mxmlFindElement(media, media,
-						      "escp2:papers", NULL,
+						      "escp2Papers", NULL,
 						      NULL, STP_MXML_DESCEND);
 	  *xnode = media;
 	  *xlist = stp_list_create();
@@ -346,7 +346,7 @@ stp_escp2_load_input_slots(const stp_vars_t *v, const char *name)
 	  stp_string_list_t **xslots =
 	    (stp_string_list_t **) &(printdef->input_slots);
 	  stp_mxml_node_t *node = stp_mxmlFindElement(slots, slots,
-						      "escp2:InputSlots", NULL,
+						      "escp2InputSlots", NULL,
 						      NULL, STP_MXML_DESCEND);
 	  *xnode = slots;
 	  *xlist = stp_list_create();

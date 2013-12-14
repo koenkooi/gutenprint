@@ -1,5 +1,5 @@
 /*
- * "$Id: escp2-channels.c,v 1.91 2010/12/19 02:51:37 rlk Exp $"
+ * "$Id: escp2-channels.c,v 1.92 2013/12/14 19:36:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -415,7 +415,7 @@ load_inkgroup(const char *name)
 	{
 	  int count = 0;
 	  stp_mxml_node_t *node = stp_mxmlFindElement(inkgroup, inkgroup,
-						      "escp2:InkGroup", NULL,
+						      "escp2InkGroup", NULL,
 						      NULL, STP_MXML_DESCEND);
 	  if (node)
 	    {

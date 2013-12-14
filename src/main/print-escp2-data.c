@@ -1,5 +1,5 @@
 /*
- * "$Id: print-escp2-data.c,v 1.274 2013/12/14 19:30:45 rlk Exp $"
+ * "$Id: print-escp2-data.c,v 1.275 2013/12/14 19:36:29 rlk Exp $"
  *
  *   Print plug-in EPSON ESC/P2 driver for the GIMP.
  *
@@ -406,7 +406,7 @@ stp_escp2_load_model(const stp_vars_t *v, int model)
       if (doc)
 	{
 	  stp_mxml_node_t *node =
-	    stp_mxmlFindElement(doc, doc, "escp2:model", NULL, NULL,
+	    stp_mxmlFindElement(doc, doc, "escp2Model", NULL, NULL,
 				STP_MXML_DESCEND);
 	  if (node)
 	    {
