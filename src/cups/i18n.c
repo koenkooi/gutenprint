@@ -1,5 +1,5 @@
 /*
- * "$Id: i18n.c,v 1.8 2009/04/11 19:05:12 rlk Exp $"
+ * "$Id: i18n.c,v 1.9 2013/12/14 19:23:58 rlk Exp $"
  *
  *   Internationalization functions for CUPS drivers.
  *
@@ -244,12 +244,12 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
 	  */
 
           stpi_unquote(utf8str);
-          stp_string_list_add_string(po, id, utf8str);
+          stp_string_list_add_string_unsafe(po, id, utf8str);
 	}
 	else
 	{
           stpi_unquote(str);
-          stp_string_list_add_string(po, id, str);
+          stp_string_list_add_string_unsafe(po, id, str);
         }
       }
       else if (!id[0] && str[0] && !ic)
@@ -362,12 +362,12 @@ stp_i18n_load(const char *locale)	/* I - Locale name */
       */
 
       stpi_unquote(utf8str);
-      stp_string_list_add_string(po, id, utf8str);
+      stp_string_list_add_string_unsafe(po, id, utf8str);
     }
     else
     {
       stpi_unquote(str);
-      stp_string_list_add_string(po, id, str);
+      stp_string_list_add_string_unsafe(po, id, str);
     }
   }
 
@@ -479,5 +479,5 @@ stpi_unquote(char *s)		/* IO - Original string */
 
 
 /*
- * End of "$Id: i18n.c,v 1.8 2009/04/11 19:05:12 rlk Exp $".
+ * End of "$Id: i18n.c,v 1.9 2013/12/14 19:23:58 rlk Exp $".
  */

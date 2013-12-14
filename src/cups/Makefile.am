@@ -1,5 +1,5 @@
 
-## $Id: Makefile.am,v 1.136 2013/11/23 19:58:56 speachy Exp $
+## $Id: Makefile.am,v 1.137 2013/12/14 19:23:58 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -256,8 +256,8 @@ ppd-nls: cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ ppd-n
 	$(mkdir_p) ppd
 	$(MAKE) ppd-catalog
 	for language in `$(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ -L` ; do \
-	  mkdir ppd/$$language ; \
-	  echo "$$language:" ; \
+	  $(mkdir_p) ppd/$$language ; \
+	  echo -n "$$language: " ; \
 	  LC_ALL=$$language LANG=$$language LANGUAGE=$$language $(STP_ENV) ./cups-genppd.@GUTENPRINT_MAJOR_VERSION@.@GUTENPRINT_MINOR_VERSION@ $(EXTRA_GENPPD_OPTS) @WHICH_PPDS@ -l $$language -p ppd/$$language; \
 	done
 	$(MAKE) ppd-catalog-clean
