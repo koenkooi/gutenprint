@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.140 2013/03/03 03:37:31 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.141 2013/12/14 14:40:47 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -1398,9 +1398,8 @@ main(int  argc,				/* I - Number of command-line arguments */
   (void) times(&tms);
   (void) gettimeofday(&t2, &tz);
   clocks_per_sec = sysconf(_SC_CLK_TCK);
-  fprintf(stderr, "DEBUG: Gutenprint: Printed total %.0f bytes\n",
-	  total_bytes_printed);
-  fprintf(stderr, "DEBUG: Gutenprint: Time %.3f user, %.3f sys, %.3f elapsed\n",
+  fprintf(stderr, "DEBUG: Gutenprint: Printed total %.0fB, %.3fu, %.3fs, %.3fel\n",
+	  total_bytes_printed,
 	  (double) tms.tms_utime / clocks_per_sec,
 	  (double) tms.tms_stime / clocks_per_sec,
 	  (double) (t2.tv_sec - t1.tv_sec) +
@@ -1701,5 +1700,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.140 2013/03/03 03:37:31 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.141 2013/12/14 14:40:47 rlk Exp $".
  */
