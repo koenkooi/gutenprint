@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.141 2013/12/14 19:44:15 rlk Exp $"
+ * "$Id: print-olympus.c,v 1.142 2013/12/15 19:36:41 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -1299,7 +1299,7 @@ static void updr150_200_printer_init_func(stp_vars_t *v, int updr200)
   if (updr200) { /* UP-DR200-specific! */
     stp_zfwrite("\x07\x00\x00\x00"
 		"\x1b\xc0\x00\x03\x00\x05", 1, 10, v);
-    stp_putc(pg, 0x00);  /* 0x02 for doubled-up prints. */
+    stp_putc(pg, v);  /* 0x02 for doubled-up prints. */
     /* eg 2x6 on 4x6 media, 3.5x5 on 5x7 media, 4x6 on 8x6 media */
   }
     
