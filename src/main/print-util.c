@@ -1,5 +1,5 @@
 /*
- * "$Id: print-util.c,v 1.117 2010/06/26 20:02:02 rlk Exp $"
+ * "$Id: print-util.c,v 1.118 2013/12/15 19:38:23 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -664,5 +664,10 @@ stp_get_parameter_list(const stp_vars_t *v)
 void
 stp_abort(void)
 {
+  if (stp_get_debug_level > 0)
+    {
+      int i = *((int *) 0);
+      stp_erprintf("Crashing here...%d\n", i);
+    }
   abort();
 }
