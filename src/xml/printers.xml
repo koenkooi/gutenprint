@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: printers.xml,v 1.335 2013/11/24 15:16:49 speachy Exp $"
+   "$Id: printers.xml,v 1.336 2013/12/16 23:28:22 speachy Exp $"
 
    XML description of printers known to libgutenprint
    You can add additional printers here, but the underlying driver has
@@ -2622,8 +2622,8 @@
       <printer translate="name" name="Shinko CHC-S9045" driver="shinko-chcs9045" manufacturer="Shinko" model="5000" foomaticid="Shinko-CHC-S9045" />
       <printer translate="name" name="Shinko CHC-S2145" deviceid="MFG:SHINKO;CMD:SUPCC;MDL:CHC-S2145;CLS:PRINTER;DES:SHINKO CHC-S2145;" driver="shinko-chcs2145" manufacturer="Shinko" model="5001" foomaticid="Shinko-CHC-S2145" />
       <printer translate="name" name="Sinfonia CHC-S2145" driver="sinfonia-chcs2145" manufacturer="Sinfonia" model="5001" foomaticid="Sinfonia-CHC-S2145" />
-      <printer translate="name" name="Dai Nippon Printing DS40" driver="dnp-ds40" manufacturer="DNP" model="6000" foomaticid="DNP-DS40" />
-      <printer translate="name" name="Dai Nippon Printing DS80" driver="dnp-ds80" manufacturer="DNP" model="6001" foomaticid="DNP-DS80" />
+      <printer translate="name" name="Dai Nippon Printing DS40" deviceid="MANUFACTURER:Dai Nippon Printing ;MODEL:DS40;" driver="dnp-ds40" manufacturer="DNP" model="6000" foomaticid="DNP-DS40" />
+      <printer translate="name" name="Dai Nippon Printing DS80" deviceid="MANUFACTURER:Dai Nippon Printing ;MODEL:DS80;" driver="dnp-ds80" manufacturer="DNP" model="6001" foomaticid="DNP-DS80" />
     </family>
     <family name="raw">
       <printer translate="name" name="RAW DATA 16 bit" driver="raw-data-16" manufacturer="" model="0" />
