@@ -1,5 +1,4 @@
-
-## $Id: Makefile.am,v 1.139 2013/12/18 14:41:26 speachy Exp $
+## $Id: Makefile.am,v 1.140 2013/12/18 19:01:30 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -42,6 +41,7 @@ cupsexec_filterdir = $(pkglibdir)/filter
 
 if BUILD_LIBUSB_BACKENDS
 cupsexec_backenddir = $(pkglibdir)/backend
+cupsdata_blacklistdir = $(DESTDIR)/$(pkgdatadir)/usb/
 endif
 
 if CUPS_PPDS_AT_TOP_LEVEL
@@ -175,6 +175,10 @@ install-data-local: $(INSTALL_DATA_LOCAL_DEPS)
 	  $(mkdir_p) "$(DESTDIR)$(localedir)/$$lang"; \
 	  $(INSTALL_DATA) $$file "$(DESTDIR)$(localedir)/$$lang/gutenprint_$$lang.po"; \
 	done
+if BUILD_LIBUSB_BACKENDS
+	$(mkdir_p) $(cupsdata_blacklistdir)
+	$(INSTALL_DATA) blacklist $(cupsdata_blacklistdir)/net.sf.gimp-print.usb-quirks
+endif
 
 uninstall-local: $(INSTALL_DATA_LOCAL_DEPS)
 # Remove PPDs installed in new PPD location
@@ -197,6 +201,7 @@ install-data-hook:
 	-rmdir $(DESTDIR)$(cupsexec_driverdir)
 	-rmdir $(DESTDIR)$(cupsexec_filterdir)
 	-rmdir $(DESTDIR)$(cupsexec_backenddir)
+	-rmdir $(DESTDIR)$(cupsdata_blacklistdir)
 	-rmdir $(DESTDIR)$(bindir)
 	-rmdir $(DESTDIR)$(pkglibdir)
 	-rmdir $(DESTDIR)$(pkgsysconfdir)
