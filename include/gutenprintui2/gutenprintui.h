@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprintui.h,v 1.2 2005/01/28 03:02:18 rlk Exp $"
+ * "$Id: gutenprintui.h,v 1.3 2014/01/04 00:31:37 rlk Exp $"
  *
  *   Print plug-in for the GIMP.
  *
@@ -38,7 +38,13 @@ extern "C" {
 #define inline __inline__
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-prototypes"
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-pedantic"
 #include <gtk/gtk.h>
+#pragma GCC diagnostic pop
 
 #include <gutenprint/gutenprint.h>
 

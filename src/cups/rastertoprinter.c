@@ -1,5 +1,5 @@
 /*
- * "$Id: rastertoprinter.c,v 1.142 2013/12/14 14:45:03 rlk Exp $"
+ * "$Id: rastertoprinter.c,v 1.143 2014/01/04 00:31:37 rlk Exp $"
  *
  *   Gutenprint based raster filter for the Common UNIX Printing System.
  *
@@ -135,6 +135,16 @@ static const char *load_file_name = NULL;
 #endif /* ENABLE_CUPS_LOAD_SAVE_OPTIONS */
 
 extern void stpi_vars_print_error(const stp_vars_t *v, const char *prefix);
+
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
+static inline void *
+cast_safe(const void *ptr)
+{
+  return (void *)ptr;
+}
+#pragma GCC diagnostic pop
 
 static void
 set_string_parameter(stp_vars_t *v, const char *name, const char *val)
@@ -800,7 +810,7 @@ set_all_options(stp_vars_t *v, cups_option_t *options, int num_options,
 		  if (raw)
 		    {
 		      stp_set_raw_parameter(v, desc.name, raw->data, raw->bytes);
-		      stp_free((void *)raw->data);
+		      stp_free(cast_safe(raw->data));
 		      stp_free(raw);
 		    }
 		  break;
@@ -1700,5 +1710,5 @@ Image_width(stp_image_t *image)	/* I - Image */
 
 
 /*
- * End of "$Id: rastertoprinter.c,v 1.142 2013/12/14 14:45:03 rlk Exp $".
+ * End of "$Id: rastertoprinter.c,v 1.143 2014/01/04 00:31:37 rlk Exp $".
  */

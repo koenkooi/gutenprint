@@ -1,5 +1,5 @@
 /*
- * "$Id: gutenprint-internal.h,v 1.5 2011/06/12 00:31:51 rlk Exp $"
+ * "$Id: gutenprint-internal.h,v 1.6 2014/01/04 00:31:38 rlk Exp $"
  *
  *   Print plug-in header file for the GIMP.
  *
@@ -76,6 +76,18 @@ do									\
 
 /** @} */
 
+#define CAST_IS_SAFE GCC_DIAG_OFF(cast-qual)
+#define CAST_IS_UNSAFE GCC_DIAG_ON(cast-qual)
+
+#pragma GCC diagnostic ignored "-Woverlength-strings"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
+static inline void *
+stpi_cast_safe(const void *ptr)
+{
+  return (void *)ptr;
+}
+#pragma GCC diagnostic pop
 
 #ifdef __cplusplus
   }
@@ -83,5 +95,5 @@ do									\
 
 #endif /* GUTENPRINT_INTERNAL_INTERNAL_H */
 /*
- * End of "$Id: gutenprint-internal.h,v 1.5 2011/06/12 00:31:51 rlk Exp $".
+ * End of "$Id: gutenprint-internal.h,v 1.6 2014/01/04 00:31:38 rlk Exp $".
  */

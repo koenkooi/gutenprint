@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.194 2013/12/14 19:23:58 rlk Exp $"
+ * "$Id: genppd.c,v 1.195 2014/01/04 00:31:37 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -39,6 +39,8 @@
 /*
  * Include necessary headers...
  */
+
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -2702,5 +2704,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.194 2013/12/14 19:23:58 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.195 2014/01/04 00:31:37 rlk Exp $".
  */

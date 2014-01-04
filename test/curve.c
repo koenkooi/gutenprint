@@ -1,5 +1,5 @@
 /*
- * "$Id: curve.c,v 1.23 2008/01/21 23:19:41 rlk Exp $"
+ * "$Id: curve.c,v 1.24 2014/01/04 00:31:38 rlk Exp $"
  *
  *   Copyright 2002 Robert Krawitz (rlk@alum.mit.edu)
  *
@@ -28,6 +28,8 @@
 #ifdef __GNU_LIBRARY__
 #include <getopt.h>
 #endif
+
+#pragma GCC diagnostic ignored "-Woverlength-strings"
 
 #define DEBUG_SIGNAL
 #define MIN(x, y) ((x) <= (y) ? (x) : (y))
@@ -497,7 +499,7 @@ piecewise_curve_checks(stp_curve_t *curve1, int resample_points, int expected)
 	{
 	  TEST_FAIL();
 	  if (!quiet)
-	    printf("Expected %d points, got %d\n", expected, count);
+	    printf("Expected %d points, got %lu\n", expected, count);
 	}
       TEST("Comparing data");
       for (i = 0; i < count; i++)

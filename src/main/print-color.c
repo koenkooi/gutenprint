@@ -1,5 +1,5 @@
 /*
- * "$Id: print-color.c,v 1.145 2012/01/19 13:25:40 m0m Exp $"
+ * "$Id: print-color.c,v 1.146 2014/01/04 00:31:38 rlk Exp $"
  *
  *   Gutenprint color management module - traditional Gutenprint algorithm.
  *
@@ -1734,7 +1734,7 @@ static const stp_colorfuncs_t stpi_color_traditional_colorfuncs =
   &stpi_color_traditional_describe_parameter
 };
 
-static const stp_color_t stpi_color_traditional_module_data =
+static stp_color_t stpi_color_traditional_module_data =
   {
     "traditional",
     N_("Traditional Gutenprint color conversion"),

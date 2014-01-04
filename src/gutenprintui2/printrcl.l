@@ -1,5 +1,5 @@
 /*		-*-Mode: C-*-
- * "$Id: printrcl.l,v 1.2 2012/05/11 13:16:12 rlk Exp $"
+ * "$Id: printrcl.l,v 1.3 2014/01/04 00:31:37 rlk Exp $"
  *
  *   printrc parser
  *
@@ -36,6 +36,10 @@
 #include <stdlib.h>
 
 #define YY_NO_UNPUT
+
+/* Bison does some stuff that triggers unimportant warnings. */
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 int mylineno = 1;
 

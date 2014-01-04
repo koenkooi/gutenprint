@@ -1,5 +1,5 @@
 /*
- * "$Id: print-list.c,v 1.26 2012/01/19 13:25:40 m0m Exp $"
+ * "$Id: print-list.c,v 1.27 2014/01/04 00:31:38 rlk Exp $"
  *
  *   Gutenprint list functions.  A doubly-linked list implementation,
  *   with callbacks for freeing, sorting, and retrieving nodes by name
@@ -236,7 +236,7 @@ stp_list_get_end(const stp_list_t *list)
 static inline stp_list_t *
 deconst_list(const stp_list_t *list)
 {
-  return (stp_list_t *) list;
+  return (stp_list_t *) stpi_cast_safe(list);
 }
 
 /* get the node by its place in the list */
@@ -568,7 +568,7 @@ stp_list_item_create(stp_list_t *list,
   ln->prev = ln->next = NULL;
 
   if (data)
-    ln->data = (void *) data;
+    ln->data = stpi_cast_safe(data);
   else
     {
       stp_free(ln);

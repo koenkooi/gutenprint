@@ -1,5 +1,5 @@
 /*
- * "$Id: string-list.c,v 1.20 2013/12/14 19:30:45 rlk Exp $"
+ * "$Id: string-list.c,v 1.21 2014/01/04 00:31:38 rlk Exp $"
  *
  *   Print plug-in driver utility functions for the GIMP.
  *
@@ -33,8 +33,8 @@ static void
 free_list_element(void *item)
 {
   stp_param_string_t *string = (stp_param_string_t *) (item);
-  stp_free((char *) string->name);
-  stp_free((char *) string->text);
+  stp_free(stpi_cast_safe(string->name));
+  stp_free(stpi_cast_safe(string->text));
   stp_free(string);
 }
 
