@@ -1,5 +1,5 @@
 /*
- * "$Id: testpatternl.l,v 1.27 2012/05/11 13:16:12 rlk Exp $"
+ * "$Id: testpatternl.l,v 1.28 2014/01/04 00:30:27 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "testpattern.h"
+
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 #define YY_NO_UNPUT
 
