@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: papers.xml,v 1.14 2013/11/24 15:15:16 speachy Exp $"
+   "$Id: papers.xml,v 1.15 2014/01/05 04:56:12 rlk Exp $"
 
    XML description of papers known to libgutenprint.
    You can add additional paper sizes here.
@@ -256,6 +256,12 @@
 <!--
     Other common photographic paper sizes
 -->
+    <paper name="w576h576">
+      <description translate="value" value="8x8"/>
+      <width value="576"/>
+      <height value="576"/>
+      <unit value="english-extended"/>
+    </paper>
     <paper name="w576h864">
       <description translate="value" value="8x12"/>
       <comment value="Sometimes used for 35mm"/>
