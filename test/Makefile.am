@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.48 2007/01/26 01:04:52 rlk Exp $
+## $Id: Makefile.am,v 1.49 2014/01/08 01:50:29 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,10 @@ include $(top_srcdir)/scripts/global.mk
 
 LOCAL_CPPFLAGS = -I$(top_srcdir)/src/main $(GUTENPRINT_CFLAGS)
 
-TESTS = curve run-testdither run-weavetest
+## run-weavetest is extremely time consuming and provides little value for
+## release testing since the last material change was made in 2008.
+## It is essentially a giant unit test for the weave code.
+TESTS = curve run-testdither
 
 ## Programs
 
