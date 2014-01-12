@@ -1,5 +1,5 @@
 /*
- * "$Id: panel.c,v 1.20 2014/01/04 00:31:37 rlk Exp $"
+ * "$Id: panel.c,v 1.21 2014/01/12 02:06:13 rlk Exp $"
  *
  *   Main window code for Print plug-in for the GIMP.
  *
@@ -768,8 +768,8 @@ build_printer_combo(void)
     stp_string_list_destroy(printer_list);
   printer_list = stp_string_list_create();
   for (i = 0; i < stpui_plist_count; i++)
-    stp_string_list_add_string(printer_list,
-			       stpui_plist[i].name, stpui_plist[i].name);
+    stp_string_list_add_string_unsafe(printer_list,
+				      stpui_plist[i].name, stpui_plist[i].name);
   plist_build_combo(printer_combo,
 		    NULL,
 		    printer_list,
@@ -1822,7 +1822,7 @@ create_printer_dialog (void)
 	{
 	  const gchar *make = stp_printer_get_manufacturer(the_printer);
 	  if (! stp_string_list_is_present(manufacturer_list, make))
-	    stp_string_list_add_string(manufacturer_list, make, make);
+	    stp_string_list_add_string_unsafe(manufacturer_list, make, make);
 	}
     }
 
