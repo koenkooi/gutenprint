@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.244 2014/01/05 04:56:31 rlk Exp $
+dnl $Id: configure.ac,v 1.245 2014/01/12 02:06:51 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.244 $)
+AC_REVISION($Revision: 1.245 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1136,11 +1136,11 @@ echo "  Installation summary:"
 echo "    Installation prefix:                        $prefix"
 # Configure intentionally does not expand exec_prefix to allow make
 # to do so.
-echo -n "    Exec prefix:                                $exec_prefix (";echo -n $exec_prefix | sed "s,\${prefix},$prefix,";echo ")";
+echo "    Exec prefix:                                $exec_prefix (`eval eval echo $exec_prefix`)";
 echo "    Data directory:                             $PACKAGE_DATA_DIR"
-echo -n "    Library directory:                          $PACKAGE_LIB_DIR (";echo -n $PACKAGE_LIB_DIR | sed "s,\${exec_prefix},$exec_prefix," | sed "s,\${prefix},$prefix,";echo ")"
+echo "    Library directory:                          $PACKAGE_LIB_DIR (`eval eval echo $PACKAGE_LIB_DIR`)"
 echo "    XML data directory:                         $PKGXMLDATADIR"
-echo -n "    Module directory:                           $PKGMODULEDIR (";echo -n $PKGMODULEDIR | sed "s,\${exec_prefix},$exec_prefix," | sed "s,\${prefix},$prefix,"; echo ")"
+echo "    Module directory:                           $PKGMODULEDIR (`eval eval echo $PKGMODULEDIR`)"
 echo "    Install sample images:                      $INSTALL_SAMPLES"
 echo
 echo "  General configuration:"
