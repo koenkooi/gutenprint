@@ -1,5 +1,5 @@
 /*
- * "$Id: print-canon.c,v 1.546 2014/01/13 17:15:10 gernot2270 Exp $"
+ * "$Id: print-canon.c,v 1.547 2014/01/14 01:16:21 rlk Exp $"
  *
  *   Print plug-in CANON BJL driver for the GIMP.
  *
@@ -4910,7 +4910,7 @@ canon_init_setESC_v(const stp_vars_t *v, const canon_privdata_t *init)
 
 
 static void
-canon_init_printer(const stp_vars_t *v, const canon_privdata_t *init)
+canon_init_printer(const stp_vars_t *v, canon_privdata_t *init)
 {
   unsigned int mytop;
   /* init printer */
