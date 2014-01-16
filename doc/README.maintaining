@@ -49,7 +49,7 @@ something that you would like covering, please let me know!
 
  -- Roger Leigh <rleigh@debian.org>
 
- $Id: README.maintaining,v 1.29 2014/01/16 01:37:00 jlabovitz Exp $
+ $Id: README.maintaining,v 1.30 2014/01/16 01:51:51 rlk Exp $
 
 
 1. Setting up the autotools
@@ -92,7 +92,6 @@ Gutenprint:
   cvs
   docbook-utils
   doxygen
-  flex
   flex
   gettext
   libglib2.0-dev
