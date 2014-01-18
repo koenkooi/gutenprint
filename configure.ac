@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.246 2014/01/12 17:12:56 rlk Exp $
+dnl $Id: configure.ac,v 1.247 2014/01/18 00:31:32 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.246 $)
+AC_REVISION($Revision: 1.247 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -260,8 +260,9 @@ BUILD_CUPS_1_2="no"
 if test -n "${CUPS_CONFIG}" -a "${BUILD_CUPS}" = "yes" ; then
   cups_version=`${CUPS_CONFIG} --version | sed -e '1,$s/svn$/.0/'`
 dnl Quote to protect sed regexes
-  [cups_major=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\1/'`]
-  [cups_minor=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
+dnl Some relases may be 1.xrc1 or 1.xsvn. Grab only what is needed.
+  [cups_major=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).*/\1/'`]
+  [cups_minor=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).*/\2/'`]
   [cups_point=`echo $cups_version | sed -e 's/\([0-9][0-9]*\).\([0-9][0-9]*\).\([0-9][0-9]*\).*/\3/'`]
 dnl There was no CUPS 1.0.15 or the like
   if test "$cups_major" -gt 1 -o "$cups_minor" -gt 1 -o "$cups_point" -gt 14 ; then
