@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-   "$Id: papers.xml,v 1.15 2014/01/05 04:56:12 rlk Exp $"
+   "$Id: papers.xml,v 1.16 2014/01/22 13:52:41 rlk Exp $"
 
    XML description of papers known to libgutenprint.
    You can add additional paper sizes here.
@@ -1304,14 +1304,14 @@
       <unit value="metric-extended"/>
     </paper>
     <paper name="w155h244">
-      <description translate="value" value="Card"/>
+      <description translate="value" value="Credit Card"/>
       <comment value="54mm x 86mm"/>
       <width value="155"/>
       <height value="244"/>
       <unit value="metric-extended"/>
     </paper>
     <paper name="w155h257">
-      <description translate="value" value="Card"/>
+      <description translate="value" value="Japanese Business Card"/>
       <comment value="55mm x 91mm"/>
       <width value="155"/>
       <height value="257"/>
