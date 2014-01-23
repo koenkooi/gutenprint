@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.h,v 1.20 2010/09/06 17:08:39 rlk Exp $"
+ * "$Id: testpattern.h,v 1.21 2014/01/23 13:22:41 rlk Exp $"
  *
  *   Test pattern generator for Gimp-Print
  *
@@ -37,10 +37,10 @@ typedef struct
   } type;
   union {
     struct {
-      double mins[32];
-      double vals[32];
-      double gammas[32];
-      double levels[32];
+      double mins[STP_CHANNEL_LIMIT];
+      double vals[STP_CHANNEL_LIMIT];
+      double gammas[STP_CHANNEL_LIMIT];
+      double levels[STP_CHANNEL_LIMIT];
       double lower;
       double upper;
     } pattern;

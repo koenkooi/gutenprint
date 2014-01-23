@@ -1,5 +1,5 @@
 /*
- * "$Id: image.h,v 1.2 2005/10/18 02:08:16 rlk Exp $"
+ * "$Id: image.h,v 1.3 2014/01/23 13:22:40 rlk Exp $"
  *
  *   libgimpprint image functions.
  *
@@ -46,7 +46,7 @@ extern "C" {
  */
 
 /*! The maximum number of channels. */
-#define STP_CHANNEL_LIMIT	(32)
+#define STP_CHANNEL_LIMIT	(64)
 
 
 /** Image status. */
@@ -142,5 +142,5 @@ extern void stp_image_conclude(stp_image_t *image);
 
 #endif /* GUTENPRINT_IMAGE_H */
 /*
- * End of "$Id: image.h,v 1.2 2005/10/18 02:08:16 rlk Exp $".
+ * End of "$Id: image.h,v 1.3 2014/01/23 13:22:40 rlk Exp $".
  */
