@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.249 2014/02/03 16:26:43 speachy Exp $
+dnl $Id: configure.ac,v 1.250 2014/02/08 17:28:19 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.249 $)
+AC_REVISION($Revision: 1.250 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -1115,10 +1115,10 @@ if test "$BUILD_CUPS" != "no" ; then
 	echo "                        Please review the README and release notes carefully!"
 	warnings_emitted=1
     fi
+    echo "        Build CUPS dyesub USB backend:          $BUILD_LIBUSB_BACKENDS"
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
 fi
-echo "    Build CUPS spoolers/backends:               $BUILD_LIBUSB_BACKENDS"
 echo "    Build Ghostscript IJS driver:               $BUILD_GHOSTSCRIPT"
 echo "    Build Foomatic data:                        $BUILD_FOOMATIC"
 if test "$BUILD_FOOMATIC" != "no" ; then
@@ -1135,7 +1135,7 @@ if test "$BUILD_GIMP2" != "no" ; then
 else
     echo "    Build enhanced Print plugin for GIMP:       no"
 fi
-echo "    Build EPSON Stylus utility:                 $BUILD_ESCPUTIL"
+echo "    Build EPSON inkjet utility:                 $BUILD_ESCPUTIL"
 echo "    Build test programs:                        $BUILD_TEST"
 echo "    Build testpattern generator:                $BUILD_TESTPATTERN"
 echo
