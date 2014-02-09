@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.252 2014/02/08 23:46:28 speachy Exp $
+dnl $Id: configure.ac,v 1.253 2014/02/09 03:47:08 speachy Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.252 $)
+AC_REVISION($Revision: 1.253 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -433,6 +433,10 @@ PKG_CHECK_MODULES([LIBUSB], [libusb-1.0],
                    BUILD_LIBUSB_BACKENDS=yes],
                   [HAVE_LIBUSB=no
 	           BUILD_LIBUSB_BACKENDS=no])
+# complain if we have an older (less-featured) version of libusb-1.0
+PKG_CHECK_MODULES([LIBUSBOLD], [libusb-1.0 < 1.0.13],
+                  [HAVE_LIBUSBOLD=yes],
+                  [HAVE_LIBUSBOLD=no])
 
 AC_PATH_PROGS([GIMPTOOL2_CHECK], [gimptool-2.0 gimptool])
 if test -z "${GIMPTOOL2_CHECK}" ; then
@@ -1116,6 +1120,9 @@ if test "$BUILD_CUPS" != "no" ; then
 	warnings_emitted=1
     fi
     echo "        Build CUPS dyesub USB backend:          $BUILD_LIBUSB_BACKENDS"
+    if test "$HAVE_LIBUSBOLD" != "no" ; then
+        echo "    *** WARNING: libusb < 1.0.13 use, see README section D"
+    fi
 else
     echo "    Build CUPS:                                 $BUILD_CUPS"
 fi
