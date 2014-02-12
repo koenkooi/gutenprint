@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.144 2014/02/09 02:15:25 speachy Exp $
+## $Id: Makefile.am,v 1.145 2014/02/12 13:42:27 rlk Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -229,10 +229,10 @@ ppd-stamp: cups-genppd.@GUTENPRINT_RELEASE_VERSION@ $(top_srcdir)/src/xml/xml-st
 ppd-stamp-phony: $(PPD)
 
 ppd-catalog-clean:
-	-$(RM) -r catalog
+	$(RM) -rf catalog
 
 ppd-clean:
-	-$(RM) -r ppd
+	$(RM) -rf ppd
 
 ppd-stamp-pre: ppd-catalog-clean ppd-clean
 
