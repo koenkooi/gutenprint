@@ -1,5 +1,5 @@
 /*
- * "$Id: genppd.c,v 1.195 2014/01/04 00:31:37 rlk Exp $"
+ * "$Id: genppd.c,v 1.196 2014/02/13 02:30:27 rlk Exp $"
  *
  *   PPD file generation program for the CUPS drivers.
  *
@@ -791,13 +791,15 @@ help(void)
        "  -V            Show version information and defaults.\n"
        "  The default is to output PPDs.\n");
   puts("Options:\n"
+       "  -N            Localize numbers.\n"
        "  -l locale     Output PPDs translated with messages for locale.\n"
        "  -p prefix     Output PPDs in directory prefix.\n"
        "  -d prefix     Embed directory prefix in PPD file.\n"
        "  -s            Generate simplified PPD files.\n"
        "  -a            Generate all (simplified and full) PPD files.\n"
        "  -q            Quiet mode.\n"
-       "  -v            Verbose mode.\n"
+       "  -v            Verbose mode.\n");
+  puts(
 #ifdef HAVE_LIBZ
        "  -z            Compress PPD files.\n"
        "  -Z            Don't compress PPD files.\n"
@@ -2704,5 +2706,5 @@ write_ppd(
 
 
 /*
- * End of "$Id: genppd.c,v 1.195 2014/01/04 00:31:37 rlk Exp $".
+ * End of "$Id: genppd.c,v 1.196 2014/02/13 02:30:27 rlk Exp $".
  */
