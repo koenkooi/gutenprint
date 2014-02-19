@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.145 2014/02/12 13:42:27 rlk Exp $
+## $Id: Makefile.am,v 1.146 2014/02/19 12:26:43 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ if BUILD_LIBUSB_BACKENDS
 INSTALL_BLACKLIST=install-blacklist
 install-blacklist:
 	$(mkdir_p) $(DESTDIR)$(cupsdata_blacklistdir)
-	$(INSTALL_DATA) blacklist $(DESTDIR)$(cupsdata_blacklistdir)/net.sf.gimp-print.usb-quirks
+	$(INSTALL_DATA) $(srcdir)/blacklist $(DESTDIR)$(cupsdata_blacklistdir)/net.sf.gimp-print.usb-quirks
 endif
 
 install-data-local: $(INSTALL_DATA_LOCAL_DEPS) $(INSTALL_BLACKLIST)
