@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.258 2014/03/07 00:50:06 rlk Exp $
+dnl $Id: configure.ac,v 1.259 2014/03/07 00:57:06 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -54,9 +54,9 @@ dnl 	 GCI=4, GBA=0 => .soname = libgutenprint.so.4.0
 dnl 	 GCI=5, GBA=1 => .soname = libgutenprint.so.4.1
 dnl 	 GCI=6, GBA=2 => .soname = libgutenprint.so.4.2
 dnl          (for Gutenprint 5.3 or 5.4 or 6.0 or whatever)
-dnl 	 GCI=5, GBA=0 => .soname = libgutenprint.so.4.0
-dnl 	 GCI=6, GBA=1 => .soname = libgutenprint.so.4.1
-dnl 	 GCI=7, GBA=2 => .soname = libgutenprint.so.4.2
+dnl 	 GCI=5, GBA=0 => .soname = libgutenprint.so.5.0
+dnl 	 GCI=6, GBA=1 => .soname = libgutenprint.so.5.1
+dnl 	 GCI=7, GBA=2 => .soname = libgutenprint.so.5.2
 dnl          (for the next major/minor release beyond that)
 dnl
 dnl Typically, programs will require a certain major number to be matched
@@ -86,7 +86,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.258 $)
+AC_REVISION($Revision: 1.259 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
