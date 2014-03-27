@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.147 2014/03/11 15:04:02 speachy Exp $
+## $Id: Makefile.am,v 1.148 2014/03/27 22:37:09 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -93,8 +93,8 @@ endif
 ## See http://www.cups.org/documentation.php/doc-1.6/man-backend.html
 if BUILD_LIBUSB_BACKENDS
 install-exec-hook:
+	chmod 700 $(DESTDIR)$(pkglibdir)/backend/backend_gutenprint
 	mv $(DESTDIR)$(pkglibdir)/backend/backend_gutenprint "$(DESTDIR)$(pkglibdir)/backend/gutenprint$(GUTENPRINT_MAJOR_VERSION)$(GUTENPRINT_MINOR_VERSION)+usb"
-	chmod 700 "$(DESTDIR)$(pkglibdir)/backend/gutenprint$(GUTENPRINT_MAJOR_VERSION)$(GUTENPRINT_MINOR_VERSION)+usb"
 endif
 
 TESTS= test-ppds test-rastertogutenprint
