@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.161 2014/03/11 22:53:55 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.162 2014/03/30 01:58:34 rlk Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -2568,7 +2568,7 @@ static void mitsu_cpd70k60_printer_init(stp_vars_t *v, int is_k60)
 
 static void mitsu_cpd70x_printer_init(stp_vars_t *v)
 {
-  return mitsu_cpd70k60_printer_init(v, 0);
+  mitsu_cpd70k60_printer_init(v, 0);
 }
 
 static void mitsu_cpd70x_printer_end(stp_vars_t *v)
@@ -2659,7 +2659,7 @@ LIST(dyesub_printsize_list_t, mitsu_cpk60_printsize_list, dyesub_printsize_t, mi
 
 static void mitsu_cpk60_printer_init(stp_vars_t *v)
 {
-  return mitsu_cpd70k60_printer_init(v, 1);
+  mitsu_cpd70k60_printer_init(v, 1);
 }
 
 /* Shinko CHC-S9045 (experimental) */
