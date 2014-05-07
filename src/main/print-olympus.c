@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.164 2014/05/06 17:51:55 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.165 2014/05/07 11:16:56 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -3550,7 +3550,7 @@ static const dyesub_cap_t dyesub_model_capabilities[] =
   },
   { /* Canon CP820, CP910 */
     1011,
-    &ymc_ink_list,
+    &bgr_ink_list,
     &res_300dpi_list,
     &cp910_page_list,
     &cp910_printsize_list,
@@ -3561,7 +3561,7 @@ static const dyesub_cap_t dyesub_model_capabilities[] =
     &cp910_printer_init_func, NULL,
     NULL, NULL,
     NULL, NULL,
-    cpx00_adj_cyan, cpx00_adj_magenta, cpx00_adj_yellow,
+    NULL, NULL, NULL, /* Unknown color correction! */
     NULL, NULL,
   },
   { /* Sony UP-DP10  */
