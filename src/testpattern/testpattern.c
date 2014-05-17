@@ -1,5 +1,5 @@
 /*
- * "$Id: testpattern.c,v 1.63 2014/05/04 22:34:26 rlk Exp $"
+ * "$Id: testpattern.c,v 1.64 2014/05/17 21:56:46 rlk Exp $"
  *
  *   Test pattern generator for Gutenprint
  *
@@ -190,6 +190,7 @@ static void
 writefunc(void *file, const char *buf, size_t bytes)
 {
   FILE *prn = (FILE *)file;
+  bytes_written += bytes;
   if (! file)
     return;
   if (file == stderr)
@@ -200,7 +201,6 @@ writefunc(void *file, const char *buf, size_t bytes)
   else if (!global_suppress_output)
     {
       fwrite(buf, 1, bytes, prn);
-      bytes_written += bytes;
     }
 }
 
