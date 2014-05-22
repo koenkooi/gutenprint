@@ -1,5 +1,5 @@
 /*
- * "$Id: printers.h,v 1.7 2010/08/07 02:30:38 rlk Exp $"
+ * "$Id: printers.h,v 1.8 2014/05/22 02:08:20 rlk Exp $"
  *
  *   libgimpprint printer functions.
  *
@@ -159,6 +159,13 @@ extern const char *stp_printer_get_manufacturer(const stp_printer_t *p);
 extern const char *stp_printer_get_foomatic_id(const stp_printer_t *p);
 
 /**
+ * Get a printer model's comment string
+ * @param p the printer model to use.
+ * @returns the comments or NULL (should never be freed)
+ */
+extern const char *stp_printer_get_comment(const stp_printer_t *p);
+
+/**
  * Get a printer model's model number.
  * The model number is used internally by the "family" driver module,
  * and has no meaning out of that context.  It bears no relation to
@@ -285,5 +292,5 @@ const char *stp_describe_output(const stp_vars_t *v);
 
 #endif /* GUTENPRINT_PRINTERS_H */
 /*
- * End of "$Id: printers.h,v 1.7 2010/08/07 02:30:38 rlk Exp $".
+ * End of "$Id: printers.h,v 1.8 2014/05/22 02:08:20 rlk Exp $".
  */
