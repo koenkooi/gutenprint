@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.262 2014/05/22 02:06:45 rlk Exp $
+dnl $Id: configure.ac,v 1.263 2014/06/01 14:54:25 rlk Exp $
 dnl Copyright (C) 2001-2004 Roger Leigh
 dnl 
 dnl This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ pushdef([GUTENPRINT_VERSION], GUTENPRINT_MAJOR_VERSION.GUTENPRINT_MINOR_VERSION.
 
 AC_INIT(GUTENPRINT_NAME, GUTENPRINT_VERSION, [gimp-print-devel@lists.sourceforge.net])
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.262 $)
+AC_REVISION($Revision: 1.263 $)
 AC_CONFIG_SRCDIR(src/main/print-vars.c)
 AC_CONFIG_AUX_DIR(scripts)
 STP_INIT
@@ -356,6 +356,10 @@ STP_ARG_WITH([foomatic3],
              [make use of foomatic 3 extra features],
              [BUILD_FOOMATIC_3],
              [(automatic)])
+
+if test "$BUILD_FOOMATIC_3" = "yes" ; then
+   BUILD_FOOMATIC=yes
+fi
 
 AC_PATH_PROG(IJS_CONFIG, ijs-config)
 
