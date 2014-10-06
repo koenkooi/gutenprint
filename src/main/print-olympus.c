@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.168 2014/10/06 04:23:55 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.169 2014/10/06 04:30:09 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -3367,8 +3367,8 @@ static void citizen_cw01_plane_init(stp_vars_t *v)
 	stp_put32_le(0x0800, v);
 	stp_put16_le(privdata.h_size, v);  /* number of rows */
 	stp_put16_le(0x0, v);
-	stp_put32_le(0x00, v);
 	stp_put32_le(0x080001, v);
+	stp_put32_le(0x00, v);
 	stp_put32_le(0x00, v);
 	stp_put32_le(0x335a, v);
 	stp_put32_le(0x335a, v);
