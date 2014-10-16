@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.148 2014/03/27 22:37:09 speachy Exp $
+## $Id: Makefile.am,v 1.149 2014/10/16 16:29:45 speachy Exp $
 ## Copyright (C) 2000 Roger Leigh
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,7 @@ commandtoepson_SOURCES = commandtoepson.c
 commandtoepson_LDADD = $(CUPS_LIBS)
 
 if BUILD_LIBUSB_BACKENDS
-backend_gutenprint_SOURCES = selphy_print.c kodak1400_print.c kodak6800_print.c kodak605_print.c shinko_s2145_print.c sony_updr150_print.c dnpds40_print.c mitsu70x_print.c backend_common.c backend_common.h
+backend_gutenprint_SOURCES = selphy_print.c kodak1400_print.c kodak6800_print.c kodak605_print.c shinko_s2145_print.c sony_updr150_print.c dnpds40_print.c mitsu70x_print.c citizencw01_print.c backend_common.c backend_common.h
 
 backend_gutenprint_LDADD = $(LIBUSB_LIBS)
 backend_gutenprint_CPPFLAGS = $(LIBUSB_CFLAGS) -DURI_PREFIX=\"gutenprint$(GUTENPRINT_MAJOR_VERSION)$(GUTENPRINT_MINOR_VERSION)+usb\" -DLIBUSB_PRE_1_0_10
