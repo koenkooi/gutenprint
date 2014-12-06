@@ -1,5 +1,5 @@
 /*
- * "$Id: print-olympus.c,v 1.177 2014/12/03 04:44:47 speachy Exp $"
+ * "$Id: print-olympus.c,v 1.178 2014/12/06 22:06:28 speachy Exp $"
  *
  *   Print plug-in DyeSub driver (formerly Olympus driver) for the GIMP.
  *
@@ -4443,7 +4443,7 @@ static const dyesub_cap_t dyesub_model_capabilities[] =
   },
   { /* Mitsubishi CP9550D */
     4103,
-    &bgr_ink_list,
+    &rgb_ink_list,
     &res_346dpi_list,
     &mitsu_cp9550_page_list,
     &mitsu_cp9550_printsize_list,
